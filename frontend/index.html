@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mentor AI | Învață cu direcție</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./BorderGlow.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body class="text-white overflow-x-hidden">
+  <noscript>Acest site necesită JavaScript pentru a funcționa.</noscript>
+  <div id="root" class="min-h-screen">
+    <div id="boot-fallback" class="boot-fallback">
+      <div class="boot-fallback-mark">M</div>
+      <p>Se încarcă Mentor AI…</p>
+    </div>
+  </div>
+  <script>
+    // Surfaces a friendly message instead of a silent blank screen if a
+    // component script fails to load or React throws during render.
+    window.addEventListener('error', function (event) {
+      var fallback = document.getElementById('boot-fallback');
+      if (!fallback || document.getElementById('root').children.length > 1) return;
+      fallback.innerHTML = '<p style="max-width:320px;text-align:center;padding:0 20px;">Nu am putut încărca aplicația (' + (event.message || 'eroare necunoscută') + '). Reîncarcă pagina.</p>';
+    });
+  </script>
+  <script type="text/babel" src="./apiClient.js"></script>
+  <script type="text/babel" src="./components/Toast.js"></script>
+  <script type="text/babel" src="./components/BorderGlow.js"></script>
+  <script type="text/babel" src="./components/AdaptiveContainer.js"></script>
+  <script type="text/babel" src="./components/BottomNav.js"></script>
+  <script type="text/babel" src="./components/SplashScreen.js"></script>
+  <script type="text/babel" src="./components/AuthScreen.js"></script>
+  <script type="text/babel" src="./components/LoginScreen.js"></script>
+  <script type="text/babel" src="./components/RegisterScreen.js"></script>
+  <script type="text/babel" src="./components/OnboardingScreen.js"></script>
+  <script type="text/babel" src="./components/DarkVeil.js"></script>
+  <script type="text/babel" src="./components/LineWaves.js"></script>
+  <script type="text/babel" src="./components/FloatingLines.js"></script>
+  <script type="text/babel" src="./components/StudyScreens.js"></script>
+  <script type="text/babel" src="./app.js"></script>
+</body>
+</html>
