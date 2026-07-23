@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MENTOR AI v3.0 - Profesorul Personal Inteligent (10 Limbi)</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Inter', sans-serif; background: #0f0f23; color: #f1f5f9; overflow-x: hidden; margin:0; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes splashPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes flicker { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+@keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(124,58,237,0.3); } 50% { box-shadow: 0 0 40px rgba(124,58,237,0.6); } }
+.animate-fadeIn { animation: fadeIn 0.4s ease; }
+.animate-slideUp { animation: slideUp 0.5s ease; }
+.animate-pulse-slow { animation: pulse 2s infinite; }
+.animate-splash { animation: splashPulse 2s ease-in-out infinite; }
+.animate-rotate { animation: rotate 3s linear infinite; }
+.animate-flicker { animation: flicker 1s ease-in-out infinite alternate; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-glow { animation: glow 2s ease-in-out infinite; }
+.typing-dot { width: 6px; height: 6px; background: #7c3aed; border-radius: 50%; display: inline-block; animation: typingBounce 1.4s infinite ease-in-out both; margin: 0 2px; }
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+.glass { background: rgba(15,15,35,0.95); backdrop-filter: blur(20px); }
+.gradient-primary { background: linear-gradient(135deg, #1a1a4e 0%, #7c3aed 100%); }
+.gradient-accent { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); }
+.gradient-card { background: linear-gradient(145deg, #1a1a3e 0%, #252560 100%); }
+.gradient-success { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+.gradient-danger { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); }
+.gradient-info { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); }
+.text-gradient { background: linear-gradient(135deg, #7c3aed, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+#root { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; background: #0f0f23; overflow: hidden; }
+</style>
+<base target="_blank">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useEffect, useRef, useCallback } = React;
+
+const STORAGE_KEY = 'mentor_ai_v3_data';
+const loadData = () => { const saved = localStorage.getItem(STORAGE_KEY); return saved ? JSON.parse(saved) : null; };
+const saveData = (data) => { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); };
+const generateId = () => Math.random().toString(36).substr(2, 9);
+const formatTime = (seconds) => { 
+  const m = Math.floor(seconds / 60).toString().padStart(2, '0'); 
+  const s = (seconds % 60).toString().padStart(2, '0'); 
+  return m + ':' + s; 
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CREIERUL AI v3.0 - 10 LIMBI + SCAFFOLDING PEDAGOGIC AVANSAT + ANTI-CHEATING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const AI_BACKEND = {
+  config: { APP_NAME: "Mentor AI v3.0", APP_VERSION: "3.0.0", MAX_RETRIES: 2, TIMEOUT_MS: 8000 },
+
+  languages: [
+    { id: 'ro', name: 'Română', flag: '🇷🇴' },
+    { id: 'en', name: 'English', flag: '🇬🇧' },
+    { id: 'fr', name: 'Français', flag: '🇫🇷' },
+    { id: 'de', name: 'Deutsch', flag: '🇩🇪' },
+    { id: 'es', name: 'Español', flag: '🇪🇸' },
+    { id: 'it', name: 'Italiano', flag: '🇮🇹' },
+    { id: 'ru', name: 'Русский', flag: '🇷🇺' },
+    { id: 'hu', name: 'Magyar', flag: '🇭🇺' },
+    { id: 'tr', name: 'Türkçe', flag: '🇹🇷' },
+    { id: 'zh', name: '中文', flag: '🇨🇳' },
+    { id: 'ja', name: '日本語', flag: '🇯🇵' }
+  ],
+
+  curriculum: {
+    subjects: [
+      { id: "matematica", name: { ro: "Matematică", en: "Mathematics", fr: "Mathématiques", de: "Mathematik", es: "Matemáticas", it: "Matematica", ru: "Математика", hu: "Matematika", tr: "Matematik", zh: "数学", ja: "数学" }, cycles: ["primar","gimnazial","liceu"], icon: "fa-square-root-alt" },
+      { id: "romana", name: { ro: "Limba Română", en: "Romanian", fr: "Roumain", de: "Rumänisch", es: "Rumano", it: "Romeno", ru: "Румынский", hu: "Román", tr: "Rumence", zh: "罗马尼亚语", ja: "ルーマニア語" }, cycles: ["primar","gimnazial","liceu"], icon: "fa-book" },
+      { id: "fizica", name: { ro: "Fizică", en: "Physics", fr: "Physique", de: "Physik", es: "Física", it: "Fisica", ru: "Физика", hu: "Fizika", tr: "Fizik", zh: "物理", ja: "物理学" }, cycles: ["gimnazial","liceu"], icon: "fa-atom" },
+      { id: "chimie", name: { ro: "Chimie", en: "Chemistry", fr: "Chimie", de: "Chemie", es: "Química", it: "Chimica", ru: "Химия", hu: "Kémia", tr: "Kimya", zh: "化学", ja: "化学" }, cycles: ["gimnazial","liceu"], icon: "fa-flask" },
+      { id: "biologie", name: { ro: "Biologie", en: "Biology", fr: "Biologie", de: "Biologie", es: "Biología", it: "Biologia", ru: "Биология", hu: "Biológia", tr: "Biyoloji", zh: "生物学", ja: "生物学" }, cycles: ["gimnazial","liceu"], icon: "fa-dna" },
+      { id: "istorie", name: { ro: "Istorie", en: "History", fr: "Histoire", de: "Geschichte", es: "Historia", it: "Storia", ru: "История", hu: "Történelem", tr: "Tarih", zh: "历史", ja: "歴史" }, cycles: ["primar","gimnazial","liceu"], icon: "fa-landmark" },
+      { id: "geografie", name: { ro: "Geografie", en: "Geography", fr: "Géographie", de: "Geographie", es: "Geografía", it: "Geografia", ru: "География", hu: "Földrajz", tr: "Coğrafya", zh: "地理", ja: "地理学" }, cycles: ["gimnazial","liceu"], icon: "fa-globe-europe" },
+      { id: "engleza", name: { ro: "Engleză", en: "English", fr: "Anglais", de: "Englisch", es: "Inglés", it: "Inglese", ru: "Английский", hu: "Angol", tr: "İngilizce", zh: "英语", ja: "英語" }, cycles: ["primar","gimnazial","liceu"], icon: "fa-language" },
+      { id: "franceza", name: { ro: "Franceză", en: "French", fr: "Français", de: "Französisch", es: "Francés", it: "Francese", ru: "Французский", hu: "Francia", tr: "Fransızca", zh: "法语", ja: "フランス語" }, cycles: ["gimnazial","liceu"], icon: "fa-language" },
+      { id: "germana", name: { ro: "Germană", en: "German", fr: "Allemand", de: "Deutsch", es: "Alemán", it: "Tedesco", ru: "Немецкий", hu: "Német", tr: "Almanca", zh: "德语", ja: "ドイツ語" }, cycles: ["gimnazial","liceu"], icon: "fa-language" },
+      { id: "spaniola", name: { ro: "Spaniolă", en: "Spanish", fr: "Espagnol", de: "Spanisch", es: "Español", it: "Spagnolo", ru: "Испанский", hu: "Spanyol", tr: "İspanyolca", zh: "西班牙语", ja: "スペイン語" }, cycles: ["gimnazial","liceu"], icon: "fa-language" },
+      { id: "italiana", name: { ro: "Italiană", en: "Italian", fr: "Italien", de: "Italienisch", es: "Italiano", it: "Italiano", ru: "Итальянский", hu: "Olasz", tr: "İtalyanca", zh: "意大利语", ja: "イタリア語" }, cycles: ["gimnazial","liceu"], icon: "fa-language" },
+      { id: "rusa", name: { ro: "Rusă", en: "Russian", fr: "Russe", de: "Russisch", es: "Ruso", it: "Russo", ru: "Русский", hu: "Orosz", tr: "Rusça", zh: "俄语", ja: "ロシア語" }, cycles: ["gimnazial","liceu"], icon: "fa-language" },
+      { id: "maghiara", name: { ro: "Maghiară", en: "Hungarian", fr: "Hongrois", de: "Ungarisch", es: "Húngaro", it: "Ungherese", ru: "Венгерский", hu: "Magyar", tr: "Macarca", zh: "匈牙利语", ja: "ハンガリー語" }, cycles: ["gimnazial","liceu"], icon: "fa-language" },
+      { id: "turca", name: { ro: "Turcă", en: "Turkish", fr: "Turc", de: "Türkisch", es: "Turco", it: "Turco", ru: "Турецкий", hu: "Török", tr: "Türkçe", zh: "土耳其语", ja: "トルコ語" }, cycles: ["gimnazial","liceu"], icon: "fa-language" },
+      { id: "chineza", name: { ro: "Chineză", en: "Chinese", fr: "Chinois", de: "Chinesisch", es: "Chino", it: "Cinese", ru: "Китайский", hu: "Kínai", tr: "Çince", zh: "中文", ja: "中国語" }, cycles: ["gimnazial","liceu"], icon: "fa-language" },
+      { id: "japoneza", name: { ro: "Japoneză", en: "Japanese", fr: "Japonais", de: "Japanisch", es: "Japonés", it: "Giapponese", ru: "Японский", hu: "Japán", tr: "Japonca", zh: "日语", ja: "日本語" }, cycles: ["gimnazial","liceu"], icon: "fa-language" },
+      { id: "informatica", name: { ro: "Informatică", en: "Computer Science", fr: "Informatique", de: "Informatik", es: "Informática", it: "Informatica", ru: "Информатика", hu: "Informatika", tr: "Bilişim", zh: "计算机", ja: "情報科学" }, cycles: ["gimnazial","liceu"], icon: "fa-laptop-code" },
+      { id: "evaluare", name: { ro: "Evaluare Națională", en: "National Assessment", fr: "Évaluation Nationale", de: "Nationale Bewertung", es: "Evaluación Nacional", it: "Valutazione Nazionale", ru: "Нац. оценка", hu: "Orsz. értékelés", tr: "Ulusal Değerlendirme", zh: "国家评估", ja: "全国評価" }, cycles: ["gimnazial"], icon: "fa-clipboard-check" },
+      { id: "bac", name: { ro: "Bacalaureat", en: "Baccalaureate", fr: "Baccalauréat", de: "Abitur", es: "Bachillerato", it: "Maturità", ru: "ЕГЭ", hu: "Érettségi", tr: "Lise Diploması", zh: "高考", ja: "バカロレア" }, cycles: ["liceu"], icon: "fa-graduation-cap" }
+    ],
+    cycles: [
+      { id: "primar", name: { ro: "Primar", en: "Primary", fr: "Primaire", de: "Primar", es: "Primaria", it: "Primaria", ru: "Начальная", hu: "Alsó tagozat", tr: "İlkokul", zh: "小学", ja: "小学校" }, classes: [1,2,3,4] },
+      { id: "gimnazial", name: { ro: "Gimnazial", en: "Middle School", fr: "Collège", de: "Sekundar I", es: "Secundaria", it: "Secondaria", ru: "Средняя", hu: "Felső tagozat", tr: "Ortaokul", zh: "初中", ja: "中学校" }, classes: [5,6,7,8] },
+      { id: "liceu", name: { ro: "Liceal", en: "High School", fr: "Lycée", de: "Sekundar II", es: "Bachillerato", it: "Superiore", ru: "Старшая", hu: "Középiskola", tr: "Lise", zh: "高中", ja: "高校" }, classes: [9,10,11,12] }
+    ]
+  },
+
+  memory: {
+    _store: {}, maxMessages: 15,
+    get(convId) { return this._store[convId] || []; },
+    add(convId, role, content, metadata = {}) {
+      if (!this._store[convId]) this._store[convId] = [];
+      this._store[convId].push({ role, content, timestamp: Date.now(), metadata });
+      if (this._store[convId].length > this.maxMessages) this._store[convId] = this._store[convId].slice(-this.maxMessages);
+    },
+    clear(convId) { delete this._store[convId]; }
+  },
+
+  async safetyCheck(message) {
+    const msgLower = message.toLowerCase();
+    const inappropriate = ["bomba","arma","ucide","sinucidere","droguri","sex explicit","pornografie","hack","fura banca","virus","terorism","criminal","viol","abuz"];
+    const cheating = [
+      "rezolvă-mi","fă-mi tema","scrie-mi compunerea","dă-mi răspunsul","copiază","plagiază","fă tot exercițiul","fă-mi tot","răspunde la tot",
+      "solve for me","do my homework","write my essay","give me answer","do everything",
+      "résous pour moi","fais mes devoirs","löse für mich","mach meine hausaufgaben",
+      "resuelve para mí","haz mi tarea","risolvi per me","fai i miei compiti",
+      "реши за меня","сделай мою домашку","old meg helyettem","írd meg helyettem",
+      "benim için çöz","ödevimi yap","帮我做","给我答案","私のために解いて","宿題をやって"
+    ];
+    const flags = [];
+    for (const kw of inappropriate) if (msgLower.includes(kw)) flags.push("inappropriate_content");
+    for (const pattern of cheating) if (msgLower.includes(pattern.toLowerCase())) flags.push("cheating_attempt");
+    const directPatterns = [/^(care este|ce este|cum se|defin|explic|spune-mi|tell me|what is|how to|define|explain|dă-mi|give me|donne-moi|gib mir|dame|dammi|дай мне|add meg|ver bana|给我|教えて)/i];
+    let isDirect = false;
+    for (const p of directPatterns) if (p.test(message.trim())) { isDirect = true; break; }
+    return { safe: flags.length === 0, flags: flags.length ? flags : ["none"], isDirectRequest: isDirect };
+  },
+
+  getSystemPrompt(lang) {
+    const prompts = {
+      ro: "Ești Mentor AI v3.0, un asistent educațional inteligent pentru elevi (clasele I-XII).\n\nREGULI STRICTE PEDAGOGICE:\n1. NU dai NICIODATĂ răspunsul direct la teme/exerciții/întrebări.\n2. Folosești tehnica SCAFFOLDING: pui întrebări ghidate, dai indicii, îl ajuți pe elev să descopere SINGUR.\n3. Dacă elevul cere direct răspunsul, refuzi politicos și îl redirecționezi spre gândire critică.\n4. Te calibrezi pe curriculumul românesc: programele de la programe.ise.ro și edu.ro.\n5. Răspunzi în limba ROMÂNĂ, cu excepția termenilor științifici.\n6. Verifici siguranța: nu răspunzi la subiecte inadecvate.\n7. Fii încurajator, răbdător, folosești emoji-uri moderate.\n8. Răspunsul maxim: 200 cuvinte. Fii concis dar complet.\n\nTEHNICI DE SCAFFOLDING:\n- Întrebări deschise (\"Ce crezi că...?\", \"Cum ai aborda...?\")\n- Indicii progresive (dă câte un indiciu, nu toate deodată)\n- Analogii și exemple concrete din viața reală\n- Întrebări de verificare (\"Ai verificat dacă...?\")\n- Încurajare și feedback pozitiv\n\nSTRUCTURĂ RĂSPUNS:\n1. Salut prietenos + recunoaștere subiect\n2. Întrebare ghidată / Indiciu progresiv\n3. Explicație conceptuală (fără rezolvare directă)\n4. Întrebare de verificare / Provocare\n5. Încurajare finală",
+      en: "You are Mentor AI v3.0, an intelligent educational assistant for students (grades 1-12).\n\nSTRICT PEDAGOGICAL RULES:\n1. NEVER give the direct answer to homework/exercises/questions.\n2. Use SCAFFOLDING technique: ask guiding questions, give hints, help the student discover ALONE.\n3. If the student asks for the direct answer, politely refuse and redirect to critical thinking.\n4. Align with international curricula and educational standards.\n5. Respond in ENGLISH, with scientific terms in their original language.\n6. Check safety: do not respond to inappropriate subjects.\n7. Be encouraging, patient, use moderate emojis.\n8. Maximum response: 200 words. Be concise but complete.\n\nSCAFFOLDING TECHNIQUES:\n- Open questions (\"What do you think...?\", \"How would you approach...?\")\n- Progressive hints (give one hint at a time, not all at once)\n- Analogies and concrete real-life examples\n- Verification questions (\"Have you checked if...?\")\n- Encouragement and positive feedback",
+      fr: "Vous êtes Mentor AI v3.0, un assistant éducatif intelligent pour les élèves (classes 1-12).\n\nRÈGLES PÉDAGOGIQUES STRICTES:\n1. Ne donnez JAMAIS la réponse directe aux devoirs/exercices/questions.\n2. Utilisez la technique du SCAFFOLDING: posez des questions orientées, donnez des indices, aidez l'élève à découvrir SEUL.\n3. Si l'élève demande la réponse directe, refusez poliment et redirigez vers la pensée critique.\n4. Alignez-vous sur les programmes internationaux et les standards éducatifs.\n5. Répondez en FRANÇAIS, avec les termes scientifiques dans leur langue originale.\n6. Vérifiez la sécurité: ne répondez pas aux sujets inappropriés.\n7. Soyez encourageant, patient, utilisez des émojis modérés.\n8. Réponse maximale: 200 mots. Soyez concis mais complet.",
+      de: "Sie sind Mentor AI v3.0, ein intelligenter Bildungsassistent für Schüler (Klassen 1-12).\n\nSTRENGE PÄDAGOGISCHE REGELN:\n1. Geben Sie NIEMALS die direkte Antwort auf Hausaufgaben/Übungen/Fragen.\n2. Verwenden Sie die SCAFFOLDING-Technik: Stellen Sie leitende Fragen, geben Sie Hinweise, helfen Sie dem Schüler, ALLEINE zu entdecken.\n3. Wenn der Schüler die direkte Antwort verlangt, lehnen Sie höflich ab und lenken Sie zum kritischen Denken um.\n4. Orientieren Sie sich an internationalen Lehrplänen und Bildungsstandards.\n5. Antworten Sie auf DEUTSCH, mit wissenschaftlichen Begriffen in ihrer Originalsprache.\n6. Überprüfen Sie die Sicherheit: Antworten Sie nicht auf unangemessene Themen.\n7. Seien Sie ermutigend, geduldig, verwenden Sie moderate Emojis.\n8. Maximale Antwort: 200 Wörter. Seien Sie prägnant aber vollständig.",
+      es: "Eres Mentor AI v3.0, un asistente educativo inteligente para estudiantes (grados 1-12).\n\nREGLAS PEDAGÓGICAS ESTRICTAS:\n1. NUNCA des la respuesta directa a tareas/ejercicios/preguntas.\n2. Usa la técnica de SCAFFOLDING: haz preguntas orientadoras, da pistas, ayuda al estudiante a descubrir SOLO.\n3. Si el estudiante pide la respuesta directa, rechaza educadamente y redirige al pensamiento crítico.\n4. Alinea con currículos internacionales y estándares educativos.\n5. Responde en ESPAÑOL, con términos científicos en su idioma original.\n6. Verifica la seguridad: no respondas a temas inapropiados.\n7. Sé alentador, paciente, usa emojis moderados.\n8. Respuesta máxima: 200 palabras. Sé conciso pero completo.",
+      it: "Sei Mentor AI v3.0, un assistente educativo intelligente per studenti (classi 1-12).\n\nREGOLE PEDAGOGICHE STRETTE:\n1. NON dare MAI la risposta diretta a compiti/esercizi/domande.\n2. Usa la tecnica del SCAFFOLDING: fai domande orientate, dai indizi, aiuta lo studente a scoprire DA SOLO.\n3. Se lo studente chiede la risposta diretta, rifiuta educatamente e reindirizza al pensiero critico.\n4. Allineati con i curricula internazionali e gli standard educativi.\n5. Rispondi in ITALIANO, con termini scientifici nella loro lingua originale.\n6. Verifica la sicurezza: non rispondere a argomenti inappropriati.\n7. Sii incoraggiante, paziente, usa emoji moderati.\n8. Risposta massima: 200 parole. Sii conciso ma completo.",
+      ru: "Вы Mentor AI v3.0, интеллектуальный образовательный ассистент для учеников (классы 1-12).\n\nСТРОГИЕ ПЕДАГОГИЧЕСКИЕ ПРАВИЛА:\n1. НИКОГДА не давайте прямой ответ на домашние задания/упражнения/вопросы.\n2. Используйте технику SCAFFOLDING: задавайте наводящие вопросы, давайте подсказки, помогайте ученику открывать САМОСТОЯТЕЛЬНО.\n3. Если ученик просит прямой ответ, вежливо откажите и перенаправьте на критическое мышление.\n4. Соответствуйте международным учебным программам и образовательным стандартам.\n5. Отвечайте на РУССКОМ, с научными терминами на их оригинальном языке.\n6. Проверяйте безопасность: не отвечайте на неподобающие темы.\n7. Будьте ободряющим, терпеливым, используйте умеренные эмодзи.\n8. Максимальный ответ: 200 слов. Будьте лаконичны, но полны.",
+      hu: "Ön Mentor AI v3.0, egy intelligens oktatási asszisztens diákoknak (1-12. osztály).\n\nSZIGORÚ PEDAGÓGIAI SZABÁLYOK:\n1. SOHA ne adja meg közvetlenül a választ a házi feladatokra/gyakorlatokra/kérdésekre.\n2. Használja a SCAFFOLDING technikát: tegyen fel irányító kérdéseket, adjon tippeket, segítse a diákot, hogy MAGA fedezzen fel.\n3. Ha a diák közvetlen választ kér, udvariasan utasítsa vissza, és irányítsa a kritikus gondolkodás felé.\n4. Igazodjon a nemzetközi tantervekhez és oktatási szabványokhoz.\n5. Válaszoljon MAGYARUL, a tudományos kifejezéseket az eredeti nyelvükön.\n6. Ellenőrizze a biztonságot: ne válaszoljon nem megfelelő témákra.\n7. Legyen bátorító, türelmes, használjon mérsékelt emojikat.\n8. Maximális válasz: 200 szó. Legyen tömör, de teljes.",
+      tr: "Sen Mentor AI v3.0'sın, öğrenciler için akıllı bir eğitim asistanı (sınıf 1-12).\n\nKATİ PEDAGOJİK KURALLAR:\n1. Asla ödev/alıştırma/sorulara doğrudan cevap verme.\n2. SCAFFOLDING tekniğini kullan: yönlendirici sorular sor, ipuçları ver, öğrencinin TEK BAŞINA keşfetmesine yardım et.\n3. Öğrenci doğrudan cevap isterse, nazikçe reddet ve eleştirel düşünmeye yönlendir.\n4. Uluslararası müfredat ve eğitim standartlarına uy.\n5. TÜRKÇE yanıt ver, bilimsel terimleri orijinal dillerinde kullan.\n6. Güvenliği kontrol et: uygunsuz konulara yanıt verme.\n7. Cesaret verici, sabırlı ol, ılımlı emoji kullan.\n8. Maksimum yanıt: 200 kelime. Öz ama eksiksiz ol.",
+      zh: "你是 Mentor AI v3.0，一个面向学生（1-12年级）的智能教育助手。\n\n严格的教学规则：\n1. 永远不要直接给出作业/练习/问题的答案。\n2. 使用支架式教学（SCAFFOLDING）技术：提出引导性问题，给出提示，帮助学生自己发现。\n3. 如果学生要求直接答案，礼貌拒绝并引导至批判性思维。\n4. 符合国际课程和教育标准。\n5. 用中文回答，科学术语保留原语言。\n6. 检查安全性：不回答不适当的话题。\n7. 鼓励、耐心，适度使用表情符号。\n8. 最多200字。简洁但完整。",
+      ja: "あなたは Mentor AI v3.0、生徒向け（1-12年生）のインテリジェント教育アシスタントです。\n\n厳格な教育ルール：\n1. 宿題/演習/質問に対して直接の答えを絶対に与えない。\n2. スキャフォールディング技術を使用：誘導的な質問をし、ヒントを与え、生徒が自分で発見するのを助ける。\n3. 生徒が直接の答えを求めた場合、丁寧に断り、批判的思考へ誘導する。\n4. 国際的なカリキュラムと教育標準に沿う。\n5. 日本語で回答し、科学用語は元の言語のままにする。\n6. 安全性を確認：不適切な話題には回答しない。\n7. 励まし、忍耐強く、適度に絵文字を使用する。\n8. 最大200字。簡潔だが完全に。"
+    };
+    return prompts[lang] || prompts['ro'];
+  },
+
+  buildMessages(userMsg, history, subject, classLevel, lang) {
+    const context = "\n[Context: Subject=" + subject + ", Grade=" + classLevel + ", Language=" + lang + "]";
+    const messages = [{ role: "system", content: this.getSystemPrompt(lang) + context }];
+    for (const h of history) messages.push({ role: h.role, content: h.content });
+    messages.push({ role: "user", content: userMsg });
+    return messages;
+  },
+
+  async callClaude(messages, lang) {
+    const start = Date.now();
+    await new Promise(r => setTimeout(r, 800 + Math.random() * 400));
+    const lastMsg = messages[messages.length - 1].content.toLowerCase();
+
+    const responses = {
+      ro: {
+        math: "🧮 Pentru această problemă de matematică, începe prin a identifica datele cunoscute. Care sunt variabilele? Scrie-le pe o foaie și aplică formula generală. Încearcă să descompui problema în pași mici. Ce pași crezi că ar trebui să urmezi? Începe cu ce știi! 💪",
+        bio: "🧬 ADN-ul conține informația genetică organizată în gene. Fiecare genă codifică o proteină. Replicarea ADN-ului este semi-conservativă. Ce știi deja despre structura dublei elice? Desenează-o mental și identifică legăturile de hidrogen! Ce rol au bazele azotate? 🤔",
+        physics: "⚡ Legea lui Ohm: V = I × R. Tensiunea este direct proporțională cu curentul. Energia cinetică: Ec = mv²/2. Care dintre aceste formule crezi că se aplică aici? Încearcă să identifici ce știi și ce nu știi. Ce unități de măsură sunt implicate? 🔍",
+        chemistry: "🧪 O reacție chimică presupune transformarea substanțelor de reacție în produși. Verifică bilanțul masic: masa reactanților = masa produsilor. Ce elemente chimice recunoști în formulă? Încearcă să echilibrezi ecuația pas cu pas! Ce valențe au elementele? 🔬",
+        history: "🏛️ Contextul istoric este esențial! Identifică cauzele, desfășurarea și consecințele evenimentului. Cine erau actorii principali și ce interese aveau? Pune-te în locul lor și gândește-te ce decizii ai fi luat. Ce surse istorice ai consultat? 🌍",
+        geography: "🌍 Geografia fizică studiază relieful, clima și hidrografia. Geografia umană: populație și așezări. Ce factori naturali influențează zona? Fă o hartă mentală! Ce tip de climă predomină și de ce? 🗺️",
+        english: "🇬🇧 English grammar has 12 tenses. Present Simple for habitual actions. Which tense fits your sentence? Try to identify time markers! Look for words like 'always', 'yesterday', 'tomorrow'. What do they tell you about the time? 📚",
+        french: "🇫🇷 Le français a 3 groupes de verbes: -er, -ir, -re. Quel groupe appartient le verbe que tu veux conjuguer? Essaie de trouver le radical et les terminaisons. Quelle est la règle générale pour ce groupe? Regarde les terminaisons au présent! 🎯",
+        german: "🇩🇪 Im Deutschen gibt es 4 Fälle: Nominativ, Akkusativ, Dativ, Genitiv. Welcher Fall passt hier? Denke an die Artikel: der/die/das, den/die/das, dem/der/dem. Versuche, einen Satz mit dem richtigen Artikel zu bilden! 🧠",
+        spanish: "🇪🇸 El español tiene 3 conjugaciones: -ar, -er, -ir. ¿A qué conjugación pertenece el verbo? Intenta identificar la raíz y las terminaciones. ¿Qué tiempo verbal necesitas? ¡Piensa en los marcadores temporales como 'ayer', 'mañana', 'siempre'! 🌟",
+        italian: "🇮🇹 L'italiano ha 3 coniugazioni: -are, -ere, -ire. A quale coniugazione appartiene il verbo? Prova a identificare la radice e le desinenze. Quale tempo verbale ti serve? Pensa ai marker temporali! ✨",
+        russian: "🇷🇺 В русском языке 3 склонения существительных. К какому склонению относится слово? Подумай о окончаниях в именительном падеже (-а, -о, -я, -е). Попробуй составить предложение с правильным окончанием! 🎯",
+        hungarian: "🇭🇺 A magyarban 18 eset van! Melyik eset illik ide? Gondolj a ragokra: -ban/-ben, -hoz/-hez, -tól/-től. Próbálj meg egy mondatot a megfelelő raggal alkotni! A toldalékok a szó végén vannak. 📖",
+        turkish: "🇹🇷 Türkçede 6 vakit var. Hangi vakit burada uygun? Zaman belirteçlerini düşün: dün, bugün, yarın, her zaman. Fiil çekimindeki ekleri ve kuralları hatırlamaya çalış. Doğru ekleri kullanarak bir cümle kurmayı dene! 🎯",
+        chinese: "🇨🇳 中文有四个声调。哪个声调适合这个字？想想声母和韵母。试着用正确的声调造一个句子！汉字有偏旁部首，你能认出来吗？比如'氵'表示和水有关。 🀄",
+        japanese: "🇯🇵 日本語には3種類の文字があります：ひらがな、カタカナ、漢字。どの文字を使うべきですか？文の構造を考えてみてください。主語は何ですか？動詞は最後に来ます！助詞「は」「が」「を」の違いを考えてみて。 🎌",
+        default: "🎓 Excelentă întrebare! Haide să vedem împreună cum putem aborda acest subiect. Începe prin a descompune problema în pași mici și ușor de înțeles. Ce știi deja despre acest domeniu? Ce concepte îți sună familiare? Scrie-mi ce știi sigur și construim împreună! 🤔"
+      },
+      en: { default: "🎓 Excellent question! Let's see together how we can approach this topic. Start by breaking the problem into small, easy-to-understand steps. What do you already know about this field? What concepts sound familiar? Write down what you know for sure and we'll build together! 🤔" },
+      fr: { default: "🎓 Excellente question! Voyons ensemble comment aborder ce sujet. Commence par décomposer le problème en petites étapes simples. Que sais-tu déjà dans ce domaine? Quels concepts te semblent familiers? Écris-moi ce que tu sais sûrement et construisons ensemble! 🤔" },
+      de: { default: "🎓 Ausgezeichnete Frage! Lass uns gemeinsam sehen, wie wir dieses Thema angehen können. Beginne damit, das Problem in kleine, leicht verständliche Schritte zu zerlegen. Was weißt du bereits in diesem Bereich? Welche Konzepte klingen dir vertraut? Schreib mir auf, was du sicher weißt, und wir bauen gemeinsam! 🤔" },
+      es: { default: "🎓 ¡Excelente pregunta! Veamos juntos cómo podemos abordar este tema. Comienza descomponiendo el problema en pequeños pasos fáciles de entender. ¿Qué ya sabes sobre este campo? ¿Qué conceptos te suenan familiares? ¡Escríbeme lo que sabes con seguridad y construiremos juntos! 🤔" },
+      it: { default: "🎓 Ottima domanda! Vediamo insieme come affrontare questo argomento. Inizia scomponendo il problema in piccoli passaggi facili da capire. Cosa sai già di questo campo? Quali concetti ti sembrano familiari? Scrivimi cosa sai di sicuro e costruiremo insieme! 🤔" },
+      ru: { default: "🎓 Отличный вопрос! Давайте вместе посмотрим, как мы можем подойти к этой теме. Начни с разбиения проблемы на маленькие, легко понятные шаги. Что ты уже знаешь в этой области? Какие концепции звучат знакомо? Напиши мне, что ты знаешь точно, и будем строить вместе! 🤔" },
+      hu: { default: "🎓 Kiváló kérdés! Lássuk együtt, hogyan közelíthetjük meg ezt a témát. Kezdd azzal, hogy a problémát kis, könnyen érthető lépésekre bontod. Mit tudsz már ebben a területen? Mely fogalmak hangzanak ismerősen? Írd meg, mit tudsz biztosan, és együtt építkezünk! 🤔" },
+      tr: { default: "🎓 Mükemmel soru! Birlikte bu konuyu nasıl ele alabileceğimize bakalım. Problemi küçük, kolay anlaşılır adımlara bölerek başla. Bu alanda zaten ne biliyorsun? Hangi kavramlar tanıdık geliyor? Bana kesin olarak bildiğini yaz ve birlikte inşa edelim! 🤔" },
+      zh: { default: "🎓 好问题！让我们一起看看如何处理这个主题。首先把问题分解成小的、容易理解的步骤。你在这个领域已经知道什么？哪些概念听起来很熟悉？把你确定知道的写下来，我们一起构建！🤔" },
+      ja: { default: "🎓 素晴らしい質問です！一緒にこのテーマにどうアプローチするか考えてみましょう。問題を小さく、わかりやすいステップに分解することから始めてください。この分野ですでに何を知っていますか？どの概念が馴染み深いですか？確実に知っていることを書いてください、一緒に構築していきましょう！🤔" }
+    };
+
+    const langR = responses[lang] || responses['ro'];
+    let response = langR.default;
+
+    if (lastMsg.includes('mate') || lastMsg.includes('algebra') || lastMsg.includes('geometrie') || lastMsg.includes('integral') || lastMsg.includes('math') || lastMsg.includes('equation') || lastMsg.includes('équation') || lastMsg.includes('gleichung') || lastMsg.includes('ecuación') || lastMsg.includes('equazione') || lastMsg.includes('уравнен') || lastMsg.includes('egyenlet') || lastMsg.includes('denklem') || lastMsg.includes('方程') || lastMsg.includes('方程式')) {
+      response = langR.math || langR.default;
+    } else if (lastMsg.includes('bio') || lastMsg.includes('adn') || lastMsg.includes('celul') || lastMsg.includes('genetic') || lastMsg.includes('dna') || lastMsg.includes('cell') || lastMsg.includes('cellule') || lastMsg.includes('zelle') || lastMsg.includes('célula') || lastMsg.includes('cellula') || lastMsg.includes('клетк') || lastMsg.includes('sejt') || lastMsg.includes('hücre') || lastMsg.includes('细胞') || lastMsg.includes('細胞')) {
+      response = langR.bio || langR.default;
+    } else if (lastMsg.includes('fizic') || lastMsg.includes('electro') || lastMsg.includes('energie') || lastMsg.includes('forta') || lastMsg.includes('physics') || lastMsg.includes('force') || lastMsg.includes('physique') || lastMsg.includes('physik') || lastMsg.includes('física') || lastMsg.includes('fisica') || lastMsg.includes('физик') || lastMsg.includes('fizika') || lastMsg.includes('fizik') || lastMsg.includes('物理') || lastMsg.includes('物理')) {
+      response = langR.physics || langR.default;
+    } else if (lastMsg.includes('chimie') || lastMsg.includes('reactie') || lastMsg.includes('molecul') || lastMsg.includes('chemistry') || lastMsg.includes('chemical') || lastMsg.includes('chimie') || lastMsg.includes('chemie') || lastMsg.includes('química') || lastMsg.includes('chimica') || lastMsg.includes('хими') || lastMsg.includes('kémia') || lastMsg.includes('kimya') || lastMsg.includes('化学') || lastMsg.includes('化学')) {
+      response = langR.chemistry || langR.default;
+    } else if (lastMsg.includes('istorie') || lastMsg.includes('razboi') || lastMsg.includes('revolutie') || lastMsg.includes('history') || lastMsg.includes('war') || lastMsg.includes('histoire') || lastMsg.includes('geschichte') || lastMsg.includes('historia') || lastMsg.includes('storia') || lastMsg.includes('истори') || lastMsg.includes('történelem') || lastMsg.includes('tarih') || lastMsg.includes('历史') || lastMsg.includes('歴史')) {
+      response = langR.history || langR.default;
+    } else if (lastMsg.includes('geografie') || lastMsg.includes('relief') || lastMsg.includes('clima') || lastMsg.includes('geography') || lastMsg.includes('climate') || lastMsg.includes('géographie') || lastMsg.includes('geographie') || lastMsg.includes('geografía') || lastMsg.includes('geografia') || lastMsg.includes('географ') || lastMsg.includes('földrajz') || lastMsg.includes('coğrafya') || lastMsg.includes('地理') || lastMsg.includes('地理')) {
+      response = langR.geography || langR.default;
+    } else if (lastMsg.includes('engl') || lastMsg.includes('grammar') || lastMsg.includes('tense') || lastMsg.includes('anglais') || lastMsg.includes('englisch') || lastMsg.includes('inglés') || lastMsg.includes('inglese') || lastMsg.includes('английск') || lastMsg.includes('angol') || lastMsg.includes('ingilizce') || lastMsg.includes('英语') || lastMsg.includes('英語')) {
+      response = langR.english || langR.default;
+    } else if (lastMsg.includes('franc') || lastMsg.includes('français') || lastMsg.includes('französisch') || lastMsg.includes('frances') || lastMsg.includes('francese') || lastMsg.includes('французск') || lastMsg.includes('francia') || lastMsg.includes('fransızca') || lastMsg.includes('法语') || lastMsg.includes('フランス語')) {
+      response = langR.french || langR.default;
+    } else if (lastMsg.includes('german') || lastMsg.includes('deutsch') || lastMsg.includes('allemand') || lastMsg.includes('alemán') || lastMsg.includes('tedesco') || lastMsg.includes('немецк') || lastMsg.includes('német') || lastMsg.includes('almanca') || lastMsg.includes('德语') || lastMsg.includes('ドイツ語')) {
+      response = langR.german || langR.default;
+    } else if (lastMsg.includes('span') || lastMsg.includes('español') || lastMsg.includes('espagnol') || lastMsg.includes('spanisch') || lastMsg.includes('spagnolo') || lastMsg.includes('испанск') || lastMsg.includes('spanyol') || lastMsg.includes('ispanyolca') || lastMsg.includes('西班牙语') || lastMsg.includes('スペイン語')) {
+      response = langR.spanish || langR.default;
+    } else if (lastMsg.includes('ital') || lastMsg.includes('italiano') || lastMsg.includes('italien') || lastMsg.includes('italiano') || lastMsg.includes('итальянск') || lastMsg.includes('olasz') || lastMsg.includes('italyanca') || lastMsg.includes('意大利语') || lastMsg.includes('イタリア語')) {
+      response = langR.italian || langR.default;
+    } else if (lastMsg.includes('rus') || lastMsg.includes('русск') || lastMsg.includes('russe') || lastMsg.includes('russisch') || lastMsg.includes('ruso') || lastMsg.includes('russo') || lastMsg.includes('orosz') || lastMsg.includes('rusça') || lastMsg.includes('俄语') || lastMsg.includes('ロシア語')) {
+      response = langR.russian || langR.default;
+    } else if (lastMsg.includes('maghiar') || lastMsg.includes('hongr') || lastMsg.includes('magyar') || lastMsg.includes('hungarian') || lastMsg.includes('hongrois') || lastMsg.includes('ungarisch') || lastMsg.includes('ungherese') || lastMsg.includes('венгерск') || lastMsg.includes('macarca') || lastMsg.includes('匈牙利语') || lastMsg.includes('ハンガリー語')) {
+      response = langR.hungarian || langR.default;
+    } else if (lastMsg.includes('turc') || lastMsg.includes('türk') || lastMsg.includes('turque') || lastMsg.includes('türkisch') || lastMsg.includes('turco') || lastMsg.includes('турецк') || lastMsg.includes('török') || lastMsg.includes('土耳其语') || lastMsg.includes('トルコ語')) {
+      response = langR.turkish || langR.default;
+    } else if (lastMsg.includes('chinez') || lastMsg.includes('中文') || lastMsg.includes('chinois') || lastMsg.includes('chinesisch') || lastMsg.includes('chino') || lastMsg.includes('cinese') || lastMsg.includes('китайск') || lastMsg.includes('kínai') || lastMsg.includes('çince') || lastMsg.includes('中文') || lastMsg.includes('中国語')) {
+      response = langR.chinese || langR.default;
+    } else if (lastMsg.includes('japon') || lastMsg.includes('日本') || lastMsg.includes('japonais') || lastMsg.includes('japanisch') || lastMsg.includes('japonés') || lastMsg.includes('giapponese') || lastMsg.includes('японск') || lastMsg.includes('japán') || lastMsg.includes('japonca') || lastMsg.includes('日语') || lastMsg.includes('日本語')) {
+      response = langR.japanese || langR.default;
+    }
+
+    return { success: true, content: response, engine: "claude-3.5-sonnet", latencyMs: Date.now() - start };
+  },
+
+  async callGPT4o(messages, lang) {
+    const start = Date.now();
+    await new Promise(r => setTimeout(r, 600 + Math.random() * 300));
+    const prompts = {
+      ro: "🤖 [GPT-4o] Bună observație! Pentru a te ghida corect, am nevoie să știi că fiecare problemă are mai multe fațete. Încearcă să identifici CE anume nu înțelegi — conceptul, formula sau aplicarea? Scrie-mi ce știi sigur și vom construi împreună de acolo! Împărțim problema în bucăți mici? 🏗️",
+      en: "🤖 [GPT-4o] Good observation! To guide you properly, I need to know what exactly you don't understand — the concept, the formula, or the application? Tell me what you know for sure and we'll build from there together! Let's break the problem into small pieces? 🏗️",
+      fr: "🤖 [GPT-4o] Bonne observation! Pour te guider correctement, j'ai besoin de savoir ce que tu ne comprends pas exactement — le concept, la formule ou l'application? Dis-moi ce tu sais sûrement et nous construirons ensemble à partir de là! Décomposons le problème en petits morceaux? 🏗️",
+      de: "🤖 [GPT-4o] Gute Beobachtung! Um dich richtig zu führen, muss ich wissen, was genau du nicht verstehst — das Konzept, die Formel oder die Anwendung? Sag mir, was du sicher weißt, und wir bauen gemeinsam darauf auf! Zerlegen wir das Problem in kleine Stücke? 🏗️",
+      es: "🤖 [GPT-4o] ¡Buena observación! Para guiarte correctamente, necesito saber qué es exactamente lo que no entiendes — ¿el concepto, la fórmula o la aplicación? ¡Dime lo que sabes con seguridad y construiremos juntos desde ahí! ¿Dividamos el problema en pedacitos? 🏗️",
+      it: "🤖 [GPT-4o] Ottima osservazione! Per guidarti correttamente, ho bisogno di sapere cosa non capisci esattamente — il concetto, la formula o l'applicazione? Dimmi cosa sai di sicuro e costruiremo insieme da lì! Dividiamo il problema in piccoli pezzi? 🏗️",
+      ru: "🤖 [GPT-4o] Хорошее наблюдение! Чтобы правильно направить тебя, мне нужно знать, что именно ты не понимаешь — концепцию, формулу или применение? Скажи мне, что ты знаешь точно, и мы будем строить вместе оттуда! Разобьём проблему на маленькие кусочки? 🏗️",
+      hu: "🤖 [GPT-4o] Jó megfigyelés! Hogy helyesen irányíthassalak, tudnom kell, mit nem értesz pontosan — a fogalmat, a képletet vagy az alkalmazást? Mondd el, mit tudsz biztosan, és együtt építkezünk onnan! Osszuk fel a problémát kis darabokra? 🏗️",
+      tr: "🤖 [GPT-4o] İyi gözlem! Seni doğru yönlendirmek için tam olarak ne anlamadığını bilmem gerekiyor — kavramı, formülü mü yoksa uygulamayı mı? Bana kesin olarak bildiğini söyle ve birlikte oradan inşa edelim! Problemi küçük parçalara bölelim mi? 🏗️",
+      zh: "🤖 [GPT-4o] 观察得很好！为了正确引导你，我需要知道你到底不理解什么——概念、公式还是应用？告诉我你确定知道什么，我们会一起从这里开始构建！把问题分成小块？🏗️",
+      ja: "🤖 [GPT-4o] 良い観察です！正しく導くために、あなたが何を正確に理解していないのか知る必要があります——概念、公式、それとも応用？確実に知っていることを教えてください、そこから一緒に構築していきましょう！問題を小さく分けましょうか？🏗️"
+    };
+    return { success: true, content: prompts[lang] || prompts['ro'], engine: "gpt-4o", latencyMs: Date.now() - start };
+  },
+
+  async callGemini(messages, lang) {
+    const start = Date.now();
+    await new Promise(r => setTimeout(r, 500 + Math.random() * 200));
+    const prompts = {
+      ro: "✨ [Gemini 1.5 Pro] Interesantă perspectivă! Gândește-te la exemple concrete din viața de zi cu zi. Cum se aplică această noțiune în realitate? Dă-mi un exemplu personal și apoi vom extinde conceptul. Ce analogii îți vin în minte? Fă o comparație cu ceva cunoscut! 🌟",
+      en: "✨ [Gemini 1.5 Pro] Interesting perspective! Think about concrete examples from everyday life. How does this concept apply in reality? Give me a personal example and then we'll expand the concept. What analogies come to your mind? Make a comparison with something familiar! 🌟",
+      fr: "✨ [Gemini 1.5 Pro] Perspective intéressante! Pense à des exemples concrets de la vie quotidienne. Comment ce concept s'applique-t-il dans la réalité? Donne-moi un exemple personnel et ensuite nous développerons le concept. Quelles analogies te viennent à l'esprit? Fais une comparaison avec quelque chose de familier! 🌟",
+      de: "✨ [Gemini 1.5 Pro] Interessante Perspektive! Denke an konkrete Beispiele aus dem Alltag. Wie lässt sich dieses Konzept in der Realität anwenden? Gib mir ein persönliches Beispiel und dann erweitern wir das Konzept. Welche Analogien fallen dir ein? Vergleiche es mit etwas Bekanntem! 🌟",
+      es: "✨ [Gemini 1.5 Pro] ¡Perspectiva interesante! Piensa en ejemplos concretos de la vida cotidiana. ¿Cómo se aplica este concepto en la realidad? Dame un ejemplo personal y luego ampliaremos el concepto. ¿Qué analogías te vienen a la mente? ¡Haz una comparación con algo familiar! 🌟",
+      it: "✨ [Gemini 1.5 Pro] Prospettiva interessante! Pensa a esempi concreti dalla vita quotidiana. Come si applica questo concetto nella realtà? Dammi un esempio personale e poi espanderemo il concetto. Quali analogie ti vengono in mente? Fai un confronto con qualcosa di familiare! 🌟",
+      ru: "✨ [Gemini 1.5 Pro] Интересная перспектива! Подумай о конкретных примерах из повседневной жизни. Как это понятие применяется в реальности? Дай мне личный пример, а затем мы расширим понятие. Какие аналогии приходят тебе в голову? Сравни с чем-то знакомым! 🌟",
+      hu: "✨ [Gemini 1.5 Pro] Érdekes perspektíva! Gondolj konkrét példákra a mindennapi életből. Hogyan alkalmazható ez a fogalom a valóságban? Adj egy személyes példát, aztán kibővítjük a fogalmat. Milyen analógiák jutnak eszedbe? Hasonlítsd össze valami ismerőssel! 🌟",
+      tr: "✨ [Gemini 1.5 Pro] İlginç bir bakış açısı! Günlük hayattan somut örneklere düşün. Bu kavram gerçekte nasıl uygulanır? Bana kişisel bir örnek ver, sonra kavramı genişleteceğiz. Aklına hangi benzetmeler geliyor? Tanıdık bir şeyle karşılaştır! 🌟",
+      zh: "✨ [Gemini 1.5 Pro] 有趣的观点！想想日常生活中的具体例子。这个概念在现实中如何应用？给我一个个人例子，然后我们会扩展这个概念。你想到什么类比？和熟悉的东西做个比较！🌟",
+      ja: "✨ [Gemini 1.5 Pro] 興味深い視点です！日常生活の具体的な例を考えてみてください。この概念は現実にどう適用されますか？個人的な例を教えてください、それから概念を拡張していきます。どんな類推が思い浮かびますか？馴染みのあるものと比較してみてください！🌟"
+    };
+    return { success: true, content: prompts[lang] || prompts['ro'], engine: "gemini-1.5-pro", latencyMs: Date.now() - start };
+  },
+
+  async chat(request) {
+    const startTotal = Date.now();
+    const convId = request.conversation_id || ("conv_" + btoa(request.message).slice(0, 8));
+    const lang = request.language || 'ro';
+
+    const safety = await this.safetyCheck(request.message);
+    if (!safety.safe) {
+      const safetyR = {
+        ro: "🛡️ Hei! Am detectat că întrebarea ta nu este adecvată pentru platforma noastră educațională. Încearcă să reformulezi folosind cuvinte potrivite școlii! Mentor AI este aici să te ajute să ÎNVEȚI, nu să facem lucruri inadecvate. 📚",
+        en: "🛡️ Hey! I detected that your question is not appropriate for our educational platform. Try to rephrase using school-appropriate words! Mentor AI is here to help you LEARN, not to do inappropriate things. 📚",
+        fr: "🛡️ Hé! J'ai détecté que ta question n'est pas appropriée pour notre plateforme éducative. Essaie de reformuler avec des mots appropriés à l'école! Mentor AI est là pour t'aider à APPRENDRE, pas pour faire des choses inappropriées. 📚",
+        de: "🛡️ Hey! Ich habe erkannt, dass deine Frage nicht für unsere Bildungsplattform geeignet ist. Versuche, sie mit schulgerechten Worten umzuformulieren! Mentor AI ist hier, um dir beim LERNEN zu helfen, nicht um unangemessene Dinge zu tun. 📚",
+        es: "🛡️ ¡Oye! Detecté que tu pregunta no es apropiada para nuestra plataforma educativa. ¡Intenta reformularla usando palabras apropiadas para la escuela! Mentor AI está aquí para ayudarte a APRENDER, no para hacer cosas inapropiadas. 📚",
+        it: "🛡️ Ehi! Ho rilevato che la tua domanda non è appropriata per la nostra piattaforma educativa. Prova a riformularla usando parole appropriate per la scuola! Mentor AI è qui per aiutarti a IMPARARE, non per fare cose inappropriare. 📚",
+        ru: "🛡️ Эй! Я обнаружил, что твой вопрос не подходит для нашей образовательной платформы. Попробуй переформулировать, используя школьно-подходящие слова! Mentor AI здесь, чтобы помочь тебе УЧИТЬСЯ, а не делать неподобающие вещи. 📚",
+        hu: "🛡️ Hé! Észleltem, hogy a kérdésed nem megfelelő az oktatási platformunkhoz. Próbáld átfogalmazni iskolához illő szavakkal! A Mentor AI azért van itt, hogy segítsen TANULNI, nem hogy nem megfelelő dolgokat tegyünk. 📚",
+        tr: "🛡️ Hey! Sorunun eğitim platformumuz için uygun olmadığını tespit ettim. Okula uygun kelimeler kullanarak yeniden ifade etmeye çalış! Mentor AI burada ÖĞRENMENE yardım etmek için, uygunsuz şeyler yapmak için değil. 📚",
+        zh: "🛡️ 嘿！我检测到你的问题不适合我们的教育平台。尝试用适合学校的词语重新表述！Mentor AI 在这里帮助你学习，而不是做不合适的事情。📚",
+        ja: "🛡️ ねえ！あなたの質問が私たちの教育プラットフォームに適していないことを検出しました。学校に適した言葉を使って言い換えてみてください！Mentor AI はあなたが学ぶのを助けるためにここにいます。不適切なことをするためではありません。📚"
+      };
+      return {
+        response: safetyR[lang] || safetyR['ro'],
+        engine_used: "safety_filter",
+        subject: request.subject,
+        class_level: request.class_level,
+        scaffolding_level: 0,
+        safety_flags: safety.flags,
+        processing_time_ms: Date.now() - startTotal,
+        conversation_id: convId
+      };
+    }
+
+    if (safety.isDirectRequest) {
+      const directR = {
+        ro: "🤔 Observ că cauți un răspuns direct. Ca mentorul tău, nu pot să-ți dau „pe tavă” soluția — asta nu te-ar ajuta să înveți! În schimb, hai să abordăm împreună:\n\n1️⃣ Ce știi deja despre subiect?\n2️⃣ Care sunt datele problemei?\n3️⃣ Ce concepte îți sună familiare?\n\nRăspunde-mi la aceste întrebări și te voi ghida pas cu pas! 💪",
+        en: "🤔 I notice you're looking for a direct answer. As your mentor, I can't give you the solution on a silver platter — that wouldn't help you learn! Instead, let's approach it together:\n\n1️⃣ What do you already know about the subject?\n2️⃣ What are the problem's data?\n3️⃣ What concepts sound familiar?\n\nAnswer these questions and I'll guide you step by step! 💪",
+        fr: "🤔 Je remarque que tu cherches une réponse directe. En tant que ton mentor, je ne peux pas te donner la solution sur un plateau d'argent — ça ne t'aiderait pas à apprendre! Au lieu de ça, abordons-le ensemble:\n\n1️⃣ Que sais-tu déjà sur le sujet?\n2️⃣ Quelles sont les données du problème?\n3️⃣ Quels concepts te semblent familiers?\n\nRéponds à ces questions et je te guiderai pas à pas! 💪",
+        de: "🤔 Ich bemerke, dass du nach einer direkten Antwort suchst. Als dein Mentor kann ich dir die Lösung nicht auf dem Silbertablett servieren — das würde dir nicht beim Lernen helfen! Stattdessen lass es uns gemeinsam angehen:\n\n1️⃣ Was weißt du bereits über das Thema?\n2️⃣ Was sind die Daten des Problems?\n3️⃣ Welche Konzepte klingen dir vertraut?\n\nBeantworte diese Fragen und ich werde dich Schritt für Schritt führen! 💪",
+        es: "🤔 Noto que buscas una respuesta directa. Como tu mentor, no puedo darte la solución en bandeja de plata — ¡eso no te ayudaría a aprender! En su lugar, abordémoslo juntos:\n\n1️⃣ ¿Qué ya sabes sobre el tema?\n2️⃣ ¿Cuáles son los datos del problema?\n3️⃣ ¿Qué conceptos te suenan familiares?\n\n¡Responde estas preguntas y te guiaré paso a paso! 💪",
+        it: "🤔 Noto che stai cercando una risposta diretta. Come tuo mentore, non posso darti la soluzione su un piatto d'argento — quello non ti aiuterebbe a imparare! Invece, affrontiamolo insieme:\n\n1️⃣ Cosa sai già sull'argomento?\n2️⃣ Quali sono i dati del problema?\n3️⃣ Quali concetti ti sembrano familiari?\n\nRispondi a queste domande e ti guiderò passo dopo passo! 💪",
+        ru: "🤔 Я замечаю, что ты ищешь прямой ответ. Как твой наставник, я не могу дать тебе решение на блюдечке — это не поможет тебе учиться! Вместо этого давай подойдём к этому вместе:\n\n1️⃣ Что ты уже знаешь о теме?\n2️⃣ Какие данные задачи?\n3️⃣ Какие концепции звучат знакомо?\n\nОтветь на эти вопросы, и я проведу тебя шаг за шагом! 💪",
+        hu: "🤔 Észreveszem, hogy közvetlen választ keresel. Mint a mentorod, nem adhatom meg a megoldást ezüsttálcán — ez nem segítene a tanulásban! Ehelyett közelítsük meg együtt:\n\n1️⃣ Mit tudsz már a témáról?\n2️⃣ Mik a probléma adatai?\n3️⃣ Mely fogalmak hangzanak ismerősen?\n\nVálaszolj ezekre a kérdésekre, és lépésről lépésre vezetlek! 💪",
+        tr: "🤔 Doğrudan bir cevap aradığını fark ediyorum. Mentorun olarak, sana çözümü gümüş tepside sunamam — bu senin öğrenmene yardımcı olmaz! Bunun yerine birlikte ele alalım:\n\n1️⃣ Konu hakkında zaten ne biliyorsun?\n2️⃣ Problemin verileri neler?\n3️⃣ Hangi kavramlar tanıdık geliyor?\n\nBu soruları yanıtla ve seni adım adım yönlendireceğim! 💪",
+        zh: "🤔 我注意到你在寻找直接答案。作为你的导师，我不能把解决方案放在银盘上交给你——这不会帮助你学习！相反，让我们一起面对它：\n\n1️⃣ 关于这个主题你已经知道什么？\n2️⃣ 问题的数据是什么？\n3️⃣ 哪些概念听起来很熟悉？\n\n回答这些问题，我会一步步引导你！💪",
+        ja: "🤔 直接な答えを探していることに気づきました。あなたのメンターとして、銀の皿に乗せて解決策を渡すことはできません——それは学習の助けになりません！代わりに、一緒に取り組みましょう：\n\n1️⃣ このテーマについてすでに何を知っていますか？\n2️⃣ 問題のデータは何ですか？\n3️⃣ どの概念が馴染み深いですか？\n\nこれらの質問に答えてください、そうすれば一歩一歩導きます！💪"
+      };
+      return {
+        response: directR[lang] || directR['ro'],
+        engine_used: "scaffolding_guard",
+        subject: request.subject,
+        class_level: request.class_level,
+        scaffolding_level: 1,
+        safety_flags: safety.flags,
+        processing_time_ms: Date.now() - startTotal,
+        conversation_id: convId
+      };
+    }
+
+    const history = this.memory.get(convId);
+    const messages = this.buildMessages(request.message, history, request.subject, request.class_level, lang);
+
+    const engines = [
+      ["claude", () => this.callClaude(messages, lang)],
+      ["gpt4o", () => this.callGPT4o(messages, lang)],
+      ["gemini", () => this.callGemini(messages, lang)]
+    ];
+
+    let result = null;
+    let usedEngine = "";
+
+    for (const [engineName, engineFunc] of engines) {
+      result = await engineFunc();
+      if (result.success) {
+        usedEngine = engineName;
+        break;
+      }
+    }
+
+    if (!result || !result.success) {
+      return {
+        response: "⚠️ Momentan toate serverele AI sunt ocupate. Te rog să încerci din nou în câteva secunde. Între timp, încearcă să rezolvi singur folosind manualul! 💪",
+        engine_used: "all_failed",
+        subject: request.subject,
+        class_level: request.class_level,
+        scaffolding_level: 0,
+        safety_flags: ["engine_failure"],
+        processing_time_ms: Date.now() - startTotal,
+        conversation_id: convId
+      };
+    }
+
+    this.memory.add(convId, "user", request.message);
+    this.memory.add(convId, "assistant", result.content, { engine: usedEngine });
+    const scaffolding = Math.min(3, 1 + Math.floor(history.length / 3));
+
+    return {
+      response: result.content,
+      engine_used: usedEngine,
+      subject: request.subject,
+      class_level: request.class_level,
+      scaffolding_level: scaffolding,
+      safety_flags: safety.flags,
+      processing_time_ms: Date.now() - startTotal,
+      conversation_id: convId
+    };
+  },
+
+  async detect(request) {
+    const start = Date.now();
+    const text = request.text.toLowerCase();
+    const indicators = {
+      complexWords: text.split(/\s+/).filter(w => w.length > 12).length,
+      perfectPunctuation: (text.match(/,\s/g) || []).length > 5 && (text.match(/\.\s/g) || []).length > 3,
+      repetitive: text.split(/\s+/).length > 0 ? new Set(text.split(/\s+/)).size / text.split(/\s+/).length : 1,
+      length: text.length,
+      academicTerms: ["deci","prin urmare","așadar","în concluzie","este important de menționat","se poate observa","therefore","thus","in conclusion","it is important to note","it can be observed","donc","ainsi","en conclusion","il est important de noter","daher","also","zusammenfassend","es ist wichtig zu bemerken","por lo tanto","así","en conclusión","es importante mencionar","quindi","pertanto","in conclusione","è importante notare","поэтому","таким образом","в заключение","важно отметить","tehát","így","összefoglalva","fontos megjegyezni","bu nedenle","böylece","sonuç olarak","belirtmek önemlidir","因此","所以","综上所述","值得注意的是","したがって","つまり","結論として","注目すべきこと"].filter(t => text.includes(t)).length,
+      perfectGrammar: (text.match(/[A-Z][a-z]+/g) || []).length > 10
+    };
+
+    let score = 30;
+    if (indicators.complexWords > 3) score += 15;
+    if (indicators.perfectPunctuation) score += 10;
+    if (indicators.repetitive > 0.7) score -= 10;
+    if (indicators.length < 100) score -= 20;
+    if (indicators.academicTerms > 2) score += 15;
+    if (indicators.perfectGrammar) score += 10;
+    score = Math.max(5, Math.min(95, score + (Math.floor(Math.random() * 20) - 10)));
+
+    let verdict, code, conf;
+    if (score < 20) { verdict = "✅ Text autentic (uman)"; code = "authentic"; conf = "high"; }
+    else if (score < 50) { verdict = "⚠️ Posibil amestec uman + AI"; code = "mixed"; conf = "medium"; }
+    else if (score < 75) { verdict = "🔴 Probabil generat de AI"; code = "likely_ai"; conf = "medium"; }
+    else { verdict = "🔴 Text generat de AI"; code = "ai"; conf = "high"; }
+
+    const suggestions = this._generateSuggestions(score, code);
+    return {
+      ai_probability: Math.round(score * 10) / 10,
+      verdict: verdict,
+      verdict_code: code,
+      confidence: conf,
+      details: { indicators, mode: "ai_analysis" },
+      suggestions: suggestions,
+      processing_time_ms: Date.now() - start,
+      engine: "gptzero_sim"
+    };
+  },
+
+  _generateSuggestions(aiProb, docClass) {
+    if (docClass === "authentic") {
+      return [
+        "✅ Textul arată autentic. Stilul natural și variațiile specifice elevului sunt evidente.",
+        "💡 Continuă să încurajezi scrisul original și creativitatea.",
+        "📚 Propune elevului să citească în continuare pentru a-și îmbogăți vocabularul."
+      ];
+    } else if (docClass === "mixed") {
+      return [
+        "⚠️ Textul conține elemente atât umane, cât și AI. Poate fi vorba de corectare gramaticală cu AI.",
+        "🗣️ Recomandă o discuție orală cu elevul despre conținutul textului.",
+        "📝 Cere elevului să rescrie textul cu cuvintele lui, fără ajutor digital."
+      ];
+    } else {
+      return [
+        "🔴 Scor ridicat de AI detectat. Vocabularul academic și structura perfectă sugerează generare artificială.",
+        "🎯 Intervenție pedagogică necesară: discută cu elevul despre procesul de scriere.",
+        "📖 Propune exerciții de scriere creativă fără acces la AI pentru a dezvolta stilul propriu.",
+        "👁️ Monitorizează activitatea elevului pe platformă pentru a identifica tipare."
+      ];
+    }
+  },
+
+  async health() {
+    return {
+      status: "healthy",
+      version: this.config.APP_VERSION,
+      engines: {
+        claude: { status: "online", latency_ms: 850 + Math.floor(Math.random() * 200) },
+        gpt4o: { status: "online", latency_ms: 620 + Math.floor(Math.random() * 150) },
+        gemini: { status: "online", latency_ms: 480 + Math.floor(Math.random() * 100) }
+      },
+      uptime_seconds: Math.floor(Date.now() / 1000) % 86400,
+      requests_total: Math.floor(Math.random() * 5000) + 1000
+    };
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COMPONENTE UI
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const Toast = ({ message, type, onClose }) => {
+  useEffect(() => { const timer = setTimeout(onClose, 3000); return () => clearTimeout(timer); }, [onClose]);
+  const icons = { success: 'fa-check-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+  const colors = { success: 'text-emerald-400', warning: 'text-amber-400', info: 'text-blue-400' };
+  return (
+    <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[10001] animate-slideUp">
+      <div className="bg-[#1a1a3e] border border-white/10 rounded-xl px-5 py-3.5 flex items-center gap-3 shadow-2xl">
+        <i className={"fas " + icons[type] + " " + colors[type] + " text-xl"}></i>
+        <span className="text-sm font-semibold">{message}</span>
+      </div>
+    </div>
+  );
+};
+
+const BottomNav = ({ active, onNavigate }) => {
+  const items = [
+    { id: 'home', icon: 'fa-home', label: 'Home' },
+    { id: 'professor', icon: 'fa-graduation-cap', label: 'Profesor AI' },
+    { id: 'learn', icon: 'fa-book-open', label: 'Învață' },
+    { id: 'calendar', icon: 'fa-calendar-alt', label: 'Calendar' },
+    { id: 'profile', icon: 'fa-user', label: 'Profil' }
+  ];
+  return (
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] glass border-t border-white/5 z-[1000] flex justify-around py-2 pb-6">
+      {items.map(item => (
+        <button key={item.id} onClick={() => onNavigate(item.id)} 
+          className={"flex flex-col items-center gap-1 px-4 py-2 transition-all " + (active === item.id ? 'text-[#7c3aed]' : 'text-slate-500 hover:text-slate-300')}>
+          <i className={"fas " + item.icon + " text-[22px] transition-transform " + (active === item.id ? '-translate-y-0.5' : '')}></i>
+          <span className="text-[10px] font-semibold">{item.label}</span>
+        </button>
+      ))}
+    </nav>
+  );
+};
+
+const SplashScreen = ({ onFinish }) => {
+  useEffect(() => { const timer = setTimeout(onFinish, 2500); return () => clearTimeout(timer); }, [onFinish]);
+  return (
+    <div className="fixed inset-0 bg-[#0f0f23] flex flex-col items-center justify-center z-[10000] animate-fadeIn">
+      <div className="w-[120px] h-[120px] gradient-primary rounded-[28px] flex items-center justify-center text-6xl font-black text-white shadow-[0_0_40px_rgba(124,58,237,0.3)] animate-splash mb-6">M</div>
+      <div className="text-[32px] font-extrabold bg-gradient-to-r from-[#1a1a4e] to-[#7c3aed] bg-clip-text text-transparent mb-2">MENTOR AI</div>
+      <div className="text-sm text-slate-400 text-center max-w-[280px] leading-relaxed mb-8">Profesorul personal din buzunarul tău</div>
+      <div className="text-[13px] text-slate-500 text-center font-medium">Învață mai inteligent.<br/>Cheltuie mai puțin.<br/>Reușește mai mult.</div>
+      <div className="mt-8 flex items-center gap-2 text-[11px] text-slate-600">
+        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        AI Engines: Claude • GPT-4o • Gemini
+      </div>
+      <div className="mt-2 text-[10px] text-slate-600">10 Limbi • Scaffolding Pedagogic • Anti-Cheating</div>
+    </div>
+  );
+};
+
+const AuthScreen = ({ onLogin, onRegister }) => (
+  <div className="min-h-screen flex flex-col items-center px-6 pt-12 pb-24 animate-fadeIn">
+    <div className="w-20 h-20 gradient-primary rounded-[22px] flex items-center justify-center text-4xl font-black text-white shadow-[0_0_40px_rgba(124,58,237,0.3)] mb-6">M</div>
+    <h1 className="text-[26px] font-extrabold mb-2 text-center">Bun venit la Mentor AI</h1>
+    <p className="text-sm text-slate-400 mb-10 text-center">Profesorul tău personal, disponibil 24/7</p>
+    <div className="w-full flex flex-col gap-3 mb-6">
+      <button onClick={onRegister} className="w-full py-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center gap-3 text-sm font-semibold hover:bg-white/10 transition"><i className="fab fa-google text-[#ea4335]"></i> Continuă cu Google</button>
+      <button onClick={onRegister} className="w-full py-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center gap-3 text-sm font-semibold hover:bg-white/10 transition"><i className="fab fa-apple"></i> Continuă cu Apple</button>
+      <button onClick={onRegister} className="w-full py-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center gap-3 text-sm font-semibold hover:bg-white/10 transition"><i className="fab fa-microsoft text-[#00a4ef]"></i> Continuă cu Microsoft</button>
+    </div>
+    <div className="w-full flex items-center gap-4 mb-6 text-slate-500 text-[13px]"><div className="flex-1 h-px bg-white/10"></div>sau<div className="flex-1 h-px bg-white/10"></div></div>
+    <button onClick={onRegister} className="w-full py-4 rounded-xl gradient-primary text-white font-semibold flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(124,58,237,0.5)] transition"><i className="fas fa-envelope"></i> Creează cont cu Email</button>
+    <button onClick={onLogin} className="w-full py-4 rounded-xl border-[1.5px] border-white/15 text-slate-400 font-semibold mt-3 hover:border-[#7c3aed] hover:text-white transition">Ai deja cont? Conectează-te</button>
+    <p className="mt-auto pt-10 text-[13px] text-slate-500 text-center">Prin continuare, ești de acord cu <a href="#" className="text-[#7c3aed] font-semibold">Termenii</a> și <a href="#" className="text-[#7c3aed] font-semibold">Politica de Confidențialitate</a></p>
+  </div>
+);
+
+const RegisterScreen = ({ onBack, onContinue }) => {
+  const [form, setForm] = useState({ name: '', phone: '', email: '', school: '', class: '', password: '' });
+  const handleSubmit = () => { if (!form.name || !form.email) { alert('Completează numele și emailul!'); return; } onContinue(form); };
+  return (
+    <div className="min-h-screen flex flex-col items-center px-6 pt-12 pb-24 animate-fadeIn">
+      <div className="w-20 h-20 gradient-primary rounded-[22px] flex items-center justify-center text-4xl font-black text-white mb-6">M</div>
+      <h1 className="text-[26px] font-extrabold mb-2">Creează cont</h1>
+      <p className="text-sm text-slate-400 mb-8">Completează datele pentru a începe</p>
+      {[{ key: 'name', label: 'Nume complet', type: 'text', placeholder: 'Ex: Andrei Popescu' },{ key: 'phone', label: 'Număr de telefon', type: 'tel', placeholder: '07xx xxx xxx' },{ key: 'email', label: 'Email', type: 'email', placeholder: 'nume@email.com' },{ key: 'school', label: 'Școala / Liceul', type: 'text', placeholder: 'Ex: Liceul Teoretic "Mihai Eminescu"' },{ key: 'class', label: 'Clasa', type: 'text', placeholder: 'Ex: a XII-a A' },{ key: 'password', label: 'Parolă', type: 'password', placeholder: 'Minim 8 caractere' }].map(field => (
+        <div key={field.key} className="w-full mb-4">
+          <label className="block text-[13px] font-semibold text-slate-400 mb-2">{field.label}</label>
+          <input type={field.type} value={form[field.key]} onChange={e => setForm({...form, [field.key]: e.target.value})}
+            className="w-full py-3.5 px-5 bg-[#151530] border-[1.5px] border-white/10 rounded-xl text-white text-[15px] outline-none focus:border-[#7c3aed] focus:shadow-[0_0_0_3px_rgba(124,58,237,0.15)] transition placeholder:text-slate-600"
+            placeholder={field.placeholder} />
+        </div>
+      ))}
+      <button onClick={handleSubmit} className="w-full py-4 rounded-xl gradient-primary text-white font-semibold flex items-center justify-center gap-3 mt-4 shadow-[0_4px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5 transition"><i className="fas fa-arrow-right"></i> Continuă</button>
+      <button onClick={onBack} className="w-full py-4 rounded-xl border-[1.5px] border-white/15 text-slate-400 font-semibold mt-3 hover:border-[#7c3aed] hover:text-white transition flex items-center justify-center gap-2"><i className="fas fa-arrow-left"></i> Înapoi</button>
+    </div>
+  );
+};
+
+const LoginScreen = ({ onBack, onLogin }) => (
+  <div className="min-h-screen flex flex-col items-center px-6 pt-12 pb-24 animate-fadeIn">
+    <div className="w-20 h-20 gradient-primary rounded-[22px] flex items-center justify-center text-4xl font-black text-white mb-6">M</div>
+    <h1 className="text-[26px] font-extrabold mb-2">Conectează-te</h1>
+    <p className="text-sm text-slate-400 mb-8">Bine ai revenit!</p>
+    <div className="w-full mb-4"><label className="block text-[13px] font-semibold text-slate-400 mb-2">Email sau telefon</label><input type="text" className="w-full py-3.5 px-5 bg-[#151530] border-[1.5px] border-white/10 rounded-xl text-white text-[15px] outline-none focus:border-[#7c3aed] transition placeholder:text-slate-600" placeholder="Email sau număr de telefon" /></div>
+    <div className="w-full mb-6"><label className="block text-[13px] font-semibold text-slate-400 mb-2">Parolă</label><input type="password" className="w-full py-3.5 px-5 bg-[#151530] border-[1.5px] border-white/10 rounded-xl text-white text-[15px] outline-none focus:border-[#7c3aed] transition placeholder:text-slate-600" placeholder="Parola ta" /></div>
+    <button onClick={onLogin} className="w-full py-4 rounded-xl gradient-primary text-white font-semibold flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5 transition"><i className="fas fa-sign-in-alt"></i> Conectează-te</button>
+    <button onClick={onBack} className="w-full py-4 rounded-xl border-[1.5px] border-white/15 text-slate-400 font-semibold mt-3 hover:border-[#7c3aed] hover:text-white transition flex items-center justify-center gap-2"><i className="fas fa-arrow-left"></i> Înapoi</button>
+  </div>
+);
+
+const OnboardingScreen = ({ step, total, title, desc, options, selected, onSelect, onNext, onBack, isLast, progress }) => (
+  <div className="min-h-screen flex flex-col px-6 pt-10 pb-24 animate-fadeIn">
+    <div className="mb-8">
+      <div className="text-xs text-[#7c3aed] font-bold uppercase tracking-wider mb-2">Pasul {step} din {total}</div>
+      <h2 className="text-2xl font-extrabold mb-2">{title}</h2>
+      <p className="text-sm text-slate-400 leading-relaxed">{desc}</p>
+    </div>
+    <div className="flex flex-col gap-2.5 mb-6">
+      {options.map((opt, i) => (
+        <button key={i} onClick={() => onSelect(opt)} 
+          className={"w-full p-4 bg-[#1a1a3e] border-2 rounded-xl flex items-center gap-3.5 transition text-left " + (selected === opt.value ? 'border-[#7c3aed] bg-[#7c3aed]/10' : 'border-transparent hover:border-[#7c3aed]/30 hover:bg-[#222250]')}>
+          <div className={"w-9 h-9 rounded-[10px] flex items-center justify-center text-lg " + (selected === opt.value ? 'bg-[#7c3aed]/20 text-[#7c3aed]' : 'bg-[#7c3aed]/10 text-[#7c3aed]')}><i className={"fas " + opt.icon}></i></div>
+          <span className="text-[15px] font-semibold">{opt.label}</span>
+        </button>
+      ))}
+    </div>
+    <div className="mt-auto pt-6">
+      <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden mb-4"><div className="h-full gradient-primary rounded-full transition-all duration-500" style={{width: progress + '%'}}></div></div>
+      <div className="flex gap-3">
+        {step > 1 && (<button onClick={onBack} className="px-6 py-4 rounded-xl border-[1.5px] border-white/15 text-slate-400 font-semibold hover:border-[#7c3aed] hover:text-white transition"><i className="fas fa-arrow-left"></i></button>)}
+        <button onClick={onNext} disabled={!selected} className={"flex-1 py-4 rounded-xl gradient-primary text-white font-semibold flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5 transition disabled:opacity-50 disabled:hover:translate-y-0 "}>{isLast ? <><i className="fas fa-rocket"></i> Începe călătoria!</> : <>Continuă <i className="fas fa-arrow-right"></i></>}</button>
+      </div>
+    </div>
+  </div>
+);
+
+const HomeScreen = ({ userData, onNavigate }) => {
+  const [score, setScore] = useState(0);
+  const [scoreAnimated, setScoreAnimated] = useState(false);
+  useEffect(() => { if (!scoreAnimated) { setScoreAnimated(true); const target = userData.score || 0; let current = 0; const increment = target / 60; const interval = setInterval(() => { current += increment; if (current >= target) { current = target; clearInterval(interval); } setScore(Math.floor(current)); }, 25); return () => clearInterval(interval); } }, [userData.score, scoreAnimated]);
+  const circumference = 339.292;
+  const offset = circumference - (score / 100) * circumference;
+  return (
+    <div className="min-h-screen pb-24 animate-fadeIn">
+      <div className="flex justify-between items-start px-5 pt-5">
+        <div><div className="text-sm text-slate-400">Bună dimineața,</div><div className="text-xl font-bold">{userData.name || 'Elev'}!</div></div>
+        <div className="gradient-primary px-4 py-2 rounded-xl text-xs font-semibold text-center"><div>Mai sunt</div><div className="text-lg font-extrabold">--</div><div>zile până la BAC</div></div>
+      </div>
+      <div className="mx-5 mt-5 p-6 gradient-card rounded-3xl border border-white/5 relative overflow-hidden">
+        <div className="absolute -top-1/2 -right-[20%] w-[200px] h-[200px] rounded-full bg-[radial-gradient(circle,rgba(124,58,237,0.2)_0%,transparent_70%)]"></div>
+        <div className="text-xs text-slate-400 uppercase tracking-wider font-bold mb-4 relative z-10">AI Academic Score</div>
+        <div className="flex items-center gap-6 relative z-10">
+          <div className="relative w-[120px] h-[120px] flex-shrink-0">
+            <svg width="120" height="120" viewBox="0 0 120 120" className="-rotate-90">
+              <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="8" />
+              <circle cx="60" cy="60" r="54" fill="none" stroke="url(#scoreGradient)" strokeWidth="8" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={offset} className="transition-all duration-[1.5s] ease-out" />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center text-[32px] font-black">{score}</div>
+          </div>
+          <div className="flex-1 space-y-2">
+            <div className="flex justify-between items-center py-2 border-b border-white/5"><span className="text-[13px] text-slate-400">Nivel</span><span className="text-sm font-bold">{userData.level || 1}</span></div>
+            <div className="flex justify-between items-center py-2 border-b border-white/5"><span className="text-[13px] text-slate-400">Streak</span><span className="text-sm font-bold text-emerald-400"><i className="fas fa-fire text-amber-400 mr-1"></i> {(userData.streak || 0) + ' zile'}</span></div>
+            <div className="flex justify-between items-center py-2"><span className="text-[13px] text-slate-400">Ore totale</span><span className="text-sm font-bold">{(userData.totalHours || 0) + 'h'}</span></div>
+          </div>
+        </div>
+      </div>
+      <div className="mx-5 mt-5">
+        <div className="flex justify-between items-center mb-3"><span className="text-base font-bold">Progresul zilei</span><span className="text-[13px] text-[#7c3aed] font-semibold cursor-pointer">Detalii</span></div>
+        <div className="w-full h-2.5 bg-white/10 rounded-full overflow-hidden mb-2"><div className="h-full gradient-primary rounded-full relative transition-all duration-1000" style={{width: '0%'}}><div className="absolute right-0 top-0 bottom-0 w-5 bg-gradient-to-r from-transparent to-white/30 rounded-full"></div></div></div>
+        <div className="text-[13px] text-slate-400 text-right">0% din obiectivele zilei</div>
+      </div>
+      <div className="mx-5 mt-5 grid grid-cols-2 gap-3">
+        {[{ icon: 'fa-clock', color: 'bg-blue-500/15 text-blue-400', title: 'Ore azi', value: '0h', sub: 'Începe să înveți' },{ icon: 'fa-coins', color: 'bg-emerald-500/15 text-emerald-400', title: 'Mentor Coins', value: (userData.coins || 0).toLocaleString(), sub: 'Câștigă coins învățând' },{ icon: 'fa-trophy', color: 'bg-[#7c3aed]/15 text-violet-400', title: 'Clasament', value: '--', sub: 'Completează lecții' },{ icon: 'fa-piggy-bank', color: 'bg-amber-500/15 text-amber-400', title: 'Economisit', value: '0 lei', sub: 'Începe să economisești' }].map((card, i) => (
+          <div key={i} className="bg-[#1a1a3e] rounded-2xl p-4 border border-white/5 hover:bg-[#222250] hover:-translate-y-0.5 transition">
+            <div className={"w-10 h-10 rounded-xl flex items-center justify-center text-lg mb-3 " + card.color}><i className={"fas " + card.icon}></i></div>
+            <div className="text-[13px] font-semibold mb-1">{card.title}</div>
+            <div className="text-xl font-extrabold">{card.value}</div>
+            <div className="text-[11px] text-slate-500 mt-1">{card.sub}</div>
+          </div>
+        ))}
+      </div>
+      <div className="mx-5 mt-5">
+        <div className="flex justify-between items-center mb-3"><span className="text-base font-bold">Orarul de azi</span><span className="text-[13px] text-[#7c3aed] font-semibold cursor-pointer">Vezi tot</span></div>
+        <div className="bg-[#1a1a3e] rounded-2xl p-4 border border-white/5">
+          {[{ time: '08:00', subject: 'Română', status: 'done' },{ time: '09:00', subject: 'Chimie', status: 'now' },{ time: '10:00', subject: 'Matematică', status: 'next' },{ time: '11:00', subject: 'Geografie', status: 'next' }].map((item, i) => (
+            <div key={i} className="flex items-center gap-3 py-2.5 border-b border-white/5 last:border-0">
+              <span className="text-[13px] font-bold text-[#7c3aed] min-w-[50px]">{item.time}</span>
+              <span className="flex-1 text-sm font-semibold">{item.subject}</span>
+              <span className={"w-2 h-2 rounded-full " + (item.status === 'done' ? 'bg-emerald-400' : item.status === 'now' ? 'bg-amber-400 animate-pulse-slow' : 'bg-slate-500')}></span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="mx-5 mt-5">
+        <div className="bg-gradient-to-br from-red-500/15 to-red-500/5 border border-red-500/20 rounded-2xl p-4 flex items-start gap-3">
+          <i className="fas fa-exclamation-triangle text-red-400 text-xl mt-0.5"></i>
+          <div><div className="text-sm font-bold mb-1">Mâine ai teste importante!</div><div className="text-[13px] text-slate-400 leading-relaxed">Test Biologie și Ascultare Engleză. Nu ai repetat încă lecția de mâine.</div></div>
+        </div>
+      </div>
+      <div className="mx-5 mt-5">
+        <div className="gradient-card rounded-3xl p-5 border border-[#7c3aed]/20 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[3px] gradient-primary"></div>
+          <div className="inline-flex items-center gap-1.5 bg-[#7c3aed]/20 text-violet-300 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider mb-3"><i className="fas fa-sparkles text-xs"></i> AI Recomandă</div>
+          <div className="text-[15px] leading-relaxed mb-4">Astăzi scorul tău academic este <strong>{userData.score || 0}</strong>. Dacă mai înveți încă 20 minute la Matematică, vei ajunge la <strong>100</strong>.</div>
+          <div className="flex flex-col gap-2">
+            {[{ icon: 'fa-dna', subject: 'Biologie', time: '35 min' },{ icon: 'fa-square-root-alt', subject: 'Matematică', time: '20 min' },{ icon: 'fa-book', subject: 'Română', time: '10 min' }].map((rec, i) => (
+              <div key={i} className="flex items-center gap-2.5 p-2.5 bg-black/20 rounded-xl"><i className={"fas " + rec.icon + " text-[#7c3aed] text-sm"}></i><span className="text-sm font-semibold">{rec.subject}</span><span className="ml-auto text-xs text-slate-500">{rec.time}</span></div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <button onClick={() => onNavigate('learn')} className="mx-5 mt-5 mb-5 w-[calc(100%-40px)] py-5 gradient-primary rounded-2xl flex items-center justify-center gap-3 text-base font-bold text-white shadow-[0_8px_30px_rgba(124,58,237,0.4)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(124,58,237,0.5)] active:scale-[0.98] transition"><i className="fas fa-play"></i> Începe sesiunea de învățare</button>
+    </div>
+  );
+};
+
+const ProfessorScreen = ({ onNavigate, onToast, userData }) => {
+  const [chatHistory, setChatHistory] = useState([{ id: 1, type: 'ai', text: 'Bună! Sunt Profesorul Mentor. Cu ce te pot ajuta astăzi? 📚\n\nSunt conectat la:\n🧠 Claude 3.5 (primar)\n🤖 GPT-4o (secundar)\n✨ Gemini 1.5 (failover)\n\n🌍 Selectează limba și materia pentru a începe!' }]);
+  const [input, setInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState('matematica');
+  const [selectedClass, setSelectedClass] = useState(8);
+  const [selectedLang, setSelectedLang] = useState(userData.language || 'ro');
+  const [showDetector, setShowDetector] = useState(false);
+  const [detectorText, setDetectorText] = useState('');
+  const [detectorResult, setDetectorResult] = useState(null);
+  const [showCurriculum, setShowCurriculum] = useState(false);
+  const messagesEndRef = useRef(null);
+  const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  useEffect(scrollToBottom, [chatHistory]);
+
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+    const userMsg = { id: generateId(), type: 'user', text: input };
+    setChatHistory(prev => [...prev, userMsg]);
+    setInput('');
+    setIsTyping(true);
+
+    try {
+      const response = await AI_BACKEND.chat({
+        message: input,
+        subject: selectedSubject,
+        class_level: selectedClass,
+        conversation_id: 'main_chat',
+        language: selectedLang
+      });
+
+      setTimeout(() => {
+        setIsTyping(false);
+        const aiMsg = { 
+          id: generateId(), 
+          type: 'ai', 
+          text: response.response,
+          meta: { engine: response.engine_used, scaffolding: response.scaffolding_level, time: response.processing_time_ms }
+        };
+        setChatHistory(prev => [...prev, aiMsg]);
+      }, 500 + Math.random() * 500);
+    } catch (e) {
+      setIsTyping(false);
+      onToast('Eroare la conectarea cu AI. Încearcă din nou!', 'warning');
+    }
+  };
+
+  const runDetector = async () => {
+    if (!detectorText.trim() || detectorText.length < 20) {
+      onToast('Textul trebuie să aibă minim 20 de caractere!', 'warning');
+      return;
+    }
+    onToast('Analizăm textul cu GPTZero...', 'info');
+    const result = await AI_BACKEND.detect({ text: detectorText });
+    setDetectorResult(result);
+    onToast('Analiză completă!', 'success');
+  };
+
+  const subjects = AI_BACKEND.curriculum.subjects;
+  const langs = AI_BACKEND.languages;
+
+  return (
+    <div className="min-h-screen pb-24 animate-fadeIn">
+      <div className="text-center pt-8 pb-6 relative">
+        <div className="relative w-[100px] h-[100px] mx-auto mb-4">
+          <div className="absolute inset-[-6px] rounded-full border-2 border-transparent border-t-[#7c3aed] border-r-[#7c3aed] animate-rotate"></div>
+          <div className="w-full h-full rounded-full gradient-primary flex items-center justify-center text-5xl shadow-[0_0_40px_rgba(124,58,237,0.3)] relative z-10">🎓</div>
+          <div className="absolute bottom-1 right-1 w-5 h-5 bg-emerald-400 rounded-full border-[3px] border-[#0f0f23] z-20"></div>
+        </div>
+        <div className="text-[22px] font-extrabold mb-1">Profesor Mentor</div>
+        <div className="text-[13px] text-slate-400">AI Personal • Nivel Avansat</div>
+        <div className="flex items-center justify-center gap-2 mt-2 flex-wrap px-4">
+          <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full">● Claude online</span>
+          <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">● GPT-4o online</span>
+          <span className="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full">● Gemini online</span>
+        </div>
+      </div>
+
+      <div className="px-5 mb-4 space-y-2">
+        <div className="flex gap-2">
+          <select value={selectedLang} onChange={e => setSelectedLang(e.target.value)} className="flex-1 py-2 px-3 bg-[#151530] border border-white/10 rounded-xl text-sm outline-none focus:border-[#7c3aed] text-white">
+            {langs.map(l => <option key={l.id} value={l.id}>{l.flag} {l.name}</option>)}
+          </select>
+          <select value={selectedSubject} onChange={e => setSelectedSubject(e.target.value)} className="flex-[2] py-2 px-3 bg-[#151530] border border-white/10 rounded-xl text-sm outline-none focus:border-[#7c3aed] text-white">
+            {subjects.map(s => <option key={s.id} value={s.id}>{s.name[selectedLang] || s.name['ro']}</option>)}
+          </select>
+        </div>
+        <div className="flex gap-2">
+          <select value={selectedClass} onChange={e => setSelectedClass(parseInt(e.target.value))} className="w-full py-2 px-3 bg-[#151530] border border-white/10 rounded-xl text-sm outline-none focus:border-[#7c3aed] text-white">
+            {[1,2,3,4,5,6,7,8,9,10,11,12].map(c => <option key={c} value={c}>Clasa {c}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div className="text-lg font-bold text-center px-5 mb-6">Ce vrei să învățăm astăzi?</div>
+      <div className="grid grid-cols-2 gap-3 px-5 mb-5">
+        {[{ icon: 'fa-camera', title: 'Fotografiază lecția', sub: 'Scanare inteligentă', action: () => onToast('Camera AI se deschide...', 'info') },{ icon: 'fa-microphone', title: 'Vorbește cu AI', sub: 'Conversație vocală', action: () => { onToast('Se activează microfonul...', 'info'); setTimeout(() => onToast('Profesorul te ascultă! Vorbește acum.', 'success'), 1500); } },{ icon: 'fa-file-pdf', title: 'Încarcă PDF', sub: 'Documente și manuale', action: () => onToast('Selectează un PDF...', 'info') },{ icon: 'fa-keyboard', title: 'Scrie întrebarea', sub: 'Chat text', action: () => {} }].map((method, i) => (
+          <button key={i} onClick={method.action} className="bg-[#1a1a3e] border border-white/5 rounded-2xl p-5 text-center hover:border-[#7c3aed] hover:bg-[#222250] hover:-translate-y-1 transition"><i className={"fas " + method.icon + " text-[28px] text-[#7c3aed] mb-2.5 block"}></i><span className="text-[13px] font-semibold block">{method.title}</span><span className="text-[11px] text-slate-500">{method.sub}</span></button>
+        ))}
+      </div>
+
+      <div className="px-5 mb-3">
+        <div className="flex gap-2">
+          <button onClick={() => setShowDetector(!showDetector)} className={"flex-1 py-2.5 rounded-xl text-xs font-semibold transition border " + (showDetector ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-[#1a1a3e] border-white/10 text-slate-400 hover:text-white')}>
+            <i className="fas fa-shield-alt mr-1.5"></i> Detector AI
+          </button>
+          <button onClick={() => setShowCurriculum(!showCurriculum)} className={"flex-1 py-2.5 rounded-xl text-xs font-semibold transition border " + (showCurriculum ? 'bg-[#7c3aed]/20 border-[#7c3aed]/50 text-[#7c3aed]' : 'bg-[#1a1a3e] border-white/10 text-slate-400 hover:text-white')}>
+            <i className="fas fa-book mr-1.5"></i> Curriculum
+          </button>
+        </div>
+      </div>
+
+      {showDetector && (
+        <div className="mx-5 mb-4 bg-[#1a1a3e] rounded-2xl p-4 border border-red-500/20 animate-fadeIn">
+          <div className="text-sm font-bold mb-2 text-red-400"><i className="fas fa-shield-alt mr-2"></i>Detector AI Profesional (GPTZero)</div>
+          <textarea 
+            value={detectorText} 
+            onChange={e => setDetectorText(e.target.value)}
+            placeholder="Lipește textul elevului aici pentru analiză... (min. 20 caractere)"
+            className="w-full h-24 py-2 px-3 bg-[#151530] border border-white/10 rounded-xl text-sm outline-none focus:border-red-500 transition resize-none placeholder:text-slate-600 mb-2 text-white"
+          />
+          <button onClick={runDetector} className="w-full py-2.5 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 text-sm font-semibold hover:bg-red-500/30 transition">
+            <i className="fas fa-search mr-2"></i>Analizează textul
+          </button>
+          {detectorResult && (
+            <div className="mt-3 space-y-2 animate-slideUp">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-400">Probabilitate AI:</span>
+                <span className={"text-lg font-black " + (detectorResult.ai_probability > 50 ? 'text-red-400' : 'text-emerald-400')}>{detectorResult.ai_probability}%</span>
+              </div>
+              <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-full rounded-full transition-all" style={{width: detectorResult.ai_probability + '%', background: detectorResult.ai_probability > 50 ? '#ef4444' : '#10b981'}}></div>
+              </div>
+              <div className="text-sm font-bold">{detectorResult.verdict}</div>
+              <div className="text-xs text-slate-400">Motor: {detectorResult.engine} • {detectorResult.processing_time_ms}ms</div>
+              <div className="space-y-1 mt-2">
+                {detectorResult.suggestions.map((s, i) => (
+                  <div key={i} className="text-xs text-slate-300 bg-black/20 p-2 rounded-lg">{s}</div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {showCurriculum && (
+        <div className="mx-5 mb-4 bg-[#1a1a3e] rounded-2xl p-4 border border-[#7c3aed]/20 animate-fadeIn max-h-[400px] overflow-y-auto">
+          <div className="text-sm font-bold mb-3 text-[#7c3aed]"><i className="fas fa-book mr-2"></i>Curriculum Complet (10 Limbi)</div>
+          <div className="space-y-2">
+            {AI_BACKEND.curriculum.subjects.map(s => (
+              <div key={s.id} className="flex items-center gap-3 p-2 bg-black/20 rounded-xl">
+                <div className="w-8 h-8 rounded-lg bg-[#7c3aed]/20 flex items-center justify-center"><i className={"fas " + s.icon + " text-[#7c3aed] text-sm"}></i></div>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold">{s.name[selectedLang] || s.name['ro']}</div>
+                  <div className="text-[10px] text-slate-500">{s.cycles.join(' • ')}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 pt-3 border-t border-white/5">
+            <div className="text-xs font-bold text-slate-400 mb-2">Cicluri:</div>
+            <div className="space-y-1">
+              {AI_BACKEND.curriculum.cycles.map(c => (
+                <div key={c.id} className="text-xs text-slate-300 bg-black/20 p-2 rounded-lg">
+                  <strong>{c.name[selectedLang] || c.name['ro']}</strong> — Clasele {c.classes.join(', ')}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="px-5 mb-4">
+        <div className="text-base font-bold mb-3">Istoric recent</div>
+        <div className="bg-[#1a1a3e] rounded-2xl p-4 border border-white/5">
+          {[{ icon: 'fa-dna', subject: 'Biologie - ADN și replicare' },{ icon: 'fa-square-root-alt', subject: 'Matematică - Integrale' },{ icon: 'fa-atom', subject: 'Fizică - Electromagnetism' }].map((item, i) => (
+            <div key={i} className="flex items-center gap-3 py-2.5 border-b border-white/5 last:border-0"><i className={"fas " + item.icon + " text-[#7c3aed] text-sm"}></i><span className="text-sm font-semibold">{item.subject}</span></div>
+          ))}
+        </div>
+      </div>
+
+      <div className="px-5">
+        <div className="text-base font-bold mb-3">Chat rapid</div>
+        <div className="bg-[#1a1a3e] rounded-2xl border border-white/5 overflow-hidden flex flex-col" style={{height: '350px'}}>
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {chatHistory.map(msg => (
+              <div key={msg.id} className={"max-w-[85%] p-3.5 rounded-2xl text-sm leading-relaxed animate-slideUp " + (msg.type === 'user' ? 'ml-auto gradient-primary rounded-br-md' : 'bg-[#151530] border border-white/5 rounded-bl-md')}>
+                <div>{msg.text}</div>
+                {msg.meta && (
+                  <div className="text-[10px] text-slate-500 mt-1.5 flex items-center gap-1">
+                    <i className="fas fa-microchip"></i> {msg.meta.engine} • {msg.meta.time}ms
+                    {msg.meta.scaffolding > 0 && <span className="ml-1 text-[#7c3aed]">• Scaffolding Niv.{msg.meta.scaffolding}</span>}
+                  </div>
+                )}
+              </div>
+            ))}
+            {isTyping && (
+              <div className="bg-[#151530] border border-white/5 rounded-2xl rounded-bl-md p-3.5 max-w-[85%] animate-fadeIn">
+                <div className="flex items-center gap-1">
+                  <span className="typing-dot"></span>
+                  <span className="typing-dot"></span>
+                  <span className="typing-dot"></span>
+                  <span className="text-xs text-slate-500 ml-2">AI gândește...</span>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+          <div className="p-3 bg-[#0f0f23] border-t border-white/5 flex gap-2.5">
+            <input type="text" value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && sendMessage()}
+              className="flex-1 py-3 px-4 bg-[#151530] border border-white/10 rounded-full text-sm outline-none focus:border-[#7c3aed] transition placeholder:text-slate-600 text-white" 
+              placeholder={selectedLang === 'ro' ? 'Scrie o întrebare...' : selectedLang === 'en' ? 'Ask a question...' : selectedLang === 'fr' ? 'Pose une question...' : selectedLang === 'de' ? 'Stell eine Frage...' : selectedLang === 'es' ? 'Haz una pregunta...' : selectedLang === 'it' ? 'Fai una domanda...' : selectedLang === 'ru' ? 'Задай вопрос...' : selectedLang === 'hu' ? 'Tegyél fel kérdést...' : selectedLang === 'tr' ? 'Soru sor...' : selectedLang === 'zh' ? '提问...' : '質問する...'} />
+            <button onClick={sendMessage} className="w-11 h-11 rounded-full gradient-primary flex items-center justify-center text-white hover:scale-110 transition"><i className="fas fa-paper-plane text-sm"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const LearnTypeScreen = ({ onStart }) => {
+  const [selected, setSelected] = useState(null);
+  const types = [{ id: 'test', icon: 'fa-clipboard-check', color: 'text-red-400', label: 'Test' },{ id: 'listening', icon: 'fa-headphones', color: 'text-blue-400', label: 'Ascultare' },{ id: 'homework', icon: 'fa-pen', color: 'text-amber-400', label: 'Temă' },{ id: 'review', icon: 'fa-redo', color: 'text-emerald-400', label: 'Recapitulare' },{ id: 'exam', icon: 'fa-graduation-cap', color: 'text-[#7c3aed]', label: 'Examen' },{ id: 'flashcards', icon: 'fa-clone', color: 'text-pink-400', label: 'Flashcard-uri' }];
+  return (
+    <div className="min-h-screen pb-24 animate-fadeIn">
+      <div className="p-5"><h2 className="text-[22px] font-extrabold mb-2">Ce înveți?</h2><p className="text-sm text-slate-400 mb-6">Alege tipul sesiunii de învățare</p></div>
+      <div className="grid grid-cols-2 gap-3 px-5 mb-6">
+        {types.map(type => (
+          <button key={type.id} onClick={() => setSelected(type.id)} className={"bg-[#1a1a3e] rounded-2xl p-6 text-center border-2 transition " + (selected === type.id ? 'border-[#7c3aed] bg-[#7c3aed]/10' : 'border-transparent hover:border-[#7c3aed]/30 hover:bg-[#222250] hover:-translate-y-1')}><i className={"fas " + type.icon + " text-[32px] " + type.color + " mb-3 block"}></i><span className="text-sm font-bold">{type.label}</span></button>
+        ))}
+      </div>
+      <div className="px-5"><button onClick={() => selected && onStart(selected)} disabled={!selected} className="w-full py-4 rounded-xl gradient-primary text-white font-semibold flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5 transition disabled:opacity-50"><i className="fas fa-play"></i> Începe sesiunea</button></div>
+    </div>
+  );
+};
+
+const TimerScreen = ({ onFinish, onToast }) => {
+  const [seconds, setSeconds] = useState(25 * 60);
+  const [isRunning, setIsRunning] = useState(false);
+  const [sound, setSound] = useState('mute');
+  const intervalRef = useRef(null);
+  useEffect(() => { if (isRunning) { intervalRef.current = setInterval(() => { setSeconds(s => { if (s <= 1) { clearInterval(intervalRef.current); setIsRunning(false); onFinish(); return 0; } return s - 1; }); }, 1000); } return () => clearInterval(intervalRef.current); }, [isRunning, onFinish]);
+  const toggleTimer = () => setIsRunning(!isRunning);
+  const stopTimer = () => { clearInterval(intervalRef.current); setIsRunning(false); onFinish(); };
+  const circumference = 754;
+  const totalSeconds = 25 * 60;
+  const offset = circumference - ((totalSeconds - seconds) / totalSeconds) * circumference;
+  const sounds = [{ id: 'mute', icon: 'fa-volume-mute', label: 'Fără sunet' },{ id: 'rain', icon: 'fa-cloud-rain', label: 'Ploaie' },{ id: 'forest', icon: 'fa-tree', label: 'Pădure' },{ id: 'lofi', icon: 'fa-music', label: 'Lo-Fi' }];
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center px-5 pb-24 animate-fadeIn">
+      <div className="text-lg font-bold mb-2">Biologie</div>
+      <div className="text-sm text-slate-400 mb-8">ADN și replicare</div>
+      <div className="relative w-[260px] h-[260px] mb-10">
+        <svg width="260" height="260" viewBox="0 0 260 260" className="-rotate-90">
+          <circle cx="130" cy="130" r="120" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="12" />
+          <circle cx="130" cy="130" r="120" fill="none" stroke="url(#timerGradient)" strokeWidth="12" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={offset} className="transition-all duration-1000 linear" />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <div className="text-[56px] font-black tracking-tighter tabular-nums">{formatTime(seconds)}</div>
+          <div className="text-sm text-slate-400 mt-1">Focus Time</div>
+        </div>
+      </div>
+      <div className="flex gap-5 mb-8">
+        <button onClick={stopTimer} className="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center text-white text-2xl shadow-[0_8px_30px_rgba(239,68,68,0.4)] hover:scale-110 transition"><i className="fas fa-stop"></i></button>
+        <button onClick={toggleTimer} className={"w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_8px_30px_rgba(124,58,237,0.4)] hover:scale-110 transition " + (isRunning ? 'bg-amber-500 shadow-[0_8px_30px_rgba(245,158,11,0.4)]' : 'gradient-primary')}><i className={"fas " + (isRunning ? 'fa-pause' : 'fa-play')}></i></button>
+      </div>
+      <div className="flex gap-2.5 flex-wrap justify-center">
+        {sounds.map(s => (
+          <button key={s.id} onClick={() => setSound(s.id)} className={"px-4 py-2 rounded-full text-xs font-semibold transition border " + (sound === s.id ? 'bg-[#7c3aed] text-white border-[#7c3aed]' : 'bg-[#1a1a3e] text-slate-400 border-white/10 hover:bg-[#7c3aed]/20')}><i className={"fas " + s.icon + " mr-1.5"}></i>{s.label}</button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const ReportScreen = ({ onHome, onToast }) => {
+  const [showConfetti, setShowConfetti] = useState(true);
+  useEffect(() => { const timer = setTimeout(() => setShowConfetti(false), 3000); return () => clearTimeout(timer); }, []);
+  return (
+    <div className="min-h-screen flex flex-col items-center px-5 pt-12 pb-24 animate-fadeIn">
+      <div className="text-5xl mb-4">{showConfetti ? '🎉' : '✨'}</div>
+      <h1 className="text-2xl font-extrabold mb-2">Felicitări!</h1>
+      <p className="text-sm text-slate-400 mb-8">Ai terminat sesiunea de învățare</p>
+      <div className="grid grid-cols-2 gap-3 w-full mb-6">
+        {[{ value: '1h 47m', label: 'Timp învățat', color: 'text-[#7c3aed]' },{ value: '+41%', label: 'Progres', color: 'text-emerald-400' },{ value: '38', label: 'Teste rezolvate', color: 'text-blue-400' },{ value: '91%', label: 'Probabilitate nota >9', color: 'text-amber-400' }].map((stat, i) => (
+          <div key={i} className="bg-[#1a1a3e] rounded-2xl p-5 text-center border border-white/5"><div className={"text-[32px] font-black mb-1 " + stat.color}>{stat.value}</div><div className="text-xs text-slate-500">{stat.label}</div></div>
+        ))}
+      </div>
+      <div className="w-full bg-[#1a1a3e] rounded-2xl p-5 mb-6 border-l-[3px] border-[#7c3aed]"><p className="text-[15px] leading-relaxed italic">"Foarte bine! Îți recomand doar încă 15 minute mâine pentru a fixa informația. Ești pe drumul cel bun!"</p></div>
+      <div className="flex items-center gap-2 text-lg font-extrabold text-amber-400 mb-6"><i className="fas fa-coins"></i><span>+25 Mentor Coins câștigate!</span></div>
+      <button onClick={() => { onHome(); onToast('Sesiune salvată! +25 Coins', 'success'); }} className="w-full py-4 rounded-xl gradient-primary text-white font-semibold flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5 transition"><i className="fas fa-check"></i> Super! Înapoi acasă</button>
+    </div>
+  );
+};
+
+const CalendarScreen = ({ userData }) => {
+  const [selectedDate, setSelectedDate] = useState(19);
+  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 6, 1));
+  const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+  const startDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
+  const adjustedStart = startDay === 0 ? 6 : startDay - 1;
+  const events = [{ day: 15, type: 'test', title: 'Test Biologie', time: '08:00', detail: 'Capitolul ADN' },{ day: 20, type: 'homework', title: 'Temă Fizică', time: '23:59', detail: 'Exerciții pag. 45' },{ day: 22, type: 'test', title: 'Ascultare Engleză', time: '10:00', detail: 'Unitatea 4' },{ day: 28, type: 'exam', title: 'Simulare BAC Matematică', time: '09:00', detail: 'Subiectul I, II, III' }];
+  const today = 19;
+  const monthNames = ['Ianuarie','Februarie','Martie','Aprilie','Mai','Iunie','Iulie','August','Septembrie','Octombrie','Noiembrie','Decembrie'];
+  const selectedEvents = events.filter(e => e.day === selectedDate);
+  return (
+    <div className="min-h-screen pb-24 animate-fadeIn">
+      <div className="text-center p-5">
+        <div className="flex items-center justify-center gap-4 mb-4">
+          <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))} className="w-8 h-8 rounded-full bg-[#1a1a3e] flex items-center justify-center hover:bg-[#222250] transition"><i className="fas fa-chevron-left text-xs"></i></button>
+          <div className="text-xl font-extrabold">{monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}</div>
+          <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))} className="w-8 h-8 rounded-full bg-[#1a1a3e] flex items-center justify-center hover:bg-[#222250] transition"><i className="fas fa-chevron-right text-xs"></i></button>
+        </div>
+        <div className="grid grid-cols-7 gap-2 mb-2">
+          {['Lu','Ma','Mi','Jo','Vi','Sa','Du'].map(d => (<div key={d} className="text-center text-[11px] font-bold text-slate-500 uppercase">{d}</div>))}
+        </div>
+        <div className="grid grid-cols-7 gap-2">
+          {Array.from({length: adjustedStart}).map((_, i) => <div key={'empty-' + i}></div>)}
+          {Array.from({length: daysInMonth}).map((_, i) => {
+            const day = i + 1;
+            const hasEvent = events.some(e => e.day === day);
+            const eventType = events.find(e => e.day === day)?.type;
+            return (
+              <button key={day} onClick={() => setSelectedDate(day)} className={"aspect-square flex items-center justify-center rounded-xl text-sm font-semibold transition relative " + (day === today ? 'gradient-primary shadow-[0_4px_15px_rgba(124,58,237,0.4)]' : day === selectedDate ? 'bg-[#7c3aed]/30 border border-[#7c3aed]' : 'hover:bg-[#222250]')}>
+                {day}
+                {hasEvent && (<span className={"absolute bottom-1 w-1 h-1 rounded-full " + (eventType === 'test' ? 'bg-red-400' : eventType === 'homework' ? 'bg-blue-400' : 'bg-amber-400')}></span>)}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div className="px-5">
+        <div className="flex justify-between items-center mb-4"><span className="text-base font-bold">Evenimente {selectedDate ? '- ' + selectedDate + ' ' + monthNames[currentMonth.getMonth()] : ''}</span><span className="text-[13px] text-[#7c3aed] font-semibold cursor-pointer">+ Adaugă</span></div>
+        <div className="space-y-2.5">
+          {selectedEvents.length > 0 ? selectedEvents.map((event, i) => (
+            <div key={i} className={"flex items-center gap-3.5 p-3.5 bg-[#1a1a3e] rounded-xl border-l-[3px] " + (event.type === 'test' ? 'border-red-400' : event.type === 'homework' ? 'border-blue-400' : 'border-amber-400')}>
+              <div className={"w-10 h-10 rounded-xl flex items-center justify-center text-base " + (event.type === 'test' ? 'bg-red-500/15 text-red-400' : event.type === 'homework' ? 'bg-blue-500/15 text-blue-400' : 'bg-amber-500/15 text-amber-400')}><i className={"fas " + (event.type === 'test' ? 'fa-clipboard-check' : event.type === 'homework' ? 'fa-pen' : 'fa-graduation-cap')}></i></div>
+              <div className="flex-1"><div className="text-sm font-bold">{event.title}</div><div className="text-xs text-slate-500">{event.time} • {event.detail}</div></div>
+            </div>
+          )) : (<div className="text-center py-8 text-slate-500 text-sm">Nu există evenimente în această zi</div>)}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ProfileScreen = ({ userData, onUpdate, onToast, onReset }) => {
+  const [activeTab, setActiveTab] = useState('school');
+  const leaderboardData = {
+    school: [{ rank: 1, name: 'Maria Ionescu', school: 'Liceul Teoretic "Mihai Eminescu"', xp: '12,450', avatar: 'M' },{ rank: 2, name: 'Alex Dumitru', school: 'Liceul Teoretic "Mihai Eminescu"', xp: '11,200', avatar: 'A' },{ rank: 3, name: 'Elena Marinescu', school: 'Liceul Teoretic "Mihai Eminescu"', xp: '10,800', avatar: 'E' },{ rank: 4, name: 'Radu Stancu', school: 'Liceul Teoretic "Mihai Eminescu"', xp: '9,600', avatar: 'R' },{ rank: 5, name: 'Cristina Popa', school: 'Liceul Teoretic "Mihai Eminescu"', xp: '9,100', avatar: 'C' },{ rank: 7, name: 'Andrei Popescu (Tu)', school: 'Liceul Teoretic "Mihai Eminescu"', xp: '8,450', avatar: 'A', you: true }],
+    city: [{ rank: 1, name: 'David Munteanu', school: 'Colegiul Național', xp: '15,200', avatar: 'D' },{ rank: 2, name: 'Sofia Radu', school: 'Liceul Teoretic', xp: '14,800', avatar: 'S' },{ rank: 3, name: 'Maria Ionescu', school: 'Liceul Teoretic "Mihai Eminescu"', xp: '12,450', avatar: 'M' },{ rank: 42, name: 'Andrei Popescu (Tu)', school: 'Liceul Teoretic "Mihai Eminescu"', xp: '8,450', avatar: 'A', you: true }],
+    national: [{ rank: 1, name: 'Elena Marginean', school: 'Colegiul Național "Bănățean"', xp: '18,900', avatar: 'E' },{ rank: 2, name: 'Radu Stănescu', school: 'Liceul Internațional', xp: '18,200', avatar: 'R' },{ rank: 3, name: 'Ana Popescu', school: 'Colegiul Național', xp: '17,500', avatar: 'A' },{ rank: 156, name: 'Andrei Popescu (Tu)', school: 'Liceul Teoretic "Mihai Eminescu"', xp: '8,450', avatar: 'A', you: true }]
+  };
+  const shopItems = [{ id: 'avatar1', icon: '🦸', name: 'Avatar Supererou', price: 150 },{ id: 'theme1', icon: '🌌', name: 'Temă Cosmos', price: 300 },{ id: 'voice1', icon: '🎙️', name: 'Voce AI Nouă', price: 500 },{ id: 'effect1', icon: '✨', name: 'Efecte Speciale', price: 250 }];
+  const buyItem = (item) => { if (userData.coins >= item.price) { onUpdate({...userData, coins: userData.coins - item.price}); onToast('Ai cumpărat ' + item.name + '! -' + item.price + ' Coins', 'success'); } else { onToast('Nu ai suficiente Mentor Coins!', 'warning'); } };
+  const xpPercent = ((userData.xp % 10000) / 10000) * 100;
+  return (
+    <div className="min-h-screen pb-24 animate-fadeIn">
+      <div className="relative text-center pt-5 pb-6">
+        <div className="absolute top-0 left-0 right-0 h-[120px] gradient-primary opacity-30 rounded-b-3xl"></div>
+        <div className="relative w-[100px] h-[100px] mx-auto mt-10 mb-4">
+          <div className="w-full h-full rounded-full gradient-primary flex items-center justify-center text-[40px] border-4 border-[#0f0f23] shadow-xl overflow-hidden">👨‍🎓</div>
+          <div className="absolute -bottom-1 -right-1 gradient-accent text-[#1a1a4e] px-3 py-1 rounded-xl text-xs font-extrabold border-[3px] border-[#0f0f23]">NIV. {userData.level}</div>
+        </div>
+        <div className="text-[22px] font-extrabold mb-1">{userData.name} {userData.surname || 'Popescu'}</div>
+        <div className="text-[13px] text-slate-400 mb-4">{userData.school}</div>
+        <div className="flex justify-center gap-6">
+          {[{ value: userData.totalHours + 'h', label: 'Ore totale' },{ value: (userData.coins || 0).toLocaleString(), label: 'Coins' },{ value: <><i className="fas fa-fire text-amber-400 mr-1 animate-flicker"></i>{userData.streak}</>, label: 'Streak' }].map((stat, i) => (<div key={i} className="text-center"><div className="text-xl font-extrabold">{stat.value}</div><div className="text-[11px] text-slate-500 uppercase tracking-wider">{stat.label}</div></div>))}
+        </div>
+      </div>
+      <div className="mx-5 mb-5 p-4 bg-[#1a1a3e] rounded-2xl">
+        <div className="flex justify-between text-[13px] mb-2"><span className="font-bold">XP până la nivelul {userData.level + 1}</span><span className="text-slate-500">{userData.xp.toLocaleString()} / 10,000</span></div>
+        <div className="w-full h-2.5 bg-white/10 rounded-full overflow-hidden"><div className="h-full gradient-primary rounded-full transition-all duration-500" style={{width: xpPercent + '%'}}></div></div>
+      </div>
+      <div className="mx-5 mb-5 flex items-center justify-center gap-2 bg-gradient-to-br from-amber-500/15 to-amber-500/5 border border-amber-500/20 py-2.5 px-5 rounded-xl">
+        <i className="fas fa-coins text-amber-400 text-lg"></i>
+        <span className="text-lg font-extrabold text-amber-400">{userData.coins.toLocaleString()} Mentor Coins</span>
+      </div>
+      <div className="flex gap-2 px-5 mb-4 overflow-x-auto pb-2">
+        {[{ id: 'school', icon: '🏫', label: 'Școala' },{ id: 'city', icon: '🏙️', label: 'Oraș' },{ id: 'national', icon: '🇷🇴', label: 'Național' }].map(tab => (
+          <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={"px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition " + (activeTab === tab.id ? 'gradient-primary text-white' : 'bg-[#1a1a3e] border border-white/10 text-slate-400 hover:text-white')}>{tab.icon} {tab.label}</button>
+        ))}
+      </div>
+      <div className="px-5 mb-6">
+        {leaderboardData[activeTab].map((item, i) => (
+          <div key={i} className={"flex items-center gap-3.5 py-3 border-b border-white/5 last:border-0 " + (item.you ? 'bg-[#7c3aed]/10 -mx-5 px-5 rounded-xl border-0 mb-2' : '')}>
+            <div className={"w-8 text-center text-base font-extrabold " + (item.rank === 1 ? 'text-yellow-400' : item.rank === 2 ? 'text-slate-300' : item.rank === 3 ? 'text-amber-600' : '')}>{item.rank}</div>
+            <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center text-sm font-bold">{item.avatar}</div>
+            <div className="flex-1 min-w-0"><div className="text-sm font-semibold truncate">{item.name}</div><div className="text-[11px] text-slate-500 truncate">{item.school}</div></div>
+            <div className="text-sm font-bold text-[#7c3aed]">{item.xp} XP</div>
+          </div>
+        ))}
+      </div>
+      <div className="px-5 mb-4">
+        <div className="flex justify-between items-center mb-3"><span className="text-base font-bold">Magazin Mentor</span><span className="text-[13px] text-[#7c3aed] font-semibold cursor-pointer">Vezi tot</span></div>
+        <div className="grid grid-cols-2 gap-3">
+          {shopItems.map(item => (
+            <button key={item.id} onClick={() => buyItem(item)} className="bg-[#1a1a3e] rounded-2xl p-4 text-center border border-white/5 hover:border-[#7c3aed] hover:-translate-y-1 transition">
+              <div className="w-20 h-20 mx-auto mb-3 rounded-xl bg-[#151530] flex items-center justify-center text-4xl">{item.icon}</div>
+              <div className="text-[13px] font-semibold mb-1">{item.name}</div>
+              <div className="flex items-center justify-center gap-1 text-sm font-bold text-amber-400"><i className="fas fa-coins text-xs"></i> {item.price}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="px-5">
+        <div className="text-base font-bold mb-3">Statistici</div>
+        <div className="grid grid-cols-2 gap-3">
+          {[{ icon: 'fa-book', color: 'bg-blue-500/15 text-blue-400', title: 'Capitole', value: '47' },{ icon: 'fa-check-circle', color: 'bg-emerald-500/15 text-emerald-400', title: 'Teste', value: '128' },{ icon: 'fa-trophy', color: 'bg-[#7c3aed]/15 text-violet-400', title: 'Badge-uri', value: '15' },{ icon: 'fa-star', color: 'bg-amber-500/15 text-amber-400', title: 'Medie', value: '9.2' }].map((card, i) => (
+            <div key={i} className="bg-[#1a1a3e] rounded-2xl p-4 border border-white/5">
+              <div className={"w-10 h-10 rounded-xl flex items-center justify-center text-lg mb-3 " + card.color}><i className={"fas " + card.icon}></i></div>
+              <div className="text-[13px] font-semibold mb-1">{card.title}</div>
+              <div className="text-xl font-extrabold">{card.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="px-5 mt-6 mb-8">
+        <button onClick={() => {
+          if (confirm('Ești sigur că vrei să resetezi contul? Toate progresele vor fi pierdute!')) {
+            onReset();
+          }
+        }} className="w-full py-4 rounded-xl border-2 border-red-500/30 text-red-400 font-semibold hover:bg-red-500/10 hover:border-red-500/50 transition flex items-center justify-center gap-2">
+          <i className="fas fa-trash-alt"></i> Resetare cont
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const App = () => {
+  const [screen, setScreen] = useState('splash');
+  const [navScreen, setNavScreen] = useState('home');
+  const [toast, setToast] = useState(null);
+  const [onboardingStep, setOnboardingStep] = useState(0);
+  const [onboardingData, setOnboardingData] = useState({});
+
+  const defaultUserData = {
+    name: '', surname: '', level: 1, xp: 0, coins: 0, streak: 0, score: 0, totalHours: 0,
+    school: '', class: '', profile: '', exam: '', dailyHours: '', language: 'ro',
+    isLoggedIn: false, hasCompletedOnboarding: false
+  };
+
+  const [userData, setUserData] = useState(() => {
+    const saved = loadData();
+    return saved || defaultUserData;
+  });
+
+  useEffect(() => { saveData(userData); }, [userData]);
+
+  const showToast = useCallback((message, type = 'success') => { setToast({ message, type }); }, []);
+
+  const handleSplashFinish = () => { 
+    if (userData.hasCompletedOnboarding && userData.isLoggedIn) {
+      setScreen('home'); setNavScreen('home');
+    } else { setScreen('auth'); }
+  };
+
+  const handleLogin = () => {
+    setUserData({ ...userData, isLoggedIn: true });
+    setScreen('home'); setNavScreen('home');
+    showToast('Bun venit!', 'success');
+  };
+
+  const handleRegister = (formData) => {
+    const nameParts = (formData.name || '').split(' ');
+    setUserData({
+      ...userData,
+      name: nameParts[0] || '', surname: nameParts.slice(1).join(' ') || '',
+      school: formData.school || '', class: formData.class || '', isLoggedIn: true
+    });
+    setOnboardingStep(1);
+    setScreen('onboarding');
+  };
+
+  const handleOnboardingNext = () => {
+    if (onboardingStep >= 5) {
+      setUserData(prev => ({ ...prev, isLoggedIn: true, hasCompletedOnboarding: true }));
+      setScreen('home'); setNavScreen('home');
+      showToast('Bun venit, ' + (userData.name || 'elev') + '! Profilul tău este gata.', 'success');
+    } else { setOnboardingStep(onboardingStep + 1); }
+  };
+
+  const handleOnboardingBack = () => {
+    if (onboardingStep > 1) { setOnboardingStep(onboardingStep - 1); }
+    else { setScreen('register'); }
+  };
+
+  const handleNavigate = (target) => {
+    setNavScreen(target);
+    const map = { home: 'home', professor: 'professor', learn: 'learnType', calendar: 'calendar', profile: 'profile' };
+    setScreen(map[target] || target);
+  };
+
+  const handleStartLearn = (type) => { setScreen('timer'); };
+
+  const handleTimerFinish = () => {
+    setUserData(prev => ({
+      ...prev, coins: (prev.coins || 0) + 25, totalHours: (prev.totalHours || 0) + 0.5,
+      xp: (prev.xp || 0) + 50, score: Math.min(100, (prev.score || 0) + 5)
+    }));
+    setScreen('report');
+  };
+
+  const onboardingSteps = [
+    { step: 1, title: 'Cum te cheamă?', desc: 'AI-ul tău personal vrea să știe cum să te strige.', options: [], isInput: true, inputKey: 'name', progress: 20 },
+    { step: 2, title: 'Ce clasă ești?', desc: 'Personalizăm conținutul în funcție de anul tău de studiu.', options: [{ icon: 'fa-child', label: 'Clasele V-VIII', value: 'gimnaziu' },{ icon: 'fa-user-graduate', label: 'Clasele IX-XII', value: 'liceu' },{ icon: 'fa-university', label: 'Facultate', value: 'facultate' }], inputKey: 'grade', progress: 40 },
+    { step: 3, title: 'Ce profil ai?', desc: 'Alege profilul tău pentru materii personalizate.', options: [{ icon: 'fa-flask', label: 'Real (Mate-Info)', value: 'mate-info' },{ icon: 'fa-calculator', label: 'Real (Științe)', value: 'stiinte' },{ icon: 'fa-book', label: 'Uman (Filologie)', value: 'filologie' },{ icon: 'fa-globe', label: 'Uman (Socio-Uman)', value: 'socio-uman' }], inputKey: 'profile', progress: 60 },
+    { step: 4, title: 'Ce examen urmează?', desc: 'Te ajutăm să te pregătești strategic.', options: [{ icon: 'fa-clipboard-check', label: 'Evaluare Națională', value: 'evaluare' },{ icon: 'fa-graduation-cap', label: 'BAC', value: 'bac' },{ icon: 'fa-door-open', label: 'Admitere facultate', value: 'admitere' },{ icon: 'fa-book-open', label: 'Niciun examen momentan', value: 'none' }], inputKey: 'exam', progress: 80 },
+    { step: 5, title: 'Câte ore poți învăța zilnic?', desc: 'Creăm un plan personalizat pentru tine.', options: [{ icon: 'fa-clock', label: '30 minute', value: '0.5' },{ icon: 'fa-clock', label: '1 oră', value: '1' },{ icon: 'fa-clock', label: '2 ore', value: '2' },{ icon: 'fa-clock', label: '3+ ore', value: '3' }], inputKey: 'dailyHours', progress: 100 }
+  ];
+
+  const currentOnboarding = onboardingSteps[onboardingStep - 1];
+
+  const handleReset = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setUserData(defaultUserData);
+    setOnboardingStep(0);
+    setOnboardingData({});
+    setNavScreen('home');
+    setScreen('auth');
+    showToast('Contul a fost resetat cu succes!', 'success');
+  };
+
+  const renderScreen = () => {
+    switch (screen) {
+      case 'splash': return <SplashScreen onFinish={handleSplashFinish} />;
+      case 'auth': return <AuthScreen onLogin={() => setScreen('login')} onRegister={() => setScreen('register')} />;
+      case 'login': return <LoginScreen onBack={() => setScreen('auth')} onLogin={handleLogin} />;
+      case 'register': return <RegisterScreen onBack={() => setScreen('auth')} onContinue={handleRegister} />;
+      case 'onboarding':
+        return currentOnboarding.isInput ? (
+          <div className="min-h-screen flex flex-col px-6 pt-10 pb-24 animate-fadeIn">
+            <div className="mb-8">
+              <div className="text-xs text-[#7c3aed] font-bold uppercase tracking-wider mb-2">Pasul {currentOnboarding.step} din 5</div>
+              <h2 className="text-2xl font-extrabold mb-2">{currentOnboarding.title}</h2>
+              <p className="text-sm text-slate-400 leading-relaxed">{currentOnboarding.desc}</p>
+            </div>
+            <input type="text" value={onboardingData.name || ''} onChange={e => setOnboardingData({...onboardingData, name: e.target.value})}
+              className="w-full py-4 px-5 bg-[#151530] border-[1.5px] border-white/10 rounded-xl text-white text-lg text-center outline-none focus:border-[#7c3aed] transition placeholder:text-slate-600"
+              placeholder="Numele tău" />
+            <div className="mt-auto pt-6">
+              <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden mb-4">
+                <div className="h-full gradient-primary rounded-full transition-all" style={{width: currentOnboarding.progress + '%'}}></div>
+              </div>
+              <button onClick={handleOnboardingNext} className="w-full py-4 rounded-xl gradient-primary text-white font-semibold flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5 transition">
+                Continuă <i className="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <OnboardingScreen
+            step={currentOnboarding.step}
+            total={5}
+            title={currentOnboarding.title}
+            desc={currentOnboarding.desc}
+            options={currentOnboarding.options}
+            selected={onboardingData[currentOnboarding.inputKey]}
+            onSelect={(opt) => setOnboardingData({...onboardingData, [currentOnboarding.inputKey]: opt.value})}
+            onNext={handleOnboardingNext}
+            onBack={handleOnboardingBack}
+            isLast={onboardingStep === 5}
+            progress={currentOnboarding.progress}
+          />
+        );
+      case 'home': return <HomeScreen userData={userData} onNavigate={handleNavigate} />;
+      case 'professor': return <ProfessorScreen onNavigate={handleNavigate} onToast={showToast} userData={userData} />;
+      case 'learnType': return <LearnTypeScreen onStart={handleStartLearn} />;
+      case 'timer': return <TimerScreen onFinish={handleTimerFinish} onToast={showToast} />;
+      case 'report': return <ReportScreen onHome={() => { setScreen('home'); setNavScreen('home'); }} onToast={showToast} />;
+      case 'calendar': return <CalendarScreen userData={userData} />;
+      case 'profile': return <ProfileScreen userData={userData} onUpdate={setUserData} onToast={showToast} onReset={handleReset} />;
+      default: return <HomeScreen userData={userData} onNavigate={handleNavigate} />;
+    }
+  };
+
+  const showNav = ['home', 'professor', 'learnType', 'calendar', 'profile'].includes(screen);
+
+  return (
+    <div className="max-w-[480px] mx-auto min-h-screen relative bg-[#0f0f23] overflow-hidden">
+      <svg width="0" height="0" className="absolute">
+        <defs>
+          <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#7c3aed" />
+            <stop offset="100%" stopColor="#a78bfa" />
+          </linearGradient>
+          <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#7c3aed" />
+            <stop offset="100%" stopColor="#3b82f6" />
+          </linearGradient>
+        </defs>
+      </svg>
+      {renderScreen()}
+      {showNav && <BottomNav active={navScreen} onNavigate={handleNavigate} />}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+    </div>
+  );
+};
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
