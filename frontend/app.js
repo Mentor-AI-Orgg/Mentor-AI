@@ -6,6 +6,7 @@ const AdaptiveContainerComponent = window.AdaptiveContainer || (() => null);
 const defaultUserData = {
   name: '',
   surname: '',
+  planId: 'free',
   level: 1,
   xp: 0,
   coins: 0,
@@ -56,10 +57,11 @@ const SubscriptionSkeleton = () => (
   </div>
 );
 
-const SubscriptionsScreen = ({ onBack }) => {
+const SubscriptionsScreen = ({ onBack, currentPlanId, onSelectPlan }) => {
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [fallback, setFallback] = useState(false);
+  const [selectedPlanId, setSelectedPlanId] = useState(currentPlanId || 'free');
 
   useEffect(() => {
     const load = async () => {
@@ -71,68 +73,92 @@ const SubscriptionsScreen = ({ onBack }) => {
     load();
   }, []);
 
+  useEffect(() => {
+    setSelectedPlanId(currentPlanId || 'free');
+  }, [currentPlanId]);
+
   const glowPalette = {
-    starter: ['#8b5cf6', '#a78bfa', '#38bdf8'],
+    free: ['#38bdf8', '#60a5fa', '#8b5cf6'],
     pro: ['#f472b6', '#fb7185', '#f59e0b'],
-    elite: ['#34d399', '#22c55e', '#38bdf8']
+    premium: ['#34d399', '#22c55e', '#38bdf8']
   };
 
   const planLabel = {
-    starter: 'Beginner',
+    free: 'Start',
     pro: 'Popular',
-    elite: 'Maxim'
+    premium: 'Council'
   };
 
   const comparisonRows = [
     {
       label: 'Răspunsuri AI',
-      starter: 'Bază',
-      pro: 'Detaliate + adaptate',
-      elite: 'Detaliate + strategice + avansate'
+      free: 'Fallback basic',
+      pro: 'Gemini → Claude → Wolfram',
+      premium: 'Consiliu complet + sinteză Claude'
     },
     {
       label: 'Sesiuni ghidate',
-      starter: '2 pe zi',
+      free: '2 pe zi',
       pro: 'Nelimitate + personalizare',
-      elite: 'Nelimitate + planizare avansată'
+      premium: 'Nelimitate + coordonare avansată'
     },
     {
       label: 'Plan de progres',
-      starter: 'General',
+      free: 'General',
       pro: 'Ritmul tău',
-      elite: 'Ritm + recalcul live'
+      premium: 'Ritm + recalcul live'
     },
     {
       label: 'Memorie de studiu',
-      starter: 'Fundamentală',
+      free: 'Sesiunea curentă',
       pro: 'Repetiție inteligentă',
-      elite: 'Repetiție de top + recapitulate'
+      premium: 'Repetiție avansată + sinteză'
     },
     {
       label: 'Suport de pregătire',
-      starter: 'Standard',
+      free: 'Standard',
       pro: 'Prioritate',
-      elite: 'Prioritate + sesiuni premium'
+      premium: 'Prioritate + sesiuni premium'
     },
     {
       label: 'Exerciții generate',
-      starter: '3 / săptămână',
+      free: '3 / săptămână',
       pro: '5 / săptămână',
-      elite: 'Nelimitate'
+      premium: 'Nelimitate'
     },
     {
       label: 'Traseu de învățare',
-      starter: 'Simplu',
+      free: 'Simplu',
       pro: 'Personalizat',
-      elite: 'Personalizat + complet'
+      premium: 'Personalizat + complet'
     },
     {
       label: 'Atenție pentru examen',
-      starter: 'Bază',
+      free: 'Bază',
       pro: 'Intensiv',
-      elite: 'Simulare completă'
+      premium: 'Simulare completă'
     }
   ];
+
+  const formatPlanPrice = plan => plan.price || `${Number(plan.priceMonthly || 0)} lei/lună`;
+
+  const renderFeature = feature => {
+    const item = typeof feature === 'string' ? { label: feature, included: true } : feature;
+    return (
+      <li key={item.label} className={item.included ? '' : 'not-included'}>
+        <i className={`fas ${item.included ? 'fa-check-circle' : 'fa-circle-xmark'}`}></i>
+        <span>{item.label}</span>
+      </li>
+    );
+  };
+
+  const selectPlan = async planId => {
+    if (planId === selectedPlanId) return;
+    setSelectedPlanId(planId);
+    if (onSelectPlan) {
+      await onSelectPlan(planId);
+    }
+  };
 
   return (
     <div className="screen-page animate-fadeIn" aria-busy={loading}>
@@ -162,6 +188,10 @@ const SubscriptionsScreen = ({ onBack }) => {
                   <span><i className="fas fa-rocket"></i> Răspuns rapid</span>
                   <span><i className="fas fa-brain"></i> Memorie de studiu</span>
                 </div>
+                <div className="subscription-current-plan">
+                  <span>Planul tău curent</span>
+                  <strong>{planLabel[selectedPlanId] || 'Free'}</strong>
+                </div>
               </div>
               <div className="subscription-hero-panel">
                 <div className="subscription-hero-balance">
@@ -183,12 +213,12 @@ const SubscriptionsScreen = ({ onBack }) => {
 
             <section className="subscription-grid">
               {subscriptions.map(plan => (
-                <div key={plan.id} className={`subscription-card-shell ${plan.id === 'pro' ? 'featured-plan' : ''}`}>
+                <div key={plan.id} className={`subscription-card-shell ${plan.id === 'pro' ? 'featured-plan' : ''} ${selectedPlanId === plan.id ? 'current-plan' : ''}`}>
                   <div className="subscription-ribbon">{planLabel[plan.id] || 'Plan'}</div>
                   <BorderGlowComponent
                     className="subscription-card"
                     edgeSensitivity={34}
-                    glowColor={plan.id === 'pro' ? '300 90 72' : plan.id === 'elite' ? '140 70 65' : '240 70 70'}
+                    glowColor={plan.id === 'pro' ? '300 90 72' : plan.id === 'premium' ? '140 70 65' : '240 70 70'}
                     backgroundColor="#17172E"
                     borderRadius={24}
                     glowRadius={48}
@@ -202,17 +232,22 @@ const SubscriptionsScreen = ({ onBack }) => {
                       <div className="subscription-card-head">
                         <div>
                           <div className="subscription-pill">{plan.name}</div>
-                          <div className="subscription-price">{plan.price}</div>
+                          <div className="subscription-price">{formatPlanPrice(plan)}</div>
                         </div>
                         <i className="fas fa-crown subscription-icon"></i>
                       </div>
-                      <p className="subscription-description">{plan.description}</p>
+                      <p className="subscription-description">{plan.description || plan.tagline}</p>
                       <ul className="subscription-features">
-                        {plan.features.map((feature, index) => (
-                          <li key={index}><i className="fas fa-check-circle"></i>{feature}</li>
-                        ))}
+                        {plan.features.map(renderFeature)}
                       </ul>
-                      <button className={`subscription-button ${plan.id === 'pro' ? 'is-featured' : ''}`}>Alege planul</button>
+                      <button
+                        type="button"
+                        className={`subscription-button ${plan.id === 'pro' ? 'is-featured' : ''}`}
+                        onClick={() => selectPlan(plan.id)}
+                        disabled={selectedPlanId === plan.id}
+                      >
+                        {selectedPlanId === plan.id ? 'Plan activ' : 'Alege planul'}
+                      </button>
                     </div>
                   </BorderGlowComponent>
                 </div>
@@ -223,7 +258,7 @@ const SubscriptionsScreen = ({ onBack }) => {
               <div className="subscription-compare-copy">
                 <div className="eyebrow">De ce să alegi un plan?</div>
                 <h2 className="display-font">Vei vedea diferența în claritate, ritm și încredere.</h2>
-                <p>Fiecare plan are o funcție clară: Starter te ajută să începi, Pro te face să mergi constant, Elite te duce la un ritm mai performant și mai strategic.</p>
+                <p>Fiecare plan are o funcție clară: Free te ajută să începi, Pro te face să mergi constant, iar Premium te duce la un ritm mai performant și mai strategic.</p>
               </div>
               <div className="subscription-compare-list">
                 <div>
@@ -253,16 +288,16 @@ const SubscriptionsScreen = ({ onBack }) => {
               <div className="comparison-table" role="table" aria-label="Tabel comparativ abonamente">
                 <div className="comparison-row comparison-row-head" role="row">
                   <div className="comparison-cell comparison-cell-feature" role="columnheader">Funcție</div>
-                  <div className="comparison-cell" role="columnheader">Starter</div>
+                  <div className="comparison-cell" role="columnheader">Free</div>
                   <div className="comparison-cell" role="columnheader">Pro</div>
-                  <div className="comparison-cell" role="columnheader">Elite</div>
+                  <div className="comparison-cell" role="columnheader">Premium</div>
                 </div>
                 {comparisonRows.map(row => (
                   <div className="comparison-row" role="row" key={row.label}>
                     <div className="comparison-cell comparison-cell-feature" role="cell"><strong>{row.label}</strong></div>
-                    <div className="comparison-cell" role="cell">{row.starter}</div>
+                    <div className="comparison-cell" role="cell">{row.free}</div>
                     <div className="comparison-cell" role="cell">{row.pro}</div>
-                    <div className="comparison-cell" role="cell">{row.elite}</div>
+                    <div className="comparison-cell" role="cell">{row.premium}</div>
                   </div>
                 ))}
               </div>
@@ -299,6 +334,9 @@ const ProfileScreen = ({ userData, onBack }) => (
         </div>
       </div>
     </div>
+    <div className="mx-5 mt-5">
+      <window.Leaderboard userData={userData} />
+    </div>
     <div className="mx-5 mt-5 grid gap-3">
       <button className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">Setări cont</button>
       <button className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">Preferințe limbă</button>
@@ -306,18 +344,188 @@ const ProfileScreen = ({ userData, onBack }) => (
   </div>
 );
 
-const CalendarScreen = ({ onBack }) => (
-  <div className="screen-page animate-fadeIn">
-    <div className="px-5 pt-6 flex items-center justify-between">
-      <button onClick={onBack} className="text-slate-400 text-sm hover:text-white transition"><i className="fas fa-arrow-left mr-2"></i>Înapoi</button>
-      <div className="text-sm text-slate-400">Calendar</div>
+const MONTH_NAMES_RO = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'];
+const WEEKDAY_LABELS_RO = ['L', 'Ma', 'Mi', 'J', 'V', 'S', 'D'];
+
+const CalendarScreen = ({ onBack }) => {
+  const [cursor, setCursor] = useState(() => { const d = new Date(); d.setDate(1); return d; });
+  const [events, setEvents] = useState([]);
+  const [connections, setConnections] = useState({ google: { connected: false }, notion: { connected: false } });
+  const [loading, setLoading] = useState(true);
+  const [offline, setOffline] = useState(false);
+  const [connecting, setConnecting] = useState('');
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [newTitle, setNewTitle] = useState('');
+
+  const year = cursor.getFullYear();
+  const month = cursor.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7; // luni = 0
+
+  const loadEvents = useCallback(async () => {
+    setLoading(true);
+    const result = await window.MentorAPI.getCalendarEvents({ month: month + 1, year });
+    if (result.success) {
+      setEvents(result.data.events || []);
+      setConnections(result.data.connections || { google: { connected: false }, notion: { connected: false } });
+      setOffline(false);
+    } else {
+      setEvents([]);
+      setOffline(true);
+    }
+    setLoading(false);
+  }, [month, year]);
+
+  useEffect(() => { loadEvents(); }, [loadEvents]);
+
+  const eventsByDay = {};
+  events.forEach(ev => {
+    const day = Number(ev.date.slice(8, 10));
+    if (!eventsByDay[day]) eventsByDay[day] = [];
+    eventsByDay[day].push(ev);
+  });
+
+  const changeMonth = delta => {
+    setCursor(prev => { const d = new Date(prev); d.setMonth(d.getMonth() + delta); return d; });
+    setSelectedDay(null);
+  };
+
+  const connect = async provider => {
+    setConnecting(provider);
+    const result = await window.MentorAPI.connectCalendarProvider(provider);
+    if (result.success) {
+      setConnections(prev => ({ ...prev, [provider]: result.data.connection }));
+      await loadEvents();
+    }
+    setConnecting('');
+  };
+
+  const disconnect = async provider => {
+    await window.MentorAPI.disconnectCalendarProvider(provider);
+    await loadEvents();
+  };
+
+  const addEvent = async () => {
+    if (!selectedDay || !newTitle.trim()) return;
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
+    const result = await window.MentorAPI.addCalendarEvent({ date: dateStr, title: newTitle.trim(), type: 'custom' });
+    if (result.success) {
+      setEvents(prev => [...prev, result.data.event]);
+      setNewTitle('');
+    }
+  };
+
+  const removeEvent = async id => {
+    await window.MentorAPI.deleteCalendarEvent(id);
+    setEvents(prev => prev.filter(e => e.id !== id));
+  };
+
+  const todayKey = new Date();
+  const isToday = day => todayKey.getFullYear() === year && todayKey.getMonth() === month && todayKey.getDate() === day;
+
+  const cells = [];
+  for (let i = 0; i < firstWeekday; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+  return (
+    <div className="screen-page animate-fadeIn">
+      <div className="px-5 pt-6 flex items-center justify-between">
+        <button onClick={onBack} className="text-slate-400 text-sm hover:text-white transition"><i className="fas fa-arrow-left mr-2"></i>Înapoi</button>
+        <div className="text-sm text-slate-400">Calendar</div>
+      </div>
+
+      <div className="mx-5 mt-6 grid gap-4">
+        <section className="surface calendar-connect-card">
+          <div className="calendar-connect-head">
+            <div className="eyebrow">Sincronizare</div>
+            <h2 className="display-font">Conectează-ți calendarul</h2>
+            <p className="form-subtitle" style={{ margin: '6px 0 0' }}>Leagă Google Calendar sau Notion Calendar și evenimentele se adaugă automat aici.</p>
+          </div>
+          <div className="calendar-connect-row">
+            <div className={`calendar-provider ${connections.google?.connected ? 'connected' : ''}`}>
+              <div className="calendar-provider-copy"><i className="fab fa-google"></i><span>Google Calendar</span></div>
+              {connections.google?.connected ? (
+                <button type="button" className="ghost-button" onClick={() => disconnect('google')}>Deconectează</button>
+              ) : (
+                <button type="button" className="accent-button" onClick={() => connect('google')} disabled={connecting === 'google'}>
+                  {connecting === 'google' ? <i className="fas fa-spinner fa-spin" /> : 'Conectează'}
+                </button>
+              )}
+            </div>
+            <div className={`calendar-provider ${connections.notion?.connected ? 'connected' : ''}`}>
+              <div className="calendar-provider-copy"><i className="fas fa-book-bookmark"></i><span>Notion Calendar</span></div>
+              {connections.notion?.connected ? (
+                <button type="button" className="ghost-button" onClick={() => disconnect('notion')}>Deconectează</button>
+              ) : (
+                <button type="button" className="accent-button" onClick={() => connect('notion')} disabled={connecting === 'notion'}>
+                  {connecting === 'notion' ? <i className="fas fa-spinner fa-spin" /> : 'Conectează'}
+                </button>
+              )}
+            </div>
+          </div>
+          {(connections.google?.mocked || connections.notion?.mocked) && (
+            <p className="calendar-mock-note"><i className="fas fa-circle-info" /> Conectare mock — activă doar demonstrativ. Adaugă credențiale OAuth reale în backend pentru sincronizare live.</p>
+          )}
+        </section>
+
+        <section className="surface calendar-card" aria-busy={loading}>
+          <div className="calendar-card-head">
+            <button type="button" className="ghost-button calendar-nav-btn" onClick={() => changeMonth(-1)}><i className="fas fa-chevron-left" /></button>
+            <h2 className="display-font">{MONTH_NAMES_RO[month]} {year}</h2>
+            <button type="button" className="ghost-button calendar-nav-btn" onClick={() => changeMonth(1)}><i className="fas fa-chevron-right" /></button>
+          </div>
+
+          {offline && <div className="subscription-warning">Nu s-a putut contacta backend-ul de calendar. Se afișează o grilă goală, locală.</div>}
+
+          <div className="calendar-weekdays">
+            {WEEKDAY_LABELS_RO.map(w => <span key={w}>{w}</span>)}
+          </div>
+
+          <div className="calendar-grid">
+            {cells.map((day, i) => {
+              if (day === null) return <div key={`pad-${i}`} className="calendar-cell calendar-cell-empty" />;
+              const dayEvents = eventsByDay[day] || [];
+              return (
+                <button
+                  key={day}
+                  type="button"
+                  className={`calendar-cell ${isToday(day) ? 'is-today' : ''} ${selectedDay === day ? 'is-selected' : ''} ${dayEvents.length ? 'has-events' : ''}`}
+                  onClick={() => setSelectedDay(day)}
+                >
+                  <span className="calendar-cell-num">{day}</span>
+                  {dayEvents.length > 0 && <span className="calendar-cell-dots">{dayEvents.slice(0, 3).map(e => <i key={e.id} className={`calendar-dot source-${e.source}`} />)}</span>}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {selectedDay && (
+          <section className="surface calendar-day-panel animate-fadeIn">
+            <div className="calendar-day-panel-head">
+              <h3 className="display-font">{selectedDay} {MONTH_NAMES_RO[month]}</h3>
+              <button type="button" className="ghost-button" onClick={() => setSelectedDay(null)}><i className="fas fa-xmark" /></button>
+            </div>
+            <div className="calendar-day-events">
+              {(eventsByDay[selectedDay] || []).length === 0 && <p className="calendar-empty-hint">Nicio activitate. Adaugă una mai jos.</p>}
+              {(eventsByDay[selectedDay] || []).map(ev => (
+                <div key={ev.id} className="calendar-event-row">
+                  <span className={`calendar-dot source-${ev.source}`} />
+                  <span className="calendar-event-title">{ev.title}</span>
+                  {ev.source === 'manual' && <button type="button" className="calendar-event-remove" onClick={() => removeEvent(ev.id)}><i className="fas fa-trash" /></button>}
+                </div>
+              ))}
+            </div>
+            <div className="calendar-add-row">
+              <input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Ex: Test la fizică" onKeyDown={e => { if (e.key === 'Enter') addEvent(); }} />
+              <button type="button" className="accent-button" onClick={addEvent} disabled={!newTitle.trim()}><i className="fas fa-plus" /></button>
+            </div>
+          </section>
+        )}
+      </div>
     </div>
-    <div className="surface mx-5 mt-8 rounded-3xl p-5 text-slate-300">
-      <div className="text-lg font-bold mb-2">Planificare săptămânală</div>
-      <p className="text-sm leading-relaxed">Urmărește orele, testele și sesiunile importante. Această pagină va sincroniza datele de studiu și abonamentele pentru a-ți proteja progresul.</p>
-    </div>
-  </div>
-);
+  );
+};
 
 const App = () => {
   const [screen, setScreen] = useState('splash');
@@ -450,6 +658,16 @@ const App = () => {
     setScreen(target);
   };
 
+  const handleSelectPlan = async planId => {
+    const result = await MentorAPI.checkoutSubscription({ plan_id: planId, user_id: userData.email || 'demo_user' });
+    if (result.success) {
+      setUserData(prev => ({ ...prev, planId: result.data?.subscription?.planId || planId }));
+      showToast(planId === 'free' ? 'Ai trecut pe planul Free.' : `Planul ${planId} este activ.`, 'success');
+      return;
+    }
+    showToast('Nu am putut activa planul acum. Încearcă din nou.', 'warning');
+  };
+
   const handleOnboardingSelect = value => {
     setOnboardingData(prev => ({ ...prev, [currentOnboarding.inputKey]: value }));
   };
@@ -524,7 +742,7 @@ const App = () => {
       case 'calendar':
         return <CalendarScreen onBack={() => handleNavigate('home')} />;
       case 'subscriptions':
-        return <SubscriptionsScreen onBack={() => handleNavigate('home')} />;
+        return <SubscriptionsScreen onBack={() => handleNavigate('home')} currentPlanId={userData.planId || 'free'} onSelectPlan={handleSelectPlan} />;
       case 'profile':
         return <ProfileScreen userData={userData} onBack={() => handleNavigate('home')} />;
       default:
