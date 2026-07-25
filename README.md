@@ -2,7 +2,7 @@
 
 Chei de API:
   - OPENAI (4o)
-  - Google Gemeni
+  - Google Gemeni = https://aistudio.google.com/api-keys
   - Claude Haiku
   - Wolfram Alpha 
   - Mathpix
