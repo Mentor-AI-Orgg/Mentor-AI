@@ -2,75 +2,59 @@
 const PLANS = [
   {
     id: "free",
-    name: "Gratuit",
-    tagline: "Pentru a testa Mentor AI",
+    name: "Free",
+    tagline: "Pentru a începe rapid cu fallback-ul AI",
     priceMonthly: 0,
     priceYearly: 0,
     currency: "RON",
     badge: null,
     features: [
+      { label: "Fallback AI: GPT-4o → Wolfram → Mathpix → Gemini → Claude", included: true },
       { label: "10 întrebări / zi către Profesorul AI", included: true },
       { label: "1 limbă activă (Română)", included: true },
-      { label: "Memorie conversație: doar sesiunea curentă", included: true },
+      { label: "Memorie conversație doar pentru sesiunea curentă", included: true },
+      { label: "Planuri de studiu esențiale", included: true },
       { label: "Fotografiază lecția (Mathpix OCR)", included: false },
-      { label: "Calculator științific (Wolfram Alpha)", included: false },
-      { label: "Detector AI (anti-cheating)", included: false },
-      { label: "Fără reclame", included: false }
+      { label: "Calculator științific (Wolfram Alpha)", included: false }
     ]
   },
   {
-    id: "plus",
-    name: "Mentor Plus",
-    tagline: "Cel mai popular la elevi",
+    id: "pro",
+    name: "Pro",
+    tagline: "Pentru ritm constant și răspunsuri mai bune",
     priceMonthly: 29,
     priceYearly: 249,
     currency: "RON",
     badge: "Popular",
     features: [
+      { label: "Rutină AI: Gemini → Claude → Wolfram", included: true },
       { label: "Întrebări nelimitate către Profesorul AI", included: true },
-      { label: "Toate cele 11 limbi", included: true },
-      { label: "Memorie conversație persistentă (15 mesaje)", included: true },
+      { label: "Memorie conversație persistentă", included: true },
       { label: "Fotografiază lecția (Mathpix OCR)", included: true },
       { label: "Calculator științific (Wolfram Alpha)", included: true },
-      { label: "Detector AI (anti-cheating)", included: false },
-      { label: "Fără reclame", included: true }
-    ]
-  },
-  {
-    id: "pro",
-    name: "Mentor Pro",
-    tagline: "Pentru pregătire de examen (BAC / Evaluare Națională)",
-    priceMonthly: 49,
-    priceYearly: 419,
-    currency: "RON",
-    badge: "Recomandat pentru BAC",
-    features: [
-      { label: "Tot ce include Mentor Plus", included: true },
-      { label: "Detector AI (anti-cheating) nelimitat", included: true },
       { label: "Planuri de studiu personalizate", included: true },
-      { label: "Rapoarte de progres săptămânale", included: true },
-      { label: "Prioritate motoare AI (Claude → GPT-4o → Gemini)", included: true },
       { label: "Suport prioritar", included: true }
     ]
   },
   {
-    id: "family",
-    name: "Familie",
-    tagline: "Până la 4 conturi de elevi",
-    priceMonthly: 99,
-    priceYearly: 849,
+    id: "premium",
+    name: "Premium",
+    tagline: "Consiliu AI complet, cu Claude ca judecător",
+    priceMonthly: 49,
+    priceYearly: 419,
     currency: "RON",
-    badge: null,
+    badge: "Council",
     features: [
-      { label: "Tot ce include Mentor Pro", included: true },
-      { label: "Până la 4 profiluri de elevi", included: true },
-      { label: "Dashboard părinte", included: true },
-      { label: "Facturare unică pentru toată familia", included: true }
+      { label: "Consiliu AI: GPT-4o + Wolfram/Mathpix + Gemini + Claude", included: true },
+      { label: "Claude sintetizează și alege răspunsul final", included: true },
+      { label: "Toate răspunsurile sunt comparate și punctate", included: true },
+      { label: "Memorie conversație avansată", included: true },
+      { label: "Planuri de studiu premium", included: true },
+      { label: "Analize de progres detaliate", included: true }
     ]
   }
 ];
 
-// Mock "current subscription" for a user until real auth/billing is connected.
 const DEFAULT_USER_SUBSCRIPTION = {
   planId: "free",
   status: "active",

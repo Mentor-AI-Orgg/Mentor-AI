@@ -1,0 +1,66 @@
+const express = require("express");
+const router = express.Router();
+const store = require("../data/calendarStore");
+
+const resolveUserId = req => req.query.user_id || req.body?.user_id || "demo_user";
+
+// GET /api/calendar/events?user_id=&month=7&year=2026
+router.get("/events", (req, res) => {
+  const userId = resolveUserId(req);
+  let events = store.getEvents(userId);
+
+  const { month, year } = req.query;
+  if (month && year) {
+    const m = String(Number(month)).padStart(2, "0");
+    events = events.filter(e => e.date.startsWith(`${year}-${m}`));
+  }
+
+  res.json({ events, connections: store.getConnections(userId) });
+});
+
+// POST /api/calendar/events  { date: 'YYYY-MM-DD', title, type }
+router.post("/events", (req, res) => {
+  const userId = resolveUserId(req);
+  const { date, title, type } = req.body || {};
+  if (!date || !title) return res.status(400).json({ error: "Câmpurile 'date' și 'title' sunt obligatorii." });
+  const event = store.addEvent(userId, { date, title, type });
+  res.json({ success: true, event });
+});
+
+// DELETE /api/calendar/events/:eventId
+router.delete("/events/:eventId", (req, res) => {
+  const userId = resolveUserId(req);
+  const ok = store.deleteEvent(userId, req.params.eventId);
+  res.json({ success: ok });
+});
+
+// GET /api/calendar/status?user_id=
+router.get("/status", (req, res) => {
+  res.json({ connections: store.getConnections(resolveUserId(req)) });
+});
+
+// POST /api/calendar/connect  { provider: 'google' | 'notion' }
+router.post("/connect", (req, res) => {
+  const userId = resolveUserId(req);
+  const { provider } = req.body || {};
+  if (!["google", "notion"].includes(provider)) {
+    return res.status(400).json({ error: "Provider necunoscut. Folosește 'google' sau 'notion'." });
+  }
+  const result = store.connectProvider(userId, provider);
+  res.json({
+    success: true,
+    mocked: true,
+    message: `Cont ${provider === "google" ? "Google Calendar" : "Notion Calendar"} conectat (mock). Conectează credențiale OAuth reale în .env pentru sincronizare live.`,
+    ...result
+  });
+});
+
+// POST /api/calendar/disconnect { provider }
+router.post("/disconnect", (req, res) => {
+  const userId = resolveUserId(req);
+  const { provider } = req.body || {};
+  store.disconnectProvider(userId, provider);
+  res.json({ success: true });
+});
+
+module.exports = router;

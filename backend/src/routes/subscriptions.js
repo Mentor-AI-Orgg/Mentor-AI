@@ -2,8 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { PLANS, DEFAULT_USER_SUBSCRIPTION } = require("../data/subscriptions");
 
-// data de baza de adaugat
 const mockSubscriptions = { demo_user: { ...DEFAULT_USER_SUBSCRIPTION } };
+
+router.get("/", (req, res) => {
+  res.json({ subscriptions: PLANS });
+});
 
 router.get("/plans", (req, res) => {
   res.json({ plans: PLANS });
@@ -14,7 +17,6 @@ router.get("/me", (req, res) => {
   res.json({ subscription: mockSubscriptions[userId] || { ...DEFAULT_USER_SUBSCRIPTION } });
 });
 
-// neconectat  inca
 router.post("/checkout", (req, res) => {
   const { plan_id, billing_cycle = "monthly", user_id = "demo_user" } = req.body || {};
   const plan = PLANS.find(p => p.id === plan_id);
