@@ -1,10 +1,11 @@
-// planuri mock
 const PLANS = [
   {
     id: "free",
     name: "Free",
     tagline: "Pentru a începe rapid cu fallback-ul AI",
     priceMonthly: 0,
+    priceQuarterly: 0,
+    priceHalfYear: 0,
     priceYearly: 0,
     currency: "RON",
     badge: null,
@@ -22,8 +23,10 @@ const PLANS = [
     id: "pro",
     name: "Pro",
     tagline: "Pentru ritm constant și răspunsuri mai bune",
-    priceMonthly: 29,
-    priceYearly: 249,
+    priceMonthly: 75,
+    priceQuarterly: 214,
+    priceHalfYear: 405,
+    priceYearly: 765,
     currency: "RON",
     badge: "Popular",
     features: [
@@ -40,8 +43,10 @@ const PLANS = [
     id: "premium",
     name: "Premium",
     tagline: "Consiliu AI complet, cu Claude ca judecător",
-    priceMonthly: 49,
-    priceYearly: 419,
+    priceMonthly: 50,
+    priceQuarterly: 143,
+    priceHalfYear: 270,
+    priceYearly: 510,
     currency: "RON",
     badge: "Council",
     features: [
@@ -51,6 +56,25 @@ const PLANS = [
       { label: "Memorie conversație avansată", included: true },
       { label: "Planuri de studiu premium", included: true },
       { label: "Analize de progres detaliate", included: true }
+    ]
+  },
+  {
+    id: "elite",
+    name: "Elite Family Pack",
+    tagline: "Pentru familie, mai multe conturi și control comun",
+    priceMonthly: 100,
+    priceQuarterly: 285,
+    priceHalfYear: 540,
+    priceYearly: 1020,
+    currency: "RON",
+    badge: "Family",
+    features: [
+      { label: "Toate avantajele Premium", included: true },
+      { label: "Cont profesor și cont părinte dedicate", included: true },
+      { label: "Rapoarte trimise pe email către părinte", included: true },
+      { label: "Bonus 5000 monede: 7 zile gratuite Elite Family Pack", included: true },
+      { label: "Monitorizare progres pentru copil", included: true },
+      { label: "Control activ al abonamentului în familie", included: true }
     ]
   }
 ];

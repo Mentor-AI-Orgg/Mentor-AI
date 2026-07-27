@@ -13,6 +13,7 @@ const leaderboardRoute = require("./src/routes/leaderboard");
 const calendarRoute = require("./src/routes/calendar");
 const flashcardsRoute = require("./src/routes/flashcards");
 const diagnosticsRoute = require("./src/routes/diagnostics");
+const economyRoute = require("./src/routes/economy");
 
 const app = express();
 app.use(cors());
@@ -30,6 +31,7 @@ app.use("/api/leaderboard", leaderboardRoute);
 app.use("/api/calendar", calendarRoute);
 app.use("/api/flashcards", flashcardsRoute);
 app.use("/api/diagnostics", diagnosticsRoute);
+app.use("/api/economy", economyRoute);
 
 app.use(express.static(frontendDir));
 

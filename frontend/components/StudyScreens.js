@@ -48,6 +48,9 @@ const ProfessorScreen = ({ userData }) => {
     setDraft('');
     if (diagMode) { await runDiagnostics(message); return; }
     setMessages(previous => [...previous, { role: 'user', content: message }]); setLoading(true);
+    if (window.MentorAPI?.logActivity) {
+      window.MentorAPI.logActivity({ user_id: userData.email || 'demo_user', type: 'mentor_message', note: message, meta: { diagMode } });
+    }
     try {
       const reply = await chatRequest({ message, conversationId: conversationId.current, subject: userData.profile || 'matematica', classLevel, language: userData.language || 'ro', planId: userData.planId || 'free', mockReply: 'Îți explic pas cu pas. Începem cu ideea principală și verificăm împreună fiecare pas.' });
       setMessages(previous => [...previous, { role: 'assistant', content: reply.response || 'Am primit întrebarea. Hai să o desfacem în pași simpli.', mocked: reply.mocked }]);
@@ -136,11 +139,14 @@ const parseSessionPlan = text => {
   return plan;
 };
 
-const LearnScreen = ({ userData }) => {
+const LearnScreen = ({ userData, onRewardClaim }) => {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
   const [session, setSession] = useState(null);
   const [saved, setSaved] = useState(false);
+  const [detectText, setDetectText] = useState('');
+  const [detectLoading, setDetectLoading] = useState(false);
+  const [detectResult, setDetectResult] = useState(null);
 
   const modules = [
     { id: 'algebra', icon: 'fa-square-root-variable', title: 'Algebră fără panică', meta: '5 min · nivel adaptiv', color: 'module-violet', prompt: 'Creează o sesiune de 5 minute pentru algebră. Include obiectiv, încălzire, exercițiu, verificare și bonus. Fii foarte clar și practică cu un exemplu simplu.' },
@@ -167,6 +173,24 @@ const LearnScreen = ({ userData }) => {
     const plan = parseSessionPlan(reply.response || '');
     setSession({ title: module.title, meta: module.meta, ...plan, raw: reply.response || '' });
     setLoading(false);
+    if (window.MentorAPI?.logActivity) {
+      window.MentorAPI.logActivity({ user_id: userData.email || 'demo_user', type: 'learn_module', note: module.title, meta: { moduleId: module.id, title: module.title } });
+    }
+  };
+
+  const runDetector = async () => {
+    if (!detectText.trim() || detectLoading) return;
+    setDetectLoading(true);
+    const result = await window.MentorAPI.detect({ text: detectText.trim() });
+    if (result.success) {
+      setDetectResult(result.data);
+      if (window.MentorAPI?.logActivity) {
+        window.MentorAPI.logActivity({ user_id: userData.email || 'demo_user', type: 'ai_detect', note: detectText.trim().slice(0, 120), meta: { ai_probability: result.data.ai_probability || 0, verdict: result.data.verdict || '' } });
+      }
+    } else {
+      setDetectResult({ verdict: 'Detector indisponibil', ai_probability: 0 });
+    }
+    setDetectLoading(false);
   };
 
   const focusMinutes = userData.dailyHours ? `${Math.max(30, Number(userData.dailyHours) * 30)} min` : '30 min';
@@ -230,9 +254,34 @@ const LearnScreen = ({ userData }) => {
       </> : <><div className="eyebrow">SESIUNEA TA</div><p>Pregătim acum un plan de lucru clar și eficient.</p></>}
     </section>}
 
+    <section className="surface learn-detector-card">
+      <div className="section-heading">
+        <div>
+          <div className="eyebrow">Detector AI</div>
+          <h2 className="display-font">Verifică dacă un text pare generat.</h2>
+        </div>
+      </div>
+      <textarea
+        className="learn-detector-input"
+        rows="5"
+        value={detectText}
+        onChange={e => setDetectText(e.target.value)}
+        placeholder="Lipește un text aici și verifică dacă pare scris de AI..."
+      />
+      <div className="learning-actions">
+        <button type="button" className="accent-button result-action" onClick={runDetector} disabled={detectLoading || !detectText.trim()}>{detectLoading ? 'Analizez...' : 'Rulează detectorul'}</button>
+      </div>
+      {detectResult && (
+        <div className="learn-detector-result">
+          <strong>{detectResult.verdict || 'Rezultat detector'}</strong>
+          <span>Probabilitate AI: {Number(detectResult.ai_probability || 0).toFixed(0)}%</span>
+        </div>
+      )}
+    </section>
+
     <div className="learn-tools-grid">
-      <window.FocusTimer />
-      <window.FlashCards userData={userData} presetTopics={modules.map(m => m.title)} />
+      <window.FocusTimer userData={userData} onRewardClaim={onRewardClaim} />
+      <window.FlashCards userData={userData} presetTopics={modules.map(m => m.title)} onRewardClaim={onRewardClaim} />
     </div>
   </main>;
 };

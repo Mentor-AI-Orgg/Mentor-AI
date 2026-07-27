@@ -38,15 +38,28 @@ const DockItem = ({ item, active, onNavigate, pointerX, baseSize, maxScale }) =>
   );
 };
 
-const BottomNav = ({ active, onNavigate }) => {
-  const items = [
-    { id: 'home', icon: 'fa-home', label: 'Home' },
-    { id: 'professor', icon: 'fa-graduation-cap', label: 'Profesor' },
-    { id: 'learn', icon: 'fa-book-open', label: 'Învață' },
-    { id: 'calendar', icon: 'fa-calendar-alt', label: 'Calendar' },
-    { id: 'subscriptions', icon: 'fa-crown', label: 'Abonamente' },
-    { id: 'profile', icon: 'fa-user', label: 'Profil' }
-  ];
+const BottomNav = ({ active, onNavigate, role = 'student' }) => {
+  const items = role === 'parent'
+    ? [
+        { id: 'parent', icon: 'fa-people-roof', label: 'Părinte' },
+        { id: 'subscriptions', icon: 'fa-crown', label: 'Abonamente' },
+        { id: 'profile', icon: 'fa-user', label: 'Profil' }
+      ]
+    : role === 'teacher'
+      ? [
+          { id: 'teacher', icon: 'fa-chalkboard-user', label: 'Clasa mea' },
+          { id: 'subscriptions', icon: 'fa-crown', label: 'Abonamente' },
+          { id: 'profile', icon: 'fa-user', label: 'Profil' }
+        ]
+      : [
+          { id: 'home', icon: 'fa-home', label: 'Home' },
+          { id: 'professor', icon: 'fa-graduation-cap', label: 'Profesor' },
+          { id: 'learn', icon: 'fa-book-open', label: 'Învață' },
+          { id: 'shop', icon: 'fa-store', label: 'Shop' },
+          { id: 'calendar', icon: 'fa-calendar-alt', label: 'Calendar' },
+          { id: 'subscriptions', icon: 'fa-crown', label: 'Abonamente' },
+          { id: 'profile', icon: 'fa-user', label: 'Profil' }
+        ];
 
   const [pointerX, setPointerX] = useState(null);
 

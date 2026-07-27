@@ -3,7 +3,8 @@ const { useState, useEffect, useRef, useCallback } = React;
 const PRESETS = [
   { id: 'p15', label: '15 min', seconds: 15 * 60 },
   { id: 'p25', label: '25 min · Pomodoro', seconds: 25 * 60 },
-  { id: 'p50', label: '50 min', seconds: 50 * 60 }
+  { id: 'p50', label: '50 min', seconds: 50 * 60 },
+  { id: 'p60', label: '60 min', seconds: 60 * 60 }
 ];
 
 const formatTime = totalSeconds => {
@@ -13,7 +14,7 @@ const formatTime = totalSeconds => {
   return `${mm}:${ss}`;
 };
 
-const FocusTimer = () => {
+const FocusTimer = ({ userData, onRewardClaim }) => {
   const [preset, setPreset] = useState(PRESETS[1]);
   const [remaining, setRemaining] = useState(PRESETS[1].seconds);
   const [running, setRunning] = useState(false);
@@ -29,6 +30,20 @@ const FocusTimer = () => {
           clearInterval(intervalRef.current);
           setRunning(false);
           setSessionsDone(s => s + 1);
+          if (window.MentorAPI?.logActivity) {
+            window.MentorAPI.logActivity({ user_id: userData?.email || 'demo_user', type: 'focus_session', note: `Focus completat: ${preset.label}`, meta: { minutes: Math.round(preset.seconds / 60) } });
+          }
+          if (preset.seconds >= 60 * 60) {
+            window.MentorAPI.claimReward({
+              user_id: userData?.email || 'demo_user',
+              type: 'study_1h',
+              hours: 1
+            }).then(result => {
+              if (result.success && typeof onRewardClaim === 'function') {
+                onRewardClaim(result.data);
+              }
+            });
+          }
           return 0;
         }
         return prev - 1;

@@ -21,6 +21,8 @@ const DEFAULT_SUBSCRIPTIONS = [
     id: 'free',
     name: 'Free',
     priceMonthly: 0,
+    priceQuarterly: 0,
+    priceHalfYear: 0,
     priceYearly: 0,
     currency: 'RON',
     tagline: 'Pentru a începe rapid cu fallback-ul AI',
@@ -34,8 +36,10 @@ const DEFAULT_SUBSCRIPTIONS = [
   {
     id: 'pro',
     name: 'Pro',
-    priceMonthly: 29,
-    priceYearly: 249,
+    priceMonthly: 75,
+    priceQuarterly: 214,
+    priceHalfYear: 405,
+    priceYearly: 765,
     currency: 'RON',
     tagline: 'Pentru ritm constant și răspunsuri mai bune',
     features: [
@@ -48,14 +52,32 @@ const DEFAULT_SUBSCRIPTIONS = [
   {
     id: 'premium',
     name: 'Premium',
-    priceMonthly: 49,
-    priceYearly: 419,
+    priceMonthly: 50,
+    priceQuarterly: 143,
+    priceHalfYear: 270,
+    priceYearly: 510,
     currency: 'RON',
     tagline: 'Consiliu AI complet, cu Claude ca judecător',
     features: [
       { label: 'Consiliu AI: GPT-4o + Wolfram/Mathpix + Gemini + Claude', included: true },
       { label: 'Claude sintetizează și alege răspunsul final', included: true },
       { label: 'Toate răspunsurile sunt comparate și punctate', included: true }
+    ]
+  },
+  {
+    id: 'elite',
+    name: 'Elite Family Pack',
+    priceMonthly: 100,
+    priceQuarterly: 285,
+    priceHalfYear: 540,
+    priceYearly: 1020,
+    currency: 'RON',
+    tagline: 'Pentru familie, mai multe conturi și control comun',
+    features: [
+      { label: 'Toate avantajele Premium', included: true },
+      { label: 'Cont profesor și cont părinte dedicate', included: true },
+      { label: 'Rapoarte trimise pe email către părinte', included: true },
+      { label: 'Bonus 5000 monede: 7 zile gratuite Elite Family Pack', included: true }
     ]
   }
 ];
@@ -133,6 +155,172 @@ const MentorAPI = {
   async checkoutSubscription(payload) {
     try {
       const data = await safeFetchJson('/api/subscriptions/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async getEconomySummary(params = {}) {
+    try {
+      const qs = new URLSearchParams(params).toString();
+      const data = await safeFetchJson(`/api/economy/summary${qs ? `?${qs}` : ''}`);
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async getShopCatalog() {
+    try {
+      const data = await safeFetchJson('/api/economy/catalog');
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async claimReward(payload) {
+    try {
+      const data = await safeFetchJson('/api/economy/claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async buyShopItem(payload) {
+    try {
+      const data = await safeFetchJson('/api/economy/buy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async sendParentReview(payload) {
+    try {
+      const data = await safeFetchJson('/api/economy/parent-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async getNotifications(params = {}) {
+    try {
+      const qs = new URLSearchParams(params).toString();
+      const data = await safeFetchJson(`/api/economy/notifications${qs ? `?${qs}` : ''}`);
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async logActivity(payload) {
+    try {
+      const data = await safeFetchJson('/api/economy/activity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async connectChildAccount(payload) {
+    try {
+      const data = await safeFetchJson('/api/economy/connect-child', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async updateParentPreferences(payload) {
+    try {
+      const data = await safeFetchJson('/api/economy/preferences', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async getParentAnalytics(params = {}) {
+    try {
+      const qs = new URLSearchParams(params).toString();
+      const data = await safeFetchJson(`/api/economy/parent-analytics${qs ? `?${qs}` : ''}`);
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async getTeacherAnalytics(params = {}) {
+    try {
+      const qs = new URLSearchParams(params).toString();
+      const data = await safeFetchJson(`/api/economy/teacher-analytics${qs ? `?${qs}` : ''}`);
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async requestTest(payload) {
+    try {
+      const data = await safeFetchJson('/api/economy/request-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async requestAccessCode(payload) {
+    try {
+      const data = await safeFetchJson('/api/economy/access-code/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async verifyAccessCode(payload) {
+    try {
+      const data = await safeFetchJson('/api/economy/access-code/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

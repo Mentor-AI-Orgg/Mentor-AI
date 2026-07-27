@@ -17,7 +17,7 @@ const FlashCard = ({ card, flipped, onFlip }) => (
   </div>
 );
 
-const FlashCards = ({ userData, presetTopics = [] }) => {
+const FlashCards = ({ userData, presetTopics = [], onRewardClaim }) => {
   const [customPrompt, setCustomPrompt] = useState('');
   const [cards, setCards] = useState([]);
   const [index, setIndex] = useState(0);
@@ -25,6 +25,7 @@ const FlashCards = ({ userData, presetTopics = [] }) => {
   const [loading, setLoading] = useState(false);
   const [known, setKnown] = useState({});
   const [source, setSource] = useState('');
+  const [rewardClaimed, setRewardClaimed] = useState(false);
 
   const generate = async topic => {
     const finalTopic = topic || customPrompt.trim();
@@ -33,7 +34,12 @@ const FlashCards = ({ userData, presetTopics = [] }) => {
     setFlipped(false);
     setIndex(0);
     setKnown({});
+    setRewardClaimed(false);
     setSource(finalTopic);
+
+    if (window.MentorAPI?.logActivity) {
+      window.MentorAPI.logActivity({ user_id: userData?.email || 'demo_user', type: 'flashcards_generate', note: finalTopic, meta: { topic: finalTopic, presetCount: presetTopics.length } });
+    }
 
     const result = await window.MentorAPI.generateFlashcards({
       topic: finalTopic,
@@ -55,10 +61,28 @@ const FlashCards = ({ userData, presetTopics = [] }) => {
   };
 
   const markKnown = value => {
-    setKnown(prev => ({ ...prev, [cards[index].id]: value }));
+    const nextKnown = { ...known, [cards[index].id]: value };
+    const nextKnownCount = Object.values(nextKnown).filter(Boolean).length;
+    setKnown(nextKnown);
     if (index < cards.length - 1) {
       setIndex(i => i + 1);
       setFlipped(false);
+    }
+    if (!rewardClaimed && nextKnownCount >= 5) {
+      setRewardClaimed(true);
+      window.MentorAPI.claimReward({
+        user_id: userData?.email || 'demo_user',
+        type: 'flashcards_5',
+        correct_count: nextKnownCount,
+        topic: source || customPrompt.trim() || 'flashcards'
+      }).then(result => {
+        if (result.success && typeof onRewardClaim === 'function') {
+          onRewardClaim(result.data);
+        }
+      });
+      if (window.MentorAPI?.logActivity) {
+        window.MentorAPI.logActivity({ user_id: userData?.email || 'demo_user', type: 'flashcards_result', note: `Cel puțin 5 flashcarduri corecte la ${source || customPrompt.trim() || 'flashcards'}`, meta: { correctCount: nextKnownCount } });
+      }
     }
   };
 
