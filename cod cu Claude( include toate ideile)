@@ -1,0 +1,2199 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MENTOR APP v1.0</title>
+<style>
+:root {
+  --primary: #6366f1; --primary-dark: #4f46e5; --secondary: #8b5cf6;
+  --accent: #f59e0b; --success: #10b981; --danger: #ef4444;
+  --warning: #f59e0b; --info: #3b82f6; --bg: #0f172a;
+  --bg-card: #1e293b; --bg-light: #334155; --text: #f1f5f9;
+  --text-muted: #94a3b8; --border: #475569;
+  --shadow: 0 10px 40px rgba(0,0,0,0.4);
+  --radius: 16px; --radius-sm: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes confetti { 0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 5px var(--accent); } 50% { box-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent); } }
+@keyframes rainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+@keyframes levelUpPop { 0% { transform: scale(0); opacity: 0; } 50% { transform: scale(1.2); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes wave { 0%, 100% { transform: scaleY(0.5); } 50% { transform: scaleY(1); } }
+
+.animate-fade { animation: fadeIn 0.5s ease; }
+.animate-pulse { animation: pulse 2s infinite; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-glow { animation: glow 2s infinite; }
+.animate-rainbow { animation: rainbow 3s linear infinite; }
+
+.app-container { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 260px; background: var(--bg-card); border-right: 1px solid var(--border);
+  padding: 20px; position: fixed; height: 100vh; overflow-y: auto; z-index: 100;
+  transition: transform 0.3s; display: flex; flex-direction: column;
+}
+.sidebar.collapsed { transform: translateX(-100%); }
+.sidebar-logo {
+  font-size: 1.5rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 30px; display: flex; align-items: center; gap: 10px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s;
+  margin-bottom: 4px; color: var(--text-muted); font-size: 0.95rem;
+}
+.nav-item:hover { background: var(--bg-light); color: var(--text); }
+.nav-item.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+.nav-item .badge { margin-left: auto; background: var(--danger); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; }
+
+.main-content { flex: 1; margin-left: 260px; padding: 24px; max-width: calc(100% - 260px); }
+
+.top-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+}
+.top-bar h1 { font-size: 1.5rem; }
+.user-stats { display: flex; gap: 16px; align-items: center; }
+.stat-chip {
+  display: flex; align-items: center; gap: 6px; background: var(--bg-card);
+  padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; border: 1px solid var(--border);
+}
+.stat-chip.xp { border-color: var(--accent); }
+.stat-chip.coins { border-color: var(--success); }
+.stat-chip.streak { border-color: var(--danger); }
+
+.card {
+  background: var(--bg-card); border-radius: var(--radius); padding: 24px;
+  margin-bottom: 20px; border: 1px solid var(--border);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.card-title { font-size: 1.2rem; font-weight: 700; }
+
+.grid { display: grid; gap: 20px; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-5 { grid-template-columns: repeat(5, 1fr); }
+
+@media (max-width: 1024px) { .grid-4, .grid-5 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { margin-left: 0; max-width: 100%; }
+}
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 20px; border-radius: var(--radius-sm); border: none;
+  cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s;
+}
+.btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(99,102,241,0.4); }
+.btn-success { background: var(--success); color: white; }
+.btn-danger { background: var(--danger); color: white; }
+.btn-warning { background: var(--warning); color: black; }
+.btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text); }
+.btn-outline:hover { border-color: var(--primary); }
+.btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+.btn-lg { padding: 14px 28px; font-size: 1.1rem; }
+
+.progress-bar { width: 100%; height: 10px; background: var(--bg-light); border-radius: 5px; overflow: hidden; margin: 8px 0; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 5px; transition: width 0.5s ease; }
+
+.level-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; }
+
+.shop-item {
+  background: var(--bg); border-radius: var(--radius-sm); padding: 16px;
+  text-align: center; border: 2px solid transparent; transition: all 0.2s;
+  cursor: pointer; position: relative; overflow: hidden;
+}
+.shop-item:hover { border-color: var(--primary); transform: translateY(-4px); }
+.shop-item.owned { border-color: var(--success); opacity: 0.7; }
+.shop-item.locked { opacity: 0.5; cursor: not-allowed; }
+.item-icon { font-size: 3rem; margin-bottom: 8px; }
+.item-name { font-weight: 600; margin-bottom: 4px; }
+.item-price { color: var(--accent); font-weight: 700; }
+
+.map-node {
+  padding: 16px 24px; border-radius: var(--radius-sm); text-align: center;
+  font-weight: 600; cursor: pointer; transition: all 0.3s; position: relative;
+}
+.map-node.mastered { background: linear-gradient(135deg, #10b981, #059669); }
+.map-node.almost { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.map-node.needs-practice { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.map-node.locked { background: var(--bg-light); opacity: 0.5; cursor: not-allowed; }
+.map-connector { width: 2px; height: 30px; background: var(--border); margin: 0 auto; }
+
+.chat-container {
+  display: flex; flex-direction: column; height: 500px;
+  background: var(--bg); border-radius: var(--radius); overflow: hidden;
+}
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 20px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.chat-message {
+  max-width: 80%; padding: 12px 16px; border-radius: 16px; animation: fadeIn 0.3s ease;
+}
+.chat-message.user { align-self: flex-end; background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+.chat-message.ai { align-self: flex-start; background: var(--bg-light); border: 1px solid var(--border); }
+.chat-input-area { display: flex; gap: 10px; padding: 16px; border-top: 1px solid var(--border); }
+.chat-input {
+  flex: 1; background: var(--bg-light); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 16px; color: var(--text);
+  font-size: 1rem; outline: none;
+}
+.chat-input:focus { border-color: var(--primary); }
+
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center;
+  z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--bg-card); border-radius: var(--radius); padding: 32px;
+  max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;
+  transform: scale(0.9); transition: transform 0.3s;
+}
+.modal-overlay.active .modal { transform: scale(1); }
+
+.confetti-container { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 9999; overflow: hidden; }
+.confetti-piece { position: absolute; width: 10px; height: 10px; animation: confetti 3s ease-out forwards; }
+
+.auth-container {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--bg) 0%, #1e1b4b 100%);
+}
+.auth-box {
+  background: var(--bg-card); padding: 48px; border-radius: var(--radius);
+  width: 100%; max-width: 420px; border: 1px solid var(--border);
+}
+.auth-box h2 {
+  font-size: 2rem; margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 0.9rem; }
+.form-input {
+  width: 100%; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text); font-size: 1rem; outline: none; transition: border-color 0.2s;
+}
+.form-input:focus { border-color: var(--primary); }
+
+.notification-item {
+  padding: 14px 18px; background: var(--bg); border-radius: var(--radius-sm);
+  margin-bottom: 10px; border-left: 4px solid var(--primary);
+  display: flex; align-items: flex-start; gap: 12px; animation: slideIn 0.3s ease;
+}
+.notification-item.unread { background: rgba(99,102,241,0.1); }
+.notification-item .notif-time { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+.leaderboard-row {
+  display: flex; align-items: center; gap: 16px; padding: 12px 16px;
+  border-radius: var(--radius-sm); margin-bottom: 8px; background: var(--bg); transition: all 0.2s;
+}
+.leaderboard-row:hover { background: var(--bg-light); }
+.leaderboard-row.top-1 { border: 2px solid #fbbf24; }
+.leaderboard-row.top-2 { border: 2px solid #c0c0c0; }
+.leaderboard-row.top-3 { border: 2px solid #cd7f32; }
+.lb-rank { font-size: 1.5rem; font-weight: 800; width: 40px; text-align: center; }
+.lb-avatar { font-size: 2rem; }
+.lb-info { flex: 1; }
+.lb-name { font-weight: 600; }
+.lb-meta { font-size: 0.8rem; color: var(--text-muted); }
+.lb-xp { font-weight: 700; color: var(--accent); }
+
+.mission-card {
+  background: var(--bg); border-radius: var(--radius-sm); padding: 16px;
+  margin-bottom: 12px; border: 1px solid var(--border); display: flex; align-items: center; gap: 16px;
+}
+.mission-card.completed { border-color: var(--success); opacity: 0.7; }
+.mission-icon { font-size: 2rem; }
+.mission-info { flex: 1; }
+.mission-title { font-weight: 600; }
+.mission-progress { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+.exam-timeline { display: flex; gap: 8px; overflow-x: auto; padding: 16px 0; }
+.exam-day {
+  min-width: 80px; padding: 12px; background: var(--bg); border-radius: var(--radius-sm);
+  text-align: center; border: 2px solid var(--border);
+}
+.exam-day.completed { border-color: var(--success); background: rgba(16,185,129,0.1); }
+.exam-day.current { border-color: var(--accent); background: rgba(245,158,11,0.1); }
+.exam-day.future { opacity: 0.5; }
+
+.sim-container {
+  background: var(--bg); border-radius: var(--radius); padding: 24px;
+  min-height: 300px; position: relative; overflow: hidden;
+}
+.sim-object {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--accent), #f97316);
+  border-radius: 50%; position: absolute; transition: all 0.5s ease;
+}
+.sim-controls { display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+.sim-slider { flex: 1; min-width: 200px; }
+.sim-slider label { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+.sim-slider input[type="range"] { width: 100%; accent-color: var(--primary); }
+
+.scanner-area {
+  border: 3px dashed var(--border); border-radius: var(--radius);
+  padding: 60px 20px; text-align: center; cursor: pointer;
+  transition: all 0.3s; background: var(--bg);
+}
+.scanner-area:hover { border-color: var(--primary); background: rgba(99,102,241,0.05); }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+.tab { padding: 10px 20px; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; color: var(--text-muted); }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+.personality-card {
+  padding: 20px; border-radius: var(--radius-sm); border: 2px solid var(--border);
+  cursor: pointer; transition: all 0.2s; text-align: center;
+}
+.personality-card:hover { border-color: var(--primary); }
+.personality-card.selected { border-color: var(--primary); background: rgba(99,102,241,0.1); }
+.personality-card .p-avatar { font-size: 3rem; margin-bottom: 8px; }
+.personality-card .p-name { font-weight: 700; }
+.personality-card .p-desc { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+.explain-mode {
+  padding: 12px 16px; border-radius: var(--radius-sm); background: var(--bg);
+  border: 1px solid var(--border); cursor: pointer; transition: all 0.2s;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 12px;
+}
+.explain-mode:hover { border-color: var(--primary); background: rgba(99,102,241,0.05); }
+.explain-mode .mode-icon { font-size: 1.5rem; }
+.explain-mode .mode-text { flex: 1; }
+.explain-mode .mode-title { font-weight: 600; }
+.explain-mode .mode-desc { font-size: 0.85rem; color: var(--text-muted); }
+
+.typing-indicator { display: flex; align-items: center; gap: 5px; padding: 6px 2px; }
+.typing-indicator span { width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted); animation: typingBounce 1.4s infinite ease-in-out; }
+.typing-indicator span:nth-child(1) { animation-delay: 0s; }
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
+.chat-input:disabled, .chat-input-area .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.voice-wave { display: flex; align-items: center; gap: 3px; height: 30px; }
+.voice-wave span { width: 4px; background: var(--primary); border-radius: 2px; animation: wave 1s ease-in-out infinite; }
+.voice-wave span:nth-child(1) { height: 10px; animation-delay: 0s; }
+.voice-wave span:nth-child(2) { height: 20px; animation-delay: 0.1s; }
+.voice-wave span:nth-child(3) { height: 30px; animation-delay: 0.2s; }
+.voice-wave span:nth-child(4) { height: 15px; animation-delay: 0.3s; }
+.voice-wave span:nth-child(5) { height: 25px; animation-delay: 0.4s; }
+
+.friend-request {
+  display: flex; align-items: center; gap: 12px; padding: 12px;
+  background: var(--bg); border-radius: var(--radius-sm); margin-bottom: 8px;
+}
+.event-banner {
+  background: linear-gradient(135deg, #7c3aed, #db2777); padding: 16px 24px;
+  border-radius: var(--radius-sm); margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.streak-calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 16px; }
+.streak-day {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-sm); background: var(--bg); border: 1px solid var(--border);
+  font-size: 0.85rem; font-weight: 600;
+}
+.streak-day.done { background: linear-gradient(135deg, var(--success), #059669); border-color: var(--success); }
+.streak-day.today { border-color: var(--accent); box-shadow: 0 0 10px rgba(245,158,11,0.3); }
+.streak-day.missed { background: var(--danger); opacity: 0.5; }
+
+.spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+
+.test-question { background: var(--bg); border-radius: var(--radius-sm); padding: 20px; margin-bottom: 16px; }
+.test-options { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.test-option {
+  padding: 12px 16px; background: var(--bg-light); border-radius: var(--radius-sm);
+  cursor: pointer; transition: all 0.2s; border: 2px solid transparent;
+}
+.test-option:hover { border-color: var(--primary); }
+.test-option.correct { border-color: var(--success); background: rgba(16,185,129,0.1); }
+.test-option.wrong { border-color: var(--danger); background: rgba(239,68,68,0.1); }
+
+.hint-box {
+  background: rgba(245,158,11,0.1); border-left: 4px solid var(--accent);
+  padding: 12px 16px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; margin: 12px 0;
+}
+
+.scan-result { background: var(--bg); border-radius: var(--radius-sm); padding: 16px; margin-top: 16px; border: 1px solid var(--border); }
+.scan-exercise { padding: 12px; background: var(--bg-light); border-radius: var(--radius-sm); margin-bottom: 8px; }
+
+.achievement-popup {
+  position: fixed; bottom: 30px; right: 30px;
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-light));
+  border: 2px solid var(--accent); border-radius: var(--radius);
+  padding: 20px 24px; display: flex; align-items: center; gap: 16px;
+  z-index: 9999; animation: slideIn 0.5s ease, fadeIn 0.5s ease;
+  box-shadow: 0 10px 40px rgba(245,158,11,0.3);
+}
+.achievement-popup .ach-icon { font-size: 2.5rem; }
+.achievement-popup .ach-text { font-weight: 700; }
+.achievement-popup .ach-sub { font-size: 0.85rem; color: var(--text-muted); }
+
+.levelup-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.9); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; z-index: 10000;
+}
+.levelup-content { text-align: center; animation: levelUpPop 0.6s ease; }
+.levelup-content h1 {
+  font-size: 4rem;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b, #ef4444, #8b5cf6);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  animation: rainbow 2s linear infinite;
+}
+
+.text-center { text-align: center; }
+.text-muted { color: var(--text-muted); }
+.text-success { color: var(--success); }
+.text-danger { color: var(--danger); }
+.text-warning { color: var(--warning); }
+.text-accent { color: var(--accent); }
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.hidden { display: none !important; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 16px; }
+.gap-3 { gap: 24px; }
+
+.mobile-menu-btn {
+  display: none; position: fixed; top: 20px; left: 20px; z-index: 101;
+  background: var(--bg-card); border: 1px solid var(--border); color: var(--text);
+  padding: 10px; border-radius: var(--radius-sm); cursor: pointer;
+}
+@media (max-width: 768px) { .mobile-menu-btn { display: block; } }
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="authScreen" class="auth-container">
+  <div class="auth-box animate-fade">
+    <div class="text-center mb-3">
+      <div style="font-size: 4rem;">📚</div>
+      <h2>MENTOR APP</h2>
+      <p class="text-muted">Invata inteligent, progreseaza rapid</p>
+    </div>
+    <div class="tabs" style="margin-bottom: 24px;">
+      <div class="tab active" onclick="switchAuthTab('login', event)">Autentificare</div>
+      <div class="tab" onclick="switchAuthTab('register', event)">Inregistrare</div>
+    </div>
+    <div id="loginForm">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" class="form-input" id="loginEmail" placeholder="nume@exemplu.ro" value="elev@test.ro">
+      </div>
+      <div class="form-group">
+        <label>Parola</label>
+        <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" value="123456">
+      </div>
+      <div class="form-group">
+        <label>Tip cont</label>
+        <select class="form-input" id="loginType">
+          <option value="student">Elev</option>
+          <option value="parent">Parinte</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%;" onclick="doLogin()">Intra in aplicatie</button>
+    </div>
+    <div id="registerForm" class="hidden">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" class="form-input" id="regUsername" placeholder="AlexInvata">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" class="form-input" id="regEmail" placeholder="nume@exemplu.ro">
+      </div>
+      <div class="form-group">
+        <label>Parola</label>
+        <input type="password" class="form-input" id="regPassword" placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label>Clasa</label>
+        <select class="form-input" id="regClass">
+          <option value="1">Clasa 1</option><option value="2">Clasa 2</option><option value="3">Clasa 3</option>
+          <option value="4">Clasa 4</option><option value="5" selected>Clasa 5</option><option value="6">Clasa 6</option>
+          <option value="7">Clasa 7</option><option value="8">Clasa 8</option><option value="9">Clasa 9</option>
+          <option value="10">Clasa 10</option><option value="11">Clasa 11</option><option value="12">Clasa 12</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%;" onclick="doRegister()">Creeaza cont</button>
+    </div>
+    <div class="text-center mt-2">
+      <p class="text-muted" style="font-size: 0.85rem;">
+        Demo: elev@test.ro / 123456 (elev) sau parinte@test.ro / 123456 (parinte)
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP (STUDENT) -->
+<div id="appScreen" class="hidden">
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+  <div class="app-container">
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-logo"><span>📚</span><span>MENTOR</span></div>
+      <div class="nav-item active" onclick="navigate('dashboard')"><span>🏠</span> Dashboard</div>
+      <div class="nav-item" onclick="navigate('ai-tutor')"><span>🧠</span> AI Tutor<span class="badge" id="aiBadge" style="display:none">1</span></div>
+      <div class="nav-item" onclick="navigate('learning-map')"><span>🗺️</span> Harta Invatarii</div>
+      <div class="nav-item" onclick="navigate('lessons')"><span>📖</span> Lectii</div>
+      <div class="nav-item" onclick="navigate('tests')"><span>📝</span> Teste & Examene</div>
+      <div class="nav-item" onclick="navigate('scanner')"><span>📸</span> Scanare Tema</div>
+      <div class="nav-item" onclick="navigate('simulations')"><span>🧪</span> Laboratoare</div>
+      <div class="nav-item" onclick="navigate('shop')"><span>🛒</span> Shop</div>
+      <div class="nav-item" onclick="navigate('friends')"><span>👥</span> Prieteni<span class="badge" id="friendBadge" style="display:none">0</span></div>
+      <div class="nav-item" onclick="navigate('leaderboard')"><span>🏆</span> Leaderboard</div>
+      <div class="nav-item" onclick="navigate('achievements')"><span>🏅</span> Realizari</div>
+      <div class="nav-item" onclick="navigate('profile')"><span>👤</span> Profil</div>
+      <div class="nav-item" onclick="navigate('settings')"><span>⚙️</span> Setari</div>
+      <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border);">
+        <div class="nav-item" onclick="logout()"><span>🚪</span> Iesire</div>
+      </div>
+    </nav>
+    <main class="main-content" id="mainContent"></main>
+  </div>
+</div>
+
+<!-- PARENT APP -->
+<div id="parentScreen" class="hidden">
+  <div class="auth-container">
+    <div style="max-width: 700px; width: 100%; padding: 24px;">
+      <div class="card">
+        <div class="card-header">
+          <div><h2>👨‍👩‍👦 Cont Parinte</h2><p class="text-muted">Monitorizare activitate copil</p></div>
+          <button class="btn btn-outline" onclick="logout()">🚪 Iesire</button>
+        </div>
+        <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+          <div class="stat-chip"><span>👤</span><span id="parentChildName">Alex</span></div>
+          <div class="stat-chip xp"><span>⭐</span><span id="parentChildLevel">Nivel 5</span></div>
+          <div class="stat-chip streak"><span>🔥</span><span id="parentChildStreak">12 zile</span></div>
+        </div>
+        <div class="tabs">
+          <div class="tab active" onclick="switchParentTab('inbox', event)">📨 Inbox</div>
+          <div class="tab" onclick="switchParentTab('settings', event)">⚙️ Setari Notificari</div>
+        </div>
+        <div id="parentInbox" class="tab-content active">
+          <div id="parentNotifications" class="parent-inbox"></div>
+        </div>
+        <div id="parentSettings" class="tab-content">
+          <h3 class="mb-2">Setari Notificari</h3>
+          <div id="parentNotifSettings"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalContent" onclick="event.stopPropagation()"></div>
+</div>
+
+<!-- LEVEL UP OVERLAY -->
+<div id="levelUpOverlay" class="hidden" style="position: fixed; top:0;left:0;right:0;bottom:0; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+  <div id="confettiContainer" class="confetti-container"></div>
+  <div class="levelup-content">
+    <div style="font-size: 5rem; animation: float 2s ease-in-out infinite;">🎉</div>
+    <h1 style="font-size: 4rem; background: linear-gradient(135deg, #fbbf24, #f59e0b, #ef4444, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow 2s linear infinite;">LEVEL UP!</h1>
+    <h2 id="levelUpText" style="margin-top: 16px;">Ai urcat la Nivelul 2!</h2>
+    <div class="rewards" id="levelUpRewards" style="margin-top: 24px; font-size: 1.2rem;"></div>
+    <button class="btn btn-primary btn-lg" style="margin-top: 32px;" onclick="closeLevelUp()">Super! 🚀</button>
+  </div>
+</div>
+
+<!-- ACHIEVEMENT CONTAINER -->
+<div id="achievementContainer" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999;"></div>
+
+<script>
+// ============================================
+// MENTOR APP v1.0 - JAVASCRIPT COMPLET
+// ============================================
+
+// --- CONSTANTS ---
+const RANKS = [
+  { level: 1, name: "Noob", color: "#9ca3af", emoji: "⚪" },
+  { level: 2, name: "Rookie", color: "#22c55e", emoji: "🟢" },
+  { level: 3, name: "Grunt", color: "#3b82f6", emoji: "🔵" },
+  { level: 4, name: "Cadet", color: "#06b6d4", emoji: "🩵" },
+  { level: 5, name: "Soldier", color: "#10b981", emoji: "🟢" },
+  { level: 6, name: "Warrior", color: "#8b5cf6", emoji: "🟣" },
+  { level: 7, name: "Sergeant", color: "#f97316", emoji: "🟠" },
+  { level: 8, name: "Lieutenant", color: "#2563eb", emoji: "🔷" },
+  { level: 9, name: "Captain", color: "#eab308", emoji: "🟡" },
+  { level: 10, name: "Major", color: "#dc2626", emoji: "🔴" },
+  { level: 11, name: "Colonel", color: "#a16207", emoji: "🟤" },
+  { level: 12, name: "General", color: "#c0c0c0", emoji: "🥈" },
+  { level: 13, name: "Warlord", color: "#fbbf24", emoji: "🥇" },
+  { level: 14, name: "Overlord", color: "#a855f7", emoji: "💜" },
+  { level: 15, name: "God Tier", color: "#f8fafc", emoji: "✨" },
+  { level: 16, name: "Elite", color: "#3b82f6", emoji: "💙" },
+  { level: 17, name: "Veteran", color: "#dc2626", emoji: "❤️" },
+  { level: 18, name: "Legend", color: "#60a5fa", emoji: "💎" },
+  { level: 19, name: "Dominator", color: "#a855f7", emoji: "🌌" },
+  { level: 20, name: "Mythic", color: "rainbow", emoji: "🌈" }
+];
+
+const XP_LEVELS = [0, 100, 250, 450, 700, 1000, 1350, 1750, 2200, 2700, 3250, 3850, 4500, 5200, 6000, 7000, 8500, 10500, 13000, 16000];
+
+const SHOP_ITEMS = {
+  avatars: {
+    common: [
+      { id: "avatar_detective", name: "🕵️ Detectiv", price: 150 },
+      { id: "avatar_cool", name: "😎 Ochelari Cool", price: 175 },
+      { id: "avatar_astronaut", name: "👨‍🚀 Astronaut", price: 200 },
+      { id: "avatar_pirate", name: "☠️ Pirat", price: 225 },
+      { id: "avatar_samurai", name: "🥷 Samurai", price: 250 }
+    ],
+    rare: [
+      { id: "avatar_ninja", name: "🥷 Ninja", price: 350 },
+      { id: "avatar_knight", name: "🛡️ Cavaler", price: 400 },
+      { id: "avatar_viking", name: "🪓 Viking", price: 450 },
+      { id: "avatar_robot", name: "🤖 Robot", price: 500 },
+      { id: "avatar_dino", name: "🦖 Dinozaur", price: 550 }
+    ],
+    epic: [
+      { id: "avatar_wizard", name: "🧙 Vrajitor", price: 700 },
+      { id: "avatar_alien", name: "👽 Alien", price: 750 },
+      { id: "avatar_superhero", name: "🦸 Superhero", price: 800 },
+      { id: "avatar_dragon", name: "🐉 Dragon", price: 900 },
+      { id: "avatar_phoenix", name: "🔥 Phoenix", price: 1000 }
+    ],
+    legendary: [
+      { id: "avatar_angel", name: "😇 Inger", price: 1200 },
+      { id: "avatar_demon", name: "😈 Demon", price: 1200 },
+      { id: "avatar_king", name: "👑 Rege", price: 1300 },
+      { id: "avatar_queen", name: "👸 Regina", price: 1300 },
+      { id: "avatar_god", name: "⚡ Zeu", price: 1500 }
+    ],
+    mythic: [
+      { id: "avatar_unicorn", name: "🦄 Unicorn", price: 1800 },
+      { id: "avatar_cosmic", name: "🌌 Dragon Cosmic", price: 2000 },
+      { id: "avatar_galaxy", name: "🌠 Galaxy Guardian", price: 2200 },
+      { id: "avatar_time", name: "⌛ Time Traveler", price: 2400 },
+      { id: "avatar_creator", name: "🌍 Creator", price: 2500 }
+    ]
+  },
+  backgrounds: {
+    common: [
+      { id: "bg_sunny", name: "🌤 Cer Senin", price: 120 },
+      { id: "bg_forest", name: "🌲 Padure", price: 140 },
+      { id: "bg_ocean", name: "🌊 Ocean", price: 160 },
+      { id: "bg_mountains", name: "🏞 Munti", price: 180 },
+      { id: "bg_lake", name: "🌅 Lac", price: 200 }
+    ],
+    rare: [
+      { id: "bg_city", name: "🌃 Oras Noaptea", price: 280 },
+      { id: "bg_tokyo", name: "🌆 Tokyo Neon", price: 320 },
+      { id: "bg_library", name: "📚 Biblioteca", price: 350 },
+      { id: "bg_lab", name: "🧪 Laborator", price: 380 },
+      { id: "bg_cafe", name: "☕ Cafenea", price: 400 }
+    ],
+    epic: [
+      { id: "bg_castle", name: "🏰 Castel", price: 550 },
+      { id: "bg_aurora", name: "🌌 Aurora", price: 600 },
+      { id: "bg_volcano", name: "🌋 Vulcan", price: 650 },
+      { id: "bg_galaxy", name: "🌠 Galaxie", price: 700 },
+      { id: "bg_underwater", name: "🐠 Subacvatic", price: 750 }
+    ],
+    legendary: [
+      { id: "bg_dragon", name: "🐉 Dragon Kingdom", price: 900 },
+      { id: "bg_olympus", name: "⚡ Olympus", price: 1000 },
+      { id: "bg_floating", name: "☁️ Floating Islands", price: 1100 },
+      { id: "bg_crystal", name: "💎 Crystal Cave", price: 1200 },
+      { id: "bg_space", name: "🚀 Space Station", price: 1300 }
+    ],
+    mythic: [
+      { id: "bg_blackhole", name: "🕳 Black Hole", price: 1500 },
+      { id: "bg_infinite", name: "🌌 Infinite", price: 1700 },
+      { id: "bg_cyber", name: "🤖 Cyber City", price: 1900 },
+      { id: "bg_heaven", name: "☀️ Heaven", price: 2100 },
+      { id: "bg_universe", name: "🌍 Universe", price: 2300 }
+    ]
+  },
+  music: {
+    common: [
+      { id: "music_piano", name: "🎹 Pian", price: 100 },
+      { id: "music_guitar", name: "🎸 Chitara", price: 120 },
+      { id: "music_rain", name: "🌧 Ploaie", price: 140 },
+      { id: "music_waves", name: "🌊 Valuri", price: 160 },
+      { id: "music_forest", name: "🌲 Padure", price: 180 }
+    ],
+    rare: [
+      { id: "music_violin", name: "🎻 Vioara", price: 250 },
+      { id: "music_jazz", name: "🎷 Jazz", price: 280 },
+      { id: "music_sunset", name: "🎸 Apus", price: 300 },
+      { id: "music_fanfare", name: "🏰 Fanfara", price: 320 },
+      { id: "music_orchestra", name: "🎼 Orchestra", price: 350 }
+    ],
+    epic: [
+      { id: "music_lofi", name: "🌌 Lofi", price: 450 },
+      { id: "music_epic", name: "⚔️ Epic", price: 500 },
+      { id: "music_choir", name: "🎭 Cor", price: 550 },
+      { id: "music_royal", name: "👑 Regal", price: 600 },
+      { id: "music_fantasy", name: "✨ Fantasy", price: 650 }
+    ],
+    legendary: [
+      { id: "music_dragon", name: "🐉 Dragon", price: 800 },
+      { id: "music_celestial", name: "🌟 Celesta", price: 900 },
+      { id: "music_universe", name: "🌌 Univers", price: 1000 }
+    ],
+    mythic: [
+      { id: "music_king", name: "👑 Rege", price: 1200 },
+      { id: "music_rainbow", name: "🌈 Rainbow", price: 1300 },
+      { id: "music_journey", name: "🚀 Journey", price: 1500 }
+    ]
+  },
+  sfx: {
+    common: [
+      { id: "sfx_applause", name: "👏 Aplauze", price: 75 },
+      { id: "sfx_trumpet", name: "📯 Trompeta", price: 90 },
+      { id: "sfx_rocket", name: "🚀 Racheta", price: 100 },
+      { id: "sfx_magic", name: "✨ Magie", price: 110 },
+      { id: "sfx_dino", name: "🦖 Raget", price: 120 }
+    ],
+    rare: [
+      { id: "sfx_robot", name: "🤖 Robot", price: 180 },
+      { id: "sfx_dinov", name: "🦕 Dinozaur", price: 220 },
+      { id: "sfx_thunder", name: "⚡ Tunet", price: 240 },
+      { id: "sfx_explosion", name: "🔥 Explozie", price: 260 },
+      { id: "sfx_laser", name: "💥 Laser", price: 280 }
+    ],
+    epic: [
+      { id: "sfx_phoenix", name: "🐦 Phoenix", price: 400 },
+      { id: "sfx_warp", name: "🌌 Warp", price: 450 },
+      { id: "sfx_crystal", name: "💎 Crystal", price: 500 },
+      { id: "sfx_aura", name: "✨ Aura", price: 550 }
+    ],
+    legendary: [
+      { id: "sfx_royal", name: "👑 Regal", price: 700 },
+      { id: "sfx_cosmic", name: "🌠 Cosmic", price: 800 },
+      { id: "sfx_echo", name: "🌌 Echo", price: 900 }
+    ]
+  }
+};
+
+const KNOWLEDGE_MAP = {
+  "Matematica": {
+    icon: "🧮",
+    nodes: [
+      { id: "numere", name: "Numere", status: "mastered", xp: 98 },
+      { id: "fractii", name: "Fractii", status: "almost", xp: 61 },
+      { id: "procente", name: "Procente", status: "needs-practice", xp: 45 },
+      { id: "ecuatii", name: "Ecuatii", status: "locked", xp: 0, req: "fractii" },
+      { id: "functii", name: "Functii", status: "locked", xp: 0, req: "ecuatii" },
+      { id: "geometrie", name: "Geometrie", status: "almost", xp: 84 },
+      { id: "algebra", name: "Algebra", status: "needs-practice", xp: 74 }
+    ]
+  },
+  "Fizica": {
+    icon: "⚡",
+    nodes: [
+      { id: "mecanica", name: "Mecanica", status: "almost", xp: 85 },
+      { id: "termodinamica", name: "Termodinamica", status: "needs-practice", xp: 76 },
+      { id: "electricitate", name: "Electricitate", status: "almost", xp: 79 }
+    ]
+  },
+  "Biologie": {
+    icon: "🧬",
+    nodes: [
+      { id: "celula", name: "Celula", status: "mastered", xp: 92 },
+      { id: "fotosinteza", name: "Fotosinteza", status: "almost", xp: 85 },
+      { id: "genetica", name: "Genetica", status: "almost", xp: 87 }
+    ]
+  }
+};
+
+const AI_PERSONALITIES = [
+  { id: "mia", name: "Mia", emoji: "🐻", style: "Prietenoasa", desc: "Calda, incurajatoare, exemple din viata" },
+  { id: "max", name: "Max", emoji: "🚀", style: "Motivator", desc: "Energic, provocari, 'Hai ca poti!'" },
+  { id: "nova", name: "Professor Nova", emoji: "🔬", style: "Stiintific", desc: "Precis, academic, detaliat" },
+  { id: "logic", name: "Logic", emoji: "🧮", style: "Matematic", desc: "Structural, pas cu pas, logic" },
+  { id: "luna", name: "Luna", emoji: "📚", style: "Literar", desc: "Povesti, analogii, limbaj poetic" }
+];
+
+const EXPLAIN_MODES = [
+  { id: "simple", icon: "👶", title: "Foarte simpla", desc: "Limbaj de 5 ani" },
+  { id: "visual", icon: "🎨", title: "Vizuala", desc: "Descriere imagistica" },
+  { id: "academic", icon: "📖", title: "Academica", desc: "Definitii si termeni" },
+  { id: "real", icon: "🌍", title: "Din viata reala", desc: "Exemple practice" },
+  { id: "story", icon: "🎮", title: "Analogie/Poveste", desc: "Poveste sau joc" }
+];
+
+const LESSONS = [
+  { id: "l1", subject: "Matematica", title: "Fractii - Introducere", duration: 10, xp: 20, difficulty: "easy" },
+  { id: "l2", subject: "Matematica", title: "Fractii echivalente", duration: 15, xp: 20, difficulty: "easy" },
+  { id: "l3", subject: "Matematica", title: "Adunarea fractiilor", duration: 20, xp: 20, difficulty: "medium" },
+  { id: "l4", subject: "Fizica", title: "Forta si miscare", duration: 15, xp: 20, difficulty: "easy" },
+  { id: "l5", subject: "Fizica", title: "Legea lui Newton", duration: 25, xp: 20, difficulty: "medium" },
+  { id: "l6", subject: "Biologie", title: "Structura celulei", duration: 15, xp: 20, difficulty: "easy" },
+  { id: "l7", subject: "Biologie", title: "Fotosinteza", duration: 20, xp: 20, difficulty: "medium" }
+];
+
+const TEST_QUESTIONS = [
+  {
+    id: "q1", subject: "Matematica", question: "Cat este 3/4 + 1/4?",
+    options: ["1/2", "1", "3/8", "4/8"], correct: 1,
+    explanation: "3/4 + 1/4 = 4/4 = 1. Numitorii sunt egali, deci adunam numaratorii."
+  },
+  {
+    id: "q2", subject: "Matematica", question: "Care este fractia echivalenta cu 2/3?",
+    options: ["4/6", "3/2", "1/3", "2/6"], correct: 0,
+    explanation: "4/6 = 2/3 (am amplificat cu 2)."
+  },
+  {
+    id: "q3", subject: "Fizica", question: "Care este unitatea de masura pentru forta?",
+    options: ["Watt", "Newton", "Joule", "Pascal"], correct: 1,
+    explanation: "Forta se masoara in Newton (N)."
+  },
+  {
+    id: "q4", subject: "Biologie", question: "Ce organel produce energie in celula?",
+    options: ["Nucleu", "Mitocondrie", "Ribozom", "Lizozom"], correct: 1,
+    explanation: "Mitocondriile sunt 'centralele energetice' ale celulei."
+  }
+];
+
+const SIMULATIONS = [
+  { id: "sim1", name: "Fizica - Aruncarea obiectului", subject: "Fizica", type: "projectile" },
+  { id: "sim2", name: "Chimie - Molecule", subject: "Chimie", type: "molecule" },
+  { id: "sim3", name: "Biologie - Celula", subject: "Biologie", type: "cell" }
+];
+
+const EVENTS = [
+  { id: "halloween", name: "🎃 Halloween", active: false, month: 10 },
+  { id: "christmas", name: "🎄 Craciun", active: false, month: 12 },
+  { id: "easter", name: "🐰 Paste", active: false, month: 4 },
+  { id: "back_to_school", name: "📚 Back to School", active: true, month: 9 },
+  { id: "summer", name: "☀️ Summer Event", active: false, month: 7 }
+];
+
+const DAILY_MISSIONS = [
+  { id: "finish_2_lessons", desc: "📖 Finalizeaza 2 lectii", progress: 0, target: 2 },
+  { id: "correct_answers", desc: "✅ Raspunde corect la 5 intrebari", progress: 0, target: 5 },
+  { id: "test_90_percent", desc: "📝 Obtine minim 90% la un test", progress: 0, target: 100 }
+];
+
+// --- STATE ---
+let currentUser = null;
+let currentPage = 'dashboard';
+let chatHistory = [];
+let selectedPersonality = 'mia';
+let currentTest = null;
+let testScore = 0;
+let testAnswers = [];
+
+function getDefaultUser() {
+  return {
+    type: 'student',
+    username: 'AlexInvata',
+    email: 'elev@test.ro',
+    class: '5',
+    level: 5,
+    xp: 1850,
+    totalXp: 1850,
+    coins: 450,
+    streak: 12,
+    streakRecovery: 3,
+    rank: 'Soldier',
+    avatar: '🧑‍🎓',
+    background: 'bg_sunny',
+    music: 'music_piano',
+    sfx: 'sfx_applause',
+    title: null,
+    titles: [],
+    achievements: ['first_lesson', 'dedicated'],
+    inventory: ['bg_sunny', 'music_piano'],
+    friends: [
+      { username: 'MariaSmart', level: 7, rank: 'Sergeant', avatar: '👩‍🎓', streak: 8, title: null, xp: 3200, online: true },
+      { username: 'AndreiGenial', level: 4, rank: 'Cadet', avatar: '👦', streak: 3, title: null, xp: 950, online: false }
+    ],
+    friendRequests: [],
+    dailyMissions: JSON.parse(JSON.stringify(DAILY_MISSIONS)),
+    allMissionsCompleted: false,
+    medals: [],
+    notifications: [],
+    parentNotifications: [],
+    knowledge: JSON.parse(JSON.stringify(KNOWLEDGE_MAP)),
+    lessonsCompleted: ['l1', 'l2'],
+    testsCompleted: 12,
+    correctAnswers: 89,
+    studyTime: 340,
+    created: new Date().toISOString(),
+    settings: {
+      notifications: { streak: true, level_up: true, new_rank: true, special_titles: true, friend_requests: true, daily_missions: true, events: true, shop: true },
+      privacy: { friendRequests: 'everyone', profileVisibility: 'public', leaderboards: true }
+    }
+  };
+}
+
+function getDefaultParent() {
+  return {
+    type: 'parent',
+    username: 'ParinteAlex',
+    email: 'parinte@test.ro',
+    childName: 'Alex',
+    childUsername: 'AlexInvata',
+    notifications: [],
+    notifSettings: { all: true, important: false, none: false }
+  };
+}
+
+// --- AUTH ---
+function switchAuthTab(tab, evt) {
+  document.querySelectorAll('#authScreen .tab').forEach(t => t.classList.remove('active'));
+  const e = evt || window.event;
+  if (e && e.target) e.target.classList.add('active');
+  document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+  document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
+}
+
+function doLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const type = document.getElementById('loginType').value;
+
+  if (type === 'parent') {
+    currentUser = getDefaultParent();
+    // Add demo parent notifications
+    currentUser.notifications = [
+      { id: 1, type: 'streak', message: 'Alex a pastrat streak-ul! Ziua 12', time: 'Acum 2 ore', read: false },
+      { id: 2, type: 'level_up', message: 'Alex a atins Nivelul 5! Rang: Soldier', time: 'Ieri', read: false },
+      { id: 3, type: 'test', message: 'Alex a completat un test: 85%', time: 'Ieri', read: true },
+      { id: 4, type: 'lesson', message: 'Alex a terminat lectia: Fractii - Introducere', time: 'Acum 3 zile', read: true },
+      { id: 5, type: 'shop', message: 'Alex a cumparat: 🌤 Cer Senin pentru 120 MC', time: 'Acum 4 zile', read: true }
+    ];
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('parentScreen').classList.remove('hidden');
+    renderParentInbox();
+    renderParentSettings();
+  } else {
+    currentUser = getDefaultUser();
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('appScreen').classList.remove('hidden');
+    navigate('dashboard');
+  }
+}
+
+function doRegister() {
+  const username = document.getElementById('regUsername').value || 'ElevNou';
+  const userClass = document.getElementById('regClass').value;
+  currentUser = getDefaultUser();
+  currentUser.username = username;
+  currentUser.class = userClass;
+  currentUser.level = 1;
+  currentUser.xp = 0;
+  currentUser.totalXp = 0;
+  currentUser.coins = 50;
+  currentUser.streak = 1;
+  currentUser.rank = 'Noob';
+  currentUser.achievements = [];
+  currentUser.lessonsCompleted = [];
+  currentUser.friends = [];
+  currentUser.medals = [];
+  currentUser.notifications = [];
+  currentUser.parentNotifications = [];
+
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('appScreen').classList.remove('hidden');
+  navigate('dashboard');
+  showAchievement('🎉 Bine ai venit!', 'Contul tau a fost creat. Hai sa incepem sa invatam!');
+}
+
+function logout() {
+  currentUser = null;
+  currentPage = 'dashboard';
+  chatHistory = [];
+  document.getElementById('authScreen').classList.remove('hidden');
+  document.getElementById('appScreen').classList.add('hidden');
+  document.getElementById('parentScreen').classList.add('hidden');
+}
+
+// --- NAVIGATION ---
+function navigate(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const navItems = document.querySelectorAll('.nav-item');
+  const pageMap = {
+    'dashboard': 0, 'ai-tutor': 1, 'learning-map': 2, 'lessons': 3,
+    'tests': 4, 'scanner': 5, 'simulations': 6, 'shop': 7,
+    'friends': 8, 'leaderboard': 9, 'achievements': 10, 'profile': 11, 'settings': 12
+  };
+  if (navItems[pageMap[page]]) navItems[pageMap[page]].classList.add('active');
+
+  const content = document.getElementById('mainContent');
+  content.innerHTML = '';
+
+  switch(page) {
+    case 'dashboard': renderDashboard(content); break;
+    case 'ai-tutor': renderAITutor(content); break;
+    case 'learning-map': renderLearningMap(content); break;
+    case 'lessons': renderLessons(content); break;
+    case 'tests': renderTests(content); break;
+    case 'scanner': renderScanner(content); break;
+    case 'simulations': renderSimulations(content); break;
+    case 'shop': renderShop(content); break;
+    case 'friends': renderFriends(content); break;
+    case 'leaderboard': renderLeaderboard(content); break;
+    case 'achievements': renderAchievements(content); break;
+    case 'profile': renderProfile(content); break;
+    case 'settings': renderSettings(content); break;
+  }
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// --- DASHBOARD ---
+function renderDashboard(container) {
+  const rank = RANKS[currentUser.level - 1];
+  const nextLevelXp = XP_LEVELS[currentUser.level] || XP_LEVELS[XP_LEVELS.length - 1];
+  const prevLevelXp = XP_LEVELS[currentUser.level - 1] || 0;
+  const xpProgress = ((currentUser.xp - prevLevelXp) / (nextLevelXp - prevLevelXp)) * 100;
+
+  container.innerHTML = `
+    <div class="top-bar">
+      <div>
+        <h1>Salut, ${currentUser.username}! 👋</h1>
+        <p class="text-muted">Ai 18 minute azi. Ieri ai avut probleme la fractii.</p>
+      </div>
+      <div class="user-stats">
+        <div class="stat-chip xp"><span>⭐</span><span>${currentUser.totalXp} XP</span></div>
+        <div class="stat-chip coins"><span>🪙</span><span>${currentUser.coins} MC</span></div>
+        <div class="stat-chip streak"><span class="streak-flame">🔥</span><span>${currentUser.streak} zile</span></div>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⭐ Progres Nivel ${currentUser.level}</div>
+          <span class="level-badge" style="color: ${rank.color}; border: 1px solid ${rank.color};">${rank.emoji} ${rank.name}</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width: ${xpProgress}%"></div></div>
+        <p class="text-muted" style="margin-top: 8px;">${currentUser.xp - prevLevelXp} / ${nextLevelXp - prevLevelXp} XP pana la nivelul ${currentUser.level + 1}</p>
+        <div style="margin-top: 16px; display: flex; gap: 8px;">
+          <button class="btn btn-primary" onclick="navigate('lessons')">📖 Continua lectia</button>
+          <button class="btn btn-outline" onclick="navigate('ai-tutor')">🧠 Intreaba AI-ul</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">🔥 Streak Zilnic</div><span class="text-accent">${currentUser.streak} zile</span></div>
+        <div class="streak-calendar">
+          ${[...Array(14)].map((_, i) => {
+            const day = i + 1;
+            const isDone = day <= currentUser.streak;
+            const isToday = day === currentUser.streak + 1;
+            return `<div class="streak-day ${isDone ? 'done' : ''} ${isToday ? 'today' : ''}">${day}</div>`;
+          }).join('')}
+        </div>
+        <p class="text-muted" style="margin-top: 12px;">Finalizati cel putin o lectie pe zi pentru a pastra streak-ul!</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">📅 Misiuni Zilnice</div>
+        ${currentUser.allMissionsCompleted ? '<span class="text-success">✅ Completate!</span>' : ''}
+      </div>
+      <div id="missionsList">
+        ${currentUser.dailyMissions.map(m => `
+          <div class="mission-card ${m.progress >= m.target ? 'completed' : ''}">
+            <div class="mission-icon">${m.desc.split(' ')[0]}</div>
+            <div class="mission-info">
+              <div class="mission-title">${m.desc}</div>
+              <div class="mission-progress">
+                <div class="progress-bar" style="margin: 4px 0;"><div class="progress-fill" style="width: ${(m.progress / m.target) * 100}%"></div></div>
+                ${m.progress} / ${m.target}
+              </div>
+            </div>
+            ${m.progress >= m.target ? '✅' : `<button class="btn btn-sm btn-primary" onclick="doMission('${m.id}')">Fa</button>`}
+          </div>
+        `).join('')}
+      </div>
+      ${!currentUser.allMissionsCompleted ? `<p class="text-muted" style="margin-top: 12px;">Bonus pentru toate: +50 XP, +30 MC</p>` : ''}
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card text-center" style="cursor: pointer;" onclick="navigate('learning-map')">
+        <div style="font-size: 3rem; margin-bottom: 12px;">🗺️</div>
+        <h3>Harta Invatarii</h3>
+        <p class="text-muted">Vezi ce stii si ce trebuie sa inveti</p>
+      </div>
+      <div class="card text-center" style="cursor: pointer;" onclick="navigate('tests')">
+        <div style="font-size: 3rem; margin-bottom: 12px;">📝</div>
+        <h3>Teste & Examene</h3>
+        <p class="text-muted">Pregateste-te pentru evaluari</p>
+      </div>
+      <div class="card text-center" style="cursor: pointer;" onclick="navigate('scanner')">
+        <div style="font-size: 3rem; margin-bottom: 12px;">📸</div>
+        <h3>Scanare Tema</h3>
+        <p class="text-muted">Fotografiaza si rezolva exercitiile</p>
+      </div>
+    </div>
+
+    ${EVENTS.filter(e => e.active).map(e => `
+      <div class="event-banner">
+        <div>
+          <h3>${e.name}</h3>
+          <p>Iteme exclusive disponibile acum in Shop!</p>
+        </div>
+        <button class="btn btn-primary" onclick="navigate('shop')">Vezi Shop</button>
+      </div>
+    `).join('')}
+  `;
+}
+
+function doMission(missionId) {
+  const mission = currentUser.dailyMissions.find(m => m.id === missionId);
+  if (!mission || mission.progress >= mission.target) return;
+
+  mission.progress = mission.target;
+  addXp(10, 10);
+
+  // Check if all completed
+  const allDone = currentUser.dailyMissions.every(m => m.progress >= m.target);
+  if (allDone && !currentUser.allMissionsCompleted) {
+    currentUser.allMissionsCompleted = true;
+    addXp(50, 30);
+    showAchievement('📅 Misiuni Complete', 'Ai terminat toate misiunile zilnice!');
+    notifyParent('Misiuni', `Alex a completat TOATE misiunile zilnice! +80 XP total`);
+  }
+
+  navigate('dashboard');
+}
+
+// --- AI TUTOR ---
+function renderAITutor(container) {
+  container.innerHTML = `
+    <div class="top-bar">
+      <div><h1>🧠 Mentor AI</h1><p class="text-muted">Tutorele tau personal — nu iti da raspunsul direct!</p></div>
+      <div class="user-stats">
+        <div class="stat-chip"><span>🧠</span><span>${AI_PERSONALITIES.find(p => p.id === selectedPersonality).name}</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">👤 Alege personalitatea AI</div></div>
+      <div class="grid grid-5">
+        ${AI_PERSONALITIES.map(p => `
+          <div class="personality-card ${p.id === selectedPersonality ? 'selected' : ''}" onclick="selectPersonality('${p.id}')">
+            <div class="p-avatar">${p.emoji}</div>
+            <div class="p-name">${p.name}</div>
+            <div class="p-desc">${p.style}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">💬 Conversatie</div></div>
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+          ${chatHistory.length === 0 ? `
+            <div class="chat-message ai">
+              <strong>${AI_PERSONALITIES.find(p => p.id === selectedPersonality).name}:</strong><br>
+              Salut! 👋 Sunt aici sa te ajut sa inveti. Nu iti voi da raspunsul direct, ci te voi ghida pas cu pas. Cu ce te pot ajuta astazi?
+            </div>
+          ` : chatHistory.map(msg => `
+            <div class="chat-message ${msg.type}">
+              <strong>${msg.type === 'ai' ? AI_PERSONALITIES.find(p => p.id === selectedPersonality).name + ':' : 'Tu:'}</strong><br>
+              ${msg.text}
+            </div>
+          `).join('')}
+        </div>
+        <div class="chat-input-area">
+          <input type="text" class="chat-input" id="chatInput" placeholder="Scrie o intrebare..." onkeypress="if(event.key==='Enter')sendChat()">
+          <button class="btn btn-primary" onclick="sendChat()">Trimite</button>
+          <button class="btn btn-outline" onclick="startVoice()">🎤</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">❓ Nu intelegi? Alege un mod de explicare</div></div>
+      ${EXPLAIN_MODES.map(mode => `
+        <div class="explain-mode" onclick="explainMode('${mode.id}')">
+          <div class="mode-icon">${mode.icon}</div>
+          <div class="mode-text">
+            <div class="mode-title">${mode.title}</div>
+            <div class="mode-desc">${mode.desc}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function selectPersonality(id) {
+  selectedPersonality = id;
+  renderAITutor(document.getElementById('mainContent'));
+}
+
+// --- REAL AI ENGINE (Claude) ---
+let isAiResponding = false;
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function buildSystemPrompt() {
+  const p = AI_PERSONALITIES.find(x => x.id === selectedPersonality);
+  const grade = currentUser?.class || '5';
+  return `Esti ${p.name}, un tutore AI pentru elevi din Romania, in aplicatia educationala MENTOR. Stilul tau de personalitate este "${p.style}": ${p.desc}.
+
+CONTEXT ELEV:
+- Elevul este in clasa a ${grade}-a, conform sistemului de invatamant din Romania.
+- Materiile relevante includ (in functie de clasa): Matematica, Limba si literatura romana, Fizica, Chimie, Biologie, Istorie, Geografie, Informatica etc., conform curriculumului national romanesc (programa scolara oficiala).
+
+REGULI STRICTE DE PREDARE (metoda socratica):
+1. NU oferi niciodata raspunsul final la un exercitiu sau problema in mod direct, chiar daca elevul insista. In schimb, pune intrebari ghidate, ofera indicii treptate si ajuta-l sa ajunga singur la raspuns.
+2. Daca elevul da un raspuns corect, confirma-l si intreaba-l cum a ajuns acolo sau cum ar aplica ideea intr-un exercitiu similar.
+3. Daca elevul da un raspuns gresit, nu spune direct "gresit" fara context - ghideaza-l inapoi la pasul unde a gresit, cu o intrebare.
+4. Foloseste terminologia, notatiile si exemplele specifice scolii romanesti (ex: "regula de trei simpla", "cazuri de factor comun", subiecte din manualele romanesti).
+5. Adapteaza complexitatea limbajului strict la nivelul clasei a ${grade}-a - nici prea simplu, nici prea avansat.
+6. Raspunde EXCLUSIV in limba romana, cu diacritice corecte, intr-un ton potrivit personalitatii tale.
+7. Tine raspunsurile scurte si clare (2-5 propozitii), folosind eventual liste sau formule matematice simple in text (ex: a^2 + b^2 = c^2), fara markdown complex.
+8. Daca intrebarea elevului nu are legatura cu scoala, redirectioneaza-l politicos catre teme scolare, ramanand in personajul tau.
+9. Incurajeaza-l constant si lauda efortul, nu doar rezultatul corect.`;
+}
+
+async function callMentorAI(apiMessages, systemPrompt) {
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: apiMessages
+    })
+  });
+  if (!response.ok) throw new Error('Eroare API: ' + response.status);
+  const data = await response.json();
+  const text = (data.content || [])
+    .map(block => block.type === 'text' ? block.text : '')
+    .join('\n')
+    .trim();
+  return text || 'Hmm, nu am reusit sa formulez un raspuns. Poti reformula intrebarea?';
+}
+
+function setChatInputDisabled(disabled) {
+  const input = document.getElementById('chatInput');
+  const area = document.querySelector('.chat-input-area');
+  if (input) input.disabled = disabled;
+  if (area) area.querySelectorAll('button').forEach(b => b.disabled = disabled);
+}
+
+async function sendChat() {
+  if (isAiResponding) return;
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  chatHistory.push({ type: 'user', text });
+  input.value = '';
+  renderChatMessages();
+
+  await requestAiTurn(chatHistory.filter(m => !m.pending).map(m => ({
+    role: m.type === 'ai' ? 'assistant' : 'user',
+    content: m.text
+  })));
+
+  notifyParent('AI Tutor', `Alex a avut o sesiune cu Mentor AI`);
+}
+
+async function requestAiTurn(apiMessages) {
+  isAiResponding = true;
+  setChatInputDisabled(true);
+  chatHistory.push({ type: 'ai', text: '', pending: true });
+  renderChatMessages();
+
+  try {
+    const systemPrompt = buildSystemPrompt();
+    const reply = await callMentorAI(apiMessages, systemPrompt);
+    chatHistory = chatHistory.filter(m => !m.pending);
+    chatHistory.push({ type: 'ai', text: reply });
+  } catch (err) {
+    chatHistory = chatHistory.filter(m => !m.pending);
+    chatHistory.push({ type: 'ai', text: 'Ne pare rau, am intampinat o problema de conexiune cu AI-ul. Mai incearca o data in cateva momente. 🙏' });
+  }
+
+  isAiResponding = false;
+  setChatInputDisabled(false);
+  renderChatMessages();
+  input_focus_safe();
+}
+
+function input_focus_safe() {
+  const input = document.getElementById('chatInput');
+  if (input) input.focus();
+}
+
+function renderChatMessages() {
+  const container = document.getElementById('chatMessages');
+  if (!container) return;
+  container.innerHTML = chatHistory.map(msg => {
+    if (msg.pending) {
+      return `<div class="chat-message ai"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
+    }
+    return `
+    <div class="chat-message ${msg.type}">
+      <strong>${msg.type === 'ai' ? AI_PERSONALITIES.find(p => p.id === selectedPersonality).name + ':' : 'Tu:'}</strong><br>
+      ${escapeHtml(msg.text).replace(/\n/g, '<br>')}
+    </div>
+  `;
+  }).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function startVoice() {
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ro-RO';
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
+      document.getElementById('chatInput').value = transcript;
+      sendChat();
+    };
+    recognition.start();
+  } else {
+    alert('Voice recognition not supported in this browser.');
+  }
+}
+
+async function explainMode(mode) {
+  if (isAiResponding) return;
+
+  const modeLabels = {
+    simple: 'foarte simpla, pe intelesul unui copil mic, cu un exemplu jucaus',
+    visual: 'vizuala, folosind o descriere imagistica sau o comparatie usor de imaginat',
+    academic: 'academica si precisa, cu definitie clara si termenii corecti',
+    real: 'printr-un exemplu concret din viata de zi cu zi',
+    story: 'sub forma unei scurte povesti sau analogii de tip joc'
+  };
+  const modeIcon = EXPLAIN_MODES.find(m => m.id === mode)?.icon || '❓';
+  const modeTitle = EXPLAIN_MODES.find(m => m.id === mode)?.title || '';
+
+  const lastUserMsg = [...chatHistory].reverse().find(m => m.type === 'user' && !m.pending);
+  const topic = lastUserMsg ? lastUserMsg.text : 'ultimul subiect discutat, sau daca nu exista niciunul, alege un concept de baza potrivit clasei elevului';
+
+  chatHistory.push({ type: 'user', text: `${modeIcon} Explica-mi in mod "${modeTitle}"` });
+  renderChatMessages();
+
+  const userPrompt = `Explica-mi urmatorul subiect intr-un mod ${modeLabels[mode]}: "${topic}". Poti sa dai si raspunsul/rezolvarea de data asta, daca e o explicatie de concept (nu doar un indiciu), dar ramai concis.`;
+
+  await requestAiTurn([{ role: 'user', content: userPrompt }]);
+}
+
+// --- LEARNING MAP ---
+function renderLearningMap(container) {
+  container.innerHTML = `
+    <div class="top-bar">
+      <div><h1>🗺️ Harta Invatarii</h1><p class="text-muted">Vezi progresul tau pe fiecare materie</p></div>
+    </div>
+    ${Object.entries(currentUser.knowledge).map(([subject, data]) => `
+      <div class="card">
+        <div class="card-header"><div class="card-title">${data.icon} ${subject}</div></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+          ${data.nodes.map((node, i) => `
+            <div class="map-node ${node.status}" onclick="${node.status !== 'locked' ? `startLesson('${node.id}', '${subject}')` : ''}">
+              ${node.name}<br>
+              <small style="opacity: 0.8;">${node.xp > 0 ? node.xp + '%' : (node.status === 'locked' ? '🔒 Blocat' : '0%')}</small>
+            </div>
+            ${i < data.nodes.length - 1 ? '<div class="map-connector"></div>' : ''}
+          `).join('')}
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function startLesson(nodeId, subject) {
+  const lesson = LESSONS.find(l => l.subject === subject) || LESSONS[0];
+  showModal(`
+    <h2>📖 ${lesson.title}</h2>
+    <p class="text-muted">${lesson.subject} | ${lesson.duration} minute | ${lesson.xp} XP</p>
+    <div style="margin: 20px 0; padding: 20px; background: var(--bg); border-radius: var(--radius-sm);">
+      <h4>Continutul lectiei:</h4>
+      <p>Aceasta lectie acopera conceptele de baza despre ${lesson.title.toLowerCase()}.</p>
+      <ul style="margin: 12px 0; padding-left: 20px; color: var(--text-muted);">
+        <li>Definitie si exemple</li>
+        <li>Exercitii practice</li>
+        <li>Quiz de verificare</li>
+      </ul>
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <button class="btn btn-primary" onclick="completeLesson('${lesson.id}')">✅ Finalizeaza lectia</button>
+      <button class="btn btn-outline" onclick="closeModal()">Inchide</button>
+    </div>
+  `);
+}
+
+function completeLesson(lessonId) {
+  if (!currentUser.lessonsCompleted.includes(lessonId)) {
+    currentUser.lessonsCompleted.push(lessonId);
+    addXp(20, 20);
+    currentUser.studyTime += 15;
+
+    // Update mission
+    const mission = currentUser.dailyMissions.find(m => m.id === 'finish_2_lessons');
+    if (mission && mission.progress < mission.target) {
+      mission.progress = Math.min(mission.progress + 1, mission.target);
+    }
+
+    // Check achievements
+    if (currentUser.lessonsCompleted.length === 1 && !currentUser.achievements.includes('first_lesson')) {
+      currentUser.achievements.push('first_lesson');
+      showAchievement('🎓 Prima Lectie', 'Finalizeaza prima lectie');
+    }
+    if (currentUser.lessonsCompleted.length >= 100 && !currentUser.achievements.includes('dedicated')) {
+      currentUser.achievements.push('dedicated');
+      showAchievement('📚 Student Dedicat', 'Finalizeaza 100 de lectii');
+    }
+
+    notifyParent('Lectie', `Alex a terminat lectia: ${LESSONS.find(l => l.id === lessonId)?.title || 'Noua lectie'}`);
+  }
+  closeModal();
+  navigate('learning-map');
+}
+
+// --- LESSONS ---
+function renderLessons(container) {
+  container.innerHTML = `
+    <div class="top-bar">
+      <div><h1>📖 Lectii</h1><p class="text-muted">Alege o lectie si incepe sa inveti</p></div>
+    </div>
+    <div class="grid grid-2">
+      ${LESSONS.map(lesson => `
+        <div class="card" style="cursor: pointer;" onclick="startLesson('${lesson.id}', '${lesson.subject}')">
+          <div class="card-header">
+            <div class="card-title">${lesson.subject === 'Matematica' ? '🧮' : lesson.subject === 'Fizica' ? '⚡' : '🧬'} ${lesson.title}</div>
+            <span class="level-badge" style="border: 1px solid var(--border);">${lesson.difficulty === 'easy' ? '🟢' : lesson.difficulty === 'medium' ? '🟡' : '🔴'} ${lesson.difficulty}</span>
+          </div>
+          <p class="text-muted">${lesson.duration} minute | ${lesson.xp} XP | ${lesson.subject}</p>
+          ${currentUser.lessonsCompleted.includes(lesson.id) ? '<span class="text-success">✅ Completata</span>' : ''}
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// --- TESTS ---
+function renderTests(container) {
+  container.innerHTML = `
+    <div class="top-bar">
+      <div><h1>📝 Teste & Examene</h1><p class="text-muted">Verifica-ti cunostintele si pregateste-te pentru examene</p></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">🎯 Test Rapid</div></div>
+      <p class="text-muted mb-2">Raspunde la 4 intrebari si verifica-ti nivelul!</p>
+      <button class="btn btn-primary" onclick="startTest()">Incepe Testul</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">📅 Exam Mode</div></div>
+      <p class="text-muted mb-2">Genereaza un plan de pregatire pentru examen</p>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <button class="btn btn-outline" onclick="generateExamPlan('Evaluare Nationala')">Evaluare Nationala</button>
+        <button class="btn btn-outline" onclick="generateExamPlan('Bacalaureat')">Bacalaureat</button>
+        <button class="btn btn-outline" onclick="generateExamPlan('Test Scolar')">Test Scolar</button>
+      </div>
+    </div>
+
+    ${currentTest ? `
+      <div class="card" id="testArea">
+        <div class="card-header"><div class="card-title">📝 Test in desfasurare</div><span>Intrebare ${testAnswers.length + 1} / 4</span></div>
+        ${renderCurrentQuestion()}
+      </div>
+    ` : ''}
+  `;
+}
+
+function startTest() {
+  currentTest = [...TEST_QUESTIONS].sort(() => Math.random() - 0.5);
+  testScore = 0;
+  testAnswers = [];
+  renderTests(document.getElementById('mainContent'));
+}
+
+function renderCurrentQuestion() {
+  if (testAnswers.length >= currentTest.length) {
+    const percentage = Math.round((testScore / currentTest.length) * 100);
+    const passed = percentage >= 90;
+
+    // Update mission
+    const mission = currentUser.dailyMissions.find(m => m.id === 'test_90_percent');
+    if (mission && passed) mission.progress = 100;
+
+    currentUser.testsCompleted++;
+    currentUser.correctAnswers += testScore;
+
+    // Check achievements
+    if (currentUser.testsCompleted >= 100 && !currentUser.achievements.includes('test_master')) {
+      currentUser.achievements.push('test_master');
+      showAchievement('🧠 Test Master', 'Completeaza 100 de teste');
+    }
+    if (currentUser.correctAnswers >= 100 && !currentUser.achievements.includes('accuracy')) {
+      currentUser.achievements.push('accuracy');
+      showAchievement('🎯 Accuracy Expert', '100 raspunsuri corecte');
+    }
+
+    notifyParent('Test', `Alex a completat un test: ${percentage}%`);
+
+    return `
+      <div class="text-center">
+        <div style="font-size: 4rem;">${percentage >= 90 ? '🎉' : percentage >= 70 ? '👍' : '💪'}</div>
+        <h2>Test Finalizat!</h2>
+        <p style="font-size: 2rem; color: ${percentage >= 90 ? 'var(--success)' : percentage >= 70 ? 'var(--accent)' : 'var(--danger)'};">${percentage}%</p>
+        <p class="text-muted">${testScore} / ${currentTest.length} raspunsuri corecte</p>
+        <p class="text-muted">+${testScore * 10} XP castigat</p>
+        <button class="btn btn-primary" onclick="currentTest=null; testScore=0; testAnswers=[]; renderTests(document.getElementById('mainContent'));">Inchide</button>
+      </div>
+    `;
+  }
+
+  const q = currentTest[testAnswers.length];
+  return `
+    <div class="test-question">
+      <h4>${q.question}</h4>
+      <div class="test-options">
+        ${q.options.map((opt, i) => `
+          <div class="test-option" onclick="answerQuestion(${i})">${opt}</div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function answerQuestion(answerIndex) {
+  const q = currentTest[testAnswers.length];
+  const isCorrect = answerIndex === q.correct;
+  if (isCorrect) testScore++;
+
+  testAnswers.push({ question: q.id, correct: isCorrect });
+
+  // Update correct answers mission
+  const mission = currentUser.dailyMissions.find(m => m.id === 'correct_answers');
+  if (mission && isCorrect) mission.progress = Math.min(mission.progress + 1, mission.target);
+
+  addXp(isCorrect ? 10 : 5, isCorrect ? 10 : 0);
+
+  const testArea = document.getElementById('testArea');
+  if (testArea) {
+    testArea.innerHTML = `
+      <div class="card-header"><div class="card-title">📝 Test in desfasurare</div><span>Intrebare ${testAnswers.length} / 4</span></div>
+      ${renderCurrentQuestion()}
+    `;
+  }
+}
+
+function generateExamPlan(examName) {
+  const days = examName === 'Evaluare Nationala' ? 30 : examName === 'Bacalaureat' ? 45 : 14;
+  showModal(`
+    <h2>📅 Plan ${examName}</h2>
+    <p class="text-muted">${days} zile de pregatire</p>
+    <div class="exam-timeline" style="margin: 20px 0;">
+      ${[...Array(Math.min(days, 14))].map((_, i) => `
+        <div class="exam-day ${i === 0 ? 'current' : 'future'}">
+          <div style="font-weight: 700;">Ziua ${i + 1}</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">
+            ${i === 0 ? 'Diagnostic' : i < days / 3 ? 'Capitole' : i < days * 2 / 3 ? 'Practica' : i === days - 1 ? 'Review' : 'Recapitulare'}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <p class="text-muted">Planul complet este disponibil in contul tau.</p>
+    <button class="btn btn-primary" onclick="closeModal()">Super!</button>
+  `);
+  notifyParent('Exam Mode', `Alex a generat un plan de examen: ${examName}`);
+}
+
+// --- SCANNER ---
+function renderScanner(container) {
+  container.innerHTML = `
+    <div class="top-bar">
+      <div><h1>📸 Scanare Tema</h1><p class="text-muted">Fotografiaza tema si AI-ul te va ghida</p></div>
+    </div>
+    <div class="card">
+      <div class="scanner-area" id="scannerArea" onclick="scanHomework()">
+        <div style="font-size: 4rem; margin-bottom: 16px;">📷</div>
+        <h3>Apasa pentru a scana tema</h3>
+        <p class="text-muted">Sau trage o imagine aici</p>
+      </div>
+      <div id="scanResult" style="display: none;">
+        <div class="scan-result">
+          <h4>🧠 Am identificat 3 exercitii:</h4>
+          <div class="scan-exercise">
+            <strong>Exercitiul 1:</strong> 2x + 5 = 15<br>
+            <span class="text-muted">Nu-ti dau direct raspunsul. Hai sa vedem ce faci prima data ca sa scapi de +5?</span>
+            <div style="margin-top: 8px;">
+              <button class="btn btn-sm btn-primary" onclick="showHint(1)">💡 Hint</button>
+            </div>
+            <div id="hint1" class="hint-box hidden">
+              <strong>Hint:</strong> Scade 5 din ambele parti. Ce ramane?
+            </div>
+          </div>
+          <div class="scan-exercise">
+            <strong>Exercitiul 2:</strong> 3/4 + 1/2 = ?<br>
+            <span class="text-muted">Ce trebuie sa faci ca sa aduni fractii cu numitori diferiti?</span>
+            <div style="margin-top: 8px;">
+              <button class="btn btn-sm btn-primary" onclick="showHint(2)">💡 Hint</button>
+            </div>
+            <div id="hint2" class="hint-box hidden">
+              <strong>Hint:</strong> Aducem la acelasi numitor: 1/2 = 2/4. Acum adunam!
+            </div>
+          </div>
+          <div class="scan-exercise">
+            <strong>Exercitiul 3:</strong> Aria unui dreptunghi cu L=5cm, l=3cm<br>
+            <span class="text-muted">Care este formula ariei dreptunghiului?</span>
+            <div style="margin-top: 8px;">
+              <button class="btn btn-sm btn-primary" onclick="showHint(3)">💡 Hint</button>
+            </div>
+            <div id="hint3" class="hint-box hidden">
+              <strong>Hint:</strong> Aria = Lungime × Latime. Inlocuieste si calculeaza!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function scanHomework() {
+  document.getElementById('scannerArea').innerHTML = '<div class="spinner" style="margin: 0 auto;"></div><p style="margin-top: 16px;">Analizam imaginea...</p>';
+  setTimeout(() => {
+    document.getElementById('scannerArea').style.display = 'none';
+    document.getElementById('scanResult').style.display = 'block';
+    notifyParent('Scanare', `Alex a scanat o tema: 3 exercitii identificate, Timp: 2 min`);
+  }, 1500);
+}
+
+function showHint(n) {
+  document.getElementById('hint' + n).classList.remove('hidden');
+}
+
+// --- SIMULATIONS ---
+function renderSimulations(container) {
+  container.innerHTML = `
+    <div class="top-bar">
+      <div><h1>🧪 Laboratoare Virtuale</h1><p class="text-muted">Experimenteaza si invata prin simulare</p></div>
+    </div>
+    <div class="grid grid-3">
+      ${SIMULATIONS.map(sim => `
+        <div class="card" style="cursor: pointer;" onclick="openSimulation('${sim.id}')">
+          <div style="font-size: 3rem; margin-bottom: 12px;">${sim.subject === 'Fizica' ? '⚡' : sim.subject === 'Chimie' ? '⚗️' : '🧬'}</div>
+          <h3>${sim.name}</h3>
+          <p class="text-muted">${sim.subject}</p>
+        </div>
+      `).join('')}
+    </div>
+    <div id="simArea"></div>
+  `;
+}
+
+function openSimulation(simId) {
+  const sim = SIMULATIONS.find(s => s.id === simId);
+  const simArea = document.getElementById('simArea');
+  if (!simArea) return;
+
+  if (sim.type === 'projectile') {
+    simArea.innerHTML = `
+      <div class="card">
+        <div class="card-header"><div class="card-title">⚡ Simulare: Aruncarea obiectului</div></div>
+        <div class="sim-container" id="simCanvas" style="height: 300px; background: linear-gradient(to bottom, #0f172a 0%, #1e293b 100%);">
+          <div class="sim-object" id="simBall" style="bottom: 20px; left: 20px;"></div>
+          <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 20px; background: #334155;"></div>
+        </div>
+        <div class="sim-controls">
+          <div class="sim-slider">
+            <label>Masa (kg): <span id="massVal">5</span></label>
+            <input type="range" min="1" max="20" value="5" id="massSlider" oninput="updateSim()">
+          </div>
+          <div class="sim-slider">
+            <label>Viteza (m/s): <span id="velVal">10</span></label>
+            <input type="range" min="1" max="50" value="10" id="velSlider" oninput="updateSim()">
+          </div>
+          <div class="sim-slider">
+            <label>Gravitatie: <span id="gravVal">9.8</span></label>
+            <input type="range" min="1" max="25" value="9.8" step="0.1" id="gravSlider" oninput="updateSim()">
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="launchProjectile()" style="margin-top: 16px;">🚀 Lanseaza!</button>
+      </div>
+    `;
+  } else {
+    simArea.innerHTML = `
+      <div class="card">
+        <div class="card-header"><div class="card-title">${sim.subject === 'Chimie' ? '⚗️' : '🧬'} ${sim.name}</div></div>
+        <p class="text-muted">Simulare interactiva pentru ${sim.subject}. Modifica parametrii si observa rezultatele!</p>
+        <div class="sim-container" style="display: flex; align-items: center; justify-content: center;">
+          <div style="font-size: 5rem; animation: float 3s ease-in-out infinite;">${sim.subject === 'Chimie' ? '⚗️' : '🧬'}</div>
+        </div>
+        <p class="text-muted text-center">Simulare in curs de dezvoltare...</p>
+      </div>
+    `;
+  }
+}
+
+function updateSim() {
+  document.getElementById('massVal').textContent = document.getElementById('massSlider').value;
+  document.getElementById('velVal').textContent = document.getElementById('velSlider').value;
+  document.getElementById('gravVal').textContent = document.getElementById('gravSlider').value;
+}
+
+function launchProjectile() {
+  const ball = document.getElementById('simBall');
+  const vel = parseInt(document.getElementById('velSlider').value);
+  const grav = parseFloat(document.getElementById('gravSlider').value);
+  const distance = (vel * vel) / grav * 2;
+  ball.style.transition = 'all 1.5s ease-out';
+  ball.style.left = Math.min(distance, 400) + 'px';
+  ball.style.bottom = '100px';
+  setTimeout(() => {
+    ball.style.transition = 'all 0.5s ease-in';
+    ball.style.bottom = '20px';
+  }, 1500);
+}
+
+// --- SHOP ---
+function renderShop(container) {
+  container.innerHTML = `
+    <div class="top-bar">
+      <div><h1>🛒 Shop</h1><p class="text-muted">Cosmetic exclusiv — fara Pay-to-Win</p></div>
+      <div class="user-stats">
+        <div class="stat-chip coins"><span>🪙</span><span>${currentUser.coins} MC</span></div>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchShopTab('avatars', event)">👤 Avatare</div>
+      <div class="tab" onclick="switchShopTab('backgrounds', event)">🖼️ Fundaluri</div>
+      <div class="tab" onclick="switchShopTab('music', event)">🎵 Muzica</div>
+      <div class="tab" onclick="switchShopTab('sfx', event)">🔊 Efecte</div>
+    </div>
+    <div id="shopContent"></div>
+  `;
+  renderShopCategory('avatars');
+}
+
+function switchShopTab(cat, evt) {
+  document.querySelectorAll('#mainContent .tab').forEach(t => t.classList.remove('active'));
+  const e = evt || window.event;
+  if (e && e.target) e.target.classList.add('active');
+  renderShopCategory(cat);
+}
+
+function renderShopCategory(category) {
+  const content = document.getElementById('shopContent');
+  if (!content) return;
+  const items = SHOP_ITEMS[category];
+  content.innerHTML = `
+    ${Object.entries(items).map(([rarity, list]) => `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">${rarity === 'common' ? '⚪' : rarity === 'rare' ? '🔵' : rarity === 'epic' ? '🟣' : rarity === 'legendary' ? '🟡' : '🌈'} ${rarity.charAt(0).toUpperCase() + rarity.slice(1)}</div>
+          ${rarity === 'legendary' || rarity === 'mythic' ? '<span class="text-muted">Nivel 10+</span>' : ''}
+        </div>
+        <div class="grid grid-5">
+          ${list.map(item => {
+            const owned = currentUser.inventory.includes(item.id);
+            const locked = (rarity === 'legendary' || rarity === 'mythic') && currentUser.level < 10;
+            return `
+              <div class="shop-item ${owned ? 'owned' : ''} ${locked ? 'locked' : ''}" onclick="${!owned && !locked ? `buyItem('${item.id}', '${item.name}', ${item.price})` : ''}">
+                <div class="item-icon">${item.name.split(' ')[0]}</div>
+                <div class="item-name">${item.name.substring(2)}</div>
+                <div class="item-price">${owned ? '✅ Detinut' : locked ? '🔒 Nivel 10' : '🪙 ' + item.price}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function buyItem(id, name, price) {
+  if (currentUser.coins < price) {
+    alert('Nu ai suficiente Mentor Coins!');
+    return;
+  }
+  currentUser.coins -= price;
+  currentUser.inventory.push(id);
+  addXp(10, 0);
+  showAchievement('🛒 Achizitie Noua', `Ai cumparat: ${name}`);
+  notifyParent('Shop', `Alex a cumparat: ${name} pentru ${price} MC`);
+  renderShop(document.getElementById('mainContent'));
+}
+
+// --- FRIENDS ---
+function renderFriends(container) {
+  container.innerHTML = `
+    <div class="top-bar">
+      <div><h1>👥 Prieteni</h1><p class="text-muted">Competitie sanatoasa — fara chat</p></div>
+      <button class="btn btn-primary" onclick="showAddFriend()">➕ Adauga Prieten</button>
+    </div>
+
+    ${currentUser.friendRequests.length > 0 ? `
+      <div class="card">
+        <div class="card-header"><div class="card-title">📨 Cereri de Prietenie</div></div>
+        ${currentUser.friendRequests.map(req => `
+          <div class="friend-request">
+            <span style="font-size: 2rem;">${req.avatar}</span>
+            <div style="flex: 1;"><strong>${req.username}</strong><br><span class="text-muted">Nivel ${req.level}</span></div>
+            <button class="btn btn-success btn-sm" onclick="acceptFriend('${req.username}')">✅</button>
+            <button class="btn btn-danger btn-sm" onclick="rejectFriend('${req.username}')">❌</button>
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">👤 Lista Prieteni (${currentUser.friends.length})</div></div>
+      ${currentUser.friends.map(f => `
+        <div class="leaderboard-row">
+          <span class="lb-avatar">${f.avatar}</span>
+          <div class="lb-info">
+            <div class="lb-name">${f.username} ${f.title || ''}</div>
+            <div class="lb-meta">⭐ Nivel ${f.level} | ${RANKS[f.level - 1]?.emoji || ''} ${f.rank} | 🔥 ${f.streak} zile</div>
+          </div>
+          <span class="lb-xp">${f.online ? '🟢 Online' : '⚫ Offline'}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function showAddFriend() {
+  showModal(`
+    <h2>➕ Adauga Prieten</h2>
+    <div class="form-group">
+      <label>Username sau Nume</label>
+      <input type="text" class="form-input" id="friendSearch" placeholder="Cauta...">
+    </div>
+    <div id="friendSearchResults" style="margin: 16px 0;">
+      <div class="friend-request" style="cursor: pointer;" onclick="sendFriendRequest('MariaSmart')">
+        <span style="font-size: 2rem;">👩‍🎓</span>
+        <div style="flex: 1;"><strong>MariaSmart</strong><br><span class="text-muted">⭐ Nivel 7 | 🟢 Online</span></div>
+        <button class="btn btn-primary btn-sm">➕</button>
+      </div>
+      <div class="friend-request" style="cursor: pointer;" onclick="sendFriendRequest('AndreiGenial')">
+        <span style="font-size: 2rem;">👦</span>
+        <div style="flex: 1;"><strong>AndreiGenial</strong><br><span class="text-muted">⭐ Nivel 4 | ⚫ Offline</span></div>
+        <button class="btn btn-primary btn-sm">➕</button>
+      </div>
+    </div>
+    <button class="btn btn-outline" onclick="closeModal()">Inchide</button>
+  `);
+}
+
+function sendFriendRequest(username) {
+  notifyParent('Prieteni', `Alex a adaugat un prieten nou: ${username}`);
+  closeModal();
+  showAchievement('👥 Social', 'Adauga 5 prieteni');
+}
+
+function acceptFriend(username) {
+  currentUser.friendRequests = currentUser.friendRequests.filter(r => r.username !== username);
+  renderFriends(document.getElementById('mainContent'));
+}
+
+function rejectFriend(username) {
+  currentUser.friendRequests = currentUser.friendRequests.filter(r => r.username !== username);
+  renderFriends(document.getElementById('mainContent'));
+}
+
+// --- LEADERBOARD ---
+function renderLeaderboard(container) {
+  const allUsers = [
+    { username: 'MariaSmart', level: 7, rank: 'Sergeant', avatar: '👩‍🎓', streak: 8, title: null, xp: 3200, online: true },
+    { username: currentUser.username, level: currentUser.level, rank: currentUser.rank, avatar: currentUser.avatar, streak: currentUser.streak, title: currentUser.title, xp: currentUser.totalXp, online: true },
+    { username: 'AndreiGenial', level: 4, rank: 'Cadet', avatar: '👦', streak: 3, title: null, xp: 950, online: false },
+    { username: 'ElenaBrain', level: 9, rank: 'Captain', avatar: '👧', streak: 15, title: '🌅 Early Bird', xp: 7800, online: true },
+    { username: 'DavidMath', level: 6, rank: 'Warrior', avatar: '🧑‍💻', streak: 5, title: null, xp: 2500, online: false }
+  ].sort((a, b) => b.xp - a.xp);
+
+  container.innerHTML = `
+    <div class="top-bar">
+      <div><h1>🏆 Leaderboard</h1><p class="text-muted">Clasamente actualizate in timp real</p></div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchLeaderboardTab('all', event)">♾️ All Time</div>
+      <div class="tab" onclick="switchLeaderboardTab('weekly', event)">📅 Saptamanal</div>
+      <div class="tab" onclick="switchLeaderboardTab('monthly', event)">📆 Lunar</div>
+    </div>
+    <div class="card">
+      ${allUsers.map((u, i) => `
+        <div class="leaderboard-row ${i === 0 ? 'top-1' : i === 1 ? 'top-2' : i === 2 ? 'top-3' : ''}">
+          <div class="lb-rank">${i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}</div>
+          <span class="lb-avatar">${u.avatar}</span>
+          <div class="lb-info">
+            <div class="lb-name">${u.username} ${u.title || ''}</div>
+            <div class="lb-meta">⭐ ${u.level} | ${RANKS[u.level - 1]?.emoji || ''} ${u.rank} | 🔥 ${u.streak}</div>
+          </div>
+          <span class="lb-xp">${u.xp} XP</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function switchLeaderboardTab(type, evt) {
+  document.querySelectorAll('#mainContent .tab').forEach(t => t.classList.remove('active'));
+  const e = evt || window.event;
+  if (e && e.target) e.target.classList.add('active');
+  // In a real app, this would switch data. Here we just re-render.
+  renderLeaderboard(document.getElementById('mainContent'));
+}
+
+// --- ACHIEVEMENTS ---
+function renderAchievements(container) {
+  container.innerHTML = `
+    <div class="top-bar">
+      <div><h1>🏅 Realizari</h1><p class="text-muted">Colecție si prestigiu — nu ofera XP sau Coins</p></div>
+    </div>
+    <div class="grid grid-3">
+      ${[
+        { id: "first_lesson", name: "🎓 Prima Lectie", desc: "Finalizeaza prima lectie", target: 1, current: currentUser.lessonsCompleted.length },
+        { id: "dedicated", name: "📚 Student Dedicat", desc: "100 lectii", target: 100, current: currentUser.lessonsCompleted.length },
+        { id: "master_learner", name: "📖 Master Learner", desc: "500 lectii", target: 500, current: currentUser.lessonsCompleted.length },
+        { id: "test_master", name: "🧠 Test Master", desc: "100 teste", target: 100, current: currentUser.testsCompleted },
+        { id: "accuracy", name: "🎯 Accuracy Expert", desc: "100 raspunsuri corecte", target: 100, current: currentUser.correctAnswers },
+        { id: "knowledge", name: "💯 Knowledge Master", desc: "1.000 raspunsuri corecte", target: 1000, current: currentUser.correctAnswers },
+        { id: "streak_30", name: "🔥 30 Days Streak", desc: "30 zile streak", target: 30, current: currentUser.streak },
+        { id: "champion", name: "🏆 Champion", desc: "Locul 1 in leaderboard", target: 1, current: 0 },
+        { id: "first_purchase", name: "🛒 First Purchase", desc: "Cumpara primul item", target: 1, current: currentUser.inventory.length > 2 ? 1 : 0 },
+        { id: "collector_25", name: "🎨 Collector", desc: "25 obiecte", target: 25, current: currentUser.inventory.length },
+        { id: "special_one", name: "🌈 Special One", desc: "Primul titlu special", target: 1, current: currentUser.titles.length },
+        { id: "course_master", name: "🎓 Course Master", desc: "Finalizeaza un curs", target: 1, current: currentUser.lessonsCompleted.length > 3 ? 1 : 0 }
+      ].map(ach => {
+        const unlocked = ach.current >= ach.target;
+        return `
+          <div class="card ${unlocked ? '' : 'locked'}" style="${unlocked ? 'border-color: var(--accent);' : 'opacity: 0.6;'}">
+            <div style="font-size: 3rem; margin-bottom: 12px;">${ach.name.split(' ')[0]}</div>
+            <h4>${ach.name.substring(2)}</h4>
+            <p class="text-muted">${ach.desc}</p>
+            <div class="progress-bar" style="margin-top: 12px;"><div class="progress-fill" style="width: ${Math.min((ach.current / ach.target) * 100, 100)}%"></div></div>
+            <p class="text-muted" style="margin-top: 8px; font-size: 0.85rem;">${ach.current} / ${ach.target}</p>
+            ${unlocked ? '<span class="text-success">✅ Deblocat</span>' : '<span class="text-muted">🔒 Blocat</span>'}
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+// --- PROFILE ---
+function renderProfile(container) {
+  const rank = RANKS[currentUser.level - 1];
+  container.innerHTML = `
+    <div class="top-bar">
+      <div><h1>👤 Profilul Meu</h1></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="card text-center">
+        <div style="font-size: 5rem; margin-bottom: 16px;">${currentUser.avatar}</div>
+        <h2>${currentUser.username}</h2>
+        <p class="text-muted">${currentUser.title || ''}</p>
+        <div style="margin: 16px 0;">
+          <span class="level-badge" style="color: ${rank.color}; border: 1px solid ${rank.color}; font-size: 1rem;">
+            ${rank.emoji} ${rank.name} | Nivel ${currentUser.level}
+          </span>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 16px; margin-top: 16px;">
+          <div><strong>${currentUser.totalXp}</strong><br><span class="text-muted">XP</span></div>
+          <div><strong>${currentUser.coins}</strong><br><span class="text-muted">Coins</span></div>
+          <div><strong>${currentUser.streak}</strong><br><span class="text-muted">Streak</span></div>
+          <div><strong>${currentUser.friends.length}</strong><br><span class="text-muted">Prieteni</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">🎨 Personalizare</div></div>
+        <div class="form-group">
+          <label>Avatar</label>
+          <select class="form-input" onchange="changeAvatar(this.value)">
+            <option value="🧑‍🎓" ${currentUser.avatar === '🧑‍🎓' ? 'selected' : ''}>🧑‍🎓 Student</option>
+            <option value="👩‍🎓" ${currentUser.avatar === '👩‍🎓' ? 'selected' : ''}>👩‍🎓 Studenta</option>
+            <option value="🧙" ${currentUser.avatar === '🧙' ? 'selected' : ''}>🧙 Vrajitor</option>
+            <option value="🦸" ${currentUser.avatar === '🦸' ? 'selected' : ''}>🦸 Supererou</option>
+            <option value="🤖" ${currentUser.avatar === '🤖' ? 'selected' : ''}>🤖 Robot</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Titlu Special</label>
+          <select class="form-input" onchange="changeTitle(this.value)">
+            <option value="">Niciunul</option>
+            ${currentUser.titles.map(t => `<option value="${t}">${t}</option>`).join('')}
+          </select>
+        </div>
+        <div style="margin-top: 16px;">
+          <p class="text-muted">📅 Cont creat: ${new Date(currentUser.created).toLocaleDateString('ro-RO')}</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function changeAvatar(avatar) {
+  currentUser.avatar = avatar;
+  renderProfile(document.getElementById('mainContent'));
+}
+
+function changeTitle(title) {
+  currentUser.title = title || null;
+  renderProfile(document.getElementById('mainContent'));
+}
+
+// --- SETTINGS ---
+function renderSettings(container) {
+  container.innerHTML = `
+    <div class="top-bar">
+      <div><h1>⚙️ Setari</h1></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">🔔 Notificari</div></div>
+        ${Object.entries(currentUser.settings.notifications).map(([key, val]) => `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+            <span>${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
+            <label style="position: relative; display: inline-block; width: 44px; height: 24px;">
+              <input type="checkbox" ${val ? 'checked' : ''} onchange="toggleSetting('notifications', '${key}')" style="opacity: 0; width: 0; height: 0;">
+              <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: ${val ? 'var(--primary)' : 'var(--border)'}; border-radius: 24px; transition: 0.3s;"></span>
+            </label>
+          </div>
+        `).join('')}
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">🔒 Confidentialitate</div></div>
+        <div class="form-group">
+          <label>Cine poate trimite cereri de prietenie</label>
+          <select class="form-input" onchange="currentUser.settings.privacy.friendRequests = this.value">
+            <option value="everyone" ${currentUser.settings.privacy.friendRequests === 'everyone' ? 'selected' : ''}>Toata lumea</option>
+            <option value="friends_of_friends" ${currentUser.settings.privacy.friendRequests === 'friends_of_friends' ? 'selected' : ''}>Prieteni de prieteni</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Vizibilitate profil</label>
+          <select class="form-input" onchange="currentUser.settings.privacy.profileVisibility = this.value">
+            <option value="public" ${currentUser.settings.privacy.profileVisibility === 'public' ? 'selected' : ''}>Public</option>
+            <option value="friends_only" ${currentUser.settings.privacy.profileVisibility === 'friends_only' ? 'selected' : ''}>Doar prieteni</option>
+          </select>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+          <span>Aparitie in leaderboard-uri</span>
+          <label style="position: relative; display: inline-block; width: 44px; height: 24px;">
+            <input type="checkbox" ${currentUser.settings.privacy.leaderboards ? 'checked' : ''} onchange="currentUser.settings.privacy.leaderboards = this.checked" style="opacity: 0; width: 0; height: 0;">
+            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: ${currentUser.settings.privacy.leaderboards ? 'var(--primary)' : 'var(--border)'}; border-radius: 24px; transition: 0.3s;"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleSetting(category, key) {
+  currentUser.settings[category][key] = !currentUser.settings[category][key];
+}
+
+// --- PARENT INBOX ---
+function switchParentTab(tab, evt) {
+  document.querySelectorAll('#parentScreen .tab').forEach(t => t.classList.remove('active'));
+  const e = evt || window.event;
+  if (e && e.target) e.target.classList.add('active');
+  document.getElementById('parentInbox').classList.toggle('active', tab === 'inbox');
+  document.getElementById('parentSettings').classList.toggle('active', tab === 'settings');
+}
+
+function renderParentInbox() {
+  const container = document.getElementById('parentNotifications');
+  if (!container) return;
+
+  // Update child stats
+  document.getElementById('parentChildName').textContent = currentUser.childName || 'Alex';
+  document.getElementById('parentChildLevel').textContent = 'Nivel ' + (currentUser.childLevel || 5);
+  document.getElementById('parentChildStreak').textContent = (currentUser.childStreak || 12) + ' zile';
+
+  const notifs = currentUser.notifications || [];
+  if (notifs.length === 0) {
+    container.innerHTML = '<p class="text-muted text-center">Nu exista notificari inca.</p>';
+    return;
+  }
+
+  container.innerHTML = notifs.map(n => `
+    <div class="notification-item ${n.read ? '' : 'unread'}">
+      <div style="font-size: 1.5rem;">
+        ${n.type === 'streak' ? '🔥' : n.type === 'level_up' ? '⭐' : n.type === 'test' ? '📝' : n.type === 'lesson' ? '📖' : n.type === 'shop' ? '🛒' : n.type === 'ai_tutor' ? '🧠' : n.type === 'exam' ? '📅' : n.type === 'friend' ? '👥' : n.type === 'achievement' ? '🏅' : '📨'}
+      </div>
+      <div style="flex: 1;">
+        <div>${n.message}</div>
+        <div class="notif-time">${n.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderParentSettings() {
+  const container = document.getElementById('parentNotifSettings');
+  if (!container) return;
+  container.innerHTML = `
+    <div class="notification-item" style="cursor: pointer;" onclick="setParentNotif('all')">
+      <div style="flex: 1;"><strong>✅ Toate notificarile</strong><br><span class="text-muted">Primesti absolut tot ce face copilul</span></div>
+      ${currentUser.notifSettings?.all ? '✅' : ''}
+    </div>
+    <div class="notification-item" style="cursor: pointer;" onclick="setParentNotif('important')">
+      <div style="flex: 1;"><strong>⚠️ Doar importante</strong><br><span class="text-muted">Niveluri, streak pierdut, puncte slabe</span></div>
+      ${currentUser.notifSettings?.important ? '✅' : ''}
+    </div>
+    <div class="notification-item" style="cursor: pointer;" onclick="setParentNotif('none')">
+      <div style="flex: 1;"><strong>🔕 Niciuna</strong><br><span class="text-muted">Doar raport saptamanal</span></div>
+      ${currentUser.notifSettings?.none ? '✅' : ''}
+    </div>
+  `;
+}
+
+function setParentNotif(mode) {
+  currentUser.notifSettings = { all: mode === 'all', important: mode === 'important', none: mode === 'none' };
+  renderParentSettings();
+}
+
+// --- XP & LEVEL SYSTEM ---
+function addXp(xp, coins) {
+  currentUser.xp += xp;
+  currentUser.totalXp += xp;
+  currentUser.coins += coins;
+
+  // Check level up
+  const nextLevel = currentUser.level + 1;
+  if (nextLevel <= 20 && currentUser.xp >= XP_LEVELS[nextLevel - 1]) {
+    const prevXp = XP_LEVELS[currentUser.level - 1] || 0;
+    currentUser.xp -= (XP_LEVELS[nextLevel - 1] - prevXp);
+    currentUser.level = nextLevel;
+    currentUser.rank = RANKS[nextLevel - 1].name;
+    currentUser.coins += 20;
+
+    showLevelUp(nextLevel);
+    notifyParent('Nivel', `Alex a atins Nivelul ${nextLevel}! Rang: ${RANKS[nextLevel - 1].name}`);
+  }
+}
+
+function showLevelUp(level) {
+  const rank = RANKS[level - 1];
+  document.getElementById('levelUpText').textContent = `Ai urcat la Nivelul ${level}!`;
+  document.getElementById('levelUpRewards').innerHTML = `
+    <div>⭐ 50 XP Bonus</div>
+    <div>🪙 20 Mentor Coins</div>
+    <div style="margin-top: 8px; font-size: 1.5rem; color: ${rank.color}; animation: rainbow 3s linear infinite;">
+      ${rank.emoji} ${rank.name}
+    </div>
+  `;
+  document.getElementById('levelUpOverlay').classList.remove('hidden');
+
+  // Confetti
+  const container = document.getElementById('confettiContainer');
+  container.innerHTML = '';
+  const colors = ['#fbbf24', '#ef4444', '#3b82f6', '#10b981', '#8b5cf6', '#f59e0b'];
+  for (let i = 0; i < 50; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = Math.random() * 2 + 's';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+    container.appendChild(piece);
+  }
+}
+
+function closeLevelUp() {
+  document.getElementById('levelUpOverlay').classList.add('hidden');
+}
+
+// --- ACHIEVEMENT POPUP ---
+function showAchievement(title, desc) {
+  const container = document.getElementById('achievementContainer');
+  const popup = document.createElement('div');
+  popup.className = 'achievement-popup';
+  popup.innerHTML = `
+    <div class="ach-icon">🏆</div>
+    <div>
+      <div class="ach-text">${title}</div>
+      <div class="ach-sub">${desc}</div>
+    </div>
+  `;
+  container.appendChild(popup);
+  setTimeout(() => popup.remove(), 4000);
+}
+
+// --- PARENT NOTIFICATIONS ---
+function notifyParent(type, message) {
+  if (!currentUser || currentUser.type !== 'student') return;
+
+  // In a real app, this would send to parent's backend
+  // Here we just log it
+  const notif = {
+    id: Date.now(),
+    type: type.toLowerCase().replace(/\s/g, '_'),
+    message: message,
+    time: 'Acum',
+    read: false
+  };
+
+  if (!currentUser.parentNotifications) currentUser.parentNotifications = [];
+  currentUser.parentNotifications.unshift(notif);
+}
+
+// --- MODAL ---
+function showModal(html) {
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function closeModal(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+// --- INIT ---
+document.addEventListener('DOMContentLoaded', () => {
+  // Check if demo login should auto-fill
+  console.log('MENTOR APP v1.0 loaded');
+});
+</script>
+</body>
+</html>
