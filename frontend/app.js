@@ -414,7 +414,7 @@ const SubscriptionsScreen = ({ userData, onBack, currentPlanId, currentPlanStatu
   );
 };
 
-const ProfileScreen = ({ userData, onBack, onLogout }) => {
+const ProfileScreen = ({ userData, onBack, onLogout, onToast }) => {
   const [detectText, setDetectText] = useState('');
   const [detectLoading, setDetectLoading] = useState(false);
   const [detectResult, setDetectResult] = useState(null);
@@ -510,6 +510,9 @@ const ProfileScreen = ({ userData, onBack, onLogout }) => {
       </div>
 
       <div className="mx-5 mt-5">
+        <window.InvitationsPanel role={userData.role || 'student'} onToast={onToast} />
+      </div>
+      <div className="mx-5 mt-5">
         <window.Leaderboard userData={userData} />
       </div>
       <div className="mx-5 mt-5 grid gap-3">
@@ -550,15 +553,18 @@ const ParentDashboardScreen = ({ userData, onBack, onNavigate, showToast }) => {
 
   useEffect(() => { loadAnalytics(); }, [loadAnalytics]);
 
-  const connectChild = async () => {
+  // Legarea directă a dispărut: trimitem o invitație, iar copilul o acceptă.
+  // Până atunci părintele nu vede nimic din datele lui.
+  const inviteChild = async () => {
     if (!childEmail.trim()) return;
     setLinking(true);
-    const result = await window.MentorAPI.connectChildAccount({ parent_email: userData.email || 'demo_user', child_email: childEmail.trim() });
+    const result = await window.MentorAPI.inviteLink({ to_email: childEmail.trim(), kind: 'parent_child' });
     setLinking(false);
     if (result.success) {
-      setAnalytics(prev => prev ? { ...prev, analytics: { ...prev.analytics, linked: true, childEmail: childEmail.trim() } } : prev);
-      await loadAnalytics();
-      showToast?.('Contul de elev a fost conectat.', 'success');
+      showToast?.('Invitație trimisă. Contul se conectează după ce copilul acceptă.', 'success');
+      setChildEmail('');
+    } else {
+      showToast?.(result.error || 'Nu am putut trimite invitația.', 'warning');
     }
   };
 
@@ -634,9 +640,10 @@ const ParentDashboardScreen = ({ userData, onBack, onNavigate, showToast }) => {
         <h1 className="display-font parent-title">Analitică aprofundată pentru copil.</h1>
         <p className="parent-subtitle">Vezi timpul de focus, progresul, riscul de AFK, semnale de copiere și ultimele mesaje trimise către AI.</p>
         <div className="parent-connect-row">
-          <input value={childEmail} onChange={e => setChildEmail(e.target.value)} placeholder="Email-ul elevului conectat" className="parent-connect-input" />
-          <button type="button" className="accent-button" onClick={connectChild} disabled={linking || !childEmail.trim()}>{linking ? 'Conectez...' : 'Conectează elevul'}</button>
+          <input value={childEmail} onChange={e => setChildEmail(e.target.value)} placeholder="Email-ul copilului" className="parent-connect-input" />
+          <button type="button" className="accent-button" onClick={inviteChild} disabled={linking || !childEmail.trim()}>{linking ? 'Trimit...' : 'Trimite invitația'}</button>
         </div>
+        <small className="field-hint">Copilul primește o invitație și trebuie să o accepte. Până atunci nu ai acces la datele lui.</small>
       </section>
 
       <section className="mx-5 mt-5 parent-metrics-grid">
@@ -672,6 +679,10 @@ const ParentDashboardScreen = ({ userData, onBack, onNavigate, showToast }) => {
           </div>
           <button type="button" className="accent-button" onClick={savePreferences} disabled={savingPrefs}>{savingPrefs ? 'Salvez...' : 'Salvează preferințele'}</button>
         </div>
+      </section>
+
+      <section className="mx-5 mt-5">
+        <window.InvitationsPanel role="parent" onToast={showToast} onChange={loadAnalytics} />
       </section>
 
       <section className="mx-5 mt-5 surface rounded-3xl p-5 parent-panel">
@@ -1276,7 +1287,7 @@ const App = () => {
       case 'subscriptions':
         return <SubscriptionsScreen userData={userData} onBack={() => handleNavigate('home')} currentPlanId={userData.planId || 'free'} currentPlanStatus={userData.planStatus} onSelectPlan={handleSelectPlan} onToast={showToast} />;
       case 'profile':
-        return <ProfileScreen userData={userData} onBack={() => handleNavigate('home')} onLogout={handleLogout} />;
+        return <ProfileScreen userData={userData} onBack={() => handleNavigate('home')} onLogout={handleLogout} onToast={showToast} />;
       default:
         return <HomeScreen userData={userData} onNavigate={handleNavigate} />;
     }

@@ -10,7 +10,6 @@ const {
   logActivity,
   getNotifications,
   markNotificationRead,
-  connectParentChild,
   updateNotificationPreferences,
   getParentAnalytics,
   sendParentReview,
@@ -92,19 +91,14 @@ router.post('/parent-review', (req, res) => {
   res.json(result);
 });
 
-// TODO(Faza 1, PR următor): legătura este încă unilaterală - părintele indică
-// un email și conturile se leagă fără acceptul elevului. Rămâne de înlocuit cu
-// invitație + confirmare din partea celuilalt cont.
+// Legarea directă a fost înlocuită cu invitație acceptată de celălalt cont
+// (POST /api/links/invite). Păstrăm ruta ca să răspundă explicit, în loc să
+// dea 404 unui client mai vechi care încă o apelează.
 router.post('/connect-child', roleGuard('parent'), (req, res) => {
-  const { child_email = '' } = req.body || {};
-  if (!child_email) {
-    return res.status(400).json({ error: 'child_email este obligatoriu.' });
-  }
-  const result = connectParentChild({ parentEmail: req.auth.email, childEmail: child_email });
-  if (!result) {
-    return res.status(400).json({ error: 'Email-ul elevului este obligatoriu.' });
-  }
-  res.json({ success: true, connection: result });
+  res.status(410).json({
+    error: 'Legarea directă nu mai este disponibilă. Trimite o invitație prin POST /api/links/invite; elevul trebuie să o accepte.',
+    replacement: '/api/links/invite'
+  });
 });
 
 router.post('/preferences', roleGuard('parent'), (req, res) => {

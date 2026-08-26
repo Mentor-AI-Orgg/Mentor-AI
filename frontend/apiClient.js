@@ -183,6 +183,52 @@ const MentorAPI = {
     }
   },
 
+  // --- legaturi intre conturi (parinte-copil, profesor-elev) ---
+  // Legatura nu exista pana cand celalalt cont accepta invitatia.
+  async getLinks() {
+    try {
+      const data = await safeFetchJson('/api/links');
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: { incoming: [], outgoing: [], links: [] }, fallback: true };
+    }
+  },
+
+  async inviteLink(payload) {
+    try {
+      const data = await safeFetchJson('/api/links/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async respondToInvitation(invitationId, action) {
+    try {
+      const data = await safeFetchJson(`/api/links/${invitationId}/${action}`, { method: 'POST' });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async unlinkAccount(otherEmail) {
+    try {
+      const data = await safeFetchJson('/api/links/unlink', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ other_email: otherEmail })
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async chat(payload) {
     try {
       const data = await safeFetchJson('/api/chat', {
@@ -313,19 +359,6 @@ const MentorAPI = {
   async logActivity(payload) {
     try {
       const data = await safeFetchJson('/api/economy/activity', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: null, fallback: true };
-    }
-  },
-
-  async connectChildAccount(payload) {
-    try {
-      const data = await safeFetchJson('/api/economy/connect-child', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
