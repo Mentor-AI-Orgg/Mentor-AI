@@ -1,6 +1,7 @@
 // mock
 
 const config = require("../config");
+const { fetchWithTimeout } = require("./fetchWithTimeout");
 
 function mockResult(query) {
   return {
@@ -17,7 +18,7 @@ async function askWolfram(query) {
 
   try {
     const url = `https://api.wolframalpha.com/v2/query?appid=${config.WOLFRAM_KEY}&input=${encodeURIComponent(query)}&output=json`;
-    const res = await fetch(url);
+    const res = await fetchWithTimeout(url, {}, config.PROVIDER_TIMEOUT_MS);
     if (!res.ok) throw new Error(`Wolfram API responded ${res.status}`);
     const data = await res.json();
 

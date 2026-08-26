@@ -53,7 +53,7 @@ const ProfessorScreen = ({ userData }) => {
     }
     try {
       const reply = await chatRequest({ message, conversationId: conversationId.current, subject: userData.profile || 'matematica', classLevel, language: userData.language || 'ro', planId: userData.planId || 'free', mockReply: 'Îți explic pas cu pas. Începem cu ideea principală și verificăm împreună fiecare pas.' });
-      setMessages(previous => [...previous, { role: 'assistant', content: reply.response || 'Am primit întrebarea. Hai să o desfacem în pași simpli.', mocked: reply.mocked }]);
+      setMessages(previous => [...previous, { role: 'assistant', content: reply.response || 'Am primit întrebarea. Hai să o desfacem în pași simpli.', mocked: reply.mocked, engine: reply.engine_used }]);
     } catch (error) { setMessages(previous => [...previous, { role: 'assistant', content: 'Nu pot răspunde acum. Încearcă din nou în câteva secunde.' }]); }
     finally { setLoading(false); }
   };
@@ -71,10 +71,12 @@ const ProfessorScreen = ({ userData }) => {
           <i className="fas fa-stethoscope" /> {diagMode ? 'Diagnosticare: ON' : 'Diagnosticare'}
         </button>
         <span className="memory-pill"><i className="fas fa-brain" /> Memorie activă</span>
+        {messages.some(m => m.mocked) && <span className="memory-pill mock-mode-pill"><i className="fas fa-flask" /> Mod demo</span>}
       </div>
     </header>
     {diagMode && <div className="diag-banner"><i className="fas fa-circle-info" /> Mod diagnosticare activ: orice mesaj trimis va verifica memoria și fiecare API (Claude, GPT-4o, Gemini, Wolfram, Mathpix) în loc de un răspuns normal.</div>}
-    <section className="mentor-thread surface">{messages.length === 0 && <div className="mentor-empty"><div className="professor-icon"><i className="fas fa-sparkles" /></div><h2 className="display-font">Cu ce începem?</h2><p>Scrie o întrebare. Memoria conversației rămâne în backend pentru următorul tău mesaj.</p><div className="suggestion-row"><button onClick={() => send('Explică-mi un concept pe înțelesul meu')} type="button">Explică-mi un concept</button><button onClick={() => send('Ajută-mă să-mi organizez învățarea')} type="button">Fă-mi un plan</button></div></div>}{messages.map((message, index) => <MessageBubble key={`${message.role}-${index}`} role={message.role}>{message.diagnostic ? <pre className={`diag-report ${message.allOk ? 'all-ok' : 'has-issues'}`}>{message.content}</pre> : message.content}{message.mocked && <small className="mock-label">Răspuns demo</small>}</MessageBubble>)}{loading && <LoadingMessage />}</section>
+    {messages.some(m => m.mocked) && <div className="mock-banner"><i className="fas fa-flask" /> Răspunsurile marcate „demo” nu vin de la un model real: cheia API lipsește sau apelul a eșuat.</div>}
+    <section className="mentor-thread surface">{messages.length === 0 && <div className="mentor-empty"><div className="professor-icon"><i className="fas fa-sparkles" /></div><h2 className="display-font">Cu ce începem?</h2><p>Scrie o întrebare. Memoria conversației rămâne în backend pentru următorul tău mesaj.</p><div className="suggestion-row"><button onClick={() => send('Explică-mi un concept pe înțelesul meu')} type="button">Explică-mi un concept</button><button onClick={() => send('Ajută-mă să-mi organizez învățarea')} type="button">Fă-mi un plan</button></div></div>}{messages.map((message, index) => <MessageBubble key={`${message.role}-${index}`} role={message.role}>{message.diagnostic ? <pre className={`diag-report ${message.allOk ? 'all-ok' : 'has-issues'}`}>{message.content}</pre> : message.content}{message.mocked && <small className="mock-label">Răspuns demo{message.engine ? ` · ${message.engine}` : ''} — nu este generat de un model real</small>}</MessageBubble>)}{loading && <LoadingMessage />}</section>
     <form className="mentor-composer" onSubmit={event => { event.preventDefault(); send(draft); }}><input value={draft} onChange={event => setDraft(event.target.value)} placeholder={diagMode ? 'Scrie orice, va rula diagnosticarea...' : 'Scrie întrebarea ta...'} aria-label="Întrebarea pentru Mentor AI" /><button className="accent-button" type="submit" disabled={loading || !draft.trim()} aria-label="Trimite întrebarea"><i className={`fas ${diagMode ? 'fa-stethoscope' : 'fa-arrow-up'}`} /></button></form>
   </main>;
 };
@@ -171,7 +173,7 @@ const LearnScreen = ({ userData, onRewardClaim }) => {
     });
 
     const plan = parseSessionPlan(reply.response || '');
-    setSession({ title: module.title, meta: module.meta, ...plan, raw: reply.response || '' });
+    setSession({ title: module.title, meta: module.meta, ...plan, raw: reply.response || '', mocked: !!reply.mocked, engine: reply.engine_used || '' });
     setLoading(false);
     if (window.MentorAPI?.logActivity) {
       window.MentorAPI.logActivity({ user_id: userData.email || 'demo_user', type: 'learn_module', note: module.title, meta: { moduleId: module.id, title: module.title } });
@@ -240,6 +242,7 @@ const LearnScreen = ({ userData, onRewardClaim }) => {
       </> : session ? <>
         <div className="eyebrow">SESIUNEA TA</div>
         <h3 className="display-font learning-result-title">{session.title}</h3>
+        {session.mocked && <p className="mock-banner session-mock-note">Sesiune demo{session.engine ? ` · ${session.engine}` : ''} — nu este generată de un model real.</p>}
         <div className="learning-steps">
           <article className="learn-step"><span>Obiectiv</span><p>{session.objective}</p></article>
           <article className="learn-step"><span>Încălzire</span><p>{session.warmup}</p></article>

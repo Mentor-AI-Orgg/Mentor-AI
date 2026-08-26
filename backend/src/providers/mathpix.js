@@ -1,6 +1,7 @@
 // mock
 
 const config = require("../config");
+const { fetchWithTimeout } = require("./fetchWithTimeout");
 
 function mockResult() {
   return {
@@ -16,7 +17,7 @@ async function recognizeImage(base64Image) {
   if (!config.MATHPIX_APP_ID || !config.MATHPIX_APP_KEY) return mockResult();
 
   try {
-    const res = await fetch("https://api.mathpix.com/v3/text", {
+    const res = await fetchWithTimeout("https://api.mathpix.com/v3/text", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,7 +28,7 @@ async function recognizeImage(base64Image) {
         src: base64Image.startsWith("data:") ? base64Image : `data:image/jpeg;base64,${base64Image}`,
         formats: ["text", "latex_styled"]
       })
-    });
+    }, config.PROVIDER_TIMEOUT_MS);
 
     if (!res.ok) throw new Error(`Mathpix API responded ${res.status}`);
     const data = await res.json();

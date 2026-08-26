@@ -2,6 +2,7 @@
 
 const config = require("../config");
 const { pickGeminiMockReply } = require("../data/mockGemini");
+const { fetchWithTimeout } = require("./fetchWithTimeout");
 
 async function callGemini(messages, lang) {
   const start = Date.now();
@@ -24,14 +25,15 @@ async function callGemini(messages, lang) {
       .map(m => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }));
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${config.GEMINI_MODEL}:generateContent?key=${config.GEMINI_KEY}`;
-    const res = await fetch(url, {
+    const res = await fetchWithTimeout(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: system }] },
-        contents
+        contents,
+        generationConfig: { maxOutputTokens: config.MAX_TOKENS }
       })
-    });
+    }, config.PROVIDER_TIMEOUT_MS);
 
     if (!res.ok) throw new Error(`Gemini API responded ${res.status}`);
     const data = await res.json();

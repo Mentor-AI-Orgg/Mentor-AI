@@ -287,7 +287,11 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .mentor-message-ai { border: 1px solid rgba(111,215,255,.18); background: rgba(111,215,255,.08); }
 .mentor-message-role { display: block; margin-bottom: 6px; color: var(--aqua); font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 .mentor-message-user .mentor-message-role { color: var(--lime); }
-.mock-label { display: block; margin-top: 9px; color: var(--muted); font-size: 10px; }
+.mock-label { display: block; margin-top: 9px; color: #ffd8ad; font-size: 11px; font-weight: 700; }
+.mock-banner { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 12px; padding: 10px 12px; border-radius: 14px; background: rgba(255, 180, 120, .12); border: 1px solid rgba(255, 180, 120, .28); color: #ffd8ad; font-size: 12px; line-height: 1.5; }
+.mock-banner i { margin-top: 2px; }
+.mock-mode-pill { color: #ffd8ad !important; border-color: rgba(255, 180, 120, .35) !important; }
+.session-mock-note { margin: 0 0 14px; }
 .loading-dots { display: flex; gap: 4px; padding: 5px 0; }
 .loading-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--aqua); animation: pulse 1.1s infinite ease-in-out; }
 .loading-dots i:nth-child(2) { animation-delay: .15s; }.loading-dots i:nth-child(3) { animation-delay: .3s; }

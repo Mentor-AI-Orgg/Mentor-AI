@@ -562,6 +562,21 @@ function verifyAccessCode({ parentEmail = '', childEmail = '', code = '' }) {
   return { ok: true };
 }
 
+function purgeExpiredAccessCodes() {
+  const now = Date.now();
+  let removed = 0;
+  for (const [key, entry] of ACCESS_CODES.entries()) {
+    if (!entry || now > entry.expiresAt) {
+      ACCESS_CODES.delete(key);
+      removed++;
+    }
+  }
+  return removed;
+}
+
+const accessCodePurgeTimer = setInterval(purgeExpiredAccessCodes, 60 * 1000);
+accessCodePurgeTimer.unref();
+
 function getParentAnalytics(parentEmail = '') {
   const parent = ensureUser(parentEmail, { role: 'parent' });
   const childEmail = parent.preferences.childEmail || '';
@@ -897,6 +912,29 @@ function pushNotification(userId, targetEmail, subject, body, channel = 'email')
   return notification;
 }
 
+const NOTIFICATION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const MAX_NOTIFICATIONS = 500;
+
+function purgeExpiredNotifications() {
+  const cutoff = Date.now() - NOTIFICATION_TTL_MS;
+  let removed = 0;
+  for (let i = NOTIFICATIONS.length - 1; i >= 0; i--) {
+    const created = new Date(NOTIFICATIONS[i].createdAt || 0).getTime();
+    if (!Number.isFinite(created) || created < cutoff) {
+      NOTIFICATIONS.splice(i, 1);
+      removed++;
+    }
+  }
+  if (NOTIFICATIONS.length > MAX_NOTIFICATIONS) {
+    removed += NOTIFICATIONS.length - MAX_NOTIFICATIONS;
+    NOTIFICATIONS.length = MAX_NOTIFICATIONS;
+  }
+  return removed;
+}
+
+const notificationPurgeTimer = setInterval(purgeExpiredNotifications, 6 * 60 * 60 * 1000);
+notificationPurgeTimer.unref();
+
 function getNotifications(userId = 'demo_user') {
   const inbox = NOTIFICATIONS.filter(entry => entry.userId === userId);
   return {
@@ -988,6 +1026,8 @@ persistence.register('economy', {
     persistence.restoreMap(USERS, data?.users);
     persistence.restoreArray(NOTIFICATIONS, data?.notifications);
     persistence.restoreMap(PURCHASES, data?.purchases);
+    purgeExpiredNotifications();
+    purgeExpiredAccessCodes();
   }
 });
 
@@ -1015,6 +1055,8 @@ module.exports = {
   requestTest,
   generateAccessCode,
   verifyAccessCode,
+  purgeExpiredAccessCodes,
+  purgeExpiredNotifications,
   exportUser,
   deleteUser
 };
