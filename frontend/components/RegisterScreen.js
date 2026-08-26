@@ -38,7 +38,7 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
   const [form, setForm] = useState({
     name: '', phone: '', email: '', username: '', password: '', confirmPassword: '',
     role: initialRole, school: '', class: '', subject: '', parentEmail: '', teacherEmail: '', childEmail: '',
-    inviteCode: ''
+    inviteCode: '', parentalConsent: false, privacyAccepted: false
   });
   const [touched, setTouched] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -59,11 +59,13 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
     school: v => form.role !== 'student' || (v || '').trim().length >= 2,
     class: v => form.role !== 'student' || (v || '').trim().length >= 1,
     subject: v => form.role !== 'teacher' || (v || '').trim().length >= 2,
-    parentEmail: v => form.role !== 'parent' || isValidEmail(v),
+    parentEmail: v => (form.role !== 'parent' && form.role !== 'student') || isValidEmail(v),
     // Contul de profesor vede analitica mai multor elevi, deci serverul cere
     // un cod de invitație. Îl validăm doar ca prezență; corectitudinea o
     // stabilește backend-ul.
-    inviteCode: v => form.role !== 'teacher' || (v || '').trim().length > 0
+    inviteCode: v => form.role !== 'teacher' || (v || '').trim().length > 0,
+    parentalConsent: v => form.role !== 'student' || v === true,
+    privacyAccepted: v => v === true
   }), [form.role, form.password]);
 
   const fieldValid = key => (validators[key] ? validators[key](form[key]) : true);
@@ -71,9 +73,9 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
   // Câmpurile efectiv necesare diferă pe rol: un profesor nu are clasă/
   // școală de elev, un părinte nu are nici clasă/școală, nici materie.
   const requiredByRole = {
-    student: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'school', 'class'],
-    teacher: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'subject', 'inviteCode'],
-    parent: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'parentEmail']
+    student: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'school', 'class', 'parentEmail', 'parentalConsent', 'privacyAccepted'],
+    teacher: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'subject', 'inviteCode', 'privacyAccepted'],
+    parent: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'parentEmail', 'privacyAccepted']
   };
 
   const requiredFields = requiredByRole[form.role] || requiredByRole.student;
@@ -214,15 +216,23 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
         </div>
 
         {form.role === 'student' && (
-          <label className="field-label">Email părinte (opțional, dar recomandat)
-            <input
-              type="email"
-              value={form.parentEmail}
-              onChange={e => setField('parentEmail', e.target.value)}
-              placeholder="ex: parinte@email.com"
-              className="field form-input"
-            />
-          </label>
+          <div>
+            <label className="field-label">
+              <span className="field-label-row">
+                Email părinte / tutore
+                <FieldStatus touched={Boolean(touched.parentEmail)} valid={fieldValid('parentEmail')} />
+              </span>
+              <input
+                type="email"
+                value={form.parentEmail}
+                onChange={e => setField('parentEmail', e.target.value)}
+                onBlur={() => markTouched('parentEmail')}
+                placeholder="ex: parinte@email.com"
+                className={`field form-input ${touched.parentEmail ? (fieldValid('parentEmail') ? 'field-valid' : 'field-invalid') : ''}`}
+              />
+            </label>
+            <small className="field-hint">Obligatoriu. Trimitem o invitație de conectare; părintele nu vede datele tale până o acceptă.</small>
+          </div>
         )}
         {form.role === 'student' && (
           <label className="field-label">Email profesor (opțional)
@@ -274,6 +284,28 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
             <small className="field-hint">Vei putea vedea analitica acestui cont și primi coduri de acces prin SMS, niciodată parola contului.</small>
           </div>
         )}
+
+        {form.role === 'student' && (
+          <label className={`consent-check ${touched.parentalConsent && !fieldValid('parentalConsent') ? 'consent-check-invalid' : ''}`}>
+            <input
+              type="checkbox"
+              checked={form.parentalConsent}
+              onChange={e => setField('parentalConsent', e.target.checked)}
+              onBlur={() => markTouched('parentalConsent')}
+            />
+            <span>Un părinte sau tutore își dă acordul pentru crearea acestui cont de elev. <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Detalii în politica de confidențialitate</a>.</span>
+          </label>
+        )}
+
+        <label className={`consent-check ${touched.privacyAccepted && !fieldValid('privacyAccepted') ? 'consent-check-invalid' : ''}`}>
+          <input
+            type="checkbox"
+            checked={form.privacyAccepted}
+            onChange={e => setField('privacyAccepted', e.target.checked)}
+            onBlur={() => markTouched('privacyAccepted')}
+          />
+          <span>Am citit și accept <a href="/privacy.html" target="_blank" rel="noopener noreferrer">politica de confidențialitate</a> și <a href="/terms.html" target="_blank" rel="noopener noreferrer">termenii de utilizare</a>.</span>
+        </label>
       </div>
 
       {serverError && <div className="form-error" role="alert"><i className="fas fa-circle-exclamation"></i> {serverError}</div>}

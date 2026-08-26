@@ -22,9 +22,13 @@ function setSubscription(userId, subscription) {
   return subscription;
 }
 
+function deleteSubscription(userId) {
+  return SUBSCRIPTIONS.delete(userId);
+}
+
 persistence.register("subscriptions", {
   snapshot: () => persistence.mapToObject(SUBSCRIPTIONS),
   restore: data => persistence.restoreMap(SUBSCRIPTIONS, data)
 });
 
-module.exports = { getSubscription, setSubscription };
+module.exports = { getSubscription, setSubscription, deleteSubscription };

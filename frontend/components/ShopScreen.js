@@ -311,7 +311,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         <div className="shop-notes">
           <div><strong>Cont elev</strong><span>Poate primi bonusuri și notificări către părinte.</span></div>
           <div><strong>Cont părinte</strong><span>Primește rapoarte despre progres și abonamente.</span></div>
-          <div><strong>Cont profesor</strong><span>Primește sumarul clasei și ai acces la detector AI.</span></div>
+          <div><strong>Cont profesor</strong><span>Primește sumarul clasei. Detectorul de text este doar o demonstrație euristică.</span></div>
         </div>
       </section>
 

@@ -1,12 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const { detect } = require("../services/detectService");
+const { validateBody } = require("../middleware/validate");
+const { detectSchema } = require("../validation/schemas");
 
-router.post("/", async (req, res) => {
+router.post("/", validateBody(detectSchema), async (req, res) => {
   const { text } = req.body || {};
-  if (!text || text.trim().length < 20) {
-    return res.status(400).json({ error: "Textul trebuie să aibă minim 20 de caractere." });
-  }
   const result = await detect({ text });
   res.json(result);
 });

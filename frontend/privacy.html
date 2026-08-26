@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Politica de confidențialitate · Mentor AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg: #0f1228; --ink: #f4f1ea; --muted: #9aa3b5; --lime: #c8f06c; --line: rgba(255,255,255,.08); }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 "DM Sans", system-ui, sans-serif; }
+    main { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+    a { color: var(--lime); }
+    h1, h2 { font-family: "Space Grotesk", sans-serif; letter-spacing: -.02em; }
+    h1 { font-size: clamp(32px, 6vw, 44px); line-height: 1.1; margin: 12px 0 8px; }
+    h2 { font-size: 20px; margin: 32px 0 10px; }
+    p, li { color: #d5d8e4; }
+    .eyebrow { color: var(--muted); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+    .back { color: var(--muted); text-decoration: none; font-size: 14px; }
+    .note { padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.03); color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="back" href="/">← Înapoi la Mentor AI</a>
+    <p class="eyebrow">Document legal</p>
+    <h1>Politica de confidențialitate</h1>
+    <p class="note">Mentor AI este un prototip educațional. Textul de mai jos descrie ce face aplicația <strong>astăzi</strong>, nu un produs comercial final. Ultima actualizare: 26 august 2026.</p>
+
+    <h2>1. Cine suntem</h2>
+    <p>Mentor AI este o aplicație de mentorat școlar (clasele 1–12). Operatorul datelor, în această fază de prototip, este echipa care găzduiește instanța (contul de hosting pe care rulează aplicația). Nu vindem date și nu le folosim pentru publicitate.</p>
+
+    <h2>2. Ce date colectăm</h2>
+    <ul>
+      <li><strong>Cont:</strong> email, hash-ul parolei (nu parola în clar), rol (elev / părinte / profesor), nume, telefon, școală, clasă.</li>
+      <li><strong>Pentru elevi:</strong> emailul părintelui și data la care a fost bifat consimțământul parental.</li>
+      <li><strong>Sesiune:</strong> un cookie httpOnly <code>mentor_session</code>, valabil 7 zile.</li>
+      <li><strong>Utilizare:</strong> mesaje către mentorul AI, evenimente de calendar, monede, inventar, invitații între conturi, abonamentul ales.</li>
+      <li><strong>Tehnic:</strong> adresa IP (pentru limitarea de rată) și jurnalele serverului de hosting.</li>
+    </ul>
+    <p>Nu colectăm date de plată reale: abonamentele sunt încă simulate. Detectorul de text AI este un instrument demonstrativ, nu un serviciu de analiză biometrică sau de profilare.</p>
+
+    <h2>3. De ce le folosim</h2>
+    <ul>
+      <li>ca să îți putem crea și recunoaște contul;</li>
+      <li>ca mentorul AI să răspundă în contextul tău (materie, clasă, istoric recent);</li>
+      <li>ca un părinte sau un profesor să vadă analitica <em>doar după</em> ce tu accepți invitația;</li>
+      <li>ca să limităm abuzul (mesaje periculoase, brute-force pe parole sau pe codurile de acces).</li>
+    </ul>
+    <p>Temeiul: executarea contractului (contul pe care îl creezi) și, pentru elevii minori, consimțământul parental. Interesul legitim acoperă securitatea (rate limiting, moderare).</p>
+
+    <h2>4. Unde stau datele</h2>
+    <p>Datele sunt salvate pe serverul de hosting, într-un fișier protejat, nu într-o bază de date externă. Mesajele trimise către motoarele de AI (OpenAI, Anthropic, Google, Wolfram, Mathpix) pleacă la acei furnizori doar când sunt configurate chei reale și doar ca să genereze răspunsul. Moderarea de conținut, dacă este activă, trimite textul mesajului către API-ul de moderare OpenAI.</p>
+
+    <h2>5. Copii și consimțământ parental</h2>
+    <p>Un cont de elev nu se poate crea fără adresa de email a unui părinte sau tutore și fără bifarea consimțământului. Părintele <strong>nu</strong> primește automat acces la analitica elevului: primește o invitație pe care elevul (sau părintele, după ce își face cont) trebuie să o accepte. Oricare parte poate desface legătura ulterior.</p>
+
+    <h2>6. Drepturile tale</h2>
+    <ul>
+      <li><strong>Acces / portabilitate:</strong> din Profil poți descărca un export JSON cu datele contului.</li>
+      <li><strong>Ștergere:</strong> din Profil poți șterge contul. Ștergerea este ireversibilă: dispar sesiunile, conversațiile, monedele, calendarul, invitațiile și abonamentul.</li>
+      <li><strong>Retragerea consimțământului:</strong> desfaci legătura cu părintele sau profesorul din panoul de invitații, sau ștergi contul.</li>
+    </ul>
+
+    <h2>7. Păstrare</h2>
+    <p>Păstrăm datele cât timp contul există. După ștergere, ele sunt eliminate din stocarea aplicației. Copiile de rezervă ale serverului de hosting pot reține un instantaneu pentru o perioadă scurtă, specifică furnizorului.</p>
+
+    <h2>8. Cookie-uri</h2>
+    <p>Folosim un singur cookie esențial, <code>mentor_session</code>: httpOnly, SameSite=Lax, Secure în producție. Nu folosim cookie-uri de tracking sau publicitate.</p>
+
+    <h2>9. Contact</h2>
+    <p>Pentru întrebări despre datele tale, scrie-ne pe adresa de administrare a instanței pe care o folosești. Poți oricând să îți exporți sau să îți ștergi datele din aplicație, din ecranul de Profil.</p>
+
+    <p><a href="/terms.html">Citește și termenii de utilizare</a>.</p>
+  </main>
+</body>
+</html>

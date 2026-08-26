@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const { createInvitation, listForUser, respond, revoke, listLinks, unlink } = require("../data/linkStore");
+const { validateBody } = require("../middleware/validate");
+const { inviteLinkSchema, unlinkSchema } = require("../validation/schemas");
 
 // Montat în spatele `authRequired`, deci `req.auth` există mereu. Toate rutele
 // se raportează strict la contul autentificat: nu se poate invita sau accepta
@@ -14,7 +16,7 @@ router.get("/", (req, res) => {
 });
 
 // POST /api/links/invite { to_email, kind }
-router.post("/invite", (req, res) => {
+router.post("/invite", validateBody(inviteLinkSchema), (req, res) => {
   const { to_email: toEmail = "", kind = "" } = req.body || {};
 
   const result = createInvitation({
@@ -83,7 +85,7 @@ router.post("/:id/revoke", (req, res) => {
 // POST /api/links/unlink { other_email }
 // Oricare parte poate desface legătura, fără acordul celeilalte: retragerea
 // consimțământului nu trebuie să depindă de nimeni.
-router.post("/unlink", (req, res) => {
+router.post("/unlink", validateBody(unlinkSchema), (req, res) => {
   const { other_email: otherEmail = "" } = req.body || {};
   const result = unlink({ email: req.auth.email, otherEmail });
   if (!result.ok) {

@@ -44,7 +44,7 @@ const AuthScreen = ({ onLogin, onRegisterRole }) => (
       <button onClick={onLogin} className="auth-login">Ai deja cont? <strong>Conectează-te</strong></button>
     </div>
 
-    <p className="auth-legal">Prin continuare, accepți <a href="#">Termenii</a> și <a href="#">Politica de confidențialitate</a>.</p>
+    <p className="auth-legal">Prin continuare, accepți <a href="/terms.html" target="_blank" rel="noopener noreferrer">Termenii</a> și <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Politica de confidențialitate</a>.</p>
   </main>
 );
 

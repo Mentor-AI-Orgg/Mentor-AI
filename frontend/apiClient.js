@@ -183,6 +183,28 @@ const MentorAPI = {
     }
   },
 
+  async exportAccount() {
+    try {
+      const data = await safeFetchJson('/api/account/export');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async deleteAccount() {
+    try {
+      const data = await safeFetchJson('/api/account', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirm: 'DELETE' })
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   // --- legaturi intre conturi (parinte-copil, profesor-elev) ---
   // Legatura nu exista pana cand celalalt cont accepta invitatia.
   async getLinks() {

@@ -6,22 +6,21 @@ const ACADEMIC_TERMS = ["deci","prin urmare","așadar","în concluzie","este imp
 function generateSuggestions(aiProb, docClass) {
   if (docClass === "authentic") {
     return [
-      "✅ Textul arată autentic. Stilul natural și variațiile specifice elevului sunt evidente.",
-      "💡 Continuă să încurajezi scrisul original și creativitatea.",
-      "📚 Propune elevului să citească în continuare pentru a-și îmbogăți vocabularul."
+      "Scorul demonstrativ e scăzut. Folosește-l doar ca punct de discuție, nu ca verdict.",
+      "Încurajează scrisul original: cere elevului să explice un paragraf cu voce tare.",
+      "Detectorul nu înlocuiește o conversație cu elevul despre cum a lucrat."
     ];
   } else if (docClass === "mixed") {
     return [
-      "⚠️ Textul conține elemente atât umane, cât și AI. Poate fi vorba de corectare gramaticală cu AI.",
-      "🗣️ Recomandă o discuție orală cu elevul despre conținutul textului.",
-      "📝 Cere elevului să rescrie textul cu cuvintele lui, fără ajutor digital."
+      "Scor mixt — poate fi corectare gramaticală, șablon sau pur și simplu un text îngrijit.",
+      "Întreabă elevul cum a construit textul, în loc să tratezi scorul ca pe o acuzare.",
+      "Cere o rescriere scurtă, cu cuvintele lui, ca exercițiu, nu ca pedeapsă."
     ];
   }
   return [
-    "🔴 Scor ridicat de AI detectat. Vocabularul academic și structura perfectă sugerează generare artificială.",
-    "🎯 Intervenție pedagogică necesară: discută cu elevul despre procesul de scriere.",
-    "📖 Propune exerciții de scriere creativă fără acces la AI pentru a dezvolta stilul propriu.",
-    "👁️ Monitorizează activitatea elevului pe platformă pentru a identifica tipare."
+    "Scorul demonstrativ e ridicat, dar euristicile greșesc des (texte formale, traduceri, elevi foarte corecți).",
+    "Discută procesul de scriere. Nu folosi acest scor în evaluare sau ca dovadă de copiat.",
+    "Un exercițiu oral sau o ciornă scrisă în clasă spune mai mult decât detectorul."
   ];
 }
 
@@ -48,20 +47,22 @@ async function detect({ text }) {
   score = Math.max(5, Math.min(95, score + (Math.floor(Math.random() * 20) - 10)));
 
   let verdict, code, confidence;
-  if (score < 20) { verdict = "✅ Text autentic (uman)"; code = "authentic"; confidence = "high"; }
-  else if (score < 50) { verdict = "⚠️ Posibil amestec uman + AI"; code = "mixed"; confidence = "medium"; }
-  else if (score < 75) { verdict = "🔴 Probabil generat de AI"; code = "likely_ai"; confidence = "medium"; }
-  else { verdict = "🔴 Text generat de AI"; code = "ai"; confidence = "high"; }
+  if (score < 20) { verdict = "Scor demonstrativ: textul seamănă a scris uman"; code = "authentic"; confidence = "demo"; }
+  else if (score < 50) { verdict = "Scor demonstrativ: posibil amestec uman + AI"; code = "mixed"; confidence = "demo"; }
+  else if (score < 75) { verdict = "Scor demonstrativ: textul are trăsături asociate cu AI"; code = "likely_ai"; confidence = "demo"; }
+  else { verdict = "Scor demonstrativ: textul seamănă a generat de AI"; code = "ai"; confidence = "demo"; }
 
   return {
+    demo: true,
+    disclaimer: "Instrument demonstrativ bazat pe euristici locale (lungimea cuvintelor, termeni academici, un jitter aleator). Nu este un detector real și nu trebuie folosit ca dovadă.",
     ai_probability: Math.round(score * 10) / 10,
     verdict,
     verdict_code: code,
     confidence,
-    details: { indicators, mode: "ai_analysis" },
+    details: { indicators, mode: "heuristic_demo" },
     suggestions: generateSuggestions(score, code),
     processing_time_ms: Date.now() - start,
-    engine: "gptzero_sim"
+    engine: "heuristic_demo"
   };
 }
 

@@ -1,4 +1,5 @@
 const persistence = require('./persistence');
+const crypto = require('crypto');
 
 const USERS = new Map();
 const NOTIFICATIONS = [];
@@ -313,6 +314,10 @@ function ensureUser(userId, patch = {}) {
   return current;
 }
 
+function getUser(userId) {
+  return USERS.get(userId) || null;
+}
+
 function recordActivity(user, type, amount, note, meta = {}) {
   const entry = {
     id: `${type}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
@@ -486,15 +491,34 @@ function requestTest({ requesterEmail = '', requesterRole = 'teacher', studentEm
 // nici prin SMS, nici prin alt canal -- pentru că am stoca/transmite o
 // parolă în clar, ceea ce e o practică nesigură chiar și într-un mock.
 // Codul e cu totul separat de parola contului și expiră rapid.
+// Cod de acces temporar (OTP, 6 cifre, valabil 10 minute). Părintele îl
+// primește prin SMS (mock: inbox-ul din aplicație). Nu trimitem niciodată
+// parola reală a copilului.
+//
+// Stocăm doar hash-ul SHA-256 al codului, nu valoarea în clar, și blocăm
+// verificarea după 5 încercări greșite. Fără astea, 1.000.000 de combinații
+// într-o fereastră de 10 minute erau fezabile.
 const ACCESS_CODES = new Map();
+const ACCESS_CODE_TTL_MS = 10 * 60 * 1000;
+const MAX_ACCESS_CODE_ATTEMPTS = 5;
+
+function hashAccessCode(code) {
+  return crypto.createHash('sha256').update(String(code)).digest('hex');
+}
 
 function generateAccessCode({ parentEmail = '', childEmail = '', phone = '' }) {
   if (!parentEmail || !childEmail) return null;
-  const code = String(Math.floor(100000 + Math.random() * 900000));
-  const expiresAt = Date.now() + 10 * 60 * 1000;
-  ACCESS_CODES.set(`${parentEmail}:${childEmail}`, { code, expiresAt });
+  const code = String(crypto.randomInt(100000, 1000000));
+  const expiresAt = Date.now() + ACCESS_CODE_TTL_MS;
+  ACCESS_CODES.set(`${parentEmail}:${childEmail}`, {
+    codeHash: hashAccessCode(code),
+    expiresAt,
+    attempts: 0
+  });
 
-  const notification = pushNotification(
+  // Inbox-ul este canalul mock de SMS: aici rămâne codul în clar, ca părintele
+  // să-l poată citi în aplicație. Răspunsul HTTP NU include codul.
+  pushNotification(
     parentEmail,
     phone || parentEmail,
     'Cod de acces Mentor AI',
@@ -502,15 +526,39 @@ function generateAccessCode({ parentEmail = '', childEmail = '', phone = '' }) {
     'sms'
   );
 
-  return { ok: true, expiresAt, notification };
+  return { ok: true, expiresAt };
 }
 
 function verifyAccessCode({ parentEmail = '', childEmail = '', code = '' }) {
-  const entry = ACCESS_CODES.get(`${parentEmail}:${childEmail}`);
+  const key = `${parentEmail}:${childEmail}`;
+  const entry = ACCESS_CODES.get(key);
   if (!entry) return { ok: false, reason: 'no_code_requested' };
-  if (Date.now() > entry.expiresAt) return { ok: false, reason: 'expired' };
-  if (entry.code !== String(code)) return { ok: false, reason: 'invalid_code' };
-  ACCESS_CODES.delete(`${parentEmail}:${childEmail}`);
+  if (Date.now() > entry.expiresAt) {
+    ACCESS_CODES.delete(key);
+    return { ok: false, reason: 'expired' };
+  }
+  if (entry.attempts >= MAX_ACCESS_CODE_ATTEMPTS) {
+    ACCESS_CODES.delete(key);
+    return { ok: false, reason: 'locked' };
+  }
+
+  entry.attempts += 1;
+  const expected = Buffer.from(entry.codeHash, 'hex');
+  const given = Buffer.from(hashAccessCode(code), 'hex');
+  const match = expected.length === given.length && crypto.timingSafeEqual(expected, given);
+  if (!match) {
+    if (entry.attempts >= MAX_ACCESS_CODE_ATTEMPTS) {
+      ACCESS_CODES.delete(key);
+      return { ok: false, reason: 'locked' };
+    }
+    return {
+      ok: false,
+      reason: 'invalid_code',
+      attemptsLeft: MAX_ACCESS_CODE_ATTEMPTS - entry.attempts
+    };
+  }
+
+  ACCESS_CODES.delete(key);
   return { ok: true };
 }
 
@@ -885,6 +933,51 @@ function sendParentReview({ userId = 'demo_user', parentEmail = '', planId = '',
   };
 }
 
+function exportUser(email) {
+  const user = getUser(email);
+  if (!user) return null;
+  return {
+    ...buildSummary(user),
+    activityLog: Array.isArray(user.activityLog) ? user.activityLog.slice() : [],
+    notifications: getNotifications(email).inbox
+  };
+}
+
+function deleteUser(email) {
+  const key = String(email || '').trim().toLowerCase();
+  const user = USERS.get(key);
+  if (user) {
+    const childEmail = user.preferences.childEmail;
+    const parentEmail = user.preferences.parentEmail;
+    if (childEmail) {
+      const child = USERS.get(childEmail);
+      if (child && child.preferences.parentEmail === key) child.preferences.parentEmail = '';
+    }
+    if (parentEmail) {
+      const parent = USERS.get(parentEmail);
+      if (parent && parent.preferences.childEmail === key) parent.preferences.childEmail = '';
+    }
+    if (user.role === 'teacher') {
+      for (const other of USERS.values()) {
+        if (other.preferences.teacherEmail === key) other.preferences.teacherEmail = '';
+      }
+    }
+    USERS.delete(key);
+  }
+
+  for (let i = NOTIFICATIONS.length - 1; i >= 0; i--) {
+    if (NOTIFICATIONS[i].userId === key || NOTIFICATIONS[i].to === key) {
+      NOTIFICATIONS.splice(i, 1);
+    }
+  }
+  PURCHASES.delete(key);
+  for (const codeKey of [...ACCESS_CODES.keys()]) {
+    if (codeKey === key || codeKey.startsWith(`${key}:`) || codeKey.endsWith(`:${key}`)) {
+      ACCESS_CODES.delete(codeKey);
+    }
+  }
+}
+
 persistence.register('economy', {
   snapshot: () => ({
     users: persistence.mapToObject(USERS),
@@ -900,6 +993,7 @@ persistence.register('economy', {
 
 module.exports = {
   ensureUser,
+  getUser,
   getSummary,
   getCatalog,
   purchaseItem,
@@ -920,5 +1014,7 @@ module.exports = {
   listStudentEmailsForTeacher,
   requestTest,
   generateAccessCode,
-  verifyAccessCode
+  verifyAccessCode,
+  exportUser,
+  deleteUser
 };

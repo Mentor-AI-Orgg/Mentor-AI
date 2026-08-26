@@ -66,6 +66,11 @@ const LoginScreen = ({ onBack, onLogin, onForgotPassword }) => {
       <button className="forgot-link" type="button" onClick={() => onForgotPassword(email.trim())}>
         Ai uitat parola?
       </button>
+      <p className="auth-legal">
+        <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Politica de confidențialitate</a>
+        {' · '}
+        <a href="/terms.html" target="_blank" rel="noopener noreferrer">Termeni</a>
+      </p>
     </main>
   );
 };
