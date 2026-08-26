@@ -13,7 +13,6 @@ const TeacherDashboard = ({ userData, onNavigate, showToast }) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [studentEmail, setStudentEmail] = useState('');
-  const [linking, setLinking] = useState(false);
   const [testForm, setTestForm] = useState({ studentEmail: '', subject: userData.subject || '', note: '', dueDate: '' });
   const [sendingTest, setSendingTest] = useState(false);
 
@@ -26,25 +25,17 @@ const TeacherDashboard = ({ userData, onNavigate, showToast }) => {
 
   useEffect(() => { load(); }, [load]);
 
-  // Conectarea unui elev la profesor se face momentan simplu, cerând
-  // elevului să pună emailul profesorului la înregistrare, sau invers,
-  // aici. Nu există încă cont/parolă reale, deci e doar o legătură de tip
-  // "roster" -- suficient pentru a grupa analitica pe clasă.
+  // Varianta veche scria activitate direct în contul elevului
+  // (`user_id: studentEmail`), adică profesorul putea modifica datele oricărui
+  // cont doar știindu-i adresa. Rutele folosesc acum identitatea din sesiune,
+  // deci apelul acela nu mai are efect asupra elevului.
+  //
+  // Legarea corectă are nevoie de o invitație pe care elevul o acceptă;
+  // urmează în PR-ul de consimțământ. Până atunci elevul își pune emailul
+  // profesorului la înregistrare, iar aici doar explicăm asta, ca să nu lăsăm
+  // un buton care pretinde că a făcut ceva.
   const connectStudent = async () => {
-    if (!studentEmail.trim()) return;
-    setLinking(true);
-    const result = await window.MentorAPI.logActivity({
-      user_id: studentEmail.trim(),
-      type: 'teacher_link',
-      note: `Profesor conectat: ${userData.email || 'demo_user'}`,
-      meta: { teacherEmail: userData.email || 'demo_user' }
-    });
-    setLinking(false);
-    if (result.success) {
-      showToast?.('Elevul a fost adăugat la clasă (dacă emailul e corect).', 'success');
-      setStudentEmail('');
-      await load();
-    }
+    showToast?.('Legarea directă a fost dezactivată. Elevul te adaugă punând emailul tău la înregistrare.', 'warning');
   };
 
   const requestTest = async () => {
@@ -83,8 +74,9 @@ const TeacherDashboard = ({ userData, onNavigate, showToast }) => {
         <p className="parent-subtitle">Vezi progresul elevilor conectați, ceri teste rapid și ai acces la resurse pedagogice utile — fără să te amesteci cu profilul unui elev.</p>
         <div className="parent-connect-row">
           <input value={studentEmail} onChange={e => setStudentEmail(e.target.value)} placeholder="Email elev de adăugat la clasă" className="parent-connect-input" />
-          <button type="button" className="accent-button" onClick={connectStudent} disabled={linking || !studentEmail.trim()}>{linking ? 'Adaug...' : 'Adaugă elev'}</button>
+          <button type="button" className="accent-button" onClick={connectStudent} disabled={!studentEmail.trim()}>Adaugă elev</button>
         </div>
+        <small className="field-hint">Legarea prin invitație acceptată de elev urmează. Deocamdată elevul te adaugă punând emailul tău la înregistrare.</small>
       </section>
 
       <section className="mx-5 mt-5 parent-metrics-grid teacher-metrics-grid">

@@ -414,7 +414,7 @@ const SubscriptionsScreen = ({ userData, onBack, currentPlanId, currentPlanStatu
   );
 };
 
-const ProfileScreen = ({ userData, onBack }) => {
+const ProfileScreen = ({ userData, onBack, onLogout }) => {
   const [detectText, setDetectText] = useState('');
   const [detectLoading, setDetectLoading] = useState(false);
   const [detectResult, setDetectResult] = useState(null);
@@ -422,7 +422,7 @@ const ProfileScreen = ({ userData, onBack }) => {
 
   useEffect(() => {
     const loadInbox = async () => {
-      const result = await window.MentorAPI.getNotifications({ user_id: userData.email || 'demo_user' });
+      const result = await window.MentorAPI.getNotifications();
       if (result.success) {
         setInbox(result.data.inbox || []);
       }
@@ -515,6 +515,9 @@ const ProfileScreen = ({ userData, onBack }) => {
       <div className="mx-5 mt-5 grid gap-3">
         <button className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">Setări cont</button>
         <button className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">Preferințe limbă</button>
+        <button type="button" onClick={onLogout} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">
+          <i className="fas fa-arrow-right-from-bracket mr-2"></i>Deconectează-te
+        </button>
       </div>
     </div>
   );
@@ -956,30 +959,97 @@ const App = () => {
     }));
   }, []);
 
-  const handleSplashFinish = () => {
-    if (userData.isLoggedIn && userData.hasCompletedOnboarding) {
-      const nextScreen = routeByRole(userData.role || 'student');
-      setScreen(nextScreen);
-      setNavScreen(nextScreen);
-    } else {
+  const handleSplashFinish = async () => {
+    // Sursa de adevăr este sesiunea din backend, nu flagul din localStorage,
+    // pe care oricine îl putea seta din consola browserului.
+    const session = await MentorAPI.me();
+    if (!session.success) {
+      setUserData(prev => ({ ...prev, isLoggedIn: false }));
       setScreen('auth');
+      return;
     }
-  };
 
-  const handleLogin = () => {
-    setUserData(prev => ({ ...prev, isLoggedIn: true }));
-    const nextScreen = routeByRole(userData.role || 'student');
+    const role = session.user.role || 'student';
+    setUserData(prev => ({ ...prev, isLoggedIn: true, role, email: session.user.email }));
+
+    if (role === 'student' && !userData.hasCompletedOnboarding) {
+      setOnboardingStep(1);
+      setScreen('onboarding');
+      return;
+    }
+
+    const nextScreen = routeByRole(role);
     setScreen(nextScreen);
     setNavScreen(nextScreen);
-    MentorAPI.claimReward({ user_id: userData.email || 'demo_user', type: 'login_bonus' }).then(result => {
-      if (result.success) {
-        handleEconomyUpdate(result.data.balance, {}, null, { firstLoginRewardClaimed: true });
+  };
+
+  const handleLogin = async credentials => {
+    const result = await MentorAPI.login(credentials);
+    if (!result.success) {
+      // LoginScreen afișează mesajul lângă formular.
+      return { success: false, error: result.error };
+    }
+
+    const user = result.data.user || {};
+    const role = user.role || 'student';
+    setUserData(prev => ({
+      ...prev,
+      isLoggedIn: true,
+      email: user.email || '',
+      role,
+      name: prev.name || (user.name || '').split(' ')[0] || ''
+    }));
+
+    const nextScreen = routeByRole(role);
+    setScreen(nextScreen);
+    setNavScreen(nextScreen);
+
+    // Contul vine acum din sesiune, deci nu mai trimitem user_id.
+    MentorAPI.claimReward({ type: 'login_bonus' }).then(rewardResult => {
+      if (rewardResult.success) {
+        handleEconomyUpdate(rewardResult.data.balance, {}, null, { firstLoginRewardClaimed: true });
       }
     });
     showToast('Bun venit!', 'success');
+    return { success: true };
   };
 
-  const handleRegister = formData => {
+  const handleLogout = async () => {
+    await MentorAPI.logout();
+    setUserData(prev => ({ ...prev, isLoggedIn: false, email: '', planId: 'free', coins: 0 }));
+    setScreen('auth');
+    setNavScreen('home');
+    showToast('Te-ai deconectat.', 'success');
+  };
+
+  const handleForgotPassword = async email => {
+    const result = await MentorAPI.forgotPassword({ email });
+    // Răspunsul e identic și dacă adresa nu are cont, ca să nu confirmăm
+    // cine este înregistrat.
+    showToast(result.data?.message || 'Dacă adresa are un cont, vei primi instrucțiuni.', 'success');
+  };
+
+  const handleRegister = async formData => {
+    const registration = await MentorAPI.register({
+      email: formData.email,
+      password: formData.password,
+      role: formData.role || 'student',
+      invite_code: formData.inviteCode || '',
+      name: formData.name,
+      username: formData.username,
+      phone: formData.phone,
+      school: formData.school,
+      class: formData.class,
+      subject: formData.subject,
+      parentEmail: formData.role === 'student' ? (formData.parentEmail || '') : '',
+      teacherEmail: formData.teacherEmail || ''
+    });
+
+    if (!registration.success) {
+      showToast(registration.error || 'Nu am putut crea contul.', 'warning');
+      return { success: false, error: registration.error, field: registration.field };
+    }
+
     const nameParts = (formData.name || '').split(' ');
     setUserData(prev => ({
       ...prev,
@@ -1001,16 +1071,17 @@ const App = () => {
       setUserData(prev => ({ ...prev, hasCompletedOnboarding: true, role: 'parent', childEmail: formData.parentEmail || '' }));
       setScreen('parent');
       setNavScreen('parent');
-      return;
+      return { success: true };
     }
     if (formData.role === 'teacher') {
       setUserData(prev => ({ ...prev, hasCompletedOnboarding: true, role: 'teacher' }));
       setScreen('teacher');
       setNavScreen('teacher');
-      return;
+      return { success: true };
     }
     setOnboardingStep(1);
     setScreen('onboarding');
+    return { success: true };
   };
 
   const onboardingSteps = [
@@ -1134,7 +1205,7 @@ const App = () => {
       case 'auth':
         return <AuthScreen onLogin={() => setScreen('login')} onRegisterRole={role => { setAuthRole(role); setScreen('register'); }} />;
       case 'login':
-        return <LoginScreen onBack={() => setScreen('auth')} onLogin={handleLogin} />;
+        return <LoginScreen onBack={() => setScreen('auth')} onLogin={handleLogin} onForgotPassword={handleForgotPassword} />;
       case 'register':
         return <RegisterScreen onBack={() => setScreen('auth')} onContinue={handleRegister} onValidationError={message => showToast(message, 'warning')} initialRole={authRole} />;
       case 'onboarding':
@@ -1205,7 +1276,7 @@ const App = () => {
       case 'subscriptions':
         return <SubscriptionsScreen userData={userData} onBack={() => handleNavigate('home')} currentPlanId={userData.planId || 'free'} currentPlanStatus={userData.planStatus} onSelectPlan={handleSelectPlan} onToast={showToast} />;
       case 'profile':
-        return <ProfileScreen userData={userData} onBack={() => handleNavigate('home')} />;
+        return <ProfileScreen userData={userData} onBack={() => handleNavigate('home')} onLogout={handleLogout} />;
       default:
         return <HomeScreen userData={userData} onNavigate={handleNavigate} />;
     }

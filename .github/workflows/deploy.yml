@@ -23,6 +23,32 @@ jobs:
         # Passenger nu poate porni procesul. Mai bine picăm aici.
         run: for file in $(find backend -name '*.js' -not -path '*/node_modules/*'); do node --check "$file" || exit 1; done
 
+      - name: Verifică sintaxa JSX din frontend
+        # `node --check` nu înțelege JSX, iar componentele sunt compilate în
+        # browser: o eroare de sintaxă n-ar apărea nicăieri la deploy, doar ca
+        # ecran alb la vizitator.
+        run: |
+          npm install --no-save --silent @babel/core@7 @babel/preset-react@7
+          node -e "
+            const babel = require('@babel/core');
+            const fs = require('fs');
+            const files = fs.readdirSync('frontend/components').map(f => 'frontend/components/' + f)
+              .concat(['frontend/app.js', 'frontend/apiClient.js'])
+              .filter(f => f.endsWith('.js'));
+            let failed = 0;
+            for (const file of files) {
+              try {
+                babel.transformSync(fs.readFileSync(file, 'utf8'),
+                  { presets: ['@babel/preset-react'], filename: file, configFile: false, babelrc: false });
+              } catch (error) {
+                console.error('FAIL ' + file + ': ' + error.message.split('\n')[0]);
+                failed++;
+              }
+            }
+            if (failed) process.exit(1);
+            console.log(files.length + ' fișiere JSX verificate, toate OK');
+          "
+
       - name: Cere restart de la Passenger
         # Passenger repornește aplicația când se schimbă tmp/restart.txt.
         # Conținutul diferă la fiecare rulare, deci sincronizarea îl încarcă

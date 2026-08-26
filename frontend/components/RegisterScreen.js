@@ -37,9 +37,12 @@ const FieldStatus = ({ touched, valid }) => {
 const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = 'student' }) => {
   const [form, setForm] = useState({
     name: '', phone: '', email: '', username: '', password: '', confirmPassword: '',
-    role: initialRole, school: '', class: '', subject: '', parentEmail: '', teacherEmail: '', childEmail: ''
+    role: initialRole, school: '', class: '', subject: '', parentEmail: '', teacherEmail: '', childEmail: '',
+    inviteCode: ''
   });
   const [touched, setTouched] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState('');
 
   const setField = (key, value) => setForm(prev => ({ ...prev, [key]: value }));
   const markTouched = key => setTouched(prev => ({ ...prev, [key]: true }));
@@ -56,7 +59,11 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
     school: v => form.role !== 'student' || (v || '').trim().length >= 2,
     class: v => form.role !== 'student' || (v || '').trim().length >= 1,
     subject: v => form.role !== 'teacher' || (v || '').trim().length >= 2,
-    parentEmail: v => form.role !== 'parent' || isValidEmail(v)
+    parentEmail: v => form.role !== 'parent' || isValidEmail(v),
+    // Contul de profesor vede analitica mai multor elevi, deci serverul cere
+    // un cod de invitație. Îl validăm doar ca prezență; corectitudinea o
+    // stabilește backend-ul.
+    inviteCode: v => form.role !== 'teacher' || (v || '').trim().length > 0
   }), [form.role, form.password]);
 
   const fieldValid = key => (validators[key] ? validators[key](form[key]) : true);
@@ -65,21 +72,31 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
   // școală de elev, un părinte nu are nici clasă/școală, nici materie.
   const requiredByRole = {
     student: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'school', 'class'],
-    teacher: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'subject'],
+    teacher: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'subject', 'inviteCode'],
     parent: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'parentEmail']
   };
 
   const requiredFields = requiredByRole[form.role] || requiredByRole.student;
   const allValid = requiredFields.every(fieldValid);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setTouched(Object.fromEntries(requiredFields.map(key => [key, true])));
+    setServerError('');
     if (!allValid) {
       const message = 'Verifică toate câmpurile marcate cu X înainte să continui.';
       if (onValidationError) onValidationError(message); else alert(message);
       return;
     }
-    onContinue(form);
+
+    // Contul se creează pe server, deci pot apărea erori pe care validarea din
+    // browser nu le poate prinde: email deja folosit, cod de invitație greșit.
+    setSubmitting(true);
+    const result = await onContinue(form);
+    setSubmitting(false);
+    if (result && !result.success) {
+      setServerError(result.error || 'Nu am putut crea contul.');
+      if (result.field) setTouched(prev => ({ ...prev, [result.field]: true }));
+    }
   };
 
   const fieldLabels = {
@@ -218,6 +235,26 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
             />
           </label>
         )}
+        {form.role === 'teacher' && (
+          <div>
+            <label className="field-label">
+              <span className="field-label-row">
+                Cod de invitație
+                <FieldStatus touched={Boolean(touched.inviteCode)} valid={fieldValid('inviteCode')} />
+              </span>
+              <input
+                type="text"
+                value={form.inviteCode}
+                onChange={e => setField('inviteCode', e.target.value)}
+                onBlur={() => markTouched('inviteCode')}
+                placeholder="Codul primit de la administrator"
+                autoComplete="off"
+                className={`field form-input ${touched.inviteCode ? (fieldValid('inviteCode') ? 'field-valid' : 'field-invalid') : ''}`}
+              />
+            </label>
+            <small className="field-hint">Conturile de profesor se creează doar prin invitație, pentru că au acces la analitica elevilor.</small>
+          </div>
+        )}
         {form.role === 'parent' && (
           <div>
             <label className="field-label">
@@ -239,7 +276,11 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
         )}
       </div>
 
-      <button onClick={handleSubmit} className="accent-button form-submit">Continuă <i className="fas fa-arrow-right"></i></button>
+      {serverError && <div className="form-error" role="alert"><i className="fas fa-circle-exclamation"></i> {serverError}</div>}
+
+      <button onClick={handleSubmit} className="accent-button form-submit" disabled={submitting}>
+        {submitting ? 'Se creează contul...' : <>Continuă <i className="fas fa-arrow-right"></i></>}
+      </button>
     </main>
   );
 };

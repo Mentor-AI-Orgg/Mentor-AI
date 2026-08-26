@@ -150,7 +150,11 @@ router.post("/", async (req, res) => {
   }
 
   const lang = language || "ro";
-  const conversationId = req.body.conversation_id || `conv_${Buffer.from(message).toString("base64").slice(0, 8)}`;
+  const requestedConversationId = req.body.conversation_id || `conv_${Buffer.from(message).toString("base64").slice(0, 8)}`;
+  // Cheia de memorie era derivată doar din textul mesajului, deci doi elevi
+  // care scriau exact același prim mesaj ajungeau să împartă istoricul
+  // conversației. O prefixăm cu contul, ca memoria să rămână strict a lui.
+  const conversationId = `${req.auth.email}::${requestedConversationId}`;
   const normalizedPlanId = String(plan_id || "free").toLowerCase();
 
   const safety = await safetyCheck(message);
@@ -163,7 +167,7 @@ router.post("/", async (req, res) => {
       scaffolding_level: 0,
       safety_flags: safety.flags,
       processing_time_ms: Date.now() - startTotal,
-      conversation_id: conversationId
+      conversation_id: requestedConversationId
     });
   }
 
@@ -175,7 +179,7 @@ router.post("/", async (req, res) => {
       scaffolding_level: 1,
       safety_flags: safety.flags,
       processing_time_ms: Date.now() - startTotal,
-      conversation_id: conversationId
+      conversation_id: requestedConversationId
     });
   }
 
@@ -199,7 +203,7 @@ router.post("/", async (req, res) => {
       scaffolding_level: 0,
       safety_flags: ["engine_failure"],
       processing_time_ms: Date.now() - startTotal,
-      conversation_id: conversationId
+      conversation_id: requestedConversationId
     });
   }
 
@@ -216,13 +220,15 @@ router.post("/", async (req, res) => {
     scaffolding_level: scaffoldingLevel,
     safety_flags: safety.flags,
     processing_time_ms: Date.now() - startTotal,
-    conversation_id: conversationId,
+    conversation_id: requestedConversationId,
     plan_id: normalizedPlanId
   });
 });
 
 router.delete("/:conversationId", (req, res) => {
-  memory.clear(req.params.conversationId);
+  // Aceeași namespace-uire ca la scriere, ca un utilizator să nu poată șterge
+  // istoricul conversației altcuiva.
+  memory.clear(`${req.auth.email}::${req.params.conversationId}`);
   res.json({ cleared: true });
 });
 

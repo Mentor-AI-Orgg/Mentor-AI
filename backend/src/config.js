@@ -10,6 +10,14 @@ module.exports = {
   STAGING_AUTH_USER: process.env.STAGING_AUTH_USER || "",
   STAGING_AUTH_PASSWORD: process.env.STAGING_AUTH_PASSWORD || "",
 
+  // Cookie-ul de sesiune se trimite doar pe HTTPS în producție.
+  IS_PRODUCTION: process.env.NODE_ENV === "production",
+
+  // Fără acest cod, înregistrarea unui cont de profesor este blocată. Rolul
+  // de profesor vede analitica mai multor elevi, deci nu poate fi ales liber
+  // de către client.
+  TEACHER_INVITE_CODE: process.env.TEACHER_INVITE_CODE || "",
+
   // --- AI chat engines (fallback order: Claude -> OpenAI -> Gemini) ---
   CLAUDE_KEY: process.env.CLAUDE_KEY || "",
   CLAUDE_MODEL: process.env.CLAUDE_MODEL || "claude-haiku-4-5-20251001",
