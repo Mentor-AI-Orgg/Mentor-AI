@@ -1,3 +1,5 @@
+const persistence = require('./persistence');
+
 const USERS = new Map();
 const NOTIFICATIONS = [];
 const PURCHASES = new Map();
@@ -882,6 +884,19 @@ function sendParentReview({ userId = 'demo_user', parentEmail = '', planId = '',
     preview: { subject, body }
   };
 }
+
+persistence.register('economy', {
+  snapshot: () => ({
+    users: persistence.mapToObject(USERS),
+    notifications: NOTIFICATIONS,
+    purchases: persistence.mapToObject(PURCHASES)
+  }),
+  restore: data => {
+    persistence.restoreMap(USERS, data?.users);
+    persistence.restoreArray(NOTIFICATIONS, data?.notifications);
+    persistence.restoreMap(PURCHASES, data?.purchases);
+  }
+});
 
 module.exports = {
   ensureUser,

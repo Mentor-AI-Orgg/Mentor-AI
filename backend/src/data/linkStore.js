@@ -11,6 +11,7 @@
 // plan-imbunatatiri.md).
 
 const crypto = require("crypto");
+const persistence = require("./persistence");
 const {
   ensureUser,
   pushNotification,
@@ -273,6 +274,14 @@ function purgeExpired() {
 
 const purgeTimer = setInterval(purgeExpired, 6 * 60 * 60 * 1000);
 purgeTimer.unref();
+
+persistence.register("links", {
+  snapshot: () => ({ invitations: persistence.mapToObject(INVITATIONS) }),
+  restore: data => {
+    persistence.restoreMap(INVITATIONS, data?.invitations);
+    purgeExpired();
+  }
+});
 
 module.exports = {
   KINDS,

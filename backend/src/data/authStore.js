@@ -4,19 +4,23 @@
 // salt unic per cont. scrypt vine din `node:crypto`, deci nu adaugă nicio
 // dependință nativă (bcrypt ar cere compilare pe server).
 //
-// Ca tot restul aplicației, datele stau în memorie și se pierd la restartul
-// procesului - vezi Faza 2 din plan-imbunatatiri.md. Pe shared hosting
-// procesul e oprit des, deci conturile create acum sunt de fapt temporare.
-// Interfața de aici este gândită să rămână neschimbată când în spate ajunge
-// o bază de date reală.
+// Datele sunt salvate pe disc prin persistence.js, deci conturile și sesiunile
+// supraviețuiesc restartului procesului.
 
 const crypto = require("crypto");
 const { promisify } = require("util");
+const persistence = require("./persistence");
 
 const scrypt = promisify(crypto.scrypt);
 
 const ACCOUNTS = new Map(); // email normalizat -> cont
-const SESSIONS = new Map(); // token -> { email, expiresAt }
+// Indexat pe hash-ul token-ului, nu pe token. Fișierul de date ajunge pe disc
+// și în backup-uri; dacă ar conține token-urile în clar, oricine l-ar citi
+// putea prelua sesiunile active. Hash-ul nu este reversibil, iar verificarea
+// costă la fel de puțin.
+const SESSIONS = new Map(); // sha256(token) -> { email, expiresAt }
+
+const hashToken = token => crypto.createHash("sha256").update(String(token)).digest("hex");
 
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 zile
 const KEY_LENGTH = 64;
@@ -100,23 +104,24 @@ function publicAccount(account) {
 
 function createSession(email) {
   const token = crypto.randomBytes(32).toString("hex");
-  SESSIONS.set(token, { email: normalizeEmail(email), expiresAt: Date.now() + SESSION_TTL_MS });
+  SESSIONS.set(hashToken(token), { email: normalizeEmail(email), expiresAt: Date.now() + SESSION_TTL_MS });
   return { token, maxAge: SESSION_TTL_MS };
 }
 
 function getSession(token) {
   if (!token) return null;
-  const session = SESSIONS.get(token);
+  const key = hashToken(token);
+  const session = SESSIONS.get(key);
   if (!session) return null;
   if (Date.now() > session.expiresAt) {
-    SESSIONS.delete(token);
+    SESSIONS.delete(key);
     return null;
   }
   return session;
 }
 
 function destroySession(token) {
-  if (token) SESSIONS.delete(token);
+  if (token) SESSIONS.delete(hashToken(token));
 }
 
 // Invalidează toate sesiunile unui cont (schimbare de parolă, logout global).
@@ -142,6 +147,20 @@ function purgeExpiredSessions() {
 
 const purgeTimer = setInterval(purgeExpiredSessions, 60 * 60 * 1000);
 purgeTimer.unref();
+
+persistence.register("auth", {
+  snapshot: () => ({
+    accounts: persistence.mapToObject(ACCOUNTS),
+    sessions: persistence.mapToObject(SESSIONS)
+  }),
+  restore: data => {
+    persistence.restoreMap(ACCOUNTS, data?.accounts);
+    persistence.restoreMap(SESSIONS, data?.sessions);
+    // Sesiunile expirate în timpul cât procesul a fost oprit nu au de ce să
+    // ajungă înapoi în memorie.
+    purgeExpiredSessions();
+  }
+});
 
 module.exports = {
   ROLES,

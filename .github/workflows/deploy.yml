@@ -68,11 +68,16 @@ jobs:
           local-dir: ./
           # node_modules se instalează pe server (vezi DEPLOY.md), nu prin FTP:
           # sunt mii de fișiere și transferul ar dura enorm.
+          #
+          # ATENȚIE la `data/`: acțiunea șterge de pe server fișierele care nu
+          # există local. Fără excluderea de mai jos, fiecare deploy ar șterge
+          # baza de date a aplicației (conturi, monede, calendar).
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
             **/.env
+            data/**
             *.md
             cod cu Claude*
             mentor_ai_v3*.html
