@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const store = require("../data/calendarStore");
+const { validateBody } = require("../middleware/validate");
+const { calendarEventSchema } = require("../validation/schemas");
 
 // Montat în spatele `authRequired`, deci `req.auth` există mereu. Înainte,
 // user_id venea din query/body, deci oricine putea citi sau șterge
@@ -22,10 +24,9 @@ router.get("/events", (req, res) => {
 });
 
 // POST /api/calendar/events  { date: 'YYYY-MM-DD', title, type }
-router.post("/events", (req, res) => {
+router.post("/events", validateBody(calendarEventSchema), (req, res) => {
   const userId = resolveUserId(req);
   const { date, title, type } = req.body || {};
-  if (!date || !title) return res.status(400).json({ error: "Câmpurile 'date' și 'title' sunt obligatorii." });
   const event = store.addEvent(userId, { date, title, type });
   res.json({ success: true, event });
 });

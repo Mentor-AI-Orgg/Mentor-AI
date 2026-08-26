@@ -9,9 +9,13 @@ const {
   publicAccount,
   findAccount,
   createSession,
-  destroySession
+  destroySession,
+  normalizeEmail
 } = require("../data/authStore");
 const { SESSION_COOKIE, authRequired } = require("../middleware/auth");
+const { authLimiter } = require("../middleware/rateLimits");
+const { validateBody } = require("../middleware/validate");
+const { registerSchema, loginSchema, forgotPasswordSchema } = require("../validation/schemas");
 const { ensureUser, pushNotification } = require("../data/economyStore");
 const { createInvitation } = require("../data/linkStore");
 
@@ -47,8 +51,15 @@ function sessionCookieOptions(maxAge) {
   };
 }
 
-router.post("/register", async (req, res) => {
-  const { email, password, role = "student", invite_code: inviteCode = "", ...profile } = req.body || {};
+router.post("/register", authLimiter, validateBody(registerSchema), async (req, res) => {
+  const { email, password, role = "student", invite_code: inviteCode = "", parental_consent: parentalConsent, privacy_accepted: privacyAccepted, ...profile } = req.body || {};
+
+  if (!privacyAccepted) {
+    return res.status(400).json({
+      error: "Trebuie să accepți politica de confidențialitate și termenii de utilizare.",
+      field: "privacy_accepted"
+    });
+  }
 
   if (!isValidEmail(email)) {
     return res.status(400).json({ error: "Adresa de email nu este validă.", field: "email" });
@@ -59,6 +70,30 @@ router.post("/register", async (req, res) => {
   }
   if (!ROLES.includes(role)) {
     return res.status(400).json({ error: "Rol necunoscut.", field: "role" });
+  }
+
+  // Un elev minor nu își poate deschide contul fără un adult de contact și
+  // fără consimțământ explicit. Emailul părintelui nu leagă automat conturile:
+  // trimite doar o invitație (vezi mai jos).
+  if (role === "student") {
+    if (!isValidEmail(profile.parentEmail)) {
+      return res.status(400).json({
+        error: "Contul de elev cere emailul unui părinte sau tutore.",
+        field: "parentEmail"
+      });
+    }
+    if (normalizeEmail(profile.parentEmail) === normalizeEmail(email)) {
+      return res.status(400).json({
+        error: "Emailul părintelui trebuie să fie diferit de al elevului.",
+        field: "parentEmail"
+      });
+    }
+    if (parentalConsent !== true) {
+      return res.status(400).json({
+        error: "Contul de elev cere consimțământul parental.",
+        field: "parental_consent"
+      });
+    }
   }
 
   // Rolul de profesor dă acces la analitica mai multor elevi, deci nu poate fi
@@ -76,7 +111,16 @@ router.post("/register", async (req, res) => {
     }
   }
 
-  const created = await createAccount({ email, password, role, profile });
+  const created = await createAccount({
+    email,
+    password,
+    role,
+    profile: {
+      ...profile,
+      parentalConsentAt: role === "student" ? new Date().toISOString() : null,
+      privacyAcceptedAt: new Date().toISOString()
+    }
+  });
   if (!created.ok) {
     if (created.reason === "email_taken") {
       return res.status(409).json({ error: "Există deja un cont cu această adresă.", field: "email" });
@@ -122,7 +166,7 @@ router.post("/register", async (req, res) => {
   res.status(201).json({ success: true, user: publicAccount(created.account), invitations });
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) => {
   const { email, password } = req.body || {};
   if (!email || !password) {
     return res.status(400).json({ error: "Emailul și parola sunt obligatorii." });
@@ -154,7 +198,7 @@ router.get("/me", authRequired, (req, res) => {
 
 // Nu există încă trimitere reală de email (vezi Faza 6). Răspundem identic
 // indiferent dacă adresa are cont, ca să nu permitem enumerarea utilizatorilor.
-router.post("/forgot-password", (req, res) => {
+router.post("/forgot-password", authLimiter, validateBody(forgotPasswordSchema), (req, res) => {
   const { email } = req.body || {};
   const account = isValidEmail(email) ? findAccount(email) : null;
 

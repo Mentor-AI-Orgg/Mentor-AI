@@ -257,24 +257,26 @@ const LearnScreen = ({ userData, onRewardClaim }) => {
     <section className="surface learn-detector-card">
       <div className="section-heading">
         <div>
-          <div className="eyebrow">Detector AI</div>
-          <h2 className="display-font">Verifică dacă un text pare generat.</h2>
+          <div className="eyebrow">Detector demo</div>
+          <h2 className="display-font">Un scor euristic, nu un verdict.</h2>
         </div>
       </div>
+      <p className="detector-demo-note">Folosește lungimea cuvintelor și termeni academici, plus un jitter aleator. Nu este un detector real de conținut AI.</p>
       <textarea
         className="learn-detector-input"
         rows="5"
         value={detectText}
         onChange={e => setDetectText(e.target.value)}
-        placeholder="Lipește un text aici și verifică dacă pare scris de AI..."
+        placeholder="Lipește un text aici pentru scorul demonstrativ..."
       />
       <div className="learning-actions">
-        <button type="button" className="accent-button result-action" onClick={runDetector} disabled={detectLoading || !detectText.trim()}>{detectLoading ? 'Analizez...' : 'Rulează detectorul'}</button>
+        <button type="button" className="accent-button result-action" onClick={runDetector} disabled={detectLoading || !detectText.trim()}>{detectLoading ? 'Analizez...' : 'Rulează demonstrația'}</button>
       </div>
       {detectResult && (
         <div className="learn-detector-result">
-          <strong>{detectResult.verdict || 'Rezultat detector'}</strong>
-          <span>Probabilitate AI: {Number(detectResult.ai_probability || 0).toFixed(0)}%</span>
+          <strong>{detectResult.verdict || 'Rezultat demonstrativ'}</strong>
+          <span>Scor demonstrativ: {Number(detectResult.ai_probability || 0).toFixed(0)}% · nu este o probă</span>
+          {detectResult.disclaimer && <small>{detectResult.disclaimer}</small>}
         </div>
       )}
     </section>

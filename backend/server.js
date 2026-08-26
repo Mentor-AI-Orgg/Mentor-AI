@@ -1,5 +1,4 @@
 const express = require("express");
-const cors = require("cors");
 const path = require("path");
 const config = require("./src/config");
 
@@ -16,8 +15,11 @@ const diagnosticsRoute = require("./src/routes/diagnostics");
 const economyRoute = require("./src/routes/economy");
 const authRoute = require("./src/routes/auth");
 const linksRoute = require("./src/routes/links");
+const accountRoute = require("./src/routes/account");
 const { basicAuth } = require("./src/middleware/basicAuth");
 const { attachUser, authRequired } = require("./src/middleware/auth");
+const { corsAllowlist } = require("./src/middleware/corsAllowlist");
+const { generalApiLimiter, chatLimiter, detectLimiter } = require("./src/middleware/rateLimits");
 const persistence = require("./src/data/persistence");
 
 // Toate store-urile s-au înregistrat la persistence în momentul require-urilor
@@ -38,8 +40,9 @@ app.use(basicAuth({
   skipPaths: ["/api/health"]
 }));
 
-app.use(cors());
+app.use(corsAllowlist);
 app.use(express.json({ limit: "10mb" }));
+app.use("/api", generalApiLimiter);
 
 const frontendDir = path.join(__dirname, "..", "frontend");
 
@@ -53,8 +56,8 @@ app.use("/api/leaderboard", leaderboardRoute);
 
 // Rutele de mai jos cer un cont. Pe lângă protejarea datelor, asta oprește și
 // consumul anonim al providerilor de AI, care se plătește la fiecare cerere.
-app.use("/api/chat", authRequired, chatRoute);
-app.use("/api/detect", authRequired, detectRoute);
+app.use("/api/chat", authRequired, chatLimiter, chatRoute);
+app.use("/api/detect", authRequired, detectLimiter, detectRoute);
 app.use("/api/wolfram", authRequired, wolframRoute);
 app.use("/api/mathpix", authRequired, mathpixRoute);
 app.use("/api/flashcards", authRequired, flashcardsRoute);
@@ -62,6 +65,7 @@ app.use("/api/diagnostics", authRequired, diagnosticsRoute);
 app.use("/api/calendar", authRequired, calendarRoute);
 app.use("/api/economy", authRequired, economyRoute);
 app.use("/api/links", authRequired, linksRoute);
+app.use("/api/account", authRequired, accountRoute);
 
 // Lista de planuri rămâne publică; rutele care ating un cont sunt protejate
 // în interiorul router-ului.

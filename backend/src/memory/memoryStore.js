@@ -27,9 +27,29 @@ function all() {
   return store;
 }
 
+function prefixForEmail(email) {
+  return `${String(email || "").trim().toLowerCase()}::`;
+}
+
+function exportForEmail(email) {
+  const prefix = prefixForEmail(email);
+  const conversations = {};
+  for (const [key, value] of Object.entries(store)) {
+    if (key.startsWith(prefix)) conversations[key.slice(prefix.length)] = value;
+  }
+  return conversations;
+}
+
+function deleteForEmail(email) {
+  const prefix = prefixForEmail(email);
+  for (const key of Object.keys(store)) {
+    if (key.startsWith(prefix)) delete store[key];
+  }
+}
+
 persistence.register("memory", {
   snapshot: () => store,
   restore: data => persistence.restoreObject(store, data)
 });
 
-module.exports = { get, add, clear, all, MAX_MESSAGES };
+module.exports = { get, add, clear, all, exportForEmail, deleteForEmail, MAX_MESSAGES };

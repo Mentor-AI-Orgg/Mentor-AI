@@ -10,6 +10,8 @@ const { callGPT4o } = require("../providers/openai");
 const { callGemini } = require("../providers/gemini");
 const { askWolfram } = require("../providers/wolfram");
 const { recognizeImage } = require("../providers/mathpix");
+const { validateBody } = require("../middleware/validate");
+const { chatSchema } = require("../validation/schemas");
 
 function buildMessages(userMsg, history, subject, classLevel, lang) {
   const context = `\n[Context: Subject=${subject}, Grade=${classLevel}, Language=${lang}]`;
@@ -141,13 +143,9 @@ async function runPremiumCouncil({ messages, userMsg, imageBase64, lang }) {
   };
 }
 
-router.post("/", async (req, res) => {
+router.post("/", validateBody(chatSchema), async (req, res) => {
   const startTotal = Date.now();
   const { message, subject = "matematica", class_level = 8, language = "ro", plan_id = "free", image_base64 = "" } = req.body || {};
-
-  if (!message || !message.trim()) {
-    return res.status(400).json({ error: "Câmpul 'message' este obligatoriu." });
-  }
 
   const lang = language || "ro";
   const requestedConversationId = req.body.conversation_id || `conv_${Buffer.from(message).toString("base64").slice(0, 8)}`;

@@ -157,6 +157,11 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .field-hint-bad { color: #fb7185; }
 .form-error { display: flex; align-items: center; gap: 8px; margin-top: 4px; padding: 10px 12px; border-radius: 14px; background: rgba(251, 113, 133, .12); border: 1px solid rgba(251, 113, 133, .4); color: #fda4af; font-size: 12px; line-height: 1.5; }
 .form-error i { font-size: 13px; flex-shrink: 0; }
+.consent-check { display: flex; align-items: flex-start; gap: 10px; margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.55; font-weight: 500; }
+.consent-check input { margin-top: 3px; flex-shrink: 0; }
+.consent-check a { color: var(--lime); }
+.consent-check-invalid { color: #fda4af; }
+.detector-demo-note { margin: 0 0 12px; color: var(--muted); font-size: 12px; line-height: 1.55; }
 .invitation-group { margin-top: 18px; display: grid; gap: 10px; }
 .invitation-group-title { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
 .invitation-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
@@ -601,6 +606,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .profile-detector-result { display: grid; gap: 4px; padding: 12px 14px; border-radius: 14px; background: rgba(111,215,255,.08); border: 1px solid rgba(111,215,255,.15); }
 .profile-detector-result strong { font-size: 13px; }
 .profile-detector-result span { color: var(--muted); font-size: 11px; }
+.profile-detector-result small { color: var(--muted); font-size: 11px; line-height: 1.5; }
 .profile-inbox { display: grid; gap: 8px; }
 .profile-inbox-item { display: grid; gap: 4px; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); }
 .profile-inbox-item strong { font-size: 12px; }
@@ -676,6 +682,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .learn-detector-result { display: grid; gap: 4px; margin-top: 10px; padding: 12px 14px; border-radius: 14px; background: rgba(111,215,255,.08); border: 1px solid rgba(111,215,255,.15); }
 .learn-detector-result strong { font-size: 13px; }
 .learn-detector-result span { color: var(--muted); font-size: 11px; }
+.learn-detector-result small { color: var(--muted); font-size: 11px; line-height: 1.5; }
 
 .parent-hero-card { display: grid; gap: 12px; }
 .parent-title { margin: 8px 0 0; font-size: clamp(28px, 5vw, 44px); line-height: 1; }

@@ -70,6 +70,8 @@ async function createAccount({ email, password, role = "student", profile = {} }
       parentEmail: profile.parentEmail || "",
       teacherEmail: profile.teacherEmail || ""
     },
+    parentalConsentAt: profile.parentalConsentAt || null,
+    privacyAcceptedAt: profile.privacyAcceptedAt || null,
     createdAt: new Date().toISOString()
   };
   ACCOUNTS.set(key, account);
@@ -96,6 +98,8 @@ function publicAccount(account) {
     email: account.email,
     role: account.role,
     ...account.profile,
+    parentalConsentAt: account.parentalConsentAt || null,
+    privacyAcceptedAt: account.privacyAcceptedAt || null,
     createdAt: account.createdAt
   };
 }
@@ -130,6 +134,12 @@ function destroySessionsForEmail(email) {
   for (const [token, session] of SESSIONS.entries()) {
     if (session.email === key) SESSIONS.delete(token);
   }
+}
+
+function deleteAccount(email) {
+  const key = normalizeEmail(email);
+  destroySessionsForEmail(key);
+  return ACCOUNTS.delete(key);
 }
 
 // Sesiunile expirate s-ar acumula la infinit dacă nimeni nu le mai atinge.
@@ -173,6 +183,7 @@ module.exports = {
   getSession,
   destroySession,
   destroySessionsForEmail,
+  deleteAccount,
   purgeExpiredSessions,
   // expuse pentru teste
   hashPassword,

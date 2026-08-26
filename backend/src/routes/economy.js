@@ -1,6 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { roleGuard } = require('../middleware/auth');
+const { validateBody } = require('../middleware/validate');
+const { accessCodeVerifyLimiter } = require('../middleware/rateLimits');
+const {
+  claimSchema,
+  buySchema,
+  accessCodeRequestSchema,
+  accessCodeVerifySchema
+} = require('../validation/schemas');
 const {
   getSummary,
   getCatalog,
@@ -60,7 +68,7 @@ router.post('/notifications/:notificationId/read', (req, res) => {
   res.json({ success: true, notification });
 });
 
-router.post('/claim', (req, res) => {
+router.post('/claim', validateBody(claimSchema), (req, res) => {
   const { type, ...payload } = req.body || {};
   if (!type) {
     return res.status(400).json({ error: 'Tipul recompensei este obligatoriu.' });
@@ -69,7 +77,7 @@ router.post('/claim', (req, res) => {
   res.status(result.ok ? 200 : 400).json(result);
 });
 
-router.post('/buy', (req, res) => {
+router.post('/buy', validateBody(buySchema), (req, res) => {
   const { item_id } = req.body || {};
   if (!item_id) {
     return res.status(400).json({ error: 'item_id este obligatoriu.' });
@@ -143,18 +151,19 @@ router.post('/request-test', roleGuard('parent', 'teacher'), (req, res) => {
 });
 
 // Cod de acces temporar prin SMS (nu parola reala -- vezi economyStore.js).
-router.post('/access-code/request', roleGuard('parent'), (req, res) => {
+router.post('/access-code/request', roleGuard('parent'), validateBody(accessCodeRequestSchema), (req, res) => {
   const { child_email = '', phone = '' } = req.body || {};
-  if (!child_email) {
-    return res.status(400).json({ error: 'child_email este obligatoriu.' });
-  }
   const result = generateAccessCode({ parentEmail: req.auth.email, childEmail: child_email, phone });
   res.json(result || { ok: false, reason: 'invalid_request' });
 });
 
-router.post('/access-code/verify', roleGuard('parent'), (req, res) => {
+router.post('/access-code/verify', roleGuard('parent'), accessCodeVerifyLimiter, validateBody(accessCodeVerifySchema), (req, res) => {
   const { child_email = '', code = '' } = req.body || {};
   const result = verifyAccessCode({ parentEmail: req.auth.email, childEmail: child_email, code });
+  if (!result.ok) {
+    const status = result.reason === 'locked' ? 429 : 400;
+    return res.status(status).json(result);
+  }
   res.json(result);
 });
 

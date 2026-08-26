@@ -14,6 +14,7 @@ const crypto = require("crypto");
 const persistence = require("./persistence");
 const {
   ensureUser,
+  getUser,
   pushNotification,
   logActivity,
   listStudentEmailsForTeacher
@@ -235,15 +236,17 @@ function unlink({ email, otherEmail }) {
   if (!other) return { ok: false, reason: "missing_target" };
 
   const user = ensureUser(key);
-  const target = ensureUser(other);
+  const target = getUser(other);
   let removed = false;
 
   if (user.preferences.childEmail === other) { user.preferences.childEmail = ""; removed = true; }
   if (user.preferences.parentEmail === other) { user.preferences.parentEmail = ""; removed = true; }
-  if (target.preferences.childEmail === key) { target.preferences.childEmail = ""; removed = true; }
-  if (target.preferences.parentEmail === key) { target.preferences.parentEmail = ""; removed = true; }
   if (user.preferences.teacherEmail === other) { user.preferences.teacherEmail = ""; removed = true; }
-  if (target.preferences.teacherEmail === key) { target.preferences.teacherEmail = ""; removed = true; }
+  if (target) {
+    if (target.preferences.childEmail === key) { target.preferences.childEmail = ""; removed = true; }
+    if (target.preferences.parentEmail === key) { target.preferences.parentEmail = ""; removed = true; }
+    if (target.preferences.teacherEmail === key) { target.preferences.teacherEmail = ""; removed = true; }
+  }
 
   if (!removed) return { ok: false, reason: "not_linked" };
 
@@ -255,6 +258,26 @@ function unlink({ email, otherEmail }) {
     "invitation"
   );
   return { ok: true };
+}
+
+// Șterge invitațiile și legăturile unui cont, fără a crea utilizatori-fantomă
+// (ensureUser ar deschide un rând nou pentru cealaltă parte).
+function purgeForEmail(email) {
+  const key = normalize(email);
+  const user = getUser(key);
+  const others = new Set();
+  if (user) {
+    if (user.preferences.childEmail) others.add(user.preferences.childEmail);
+    if (user.preferences.parentEmail) others.add(user.preferences.parentEmail);
+    if (user.preferences.teacherEmail) others.add(user.preferences.teacherEmail);
+    if (user.role === "teacher") {
+      for (const studentEmail of listStudentEmailsForTeacher(user.userId)) others.add(studentEmail);
+    }
+  }
+  for (const other of others) unlink({ email: key, otherEmail: other });
+  for (const [id, invitation] of INVITATIONS.entries()) {
+    if (invitation.fromEmail === key || invitation.toEmail === key) INVITATIONS.delete(id);
+  }
 }
 
 function purgeExpired() {
@@ -291,5 +314,6 @@ module.exports = {
   revoke,
   listLinks,
   unlink,
+  purgeForEmail,
   purgeExpired
 };

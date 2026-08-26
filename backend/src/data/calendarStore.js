@@ -73,6 +73,11 @@ function disconnectProvider(userId, provider) {
   }
 }
 
+function deleteUser(userId) {
+  delete eventsByUser[userId];
+  delete connectionsByUser[userId];
+}
+
 persistence.register("calendar", {
   snapshot: () => ({ events: eventsByUser, connections: connectionsByUser }),
   restore: data => {
@@ -81,4 +86,4 @@ persistence.register("calendar", {
   }
 });
 
-module.exports = { getEvents, addEvent, deleteEvent, getConnections, connectProvider, disconnectProvider };
+module.exports = { getEvents, addEvent, deleteEvent, getConnections, connectProvider, disconnectProvider, deleteUser };

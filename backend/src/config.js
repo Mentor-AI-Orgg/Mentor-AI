@@ -13,6 +13,13 @@ module.exports = {
   // Cookie-ul de sesiune se trimite doar pe HTTPS în producție.
   IS_PRODUCTION: process.env.NODE_ENV === "production",
 
+  // Origini extra permise pentru CORS (separate prin virgulă). Same-origin
+  // funcționează oricum; lista e pentru un frontend găzduit pe alt domeniu.
+  CORS_ORIGINS: String(process.env.CORS_ORIGINS || "")
+    .split(",")
+    .map(value => value.trim())
+    .filter(Boolean),
+
   // Fără acest cod, înregistrarea unui cont de profesor este blocată. Rolul
   // de profesor vede analitica mai multor elevi, deci nu poate fi ales liber
   // de către client.

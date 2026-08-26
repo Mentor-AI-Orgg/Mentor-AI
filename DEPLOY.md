@@ -82,8 +82,8 @@ FTP ar dura foarte mult.
 ## Pasul 4 - Instalează dependințele pe server
 
 O singură dată, după primul deploy: în **Setup Node.js App**, apasă
-**Run NPM Install**. Aplicația are doar trei dependințe (`express`, `cors`,
-`dotenv`), deci durează câteva secunde.
+**Run NPM Install**. Aplicația are câteva dependințe JS pure (`express`,
+`cors`, `dotenv`, `express-rate-limit`, `zod`), deci durează câteva secunde.
 
 Repetă pasul doar când se schimbă `backend/package.json`.
 
@@ -115,6 +115,12 @@ STAGING_AUTH_PASSWORD=<alege o parolă>
 ```
 
 Fără chei de AI aplicația funcționează, dar toate răspunsurile sunt mock.
+
+Dacă frontend-ul și API-ul sunt pe același domeniu, nu trebuie să setezi
+`CORS_ORIGINS`. Completeaz-o doar dacă apeți API-ul de pe un alt origin
+(de exemplu un preview). Origini necunoscute nu mai primesc
+`Access-Control-Allow-Credentials`, deci cookie-ul de sesiune nu poate fi
+folosit cross-site de un domeniu oarecare.
 
 ## Pasul 6 - Verifică
 

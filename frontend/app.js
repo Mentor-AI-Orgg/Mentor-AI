@@ -419,6 +419,8 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast }) => {
   const [detectLoading, setDetectLoading] = useState(false);
   const [detectResult, setDetectResult] = useState(null);
   const [inbox, setInbox] = useState([]);
+  const [exporting, setExporting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const loadInbox = async () => {
@@ -440,6 +442,40 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast }) => {
       setDetectResult({ verdict: 'Detector indisponibil', ai_probability: 0 });
     }
     setDetectLoading(false);
+  };
+
+  const exportAccount = async () => {
+    setExporting(true);
+    const result = await window.MentorAPI.exportAccount();
+    setExporting(false);
+    if (!result.success) {
+      onToast?.('Nu am putut exporta datele.', 'warning');
+      return;
+    }
+    const blob = new Blob([JSON.stringify(result.data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'mentor-ai-date.json';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    onToast?.('Datele au fost descărcate.', 'success');
+  };
+
+  const deleteAccount = async () => {
+    if (!window.confirm('Ștergi definitiv contul și toate datele asociate? Acțiunea nu poate fi anulată.')) return;
+    if (!window.confirm('Ultima confirmare: vrei să ștergi acest cont acum?')) return;
+    setDeleting(true);
+    const result = await window.MentorAPI.deleteAccount();
+    setDeleting(false);
+    if (!result.success) {
+      onToast?.('Nu am putut șterge contul.', 'warning');
+      return;
+    }
+    onToast?.('Contul a fost șters.', 'success');
+    onLogout();
   };
 
   return (
@@ -471,22 +507,24 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast }) => {
 
       <div className="mx-5 mt-5 profile-tools-grid">
         <section className="surface rounded-3xl p-5 profile-tool-card">
-          <div className="eyebrow">Detector AI</div>
-          <h3 className="display-font profile-tool-title">Verifică dacă textul pare generat.</h3>
+          <div className="eyebrow">Detector demo</div>
+          <h3 className="display-font profile-tool-title">Euristică locală, nu un detector real.</h3>
+          <p className="detector-demo-note">Scorul folosește lungimea cuvintelor, termeni academici și un jitter aleator. Nu este GPTZero și nu trebuie folosit ca dovadă că un text a fost generat de AI.</p>
           <textarea
             className="profile-detector-input"
             rows="5"
             value={detectText}
             onChange={e => setDetectText(e.target.value)}
-            placeholder="Lipește aici un text pentru detectare AI..."
+            placeholder="Lipește aici un text pentru scorul demonstrativ..."
           />
           <button type="button" className="accent-button profile-tool-action" onClick={runDetector} disabled={detectLoading || !detectText.trim()}>
-            {detectLoading ? 'Analizez...' : 'Rulează detectorul'}
+            {detectLoading ? 'Analizez...' : 'Rulează demonstrația'}
           </button>
           {detectResult && (
             <div className="profile-detector-result">
-              <strong>{detectResult.verdict || 'Rezultat detector'}</strong>
-              <span>Probabilitate AI: {Number(detectResult.ai_probability || 0).toFixed(0)}%</span>
+              <strong>{detectResult.verdict || 'Rezultat demonstrativ'}</strong>
+              <span>Scor demonstrativ: {Number(detectResult.ai_probability || 0).toFixed(0)}% · nu este o probă</span>
+              {detectResult.disclaimer && <small>{detectResult.disclaimer}</small>}
             </div>
           )}
         </section>
@@ -516,8 +554,13 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast }) => {
         <window.Leaderboard userData={userData} />
       </div>
       <div className="mx-5 mt-5 grid gap-3">
-        <button className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">Setări cont</button>
-        <button className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">Preferințe limbă</button>
+        <button type="button" onClick={exportAccount} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition" disabled={exporting}>
+          <i className="fas fa-download mr-2"></i>{exporting ? 'Se exportă...' : 'Descarcă datele mele'}
+        </button>
+        <button type="button" onClick={deleteAccount} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition" disabled={deleting}>
+          <i className="fas fa-trash mr-2"></i>{deleting ? 'Se șterge...' : 'Șterge contul'}
+        </button>
+        <a href="/privacy.html" target="_blank" rel="noopener noreferrer" className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">Politica de confidențialitate</a>
         <button type="button" onClick={onLogout} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">
           <i className="fas fa-arrow-right-from-bracket mr-2"></i>Deconectează-te
         </button>
@@ -650,7 +693,7 @@ const ParentDashboardScreen = ({ userData, onBack, onNavigate, showToast }) => {
         <div className="surface parent-metric-card"><span>Focus total</span><strong>{analytics?.analytics?.totalFocusMinutes || 0} min</strong><small>sesiuni: {analytics?.analytics?.focusSessions || 0}</small></div>
         <div className="surface parent-metric-card"><span>Studiu</span><strong>{analytics?.analytics?.totalStudyMinutes || 0} min</strong><small>activități: {analytics?.analytics?.studySessions || 0}</small></div>
         <div className="surface parent-metric-card"><span>AFK</span><strong>{riskLabel(analytics?.analytics?.afkRisk || 'low')}</strong><small>{analytics?.analytics?.afkMinutes || 0} min de la ultima activitate</small></div>
-        <div className="surface parent-metric-card"><span>Copiat</span><strong>{riskLabel(analytics?.analytics?.copiedRisk || 'low')}</strong><small>pe baza detectorului AI și a textelor analizate</small></div>
+        <div className="surface parent-metric-card"><span>Copiat</span><strong>{riskLabel(analytics?.analytics?.copiedRisk || 'low')}</strong><small>semnal demonstrativ, nu o dovadă de copiat</small></div>
       </section>
 
       <section className="mx-5 mt-5 parent-analytics-grid">
@@ -1053,7 +1096,9 @@ const App = () => {
       class: formData.class,
       subject: formData.subject,
       parentEmail: formData.role === 'student' ? (formData.parentEmail || '') : '',
-      teacherEmail: formData.teacherEmail || ''
+      teacherEmail: formData.teacherEmail || '',
+      parental_consent: formData.role === 'student' ? Boolean(formData.parentalConsent) : false,
+      privacy_accepted: Boolean(formData.privacyAccepted)
     });
 
     if (!registration.success) {
