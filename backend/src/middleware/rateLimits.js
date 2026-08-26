@@ -23,7 +23,7 @@ const generalApiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 400,
   ...common,
-  skip: req => req.path === "/health" || req.originalUrl === "/api/health" || req.originalUrl.startsWith("/api/health?"),
+  skip: req => /\/health$/.test(req.path) || /\/api(?:\/v1)?\/health/.test(req.originalUrl),
   handler: romanianHandler("Prea multe cereri. Încearcă din nou în câteva minute.")
 });
 

@@ -35,6 +35,13 @@ module.exports = {
   GEMINI_KEY: process.env.GEMINI_KEY || "",
   GEMINI_MODEL: process.env.GEMINI_MODEL || "gemini-1.5-pro",
 
+  // Timeout per provider (ms). Un motor agățat trebuie să cedeze locul
+  // următorului din lanț, nu să țină toată cererea de chat deschisă.
+  PROVIDER_TIMEOUT_MS: Number(process.env.PROVIDER_TIMEOUT_MS) || 8000,
+
+  // 500 tăia răspunsurile de scaffolding pe mai mulți pași.
+  MAX_TOKENS: Number(process.env.MAX_TOKENS) || 2048,
+
   // --- specialized tools ---
   WOLFRAM_KEY: process.env.WOLFRAM_KEY || "",
   MATHPIX_APP_ID: process.env.MATHPIX_APP_ID || "",

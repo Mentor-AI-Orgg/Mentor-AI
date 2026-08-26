@@ -110,8 +110,8 @@ const fetchWithTimeout = async (url, options = {}, timeout = 6000) => {
   return response;
 };
 
-const safeFetchJson = async (url, options) => {
-  const response = await fetchWithTimeout(url, options);
+const safeFetchJson = async (url, options, timeout) => {
+  const response = await fetchWithTimeout(url, options, timeout);
   if (!response.ok) {
     let payload = null;
     try { payload = await response.json(); } catch (error) { payload = null; }
@@ -257,7 +257,7 @@ const MentorAPI = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-      });
+      }, 45000);
       return { success: true, data, fallback: false };
     } catch (error) {
       return {
@@ -546,7 +546,7 @@ const MentorAPI = {
 
   async runDiagnostics() {
     try {
-      const data = await safeFetchJson('/api/diagnostics/full', { method: 'POST' });
+      const data = await safeFetchJson('/api/diagnostics/full', { method: 'POST' }, 40000);
       return { success: true, data, fallback: false };
     } catch (error) {
       return { success: false, data: null, fallback: true };

@@ -2,6 +2,7 @@
 
 const config = require("../config");
 const { pickClaudeMockReply } = require("../data/mockClaude");
+const { fetchWithTimeout } = require("./fetchWithTimeout");
 
 async function callClaude(messages, lang) {
   const start = Date.now();
@@ -22,7 +23,7 @@ async function callClaude(messages, lang) {
     const system = messages.find(m => m.role === "system")?.content || "";
     const conversational = messages.filter(m => m.role !== "system");
 
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const res = await fetchWithTimeout("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,11 +32,11 @@ async function callClaude(messages, lang) {
       },
       body: JSON.stringify({
         model: config.CLAUDE_MODEL,
-        max_tokens: 500,
+        max_tokens: config.MAX_TOKENS,
         system,
         messages: conversational
       })
-    });
+    }, config.PROVIDER_TIMEOUT_MS);
 
     if (!res.ok) throw new Error(`Claude API responded ${res.status}`);
     const data = await res.json();

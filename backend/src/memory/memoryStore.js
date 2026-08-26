@@ -47,9 +47,31 @@ function deleteForEmail(email) {
   }
 }
 
+const MEMORY_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+function purgeStale(ttlMs = MEMORY_TTL_MS) {
+  const cutoff = Date.now() - ttlMs;
+  let removed = 0;
+  for (const [id, messages] of Object.entries(store)) {
+    const last = Array.isArray(messages) && messages.length ? messages[messages.length - 1] : null;
+    const ts = last && Number(last.timestamp);
+    if (!ts || ts < cutoff) {
+      delete store[id];
+      removed++;
+    }
+  }
+  return removed;
+}
+
+const memoryPurgeTimer = setInterval(() => purgeStale(), 6 * 60 * 60 * 1000);
+memoryPurgeTimer.unref();
+
 persistence.register("memory", {
   snapshot: () => store,
-  restore: data => persistence.restoreObject(store, data)
+  restore: data => {
+    persistence.restoreObject(store, data);
+    purgeStale();
+  }
 });
 
-module.exports = { get, add, clear, all, exportForEmail, deleteForEmail, MAX_MESSAGES };
+module.exports = { get, add, clear, all, exportForEmail, deleteForEmail, purgeStale, MAX_MESSAGES };

@@ -16,6 +16,7 @@ const economyRoute = require("./src/routes/economy");
 const authRoute = require("./src/routes/auth");
 const linksRoute = require("./src/routes/links");
 const accountRoute = require("./src/routes/account");
+const { spec: openapiSpec } = require("./src/openapi");
 const { basicAuth } = require("./src/middleware/basicAuth");
 const { attachUser, authRequired } = require("./src/middleware/auth");
 const { corsAllowlist } = require("./src/middleware/corsAllowlist");
@@ -37,7 +38,7 @@ app.set("trust proxy", 1);
 app.use(basicAuth({
   user: config.STAGING_AUTH_USER,
   password: config.STAGING_AUTH_PASSWORD,
-  skipPaths: ["/api/health"]
+  skipPaths: ["/api/health", "/api/v1/health"]
 }));
 
 app.use(corsAllowlist);
@@ -49,35 +50,42 @@ const frontendDir = path.join(__dirname, "..", "frontend");
 // Identifică utilizatorul din cookie-ul de sesiune, fără să blocheze cererea.
 app.use(attachUser);
 
-// Public: autentificare, health check, planuri de abonament, clasament.
-app.use("/api/auth", authRoute);
-app.use("/api/health", healthRoute);
-app.use("/api/leaderboard", leaderboardRoute);
+function mountApi(prefix) {
+  app.get(`${prefix}/openapi.json`, (req, res) => res.json(openapiSpec));
+  app.get(prefix, (req, res) => res.json({
+    name: config.APP_NAME,
+    version: config.APP_VERSION,
+    ok: true,
+    spec: `${prefix}/openapi.json`
+  }));
 
-// Rutele de mai jos cer un cont. Pe lângă protejarea datelor, asta oprește și
-// consumul anonim al providerilor de AI, care se plătește la fiecare cerere.
-app.use("/api/chat", authRequired, chatLimiter, chatRoute);
-app.use("/api/detect", authRequired, detectLimiter, detectRoute);
-app.use("/api/wolfram", authRequired, wolframRoute);
-app.use("/api/mathpix", authRequired, mathpixRoute);
-app.use("/api/flashcards", authRequired, flashcardsRoute);
-app.use("/api/diagnostics", authRequired, diagnosticsRoute);
-app.use("/api/calendar", authRequired, calendarRoute);
-app.use("/api/economy", authRequired, economyRoute);
-app.use("/api/links", authRequired, linksRoute);
-app.use("/api/account", authRequired, accountRoute);
+  app.use(`${prefix}/auth`, authRoute);
+  app.use(`${prefix}/health`, healthRoute);
+  app.use(`${prefix}/leaderboard`, leaderboardRoute);
 
-// Lista de planuri rămâne publică; rutele care ating un cont sunt protejate
-// în interiorul router-ului.
-app.use("/api/subscriptions", subscriptionsRoute);
+  app.use(`${prefix}/chat`, authRequired, chatLimiter, chatRoute);
+  app.use(`${prefix}/detect`, authRequired, detectLimiter, detectRoute);
+  app.use(`${prefix}/wolfram`, authRequired, wolframRoute);
+  app.use(`${prefix}/mathpix`, authRequired, mathpixRoute);
+  app.use(`${prefix}/flashcards`, authRequired, flashcardsRoute);
+  app.use(`${prefix}/diagnostics`, authRequired, diagnosticsRoute);
+  app.use(`${prefix}/calendar`, authRequired, calendarRoute);
+  app.use(`${prefix}/economy`, authRequired, economyRoute);
+  app.use(`${prefix}/links`, authRequired, linksRoute);
+  app.use(`${prefix}/account`, authRequired, accountRoute);
+  app.use(`${prefix}/subscriptions`, subscriptionsRoute);
+}
+
+// `/api` rămâne calea pe care o folosește frontend-ul. `/api/v1` este același
+// contract, ca un client să poată ancora o versiune explicită.
+mountApi("/api");
+mountApi("/api/v1");
 
 app.use(express.static(frontendDir));
 
 app.get(/^\/(?!api\/).*/, (req, res) => {
   res.sendFile(path.join(frontendDir, "index.html"));
 });
-
-app.get("/api", (req, res) => res.json({ name: config.APP_NAME, version: config.APP_VERSION, ok: true }));
 
 const server = app.listen(config.PORT, () => {
   console.log(`${config.APP_NAME} backend listening on http://localhost:${config.PORT}`);

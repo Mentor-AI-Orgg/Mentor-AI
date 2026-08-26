@@ -2,6 +2,7 @@
 
 const config = require("../config");
 const { pickGpt4oMockReply } = require("../data/mockGpt4o");
+const { fetchWithTimeout } = require("./fetchWithTimeout");
 
 async function callGPT4o(messages, lang) {
   const start = Date.now();
@@ -18,7 +19,7 @@ async function callGPT4o(messages, lang) {
   }
 
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    const res = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,9 +28,9 @@ async function callGPT4o(messages, lang) {
       body: JSON.stringify({
         model: config.OPENAI_MODEL,
         messages,
-        max_tokens: 500
+        max_tokens: config.MAX_TOKENS
       })
-    });
+    }, config.PROVIDER_TIMEOUT_MS);
 
     if (!res.ok) throw new Error(`OpenAI API responded ${res.status}`);
     const data = await res.json();
