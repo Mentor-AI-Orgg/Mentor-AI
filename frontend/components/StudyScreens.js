@@ -3,9 +3,12 @@ const { useEffect, useRef, useState } = React;
 const makeConversationId = prefix => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 
 const chatRequest = async ({ message, conversationId, subject, classLevel, language, planId, mockReply }) => {
-  if (!window.MentorAPI) return { response: mockReply, mocked: true };
+  if (!window.MentorAPI) return { response: mockReply, mocked: true, engine_used: 'offline' };
   const result = await MentorAPI.chat({ message, conversation_id: conversationId, subject, class_level: classLevel, language, plan_id: planId });
-  return { ...result.data, response: result.fallback ? mockReply : result.data?.response, mocked: result.fallback || result.data?.engine_mocked };
+  if (result.success && result.data) {
+    return { ...result.data, mocked: !!result.data.engine_mocked };
+  }
+  return { response: mockReply, mocked: true, engine_used: 'offline' };
 };
 
 const MessageBubble = ({ role, children }) => <div className={`mentor-message ${role === 'user' ? 'mentor-message-user' : 'mentor-message-ai'}`}><span className="mentor-message-role">{role === 'user' ? 'Tu' : 'Mentor AI'}</span><div>{children}</div></div>;
@@ -75,8 +78,7 @@ const ProfessorScreen = ({ userData }) => {
       </div>
     </header>
     {diagMode && <div className="diag-banner"><i className="fas fa-circle-info" /> Mod diagnosticare activ: orice mesaj trimis va verifica memoria și fiecare API (Claude, GPT-4o, Gemini, Wolfram, Mathpix) în loc de un răspuns normal.</div>}
-    {messages.some(m => m.mocked) && <div className="mock-banner"><i className="fas fa-flask" /> Răspunsurile marcate „demo” nu vin de la un model real: cheia API lipsește sau apelul a eșuat.</div>}
-    <section className="mentor-thread surface">{messages.length === 0 && <div className="mentor-empty"><div className="professor-icon"><i className="fas fa-sparkles" /></div><h2 className="display-font">Cu ce începem?</h2><p>Scrie o întrebare. Memoria conversației rămâne în backend pentru următorul tău mesaj.</p><div className="suggestion-row"><button onClick={() => send('Explică-mi un concept pe înțelesul meu')} type="button">Explică-mi un concept</button><button onClick={() => send('Ajută-mă să-mi organizez învățarea')} type="button">Fă-mi un plan</button></div></div>}{messages.map((message, index) => <MessageBubble key={`${message.role}-${index}`} role={message.role}>{message.diagnostic ? <pre className={`diag-report ${message.allOk ? 'all-ok' : 'has-issues'}`}>{message.content}</pre> : message.content}{message.mocked && <small className="mock-label">Răspuns demo{message.engine ? ` · ${message.engine}` : ''} — nu este generat de un model real</small>}</MessageBubble>)}{loading && <LoadingMessage />}</section>
+    <section className="mentor-thread surface">{messages.some(m => m.mocked) && <div className="mock-banner"><i className="fas fa-flask" /> Răspunsurile marcate „demo” nu vin de la un model real: cheia API lipsește sau apelul a eșuat.</div>}{messages.length === 0 && <div className="mentor-empty"><div className="professor-icon"><i className="fas fa-sparkles" /></div><h2 className="display-font">Cu ce începem?</h2><p>Scrie o întrebare. Memoria conversației rămâne în backend pentru următorul tău mesaj.</p><div className="suggestion-row"><button onClick={() => send('Explică-mi un concept pe înțelesul meu')} type="button">Explică-mi un concept</button><button onClick={() => send('Ajută-mă să-mi organizez învățarea')} type="button">Fă-mi un plan</button></div></div>}{messages.map((message, index) => <MessageBubble key={`${message.role}-${index}`} role={message.role}>{message.diagnostic ? <pre className={`diag-report ${message.allOk ? 'all-ok' : 'has-issues'}`}>{message.content}</pre> : message.content}{message.mocked && <small className="mock-label">Răspuns demo{message.engine ? ` · ${message.engine}` : ''} — nu este generat de un model real</small>}</MessageBubble>)}{loading && <LoadingMessage />}</section>
     <form className="mentor-composer" onSubmit={event => { event.preventDefault(); send(draft); }}><input value={draft} onChange={event => setDraft(event.target.value)} placeholder={diagMode ? 'Scrie orice, va rula diagnosticarea...' : 'Scrie întrebarea ta...'} aria-label="Întrebarea pentru Mentor AI" /><button className="accent-button" type="submit" disabled={loading || !draft.trim()} aria-label="Trimite întrebarea"><i className={`fas ${diagMode ? 'fa-stethoscope' : 'fa-arrow-up'}`} /></button></form>
   </main>;
 };
