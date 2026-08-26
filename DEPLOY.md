@@ -1,0 +1,186 @@
+# Deploy pe gazduire.net (DirectAdmin + CloudLinux)
+
+Setup pentru sincronizare automată: fiecare push pe `main` urcă aplicația pe
+hosting și repornește procesul Node, deci vezi modificările pe domeniu în
+aproximativ un minut.
+
+Aplicația rulează ca **o singură aplicație Node**, pe același domeniu.
+`backend/server.js` servește și frontend-ul:
+
+```js
+app.use(express.static(frontendDir));
+app.get(/^\/(?!api\/).*/, (req, res) => { ... });
+```
+
+Deci nu ai nevoie de un host separat pentru API, nu ai CORS de configurat și
+nu ai probleme de mixed content.
+
+---
+
+## Pasul 1 - Creează aplicația Node în DirectAdmin
+
+În DirectAdmin: **Extra Features** (sau **Advanced Features**) →
+**Setup Node.js App** → **Create Application**.
+
+| Câmp | Valoare |
+| --- | --- |
+| Node.js version | 18.x sau mai nou |
+| Application mode | Production |
+| Application root | `mentor-ai` |
+| Application URL | domeniul tău |
+| Application startup file | `backend/server.js` |
+
+Două detalii care contează:
+
+- **Application root trebuie să fie folderul care conține `backend/` și
+  `frontend/`**, nu `backend/`. Serverul rezolvă frontend-ul ca
+  `path.join(__dirname, "..", "frontend")`, deci structura din repo trebuie
+  păstrată intactă.
+- **Nu configura portul.** CloudLinux atribuie portul prin variabila `PORT`,
+  iar `backend/src/config.js` o citește deja (`process.env.PORT || 3001`).
+
+Dacă opțiunea nu apare în panel, cere-le suport să activeze Node.js Selector
+pe contul tău (planurile gazduire.net rulează CloudLinux și listează NodeJS ca
+inclus).
+
+## Pasul 2 - Configurează secretele în GitHub
+
+**Settings → Secrets and variables → Actions**.
+
+La tab-ul **Secrets** (valori sensibile, nu se mai pot citi după salvare):
+
+| Secret | Valoare |
+| --- | --- |
+| `FTP_SERVER` | hostname-ul FTP de la gazduire.net |
+| `FTP_USERNAME` | utilizatorul FTP |
+| `FTP_PASSWORD` | parola FTP |
+
+La tab-ul **Variables** (valori normale, vizibile):
+
+| Variabilă | Valoare | Observații |
+| --- | --- | --- |
+| `FTP_SERVER_DIR` | `./mentor-ai/` | Calea către Application root, relativ la folderul în care aterizează userul FTP |
+| `FTP_PROTOCOL` | `ftps` | Pune `ftp` doar dacă hostul nu suportă FTPS |
+
+Folosește **FTPS** dacă poți. FTP simplu trimite parola în clar la fiecare
+deploy.
+
+## Pasul 3 - Primul deploy
+
+Fă un push pe `main` (sau rulează workflow-ul manual din tab-ul **Actions** →
+**Deploy** → **Run workflow**). Workflow-ul din
+[.github/workflows/deploy.yml](.github/workflows/deploy.yml):
+
+1. verifică sintaxa fiecărui fișier din `backend/` - un deploy cu o eroare de
+   sintaxă ar lăsa site-ul căzut, pentru că Passenger nu poate porni procesul;
+2. scrie `tmp/restart.txt` cu data curentă;
+3. sincronizează fișierele prin FTPS, incremental (doar ce s-a schimbat).
+
+`node_modules` este exclus intenționat: sunt mii de fișiere și transferul prin
+FTP ar dura foarte mult.
+
+## Pasul 4 - Instalează dependințele pe server
+
+O singură dată, după primul deploy: în **Setup Node.js App**, apasă
+**Run NPM Install**. Aplicația are doar trei dependințe (`express`, `cors`,
+`dotenv`), deci durează câteva secunde.
+
+Repetă pasul doar când se schimbă `backend/package.json`.
+
+Dacă butonul cere un `package.json` în Application root și al tău e în
+`backend/`, ai două variante: pornește instalarea prin SSH
+(`cd ~/mentor-ai/backend && npm install --omit=dev`), sau setează Application
+root pe `mentor-ai/backend` **și** mută frontend-ul corespunzător - prima
+variantă e mai simplă.
+
+## Pasul 5 - Setează variabilele de mediu
+
+**Recomandat: direct în interfața Setup Node.js App**, la secțiunea de
+environment variables. Valorile ajung ca variabile reale de proces, deci
+`dotenv` nu mai are nicio treabă.
+
+Merită să știi de ce recomand asta: `config.js` apelează `require("dotenv").config()`
+fără cale explicită, iar dotenv citește `.env` din **directorul curent al
+procesului**, nu de lângă fișierul `config.js`. Local rulezi din `backend/`, deci
+`backend/.env` funcționează. Sub Passenger, directorul curent este Application
+root, deci un `backend/.env` ar fi ignorat în silence - exact genul de problemă
+care se depanează greu. Variabilele setate din panel evită complet ambiguitatea.
+
+Variabilele disponibile sunt documentate în
+[backend/.env.example](backend/.env.example). Minimul pentru producție:
+
+```
+STAGING_AUTH_USER=<alege un user>
+STAGING_AUTH_PASSWORD=<alege o parolă>
+```
+
+Fără chei de AI aplicația funcționează, dar toate răspunsurile sunt mock.
+
+## Pasul 6 - Verifică
+
+```
+https://domeniul-tau.ro/api/health
+```
+
+Ruta răspunde cu starea fiecărui provider și rămâne accesibilă fără parolă, ca
+să poți conecta monitorizare externă. Restul site-ului cere user și parolă dacă
+ai setat variabilele din pasul 5.
+
+---
+
+## Protejează site-ul până la Faza 1
+
+Aplicația **nu are încă autentificare reală**. Rutele identifică utilizatorul
+prin `user_id` trimis de client, deci oricine cunoaște adresa poate citi sau
+modifica datele oricărui cont doar schimbând un parametru - inclusiv
+`parent-analytics`, care expune despre un copil `copiedRisk`, `mentorMessages`
+și `detectHistory`.
+
+Până când Faza 1 din [plan-imbunatatiri.md](plan-imbunatatiri.md) este
+implementată:
+
+- ține `STAGING_AUTH_USER` și `STAGING_AUTH_PASSWORD` setate;
+- nu pune date reale despre elevi în aplicație.
+
+## Datele se pierd la fiecare restart
+
+Tot ce ține de stare (monede, streak, cumpărături, evenimente de calendar,
+istoricul conversațiilor) trăiește în memorie, în `Map`-uri și obiecte JS.
+Pe shared hosting procesul este oprit la fiecare deploy și când aplicația intră
+în idle, deci resetările vor fi **frecvente și vizibile**.
+
+Nu e o problemă de configurare - e lipsa de persistență din Faza 2 a planului.
+
+## Rollback
+
+Deploy-ul urmează `main`, deci cel mai rapid rollback este:
+
+```bash
+git revert <commit>
+git push origin main
+```
+
+Următorul deploy pornește automat și readuce versiunea anterioară.
+
+## Alternativă: deploy prin SSH
+
+Planurile gazduire.net includ acces SSH, care e mai bun decât FTP: folosește
+chei în loc de parolă, sincronizează mai repede și poate rula `npm install`
+singur. Dacă vrei să treci pe SSH, înlocuiește pasul de sincronizare cu:
+
+```yaml
+      - name: Deploy prin SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/mentor-ai
+            git pull origin main
+            cd backend && npm install --omit=dev
+            mkdir -p ~/mentor-ai/tmp && touch ~/mentor-ai/tmp/restart.txt
+```
+
+Pentru varianta asta trebuie să faci o dată `git clone` al repo-ului în
+`~/mentor-ai` pe server și să adaugi cheia publică în `~/.ssh/authorized_keys`.

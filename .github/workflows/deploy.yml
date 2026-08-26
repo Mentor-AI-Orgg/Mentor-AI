@@ -1,0 +1,52 @@
+name: Deploy
+
+# Sincronizează aplicația pe hosting la fiecare push pe main.
+# Configurare completă (inclusiv pașii din DirectAdmin): vezi DEPLOY.md
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  # Un singur deploy în același timp; un push nou anulează unul în curs.
+  group: deploy-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verifică sintaxa backend-ului
+        # Un deploy cu o eroare de sintaxă lasă site-ul căzut, pentru că
+        # Passenger nu poate porni procesul. Mai bine picăm aici.
+        run: for file in $(find backend -name '*.js' -not -path '*/node_modules/*'); do node --check "$file" || exit 1; done
+
+      - name: Cere restart de la Passenger
+        # Passenger repornește aplicația când se schimbă tmp/restart.txt.
+        # Conținutul diferă la fiecare rulare, deci sincronizarea îl încarcă
+        # mereu, iar codul nou intră în funcțiune imediat după deploy.
+        run: |
+          mkdir -p tmp
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > tmp/restart.txt
+
+      - name: Sincronizează prin FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          server-dir: ${{ vars.FTP_SERVER_DIR }}
+          local-dir: ./
+          # node_modules se instalează pe server (vezi DEPLOY.md), nu prin FTP:
+          # sunt mii de fișiere și transferul ar dura enorm.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.env
+            *.md
+            cod cu Claude*
+            mentor_ai_v3*.html

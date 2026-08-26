@@ -5,6 +5,11 @@ require("dotenv").config();
 module.exports = {
   PORT: process.env.PORT || 3001,
 
+  // Protecție temporară la nivel de site, activă doar dacă ambele valori
+  // sunt setate. Vezi backend/src/middleware/basicAuth.js.
+  STAGING_AUTH_USER: process.env.STAGING_AUTH_USER || "",
+  STAGING_AUTH_PASSWORD: process.env.STAGING_AUTH_PASSWORD || "",
+
   // --- AI chat engines (fallback order: Claude -> OpenAI -> Gemini) ---
   CLAUDE_KEY: process.env.CLAUDE_KEY || "",
   CLAUDE_MODEL: process.env.CLAUDE_MODEL || "claude-haiku-4-5-20251001",

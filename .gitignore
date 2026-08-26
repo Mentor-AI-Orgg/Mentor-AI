@@ -1,0 +1,32 @@
+# Dependințe
+node_modules/
+
+# Variabile de mediu (conțin cheile API - NU se comit niciodată)
+.env
+.env.*
+!.env.example
+
+# Loguri
+logs/
+*.log
+npm-debug.log*
+
+# Cache / build
+.cache/
+dist/
+build/
+coverage/
+
+# Semnal de restart pentru Passenger (generat la fiecare deploy)
+tmp/
+
+# Stare de sincronizare lăsată pe server de acțiunea de deploy FTP
+.ftp-deploy-sync-state.json
+
+# Fișiere de sistem / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
