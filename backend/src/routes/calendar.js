@@ -2,9 +2,12 @@ const express = require("express");
 const router = express.Router();
 const store = require("../data/calendarStore");
 
-const resolveUserId = req => req.query.user_id || req.body?.user_id || "demo_user";
+// Montat în spatele `authRequired`, deci `req.auth` există mereu. Înainte,
+// user_id venea din query/body, deci oricine putea citi sau șterge
+// evenimentele din calendarul altcuiva.
+const resolveUserId = req => req.auth.email;
 
-// GET /api/calendar/events?user_id=&month=7&year=2026
+// GET /api/calendar/events?month=7&year=2026
 router.get("/events", (req, res) => {
   const userId = resolveUserId(req);
   let events = store.getEvents(userId);
@@ -34,7 +37,7 @@ router.delete("/events/:eventId", (req, res) => {
   res.json({ success: ok });
 });
 
-// GET /api/calendar/status?user_id=
+// GET /api/calendar/status
 router.get("/status", (req, res) => {
   res.json({ connections: store.getConnections(resolveUserId(req)) });
 });

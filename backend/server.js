@@ -14,7 +14,9 @@ const calendarRoute = require("./src/routes/calendar");
 const flashcardsRoute = require("./src/routes/flashcards");
 const diagnosticsRoute = require("./src/routes/diagnostics");
 const economyRoute = require("./src/routes/economy");
+const authRoute = require("./src/routes/auth");
 const { basicAuth } = require("./src/middleware/basicAuth");
+const { attachUser, authRequired } = require("./src/middleware/auth");
 
 const app = express();
 
@@ -33,17 +35,28 @@ app.use(express.json({ limit: "10mb" }));
 
 const frontendDir = path.join(__dirname, "..", "frontend");
 
-app.use("/api/chat", chatRoute);
-app.use("/api/detect", detectRoute);
-app.use("/api/wolfram", wolframRoute);
-app.use("/api/mathpix", mathpixRoute);
-app.use("/api/subscriptions", subscriptionsRoute);
+// Identifică utilizatorul din cookie-ul de sesiune, fără să blocheze cererea.
+app.use(attachUser);
+
+// Public: autentificare, health check, planuri de abonament, clasament.
+app.use("/api/auth", authRoute);
 app.use("/api/health", healthRoute);
 app.use("/api/leaderboard", leaderboardRoute);
-app.use("/api/calendar", calendarRoute);
-app.use("/api/flashcards", flashcardsRoute);
-app.use("/api/diagnostics", diagnosticsRoute);
-app.use("/api/economy", economyRoute);
+
+// Rutele de mai jos cer un cont. Pe lângă protejarea datelor, asta oprește și
+// consumul anonim al providerilor de AI, care se plătește la fiecare cerere.
+app.use("/api/chat", authRequired, chatRoute);
+app.use("/api/detect", authRequired, detectRoute);
+app.use("/api/wolfram", authRequired, wolframRoute);
+app.use("/api/mathpix", authRequired, mathpixRoute);
+app.use("/api/flashcards", authRequired, flashcardsRoute);
+app.use("/api/diagnostics", authRequired, diagnosticsRoute);
+app.use("/api/calendar", authRequired, calendarRoute);
+app.use("/api/economy", authRequired, economyRoute);
+
+// Lista de planuri rămâne publică; rutele care ating un cont sunt protejate
+// în interiorul router-ului.
+app.use("/api/subscriptions", subscriptionsRoute);
 
 app.use(express.static(frontendDir));
 

@@ -99,7 +99,13 @@ const normalizePlan = plan => ({
 const fetchWithTimeout = async (url, options = {}, timeout = 6000) => {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
-  const response = await fetch(buildApiUrl(url), { signal: controller.signal, ...options });
+  // `credentials: 'include'` trimite cookie-ul de sesiune. Fara el, fiecare
+  // cerere ar parea neautentificata si ar primi 401.
+  const response = await fetch(buildApiUrl(url), {
+    signal: controller.signal,
+    credentials: 'include',
+    ...options
+  });
   clearTimeout(timer);
   return response;
 };
@@ -107,12 +113,76 @@ const fetchWithTimeout = async (url, options = {}, timeout = 6000) => {
 const safeFetchJson = async (url, options) => {
   const response = await fetchWithTimeout(url, options);
   if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
+    let payload = null;
+    try { payload = await response.json(); } catch (error) { payload = null; }
+    const failure = new Error(payload?.error || `HTTP ${response.status}`);
+    failure.status = response.status;
+    failure.payload = payload;
+    throw failure;
   }
   return response.json();
 };
 
 const MentorAPI = {
+  async register(payload) {
+    try {
+      const data = await safeFetchJson('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, error: error.message, status: error.status, field: error.payload?.field };
+    }
+  },
+
+  async login(payload) {
+    try {
+      const data = await safeFetchJson('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, error: error.message, status: error.status };
+    }
+  },
+
+  async logout() {
+    try {
+      await safeFetchJson('/api/auth/logout', { method: 'POST' });
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  // Sursa de adevar pentru "sunt logat?". Inainte, aplicatia se baza pe un
+  // flag din localStorage, pe care oricine il putea seta din consola.
+  async me() {
+    try {
+      const data = await safeFetchJson('/api/auth/me');
+      return { success: true, user: data.user };
+    } catch (error) {
+      return { success: false, user: null, status: error.status };
+    }
+  },
+
+  async forgotPassword(payload) {
+    try {
+      const data = await safeFetchJson('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async chat(payload) {
     try {
       const data = await safeFetchJson('/api/chat', {

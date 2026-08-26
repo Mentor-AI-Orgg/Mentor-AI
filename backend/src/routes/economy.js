@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const { roleGuard } = require('../middleware/auth');
 const {
-  ensureUser,
   getSummary,
   getCatalog,
   purchaseItem,
@@ -20,20 +20,21 @@ const {
   verifyAccessCode
 } = require('../data/economyStore');
 
+// Toate rutele de aici sunt montate în spatele `authRequired` (vezi
+// backend/server.js), deci `req.auth` există mereu. Identitatea vine exclusiv
+// din sesiune: niciun handler nu mai citește `user_id` din query sau body.
+
 router.get('/summary', (req, res) => {
-  const userId = req.query.user_id || 'demo_user';
+  // Rolul vine din contul salvat, iar monedele și metricile nu mai pot fi
+  // trimise de client. Înainte, un simplu `?coins=999999` îi lăsa oricui
+  // balanța la ce voia, iar `?role=teacher` îi schimba rolul în magazin.
   const patch = {
-    role: req.query.role,
-    parentEmail: req.query.parent_email,
-    teacherEmail: req.query.teacher_email,
+    role: req.auth.role,
     guardianName: req.query.guardian_name,
     className: req.query.class_name,
-    profileName: req.query.profile_name,
-    streak: req.query.streak !== undefined ? Number(req.query.streak) : undefined,
-    hoursToday: req.query.hours_today !== undefined ? Number(req.query.hours_today) : undefined,
-    coins: req.query.coins !== undefined ? Number(req.query.coins) : undefined
+    profileName: req.query.profile_name
   };
-  res.json({ summary: getSummary(userId, patch) });
+  res.json({ summary: getSummary(req.auth.email, patch) });
 });
 
 router.get('/catalog', (req, res) => {
@@ -41,125 +42,135 @@ router.get('/catalog', (req, res) => {
 });
 
 router.get('/inventory', (req, res) => {
-  const userId = req.query.user_id || 'demo_user';
-  res.json(getInventory(userId));
+  res.json(getInventory(req.auth.email));
 });
 
 router.get('/notifications', (req, res) => {
-  const userId = req.query.user_id || 'demo_user';
-  res.json(getNotifications(userId));
+  res.json(getNotifications(req.auth.email));
 });
 
 router.post('/notifications/:notificationId/read', (req, res) => {
-  const notification = markNotificationRead(req.params.notificationId);
-  if (!notification) {
+  // Verificăm întâi că notificarea îi aparține. Fără asta, oricine cu un id
+  // de notificare putea marca drept citit mesajul altcuiva.
+  const owned = getNotifications(req.auth.email).inbox
+    .some(entry => entry.id === req.params.notificationId);
+  if (!owned) {
     return res.status(404).json({ error: 'Notificarea nu a fost găsită.' });
   }
+  const notification = markNotificationRead(req.params.notificationId);
   res.json({ success: true, notification });
 });
 
 router.post('/claim', (req, res) => {
-  const { user_id = 'demo_user', type, ...payload } = req.body || {};
+  const { type, ...payload } = req.body || {};
   if (!type) {
     return res.status(400).json({ error: 'Tipul recompensei este obligatoriu.' });
   }
-  const result = claimReward({ userId: user_id, type, payload });
-  const status = result.ok ? 200 : 400;
-  res.status(status).json(result);
+  const result = claimReward({ userId: req.auth.email, type, payload });
+  res.status(result.ok ? 200 : 400).json(result);
 });
 
 router.post('/buy', (req, res) => {
-  const { user_id = 'demo_user', item_id } = req.body || {};
+  const { item_id } = req.body || {};
   if (!item_id) {
     return res.status(400).json({ error: 'item_id este obligatoriu.' });
   }
-  const result = purchaseItem({ userId: user_id, itemId: item_id });
-  const status = result.ok ? 200 : 400;
-  res.status(status).json(result);
+  const result = purchaseItem({ userId: req.auth.email, itemId: item_id });
+  res.status(result.ok ? 200 : 400).json(result);
 });
 
 router.post('/parent-review', (req, res) => {
-  const { user_id = 'demo_user', parent_email = '', plan_id = '', billing_cycle = 'monthly', role = 'student', message = '' } = req.body || {};
-  const result = sendParentReview({ userId: user_id, parentEmail: parent_email, planId: plan_id, billingCycle: billing_cycle, role, message });
+  const { parent_email = '', plan_id = '', billing_cycle = 'monthly', message = '' } = req.body || {};
+  const result = sendParentReview({
+    userId: req.auth.email,
+    parentEmail: parent_email,
+    planId: plan_id,
+    billingCycle: billing_cycle,
+    role: req.auth.role,
+    message
+  });
   res.json(result);
 });
 
-router.post('/connect-child', (req, res) => {
-  const { parent_email = '', child_email = '' } = req.body || {};
-  const result = connectParentChild({ parentEmail: parent_email, childEmail: child_email });
+// TODO(Faza 1, PR următor): legătura este încă unilaterală - părintele indică
+// un email și conturile se leagă fără acceptul elevului. Rămâne de înlocuit cu
+// invitație + confirmare din partea celuilalt cont.
+router.post('/connect-child', roleGuard('parent'), (req, res) => {
+  const { child_email = '' } = req.body || {};
+  if (!child_email) {
+    return res.status(400).json({ error: 'child_email este obligatoriu.' });
+  }
+  const result = connectParentChild({ parentEmail: req.auth.email, childEmail: child_email });
   if (!result) {
-    return res.status(400).json({ error: 'Email-ul părintelui și al elevului sunt obligatorii.' });
+    return res.status(400).json({ error: 'Email-ul elevului este obligatoriu.' });
   }
   res.json({ success: true, connection: result });
 });
 
-router.post('/preferences', (req, res) => {
-  const { parent_email = '', preferences = {} } = req.body || {};
-  if (!parent_email) {
-    return res.status(400).json({ error: 'parent_email este obligatoriu.' });
-  }
-  const updated = updateNotificationPreferences({ parentEmail: parent_email, preferences });
+router.post('/preferences', roleGuard('parent'), (req, res) => {
+  const { preferences = {} } = req.body || {};
+  const updated = updateNotificationPreferences({ parentEmail: req.auth.email, preferences });
   res.json({ success: true, preferences: updated });
 });
 
 router.post('/activity', (req, res) => {
-  const { user_id = 'demo_user', type, note = '', meta = {}, amount = 0 } = req.body || {};
+  const { type, note = '', meta = {}, amount = 0 } = req.body || {};
   if (!type) {
     return res.status(400).json({ error: 'type este obligatoriu.' });
   }
-  const result = logActivity({ userId: user_id, type, note, meta, amount });
+  const result = logActivity({ userId: req.auth.email, type, note, meta, amount });
   res.json({ success: true, ...result });
 });
 
-router.get('/parent-analytics', (req, res) => {
-  const parentEmail = req.query.parent_email || 'demo_user';
-  const result = getParentAnalytics(parentEmail);
-  res.json(result);
+// Analitica despre un copil este cea mai sensibilă parte a aplicației, deci
+// cere rolul potrivit și se raportează strict la contul autentificat.
+router.get('/parent-analytics', roleGuard('parent'), (req, res) => {
+  res.json(getParentAnalytics(req.auth.email));
 });
 
-router.get('/teacher-analytics', (req, res) => {
-  const teacherEmail = req.query.teacher_email || 'demo_user';
-  const result = getTeacherAnalytics(teacherEmail);
-  res.json(result);
+router.get('/teacher-analytics', roleGuard('teacher'), (req, res) => {
+  res.json(getTeacherAnalytics(req.auth.email));
 });
 
-router.post('/request-test', (req, res) => {
-  const { requester_email = '', requester_role = 'teacher', student_email = '', subject = '', note = '', due_date = '' } = req.body || {};
+router.post('/request-test', roleGuard('parent', 'teacher'), (req, res) => {
+  const { student_email = '', subject = '', note = '', due_date = '' } = req.body || {};
   if (!student_email) {
     return res.status(400).json({ error: 'student_email este obligatoriu.' });
   }
-  const result = requestTest({ requesterEmail: requester_email, requesterRole: requester_role, studentEmail: student_email, subject, note, dueDate: due_date });
+  const result = requestTest({
+    requesterEmail: req.auth.email,
+    requesterRole: req.auth.role,
+    studentEmail: student_email,
+    subject,
+    note,
+    dueDate: due_date
+  });
   res.json({ success: true, ...result });
 });
 
 // Cod de acces temporar prin SMS (nu parola reala -- vezi economyStore.js).
-router.post('/access-code/request', (req, res) => {
-  const { parent_email = '', child_email = '', phone = '' } = req.body || {};
-  if (!parent_email || !child_email) {
-    return res.status(400).json({ error: 'parent_email și child_email sunt obligatorii.' });
+router.post('/access-code/request', roleGuard('parent'), (req, res) => {
+  const { child_email = '', phone = '' } = req.body || {};
+  if (!child_email) {
+    return res.status(400).json({ error: 'child_email este obligatoriu.' });
   }
-  const result = generateAccessCode({ parentEmail: parent_email, childEmail: child_email, phone });
+  const result = generateAccessCode({ parentEmail: req.auth.email, childEmail: child_email, phone });
   res.json(result || { ok: false, reason: 'invalid_request' });
 });
 
-router.post('/access-code/verify', (req, res) => {
-  const { parent_email = '', child_email = '', code = '' } = req.body || {};
-  const result = verifyAccessCode({ parentEmail: parent_email, childEmail: child_email, code });
+router.post('/access-code/verify', roleGuard('parent'), (req, res) => {
+  const { child_email = '', code = '' } = req.body || {};
+  const result = verifyAccessCode({ parentEmail: req.auth.email, childEmail: child_email, code });
   res.json(result);
 });
 
 router.post('/bootstrap', (req, res) => {
-  const { user_id = 'demo_user', role, parent_email, teacher_email, guardian_name, class_name, profile_name, streak, hours_today, coins } = req.body || {};
-  const summary = getSummary(user_id, {
-    role,
-    parentEmail: parent_email,
-    teacherEmail: teacher_email,
+  const { guardian_name, class_name, profile_name } = req.body || {};
+  const summary = getSummary(req.auth.email, {
+    role: req.auth.role,
     guardianName: guardian_name,
     className: class_name,
-    profileName: profile_name,
-    streak: streak !== undefined ? Number(streak) : undefined,
-    hoursToday: hours_today !== undefined ? Number(hours_today) : undefined,
-    coins: coins !== undefined ? Number(coins) : undefined
+    profileName: profile_name
   });
   res.json({ success: true, summary });
 });

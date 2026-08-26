@@ -155,6 +155,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .field-invalid { border-color: rgba(251, 113, 133, .55) !important; }
 .field-hint { display: block; margin-top: 6px; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .field-hint-bad { color: #fb7185; }
+.form-error { display: flex; align-items: center; gap: 8px; margin-top: 4px; padding: 10px 12px; border-radius: 14px; background: rgba(251, 113, 133, .12); border: 1px solid rgba(251, 113, 133, .4); color: #fda4af; font-size: 12px; line-height: 1.5; }
+.form-error i { font-size: 13px; flex-shrink: 0; }
 .password-checklist { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 5px; }
 .password-checklist li { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); }
 .password-checklist li i { font-size: 10px; }
