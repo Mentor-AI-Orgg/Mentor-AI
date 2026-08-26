@@ -13,6 +13,7 @@ const {
 } = require("../data/authStore");
 const { SESSION_COOKIE, authRequired } = require("../middleware/auth");
 const { ensureUser, pushNotification } = require("../data/economyStore");
+const { createInvitation } = require("../data/linkStore");
 
 // Aceleași reguli pe care le arată RegisterScreen în interfață. Validarea din
 // browser e doar pentru UX; asta e cea care contează, pentru că un client
@@ -87,14 +88,38 @@ router.post("/register", async (req, res) => {
   // este indexat pe același email.
   ensureUser(created.account.email, {
     role: created.account.role,
-    parentEmail: created.account.profile.parentEmail,
-    teacherEmail: created.account.profile.teacherEmail,
     className: created.account.profile.class
   });
 
+  // Emailurile de părinte/profesor completate la înregistrare NU mai leagă
+  // conturile direct. Trimit doar o invitație, pe care celălalt cont trebuie
+  // să o accepte - altfel un elev ar putea atașa un adult oarecare la contul
+  // lui, sau invers.
+  const invitations = [];
+  if (created.account.role === "student") {
+    if (created.account.profile.parentEmail) {
+      const invite = createInvitation({
+        fromEmail: created.account.email,
+        fromRole: "student",
+        toEmail: created.account.profile.parentEmail,
+        kind: "parent_child"
+      });
+      if (invite.ok) invitations.push(invite.invitation);
+    }
+    if (created.account.profile.teacherEmail) {
+      const invite = createInvitation({
+        fromEmail: created.account.email,
+        fromRole: "student",
+        toEmail: created.account.profile.teacherEmail,
+        kind: "teacher_student"
+      });
+      if (invite.ok) invitations.push(invite.invitation);
+    }
+  }
+
   const { token, maxAge } = createSession(created.account.email);
   res.cookie(SESSION_COOKIE, token, sessionCookieOptions(maxAge));
-  res.status(201).json({ success: true, user: publicAccount(created.account) });
+  res.status(201).json({ success: true, user: publicAccount(created.account), invitations });
 });
 
 router.post("/login", async (req, res) => {

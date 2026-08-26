@@ -13,6 +13,7 @@ const TeacherDashboard = ({ userData, onNavigate, showToast }) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [studentEmail, setStudentEmail] = useState('');
+  const [inviting, setInviting] = useState(false);
   const [testForm, setTestForm] = useState({ studentEmail: '', subject: userData.subject || '', note: '', dueDate: '' });
   const [sendingTest, setSendingTest] = useState(false);
 
@@ -26,16 +27,19 @@ const TeacherDashboard = ({ userData, onNavigate, showToast }) => {
   useEffect(() => { load(); }, [load]);
 
   // Varianta veche scria activitate direct în contul elevului
-  // (`user_id: studentEmail`), adică profesorul putea modifica datele oricărui
-  // cont doar știindu-i adresa. Rutele folosesc acum identitatea din sesiune,
-  // deci apelul acela nu mai are efect asupra elevului.
-  //
-  // Legarea corectă are nevoie de o invitație pe care elevul o acceptă;
-  // urmează în PR-ul de consimțământ. Până atunci elevul își pune emailul
-  // profesorului la înregistrare, iar aici doar explicăm asta, ca să nu lăsăm
-  // un buton care pretinde că a făcut ceva.
-  const connectStudent = async () => {
-    showToast?.('Legarea directă a fost dezactivată. Elevul te adaugă punând emailul tău la înregistrare.', 'warning');
+  // (`user_id: studentEmail`), deci profesorul putea atașa la clasă orice cont
+  // doar știindu-i adresa. Acum trimitem o invitație, iar elevul decide.
+  const inviteStudent = async () => {
+    if (!studentEmail.trim()) return;
+    setInviting(true);
+    const result = await window.MentorAPI.inviteLink({ to_email: studentEmail.trim(), kind: 'teacher_student' });
+    setInviting(false);
+    if (result.success) {
+      showToast?.('Invitație trimisă. Elevul apare în clasă după ce o acceptă.', 'success');
+      setStudentEmail('');
+    } else {
+      showToast?.(result.error || 'Nu am putut trimite invitația.', 'warning');
+    }
   };
 
   const requestTest = async () => {
@@ -73,10 +77,10 @@ const TeacherDashboard = ({ userData, onNavigate, showToast }) => {
         <h1 className="display-font parent-title">Clasa ta, dintr-o privire.</h1>
         <p className="parent-subtitle">Vezi progresul elevilor conectați, ceri teste rapid și ai acces la resurse pedagogice utile — fără să te amesteci cu profilul unui elev.</p>
         <div className="parent-connect-row">
-          <input value={studentEmail} onChange={e => setStudentEmail(e.target.value)} placeholder="Email elev de adăugat la clasă" className="parent-connect-input" />
-          <button type="button" className="accent-button" onClick={connectStudent} disabled={!studentEmail.trim()}>Adaugă elev</button>
+          <input value={studentEmail} onChange={e => setStudentEmail(e.target.value)} placeholder="Email elev de invitat în clasă" className="parent-connect-input" />
+          <button type="button" className="accent-button" onClick={inviteStudent} disabled={inviting || !studentEmail.trim()}>{inviting ? 'Trimit...' : 'Invită elev'}</button>
         </div>
-        <small className="field-hint">Legarea prin invitație acceptată de elev urmează. Deocamdată elevul te adaugă punând emailul tău la înregistrare.</small>
+        <small className="field-hint">Elevul primește o invitație și trebuie să o accepte. Până atunci nu îi vezi datele.</small>
       </section>
 
       <section className="mx-5 mt-5 parent-metrics-grid teacher-metrics-grid">
@@ -129,6 +133,10 @@ const TeacherDashboard = ({ userData, onNavigate, showToast }) => {
           <textarea value={testForm.note} onChange={e => setTestForm(prev => ({ ...prev, note: e.target.value }))} rows="2" placeholder="Mesaj pentru elev (opțional)" className="teacher-test-note" />
           <button type="button" className="accent-button" onClick={requestTest} disabled={sendingTest || !testForm.studentEmail.trim()}>{sendingTest ? 'Trimit...' : 'Trimite cererea'}</button>
         </div>
+      </section>
+
+      <section className="mx-5 mt-5">
+        <window.InvitationsPanel role="teacher" onToast={showToast} onChange={load} />
       </section>
 
       <section className="mx-5 mt-5 surface rounded-3xl p-5 parent-panel">

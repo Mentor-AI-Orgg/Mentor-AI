@@ -420,6 +420,12 @@ function findStudentsForTeacher(teacherEmail) {
   return students;
 }
 
+// Emailurile elevilor legați de un profesor. Folosit de linkStore ca să
+// listeze legăturile active, fără să expună obiectele interne de user.
+function listStudentEmailsForTeacher(teacherEmail) {
+  return findStudentsForTeacher(teacherEmail).map(student => student.userId);
+}
+
 function getTeacherAnalytics(teacherEmail = '') {
   const teacher = ensureUser(teacherEmail, { role: 'teacher' });
   const students = findStudentsForTeacher(teacherEmail);
@@ -896,6 +902,7 @@ module.exports = {
   getTodayKey,
   pushNotification,
   getTeacherAnalytics,
+  listStudentEmailsForTeacher,
   requestTest,
   generateAccessCode,
   verifyAccessCode

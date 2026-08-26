@@ -15,6 +15,7 @@ const flashcardsRoute = require("./src/routes/flashcards");
 const diagnosticsRoute = require("./src/routes/diagnostics");
 const economyRoute = require("./src/routes/economy");
 const authRoute = require("./src/routes/auth");
+const linksRoute = require("./src/routes/links");
 const { basicAuth } = require("./src/middleware/basicAuth");
 const { attachUser, authRequired } = require("./src/middleware/auth");
 
@@ -53,6 +54,7 @@ app.use("/api/flashcards", authRequired, flashcardsRoute);
 app.use("/api/diagnostics", authRequired, diagnosticsRoute);
 app.use("/api/calendar", authRequired, calendarRoute);
 app.use("/api/economy", authRequired, economyRoute);
+app.use("/api/links", authRequired, linksRoute);
 
 // Lista de planuri rămâne publică; rutele care ating un cont sunt protejate
 // în interiorul router-ului.
