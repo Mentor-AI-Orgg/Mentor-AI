@@ -2,13 +2,20 @@ const DEFAULT_API_BASE_URL = 'http://localhost:3001';
 
 const getApiBaseUrl = () => {
   if (window.__MENTOR_API_BASE_URL__) return window.__MENTOR_API_BASE_URL__;
-  if (window.location && window.location.port === '3001') {
-    return window.location.origin;
-  }
-  if (window.location && window.location.protocol === 'file:') {
-    return DEFAULT_API_BASE_URL;
-  }
-  return DEFAULT_API_BASE_URL;
+
+  const location = window.location;
+  // Pagina deschisă direct de pe disc: presupunem un backend local.
+  if (!location || location.protocol === 'file:') return DEFAULT_API_BASE_URL;
+
+  // În development frontend-ul poate fi servit de pe alt port (Live Server,
+  // http-server), în timp ce backend-ul rămâne pe 3001.
+  const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  if (isLocalhost && location.port !== '3001') return DEFAULT_API_BASE_URL;
+
+  // În producție backend-ul servește și frontend-ul (vezi backend/server.js),
+  // deci API-ul este pe aceeași origine. Fără asta, un site pe domeniu real ar
+  // trimite toate cererile către localhost-ul vizitatorului.
+  return location.origin;
 };
 
 const buildApiUrl = url => {
