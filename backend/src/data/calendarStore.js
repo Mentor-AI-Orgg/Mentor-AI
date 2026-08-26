@@ -1,6 +1,9 @@
-// mock store pt evenimente de calendar + status de conectare provider extern.
-// De inlocuit cu o baza de date reala + OAuth real (Google Calendar API / Notion API)
-// cand exista credentiale server-side.
+// Store pt evenimente de calendar + status de conectare provider extern.
+// Conectarea la Google/Notion este inca mock: de inlocuit cu OAuth real
+// (Google Calendar API / Notion API) cand exista credentiale server-side.
+// Datele sunt salvate pe disc prin persistence.js.
+
+const persistence = require("./persistence");
 
 const eventsByUser = {};      // { userId: [ {id, date:'YYYY-MM-DD', title, type, source}, ... ] }
 const connectionsByUser = {}; // { userId: { google: {connected, connectedAt}, notion: {...} } }
@@ -69,5 +72,13 @@ function disconnectProvider(userId, provider) {
     eventsByUser[userId] = eventsByUser[userId].filter(e => e.source !== provider);
   }
 }
+
+persistence.register("calendar", {
+  snapshot: () => ({ events: eventsByUser, connections: connectionsByUser }),
+  restore: data => {
+    persistence.restoreObject(eventsByUser, data?.events);
+    persistence.restoreObject(connectionsByUser, data?.connections);
+  }
+});
 
 module.exports = { getEvents, addEvent, deleteEvent, getConnections, connectProvider, disconnectProvider };

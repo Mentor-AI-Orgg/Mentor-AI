@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { PLANS, DEFAULT_USER_SUBSCRIPTION } = require("../data/subscriptions");
+const { PLANS } = require("../data/subscriptions");
+const { getSubscription, setSubscription } = require("../data/subscriptionStore");
 const { sendParentReview, ensureUser } = require("../data/economyStore");
 const { authRequired } = require("../middleware/auth");
-
-const mockSubscriptions = { demo_user: { ...DEFAULT_USER_SUBSCRIPTION } };
 
 router.get("/", (req, res) => {
   res.json({ subscriptions: PLANS });
@@ -17,8 +16,7 @@ router.get("/plans", (req, res) => {
 // Lista de planuri de mai sus este publică. De aici încolo, rutele ating un
 // cont, deci cer autentificare și folosesc identitatea din sesiune.
 router.get("/me", authRequired, (req, res) => {
-  const userId = req.auth.email;
-  res.json({ subscription: mockSubscriptions[userId] || { ...DEFAULT_USER_SUBSCRIPTION } });
+  res.json({ subscription: getSubscription(req.auth.email) });
 });
 
 router.post("/checkout", authRequired, (req, res) => {
@@ -43,7 +41,7 @@ router.post("/checkout", authRequired, (req, res) => {
 
   const user = ensureUser(userId, { role, parentEmail: parent_email });
   const requiresParentReview = role === "student" && Boolean(parent_email);
-  mockSubscriptions[userId] = {
+  const subscription = setSubscription(userId, {
     planId: plan.id,
     status: requiresParentReview ? "pending_parent_review" : "active",
     billingCycle: billing_cycle,
@@ -52,7 +50,7 @@ router.post("/checkout", authRequired, (req, res) => {
     cardLast4: card_last4,
     reviewRequired: requiresParentReview,
     parentEmail: parent_email || user.preferences.parentEmail || ""
-  };
+  });
 
   const parentReview = requiresParentReview
     ? sendParentReview({
@@ -69,7 +67,7 @@ Plata este mock, prin card, iar această notificare poate fi înlocuită cu flux
   res.json({
     success: true,
     message: `Mock checkout reușit pentru planul „${plan.name}”. Conectează un procesator de plăți real (Stripe/Netopia) pentru tranzacții live.`,
-    subscription: mockSubscriptions[userId],
+    subscription,
     parentReview
   });
 });

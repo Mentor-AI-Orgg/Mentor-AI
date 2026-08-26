@@ -18,6 +18,13 @@ const authRoute = require("./src/routes/auth");
 const linksRoute = require("./src/routes/links");
 const { basicAuth } = require("./src/middleware/basicAuth");
 const { attachUser, authRequired } = require("./src/middleware/auth");
+const persistence = require("./src/data/persistence");
+
+// Toate store-urile s-au înregistrat la persistence în momentul require-urilor
+// de mai sus, deci acum putem restaura starea salvată. Trebuie făcut înainte de
+// a accepta cereri, ca prima cerere să vadă datele complete.
+const restored = persistence.load();
+persistence.startAutosave();
 
 const app = express();
 
@@ -76,6 +83,9 @@ const server = app.listen(config.PORT, () => {
   console.log(`Gemini:  ${config.GEMINI_KEY ? "real key detected" : "no GEMINI_KEY set -> using mock replies"}`);
   console.log(`Wolfram: ${config.WOLFRAM_KEY ? "real key detected" : "no WOLFRAM_KEY set -> using mock replies"}`);
   console.log(`Mathpix: ${(config.MATHPIX_APP_ID && config.MATHPIX_APP_KEY) ? "real keys detected" : "no MATHPIX keys set -> using mock replies"}`);
+  console.log(restored.loaded
+    ? `Date: restaurate din ${persistence.DATA_FILE} (salvate la ${restored.savedAt})`
+    : `Date: pornire pe curat (${restored.reason}); voi salva în ${persistence.DATA_FILE}`);
 });
 
 // Passenger oprește procesul cu SIGTERM la fiecare redeploy sau când aplicația
@@ -84,6 +94,11 @@ const server = app.listen(config.PORT, () => {
 function shutdown(signal) {
   return () => {
     console.log(`${signal} primit, opresc serverul...`);
+    // Salvăm sincron înainte de ieșire: altfel s-ar pierde tot ce s-a schimbat
+    // de la ultimul autosave, iar Passenger oprește procesul la fiecare deploy.
+    persistence.stopAutosave();
+    const result = persistence.saveNow();
+    console.log(result.saved ? `Date salvate (${result.bytes} bytes).` : `Date nesalvate: ${result.reason}.`);
     server.close(() => process.exit(0));
     setTimeout(() => process.exit(1), 10000).unref();
   };

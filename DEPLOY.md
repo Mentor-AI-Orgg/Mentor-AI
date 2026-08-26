@@ -142,14 +142,34 @@ implementată:
 - ține `STAGING_AUTH_USER` și `STAGING_AUTH_PASSWORD` setate;
 - nu pune date reale despre elevi în aplicație.
 
-## Datele se pierd la fiecare restart
+## Unde stau datele
 
-Tot ce ține de stare (monede, streak, cumpărături, evenimente de calendar,
-istoricul conversațiilor) trăiește în memorie, în `Map`-uri și obiecte JS.
-Pe shared hosting procesul este oprit la fiecare deploy și când aplicația intră
-în idle, deci resetările vor fi **frecvente și vizibile**.
+Conturile, monedele, abonamentele, calendarul și istoricul conversațiilor sunt
+salvate în `data/mentor-ai.json`, în rădăcina aplicației (configurabil prin
+`DATA_DIR`). Fișierul este scris automat la câteva secunde după orice
+modificare și încă o dată la oprirea procesului, deci datele supraviețuiesc
+restartului și deploy-ului.
 
-Nu e o problemă de configurare - e lipsa de persistență din Faza 2 a planului.
+Trei lucruri de reținut:
+
+- **Folderul `data/` este exclus din sincronizarea prin FTP.** Acțiunea de
+  deploy șterge de pe server fișierele care nu există în repo; fără excludere,
+  fiecare deploy ar șterge toate conturile. Exclusion-ul este deja în
+  [.github/workflows/deploy.yml](.github/workflows/deploy.yml).
+- **Include-l în backup-uri.** Backup-ul zilnic de la gazduire.net acoperă
+  contul, deci și acest fișier, dar merită verificat că e acolo.
+- **Fișierul conține date despre minori.** Nu îl copia în afara serverului fără
+  motiv și nu îl comite niciodată în git (este în `.gitignore`).
+
+Dacă fișierul se corupe, aplicația nu refuză să pornească: îl mută într-un
+`mentor-ai.json.corupt-<timestamp>` și pornește pe curat, ca site-ul să rămână
+funcțional.
+
+Un fișier JSON este suficient pentru volumul de acum și nu are nicio
+dependință, ceea ce conteaza pe shared hosting, unde `npm install` rulează pe
+server. Când numărul de utilizatori crește, locul de înlocuit este doar
+`backend/src/data/persistence.js` - MySQL este disponibil în DirectAdmin, iar
+driverul `mysql2` este pur JavaScript, deci nu cere compilare.
 
 ## Rollback
 

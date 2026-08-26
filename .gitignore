@@ -20,6 +20,11 @@ coverage/
 # Semnal de restart pentru Passenger (generat la fiecare deploy)
 tmp/
 
+# Datele aplicației (conturi, monede, calendar). Rămân doar pe server.
+# Slash-ul de la început ancorează regula la rădăcina repo-ului: fără el,
+# regula ar exclude și `backend/src/data/`, adică tot codul store-urilor.
+/data/
+
 # Stare de sincronizare lăsată pe server de acțiunea de deploy FTP
 .ftp-deploy-sync-state.json
 

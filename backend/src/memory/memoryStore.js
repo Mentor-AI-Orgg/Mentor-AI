@@ -1,4 +1,8 @@
-// mock memorie
+// Istoricul conversațiilor cu mentorul. Cheile sunt namespace-uite pe cont în
+// routes/chat.js, iar datele sunt salvate pe disc prin persistence.js, deci
+// conversația nu se mai pierde la restartul procesului.
+
+const persistence = require("../data/persistence");
 
 const MAX_MESSAGES = 15;
 const store = {};
@@ -22,5 +26,10 @@ function clear(conversationId) {
 function all() {
   return store;
 }
+
+persistence.register("memory", {
+  snapshot: () => store,
+  restore: data => persistence.restoreObject(store, data)
+});
 
 module.exports = { get, add, clear, all, MAX_MESSAGES };
