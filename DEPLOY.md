@@ -5,10 +5,11 @@ hosting și repornește procesul Node, deci vezi modificările pe domeniu în
 aproximativ un minut.
 
 Aplicația rulează ca **o singură aplicație Node**, pe același domeniu.
-`backend/server.js` servește și frontend-ul:
+`backend/server.js` servește frontend-ul compilat din `frontend/dist`
+(după `npm run build` în GitHub Actions):
 
 ```js
-app.use(express.static(frontendDir));
+app.use(express.static(distDir));
 app.get(/^\/(?!api\/).*/, (req, res) => { ... });
 ```
 
@@ -71,10 +72,12 @@ Fă un push pe `main` (sau rulează workflow-ul manual din tab-ul **Actions** �
 **Deploy** → **Run workflow**). Workflow-ul din
 [.github/workflows/deploy.yml](.github/workflows/deploy.yml):
 
-1. verifică sintaxa fiecărui fișier din `backend/` - un deploy cu o eroare de
+1. instalează dependințele și compilează frontend-ul cu Vite (`npm run build`);
+2. verifică sintaxa fiecărui fișier din `backend/` - un deploy cu o eroare de
    sintaxă ar lăsa site-ul căzut, pentru că Passenger nu poate porni procesul;
-2. scrie `tmp/restart.txt` cu data curentă;
-3. sincronizează fișierele prin FTPS, incremental (doar ce s-a schimbat).
+3. scrie `tmp/restart.txt` cu data curentă;
+4. sincronizează fișierele prin FTPS, incremental (doar ce s-a schimbat),
+   inclusiv `frontend/dist`.
 
 `node_modules` este exclus intenționat: sunt mii de fișiere și transferul prin
 FTP ar dura foarte mult.
@@ -85,7 +88,11 @@ O singură dată, după primul deploy: în **Setup Node.js App**, apasă
 **Run NPM Install**. Aplicația are câteva dependințe JS pure (`express`,
 `cors`, `dotenv`, `express-rate-limit`, `zod`), deci durează câteva secunde.
 
-Repetă pasul doar când se schimbă `backend/package.json`.
+Repetă pasul doar când se schimbă `backend/package.json` sau `package.json`
+din rădăcină.
+
+Frontend-ul nu se mai compilează în browser. Workflow-ul de deploy rulează
+`npm run build` și urcă `frontend/dist`. Pe server nu trebuie Vite.
 
 Dacă butonul cere un `package.json` în Application root și al tău e în
 `backend/`, ai două variante: pornește instalarea prin SSH

@@ -1,26 +1,22 @@
 const DEFAULT_API_BASE_URL = 'http://localhost:3001';
 
 const getApiBaseUrl = () => {
-  if (window.__MENTOR_API_BASE_URL__) return window.__MENTOR_API_BASE_URL__;
+  if (typeof window !== 'undefined' && window.__MENTOR_API_BASE_URL__) {
+    return window.__MENTOR_API_BASE_URL__;
+  }
 
-  const location = window.location;
+  const location = typeof window === 'undefined' ? null : window.location;
   // Pagina deschisă direct de pe disc: presupunem un backend local.
   if (!location || location.protocol === 'file:') return DEFAULT_API_BASE_URL;
 
-  // În development frontend-ul poate fi servit de pe alt port (Live Server,
-  // http-server), în timp ce backend-ul rămâne pe 3001.
-  const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  if (isLocalhost && location.port !== '3001') return DEFAULT_API_BASE_URL;
-
-  // În producție backend-ul servește și frontend-ul (vezi backend/server.js),
-  // deci API-ul este pe aceeași origine. Fără asta, un site pe domeniu real ar
-  // trimite toate cererile către localhost-ul vizitatorului.
+  // Vite (alt port) proxiează `/api` către backend. În producție Express
+  // servește și frontend-ul, deci API-ul este pe aceeași origine.
   return location.origin;
 };
 
 const buildApiUrl = url => {
   if (/^https?:\/\//i.test(url)) return url;
-  return new URL(url, getApiBaseUrl()).toString();
+  return new URL(url, `${getApiBaseUrl()}/`).toString();
 };
 
 const DEFAULT_SUBSCRIPTIONS = [
@@ -563,4 +559,5 @@ const MentorAPI = {
   }
 };
 
-window.MentorAPI = MentorAPI;
+export { MentorAPI, getApiBaseUrl };
+export default MentorAPI;

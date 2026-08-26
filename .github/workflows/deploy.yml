@@ -8,7 +8,6 @@ on:
   workflow_dispatch:
 
 concurrency:
-  # Un singur deploy în același timp; un push nou anulează unul în curs.
   group: deploy-production
   cancel-in-progress: true
 
@@ -18,44 +17,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalează dependințele
+        run: npm ci
+
       - name: Verifică sintaxa backend-ului
-        # Un deploy cu o eroare de sintaxă lasă site-ul căzut, pentru că
-        # Passenger nu poate porni procesul. Mai bine picăm aici.
         run: for file in $(find backend -name '*.js' -not -path '*/node_modules/*'); do node --check "$file" || exit 1; done
 
-      - name: Verifică sintaxa JSX din frontend
-        # `node --check` nu înțelege JSX, iar componentele sunt compilate în
-        # browser: o eroare de sintaxă n-ar apărea nicăieri la deploy, doar ca
-        # ecran alb la vizitator.
-        run: |
-          npm install --no-save --silent @babel/core@7 @babel/preset-react@7
-          node -e "
-            const babel = require('@babel/core');
-            const fs = require('fs');
-            const files = fs.readdirSync('frontend/components').map(f => 'frontend/components/' + f)
-              .concat(['frontend/app.js', 'frontend/apiClient.js'])
-              .filter(f => f.endsWith('.js'));
-            let failed = 0;
-            for (const file of files) {
-              try {
-                babel.transformSync(fs.readFileSync(file, 'utf8'),
-                  { presets: ['@babel/preset-react'], filename: file, configFile: false, babelrc: false });
-              } catch (error) {
-                console.error('FAIL ' + file + ': ' + error.message.split('\n')[0]);
-                failed++;
-              }
-            }
-            if (failed) process.exit(1);
-            console.log(files.length + ' fișiere JSX verificate, toate OK');
-          "
+      - name: Compilează frontend-ul
+        run: npm run build
 
       - name: Cere restart de la Passenger
-        # Passenger repornește aplicația când se schimbă tmp/restart.txt.
-        # Conținutul diferă la fiecare rulare, deci sincronizarea îl încarcă
-        # mereu, iar codul nou intră în funcțiune imediat după deploy.
         run: |
           mkdir -p tmp
           date -u +"%Y-%m-%dT%H:%M:%SZ" > tmp/restart.txt
+
+      - name: Include dist în upload
+        # FTP-Deploy-Action respectă .gitignore, iar frontend/dist este ignorat
+        # intenționat (se construiește aici). Scoatem regula doar pe runner.
+        run: sed -i '/^dist\/$/d' .gitignore
 
       - name: Sincronizează prin FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -66,12 +50,6 @@ jobs:
           protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
           server-dir: ${{ vars.FTP_SERVER_DIR }}
           local-dir: ./
-          # node_modules se instalează pe server (vezi DEPLOY.md), nu prin FTP:
-          # sunt mii de fișiere și transferul ar dura enorm.
-          #
-          # ATENȚIE la `data/`: acțiunea șterge de pe server fișierele care nu
-          # există local. Fără excluderea de mai jos, fiecare deploy ar șterge
-          # baza de date a aplicației (conturi, monede, calendar).
           exclude: |
             **/.git*
             **/.git*/**
@@ -81,3 +59,6 @@ jobs:
             *.md
             cod cu Claude*
             mentor_ai_v3*.html
+            tests/**
+            scripts/**
+            coverage/**

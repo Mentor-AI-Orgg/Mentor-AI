@@ -13,17 +13,20 @@ const romanianHandler = (message) => (_req, res) => {
 
 // Dezactivăm validările stricte de IP din express-rate-limit: suntem în spatele
 // unui singur proxy (Passenger) și folosim keyGenerator pe email unde există sesiune.
+const skipInTests = () => process.env.NODE_ENV === "test" || process.env.VITEST === "true";
+
 const common = {
   standardHeaders: true,
   legacyHeaders: false,
-  validate: false
+  validate: false,
+  skip: skipInTests
 };
 
 const generalApiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 400,
   ...common,
-  skip: req => /\/health$/.test(req.path) || /\/api(?:\/v1)?\/health/.test(req.originalUrl),
+  skip: req => skipInTests() || /\/health$/.test(req.path) || /\/api(?:\/v1)?\/health/.test(req.originalUrl),
   handler: romanianHandler("Prea multe cereri. Încearcă din nou în câteva minute.")
 });
 

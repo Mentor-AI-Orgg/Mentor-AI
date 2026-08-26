@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalează dependințele
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Teste
+        run: npm test
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: npm audit (dependințe de producție)
+        run: npm audit --omit=dev --audit-level=high

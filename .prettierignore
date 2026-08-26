@@ -1,0 +1,9 @@
+frontend/dist
+node_modules
+coverage
+data
+*.min.js
+backend
+plan-imbunatatiri.md
+file-explicatie.md
+DEPLOY.md
