@@ -1,15 +1,21 @@
 # Mentor AI v3.0 - Improvement Roadmap
 
 Plan de îmbunătățiri pe faze, complementar celorlalte documente din repo:
-[file-explicatie.md](file-explicatie.md) descrie arborele de fișiere,
-[vulnerabilitati_v2.md](vulnerabilitati_v2.md) analizează securitatea, iar
-[top-50-vulnerabilitati.md](top-50-vulnerabilitati.md) listează ce trebuie
-făcut. Documentul de aici ordonează munca în faze livrabile independent, cu
-elementele critice de siguranță primele.
+[file-explicatie.md](file-explicatie.md) descrie arborele de fișiere *așa
+cum era la început*, [vulnerabilitati_v2.md](vulnerabilitati_v2.md) analizează
+securitatea de atunci, iar [top-50-vulnerabilitati.md](top-50-vulnerabilitati.md)
+listează ce trebuia făcut. Documentul de aici a ordonat munca în faze.
 
-Nimic din acest plan nu este implementat încă.
+**Stare (27 august 2026):** fazele 1–5 sunt pe `main`. Faza 6 este în
+[PR #9](https://github.com/Mentor-AI-Orgg/Mentor-AI/pull/9). Ce s-a livrat
+efectiv, inclusiv abaterile de la plan (JSON în loc de Prisma, scrypt în loc
+de bcrypt, Stripe în loc de Netopia), stă în
+[IMPLEMENTARE.md](IMPLEMENTARE.md).
 
-## Where the app stands today
+Textul de mai jos este planul original. Unele propoziții („nimic nu este
+implementat”, „nu există test file”) nu mai sunt adevărate.
+
+## Where the app stood when this plan was written
 
 The route structure in [backend/server.js](backend/server.js) is clean and modular, and the frontend screens are complete. The problem is that everything underneath is a mock: there is no identity, no persistence, and no real content safety. Because the app serves children (grades 1-12) and exposes parent/teacher views of a minor's activity, the identity and safety gaps are not just technical debt, they are launch blockers.
 

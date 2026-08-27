@@ -44,5 +44,6 @@ Fără chei externe (Stripe, SMTP, Twilio, Google/Notion, motoare AI) aplicația
 pornește pe mock-uri etichetate. Variabilele sunt în
 [backend/.env.example](backend/.env.example).
 
-Roadmap: [plan-imbunatatiri.md](plan-imbunatatiri.md).
+Ce s-a implementat, pe faze și PR-uri: [IMPLEMENTARE.md](IMPLEMENTARE.md).
+Planul original: [plan-imbunatatiri.md](plan-imbunatatiri.md).
 Deploy pe gazduire.net: [DEPLOY.md](DEPLOY.md).

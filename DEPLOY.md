@@ -162,19 +162,15 @@ ai setat variabilele din pasul 5.
 
 ---
 
-## Protejează site-ul până la Faza 1
+## Protecție extra pe prototipul public
 
-Aplicația **nu are încă autentificare reală**. Rutele identifică utilizatorul
-prin `user_id` trimis de client, deci oricine cunoaște adresa poate citi sau
-modifica datele oricărui cont doar schimbând un parametru - inclusiv
-`parent-analytics`, care expune despre un copil `copiedRisk`, `mentorMessages`
-și `detectHistory`.
+Autentificarea pe conturi există (Faza 1): identitatea vine din cookie-ul
+`mentor_session`, nu din `user_id` trimis de client. Cât instanța e un
+prototip pe un URL ghicibil, ține totuși `STAGING_AUTH_USER` și
+`STAGING_AUTH_PASSWORD` setate, ca să nu indexeze motoarele de căutare
+paginile și ca Basic Auth să stea în fața formularului de register.
 
-Până când Faza 1 din [plan-imbunatatiri.md](plan-imbunatatiri.md) este
-implementată:
-
-- ține `STAGING_AUTH_USER` și `STAGING_AUTH_PASSWORD` setate;
-- nu pune date reale despre elevi în aplicație.
+Nu pune date reale despre elevi pe o instanță de staging.
 
 ## Unde stau datele
 
