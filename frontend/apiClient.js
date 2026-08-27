@@ -179,6 +179,28 @@ const MentorAPI = {
     }
   },
 
+  async updateProfile(payload) {
+    try {
+      const data = await safeFetchJson('/api/account/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, user: data.user };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async getMySubscription() {
+    try {
+      const data = await safeFetchJson('/api/subscriptions/me');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, data: null };
+    }
+  },
+
   async exportAccount() {
     try {
       const data = await safeFetchJson('/api/account/export');

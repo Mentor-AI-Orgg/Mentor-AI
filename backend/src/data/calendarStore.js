@@ -1,12 +1,21 @@
 // Store pt evenimente de calendar + status de conectare provider extern.
-// Conectarea la Google/Notion este inca mock: de inlocuit cu OAuth real
-// (Google Calendar API / Notion API) cand exista credentiale server-side.
+// Google/Notion: OAuth real când există credențiale; altfel connect rămâne
+// mock etichetat (demo events). Tokenii nu sunt expuși în API-ul public.
 // Datele sunt salvate pe disc prin persistence.js.
 
 const persistence = require("./persistence");
 
 const eventsByUser = {};      // { userId: [ {id, date:'YYYY-MM-DD', title, type, source}, ... ] }
-const connectionsByUser = {}; // { userId: { google: {connected, connectedAt}, notion: {...} } }
+const connectionsByUser = {}; // { userId: { google: {connected, ...tokens}, notion: {...} } }
+
+function publicConnection(conn) {
+  if (!conn || !conn.connected) return { connected: false };
+  return {
+    connected: true,
+    connectedAt: conn.connectedAt || null,
+    mocked: Boolean(conn.mocked)
+  };
+}
 
 function getEvents(userId) {
   return eventsByUser[userId] || [];
@@ -33,16 +42,36 @@ function deleteEvent(userId, eventId) {
 }
 
 function getConnections(userId) {
-  return connectionsByUser[userId] || { google: { connected: false }, notion: { connected: false } };
+  const raw = connectionsByUser[userId] || { google: { connected: false }, notion: { connected: false } };
+  return {
+    google: publicConnection(raw.google),
+    notion: publicConnection(raw.notion)
+  };
 }
 
-// Simuleaza un "connect" catre Google Calendar / Notion Calendar.
-// Fara chei OAuth reale in .env, generam cateva evenimente demo ca sa aratam
-// fluxul de auto-sincronizare. Cand exista GOOGLE_CLIENT_ID/SECRET sau
-// NOTION_TOKEN in .env, acest mock trebuie inlocuit cu fluxul OAuth real.
-function connectProvider(userId, provider) {
+function replaceSyncedEvents(userId, provider, events) {
+  if (!eventsByUser[userId]) eventsByUser[userId] = [];
+  eventsByUser[userId] = eventsByUser[userId].filter(e => e.source !== provider);
+  return (events || []).map(event => addEvent(userId, { ...event, source: provider, type: event.type || "sync" }));
+}
+
+// Conectare mock: câteva evenimente demo ca să arătăm fluxul. Când extra.mocked
+// e false (după OAuth real), nu adăugăm evenimente fabricate.
+function connectProvider(userId, provider, extra = {}) {
   if (!connectionsByUser[userId]) connectionsByUser[userId] = { google: { connected: false }, notion: { connected: false } };
-  connectionsByUser[userId][provider] = { connected: true, connectedAt: new Date().toISOString(), mocked: true };
+  const mocked = extra.mocked !== false;
+  connectionsByUser[userId][provider] = {
+    connected: true,
+    connectedAt: new Date().toISOString(),
+    mocked,
+    accessToken: extra.tokens?.accessToken || extra.accessToken || "",
+    refreshToken: extra.tokens?.refreshToken || extra.refreshToken || "",
+    expiresAt: extra.tokens?.expiresAt || extra.expiresAt || null
+  };
+
+  if (!mocked) {
+    return { connection: publicConnection(connectionsByUser[userId][provider]), syncedEvents: [] };
+  }
 
   const today = new Date();
   const demoEvents = [
@@ -62,7 +91,7 @@ function connectProvider(userId, provider) {
     });
   });
 
-  return { connection: connectionsByUser[userId][provider], syncedEvents: added };
+  return { connection: publicConnection(connectionsByUser[userId][provider]), syncedEvents: added };
 }
 
 function disconnectProvider(userId, provider) {
@@ -86,4 +115,13 @@ persistence.register("calendar", {
   }
 });
 
-module.exports = { getEvents, addEvent, deleteEvent, getConnections, connectProvider, disconnectProvider, deleteUser };
+module.exports = {
+  getEvents,
+  addEvent,
+  deleteEvent,
+  getConnections,
+  connectProvider,
+  disconnectProvider,
+  replaceSyncedEvents,
+  deleteUser
+};

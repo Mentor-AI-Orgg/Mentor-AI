@@ -4,6 +4,8 @@
     "continue": "Continuă",
     "loading": "Se încarcă…",
     "save": "Salvează",
+    "cancel": "Anulează",
+    "confirm": "Confirmă",
     "student": "Elev",
     "parent": "Părinte",
     "teacher": "Profesor"
@@ -149,7 +151,12 @@
     "planFailed": "Nu am putut activa planul acum. Încearcă din nou.",
     "planPending": "Planul {plan} așteaptă aprobarea părintelui.",
     "planFree": "Ai trecut pe planul Free.",
-    "planActive": "Planul {plan} este activ."
+    "planActive": "Planul {plan} este activ.",
+    "planMocked": "Planul {plan} este activ (checkout mock — fără Stripe).",
+    "checkoutSuccess": "Plata a fost înregistrată. Planul se activează după confirmarea Stripe.",
+    "checkoutCancel": "Checkout-ul a fost anulat.",
+    "calendarConnected": "Calendarul a fost conectat.",
+    "calendarError": "Nu am putut conecta calendarul."
   },
   "languages": {
     "ro": "Română",

@@ -100,7 +100,7 @@ const ShopItemCard = ({ item, owned, equipped, onBuy, buying }) => {
       <p>{item.description}</p>
       <div className="shop-item-footer">
         <span>{CATEGORY_META[item.category]?.label || item.category}</span>
-        <button type="button" className="accent-button" disabled={owned || buying} onClick={() => onBuy(item.id)}>
+        <button type="button" className="accent-button" disabled={owned || buying} onClick={() => onBuy(item)}>
           {owned ? (isEquipped ? 'Echipat' : 'Cumpărat') : buying ? '...' : 'Cumpără'}
         </button>
       </div>
@@ -119,6 +119,8 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
   const [parentEmail, setParentEmail] = useState(userData.parentEmail || '');
   const [parentMessage, setParentMessage] = useState('');
   const [parentSending, setParentSending] = useState(false);
+  const [pendingItem, setPendingItem] = useState(null);
+  const [deliveryNote, setDeliveryNote] = useState('');
 
   const load = async () => {
     setRefreshing(true);
@@ -184,6 +186,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
     setBuyingId(itemId);
     const result = await MentorAPI.buyShopItem({ user_id: userData.email || 'demo_user', item_id: itemId });
     setBuyingId('');
+    setPendingItem(null);
     if (result.success) {
       if (typeof onCoinsChange === 'function') {
         onCoinsChange(result.data.balance, result.data.equipped || {}, summary?.role || userData.role || 'student');
@@ -210,7 +213,8 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
     });
     setParentSending(false);
     if (result.success) {
-      if (onRewardToast) onRewardToast('Recapitularea prețurilor a fost trimisă părintelui.');
+      setDeliveryNote(result.data?.mocked === false && result.data?.delivered ? 'email trimis' : 'email mock');
+      if (onRewardToast) onRewardToast(result.data?.mocked === false && result.data?.delivered ? 'Rezumatul a fost trimis pe email.' : 'Rezumatul a fost salvat în inbox (email mock).');
       return;
     }
     if (onRewardToast) onRewardToast('Nu am putut trimite recenzia către părinte.', 'warning');
@@ -287,7 +291,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
               owned={ownedItems.has(item.id)}
               equipped={summary?.equipped?.[item.category]}
               buying={buyingId === item.id}
-              onBuy={handleBuy}
+              onBuy={item => setPendingItem(item)}
             />
           ))}
         </div>
@@ -299,7 +303,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
             <div className="eyebrow">Părinte / profesor</div>
             <h2 className="display-font">Trimite un rezumat înainte de abonament.</h2>
           </div>
-          <span className="shop-chip"><i className="fas fa-envelope" /> email mock</span>
+          <span className="shop-chip"><i className="fas fa-envelope" /> {deliveryNote || 'email'}</span>
         </div>
         <p className="shop-subtitle">Poți trimite părintelui sau profesorului un rezumat cu prețurile abonamentelor și ce include fiecare nivel.</p>
         <div className="shop-parent-form">
@@ -315,6 +319,21 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
           <div><strong>Cont profesor</strong><span>Primește sumarul clasei. Detectorul de text este doar o demonstrație euristică.</span></div>
         </div>
       </section>
+
+      {pendingItem && (
+        <div className="shop-confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="shop-confirm-title">
+          <div className="shop-confirm-card surface">
+            <h3 id="shop-confirm-title" className="display-font">Confirmă cumpărarea</h3>
+            <p>Vrei să cumperi <strong>{pendingItem.name}</strong> pentru {formatCoins(pendingItem.price)} monede?</p>
+            <div className="shop-confirm-actions">
+              <button type="button" className="ghost-button" onClick={() => setPendingItem(null)} disabled={Boolean(buyingId)}>Anulează</button>
+              <button type="button" className="accent-button" onClick={() => handleBuy(pendingItem.id)} disabled={Boolean(buyingId)}>
+                {buyingId ? 'Se cumpără...' : 'Cumpără'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {loading && <div className="shop-loading-note">Se încarcă datele magazinului...</div>}
     </main>

@@ -15,13 +15,48 @@ const formatTime = totalSeconds => {
   return `${mm}:${ss}`;
 };
 
+const focusStorageKey = email => `mentor_focus_timer_${email || 'anon'}`;
+
+const loadFocusState = email => {
+  try {
+    const raw = localStorage.getItem(focusStorageKey(email));
+    if (!raw) return null;
+    const saved = JSON.parse(raw);
+    const found = PRESETS.find(p => p.id === saved.presetId) || PRESETS[1];
+    let remaining = Number(saved.remaining);
+    if (!Number.isFinite(remaining)) remaining = found.seconds;
+    let running = Boolean(saved.running);
+    let sessionsDone = Number(saved.sessionsDone) || 0;
+    if (running && saved.savedAt) {
+      const elapsed = Math.floor((Date.now() - Number(saved.savedAt)) / 1000);
+      remaining -= elapsed;
+      if (remaining <= 0) {
+        remaining = 0;
+        running = false;
+        sessionsDone += 1;
+      }
+    }
+    return { preset: found, remaining: Math.max(0, remaining), running, sessionsDone };
+  } catch {
+    return null;
+  }
+};
+
 const FocusTimer = ({ userData, onRewardClaim }) => {
-  const [preset, setPreset] = useState(PRESETS[1]);
-  const [remaining, setRemaining] = useState(PRESETS[1].seconds);
-  const [running, setRunning] = useState(false);
+  const email = userData?.email || 'anon';
+  const restored = loadFocusState(email) || {
+    preset: PRESETS[1],
+    remaining: PRESETS[1].seconds,
+    running: false,
+    sessionsDone: 0
+  };
+  const [preset, setPreset] = useState(restored.preset);
+  const [remaining, setRemaining] = useState(restored.remaining);
+  const [running, setRunning] = useState(restored.running);
   const [focusMode, setFocusMode] = useState(false);
-  const [sessionsDone, setSessionsDone] = useState(0);
+  const [sessionsDone, setSessionsDone] = useState(restored.sessionsDone);
   const intervalRef = useRef(null);
+  const completedRef = useRef(false);
 
   useEffect(() => {
     if (!running) return undefined;
@@ -30,20 +65,22 @@ const FocusTimer = ({ userData, onRewardClaim }) => {
         if (prev <= 1) {
           clearInterval(intervalRef.current);
           setRunning(false);
-          setSessionsDone(s => s + 1);
-          if (MentorAPI.logActivity) {
-            MentorAPI.logActivity({ user_id: userData?.email || 'demo_user', type: 'focus_session', note: `Focus completat: ${preset.label}`, meta: { minutes: Math.round(preset.seconds / 60) } });
-          }
-          if (preset.seconds >= 60 * 60) {
-            MentorAPI.claimReward({
-              user_id: userData?.email || 'demo_user',
-              type: 'study_1h',
-              hours: 1
-            }).then(result => {
-              if (result.success && typeof onRewardClaim === 'function') {
-                onRewardClaim(result.data);
-              }
-            });
+          if (!completedRef.current) {
+            completedRef.current = true;
+            setSessionsDone(s => s + 1);
+            if (MentorAPI.logActivity) {
+              MentorAPI.logActivity({ type: 'focus_session', note: `Focus completat: ${preset.label}`, meta: { minutes: Math.round(preset.seconds / 60) } });
+            }
+            if (preset.seconds >= 60 * 60) {
+              MentorAPI.claimReward({
+                type: 'study_1h',
+                hours: 1
+              }).then(result => {
+                if (result.success && typeof onRewardClaim === 'function') {
+                  onRewardClaim(result.data);
+                }
+              });
+            }
           }
           return 0;
         }
@@ -53,14 +90,28 @@ const FocusTimer = ({ userData, onRewardClaim }) => {
     return () => clearInterval(intervalRef.current);
   }, [running]);
 
+  useEffect(() => {
+    localStorage.setItem(focusStorageKey(email), JSON.stringify({
+      presetId: preset.id,
+      remaining,
+      running,
+      savedAt: Date.now(),
+      sessionsDone
+    }));
+  }, [email, preset.id, remaining, running, sessionsDone]);
+
   const selectPreset = useCallback(p => {
+    completedRef.current = false;
     setPreset(p);
     setRemaining(p.seconds);
     setRunning(false);
   }, []);
 
   const toggleRun = () => {
-    if (remaining <= 0) { setRemaining(preset.seconds); }
+    if (remaining <= 0) {
+      completedRef.current = false;
+      setRemaining(preset.seconds);
+    }
     setRunning(prev => !prev);
   };
 

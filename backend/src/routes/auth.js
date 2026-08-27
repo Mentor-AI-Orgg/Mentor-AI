@@ -17,6 +17,7 @@ const { authLimiter } = require("../middleware/rateLimits");
 const { validateBody } = require("../middleware/validate");
 const { registerSchema, loginSchema, forgotPasswordSchema } = require("../validation/schemas");
 const { ensureUser, pushNotification } = require("../data/economyStore");
+const { deliverMessage, smtpConfigured } = require("../notify/deliver");
 const { createInvitation } = require("../data/linkStore");
 
 // Aceleași reguli pe care le arată RegisterScreen în interfață. Validarea din
@@ -132,7 +133,9 @@ router.post("/register", authLimiter, validateBody(registerSchema), async (req, 
   // este indexat pe același email.
   ensureUser(created.account.email, {
     role: created.account.role,
-    className: created.account.profile.class
+    className: created.account.profile.class,
+    profileName: created.account.profile.name,
+    username: created.account.profile.username
   });
 
   // Emailurile de părinte/profesor completate la înregistrare NU mai leagă
@@ -179,7 +182,12 @@ router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) =
     return res.status(401).json({ error: "Email sau parolă incorecte." });
   }
 
-  ensureUser(result.account.email, { role: result.account.role });
+  ensureUser(result.account.email, {
+    role: result.account.role,
+    username: result.account.profile.username,
+    className: result.account.profile.class,
+    profileName: result.account.profile.name
+  });
 
   const { token, maxAge } = createSession(result.account.email);
   res.cookie(SESSION_COOKIE, token, sessionCookieOptions(maxAge));
@@ -196,24 +204,23 @@ router.get("/me", authRequired, (req, res) => {
   res.json({ user: publicAccount(req.auth.account) });
 });
 
-// Nu există încă trimitere reală de email (vezi Faza 6). Răspundem identic
-// indiferent dacă adresa are cont, ca să nu permitem enumerarea utilizatorilor.
-router.post("/forgot-password", authLimiter, validateBody(forgotPasswordSchema), (req, res) => {
+// Răspundem identic indiferent dacă adresa are cont, ca să nu permitem
+// enumerarea utilizatorilor. Dacă SMTP e configurat, emailul pleacă doar
+// când contul există; mesajul către client rămâne același.
+router.post("/forgot-password", authLimiter, validateBody(forgotPasswordSchema), async (req, res) => {
   const { email } = req.body || {};
   const account = isValidEmail(email) ? findAccount(email) : null;
 
   if (account) {
-    pushNotification(
-      account.email,
-      account.email,
-      "Resetare parolă Mentor AI",
-      "Ai cerut resetarea parolei. Trimiterea reală de email nu este încă implementată; deocamdată contactează administratorul.",
-      "email"
-    );
+    const subject = "Resetare parolă Mentor AI";
+    const body = "Ai cerut resetarea parolei. Dacă nu ai fost tu, ignoră acest mesaj. Pentru a seta o parolă nouă, contactează administratorul.";
+    const delivery = await deliverMessage({ to: account.email, subject, body, channel: "email" });
+    pushNotification(account.email, account.email, subject, body, "email", delivery);
   }
 
   res.json({
     success: true,
+    mocked: !smtpConfigured(),
     message: "Dacă adresa are un cont, vei primi instrucțiuni de resetare."
   });
 });

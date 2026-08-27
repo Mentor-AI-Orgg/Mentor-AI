@@ -274,6 +274,7 @@ function createDefaultUser(userId) {
       guardianName: '',
       className: '',
       profileName: '',
+      username: '',
       notificationPreferences: {
         dailyDigest: true,
         instantMessages: false,
@@ -306,6 +307,7 @@ function ensureUser(userId, patch = {}) {
     if (patch.guardianName !== undefined) current.preferences.guardianName = patch.guardianName || '';
     if (patch.className !== undefined) current.preferences.className = patch.className || '';
     if (patch.profileName !== undefined) current.preferences.profileName = patch.profileName || '';
+    if (patch.username !== undefined) current.preferences.username = String(patch.username || '').trim().slice(0, 40);
     if (typeof patch.streak === 'number') current.metrics.streak = patch.streak;
     if (typeof patch.hoursToday === 'number') current.metrics.hoursToday = patch.hoursToday;
     if (patch.coins !== undefined && Number.isFinite(Number(patch.coins))) current.balance = Number(patch.coins);
@@ -506,7 +508,7 @@ function hashAccessCode(code) {
   return crypto.createHash('sha256').update(String(code)).digest('hex');
 }
 
-function generateAccessCode({ parentEmail = '', childEmail = '', phone = '' }) {
+async function generateAccessCode({ parentEmail = '', childEmail = '', phone = '' }) {
   if (!parentEmail || !childEmail) return null;
   const code = String(crypto.randomInt(100000, 1000000));
   const expiresAt = Date.now() + ACCESS_CODE_TTL_MS;
@@ -516,17 +518,28 @@ function generateAccessCode({ parentEmail = '', childEmail = '', phone = '' }) {
     attempts: 0
   });
 
-  // Inbox-ul este canalul mock de SMS: aici rămâne codul în clar, ca părintele
-  // să-l poată citi în aplicație. Răspunsul HTTP NU include codul.
-  pushNotification(
-    parentEmail,
-    phone || parentEmail,
-    'Cod de acces Mentor AI',
-    `Codul tău de acces temporar pentru contul copilului: ${code}. Valabil 10 minute. Nu este parola contului -- se folosește doar pentru autorizare rapidă.`,
-    'sms'
-  );
+  const subject = 'Cod de acces Mentor AI';
+  const body = `Codul tău de acces temporar pentru contul copilului: ${code}. Valabil 10 minute. Nu este parola contului -- se folosește doar pentru autorizare rapidă.`;
 
-  return { ok: true, expiresAt };
+  const { deliverMessage } = require('../notify/deliver');
+  const delivery = await deliverMessage({
+    to: parentEmail,
+    phone,
+    subject,
+    body,
+    channel: 'sms'
+  });
+
+  // Inbox-ul păstrează mesajul (inclusiv codul) ca rezervă locală. Răspunsul
+  // HTTP NU include codul.
+  pushNotification(parentEmail, phone || parentEmail, subject, body, 'sms', delivery);
+
+  return {
+    ok: true,
+    expiresAt,
+    mocked: Boolean(delivery.mocked),
+    delivered: Boolean(delivery.delivered)
+  };
 }
 
 function verifyAccessCode({ parentEmail = '', childEmail = '', code = '' }) {
@@ -894,7 +907,7 @@ function getSummary(userId = 'demo_user', patch = {}) {
   return buildSummary(user);
 }
 
-function pushNotification(userId, targetEmail, subject, body, channel = 'email') {
+function pushNotification(userId, targetEmail, subject, body, channel = 'email', delivery = {}) {
   const notification = {
     id: `note_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
     userId,
@@ -903,6 +916,8 @@ function pushNotification(userId, targetEmail, subject, body, channel = 'email')
     body,
     channel,
     read: false,
+    mocked: delivery.mocked !== false,
+    delivered: Boolean(delivery.delivered),
     createdAt: new Date().toISOString()
   };
   NOTIFICATIONS.unshift(notification);
@@ -948,24 +963,75 @@ function markNotificationRead(notificationId) {
   return notification;
 }
 
-function sendParentReview({ userId = 'demo_user', parentEmail = '', planId = '', billingCycle = 'monthly', role = 'student', message = '' }) {
+async function sendParentReview({ userId = 'demo_user', parentEmail = '', planId = '', billingCycle = 'monthly', role = 'student', message = '' }) {
   const user = ensureUser(userId, { parentEmail, role });
   const planLabel = planId ? planId.replace(/_/g, ' ') : 'abonament';
-  const subject = `Propunere abonament Mentor AI pentru ${user.preferences.profileName || userId}`;
+  const to = parentEmail || user.preferences.parentEmail;
+  const subject = `Propunere abonament Mentor AI pentru ${user.preferences.username || user.preferences.profileName || 'elev'}`;
   const body = [
     `Plan propus: ${planLabel}`,
     `Ciclu de plată: ${billingCycle}`,
-    `Role cont: ${role}`,
+    `Rol cont: ${role}`,
     `Monede disponibile: ${user.balance}`,
-    `Mesaj suplimentar: ${message || 'Nu există mesaj suplimentar.'}`,
-    'Aceasta este o notificare mock. Pentru email real, conectează un serviciu SMTP/transactional.'
+    `Mesaj suplimentar: ${message || 'Nu există mesaj suplimentar.'}`
   ].join('\n');
-  const email = pushNotification(userId, parentEmail || user.preferences.parentEmail, subject, body, 'email');
+
+  const { deliverMessage } = require('../notify/deliver');
+  const delivery = await deliverMessage({ to, subject, body, channel: 'email' });
+  const email = pushNotification(userId, to, subject, body, 'email', delivery);
   return {
     ok: true,
+    mocked: Boolean(delivery.mocked),
+    delivered: Boolean(delivery.delivered),
     email,
     preview: { subject, body }
   };
+}
+
+function publicPseudonym(user) {
+  const username = String(user.preferences?.username || '').trim();
+  if (username) return username.slice(0, 40);
+  const digest = crypto.createHash('sha256').update(String(user.userId || '')).digest('hex').slice(0, 4).toUpperCase();
+  return `Elev ${digest}`;
+}
+
+function initialsFromPseudonym(name) {
+  const parts = String(name || '').split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  return String(name || 'EL').replace(/[^A-Za-z0-9]/g, '').slice(0, 2).toUpperCase() || 'EL';
+}
+
+function xpFromUser(user) {
+  return Math.max(0, Number(user.coinsEarned || 0) + Number(user.metrics?.streak || 0) * 10);
+}
+
+function listLeaderboardEntries({ limit = 10, currentEmail = '' } = {}) {
+  const cap = Math.min(50, Math.max(1, Number(limit) || 10));
+  const me = String(currentEmail || '').trim().toLowerCase();
+  const ranked = [...USERS.values()]
+    .filter(user => user.role === 'student')
+    .map(user => {
+      const name = publicPseudonym(user);
+      const xp = xpFromUser(user);
+      return {
+        id: crypto.createHash('sha256').update(String(user.userId || '')).digest('hex').slice(0, 12),
+        name,
+        initials: initialsFromPseudonym(name),
+        xp,
+        streak: Number(user.metrics?.streak || 0),
+        level: Math.max(1, Math.floor(xp / 400) + 1),
+        class: user.preferences.className || '',
+        isCurrentUser: Boolean(me) && String(user.userId).toLowerCase() === me
+      };
+    })
+    .sort((a, b) => b.xp - a.xp || a.name.localeCompare(b.name));
+
+  const board = ranked.slice(0, cap).map((entry, index) => ({ ...entry, rank: index + 1 }));
+  const self = ranked.find(entry => entry.isCurrentUser);
+  if (self && !board.some(entry => entry.isCurrentUser)) {
+    board.push({ ...self, rank: ranked.indexOf(self) + 1 });
+  }
+  return board;
 }
 
 function exportUser(email) {
@@ -1043,6 +1109,7 @@ module.exports = {
   updateNotificationPreferences,
   getParentAnalytics,
   sendParentReview,
+  listLeaderboardEntries,
   getDeterministicJackpotDay,
   getMonthKey,
   getTodayKey,

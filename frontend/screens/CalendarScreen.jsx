@@ -50,6 +50,10 @@ const CalendarScreen = ({ onBack }) => {
   const connect = async provider => {
     setConnecting(provider);
     const result = await MentorAPI.connectCalendarProvider(provider);
+    if (result.success && result.data?.oauth_url) {
+      window.location.href = result.data.oauth_url;
+      return;
+    }
     if (result.success) {
       setConnections(prev => ({ ...prev, [provider]: result.data.connection }));
       await loadEvents();

@@ -111,6 +111,21 @@ const deleteAccountSchema = z.object({
   })
 });
 
+const profileSchema = z.object({
+  name: z.string().max(80).optional(),
+  username: z.string().max(40).optional(),
+  phone: z.string().max(20).optional(),
+  school: z.string().max(120).optional(),
+  class: z.string().max(40).optional(),
+  subject: z.string().max(80).optional(),
+  profile: z.string().max(40).optional(),
+  exam: z.string().max(40).optional(),
+  dailyHours: z.string().max(20).optional(),
+  uiLanguage: z.string().max(8).optional(),
+  language: z.string().max(8).optional(),
+  hasCompletedOnboarding: z.boolean().optional()
+});
+
 module.exports = {
   registerSchema,
   loginSchema,
@@ -124,5 +139,6 @@ module.exports = {
   accessCodeRequestSchema,
   accessCodeVerifySchema,
   calendarEventSchema,
-  deleteAccountSchema
+  deleteAccountSchema,
+  profileSchema
 };

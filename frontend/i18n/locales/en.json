@@ -4,6 +4,8 @@
     "continue": "Continue",
     "loading": "Loading…",
     "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
     "student": "Student",
     "parent": "Parent",
     "teacher": "Teacher"
@@ -149,7 +151,12 @@
     "planFailed": "We could not activate the plan right now. Try again.",
     "planPending": "Plan {plan} is waiting for parent approval.",
     "planFree": "You switched to the Free plan.",
-    "planActive": "Plan {plan} is active."
+    "planActive": "Plan {plan} is active.",
+    "planMocked": "Plan {plan} is active (mock checkout — Stripe is not configured).",
+    "checkoutSuccess": "Payment recorded. The plan activates after Stripe confirms it.",
+    "checkoutCancel": "Checkout was cancelled.",
+    "calendarConnected": "The calendar is connected.",
+    "calendarError": "We could not connect the calendar."
   },
   "languages": {
     "ro": "Română",

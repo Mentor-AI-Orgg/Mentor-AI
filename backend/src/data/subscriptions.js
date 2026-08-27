@@ -86,4 +86,36 @@ const DEFAULT_USER_SUBSCRIPTION = {
   billingCycle: "monthly"
 };
 
-module.exports = { PLANS, DEFAULT_USER_SUBSCRIPTION };
+function normalizeBillingCycle(cycle) {
+  const value = String(cycle || "monthly");
+  if (value === "half_year") return "halfYear";
+  return value;
+}
+
+function priceForCycle(plan, billingCycle) {
+  const cycle = normalizeBillingCycle(billingCycle);
+  if (cycle === "yearly") return plan.priceYearly;
+  if (cycle === "quarterly") return plan.priceQuarterly;
+  if (cycle === "halfYear") return plan.priceHalfYear;
+  return plan.priceMonthly;
+}
+
+function stripeRecurring(billingCycle) {
+  const cycle = normalizeBillingCycle(billingCycle);
+  if (cycle === "yearly") return { interval: "year", interval_count: 1 };
+  if (cycle === "quarterly") return { interval: "month", interval_count: 3 };
+  if (cycle === "halfYear") return { interval: "month", interval_count: 6 };
+  return { interval: "month", interval_count: 1 };
+}
+
+function renewsAtForCycle(billingCycle, from = new Date()) {
+  const cycle = normalizeBillingCycle(billingCycle);
+  const renewsAt = new Date(from);
+  if (cycle === "yearly") renewsAt.setFullYear(renewsAt.getFullYear() + 1);
+  else if (cycle === "quarterly") renewsAt.setMonth(renewsAt.getMonth() + 3);
+  else if (cycle === "halfYear") renewsAt.setMonth(renewsAt.getMonth() + 6);
+  else renewsAt.setMonth(renewsAt.getMonth() + 1);
+  return renewsAt.toISOString();
+}
+
+module.exports = { PLANS, DEFAULT_USER_SUBSCRIPTION, priceForCycle, stripeRecurring, renewsAtForCycle, normalizeBillingCycle };

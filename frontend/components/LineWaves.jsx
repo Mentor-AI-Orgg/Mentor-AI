@@ -1,4 +1,5 @@
 import React from 'react';
+import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion.js';
 
 const hexToVec3 = hex => {
   const h = hex.replace('#', '');
@@ -131,10 +132,14 @@ const LineWaves = ({
 }) => {
   const containerRef = React.useRef(null);
   const [supported, setSupported] = React.useState(true);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   React.useEffect(() => {
     const container = containerRef.current;
-    if (!container) return undefined;
+    if (!container || prefersReducedMotion) {
+      setSupported(!prefersReducedMotion);
+      return undefined;
+    }
 
     const canvas = document.createElement('canvas');
     canvas.className = 'line-waves-canvas';
@@ -297,7 +302,7 @@ const LineWaves = ({
       gl.deleteBuffer(buffer);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
-  }, [speed, innerLineCount, outerLineCount, warpIntensity, rotation, edgeFadeWidth, colorCycleSpeed, brightness, color1, color2, color3, enableMouseInteraction, mouseInfluence]);
+  }, [speed, innerLineCount, outerLineCount, warpIntensity, rotation, edgeFadeWidth, colorCycleSpeed, brightness, color1, color2, color3, enableMouseInteraction, mouseInfluence, prefersReducedMotion]);
 
   if (!supported) {
     return <div className="darkveil-fallback" aria-hidden="true" />;

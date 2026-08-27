@@ -68,7 +68,15 @@ async function createAccount({ email, password, role = "student", profile = {} }
       class: profile.class || "",
       subject: profile.subject || "",
       parentEmail: profile.parentEmail || "",
-      teacherEmail: profile.teacherEmail || ""
+      teacherEmail: profile.teacherEmail || "",
+      profile: profile.profile || "",
+      exam: profile.exam || "",
+      dailyHours: profile.dailyHours || "",
+      uiLanguage: profile.uiLanguage || "",
+      language: profile.language || "",
+      hasCompletedOnboarding: profile.hasCompletedOnboarding !== undefined
+        ? Boolean(profile.hasCompletedOnboarding)
+        : role !== "student"
     },
     parentalConsentAt: profile.parentalConsentAt || null,
     privacyAcceptedAt: profile.privacyAcceptedAt || null,
@@ -142,6 +150,36 @@ function deleteAccount(email) {
   return ACCOUNTS.delete(key);
 }
 
+const PROFILE_STRING_FIELDS = [
+  "name",
+  "username",
+  "phone",
+  "school",
+  "class",
+  "subject",
+  "parentEmail",
+  "teacherEmail",
+  "profile",
+  "exam",
+  "dailyHours",
+  "uiLanguage",
+  "language"
+];
+
+function updateProfile(email, patch = {}) {
+  const account = findAccount(email);
+  if (!account) return null;
+  for (const field of PROFILE_STRING_FIELDS) {
+    if (patch[field] === undefined) continue;
+    const max = field === "username" ? 40 : field === "phone" ? 20 : 120;
+    account.profile[field] = String(patch[field] ?? "").trim().slice(0, max);
+  }
+  if (patch.hasCompletedOnboarding !== undefined) {
+    account.profile.hasCompletedOnboarding = Boolean(patch.hasCompletedOnboarding);
+  }
+  return account;
+}
+
 // Sesiunile expirate s-ar acumula la infinit dacă nimeni nu le mai atinge.
 function purgeExpiredSessions() {
   const now = Date.now();
@@ -179,6 +217,7 @@ module.exports = {
   findAccount,
   authenticate,
   publicAccount,
+  updateProfile,
   createSession,
   getSession,
   destroySession,

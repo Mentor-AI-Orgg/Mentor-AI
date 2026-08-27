@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const store = require("../data/calendarStore");
+const oauth = require("../calendar/oauth");
+const { publicBaseUrl } = require("../publicUrl");
 const { validateBody } = require("../middleware/validate");
 const { calendarEventSchema } = require("../validation/schemas");
 
@@ -50,11 +52,26 @@ router.post("/connect", (req, res) => {
   if (!["google", "notion"].includes(provider)) {
     return res.status(400).json({ error: "Provider necunoscut. Folosește 'google' sau 'notion'." });
   }
-  const result = store.connectProvider(userId, provider);
+
+  if (oauth.isConfigured(provider)) {
+    const oauthUrl = oauth.buildAuthorizeUrl({
+      provider,
+      email: userId,
+      baseUrl: publicBaseUrl(req)
+    });
+    return res.json({
+      success: true,
+      mocked: false,
+      oauth_url: oauthUrl,
+      message: `Deschide URL-ul OAuth pentru a conecta ${provider === "google" ? "Google Calendar" : "Notion"}.`
+    });
+  }
+
+  const result = store.connectProvider(userId, provider, { mocked: true });
   res.json({
     success: true,
     mocked: true,
-    message: `Cont ${provider === "google" ? "Google Calendar" : "Notion Calendar"} conectat (mock). Conectează credențiale OAuth reale în .env pentru sincronizare live.`,
+    message: `Cont ${provider === "google" ? "Google Calendar" : "Notion Calendar"} conectat (mock). Adaugă GOOGLE_CLIENT_ID/SECRET sau NOTION_CLIENT_ID/SECRET pentru OAuth real.`,
     ...result
   });
 });

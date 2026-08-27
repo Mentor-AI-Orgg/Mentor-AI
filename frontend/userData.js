@@ -26,6 +26,7 @@ const defaultUserData = {
   voiceId: '',
   firstLoginRewardClaimed: false,
   isLoggedIn: false,
+  username: '',
   hasCompletedOnboarding: false
 };
 
