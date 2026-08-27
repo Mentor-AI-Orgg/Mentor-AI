@@ -618,9 +618,6 @@ function getParentAnalytics(parentEmail = '') {
 function logActivity({ userId = 'demo_user', type, note = '', meta = {}, amount = 0 }) {
   const user = ensureUser(userId);
   const entry = recordActivity(user, type, amount, note, meta);
-  if (type === 'ai_detect' && meta && typeof meta.ai_probability === 'number') {
-    user.activityLog = user.activityLog;
-  }
   return { entry, summary: buildSummary(user) };
 }
 

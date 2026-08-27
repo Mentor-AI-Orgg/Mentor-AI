@@ -1,0 +1,46 @@
+{
+  "name": "mentor-ai",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Mentor AI: scaffolding mentor for grades 1–12, with an Express API and a Vite-built SPA.",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "concurrently -k \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "node --watch backend/server.js",
+    "dev:web": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "lint": "eslint backend frontend tests --ext .js,.jsx",
+    "format": "prettier --write frontend tests vite.config.js",
+    "format:check": "prettier --check frontend tests vite.config.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.5.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.2",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "globals": "^15.14.0",
+    "postcss": "^8.5.1",
+    "prettier": "^3.4.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "supertest": "^7.0.0",
+    "tailwindcss": "^3.4.17",
+    "three": "^0.128.0",
+    "vite": "^5.4.14",
+    "vitest": "^2.1.9"
+  }
+}
