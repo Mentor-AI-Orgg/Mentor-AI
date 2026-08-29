@@ -46,9 +46,10 @@ inclus).
 
 ## Pasul 2 - Configurează secretele în GitHub
 
-**Settings → Secrets and variables → Actions**.
+Workflow-ul de deploy citește environment-ul GitHub **`mentor.ai`**.
 
-La tab-ul **Secrets** (valori sensibile, nu se mai pot citi după salvare):
+Calea corectă: **Settings → Environments → `mentor.ai`** (creează-l dacă
+nu există) → **Environment secrets** / **Environment variables**.
 
 | Secret | Valoare |
 | --- | --- |
@@ -56,12 +57,17 @@ La tab-ul **Secrets** (valori sensibile, nu se mai pot citi după salvare):
 | `FTP_USERNAME` | utilizatorul FTP |
 | `FTP_PASSWORD` | parola FTP |
 
-La tab-ul **Variables** (valori normale, vizibile):
-
 | Variabilă | Valoare | Observații |
 | --- | --- | --- |
 | `FTP_SERVER_DIR` | `./mentor-ai/` | Calea către Application root, relativ la folderul în care aterizează userul FTP |
 | `FTP_PROTOCOL` | `ftps` | Pune `ftp` doar dacă hostul nu suportă FTPS |
+
+Numele trebuie să fie **exact** cele de mai sus (majuscule, underscore).
+
+Dacă le pui doar la **Settings → Secrets and variables → Actions**
+(Repository secrets), tot funcționează: job-ul le vede ca fallback. Nu le
+pune într-un environment cu alt nume — workflow-ul nu îl citește, iar
+acțiunea FTP eșuează cu `Input required and not supplied: server`.
 
 Folosește **FTPS** dacă poți. FTP simplu trimite parola în clar la fiecare
 deploy.
