@@ -20,6 +20,29 @@ import ProfileScreen from './screens/ProfileScreen.jsx';
 import ParentDashboardScreen from './screens/ParentDashboardScreen.jsx';
 import CalendarScreen from './screens/CalendarScreen.jsx';
 
+function applyAccount(user, prev = {}) {
+  if (!user) return prev;
+  const role = user.role || prev.role || 'student';
+  return {
+    ...prev,
+    isLoggedIn: true,
+    email: user.email || prev.email || '',
+    role,
+    name: user.name || prev.name || '',
+    username: user.username || prev.username || '',
+    school: user.school || prev.school || '',
+    class: user.class || prev.class || '',
+    profile: typeof user.profile === 'string' ? user.profile : (prev.profile || ''),
+    exam: user.exam || prev.exam || '',
+    dailyHours: user.dailyHours || prev.dailyHours || '',
+    parentEmail: user.parentEmail || prev.parentEmail || '',
+    teacherEmail: user.teacherEmail || prev.teacherEmail || '',
+    uiLanguage: user.uiLanguage || prev.uiLanguage || prev.language || 'ro',
+    language: user.language || prev.language || 'ro',
+    hasCompletedOnboarding: role !== 'student' ? true : Boolean(user.hasCompletedOnboarding)
+  };
+}
+
 function AppShell({ userData, setUserData }) {
   const { t } = useI18n();
   const [screen, setScreen] = useState('splash');
@@ -78,11 +101,54 @@ function AppShell({ userData, setUserData }) {
     }
 
     const role = session.user.role || 'student';
-    setUserData(prev => ({ ...prev, isLoggedIn: true, role, email: session.user.email }));
+    let merged = null;
+    setUserData(prev => {
+      merged = applyAccount(session.user, prev);
+      return merged;
+    });
 
-    if (role === 'student' && !userData.hasCompletedOnboarding) {
+    const params = new URLSearchParams(window.location.search);
+    const checkout = params.get('checkout');
+    const calendarConnected = params.get('calendar_connected');
+    const calendarError = params.get('calendar_error');
+    if (checkout || calendarConnected || calendarError) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    const completed = role !== 'student' || Boolean(session.user.hasCompletedOnboarding) || Boolean(merged?.hasCompletedOnboarding);
+    if (role === 'student' && !completed) {
       setOnboardingStep(1);
       setScreen('onboarding');
+      return;
+    }
+
+    if (calendarError) {
+      showToast(t('toast.calendarError'), 'warning');
+    }
+    if (calendarConnected) {
+      setScreen('calendar');
+      setNavScreen('calendar');
+      showToast(t('toast.calendarConnected'), 'success');
+      return;
+    }
+    if (checkout === 'success') {
+      const sub = await MentorAPI.getMySubscription();
+      if (sub.success && sub.data?.subscription) {
+        setUserData(prev => ({
+          ...prev,
+          planId: sub.data.subscription.planId || prev.planId,
+          planStatus: sub.data.subscription.status || 'active'
+        }));
+      }
+      setScreen('subscriptions');
+      setNavScreen('subscriptions');
+      showToast(t('toast.checkoutSuccess'), 'success');
+      return;
+    }
+    if (checkout === 'cancel') {
+      setScreen('subscriptions');
+      setNavScreen('subscriptions');
+      showToast(t('toast.checkoutCancel'), 'warning');
       return;
     }
 
@@ -99,13 +165,19 @@ function AppShell({ userData, setUserData }) {
 
     const user = result.data.user || {};
     const role = user.role || 'student';
-    setUserData(prev => ({
-      ...prev,
-      isLoggedIn: true,
-      email: user.email || '',
-      role,
-      name: prev.name || (user.name || '').split(' ')[0] || ''
-    }));
+    setUserData(prev => applyAccount(user, prev));
+
+    if (role === 'student' && !user.hasCompletedOnboarding) {
+      setOnboardingStep(1);
+      setScreen('onboarding');
+      MentorAPI.claimReward({ type: 'login_bonus' }).then(rewardResult => {
+        if (rewardResult.success) {
+          handleEconomyUpdate(rewardResult.data.balance, {}, null, { firstLoginRewardClaimed: true });
+        }
+      });
+      showToast(t('toast.welcome'), 'success');
+      return { success: true };
+    }
 
     const nextScreen = routeByRole(role);
     setScreen(nextScreen);
@@ -248,8 +320,10 @@ function AppShell({ userData, setUserData }) {
 
   const currentOnboarding = onboardingSteps[onboardingStep - 1];
 
-  const handleOnboardingNext = () => {
+  const handleOnboardingNext = async () => {
     if (onboardingStep >= onboardingSteps.length) {
+      const payload = { ...onboardingData, hasCompletedOnboarding: true };
+      await MentorAPI.updateProfile(payload);
       setUserData(prev => ({ ...prev, ...onboardingData, hasCompletedOnboarding: true }));
       setScreen('home');
       setNavScreen('home');
@@ -286,6 +360,10 @@ function AppShell({ userData, setUserData }) {
       showToast(t('toast.planFailed'), 'warning');
       return { success: false };
     }
+    if (result.data?.url) {
+      window.location.href = result.data.url;
+      return { success: true, redirect: true };
+    }
     const status = result.data?.subscription?.status || 'active';
     setUserData(prev => ({
       ...prev,
@@ -294,6 +372,8 @@ function AppShell({ userData, setUserData }) {
     }));
     if (status === 'pending_parent_review') {
       showToast(t('toast.planPending', { plan: planId }), 'warning');
+    } else if (result.data?.mocked) {
+      showToast(t('toast.planMocked', { plan: planId }), 'success');
     } else {
       showToast(planId === 'free' ? t('toast.planFree') : t('toast.planActive', { plan: planId }), 'success');
     }

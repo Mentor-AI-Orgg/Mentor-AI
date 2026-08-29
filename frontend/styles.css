@@ -394,6 +394,23 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .animate-slideUp { animation: slideUp 0.4s ease both; }
 .animate-pulse-slow { animation: pulse 2s infinite; }
 .animate-splash { animation: splashPulse 2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fadeIn,
+  .animate-slideUp,
+  .animate-pulse-slow,
+  .animate-splash,
+  .typing-dot {
+    animation: none !important;
+  }
+}
+
+.floating-lines-container.is-static {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(185, 167, 255, .28), transparent 42%),
+    radial-gradient(circle at 80% 80%, rgba(111, 215, 255, .18), transparent 46%),
+    #0a0a1c;
+}
 .typing-dot {
   width: 6px;
   height: 6px;
@@ -667,6 +684,24 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .shop-notes strong { display: block; margin-bottom: 6px; font-size: 13px; }
 .shop-notes span { color: var(--muted); font-size: 12px; line-height: 1.5; }
 .shop-loading-note { color: var(--muted); font-size: 12px; padding: 0 8px; }
+.shop-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(8, 8, 24, .72);
+}
+.shop-confirm-card {
+  width: min(420px, 100%);
+  display: grid;
+  gap: 14px;
+  padding: 22px;
+  border-radius: 22px;
+}
+.shop-confirm-card p { margin: 0; color: var(--muted); line-height: 1.55; }
+.shop-confirm-actions { display: flex; justify-content: flex-end; gap: 10px; }
 
 @media (max-width: 680px) {
   .learn-tools-grid { grid-template-columns: 1fr; }

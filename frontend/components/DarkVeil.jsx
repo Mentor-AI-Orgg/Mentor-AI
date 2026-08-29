@@ -1,4 +1,5 @@
 import React from 'react';
+import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion.js';
 
 const vertex = `
 attribute vec2 position;
@@ -84,10 +85,11 @@ const DarkVeil = ({
 }) => {
   const canvasRef = React.useRef(null);
   const [supported, setSupported] = React.useState(true);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !window.OGL) {
+    if (!canvas || !window.OGL || prefersReducedMotion) {
       setSupported(false);
       return undefined;
     }
@@ -146,7 +148,7 @@ const DarkVeil = ({
       cancelAnimationFrame(frame);
       window.removeEventListener('resize', handleResize);
     };
-  }, [hueShift, noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale]);
+  }, [hueShift, noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale, prefersReducedMotion]);
 
   if (!supported) {
     return <div className="darkveil-fallback" aria-hidden="true" />;

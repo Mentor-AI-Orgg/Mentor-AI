@@ -36,9 +36,14 @@ npm run build
 
 ## Structură
 
-- `backend/` — Express: autentificare, chat, economie, persistență JSON
+- `backend/` — Express: autentificare, chat, economie, plăți, calendar, persistență JSON
 - `frontend/` — React compilat cu Vite (ES modules, i18n `ro` / `en`)
-- `tests/` — Vitest + Supertest (auth, chat mock, cumpărături)
+- `tests/` — Vitest + Supertest (auth, chat mock, cumpărături, plăți mock, clasament)
 
-Roadmap: [plan-imbunatatiri.md](plan-imbunatatiri.md).
+Fără chei externe (Stripe, SMTP, Twilio, Google/Notion, motoare AI) aplicația
+pornește pe mock-uri etichetate. Variabilele sunt în
+[backend/.env.example](backend/.env.example).
+
+Ce s-a implementat, pe faze și PR-uri: [IMPLEMENTARE.md](IMPLEMENTARE.md).
+Planul original: [plan-imbunatatiri.md](plan-imbunatatiri.md).
 Deploy pe gazduire.net: [DEPLOY.md](DEPLOY.md).

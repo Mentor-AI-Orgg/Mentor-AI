@@ -26,7 +26,11 @@ const generalApiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 400,
   ...common,
-  skip: req => skipInTests() || /\/health$/.test(req.path) || /\/api(?:\/v1)?\/health/.test(req.originalUrl),
+  skip: req => skipInTests()
+    || /\/health$/.test(req.path)
+    || /\/api(?:\/v1)?\/health/.test(req.originalUrl)
+    || /\/subscriptions\/webhook$/.test(req.path)
+    || /\/calendar\/oauth\/[^/]+\/callback$/.test(req.path),
   handler: romanianHandler("Prea multe cereri. Încearcă din nou în câteva minute.")
 });
 

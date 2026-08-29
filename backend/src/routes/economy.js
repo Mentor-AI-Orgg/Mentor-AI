@@ -86,9 +86,9 @@ router.post('/buy', validateBody(buySchema), (req, res) => {
   res.status(result.ok ? 200 : 400).json(result);
 });
 
-router.post('/parent-review', (req, res) => {
+router.post('/parent-review', async (req, res) => {
   const { parent_email = '', plan_id = '', billing_cycle = 'monthly', message = '' } = req.body || {};
-  const result = sendParentReview({
+  const result = await sendParentReview({
     userId: req.auth.email,
     parentEmail: parent_email,
     planId: plan_id,
@@ -151,9 +151,9 @@ router.post('/request-test', roleGuard('parent', 'teacher'), (req, res) => {
 });
 
 // Cod de acces temporar prin SMS (nu parola reala -- vezi economyStore.js).
-router.post('/access-code/request', roleGuard('parent'), validateBody(accessCodeRequestSchema), (req, res) => {
+router.post('/access-code/request', roleGuard('parent'), validateBody(accessCodeRequestSchema), async (req, res) => {
   const { child_email = '', phone = '' } = req.body || {};
-  const result = generateAccessCode({ parentEmail: req.auth.email, childEmail: child_email, phone });
+  const result = await generateAccessCode({ parentEmail: req.auth.email, childEmail: child_email, phone });
   res.json(result || { ok: false, reason: 'invalid_request' });
 });
 

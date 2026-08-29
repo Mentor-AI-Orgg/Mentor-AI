@@ -5,8 +5,8 @@
 // trezea pe Free după primul deploy. Mutat aici ca să fie salvat pe disc prin
 // persistence.js.
 //
-// Plata este în continuare mock - integrarea reală (Stripe/Netopia) rămâne în
-// Faza 6 din plan-imbunatatiri.md.
+// Plata: Stripe Checkout când STRIPE_SECRET_KEY e setat; altfel mock etichetat.
+// Activarea după plată live vine din webhook (vezi payments/stripe.js).
 
 const persistence = require("./persistence");
 const { DEFAULT_USER_SUBSCRIPTION } = require("./subscriptions");

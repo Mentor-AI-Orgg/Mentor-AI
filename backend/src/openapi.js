@@ -79,6 +79,14 @@ const spec = {
         responses: { 200: { description: "OK" } }
       }
     },
+    "/account/profile": {
+      patch: {
+        tags: ["account"],
+        security: [{ cookieAuth: [] }],
+        summary: "Actualizează profilul (onboarding, username, clasă)",
+        responses: { 200: { description: "OK" }, 401: { description: "Neautentificat" } }
+      }
+    },
     "/account/export": {
       get: {
         tags: ["account"],
@@ -93,6 +101,21 @@ const spec = {
         security: [{ cookieAuth: [] }],
         summary: "Șterge contul. Body: { confirm: \"DELETE\" }",
         responses: { 200: { description: "Șters" } }
+      }
+    },
+    "/subscriptions/checkout": {
+      post: {
+        tags: ["account"],
+        security: [{ cookieAuth: [] }],
+        summary: "Checkout Stripe sau mock etichetat dacă lipsește STRIPE_SECRET_KEY",
+        responses: { 200: { description: "OK" } }
+      }
+    },
+    "/leaderboard": {
+      get: {
+        tags: ["health"],
+        summary: "Clasament din activitate, cu pseudonime (fără nume reale)",
+        responses: { 200: { description: "OK" } }
       }
     },
     "/links": {

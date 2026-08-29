@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { PLANS } = require("../data/subscriptions");
+const { PLANS, priceForCycle, renewsAtForCycle, normalizeBillingCycle } = require("../data/subscriptions");
 const { getSubscription, setSubscription } = require("../data/subscriptionStore");
 const { sendParentReview, ensureUser } = require("../data/economyStore");
 const { authRequired } = require("../middleware/auth");
+const { stripeConfigured, createCheckoutSession } = require("../payments/stripe");
+const { publicBaseUrl } = require("../publicUrl");
 
 router.get("/", (req, res) => {
   res.json({ subscriptions: PLANS });
@@ -19,7 +21,7 @@ router.get("/me", authRequired, (req, res) => {
   res.json({ subscription: getSubscription(req.auth.email) });
 });
 
-router.post("/checkout", authRequired, (req, res) => {
+router.post("/checkout", authRequired, async (req, res) => {
   const {
     plan_id,
     billing_cycle = "monthly",
@@ -29,46 +31,91 @@ router.post("/checkout", authRequired, (req, res) => {
     parent_message = ""
   } = req.body || {};
 
-  // Abonamentul se activează pentru contul autentificat, nu pentru un user_id
-  // trimis de client, care permitea schimbarea planului oricui.
   const userId = req.auth.email;
   const role = req.auth.role;
   const plan = PLANS.find(p => p.id === plan_id);
   if (!plan) return res.status(404).json({ error: "Plan inexistent." });
 
-  const renewsAt = new Date();
-  renewsAt.setMonth(renewsAt.getMonth() + (billing_cycle === "yearly" ? 12 : 1));
-
+  const billingCycle = normalizeBillingCycle(billing_cycle);
   const user = ensureUser(userId, { role, parentEmail: parent_email });
   const requiresParentReview = role === "student" && Boolean(parent_email);
-  const subscription = setSubscription(userId, {
+
+  const activate = (status, extra = {}) => setSubscription(userId, {
     planId: plan.id,
-    status: requiresParentReview ? "pending_parent_review" : "active",
-    billingCycle: billing_cycle,
-    renewsAt: renewsAt.toISOString(),
+    status,
+    billingCycle,
+    renewsAt: renewsAtForCycle(billingCycle),
     paymentMethod: payment_method,
-    cardLast4: card_last4,
-    reviewRequired: requiresParentReview,
-    parentEmail: parent_email || user.preferences.parentEmail || ""
+    cardLast4: extra.cardLast4 || card_last4,
+    reviewRequired: status === "pending_parent_review",
+    parentEmail: parent_email || user.preferences.parentEmail || "",
+    ...extra
   });
 
-  const parentReview = requiresParentReview
-    ? sendParentReview({
-        userId,
-        parentEmail: parent_email,
-        planId: plan.id,
-        billingCycle: billing_cycle,
-        role,
-        message: parent_message || `Cerere de aprobare pentru planul ${plan.name}.
-Plata este mock, prin card, iar această notificare poate fi înlocuită cu flux real SMTP/Stripe.`
-      })
-    : null;
+  if (requiresParentReview) {
+    const subscription = activate("pending_parent_review");
+    const parentReview = await sendParentReview({
+      userId,
+      parentEmail: parent_email,
+      planId: plan.id,
+      billingCycle,
+      role,
+      message: parent_message || `Cerere de aprobare pentru planul ${plan.name}.`
+    });
+    return res.json({
+      success: true,
+      mocked: !stripeConfigured(),
+      message: `Planul „${plan.name}” așteaptă aprobarea părintelui. Nu s-a inițiat plata.`,
+      subscription,
+      parentReview
+    });
+  }
 
+  if (plan.id === "free" || Number(priceForCycle(plan, billingCycle) || 0) === 0) {
+    const subscription = activate("active", { paymentMethod: "none", cardLast4: "" });
+    return res.json({
+      success: true,
+      mocked: false,
+      message: `Planul „${plan.name}” este activ.`,
+      subscription
+    });
+  }
+
+  if (stripeConfigured()) {
+    const base = publicBaseUrl(req);
+    const created = await createCheckoutSession({
+      email: userId,
+      plan,
+      billingCycle,
+      successUrl: `${base}/?checkout=success&plan=${encodeURIComponent(plan.id)}`,
+      cancelUrl: `${base}/?checkout=cancel`
+    });
+    if (!created.ok) {
+      return res.status(502).json({
+        error: created.error || "Nu am putut deschide plata Stripe.",
+        reason: created.reason
+      });
+    }
+    const subscription = activate("pending_payment", {
+      paymentMethod: "stripe",
+      stripeSessionId: created.id,
+      cardLast4: ""
+    });
+    return res.json({
+      success: true,
+      mocked: false,
+      url: created.url,
+      message: `Redirecționare către Stripe pentru planul „${plan.name}”.`,
+      subscription
+    });
+  }
+
+  const subscription = activate("active");
   res.json({
     success: true,
-    message: `Mock checkout reușit pentru planul „${plan.name}”. Conectează un procesator de plăți real (Stripe/Netopia) pentru tranzacții live.`,
-    subscription,
-    parentReview
+    mocked: true,
+    message: `Checkout mock pentru planul „${plan.name}”. Setează STRIPE_SECRET_KEY pentru plăți live. Netopia poate înlocui Stripe mai târziu.`,
+    subscription
   });
 });
 

@@ -32,26 +32,20 @@ const LeaderboardRow = ({ entry }) => (
   </div>
 );
 
-const Leaderboard = ({ userData }) => {
+const Leaderboard = () => {
   const [state, setState] = useState({ loading: true, entries: [], offline: false });
 
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
-      const result = await MentorAPI.getLeaderboard({
-        limit: 8,
-        name: userData?.name ? `${userData.name} ${userData.surname || ''}`.trim() : '',
-        xp: userData?.xp || 0,
-        streak: userData?.streak || 0,
-        level: userData?.level || 1
-      });
+      const result = await MentorAPI.getLeaderboard({ limit: 8 });
       if (cancelled) return;
       const entries = result.data || [];
-      setState({ loading: false, entries, offline: result.fallback || entries.length === 0 });
+      setState({ loading: false, entries, offline: Boolean(result.fallback) });
     };
     load();
     return () => { cancelled = true; };
-  }, [userData?.name, userData?.xp, userData?.streak, userData?.level]);
+  }, []);
 
   return (
     <section className="leaderboard-card surface" aria-busy={state.loading}>
@@ -68,10 +62,14 @@ const Leaderboard = ({ userData }) => {
       ) : state.offline ? (
         <>
           <div className="leaderboard-offline-note">
-            <i className="fas fa-satellite-dish" /> Clasamentul e momentan indisponibil (server offline sau fără date). Se afișează un placeholder.
+            <i className="fas fa-satellite-dish" /> Clasamentul e momentan indisponibil (server offline).
           </div>
           <LeaderboardSkeleton />
         </>
+      ) : state.entries.length === 0 ? (
+        <div className="leaderboard-offline-note">
+          <i className="fas fa-users" /> Nu sunt încă elevi în clasament. XP-ul vine din activitate, iar numele afișat este un pseudonim.
+        </div>
       ) : (
         <div className="leaderboard-list">
           {state.entries.map(entry => <LeaderboardRow key={entry.id || entry.rank} entry={entry} />)}

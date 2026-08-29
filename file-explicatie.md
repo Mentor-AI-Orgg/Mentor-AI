@@ -1,6 +1,12 @@
 # Arbore de fișiere explicat — Mentor AI v3.0
 
-„Mentor AI" e o aplicație educațională (elevi clasele I–XII) cu un mentor AI de tip scaffolding (nu dă răspunsul direct, ci ghidează), plus gamification (monede, magazin, leaderboard, streak), dashboard-uri pentru părinți/profesori și un „detector de text scris cu AI". Backend Node/Express, frontend React (fără build — JSX compilat live în browser cu Babel Standalone).
+> **Notă (august 2026):** textul de mai jos descrie repo-ul **înainte** de
+> fazele 1–6 (Babel în browser, store-uri doar în memorie, login fără API,
+> clasament hardcodat). Starea actuală, pe PR-uri, este în
+> [IMPLEMENTARE.md](IMPLEMENTARE.md). Frontend-ul se compilează cu Vite;
+> identitatea e pe cookie; datele stau în `data/mentor-ai.json`.
+
+„Mentor AI" e o aplicație educațională (elevi clasele I–XII) cu un mentor AI de tip scaffolding (nu dă răspunsul direct, ci ghidează), plus gamification (monede, magazin, leaderboard, streak), dashboard-uri pentru părinți/profesori și un „detector de text scris cu AI". Backend Node/Express, frontend React.
 
 ```
 project/

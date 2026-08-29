@@ -23,6 +23,8 @@ const { attachUser, authRequired } = require("./middleware/auth");
 const { corsAllowlist } = require("./middleware/corsAllowlist");
 const { generalApiLimiter, chatLimiter, detectLimiter } = require("./middleware/rateLimits");
 const persistence = require("./data/persistence");
+const calendarOauthRoute = require("./routes/calendarOauth");
+const { handleStripeWebhook } = require("./payments/stripe");
 
 function createApp(options = {}) {
   const { autosave = true } = options;
@@ -37,10 +39,24 @@ function createApp(options = {}) {
   app.use(basicAuth({
     user: config.STAGING_AUTH_USER,
     password: config.STAGING_AUTH_PASSWORD,
-    skipPaths: ["/api/health", "/api/v1/health"]
+    skipPaths: [
+      "/api/health",
+      "/api/v1/health",
+      "/api/subscriptions/webhook",
+      "/api/v1/subscriptions/webhook",
+      "/api/calendar/oauth/google/callback",
+      "/api/calendar/oauth/notion/callback",
+      "/api/v1/calendar/oauth/google/callback",
+      "/api/v1/calendar/oauth/notion/callback"
+    ]
   }));
 
   app.use(corsAllowlist);
+
+  // Stripe semnează body-ul brut. Parser-ul JSON trebuie montat DUPĂ webhook.
+  app.post("/api/subscriptions/webhook", express.raw({ type: "application/json" }), handleStripeWebhook);
+  app.post("/api/v1/subscriptions/webhook", express.raw({ type: "application/json" }), handleStripeWebhook);
+
   app.use(express.json({ limit: "10mb" }));
   app.use("/api", generalApiLimiter);
   app.use(attachUser);
@@ -58,6 +74,7 @@ function createApp(options = {}) {
     app.use(`${prefix}/health`, healthRoute);
     app.use(`${prefix}/leaderboard`, leaderboardRoute);
 
+    app.use(`${prefix}/calendar/oauth`, calendarOauthRoute);
     app.use(`${prefix}/chat`, authRequired, chatLimiter, chatRoute);
     app.use(`${prefix}/detect`, authRequired, detectLimiter, detectRoute);
     app.use(`${prefix}/wolfram`, authRequired, wolframRoute);

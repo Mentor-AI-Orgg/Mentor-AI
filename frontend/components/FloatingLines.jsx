@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion.js';
 
 const MAX_GRADIENT_STOPS = 8;
 
@@ -229,6 +230,7 @@ function FloatingLines({
   parallaxStrength = 0.12,
   mixBlendMode = 'screen'
 }) {
+  const prefersReducedMotion = usePrefersReducedMotion();
   const containerRef = useRef(null);
   const targetMouseRef = useRef(new THREE.Vector2(-1000, -1000));
   const currentMouseRef = useRef(new THREE.Vector2(-1000, -1000));
@@ -261,7 +263,7 @@ function FloatingLines({
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || !THREE) return undefined;
+    if (!container || !THREE || prefersReducedMotion) return undefined;
 
     let active = true;
     const { Scene, OrthographicCamera, PlaneGeometry, Mesh, ShaderMaterial, Vector2, Vector3, WebGLRenderer, Clock } = THREE;
@@ -439,14 +441,16 @@ function FloatingLines({
     mouseDamping,
     parallax,
     parallaxStrength,
+    prefersReducedMotion,
     topWavePosition
   ]);
 
   return (
     <div
       ref={containerRef}
-      className="floating-lines-container"
+      className={`floating-lines-container${prefersReducedMotion ? ' is-static' : ''}`}
       style={{ mixBlendMode }}
+      aria-hidden="true"
     />
   );
 }

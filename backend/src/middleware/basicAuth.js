@@ -30,15 +30,17 @@ function parseCredentials(header) {
   return { user: decoded.slice(0, separator), password: decoded.slice(separator + 1) };
 }
 
-function basicAuth({ user, password, skipPaths = [] }) {
+function basicAuth({ user, password, skipPaths = [], skipPrefixes = [] }) {
   if (!user || !password) {
     return (req, res, next) => next();
   }
 
   return (req, res, next) => {
     // Health check-ul rămâne public, ca monitorizarea externă să poată
-    // verifica serverul fără credențiale.
+    // verifica serverul fără credențiale. Webhook-ul Stripe și callback-ul
+    // OAuth vin de la terți, deci nu pot trimite Basic Auth.
     if (skipPaths.includes(req.path)) return next();
+    if (skipPrefixes.some(prefix => req.path === prefix || req.path.startsWith(prefix))) return next();
 
     const credentials = parseCredentials(req.headers.authorization);
     if (credentials && safeEqual(credentials.user, user) && safeEqual(credentials.password, password)) {

@@ -92,7 +92,7 @@ FTP ar dura foarte mult.
 
 O singură dată, după primul deploy: în **Setup Node.js App**, apasă
 **Run NPM Install**. Aplicația are câteva dependințe JS pure (`express`,
-`cors`, `dotenv`, `express-rate-limit`, `zod`), deci durează câteva secunde.
+`cors`, `dotenv`, `express-rate-limit`, `zod`, `nodemailer`), deci durează câteva secunde.
 
 Repetă pasul doar când se schimbă `backend/package.json` sau `package.json`
 din rădăcină.
@@ -128,6 +128,27 @@ STAGING_AUTH_PASSWORD=<alege o parolă>
 ```
 
 Fără chei de AI aplicația funcționează, dar toate răspunsurile sunt mock.
+La fel pentru plăți (Stripe), email (SMTP), SMS (Twilio) și calendar
+(Google/Notion): fără chei, fluxurile rămân mock și răspunsul include
+`mocked: true`.
+
+Pentru plăți live și OAuth, setează și:
+
+```
+APP_BASE_URL=https://domeniul-tau.ro
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+NOTION_CLIENT_ID=
+NOTION_CLIENT_SECRET=
+SMTP_HOST=
+SMTP_FROM=
+```
+
+Webhook-ul Stripe este `POST /api/subscriptions/webhook` (body brut, fără
+JSON parser). Redirectul OAuth este
+`/api/calendar/oauth/{google|notion}/callback`.
 
 Dacă frontend-ul și API-ul sunt pe același domeniu, nu trebuie să setezi
 `CORS_ORIGINS`. Completeaz-o doar dacă apeți API-ul de pe un alt origin
@@ -147,19 +168,15 @@ ai setat variabilele din pasul 5.
 
 ---
 
-## Protejează site-ul până la Faza 1
+## Protecție extra pe prototipul public
 
-Aplicația **nu are încă autentificare reală**. Rutele identifică utilizatorul
-prin `user_id` trimis de client, deci oricine cunoaște adresa poate citi sau
-modifica datele oricărui cont doar schimbând un parametru - inclusiv
-`parent-analytics`, care expune despre un copil `copiedRisk`, `mentorMessages`
-și `detectHistory`.
+Autentificarea pe conturi există (Faza 1): identitatea vine din cookie-ul
+`mentor_session`, nu din `user_id` trimis de client. Cât instanța e un
+prototip pe un URL ghicibil, ține totuși `STAGING_AUTH_USER` și
+`STAGING_AUTH_PASSWORD` setate, ca să nu indexeze motoarele de căutare
+paginile și ca Basic Auth să stea în fața formularului de register.
 
-Până când Faza 1 din [plan-imbunatatiri.md](plan-imbunatatiri.md) este
-implementată:
-
-- ține `STAGING_AUTH_USER` și `STAGING_AUTH_PASSWORD` setate;
-- nu pune date reale despre elevi în aplicație.
+Nu pune date reale despre elevi pe o instanță de staging.
 
 ## Unde stau datele
 
