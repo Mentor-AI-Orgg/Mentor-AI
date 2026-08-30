@@ -3,7 +3,8 @@ const router = express.Router();
 const { PLANS, priceForCycle, renewsAtForCycle, normalizeBillingCycle } = require("../data/subscriptions");
 const { getSubscription, setSubscription } = require("../data/subscriptionStore");
 const { sendParentReview, ensureUser } = require("../data/economyStore");
-const { authRequired } = require("../middleware/auth");
+const { notifyParent } = require("../notify/parentActivity");
+const { authRequired, studentRequired } = require("../middleware/auth");
 const { stripeConfigured, createCheckoutSession } = require("../payments/stripe");
 const { publicBaseUrl } = require("../publicUrl");
 
@@ -17,11 +18,11 @@ router.get("/plans", (req, res) => {
 
 // Lista de planuri de mai sus este publică. De aici încolo, rutele ating un
 // cont, deci cer autentificare și folosesc identitatea din sesiune.
-router.get("/me", authRequired, (req, res) => {
+router.get("/me", authRequired, studentRequired, (req, res) => {
   res.json({ subscription: getSubscription(req.auth.email) });
 });
 
-router.post("/checkout", authRequired, async (req, res) => {
+router.post("/checkout", authRequired, studentRequired, async (req, res) => {
   const {
     plan_id,
     billing_cycle = "monthly",
@@ -71,8 +72,16 @@ router.post("/checkout", authRequired, async (req, res) => {
     });
   }
 
+  const tellParent = () => notifyParent({
+    studentEmail: userId,
+    type: "checkout",
+    note: `Plan ales: ${plan.name} (${billingCycle}).`,
+    meta: { planId: plan.id, billingCycle }
+  });
+
   if (plan.id === "free" || Number(priceForCycle(plan, billingCycle) || 0) === 0) {
     const subscription = activate("active", { paymentMethod: "none", cardLast4: "" });
+    await tellParent();
     return res.json({
       success: true,
       mocked: false,
@@ -101,6 +110,7 @@ router.post("/checkout", authRequired, async (req, res) => {
       stripeSessionId: created.id,
       cardLast4: ""
     });
+    await tellParent();
     return res.json({
       success: true,
       mocked: false,
@@ -111,6 +121,7 @@ router.post("/checkout", authRequired, async (req, res) => {
   }
 
   const subscription = activate("active");
+  await tellParent();
   res.json({
     success: true,
     mocked: true,

@@ -3,7 +3,6 @@ const router = express.Router();
 
 const config = require("../config");
 const {
-  ROLES,
   createAccount,
   authenticate,
   publicAccount,
@@ -12,13 +11,13 @@ const {
   destroySession,
   normalizeEmail
 } = require("../data/authStore");
-const { SESSION_COOKIE, authRequired } = require("../middleware/auth");
+const { SESSION_COOKIE, authRequired, STUDENTS_ONLY } = require("../middleware/auth");
 const { authLimiter } = require("../middleware/rateLimits");
 const { validateBody } = require("../middleware/validate");
 const { registerSchema, loginSchema, forgotPasswordSchema } = require("../validation/schemas");
 const { ensureUser, pushNotification } = require("../data/economyStore");
 const { deliverMessage, smtpConfigured } = require("../notify/deliver");
-const { createInvitation } = require("../data/linkStore");
+const { notifyParent } = require("../notify/parentActivity");
 
 // Aceleași reguli pe care le arată RegisterScreen în interfață. Validarea din
 // browser e doar pentru UX; asta e cea care contează, pentru că un client
@@ -53,7 +52,7 @@ function sessionCookieOptions(maxAge) {
 }
 
 router.post("/register", authLimiter, validateBody(registerSchema), async (req, res) => {
-  const { email, password, role = "student", invite_code: inviteCode = "", parental_consent: parentalConsent, privacy_accepted: privacyAccepted, ...profile } = req.body || {};
+  const { email, password, role = "student", parental_consent: parentalConsent, privacy_accepted: privacyAccepted, ...profile } = req.body || {};
 
   if (!privacyAccepted) {
     return res.status(400).json({
@@ -69,13 +68,15 @@ router.post("/register", authLimiter, validateBody(registerSchema), async (req, 
   if (passwordError) {
     return res.status(400).json({ error: passwordError, field: "password" });
   }
-  if (!ROLES.includes(role)) {
-    return res.status(400).json({ error: "Rol necunoscut.", field: "role" });
+  if (role !== "student") {
+    return res.status(403).json({
+      ...STUDENTS_ONLY,
+      field: "role"
+    });
   }
 
   // Un elev minor nu își poate deschide contul fără un adult de contact și
-  // fără consimțământ explicit. Emailul părintelui nu leagă automat conturile:
-  // trimite doar o invitație (vezi mai jos).
+  // fără consimțământ explicit. Părintele nu își face cont: primește emailuri.
   if (role === "student") {
     if (!isValidEmail(profile.parentEmail)) {
       return res.status(400).json({
@@ -94,21 +95,6 @@ router.post("/register", authLimiter, validateBody(registerSchema), async (req, 
         error: "Contul de elev cere consimțământul parental.",
         field: "parental_consent"
       });
-    }
-  }
-
-  // Rolul de profesor dă acces la analitica mai multor elevi, deci nu poate fi
-  // ales liber de client. Fără un cod de invitație configurat, înregistrarea
-  // ca profesor este blocată complet.
-  if (role === "teacher") {
-    if (!config.TEACHER_INVITE_CODE) {
-      return res.status(403).json({
-        error: "Conturile de profesor se creează doar prin invitație. Contactează administratorul.",
-        field: "role"
-      });
-    }
-    if (inviteCode !== config.TEACHER_INVITE_CODE) {
-      return res.status(403).json({ error: "Codul de invitație nu este valid.", field: "invite_code" });
     }
   }
 
@@ -138,35 +124,23 @@ router.post("/register", authLimiter, validateBody(registerSchema), async (req, 
     username: created.account.profile.username
   });
 
-  // Emailurile de părinte/profesor completate la înregistrare NU mai leagă
-  // conturile direct. Trimit doar o invitație, pe care celălalt cont trebuie
-  // să o accepte - altfel un elev ar putea atașa un adult oarecare la contul
-  // lui, sau invers.
-  const invitations = [];
-  if (created.account.role === "student") {
-    if (created.account.profile.parentEmail) {
-      const invite = createInvitation({
-        fromEmail: created.account.email,
-        fromRole: "student",
-        toEmail: created.account.profile.parentEmail,
-        kind: "parent_child"
-      });
-      if (invite.ok) invitations.push(invite.invitation);
+  const parentNotify = await notifyParent({
+    studentEmail: created.account.email,
+    type: "account_created",
+    note: "Contul a fost creat.",
+    meta: {
+      classLevel: created.account.profile.class,
+      subject: created.account.profile.subject
     }
-    if (created.account.profile.teacherEmail) {
-      const invite = createInvitation({
-        fromEmail: created.account.email,
-        fromRole: "student",
-        toEmail: created.account.profile.teacherEmail,
-        kind: "teacher_student"
-      });
-      if (invite.ok) invitations.push(invite.invitation);
-    }
-  }
+  });
 
   const { token, maxAge } = createSession(created.account.email);
   res.cookie(SESSION_COOKIE, token, sessionCookieOptions(maxAge));
-  res.status(201).json({ success: true, user: publicAccount(created.account), invitations });
+  res.status(201).json({
+    success: true,
+    user: publicAccount(created.account),
+    parentNotified: !parentNotify.skipped
+  });
 });
 
 router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) => {
@@ -182,6 +156,10 @@ router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) =
     return res.status(401).json({ error: "Email sau parolă incorecte." });
   }
 
+  if (result.account.role !== "student") {
+    return res.status(403).json(STUDENTS_ONLY);
+  }
+
   ensureUser(result.account.email, {
     role: result.account.role,
     username: result.account.profile.username,
@@ -191,7 +169,18 @@ router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) =
 
   const { token, maxAge } = createSession(result.account.email);
   res.cookie(SESSION_COOKIE, token, sessionCookieOptions(maxAge));
-  res.json({ success: true, user: publicAccount(result.account) });
+
+  const parentNotify = await notifyParent({
+    studentEmail: result.account.email,
+    type: "login",
+    note: "Elevul s-a autentificat în aplicație."
+  });
+
+  res.json({
+    success: true,
+    user: publicAccount(result.account),
+    parentNotified: !parentNotify.skipped
+  });
 });
 
 router.post("/logout", (req, res) => {
@@ -201,6 +190,11 @@ router.post("/logout", (req, res) => {
 });
 
 router.get("/me", authRequired, (req, res) => {
+  if (req.auth.role !== "student") {
+    destroySession(req.sessionToken);
+    res.clearCookie(SESSION_COOKIE, { path: "/" });
+    return res.status(403).json(STUDENTS_ONLY);
+  }
   res.json({ user: publicAccount(req.auth.account) });
 });
 

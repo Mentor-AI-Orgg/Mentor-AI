@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { MentorAPI } from '../apiClient.js';
-import InvitationsPanel from '../components/InvitationsPanel.jsx';
 import Leaderboard from '../components/Leaderboard.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
@@ -81,7 +80,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange }
           <div>
             <div className="text-xl font-extrabold">{userData.name || t('profile.defaultName')}</div>
             <div className="text-sm text-slate-400">{userData.school || t('profile.personalProfile')}</div>
-            <div className="profile-role-pill">{userData.role === 'parent' ? t('common.parent') : userData.role === 'teacher' ? t('common.teacher') : t('common.student')}</div>
+            <div className="profile-role-pill">{t('common.student')}</div>
           </div>
         </div>
         <div className="mt-6 grid grid-cols-2 gap-3">
@@ -121,11 +120,12 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange }
         </section>
 
         <section className="surface rounded-3xl p-5 profile-tool-card">
-          <div className="eyebrow">Email mock</div>
-          <h3 className="display-font profile-tool-title">Mesaje către părinte sau profesor.</h3>
+          <div className="eyebrow">{t('profile.parentEyebrow')}</div>
+          <h3 className="display-font profile-tool-title">{t('profile.parentTitle')}</h3>
+          <p className="detector-demo-note">{t('profile.parentNote', { email: userData.parentEmail || t('profile.parentEmailMissing') })}</p>
           <div className="profile-inbox">
             {inbox.length === 0 ? (
-              <p className="profile-empty-note">Nu există mesaje trimise încă. Folosește shop-ul sau abonamentele pentru recenzie.</p>
+              <p className="profile-empty-note">{t('profile.parentEmpty')}</p>
             ) : (
               inbox.slice(0, 3).map(message => (
                 <article key={message.id} className="profile-inbox-item">
@@ -165,9 +165,6 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange }
             </select>
           </label>
         </section>
-      </div>
-      <div className="mx-5 mt-5">
-        <InvitationsPanel role={userData.role || 'student'} onToast={onToast} />
       </div>
       <div className="mx-5 mt-5">
         <Leaderboard userData={userData} />

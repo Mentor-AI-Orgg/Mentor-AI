@@ -19,7 +19,7 @@ const linksRoute = require("./routes/links");
 const accountRoute = require("./routes/account");
 const { spec: openapiSpec } = require("./openapi");
 const { basicAuth } = require("./middleware/basicAuth");
-const { attachUser, authRequired } = require("./middleware/auth");
+const { attachUser, authRequired, studentRequired } = require("./middleware/auth");
 const { corsAllowlist } = require("./middleware/corsAllowlist");
 const { generalApiLimiter, chatLimiter, detectLimiter } = require("./middleware/rateLimits");
 const persistence = require("./data/persistence");
@@ -76,17 +76,19 @@ function createApp(options = {}) {
     app.use(`${prefix}/leaderboard`, leaderboardRoute);
     app.use(`${prefix}/curriculum`, curriculumRoute);
 
+    const studentOnly = [authRequired, studentRequired];
+
     app.use(`${prefix}/calendar/oauth`, calendarOauthRoute);
-    app.use(`${prefix}/chat`, authRequired, chatLimiter, chatRoute);
-    app.use(`${prefix}/detect`, authRequired, detectLimiter, detectRoute);
-    app.use(`${prefix}/wolfram`, authRequired, wolframRoute);
-    app.use(`${prefix}/mathpix`, authRequired, mathpixRoute);
-    app.use(`${prefix}/flashcards`, authRequired, flashcardsRoute);
-    app.use(`${prefix}/diagnostics`, authRequired, diagnosticsRoute);
-    app.use(`${prefix}/calendar`, authRequired, calendarRoute);
-    app.use(`${prefix}/economy`, authRequired, economyRoute);
-    app.use(`${prefix}/links`, authRequired, linksRoute);
-    app.use(`${prefix}/account`, authRequired, accountRoute);
+    app.use(`${prefix}/chat`, ...studentOnly, chatLimiter, chatRoute);
+    app.use(`${prefix}/detect`, ...studentOnly, detectLimiter, detectRoute);
+    app.use(`${prefix}/wolfram`, ...studentOnly, wolframRoute);
+    app.use(`${prefix}/mathpix`, ...studentOnly, mathpixRoute);
+    app.use(`${prefix}/flashcards`, ...studentOnly, flashcardsRoute);
+    app.use(`${prefix}/diagnostics`, ...studentOnly, diagnosticsRoute);
+    app.use(`${prefix}/calendar`, ...studentOnly, calendarRoute);
+    app.use(`${prefix}/economy`, ...studentOnly, economyRoute);
+    app.use(`${prefix}/links`, ...studentOnly, linksRoute);
+    app.use(`${prefix}/account`, ...studentOnly, accountRoute);
     app.use(`${prefix}/subscriptions`, subscriptionsRoute);
   }
 

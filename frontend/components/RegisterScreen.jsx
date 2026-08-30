@@ -34,11 +34,11 @@ const FieldStatus = ({ touched, valid }) => {
     : <i className="fas fa-circle-xmark field-status field-status-bad" aria-label="Câmp invalid"></i>;
 };
 
-const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = 'student' }) => {
+const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
   const [form, setForm] = useState({
     name: '', phone: '', email: '', username: '', password: '', confirmPassword: '',
-    role: initialRole, school: '', class: '5', subject: 'matematica', parentEmail: '', teacherEmail: '', childEmail: '',
-    inviteCode: '', parentalConsent: false, privacyAccepted: false
+    role: 'student', school: '', class: '5', subject: 'matematica', parentEmail: '',
+    parentalConsent: false, privacyAccepted: false
   });
   const [touched, setTouched] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -47,8 +47,6 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
   const setField = (key, value) => setForm(prev => ({ ...prev, [key]: value }));
   const markTouched = key => setTouched(prev => ({ ...prev, [key]: true }));
 
-  // Validatori per câmp, în funcție de rol -- fiecare intrare devine
-  // relevantă doar dacă e efectiv afișată pentru rolul curent.
   const validators = useMemo(() => ({
     name: v => (v || '').trim().length >= 3,
     phone: v => isValidPhone(v),
@@ -56,29 +54,17 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
     username: v => (v || '').trim().length >= 3 && !containsForbiddenWord(v),
     password: v => isPasswordValid(v),
     confirmPassword: v => v && v === form.password,
-    school: v => form.role !== 'student' || (v || '').trim().length >= 2,
-    class: v => form.role !== 'student' || ['5', '6', '7', '8'].includes(String(v)),
-    subject: v => (form.role !== 'teacher' && form.role !== 'student') || ['matematica', 'romana'].includes(v),
-    parentEmail: v => (form.role !== 'parent' && form.role !== 'student') || isValidEmail(v),
-    // Contul de profesor vede analitica mai multor elevi, deci serverul cere
-    // un cod de invitație. Îl validăm doar ca prezență; corectitudinea o
-    // stabilește backend-ul.
-    inviteCode: v => form.role !== 'teacher' || (v || '').trim().length > 0,
-    parentalConsent: v => form.role !== 'student' || v === true,
+    school: v => (v || '').trim().length >= 2,
+    class: v => ['5', '6', '7', '8'].includes(String(v)),
+    subject: v => ['matematica', 'romana'].includes(v),
+    parentEmail: v => isValidEmail(v) && v.trim().toLowerCase() !== (form.email || '').trim().toLowerCase(),
+    parentalConsent: v => v === true,
     privacyAccepted: v => v === true
-  }), [form.role, form.password]);
+  }), [form.password, form.email]);
 
   const fieldValid = key => (validators[key] ? validators[key](form[key]) : true);
 
-  // Câmpurile efectiv necesare diferă pe rol: un profesor nu are clasă/
-  // școală de elev, un părinte nu are nici clasă/școală, nici materie.
-  const requiredByRole = {
-    student: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'school', 'class', 'subject', 'parentEmail', 'parentalConsent', 'privacyAccepted'],
-    teacher: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'subject', 'inviteCode', 'privacyAccepted'],
-    parent: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'parentEmail', 'privacyAccepted']
-  };
-
-  const requiredFields = requiredByRole[form.role] || requiredByRole.student;
+  const requiredFields = ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'school', 'class', 'subject', 'parentEmail', 'parentalConsent', 'privacyAccepted'];
   const allValid = requiredFields.every(fieldValid);
 
   const handleSubmit = async () => {
@@ -91,7 +77,7 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
     }
 
     // Contul se creează pe server, deci pot apărea erori pe care validarea din
-    // browser nu le poate prinde: email deja folosit, cod de invitație greșit.
+    // browser nu le poate prinde: email deja folosit, email părinte invalid.
     setSubmitting(true);
     const result = await onContinue(form);
     setSubmitting(false);
@@ -101,82 +87,44 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
     }
   };
 
-  const fieldLabels = {
-    student: [
-      { key: 'name', label: 'Nume complet', type: 'text', placeholder: 'Ex: Andrei Popescu', autoComplete: 'name', hint: 'Minim 3 caractere.' },
-      { key: 'phone', label: 'Număr de telefon', type: 'tel', placeholder: '07xx xxx xxx', autoComplete: 'tel', hint: 'Format românesc, 10 cifre.' },
-      { key: 'email', label: 'Email', type: 'email', placeholder: 'nume@email.com', autoComplete: 'email' },
-      { key: 'username', label: 'Nume de utilizator (public, pe leaderboard)', type: 'text', placeholder: 'Ex: andrei_p', autoComplete: 'off', hint: 'Fără cuvinte nepotrivite.' },
-      { key: 'school', label: 'Școala', type: 'text', placeholder: 'Școala Gimnazială nr. 1', autoComplete: 'off' },
-      {
-        key: 'class',
-        label: 'Clasa',
-        type: 'select',
-        options: [
-          { value: '5', label: 'Clasa a V-a' },
-          { value: '6', label: 'Clasa a VI-a' },
-          { value: '7', label: 'Clasa a VII-a' },
-          { value: '8', label: 'Clasa a VIII-a' }
-        ]
-      },
-      {
-        key: 'subject',
-        label: 'Materia principală',
-        type: 'select',
-        options: [
-          { value: 'matematica', label: 'Matematică' },
-          { value: 'romana', label: 'Limba și literatura română' }
-        ]
-      }
-    ],
-    teacher: [
-      { key: 'name', label: 'Nume complet', type: 'text', placeholder: 'Ex: Prof. Ioana Marin', autoComplete: 'name', hint: 'Minim 3 caractere.' },
-      { key: 'phone', label: 'Număr de telefon', type: 'tel', placeholder: '07xx xxx xxx', autoComplete: 'tel', hint: 'Format românesc, 10 cifre.' },
-      { key: 'email', label: 'Email', type: 'email', placeholder: 'nume@email.com', autoComplete: 'email' },
-      { key: 'username', label: 'Nume de utilizator', type: 'text', placeholder: 'Ex: prof_marin', autoComplete: 'off', hint: 'Fără cuvinte nepotrivite.' },
-      {
-        key: 'subject',
-        label: 'Materia predată',
-        type: 'select',
-        options: [
-          { value: 'matematica', label: 'Matematică' },
-          { value: 'romana', label: 'Limba și literatura română' }
-        ],
-        hint: 'Mentorul acoperă doar aceste două materii de gimnaziu.'
-      }
-    ],
-    parent: [
-      { key: 'name', label: 'Nume complet', type: 'text', placeholder: 'Ex: Maria Popescu', autoComplete: 'name', hint: 'Minim 3 caractere.' },
-      { key: 'phone', label: 'Număr de telefon', type: 'tel', placeholder: '07xx xxx xxx', autoComplete: 'tel', hint: 'Pe acest număr primești codurile de acces prin SMS.' },
-      { key: 'email', label: 'Email', type: 'email', placeholder: 'nume@email.com', autoComplete: 'email' },
-      { key: 'username', label: 'Nume de utilizator', type: 'text', placeholder: 'Ex: maria_p', autoComplete: 'off', hint: 'Fără cuvinte nepotrivite.' }
-    ]
-  };
-
-  const roleFields = fieldLabels[form.role] || fieldLabels.student;
+  const studentFields = [
+    { key: 'name', label: 'Nume complet', type: 'text', placeholder: 'Ex: Andrei Popescu', autoComplete: 'name', hint: 'Minim 3 caractere.' },
+    { key: 'phone', label: 'Număr de telefon', type: 'tel', placeholder: '07xx xxx xxx', autoComplete: 'tel', hint: 'Format românesc, 10 cifre.' },
+    { key: 'email', label: 'Email', type: 'email', placeholder: 'nume@email.com', autoComplete: 'email' },
+    { key: 'username', label: 'Nume de utilizator (public, pe leaderboard)', type: 'text', placeholder: 'Ex: andrei_p', autoComplete: 'off', hint: 'Fără cuvinte nepotrivite.' },
+    { key: 'school', label: 'Școala', type: 'text', placeholder: 'Școala Gimnazială nr. 1', autoComplete: 'off' },
+    {
+      key: 'class',
+      label: 'Clasa',
+      type: 'select',
+      options: [
+        { value: '5', label: 'Clasa a V-a' },
+        { value: '6', label: 'Clasa a VI-a' },
+        { value: '7', label: 'Clasa a VII-a' },
+        { value: '8', label: 'Clasa a VIII-a' }
+      ]
+    },
+    {
+      key: 'subject',
+      label: 'Materia principală',
+      type: 'select',
+      options: [
+        { value: 'matematica', label: 'Matematică' },
+        { value: 'romana', label: 'Limba și literatura română' }
+      ]
+    }
+  ];
 
   return (
     <main className="form-page animate-fadeIn">
       <button onClick={onBack} className="back-link"><i className="fas fa-arrow-left"></i> Înapoi</button>
       <div className="brand-mark form-mark">M</div>
-      <div className="eyebrow">Profilul tău de învățare</div>
+      <div className="eyebrow">Cont de elev</div>
       <h1 className="display-font form-title">Hai să te cunoaștem.</h1>
-      <p className="form-subtitle">Câteva detalii ne ajută să-ți construim un ritm potrivit.</p>
+      <p className="form-subtitle">Mentor AI este doar pentru elevi. Părintele primește pe email tot ce faci aici, fără să-și facă cont.</p>
 
       <div className="form-fields">
-        <label className="field-label">Tip cont
-          <select
-            value={form.role}
-            onChange={e => setForm({ ...form, role: e.target.value })}
-            className="field form-input"
-          >
-            <option value="student">Elev</option>
-            <option value="parent">Părinte</option>
-            <option value="teacher">Profesor</option>
-          </select>
-        </label>
-
-        {roleFields.map(field => (
+        {studentFields.map(field => (
           <div key={field.key}>
             <label className="field-label">
               <span className="field-label-row">
@@ -256,87 +204,33 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
           </label>
         </div>
 
-        {form.role === 'student' && (
-          <div>
-            <label className="field-label">
-              <span className="field-label-row">
-                Email părinte / tutore
-                <FieldStatus touched={Boolean(touched.parentEmail)} valid={fieldValid('parentEmail')} />
-              </span>
-              <input
-                type="email"
-                value={form.parentEmail}
-                onChange={e => setField('parentEmail', e.target.value)}
-                onBlur={() => markTouched('parentEmail')}
-                placeholder="ex: parinte@email.com"
-                className={`field form-input ${touched.parentEmail ? (fieldValid('parentEmail') ? 'field-valid' : 'field-invalid') : ''}`}
-              />
-            </label>
-            <small className="field-hint">Obligatoriu. Trimitem o invitație de conectare; părintele nu vede datele tale până o acceptă.</small>
-          </div>
-        )}
-        {form.role === 'student' && (
-          <label className="field-label">Email profesor (opțional)
+        <div>
+          <label className="field-label">
+            <span className="field-label-row">
+              Email părinte / tutore
+              <FieldStatus touched={Boolean(touched.parentEmail)} valid={fieldValid('parentEmail')} />
+            </span>
             <input
               type="email"
-              value={form.teacherEmail}
-              onChange={e => setField('teacherEmail', e.target.value)}
-              placeholder="ex: profesor@email.com"
-              className="field form-input"
+              value={form.parentEmail}
+              onChange={e => setField('parentEmail', e.target.value)}
+              onBlur={() => markTouched('parentEmail')}
+              placeholder="ex: parinte@email.com"
+              className={`field form-input ${touched.parentEmail ? (fieldValid('parentEmail') ? 'field-valid' : 'field-invalid') : ''}`}
             />
           </label>
-        )}
-        {form.role === 'teacher' && (
-          <div>
-            <label className="field-label">
-              <span className="field-label-row">
-                Cod de invitație
-                <FieldStatus touched={Boolean(touched.inviteCode)} valid={fieldValid('inviteCode')} />
-              </span>
-              <input
-                type="text"
-                value={form.inviteCode}
-                onChange={e => setField('inviteCode', e.target.value)}
-                onBlur={() => markTouched('inviteCode')}
-                placeholder="Codul primit de la administrator"
-                autoComplete="off"
-                className={`field form-input ${touched.inviteCode ? (fieldValid('inviteCode') ? 'field-valid' : 'field-invalid') : ''}`}
-              />
-            </label>
-            <small className="field-hint">Conturile de profesor se creează doar prin invitație, pentru că au acces la analitica elevilor.</small>
-          </div>
-        )}
-        {form.role === 'parent' && (
-          <div>
-            <label className="field-label">
-              <span className="field-label-row">
-                Email elev conectat
-                <FieldStatus touched={Boolean(touched.parentEmail)} valid={fieldValid('parentEmail')} />
-              </span>
-              <input
-                type="email"
-                value={form.parentEmail}
-                onChange={e => setField('parentEmail', e.target.value)}
-                onBlur={() => markTouched('parentEmail')}
-                placeholder="ex: elev@email.com"
-                className={`field form-input ${touched.parentEmail ? (fieldValid('parentEmail') ? 'field-valid' : 'field-invalid') : ''}`}
-              />
-            </label>
-            <small className="field-hint">Vei putea vedea analitica acestui cont și primi coduri de acces prin SMS, niciodată parola contului.</small>
-          </div>
-        )}
+          <small className="field-hint">Obligatoriu și diferit de emailul tău. Părintele nu își face cont: primește pe acest email tot ce faci în aplicație.</small>
+        </div>
 
-        {form.role === 'student' && (
-          <label className={`consent-check ${touched.parentalConsent && !fieldValid('parentalConsent') ? 'consent-check-invalid' : ''}`}>
-            <input
-              type="checkbox"
-              checked={form.parentalConsent}
-              onChange={e => setField('parentalConsent', e.target.checked)}
-              onBlur={() => markTouched('parentalConsent')}
-            />
-            <span>Un părinte sau tutore își dă acordul pentru crearea acestui cont de elev. <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Detalii în politica de confidențialitate</a>.</span>
-          </label>
-        )}
+        <label className={`consent-check ${touched.parentalConsent && !fieldValid('parentalConsent') ? 'consent-check-invalid' : ''}`}>
+          <input
+            type="checkbox"
+            checked={form.parentalConsent}
+            onChange={e => setField('parentalConsent', e.target.checked)}
+            onBlur={() => markTouched('parentalConsent')}
+          />
+          <span>Un părinte sau tutore își dă acordul pentru crearea acestui cont de elev. <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Detalii în politica de confidențialitate</a>.</span>
+        </label>
 
         <label className={`consent-check ${touched.privacyAccepted && !fieldValid('privacyAccepted') ? 'consent-check-invalid' : ''}`}>
           <input
