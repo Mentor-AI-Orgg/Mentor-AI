@@ -94,7 +94,8 @@ const progressSchema = z.object({
     "focus_session",
     "save_session",
     "learn_module",
-    "mentor_message"
+    "mentor_message",
+    "chapter_test"
   ], { errorMap: () => ({ message: "Tip de progres necunoscut." }) }),
   note: z.string().max(200).optional().default(""),
   meta: z.record(z.any()).optional().default({})

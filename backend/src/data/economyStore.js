@@ -274,6 +274,8 @@ function createDefaultUser(userId) {
     mentorAwards: {},
     focusAwards: {},
     sessionAwards: {},
+    practiceSeen: {},
+    practiceTests: {},
     parentNotify: { studyDate: null, loginDate: null },
     coinsEarned: 0,
     coinsSpent: 0,
@@ -294,6 +296,8 @@ function ensureUser(userId, patch = {}) {
   if (!current.mentorAwards) current.mentorAwards = {};
   if (!current.focusAwards) current.focusAwards = {};
   if (!current.sessionAwards) current.sessionAwards = {};
+  if (!current.practiceSeen) current.practiceSeen = {};
+  if (!current.practiceTests) current.practiceTests = {};
   if (!current.parentNotify) current.parentNotify = { studyDate: null, loginDate: null };
   if (current.metrics && current.metrics.lastStudyDate === undefined) current.metrics.lastStudyDate = null;
   if (patch && typeof patch === 'object') {
@@ -716,6 +720,15 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
     }
   }
 
+  if (type === 'chapter_test') {
+    const key = chapterKey(meta.subject, meta.grade, meta.chapterId);
+    const stamp = `${key}:${todayKey}`;
+    if (key && !user.practiceTests[stamp]) {
+      user.practiceTests[stamp] = { at: new Date().toISOString(), score: Number(meta.score) || 0 };
+      awarded = grantAward(user, AWARDS.chapter_test, 'chapter_test', note || 'Test de capitol', meta);
+    }
+  }
+
   if (type === 'mentor_message') {
     const today = user.mentorAwards[todayKey] || 0;
     if (today < 5) {
@@ -741,7 +754,7 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
 }
 
 function logActivity({ userId = 'demo_user', type, note = '', meta = {}, amount = 0 }) {
-  const progressTypes = new Set(['chapter_open', 'session_complete', 'flashcard_known', 'focus_session', 'learn_module', 'save_session']);
+  const progressTypes = new Set(['chapter_open', 'session_complete', 'flashcard_known', 'focus_session', 'learn_module', 'save_session', 'chapter_test']);
   if (type === 'learn_module') {
     return recordProgress({
       userId,

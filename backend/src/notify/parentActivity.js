@@ -31,7 +31,8 @@ const STUDY_TYPES = new Set([
   "flashcard_known",
   "focus_session",
   "chapter_open",
-  "session_complete"
+  "session_complete",
+  "chapter_test"
 ]);
 const SKIP_TYPES = new Set(["claim", "buy", "ai_detect", "checkout", "calendar_event"]);
 

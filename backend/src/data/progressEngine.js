@@ -47,7 +47,8 @@ const AWARDS = {
   focus_25: { coins: 12, xp: 10 },
   focus_50: { coins: 20, xp: 18 },
   mentor_message: { coins: 4, xp: 10 },
-  streak_day: { coins: 5, xp: 5 }
+  streak_day: { coins: 5, xp: 5 },
+  chapter_test: { coins: 10, xp: 15 }
 };
 
 module.exports = { yesterdayKey, levelFromXp, touchStudy, AWARDS };

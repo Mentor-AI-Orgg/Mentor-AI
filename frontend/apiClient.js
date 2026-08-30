@@ -539,6 +539,19 @@ const MentorAPI = {
     }
   },
 
+  async markPracticeSeen(payload) {
+    try {
+      const data = await safeFetchJson('/api/flashcards/seen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
   async runDiagnostics() {
     try {
       const data = await safeFetchJson('/api/diagnostics/full', { method: 'POST' }, 40000);

@@ -1,99 +1,79 @@
 const express = require("express");
 const router = express.Router();
 
-const { callClaude } = require("../providers/claude");
-const { callGPT4o } = require("../providers/openai");
-const { callGemini } = require("../providers/gemini");
+const { pickPractice } = require("../data/practicePicker");
+const { ensureUser, getTodayKey } = require("../data/economyStore");
 
-const ENGINE_CHAIN = [
-  ["claude", callClaude],
-  ["gpt4o", callGPT4o],
-  ["gemini", callGemini]
-];
-
-function buildFlashcardPrompt({ topic, sourceText, subject, classLevel, language, count }) {
-  const base = sourceText
-    ? `Text/lecție sursă:\n"""${sourceText.slice(0, 3000)}"""`
-    : `Subiect: ${topic}`;
-
-  return `${base}\n\nGenerează exact ${count} flashcarduri de studiu pentru un elev de clasa ${classLevel}, materia ${subject}, în limba ${language}.\nRăspunde STRICT cu JSON valid, fără text în plus, fără markdown, în formatul:\n[{"question":"...","answer":"..."}, ...]`;
-}
-
-// Extrage un array JSON din raspunsul modelului, chiar daca modelul mai adauga
-// text/backtick-uri in jur (des intalnit la modele mock/reale).
-function extractJsonArray(text) {
-  if (!text) return null;
-  const match = text.match(/\[[\s\S]*\]/);
-  if (!match) return null;
-  try {
-    const parsed = JSON.parse(match[0]);
-    if (Array.isArray(parsed)) return parsed;
-  } catch (err) {
-    return null;
-  }
-  return null;
-}
-
-function fallbackFlashcards(topicLabel, count) {
-  const generic = [
-    { question: `Ce este ${topicLabel}? Definește pe scurt.`, answer: "Notează definiția cu cuvintele tale, apoi verifică în manual." },
-    { question: `Care este cea mai importantă idee despre ${topicLabel}?`, answer: "Identifică ideea principală și un exemplu concret." },
-    { question: `Dă un exemplu practic pentru ${topicLabel}.`, answer: "Gândește-te la o situație din viața reală unde se aplică." },
-    { question: `Ce greșeală comună apare la ${topicLabel}?`, answer: "Recitește secțiunea și notează unde ai putea greși." },
-    { question: `Cum verifici dacă ai înțeles ${topicLabel}?`, answer: "Explică subiectul cuiva sau ție însuți, fără să te uiți în notițe." }
-  ];
-  return generic.slice(0, count);
-}
-
-router.post("/generate", async (req, res) => {
+router.post("/generate", (req, res) => {
   const {
     topic = "",
-    source_text: sourceText = "",
+    chapter_id: chapterId = "",
     subject = "matematica",
-    class_level: classLevel = 7,
-    language = "ro",
-    count = 6
+    class_level: classLevel = 5,
+    kind = "flashcards",
+    exclude_ids: excludeIds = [],
+    count
   } = req.body || {};
 
-  const topicLabel = topic || subject;
-  if (!topic && !sourceText) {
-    return res.status(400).json({ error: "Trimite fie 'topic', fie 'source_text'." });
+  if (!topic && !chapterId) {
+    return res.status(400).json({ error: "Trimite chapter_id sau topic." });
   }
 
-  const safeCount = Math.min(12, Math.max(3, parseInt(count, 10) || 6));
-  const prompt = buildFlashcardPrompt({ topic: topicLabel, sourceText, subject, classLevel, language, count: safeCount });
-  const messages = [
-    { role: "system", content: "Ești un generator de flashcarduri educaționale. Răspunzi STRICT cu JSON valid." },
-    { role: "user", content: prompt }
-  ];
+  const user = ensureUser(req.auth.email);
+  if (!user.practiceSeen || typeof user.practiceSeen !== "object") user.practiceSeen = {};
 
-  let cards = null;
-  let usedEngine = "fallback";
-  let mocked = true;
+  const preview = pickPractice({
+    subject,
+    grade: classLevel,
+    chapterId,
+    topic,
+    kind: kind === "test" ? "test" : "flashcards",
+    excludeIds: Array.isArray(excludeIds) ? excludeIds : [],
+    seenPoints: [],
+    count
+  });
 
-  for (const [engineName, engineFn] of ENGINE_CHAIN) {
-    const result = await engineFn(messages, language);
-    if (result && result.success) {
-      const parsed = extractJsonArray(result.content);
-      if (parsed && parsed.length) {
-        cards = parsed
-          .filter(c => c && c.question && c.answer)
-          .slice(0, safeCount)
-          .map((c, i) => ({ id: `fc_${i}`, question: String(c.question), answer: String(c.answer) }));
-        usedEngine = result.engine || engineName;
-        mocked = !!result.mocked;
-        if (cards.length) break;
-      }
+  const stored = user.practiceSeen[preview.key] || { points: [], questionIds: [], day: null };
+  const pack = pickPractice({
+    subject,
+    grade: classLevel,
+    chapterId: preview.chapterId,
+    topic,
+    kind: kind === "test" ? "test" : "flashcards",
+    excludeIds: [...new Set([...(Array.isArray(excludeIds) ? excludeIds : []), ...(stored.questionIds || [])])],
+    seenPoints: stored.points || [],
+    count
+  });
+
+  res.json({
+    ...pack,
+    engine_used: "chapter_bank",
+    mocked: false,
+    topic: topic || pack.chapterId
+  });
+});
+
+router.post("/seen", (req, res) => {
+  const { chapter_id: chapterId = "", subject = "matematica", class_level: classLevel = 5, point = "", card_id: cardId = "" } = req.body || {};
+  const user = ensureUser(req.auth.email);
+  if (!user.practiceSeen) user.practiceSeen = {};
+  const pack = pickPractice({ subject, grade: classLevel, chapterId, topic: chapterId, kind: "flashcards", count: 3 });
+  const key = pack.key;
+  if (!user.practiceSeen[key]) user.practiceSeen[key] = { points: [], questionIds: [], day: getTodayKey() };
+  if (point && !user.practiceSeen[key].points.includes(point)) user.practiceSeen[key].points.push(point);
+  if (cardId && !user.practiceSeen[key].questionIds.includes(cardId)) {
+    user.practiceSeen[key].questionIds.push(cardId);
+    user.practiceSeen[key].questionIds = user.practiceSeen[key].questionIds.slice(-80);
+  }
+  const total = pack.coverage.total;
+  res.json({
+    ok: true,
+    coverage: {
+      seen: user.practiceSeen[key].points.length,
+      total,
+      complete: user.practiceSeen[key].points.length >= total
     }
-  }
-
-  if (!cards || !cards.length) {
-    cards = fallbackFlashcards(topicLabel, safeCount).map((c, i) => ({ id: `fc_${i}`, ...c }));
-    usedEngine = "fallback";
-    mocked = true;
-  }
-
-  res.json({ cards, engine_used: usedEngine, mocked, topic: topicLabel });
+  });
 });
 
 module.exports = router;

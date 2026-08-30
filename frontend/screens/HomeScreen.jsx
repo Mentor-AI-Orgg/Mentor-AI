@@ -1,6 +1,7 @@
 import { formatRoDate } from '../userData.js';
 import { useI18n } from '../i18n/index.jsx';
 import { avatarIcon } from '../appearance.js';
+import { dailySlogan } from '../slogans.js';
 
 const HomeScreen = ({ userData, onNavigate }) => {
   const { t, locale } = useI18n();
@@ -22,6 +23,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
           <div className="eyebrow">{dateLabel}</div>
           <h1 className="display-font home-title">{t('home.hello', { name: userData.name || t('home.studentFallback') })}</h1>
           <p className="home-role-tag">{t('home.roleStudent')} · {t('home.gradeOnly', { grade: userData.class || '5' })}</p>
+          <p className="home-slogan">{dailySlogan()}</p>
         </div>
         <button onClick={() => onNavigate('profile')} className="home-avatar" aria-label={t('home.openProfile')}>
           {icon ? <i className={`fas ${icon}`} /> : (userData.name || 'E').charAt(0).toUpperCase()}

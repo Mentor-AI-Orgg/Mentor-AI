@@ -8,6 +8,7 @@ import FloatingLines from './components/FloatingLines.jsx';
 import BottomNav from './components/BottomNav.jsx';
 import Toast from './components/Toast.jsx';
 import SplashScreen from './components/SplashScreen.jsx';
+import WelcomeScreen from './components/WelcomeScreen.jsx';
 import AuthScreen from './components/AuthScreen.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
 import RegisterScreen from './components/RegisterScreen.jsx';
@@ -116,7 +117,7 @@ function AppShell({ userData, setUserData }) {
     const session = await MentorAPI.me();
     if (!session.success) {
       setUserData(prev => ({ ...prev, isLoggedIn: false }));
-      setScreen('auth');
+      setScreen('welcome');
       return;
     }
 
@@ -205,7 +206,7 @@ function AppShell({ userData, setUserData }) {
   const handleLogout = async () => {
     await MentorAPI.logout();
     setUserData(prev => ({ ...prev, isLoggedIn: false, email: '', planId: 'free', coins: 0 }));
-    setScreen('auth');
+    setScreen('welcome');
     setNavScreen('home');
     showToast(t('toast.loggedOut'), 'success');
   };
@@ -347,12 +348,14 @@ function AppShell({ userData, setUserData }) {
     switch (screen) {
       case 'splash':
         return <SplashScreen onFinish={handleSplashFinish} delay={userData.isLoggedIn ? 200 : 2500} />;
+      case 'welcome':
+        return <WelcomeScreen onConnect={() => setScreen('login')} onRegister={() => setScreen('register')} />;
       case 'auth':
         return <AuthScreen onLogin={() => setScreen('login')} onRegister={() => setScreen('register')} />;
       case 'login':
-        return <LoginScreen onBack={() => setScreen('auth')} onLogin={handleLogin} onForgotPassword={handleForgotPassword} />;
+        return <LoginScreen onBack={() => setScreen('welcome')} onLogin={handleLogin} onForgotPassword={handleForgotPassword} />;
       case 'register':
-        return <RegisterScreen onBack={() => setScreen('auth')} onContinue={handleRegister} onValidationError={message => showToast(message, 'warning')} />;
+        return <RegisterScreen onBack={() => setScreen('welcome')} onContinue={handleRegister} onValidationError={message => showToast(message, 'warning')} />;
       case 'onboarding':
         return currentOnboarding.step === 1 ? (
           <main className="onboarding-page animate-fadeIn">

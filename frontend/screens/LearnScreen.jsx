@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import FocusTimer from '../components/FocusTimer.jsx';
 import FlashCards from '../components/FlashCards.jsx';
+import ChapterQuiz from '../components/ChapterQuiz.jsx';
+import { dailySlogan } from '../slogans.js';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
 
 const makeConversationId = prefix => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
@@ -68,6 +70,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [sessionDone, setSessionDone] = useState(false);
+  const [quizUnit, setQuizUnit] = useState(null);
 
   useEffect(() => {
     if (studyFocus.subject) setSubject(normalizeSubject(studyFocus.subject));
@@ -190,7 +193,8 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
         <div className="learn-hero">
           <div className="eyebrow">LECȚII DE GIMNAZIU</div>
           <h1 className="display-font screen-title">Română și matematică, clasele 5–8.</h1>
-          <p className="screen-subtitle">Alege materia, apoi clasa. Capitolele sunt explicate cu cuvintele mele, după programa oficială — nu copiez manualul digital.</p>
+          <p className="screen-subtitle">Alege materia, apoi clasa. După lecție poți genera un test, de câte ori vrei, până prinzi tot capitolul.</p>
+          <p className="learn-slogan">{dailySlogan()}</p>
         </div>
       </header>
 
@@ -204,6 +208,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
               setSubject(item.id);
               setOpenChapter(null);
               setSession(null);
+              setQuizUnit(null);
             }}
           >
             <i className={`fas ${item.icon}`} />
@@ -225,6 +230,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                   setGrade(item);
                   setOpenChapter(null);
                   setSession(null);
+                  setQuizUnit(null);
                 }}
               >
                 {gradeLabel(item)}
@@ -261,6 +267,9 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                         <button type="button" className="ghost-button result-action" onClick={() => askMentor(unit)}>
                           Întreabă mentorul <i className="fas fa-comments" />
                         </button>
+                        <button type="button" className="ghost-button result-action" onClick={() => setQuizUnit(unit)}>
+                          Generează test <i className="fas fa-clipboard-check" />
+                        </button>
                         <button type="button" className="accent-button result-action" onClick={() => startSession(unit)} disabled={loading}>
                           {loading && openChapter === unit.id ? 'Pregătesc sesiunea…' : 'Sesiune de 5 minute'}
                         </button>
@@ -296,9 +305,26 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             <button type="button" className="ghost-button result-action" onClick={saveForLater}>
               {saved ? 'Salvat în lista ta' : 'Salvează pentru mai târziu'} <i className="fas fa-bookmark" />
             </button>
+            <button type="button" className="ghost-button result-action" onClick={() => setQuizUnit({ id: session.chapterId || openChapter, title: session.title, inOwnWords: session.objective })}>
+              Generează test <i className="fas fa-clipboard-check" />
+            </button>
             <button type="button" className="accent-button result-action" onClick={() => askMentor({ id: openChapter, title: session.title, inOwnWords: session.objective })}>Continuă cu mentorul</button>
           </div>
         </section>
+      )}
+
+      {quizUnit && (
+        <ChapterQuiz
+          unit={quizUnit}
+          subject={subject}
+          grade={grade}
+          onClose={() => setQuizUnit(null)}
+          onRewardClaim={onRewardClaim}
+          onAskMentor={unit => {
+            setQuizUnit(null);
+            askMentor(unit);
+          }}
+        />
       )}
 
       {savedSessions.length > 0 && (
@@ -321,8 +347,9 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           userData={userData}
           subject={subject || 'matematica'}
           classLevel={grade}
-          presetTopics={units.map(unit => unit.title)}
+          chapters={units}
           onRewardClaim={onRewardClaim}
+          onAskMentor={askMentor}
         />
       </div>
     </main>

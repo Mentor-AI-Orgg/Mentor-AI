@@ -1,76 +1,65 @@
 import { useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 
-const FlashCard = ({ card, flipped, onFlip }) => (
-  <div className={`flashcard ${flipped ? 'is-flipped' : ''}`} onClick={onFlip} role="button" tabIndex={0}
-    onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onFlip(); } }}>
-    <div className="flashcard-inner">
-      <div className="flashcard-face flashcard-front">
-        <span className="eyebrow">Întrebare</span>
-        <p>{card.question}</p>
-        <small>Atinge pentru răspuns</small>
-      </div>
-      <div className="flashcard-face flashcard-back">
-        <span className="eyebrow">Răspuns</span>
-        <p>{card.answer}</p>
-      </div>
-    </div>
-  </div>
-);
+const letters = ['A', 'B', 'C', 'D'];
 
-const FlashCards = ({ userData, presetTopics = [], onRewardClaim, subject, classLevel }) => {
-  const [customPrompt, setCustomPrompt] = useState('');
+const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLevel, onAskMentor }) => {
   const [cards, setCards] = useState([]);
   const [index, setIndex] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [picked, setPicked] = useState(null);
   const [known, setKnown] = useState({});
-  const [source, setSource] = useState('');
+  const [source, setSource] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [coverage, setCoverage] = useState(null);
+  const [exclude, setExclude] = useState([]);
 
-  const generate = async topic => {
-    const finalTopic = topic || customPrompt.trim();
-    if (!finalTopic || loading) return;
+  const generate = async (unit, more = false) => {
+    if (!unit || loading) return;
     setLoading(true);
-    setFlipped(false);
+    setPicked(null);
     setIndex(0);
-    setKnown({});
-    setSource(finalTopic);
-
-    if (MentorAPI.logActivity) {
-      MentorAPI.logActivity({ user_id: userData?.email || 'demo_user', type: 'flashcards_generate', note: finalTopic, meta: { topic: finalTopic, presetCount: presetTopics.length } });
+    if (!more) {
+      setKnown({});
+      setExclude([]);
     }
-
+    setSource(unit);
+    const skip = more ? exclude : [];
     const result = await MentorAPI.generateFlashcards({
-      topic: finalTopic,
-      subject: subject || userData?.subject || userData?.profile || 'matematica',
+      chapter_id: unit.id,
+      topic: unit.title,
+      subject: subject || userData?.subject || 'matematica',
       class_level: classLevel || userData?.class || 5,
-      language: userData?.language || 'ro',
+      kind: 'flashcards',
+      exclude_ids: skip,
       count: 6
     });
-
-    if (result.success && result.data?.cards?.length) {
-      setCards(result.data.cards);
-    } else {
-      setCards([
-        { id: 'fc_fallback_0', question: `Ce știi deja despre „${finalTopic}”?`, answer: 'Notează 2 idei, apoi verifică-le cu materialul de curs.' },
-        { id: 'fc_fallback_1', question: `Dă un exemplu pentru „${finalTopic}”.`, answer: 'Gândește-te la o aplicație concretă, din viața reală.' }
-      ]);
-    }
+    const next = result.success && result.data?.cards?.length ? result.data.cards : [];
+    setCards(next);
+    setCoverage(result.data?.coverage || null);
+    setExclude(prev => [...new Set([...prev, ...next.map(card => card.id)])]);
     setLoading(false);
   };
 
-  const markKnown = value => {
-    const nextKnown = { ...known, [cards[index].id]: value };
-    setKnown(nextKnown);
-    if (index < cards.length - 1) {
-      setIndex(i => i + 1);
-      setFlipped(false);
-    }
-    if (value) {
+  const choose = optionIndex => {
+    if (picked != null || !cards[index]) return;
+    const card = cards[index];
+    const ok = optionIndex === card.correct;
+    setPicked(optionIndex);
+    setKnown(prev => ({ ...prev, [card.id]: ok }));
+    MentorAPI.markPracticeSeen({
+      chapter_id: source?.id,
+      subject,
+      class_level: classLevel,
+      point: card.point,
+      card_id: card.id
+    }).then(res => {
+      if (res.success) setCoverage(res.data.coverage || coverage);
+    });
+    if (ok) {
       MentorAPI.recordProgress({
         type: 'flashcard_known',
-        note: source || customPrompt.trim() || 'flashcards',
-        meta: { topic: source || customPrompt.trim() || 'flashcards' }
+        note: source?.title || 'flashcards',
+        meta: { topic: source?.title || 'flashcards', chapterId: source?.id, subject, grade: classLevel }
       }).then(result => {
         if (result.success && result.data?.awarded && typeof onRewardClaim === 'function') {
           onRewardClaim({
@@ -84,65 +73,94 @@ const FlashCards = ({ userData, presetTopics = [], onRewardClaim, subject, class
     }
   };
 
-  const known_count = Object.values(known).filter(Boolean).length;
+  const goNext = () => {
+    if (index < cards.length - 1) {
+      setIndex(i => i + 1);
+      setPicked(null);
+    }
+  };
+
+  const card = cards[index];
+  const hits = Object.values(known).filter(Boolean).length;
   const reviewed = Object.keys(known).length;
 
   return (
     <section className="flashcards-card surface">
       <div className="focus-timer-head">
         <div>
-          <div className="eyebrow">Flashcarduri</div>
-          <h3 className="display-font">Repetiție rapidă.</h3>
+          <div className="eyebrow">Flashcarduri de teorie</div>
+          <h3 className="display-font">4 variante. Alegi. Vezi imediat.</h3>
         </div>
-        {cards.length > 0 && <span className="learn-chip"><i className="fas fa-check" /> {known_count}/{reviewed} știute</span>}
+        {reviewed > 0 && <span className="learn-chip"><i className="fas fa-check" /> {hits}/{reviewed}</span>}
       </div>
+      <p className="flashcards-empty">Alege capitolul. Poți cere alt set până prinzi toate ideile.</p>
 
-      {presetTopics.length > 0 && (
+      {chapters.length > 0 && (
         <div className="flashcards-presets">
-          {presetTopics.map(t => (
-            <button key={t} type="button" className="focus-preset-btn" onClick={() => generate(t)} disabled={loading}>{t}</button>
+          {chapters.map(unit => (
+            <button
+              key={unit.id}
+              type="button"
+              className={`focus-preset-btn ${source?.id === unit.id ? 'selected' : ''}`}
+              onClick={() => generate(unit, false)}
+              disabled={loading}
+            >
+              {unit.title}
+            </button>
           ))}
         </div>
       )}
 
-      <div className="flashcards-custom-row">
-        <input
-          value={customPrompt}
-          onChange={e => setCustomPrompt(e.target.value)}
-          placeholder="Sau scrie orice subiect / lipește un text de lecție..."
-          onKeyDown={e => { if (e.key === 'Enter') generate(); }}
-        />
-        <button type="button" className="accent-button" onClick={() => generate()} disabled={loading || !customPrompt.trim()}>
-          {loading ? <i className="fas fa-spinner fa-spin" /> : <i className="fas fa-wand-magic-sparkles" />}
-        </button>
-      </div>
-
-      {loading && (
-        <div className="flashcard-skeleton skeleton" aria-hidden="true"></div>
+      {coverage && (
+        <p className="quiz-coverage">Idei atinse: {coverage.seen}/{coverage.total}{coverage.complete ? ' · capitol acoperit, poți recapitula' : ''}</p>
       )}
 
-      {!loading && cards.length > 0 && (
+      {loading && <div className="flashcard-skeleton skeleton" aria-hidden="true" />}
+
+      {!loading && card && (
         <>
-          <div className="flashcards-progress-track"><div style={{ width: `${((index) / cards.length) * 100}%` }}></div></div>
-          <FlashCard card={cards[index]} flipped={flipped} onFlip={() => setFlipped(f => !f)} />
+          <div className="flashcards-progress-track"><div style={{ width: `${((index + (picked != null ? 1 : 0)) / cards.length) * 100}%` }} /></div>
+          <p className="quiz-question">{card.question}</p>
+          <div className="quiz-options">
+            {card.options.map((option, optionIndex) => {
+              const state = picked == null ? '' : optionIndex === card.correct ? 'is-correct' : optionIndex === picked ? 'is-wrong' : '';
+              return (
+                <button
+                  key={`${card.id}-${optionIndex}`}
+                  type="button"
+                  className={`quiz-option ${state}`}
+                  disabled={picked != null}
+                  onClick={() => choose(optionIndex)}
+                >
+                  <em>{letters[optionIndex]}</em>
+                  <span>{option}</span>
+                </button>
+              );
+            })}
+          </div>
+          {picked != null && (
+            <p className={`quiz-feedback ${picked === card.correct ? 'ok' : 'bad'}`}>
+              {picked === card.correct ? 'Corect.' : 'Ai greșit.'} {card.explain}
+            </p>
+          )}
           <div className="flashcards-nav">
-            <button type="button" className="ghost-button" disabled={index === 0} onClick={() => { setIndex(i => Math.max(0, i - 1)); setFlipped(false); }}>
+            <button type="button" className="ghost-button" disabled={index === 0} onClick={() => { setIndex(i => i - 1); setPicked(null); }}>
               <i className="fas fa-arrow-left" />
             </button>
-            <div className="flashcards-nav-actions">
-              <button type="button" className="flashcard-mark unknown" onClick={() => markKnown(false)}><i className="fas fa-xmark" /> Nu știu</button>
-              <button type="button" className="flashcard-mark known" onClick={() => markKnown(true)}><i className="fas fa-check" /> Știu</button>
-            </div>
-            <button type="button" className="ghost-button" disabled={index === cards.length - 1} onClick={() => { setIndex(i => Math.min(cards.length - 1, i + 1)); setFlipped(false); }}>
+            <button type="button" className="accent-button" disabled={picked == null} onClick={index < cards.length - 1 ? goNext : () => generate(source, true)}>
+              {index < cards.length - 1 ? 'Următorul' : 'Alt set'}
+            </button>
+            <button type="button" className="ghost-button" disabled={index === cards.length - 1} onClick={goNext}>
               <i className="fas fa-arrow-right" />
             </button>
           </div>
-          <div className="flashcards-meta">Cardul {index + 1} din {cards.length} · subiect: {source}</div>
+          <div className="flashcards-meta">Cardul {index + 1} din {cards.length} · {source?.title}</div>
+          {typeof onAskMentor === 'function' && source && (
+            <button type="button" className="ghost-button" onClick={() => onAskMentor(source)}>
+              Întreabă mentorul <i className="fas fa-comments" />
+            </button>
+          )}
         </>
-      )}
-
-      {!loading && cards.length === 0 && (
-        <p className="flashcards-empty">Alege un modul de mai sus sau scrie un subiect pentru a genera flashcarduri.</p>
       )}
     </section>
   );
