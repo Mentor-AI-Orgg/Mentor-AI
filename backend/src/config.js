@@ -13,10 +13,11 @@ const processOauthSecret = crypto.randomBytes(32).toString("hex");
 module.exports = {
   PORT: process.env.PORT || 3001,
 
-  // Protecție temporară la nivel de site, activă doar dacă ambele valori
-  // sunt setate. Vezi backend/src/middleware/basicAuth.js.
-  STAGING_AUTH_USER: process.env.STAGING_AUTH_USER || "",
-  STAGING_AUTH_PASSWORD: process.env.STAGING_AUTH_PASSWORD || "",
+  // Parolă HTTP Basic pe tot site-ul. Oprimă implicit, chiar dacă pe host
+  // au rămas STAGING_AUTH_USER / STAGING_AUTH_PASSWORD din prototip.
+  // Se reactivează doar cu ENABLE_STAGING_AUTH=1 plus ambele valori.
+  STAGING_AUTH_USER: process.env.ENABLE_STAGING_AUTH === "1" ? (process.env.STAGING_AUTH_USER || "") : "",
+  STAGING_AUTH_PASSWORD: process.env.ENABLE_STAGING_AUTH === "1" ? (process.env.STAGING_AUTH_PASSWORD || "") : "",
 
   // Cookie-ul de sesiune se trimite doar pe HTTPS în producție.
   IS_PRODUCTION: process.env.NODE_ENV === "production",

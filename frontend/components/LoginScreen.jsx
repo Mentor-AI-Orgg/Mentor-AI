@@ -55,7 +55,6 @@ const LoginScreen = ({ onBack, onLogin, onForgotPassword }) => {
         </label>
 
         {error && <div className="form-error" role="alert"><i className="fas fa-circle-exclamation"></i> {error}</div>}
-        <p className="form-subtitle">{t('login.siteHint')}</p>
 
         <button type="submit" className="accent-button form-submit" disabled={!canSubmit}>
           {loading ? t('login.submitting') : <>{t('login.submit')} <i className="fas fa-arrow-right"></i></>}

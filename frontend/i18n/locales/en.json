@@ -49,8 +49,7 @@
     "submit": "Sign in",
     "submitting": "Signing in...",
     "forgot": "Forgot your password?",
-    "error": "Incorrect email or password.",
-    "siteHint": "If the browser asks for a site password, that is the DirectAdmin staging pair, not your account password."
+    "error": "Incorrect email or password."
   },
   "nav": {
     "home": "Home",

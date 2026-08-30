@@ -120,12 +120,10 @@ root, deci un `backend/.env` ar fi ignorat în silence - exact genul de problem�
 care se depanează greu. Variabilele setate din panel evită complet ambiguitatea.
 
 Variabilele disponibile sunt documentate în
-[backend/.env.example](backend/.env.example). Minimul pentru producție:
-
-```
-STAGING_AUTH_USER=<alege un user>
-STAGING_AUTH_PASSWORD=<alege o parolă>
-```
+[backend/.env.example](backend/.env.example). Nu e nevoie de parolă de
+staging: elevul intră cu emailul și parola contului. Dacă vrei din nou
+poarta HTTP Basic, pune `ENABLE_STAGING_AUTH=1` plus `STAGING_AUTH_USER`
+și `STAGING_AUTH_PASSWORD`.
 
 Fără chei de AI aplicația funcționează, dar toate răspunsurile sunt mock.
 La fel pentru plăți (Stripe), email (SMTP), SMS (Twilio) și calendar

@@ -129,4 +129,15 @@ describe('auth', () => {
     const res = await request(app).get('/api/auth/me');
     expect(res.status).toBe(401);
   });
+
+  it('does not ask for a site-wide staging password', async () => {
+    const home = await request(app).get('/');
+    expect(home.text).not.toMatch(/Acces restricționat/);
+    expect(home.headers['www-authenticate']).toBeUndefined();
+    const login = await request(app)
+      .post('/api/auth/login')
+      .send({ email: studentEmail, password: 'Wrongpass1!' });
+    expect(login.text).not.toMatch(/Acces restricționat/);
+    expect(login.body.error).toMatch(/Email sau parolă/i);
+  });
 });
