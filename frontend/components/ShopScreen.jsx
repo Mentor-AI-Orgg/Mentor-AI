@@ -40,12 +40,14 @@ const ShopRewardCard = ({ reward, loading, onClaim, claimState }) => {
   );
 };
 
-const ShopItemCard = ({ item, owned, equipped, onBuy, onEquip, buying, equipping }) => {
+const ShopItemCard = ({ item, owned, equipped, onBuy, onEquip, buying, equipping, userLevel }) => {
   const isEquipped = equipped === item.id;
+  const needsLevel = Number(item.minLevel || 0);
+  const locked = !owned && needsLevel > 0 && Number(userLevel || 1) < needsLevel;
   return (
-    <div className={`shop-item-card surface ${owned ? 'owned' : ''} ${isEquipped ? 'equipped' : ''}`}>
+    <div className={`shop-item-card surface ${owned ? 'owned' : ''} ${isEquipped ? 'equipped' : ''} ${locked ? 'is-locked' : ''}`}>
       <div className="shop-item-head">
-        <div className="shop-item-badge">{item.rarity}</div>
+        <div className="shop-item-badge">{locked ? `Nivel ${needsLevel}` : item.rarity}</div>
         <div className="shop-item-price"><i className="fas fa-coins" /> {formatCoins(item.price)}</div>
       </div>
       <div className="shop-item-visual" style={item.accent ? { color: item.accent } : undefined}>
@@ -53,6 +55,7 @@ const ShopItemCard = ({ item, owned, equipped, onBuy, onEquip, buying, equipping
       </div>
       <h4>{item.name}</h4>
       <p>{item.description}</p>
+      {locked && <small className="shop-voice-note">Mythic: ai nevoie de nivelul {needsLevel}. Continuă să înveți, nu se cumpără cu lei.</small>}
       <div className="shop-item-footer">
         <span>{CATEGORY_META[item.category]?.label || item.category}</span>
         {owned ? (
@@ -60,8 +63,8 @@ const ShopItemCard = ({ item, owned, equipped, onBuy, onEquip, buying, equipping
             {isEquipped ? 'Pe profil' : equipping ? '...' : 'Poartă'}
           </button>
         ) : (
-          <button type="button" className="accent-button" disabled={buying} onClick={() => onBuy(item)}>
-            {buying ? '...' : 'Cumpără'}
+          <button type="button" className="accent-button" disabled={buying || locked} onClick={() => onBuy(item)}>
+            {locked ? `Nivel ${needsLevel}` : buying ? '...' : 'Cumpără'}
           </button>
         )}
       </div>
@@ -197,7 +200,11 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
       if (onRewardToast) onRewardToast('Obiect cumpărat. Îl vezi pe Home și în profil.');
       return;
     }
-    if (onRewardToast) onRewardToast('Nu ai destule monede pentru obiectul ales.', 'warning');
+    if (result.data?.reason === 'level_required') {
+      if (onRewardToast) onRewardToast(`Mythic de la nivelul ${result.data.minLevel}. Acum ești nivelul ${result.data.level}.`, 'warning');
+      return;
+    }
+    if (onRewardToast) onRewardToast('Nu ai destule monede de studiu pentru obiectul ales.', 'warning');
   };
 
   const applyEquip = result => {
@@ -271,10 +278,10 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         <div>
           <div className="eyebrow">Magazinul tău</div>
           <h1 className="display-font shop-title">Câștigă din învățare și personalizează aplicația.</h1>
-          <p className="shop-subtitle">Monedele vin din capitole, flashcarduri, focus și mentor — nu din formulare. Nu sunt bani reali și nu deblochează un abonament.</p>
+          <p className="shop-subtitle">Plătești cu monede de studiu — nu cu lei. Le iei din capitole, teste, flashcarduri, focus și mentor. Mythic cere nivelul 5.</p>
         </div>
         <div className="shop-balance-card">
-          <span>Monede disponibile</span>
+          <span>Monede de studiu</span>
           <strong>{formatCoins(summary?.balance ?? userData.coins ?? 0)}</strong>
           <small>{summary?.xp || userData.xp || 0} XP · nivel {summary?.level || userData.level || 1}</small>
         </div>
@@ -345,6 +352,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
                 equipping={equippingId === item.id}
                 onBuy={item => setPendingItem(item)}
                 onEquip={handleEquipItem}
+                userLevel={summary?.level || userData.level || 1}
               />
             ))}
           </div>
@@ -368,9 +376,9 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
           </button>
         </div>
         <div className="shop-notes">
-          <div><strong>Cont elev</strong><span>Monedele vin din învățare verificată.</span></div>
-          <div><strong>Monede</strong><span>Nu sunt lei. Se cheltuie pe avatar și fundal. Titlurile se deblochează din faptă.</span></div>
-          <div><strong>Acces</strong><span>Mentorul, lecțiile și flashcardurile rămân gratuite.</span></div>
+          <div><strong>Monede de studiu</strong><span>Nu sunt lei. Se cheltuie doar pe avatar și fundal.</span></div>
+          <div><strong>Cum le iei</strong><span>Logare 30, capitol 8, sesiune 15, flashcarduri 10, test 10, focus 12–20, mentor 4, streak 5. Jackpot lunar 50.</span></div>
+          <div><strong>Mythic</strong><span>Ultima raritate se cumpără de la nivelul 5 în sus.</span></div>
         </div>
       </section>
 
@@ -378,7 +386,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         <div className="shop-confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="shop-confirm-title">
           <div className="shop-confirm-card surface">
             <h3 id="shop-confirm-title" className="display-font">Confirmă cumpărarea</h3>
-            <p>Vrei să cumperi <strong>{pendingItem.name}</strong> pentru {formatCoins(pendingItem.price)} monede?</p>
+            <p>Vrei să cumperi <strong>{pendingItem.name}</strong> pentru {formatCoins(pendingItem.price)} monede de studiu?</p>
             <div className="shop-confirm-actions">
               <button type="button" className="ghost-button" onClick={() => setPendingItem(null)} disabled={Boolean(buyingId)}>Anulează</button>
               <button type="button" className="accent-button" onClick={() => handleBuy(pendingItem.id)} disabled={Boolean(buyingId)}>

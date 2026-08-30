@@ -777,6 +777,18 @@ function purchaseItem({ userId = 'demo_user', itemId }) {
   if (user.inventory.includes(item.id)) {
     return { ok: false, reason: 'already_owned', balance: user.balance };
   }
+  const minLevel = Number(item.minLevel || 0);
+  const level = levelFromXp(user.xp || 0).level;
+  if (minLevel && level < minLevel) {
+    return {
+      ok: false,
+      reason: 'level_required',
+      minLevel,
+      level,
+      balance: user.balance,
+      item
+    };
+  }
   const spend = spendCoins(user, item.price, 'purchase', `Cumpărare: ${item.name}`, { itemId: item.id });
   if (!spend) {
     return { ok: false, reason: 'insufficient_coins', balance: user.balance, item };

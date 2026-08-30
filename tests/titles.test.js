@@ -47,6 +47,8 @@ describe('shop titles and equip', () => {
     expect(items.find(item => item.id === 'avatar-detective').emoji).toBe('🕵️');
     expect(items.find(item => item.id === 'theme-library').emoji).toBe('📚');
     expect(items.find(item => item.id === 'avatar-mentor-legend').price).toBe(220);
+    expect(items.find(item => item.id === 'avatar-unicorn').minLevel).toBe(5);
+    expect(items.filter(item => item.rarity === 'Mythic').every(item => item.minLevel === 5)).toBe(true);
   });
 
   it('unlocks Prima lecție after a finished chapter and lets the student wear it', async () => {
@@ -83,5 +85,28 @@ describe('shop titles and equip', () => {
     const clear = await agent.post('/api/economy/equip').send({ slot: 'avatar', item_id: '' });
     expect(clear.status).toBe(200);
     expect(clear.body.equipped.avatar).toBeFalsy();
+  });
+
+  it('blocks Mythic purchases before level 5', async () => {
+    const agent = await registerStudent();
+    await agent.post('/api/economy/claim').send({ type: 'login_bonus' });
+    const blocked = await agent.post('/api/economy/buy').send({ item_id: 'avatar-unicorn' });
+    expect(blocked.status).toBe(400);
+    expect(blocked.body.reason).toBe('level_required');
+    expect(blocked.body.minLevel).toBe(5);
+
+    for (let i = 0; i < 26; i += 1) {
+      await agent.post('/api/economy/progress').send({
+        type: 'session_complete',
+        meta: { subject: 'matematica', grade: '5', chapterId: `lvl-${i}`, title: `Cap ${i}` }
+      });
+    }
+    const summary = await agent.get('/api/economy/summary');
+    expect(summary.body.summary.level).toBeGreaterThanOrEqual(5);
+    expect(summary.body.summary.balance).toBeGreaterThanOrEqual(280);
+
+    const buy = await agent.post('/api/economy/buy').send({ item_id: 'avatar-unicorn' });
+    expect(buy.status).toBe(200);
+    expect(buy.body.inventory).toContain('avatar-unicorn');
   });
 });

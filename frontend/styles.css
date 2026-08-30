@@ -1043,6 +1043,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   line-height: 1.5;
 }
 .shop-item-emoji { font-size: 42px; line-height: 1; }
+.shop-item-card.is-locked { opacity: 0.72; }
 .friend-card-avatar {
   width: 40px;
   height: 40px;
