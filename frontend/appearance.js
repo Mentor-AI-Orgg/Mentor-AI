@@ -1,26 +1,4 @@
-const AVATAR_ICONS = {
-  'avatar-neon-fox': 'fa-dog',
-  'avatar-starlight-owl': 'fa-crow',
-  'avatar-pixel-tiger': 'fa-cat',
-  'avatar-cosmic-bear': 'fa-paw',
-  'avatar-hero-robot': 'fa-robot',
-  'avatar-galaxy-kid': 'fa-user-astronaut',
-  'avatar-mentor-legend': 'fa-crown'
-};
-
-const THEME_ACCENTS = {
-  'theme-pink-pulse': '#ff8fa3',
-  'theme-orange-ember': '#ffb347',
-  'theme-red-rush': '#ff6b6b',
-  'theme-mint-aurora': '#63f2c7',
-  'theme-golden-sun': '#ffd166',
-  'theme-night-aurora': '#6fd7ff',
-  'theme-violet-comet': '#b9a7ff'
-};
-
-function avatarIcon(avatarId) {
-  return AVATAR_ICONS[avatarId] || null;
-}
+import { AVATAR_ICONS, THEME_ACCENTS, avatarIcon, itemEmoji } from './shopLook.js';
 
 function applyTheme(themeId) {
   if (typeof document === 'undefined') return;
@@ -51,4 +29,4 @@ function applyProgress(summary = {}, prev = {}) {
   };
 }
 
-export { AVATAR_ICONS, THEME_ACCENTS, avatarIcon, applyTheme, applyProgress };
+export { AVATAR_ICONS, THEME_ACCENTS, avatarIcon, itemEmoji, applyTheme, applyProgress };

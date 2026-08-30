@@ -49,7 +49,7 @@ const ShopItemCard = ({ item, owned, equipped, onBuy, onEquip, buying, equipping
         <div className="shop-item-price"><i className="fas fa-coins" /> {formatCoins(item.price)}</div>
       </div>
       <div className="shop-item-visual" style={item.accent ? { color: item.accent } : undefined}>
-        <i className={`fas ${item.icon || (item.category === 'avatar' ? 'fa-user-astronaut' : 'fa-palette')}`} />
+        <span className="shop-item-emoji">{item.emoji || '✨'}</span>
       </div>
       <h4>{item.name}</h4>
       <p>{item.description}</p>
@@ -74,7 +74,7 @@ const TitleCard = ({ item, equipped, onEquip, equipping }) => (
     <div className="shop-item-head">
       <div className="shop-item-badge">{item.unlocked ? 'Deblocat' : 'Blocat'}</div>
     </div>
-    <div className="shop-item-visual"><i className="fas fa-award" /></div>
+    <div className="shop-item-visual"><span className="shop-item-emoji">{item.emoji || '🏅'}</span></div>
     <h4>{item.name}</h4>
     <p>{item.description}</p>
     <div className="shop-item-footer">

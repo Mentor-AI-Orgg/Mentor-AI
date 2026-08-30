@@ -1,6 +1,6 @@
 import { formatRoDate } from '../userData.js';
 import { useI18n } from '../i18n/index.jsx';
-import { avatarIcon } from '../appearance.js';
+import { avatarIcon, itemEmoji } from '../appearance.js';
 import { dailySlogan } from '../slogans.js';
 
 const HomeScreen = ({ userData, onNavigate }) => {
@@ -26,7 +26,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
           <p className="home-slogan">{dailySlogan()}</p>
         </div>
         <button onClick={() => onNavigate('profile')} className="home-avatar" aria-label={t('home.openProfile')}>
-          {icon ? <i className={`fas ${icon}`} /> : (userData.name || 'E').charAt(0).toUpperCase()}
+          {itemEmoji(userData.avatarId) || (icon ? <i className={`fas ${icon}`} /> : (userData.name || 'E').charAt(0).toUpperCase())}
         </button>
       </header>
       <section className="focus-card">

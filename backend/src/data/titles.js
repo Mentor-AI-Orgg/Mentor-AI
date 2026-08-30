@@ -2,20 +2,20 @@
 // Țintele sunt tăiate la scară de gimnaziu (8 capitole / clasă, nu 100 de lecții).
 
 const TITLE_CATALOG = [
-  { id: "prima-lectie", name: "Prima lecție", description: "Termină primul capitol." },
-  { id: "elev-dedicat", name: "Elev dedicat", description: "Termină 8 capitole." },
-  { id: "invatacei-harnic", name: "Învățăcel harnic", description: "Termină 16 capitole." },
-  { id: "maestru-teste", name: "Maestru la teste", description: "Rezolvă 10 teste de capitol." },
-  { id: "pe-de-rost", name: "Pe de rost", description: "Primește de 5 ori recompensa de flashcarduri." },
-  { id: "foc-7", name: "Foc de 7 zile", description: "Ține streak-ul 7 zile la rând." },
-  { id: "foc-30", name: "Foc de 30 de zile", description: "Ține streak-ul 30 de zile." },
-  { id: "primul-prieten", name: "Primul prieten", description: "Ai cel puțin un prieten." },
-  { id: "prima-cumparare", name: "Prima cumpărătură", description: "Cumpără un obiect din magazin." },
-  { id: "colectionar", name: "Colecționar", description: "Deține 5 obiecte din magazin." },
-  { id: "ciocarlie", name: "Ciocârlie", description: "Învață înainte de ora 8, în 5 zile diferite." },
-  { id: "campion", name: "Campion", description: "Ajungi pe locul 1 în clasament, cu XP." },
-  { id: "curs-incheiat", name: "Curs încheiat", description: "Termină toate capitolele clasei tale." },
-  { id: "mentor-curios", name: "Mentor curios", description: "Întreabă mentorul de 10 ori." }
+  { id: "prima-lectie", name: "Prima lecție", emoji: "🎓", description: "Termină primul capitol." },
+  { id: "elev-dedicat", name: "Elev dedicat", emoji: "📚", description: "Termină 8 capitole." },
+  { id: "invatacei-harnic", name: "Învățăcel harnic", emoji: "📖", description: "Termină 16 capitole." },
+  { id: "maestru-teste", name: "Maestru la teste", emoji: "🧠", description: "Rezolvă 10 teste de capitol." },
+  { id: "pe-de-rost", name: "Pe de rost", emoji: "🎯", description: "Primește de 5 ori recompensa de flashcarduri." },
+  { id: "foc-7", name: "Foc de 7 zile", emoji: "🔥", description: "Ține streak-ul 7 zile la rând." },
+  { id: "foc-30", name: "Foc de 30 de zile", emoji: "🔥", description: "Ține streak-ul 30 de zile." },
+  { id: "primul-prieten", name: "Primul prieten", emoji: "👥", description: "Ai cel puțin un prieten." },
+  { id: "prima-cumparare", name: "Prima cumpărătură", emoji: "🛒", description: "Cumpără un obiect din magazin." },
+  { id: "colectionar", name: "Colecționar", emoji: "🎨", description: "Deține 5 obiecte din magazin." },
+  { id: "ciocarlie", name: "Ciocârlie", emoji: "🌅", description: "Învață înainte de ora 8, în 5 zile diferite." },
+  { id: "campion", name: "Campion", emoji: "🏆", description: "Ajungi pe locul 1 în clasament, cu XP." },
+  { id: "curs-incheiat", name: "Curs încheiat", emoji: "🏅", description: "Termină toate capitolele clasei tale." },
+  { id: "mentor-curios", name: "Mentor curios", emoji: "💬", description: "Întreabă mentorul de 10 ori." }
 ];
 
 function countAllDone(user) {

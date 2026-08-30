@@ -3,139 +3,11 @@ const crypto = require('crypto');
 const { getGuide } = require('./gimnaziuGuide');
 const { levelFromXp, touchStudy, AWARDS } = require('./progressEngine');
 const { TITLE_CATALOG, unlockedTitleIds, titleById, noteEarlyBird } = require('./titles');
+const { SHOP_CATALOG } = require('./shopCatalog');
 
 const USERS = new Map();
 const NOTIFICATIONS = [];
 const PURCHASES = new Map();
-
-const SHOP_CATALOG = [
-  {
-    id: 'avatar-neon-fox',
-    category: 'avatar',
-    name: 'Vulpe',
-    price: 40,
-    rarity: 'Common',
-    icon: 'fa-dog',
-    description: 'Primul avatar: iese cam după o zi de teme.'
-  },
-  {
-    id: 'avatar-starlight-owl',
-    category: 'avatar',
-    name: 'Bufniță',
-    price: 40,
-    rarity: 'Common',
-    icon: 'fa-crow',
-    description: 'Calmă, bună pentru seri de recapitulare.'
-  },
-  {
-    id: 'avatar-pixel-tiger',
-    category: 'avatar',
-    name: 'Tigru',
-    price: 80,
-    rarity: 'Rare',
-    icon: 'fa-cat',
-    description: 'Pentru cine atacă exercițiile.'
-  },
-  {
-    id: 'avatar-cosmic-bear',
-    category: 'avatar',
-    name: 'Urs',
-    price: 80,
-    rarity: 'Rare',
-    icon: 'fa-paw',
-    description: 'Răbdător, se vede pe profil.'
-  },
-  {
-    id: 'avatar-hero-robot',
-    category: 'avatar',
-    name: 'Robot',
-    price: 140,
-    rarity: 'Epic',
-    icon: 'fa-robot',
-    description: 'Look de laborator. Cam o săptămână de ritm.'
-  },
-  {
-    id: 'avatar-galaxy-kid',
-    category: 'avatar',
-    name: 'Astronaut',
-    price: 140,
-    rarity: 'Epic',
-    icon: 'fa-user-astronaut',
-    description: 'Se recunoaște din clasament.'
-  },
-  {
-    id: 'avatar-mentor-legend',
-    category: 'avatar',
-    name: 'Legendă',
-    price: 220,
-    rarity: 'Legendary',
-    icon: 'fa-crown',
-    description: 'Singurul de 220. Pentru cine stă pe treabă săptămâni.'
-  },
-  {
-    id: 'theme-pink-pulse',
-    category: 'background',
-    name: 'Roz cald',
-    price: 40,
-    rarity: 'Common',
-    accent: '#ff8fa3',
-    description: 'Fundal roz, blând pentru ochi.'
-  },
-  {
-    id: 'theme-orange-ember',
-    category: 'background',
-    name: 'Portocaliu',
-    price: 40,
-    rarity: 'Common',
-    accent: '#ffb347',
-    description: 'Cald, de după-amiază de teme.'
-  },
-  {
-    id: 'theme-red-rush',
-    category: 'background',
-    name: 'Roșu',
-    price: 80,
-    rarity: 'Rare',
-    accent: '#ff6b6b',
-    description: 'Contrast mai tare.'
-  },
-  {
-    id: 'theme-mint-aurora',
-    category: 'background',
-    name: 'Mentă',
-    price: 80,
-    rarity: 'Rare',
-    accent: '#63f2c7',
-    description: 'Verde proaspăt, ușor de citit.'
-  },
-  {
-    id: 'theme-golden-sun',
-    category: 'background',
-    name: 'Auriu',
-    price: 80,
-    rarity: 'Rare',
-    accent: '#ffd166',
-    description: 'Luminos, fără să strice textul.'
-  },
-  {
-    id: 'theme-night-aurora',
-    category: 'background',
-    name: 'Aurora',
-    price: 140,
-    rarity: 'Epic',
-    accent: '#6fd7ff',
-    description: 'Albastru rece, de noapte.'
-  },
-  {
-    id: 'theme-violet-comet',
-    category: 'background',
-    name: 'Violet',
-    price: 200,
-    rarity: 'Legendary',
-    accent: '#b9a7ff',
-    description: 'Fundalul scump. Se vede pe tot ecranul.'
-  }
-];
 
 const CATEGORY_ORDER = ['daily', 'avatar', 'background'];
 
@@ -1172,6 +1044,7 @@ function listLeaderboardEntries({ limit = 10, currentEmail = '' } = {}) {
         level: levelFromXp(xp).level,
         class: user.preferences.className || '',
         title: titleById(user.equipped?.title)?.name || '',
+        titleEmoji: titleById(user.equipped?.title)?.emoji || '',
         isCurrentUser: Boolean(me) && String(user.userId).toLowerCase() === me
       };
     })

@@ -39,7 +39,13 @@ describe('shop titles and equip', () => {
     expect(items.some(item => item.category === 'voice')).toBe(false);
     expect(items.some(item => item.category === 'boost')).toBe(false);
     expect(items.some(item => String(item.id).startsWith('music-') || String(item.id).startsWith('sfx-'))).toBe(false);
-    expect(items.filter(item => item.category === 'avatar')).toHaveLength(7);
+    const avatars = items.filter(item => item.category === 'avatar');
+    const backgrounds = items.filter(item => item.category === 'background');
+    expect(avatars.length).toBeGreaterThanOrEqual(20);
+    expect(backgrounds.length).toBeGreaterThanOrEqual(20);
+    expect(items.every(item => item.emoji)).toBe(true);
+    expect(items.find(item => item.id === 'avatar-detective').emoji).toBe('🕵️');
+    expect(items.find(item => item.id === 'theme-library').emoji).toBe('📚');
     expect(items.find(item => item.id === 'avatar-mentor-legend').price).toBe(220);
   });
 

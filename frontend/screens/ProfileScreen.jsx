@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import Leaderboard from '../components/Leaderboard.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { avatarIcon } from '../appearance.js';
+import { avatarIcon, itemEmoji } from '../appearance.js';
 
 const CLASSES = ['5', '6', '7', '8'];
 
@@ -10,11 +10,11 @@ const FriendCard = ({ person, rank, actionLabel, onAction, disabled }) => (
   <article className={`friend-card ${rank != null ? 'has-rank' : ''}`}>
     {rank != null && <div className={`friend-rank ${rank <= 3 ? 'is-top' : ''}`}>{rank}</div>}
     <div className="friend-card-avatar">
-      {avatarIcon(person.avatarId) ? <i className={`fas ${avatarIcon(person.avatarId)}`} /> : (person.name || 'E').charAt(0)}
+      {person.avatarEmoji || itemEmoji(person.avatarId) || (avatarIcon(person.avatarId) ? <i className={`fas ${avatarIcon(person.avatarId)}`} /> : (person.name || 'E').charAt(0))}
     </div>
     <div>
       <strong>{person.name}</strong>
-      <small>{person.title ? `${person.title} · ` : ''}{person.username ? `@${person.username}` : 'fără username'} · clasa {person.class || '—'} · niv. {person.level} · {person.xp} XP</small>
+      <small>{person.title ? `${person.titleEmoji || ''} ${person.title} · `.trim() : ''}{person.username ? `@${person.username}` : 'fără username'} · clasa {person.class || '—'} · niv. {person.level} · {person.xp} XP</small>
     </div>
     {actionLabel && (
       <button type="button" className="ghost-button" onClick={onAction} disabled={disabled}>
@@ -49,6 +49,28 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
   const rankedFriends = [...(friends.friends || [])].sort((a, b) => (
     (Number(b.xp) || 0) - (Number(a.xp) || 0) || String(a.name || '').localeCompare(String(b.name || ''), 'ro')
   ));
+
+  const wear = async (payload, extra = {}) => {
+    const result = await MentorAPI.equipItem(payload);
+    if (!result.success) {
+      onToast?.(result.error || 'Nu am putut salva afișajul.', 'warning');
+      return;
+    }
+    const name = result.data.summary?.titleName || extra.titleName || userData.titleName || '';
+    onProfileSaved?.({
+      ...userData,
+      avatarId: result.data.equipped?.avatar || '',
+      themeId: result.data.equipped?.background || '',
+      titleId: result.data.equipped?.title || '',
+      titleName: name
+    });
+    setWardrobe(prev => ({
+      ...prev,
+      titles: result.data.titles?.catalog || prev.titles,
+      inventory: result.data.inventory || prev.inventory,
+      equipped: result.data.equipped || prev.equipped
+    }));
+  };
 
   const openFriendsList = () => {
     setListOpen(true);
@@ -202,12 +224,12 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
       <div className="surface mx-5 mt-6 rounded-3xl p-5 shadow-xl profile-hero-card">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-3xl gradient-primary flex items-center justify-center text-3xl">
-            {avatarIcon(userData.avatarId) ? <i className={`fas ${avatarIcon(userData.avatarId)}`} /> : (userData.name || 'M').charAt(0).toUpperCase()}
+            {itemEmoji(userData.avatarId) || (avatarIcon(userData.avatarId) ? <i className={`fas ${avatarIcon(userData.avatarId)}`} /> : (userData.name || 'M').charAt(0).toUpperCase())}
           </div>
           <div>
             <div className="text-xl font-extrabold">{userData.name || t('profile.defaultName')}</div>
             <div className="text-sm text-slate-400">{userData.school || t('profile.personalProfile')}</div>
-            <div className="profile-role-pill">{userData.titleName ? `${userData.titleName} · ` : ''}{t('common.student')} · {t('home.level')} {userData.level || 1}</div>
+            <div className="profile-role-pill">{userData.titleName ? `${wardrobe.titles.find(item => item.id === userData.titleId)?.emoji || ''} ${userData.titleName} · `.trim() : ''}{t('common.student')} · {t('home.level')} {userData.level || 1}</div>
           </div>
         </div>
         <div className="mt-6 grid grid-cols-2 gap-3">
@@ -278,59 +300,67 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
       <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
         <div className="eyebrow">Afișaj</div>
         <h3 className="display-font profile-tool-title">Ce se vede pe profil.</h3>
-        <p className="profile-empty-note">Avatarul și fundalul se cumpără din magazin. Titlul se deblochează din faptă — prima lecție, streak, prieteni, locul 1.</p>
-        <label className="field-label">Avatar
-          <select className="field form-input" value={userData.avatarId || ''} onChange={async e => {
-            const value = e.target.value;
-            const result = await MentorAPI.equipItem(value ? { item_id: value } : { slot: 'avatar', item_id: '' });
-            if (!result.success) {
-              onToast?.(result.error || 'Nu am putut schimba avatarul.', 'warning');
-              return;
-            }
-            onProfileSaved?.({ ...userData, avatarId: result.data.equipped?.avatar || '', themeId: result.data.equipped?.background || userData.themeId, titleId: result.data.equipped?.title || userData.titleId, titleName: result.data.summary?.titleName || userData.titleName });
-            setWardrobe(prev => ({ ...prev, equipped: result.data.equipped || prev.equipped }));
-          }}>
-            <option value="">Inițiala numelui</option>
-            {wardrobe.items.filter(item => item.category === 'avatar' && wardrobe.inventory.includes(item.id)).map(item => (
-              <option key={item.id} value={item.id}>{item.name}</option>
-            ))}
-          </select>
-        </label>
-        <label className="field-label">Fundal
-          <select className="field form-input" value={userData.themeId || ''} onChange={async e => {
-            const value = e.target.value;
-            const result = await MentorAPI.equipItem(value ? { item_id: value } : { slot: 'background', item_id: '' });
-            if (!result.success) {
-              onToast?.(result.error || 'Nu am putut schimba fundalul.', 'warning');
-              return;
-            }
-            onProfileSaved?.({ ...userData, avatarId: result.data.equipped?.avatar || userData.avatarId, themeId: result.data.equipped?.background || '', titleId: result.data.equipped?.title || userData.titleId, titleName: result.data.summary?.titleName || userData.titleName });
-            setWardrobe(prev => ({ ...prev, equipped: result.data.equipped || prev.equipped }));
-          }}>
-            <option value="">Fundal implicit</option>
-            {wardrobe.items.filter(item => item.category === 'background' && wardrobe.inventory.includes(item.id)).map(item => (
-              <option key={item.id} value={item.id}>{item.name}</option>
-            ))}
-          </select>
-        </label>
-        <label className="field-label">Titlu
-          <select className="field form-input" value={userData.titleId || ''} onChange={async e => {
-            const value = e.target.value;
-            const result = await MentorAPI.equipItem({ title_id: value, slot: 'title' });
-            if (!result.success) {
-              onToast?.(result.error || 'Titlul nu e deblocat.', 'warning');
-              return;
-            }
-            const name = result.data.summary?.titleName || wardrobe.titles.find(item => item.id === value)?.name || '';
-            onProfileSaved?.({ ...userData, titleId: result.data.equipped?.title || '', titleName: name });
-            setWardrobe(prev => ({ ...prev, titles: result.data.titles?.catalog || prev.titles, equipped: result.data.equipped || prev.equipped }));
-          }}>
-            <option value="">Fără titlu</option>
+        <p className="profile-empty-note">Cumperi avatarul și fundalul din magazin. Titlurile se deblochează din faptă și alegi unul singur care te definește.</p>
+
+        <h4 className="friend-subhead">Avatarul meu preferat</h4>
+        <div className="favorite-grid">
+          <button type="button" className={`favorite-chip ${!userData.avatarId ? 'is-on' : ''}`} onClick={() => wear({ slot: 'avatar', item_id: '' })}>
+            <span className="favorite-emoji">{(userData.name || 'M').charAt(0).toUpperCase()}</span>
+            <span>Inițiala</span>
+          </button>
+          {wardrobe.items.filter(item => item.category === 'avatar' && wardrobe.inventory.includes(item.id)).map(item => (
+            <button key={item.id} type="button" className={`favorite-chip ${userData.avatarId === item.id ? 'is-on' : ''}`} onClick={() => wear({ item_id: item.id })}>
+              <span className="favorite-emoji">{item.emoji}</span>
+              <span>{item.name}</span>
+            </button>
+          ))}
+        </div>
+        {wardrobe.items.filter(item => item.category === 'avatar' && wardrobe.inventory.includes(item.id)).length === 0 && (
+          <p className="profile-empty-note">Nu ai încă un avatar cumpărat. Intră în Magazin.</p>
+        )}
+
+        <h4 className="friend-subhead">Fundalul meu preferat</h4>
+        <div className="favorite-grid">
+          <button type="button" className={`favorite-chip ${!userData.themeId ? 'is-on' : ''}`} onClick={() => wear({ slot: 'background', item_id: '' })}>
+            <span className="favorite-emoji">🌙</span>
+            <span>Implicit</span>
+          </button>
+          {wardrobe.items.filter(item => item.category === 'background' && wardrobe.inventory.includes(item.id)).map(item => (
+            <button key={item.id} type="button" className={`favorite-chip ${userData.themeId === item.id ? 'is-on' : ''}`} style={item.accent ? { borderColor: item.accent } : undefined} onClick={() => wear({ item_id: item.id })}>
+              <span className="favorite-emoji">{item.emoji}</span>
+              <span>{item.name}</span>
+            </button>
+          ))}
+        </div>
+        {wardrobe.items.filter(item => item.category === 'background' && wardrobe.inventory.includes(item.id)).length === 0 && (
+          <p className="profile-empty-note">Nu ai încă un fundal cumpărat. Intră în Magazin.</p>
+        )}
+
+        <h4 className="friend-subhead">Titluri obținute</h4>
+        {wardrobe.titles.filter(item => item.unlocked).length === 0 ? (
+          <p className="profile-empty-note">Niciun titlu încă. Primul vine după primul capitol terminat.</p>
+        ) : (
+          <ul className="earned-titles">
             {wardrobe.titles.filter(item => item.unlocked).map(item => (
-              <option key={item.id} value={item.id}>{item.name}</option>
+              <li key={item.id}>{item.emoji} {item.name} — {item.description}</li>
             ))}
-          </select>
-        </label>
+          </ul>
+        )}
+
+        <h4 className="friend-subhead">Titlul meu preferat</h4>
+        <p className="profile-empty-note">Unul singur, cel care te definește acum.</p>
+        <div className="favorite-grid">
+          <button type="button" className={`favorite-chip ${!userData.titleId ? 'is-on' : ''}`} onClick={() => wear({ title_id: '', slot: 'title' })}>
+            <span className="favorite-emoji">—</span>
+            <span>Fără titlu</span>
+          </button>
+          {wardrobe.titles.filter(item => item.unlocked).map(item => (
+            <button key={item.id} type="button" className={`favorite-chip ${userData.titleId === item.id ? 'is-on' : ''}`} onClick={() => wear({ title_id: item.id, slot: 'title' }, { titleName: item.name })}>
+              <span className="favorite-emoji">{item.emoji}</span>
+              <span>{item.name}</span>
+            </button>
+          ))}
+        </div>
       </section>
 
       <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">

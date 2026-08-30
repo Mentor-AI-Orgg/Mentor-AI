@@ -1011,6 +1011,38 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   background: rgba(185, 167, 255, .22);
   color: #fff;
 }
+.favorite-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 8px;
+  margin: 8px 0 16px;
+}
+.favorite-chip {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  padding: 10px 8px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.04);
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.3;
+  text-align: center;
+}
+.favorite-chip.is-on {
+  border-color: rgba(185, 167, 255, .8);
+  background: rgba(185, 167, 255, .16);
+}
+.favorite-emoji { font-size: 26px; line-height: 1; }
+.earned-titles {
+  margin: 0 0 14px;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.shop-item-emoji { font-size: 42px; line-height: 1; }
 .friend-card-avatar {
   width: 40px;
   height: 40px;
