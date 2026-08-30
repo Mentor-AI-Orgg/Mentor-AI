@@ -118,12 +118,12 @@ function activateFromSession(session) {
   const billingCycle = session.metadata?.billingCycle || "monthly";
   if (!email) return null;
 
-  const plan = PLANS.find(entry => entry.id === planId);
+  const plan = PLANS.find(entry => entry.id === planId) || PLANS.find(entry => entry.id === "free");
   const renewsAt = new Date();
   renewsAt.setMonth(renewsAt.getMonth() + (billingCycle === "yearly" ? 12 : billingCycle === "quarterly" ? 3 : billingCycle === "halfYear" || billingCycle === "half_year" ? 6 : 1));
 
   return setSubscription(email, {
-    planId: plan ? plan.id : planId || "pro",
+    planId: "free",
     status: "active",
     billingCycle,
     renewsAt: renewsAt.toISOString(),

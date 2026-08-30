@@ -315,40 +315,6 @@ function AppShell({ userData, setUserData }) {
     setScreen(target);
   };
 
-  const handleSelectPlan = async (planId, billingCycle = 'monthly') => {
-    const result = await MentorAPI.checkoutSubscription({
-      plan_id: planId,
-      billing_cycle: billingCycle,
-      user_id: userData.email || 'demo_user',
-      payment_method: 'card',
-      card_last4: '4242',
-      parent_email: userData.parentEmail || '',
-      role: userData.role || 'student'
-    });
-    if (!result.success) {
-      showToast(t('toast.planFailed'), 'warning');
-      return { success: false };
-    }
-    if (result.data?.url) {
-      window.location.href = result.data.url;
-      return { success: true, redirect: true };
-    }
-    const status = result.data?.subscription?.status || 'active';
-    setUserData(prev => ({
-      ...prev,
-      planId: result.data?.subscription?.planId || planId,
-      planStatus: status
-    }));
-    if (status === 'pending_parent_review') {
-      showToast(t('toast.planPending', { plan: planId }), 'warning');
-    } else if (result.data?.mocked) {
-      showToast(t('toast.planMocked', { plan: planId }), 'success');
-    } else {
-      showToast(planId === 'free' ? t('toast.planFree') : t('toast.planActive', { plan: planId }), 'success');
-    }
-    return { success: true, status };
-  };
-
   const handleOnboardingSelect = value => {
     setOnboardingData(prev => ({ ...prev, [currentOnboarding.inputKey]: value }));
   };
@@ -425,7 +391,7 @@ function AppShell({ userData, setUserData }) {
       case 'calendar':
         return <CalendarScreen onBack={() => handleNavigate('home')} />;
       case 'subscriptions':
-        return <SubscriptionsScreen userData={userData} onBack={() => handleNavigate('home')} currentPlanId={userData.planId || 'free'} currentPlanStatus={userData.planStatus} onSelectPlan={handleSelectPlan} onToast={showToast} />;
+        return <SubscriptionsScreen onBack={() => handleNavigate('home')} />;
       case 'profile':
         return (
           <ProfileScreen

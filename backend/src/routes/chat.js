@@ -73,82 +73,9 @@ async function runFreeChain({ messages, userMsg, imageBase64, lang }) {
   return null;
 }
 
-async function runProChain({ messages, userMsg, lang }) {
-  const gemini = await callGemini(messages, lang);
-  if (gemini?.success) {
-    return { response: gemini.content, engine_used: gemini.engine || "gemini", engine_mocked: !!gemini.mocked, fallback_path: ["gemini"] };
-  }
-
-  const claude = await callClaude(messages, lang);
-  if (claude?.success) {
-    return { response: claude.content, engine_used: claude.engine || "claude", engine_mocked: !!claude.mocked, fallback_path: ["gemini", "claude"] };
-  }
-
-  const wolfram = await askWolfram(userMsg);
-  if (wolfram?.success) {
-    return {
-      response: wolfram.pods?.length ? `${wolfram.result}\n\n${joinPods(wolfram.pods)}` : wolfram.result,
-      engine_used: "wolfram",
-      engine_mocked: !!wolfram.mocked,
-      fallback_path: ["gemini", "claude", "wolfram"]
-    };
-  }
-
-  return null;
-}
-
-async function runPremiumCouncil({ messages, userMsg, imageBase64, lang }) {
-  const councilPromises = [
-    callGPT4o(messages, lang),
-    askWolfram(userMsg),
-    callGemini(messages, lang),
-    imageBase64 ? recognizeImage(imageBase64) : Promise.resolve({ success: false, mocked: true, text: "Mathpix OCR nu a fost disponibilă fără imagine." })
-  ];
-
-  const [gpt4o, wolfram, gemini, mathpix] = await Promise.all(councilPromises);
-
-  const advisorNotes = [
-    { name: "GPT-4o", result: gpt4o },
-    { name: "Wolfram", result: wolfram },
-    { name: "Gemini", result: gemini },
-    { name: "Mathpix", result: mathpix }
-  ].map(({ name, result }) => {
-    if (!result) return `${name}: nu a răspuns.`;
-    if (name === "Wolfram") return `${name}: ${result.result || "fără rezultat"}${result.pods?.length ? `\n${joinPods(result.pods)}` : ""}`;
-    if (name === "Mathpix") return `${name}: ${result.text || result.latex || result.error || "fără text"}`;
-    return `${name}: ${result.content || result.error || "fără rezultat"}`;
-  }).join("\n\n");
-
-  const judgeMessages = [
-    { role: "system", content: getSystemPrompt(lang) + "\nEști Claude și acționezi ca judecător. Compari cele 4 răspunsuri, păstrezi ideile cele mai bune și scrii o versiune nouă, clară și coerentă." },
-    { role: "user", content: `Întrebarea elevului: ${userMsg}\n\nRăspunsurile consiliului:\n${advisorNotes}\n\nScrie un răspuns final nou, folosind cele mai bune puncte și corectând contradicțiile.` }
-  ];
-
-  const judge = await callClaude(judgeMessages, lang);
-  if (judge?.success) {
-    return {
-      response: judge.content,
-      engine_used: judge.engine || "claude",
-      engine_mocked: !!judge.mocked,
-      fallback_path: ["gpt4o", "wolfram", "gemini", "mathpix", "claude_judge"]
-    };
-  }
-
-  const backups = [gpt4o, gemini, wolfram, mathpix].find(result => result?.success);
-  if (!backups) return null;
-
-  const backupResponse = backups.content || backups.result || backups.text || backups.latex || "Am obținut răspunsuri parțiale, dar nu pot sintetiza acum.";
-  return {
-    response: backupResponse,
-    engine_used: backups.engine || (backups.result ? "wolfram" : "mathpix"),
-    engine_mocked: !!backups.mocked,
-    fallback_path: ["gpt4o", "wolfram", "gemini", "mathpix"]
-  };
-}
-
 router.post("/", validateBody(chatSchema), async (req, res) => {
   const startTotal = Date.now();
-  const { message, language = "ro", plan_id = "free", image_base64 = "" } = req.body || {};
+  const { message, language = "ro", image_base64 = "" } = req.body || {};
   const subject = normalizeSubject(req.body.subject);
   const class_level = normalizeGrade(req.body.class_level);
 
@@ -158,7 +85,7 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
   // care scriau exact același prim mesaj ajungeau să împartă istoricul
   // conversației. O prefixăm cu contul, ca memoria să rămână strict a lui.
   const conversationId = `${req.auth.email}::${requestedConversationId}`;
-  const normalizedPlanId = String(plan_id || "free").toLowerCase();
+  const normalizedPlanId = "free";
 
   const safety = await safetyCheck(message);
 
@@ -189,14 +116,9 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
   const history = memory.get(conversationId);
   const messages = buildMessages(message, history, subject, class_level, lang);
 
-  let result = null;
-  if (normalizedPlanId === "premium") {
-    result = await runPremiumCouncil({ messages, userMsg: message, imageBase64: image_base64, lang });
-  } else if (normalizedPlanId === "pro") {
-    result = await runProChain({ messages, userMsg: message, lang });
-  } else {
-    result = await runFreeChain({ messages, userMsg: message, imageBase64: image_base64, lang });
-  }
+  // Aplicația e gratuită: toți elevii primesc același lanț de fallback.
+  // plan_id din body e ignorat ca să nu se poată „cumpăra” consiliul premium.
+  const result = await runFreeChain({ messages, userMsg: message, imageBase64: image_base64, lang });
 
   if (!result) {
     return res.json({

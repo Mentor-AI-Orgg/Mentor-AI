@@ -47,7 +47,7 @@ const BottomNav = ({ active, onNavigate }) => {
     { id: 'learn', icon: 'fa-book-open', label: t('nav.learn') },
     { id: 'shop', icon: 'fa-store', label: t('nav.shop') },
     { id: 'calendar', icon: 'fa-calendar-alt', label: t('nav.calendar') },
-    { id: 'subscriptions', icon: 'fa-crown', label: t('nav.subscriptions') },
+    { id: 'subscriptions', icon: 'fa-unlock', label: t('nav.subscriptions') },
     { id: 'profile', icon: 'fa-user', label: t('nav.profile') }
   ];
 

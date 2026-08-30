@@ -233,7 +233,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         <div>
           <div className="eyebrow">Magazinul tău</div>
           <h1 className="display-font shop-title">Câștigă, economisește și personalizează aplicația.</h1>
-          <p className="shop-subtitle">Daily free, bonusuri pentru învățare și obiecte cosmetice pe care le poți cumpăra cu monede. Elite Family Pack începe de la 5000 de monede.</p>
+          <p className="shop-subtitle">Daily free, bonusuri pentru învățare și obiecte cosmetice. Monedele nu sunt bani reali și nu deblochează un abonament — aplicația e deja gratuită.</p>
         </div>
         <div className="shop-balance-card">
           <span>Monede disponibile</span>
@@ -271,7 +271,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         <div className="shop-section-head">
           <div>
             <div className="eyebrow">Catalog</div>
-            <h2 className="display-font">Avatar, fundal, voce AI și boost-uri.</h2>
+            <h2 className="display-font">Avatar, fundal, voce și un pachet surpriză.</h2>
           </div>
           <button type="button" className="ghost-button" onClick={load} disabled={refreshing}>{refreshing ? 'Se actualizează...' : 'Actualizează'}</button>
         </div>
@@ -300,23 +300,23 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
       <section className="shop-section surface shop-parent-review">
         <div className="shop-section-head">
           <div>
-            <div className="eyebrow">Părinte / profesor</div>
-            <h2 className="display-font">Trimite un rezumat înainte de abonament.</h2>
+            <div className="eyebrow">Părinte</div>
+            <h2 className="display-font">Spune-i că mentorul e gratuit.</h2>
           </div>
           <span className="shop-chip"><i className="fas fa-envelope" /> {deliveryNote || 'email'}</span>
         </div>
-        <p className="shop-subtitle">Poți trimite părintelui sau profesorului un rezumat cu prețurile abonamentelor și ce include fiecare nivel.</p>
+        <p className="shop-subtitle">Părintele primește deja emailuri la fiecare activitate. De aici îi poți trimite un mesaj scurt: nu există abonament de plătit, monedele sunt doar pentru magazin.</p>
         <div className="shop-parent-form">
           <input value={parentEmail} onChange={e => setParentEmail(e.target.value)} placeholder="Email părinte" />
-          <input value={parentMessage} onChange={e => setParentMessage(e.target.value)} placeholder="Mesaj opțional pentru recenzie" />
+          <input value={parentMessage} onChange={e => setParentMessage(e.target.value)} placeholder="Mesaj opțional" />
           <button type="button" className="accent-button" onClick={sendParentReview} disabled={parentSending || !parentEmail.trim()}>
-            {parentSending ? 'Se trimite...' : 'Trimite rezumatul'}
+            {parentSending ? 'Se trimite...' : 'Trimite mesajul'}
           </button>
         </div>
         <div className="shop-notes">
-          <div><strong>Cont elev</strong><span>Poate primi bonusuri și notificări către părinte.</span></div>
-          <div><strong>Cont părinte</strong><span>Primește rapoarte despre progres și abonamente.</span></div>
-          <div><strong>Cont profesor</strong><span>Primește sumarul clasei. Detectorul de text este doar o demonstrație euristică.</span></div>
+          <div><strong>Cont elev</strong><span>Poate primi bonusuri. Părintele e anunțat pe email.</span></div>
+          <div><strong>Monede</strong><span>Nu sunt lei. Se cheltuie doar pe avatar, fundal sau voce.</span></div>
+          <div><strong>Acces</strong><span>Mentorul, lecțiile și flashcardurile rămân gratuite.</span></div>
         </div>
       </section>
 

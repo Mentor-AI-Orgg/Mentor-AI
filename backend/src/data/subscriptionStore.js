@@ -5,8 +5,8 @@
 // trezea pe Free după primul deploy. Mutat aici ca să fie salvat pe disc prin
 // persistence.js.
 //
-// Plata: Stripe Checkout când STRIPE_SECRET_KEY e setat; altfel mock etichetat.
-// Activarea după plată live vine din webhook (vezi payments/stripe.js).
+// Aplicația e gratuită: planurile plătite sunt respinse. Rămâne stocarea ca
+// vechile conturi Pro/Premium/Elite să se citească în continuare ca „free”.
 
 const persistence = require("./persistence");
 const { DEFAULT_USER_SUBSCRIPTION } = require("./subscriptions");
@@ -14,7 +14,16 @@ const { DEFAULT_USER_SUBSCRIPTION } = require("./subscriptions");
 const SUBSCRIPTIONS = new Map(); // userId -> abonament
 
 function getSubscription(userId) {
-  return SUBSCRIPTIONS.get(userId) || { ...DEFAULT_USER_SUBSCRIPTION };
+  const stored = SUBSCRIPTIONS.get(userId) || { ...DEFAULT_USER_SUBSCRIPTION };
+  return {
+    ...stored,
+    planId: "free",
+    status: stored.status === "pending_payment" ? "active" : stored.status || "active",
+    billingCycle: "monthly",
+    renewsAt: null,
+    paymentMethod: stored.paymentMethod === "stripe" ? "none" : stored.paymentMethod || "none",
+    reviewRequired: false
+  };
 }
 
 function setSubscription(userId, subscription) {

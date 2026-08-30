@@ -33,9 +33,12 @@ describe('economy purchases', () => {
 
     const catalog = await agent.get('/api/economy/catalog');
     expect(catalog.status).toBe(200);
-    const item = (catalog.body.items || []).find(entry => entry.id === 'avatar-neon-fox');
+    const items = catalog.body.items || [];
+    const item = items.find(entry => entry.id === 'avatar-neon-fox');
     expect(item).toBeTruthy();
     expect(item.price).toBe(50);
+    expect(items.some(entry => entry.id === 'boost-family-7d')).toBe(false);
+    expect(items.some(entry => entry.id === 'boost-xp-doubler')).toBe(false);
 
     const buy = await agent.post('/api/economy/buy').send({ item_id: 'avatar-neon-fox' });
     expect(buy.status).toBe(200);

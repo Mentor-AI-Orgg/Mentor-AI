@@ -196,36 +196,12 @@ const SHOP_CATALOG = [
     description: 'Voce specială, premium, pentru statut unic.'
   },
   {
-    id: 'boost-family-7d',
-    category: 'boost',
-    name: 'Elite Family Pack · 7 zile',
-    price: 5000,
-    rarity: 'Legendary',
-    description: 'Acces gratuit timp de 7 zile la pachetul de familie.'
-  },
-  {
-    id: 'boost-xp-doubler',
-    category: 'boost',
-    name: 'XP Doubler · 3 zile',
-    price: 350,
-    rarity: 'Epic',
-    description: 'Dublează XP-ul obținut în această perioadă.'
-  },
-  {
-    id: 'boost-extra-streak',
-    category: 'boost',
-    name: 'Streak Shield',
-    price: 250,
-    rarity: 'Rare',
-    description: 'Protecție pentru o zi, dacă ratezi ritmul.'
-  },
-  {
     id: 'boost-study-crate',
     category: 'boost',
     name: 'Study Crate',
     price: 150,
     rarity: 'Common',
-    description: 'Pachet surpriză cu efect cosmetic sau bonus mic.'
+    description: 'Pachet surpriză cosmetic: un accent de culoare pentru profil.'
   }
 ];
 
@@ -963,16 +939,14 @@ function markNotificationRead(notificationId) {
   return notification;
 }
 
-async function sendParentReview({ userId = 'demo_user', parentEmail = '', planId = '', billingCycle = 'monthly', role = 'student', message = '' }) {
+async function sendParentReview({ userId = 'demo_user', parentEmail = '', role = 'student', message = '' }) {
   const user = ensureUser(userId, { parentEmail, role });
-  const planLabel = planId ? planId.replace(/_/g, ' ') : 'abonament';
   const to = parentEmail || user.preferences.parentEmail;
-  const subject = `Propunere abonament Mentor AI pentru ${user.preferences.username || user.preferences.profileName || 'elev'}`;
+  const subject = `Mentor AI este gratuit pentru ${user.preferences.username || user.preferences.profileName || 'elev'}`;
   const body = [
-    `Plan propus: ${planLabel}`,
-    `Ciclu de plată: ${billingCycle}`,
-    `Rol cont: ${role}`,
-    `Monede disponibile: ${user.balance}`,
+    'Aplicația Mentor AI este gratuită. Nu există abonament de plătit.',
+    `Cont: ${role}`,
+    `Monede în magazin (cosmetice): ${user.balance}`,
     `Mesaj suplimentar: ${message || 'Nu există mesaj suplimentar.'}`
   ].join('\n');
 
