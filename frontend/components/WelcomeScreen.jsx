@@ -12,7 +12,14 @@ const WelcomeScreen = ({ onConnect, onRegister }) => (
     <div className="welcome-mark" aria-hidden="true">M</div>
     <p className="welcome-slogan">{dailySlogan()}</p>
     <h1 className="display-font welcome-title">Mentor AI</h1>
-    <p className="welcome-lead">Gimnaziu, română și matematică. Înveți, încerci, greșești, mai încerci. Fără abonament.</p>
+    <p className="welcome-lead">
+      Gimnaziu, română și matematică. Înveți, încerci, greșești,{' '}
+      <span className="welcome-verb-swap" aria-label="mai încerci, reușești">
+        <span className="welcome-verb welcome-verb-from" aria-hidden="true">mai încerci</span>
+        <span className="welcome-verb welcome-verb-to" aria-hidden="true">reușești</span>
+      </span>
+      . Fără abonament.
+    </p>
     <ul className="welcome-features">
       {FEATURES.map(item => (
         <li key={item.title}>
