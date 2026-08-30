@@ -776,7 +776,9 @@ function buildDailyClaims(user) {
     {
       id: 'streak-bonus',
       title: 'Bonus streak',
-      subtitle: `Ai ${user.metrics.streak || 0} zile consecutive. Bonus +5 pe lângă restul recompenselor.`,
+      subtitle: user.metrics.streak === 1
+        ? 'Ai 1 zi consecutivă. Bonus +5 pe lângă restul recompenselor.'
+        : `Ai ${user.metrics.streak || 0} zile consecutive. Bonus +5 pe lângă restul recompenselor.`,
       coins: 5,
       claimed: user.streakBonusDate === todayKey,
       action: 'streak_bonus'
