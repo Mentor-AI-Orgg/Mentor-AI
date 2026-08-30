@@ -7,19 +7,22 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
   const [cards, setCards] = useState([]);
   const [index, setIndex] = useState(0);
   const [picked, setPicked] = useState(null);
-  const [known, setKnown] = useState({});
+  const [choices, setChoices] = useState({});
   const [source, setSource] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [finishing, setFinishing] = useState(false);
   const [coverage, setCoverage] = useState(null);
   const [exclude, setExclude] = useState([]);
+  const [report, setReport] = useState(null);
 
   const generate = async (unit, more = false) => {
     if (!unit || loading) return;
     setLoading(true);
     setPicked(null);
     setIndex(0);
+    setReport(null);
     if (!more) {
-      setKnown({});
+      setChoices({});
       setExclude([]);
     }
     setSource(unit);
@@ -43,9 +46,8 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
   const choose = optionIndex => {
     if (picked != null || !cards[index]) return;
     const card = cards[index];
-    const ok = optionIndex === card.correct;
     setPicked(optionIndex);
-    setKnown(prev => ({ ...prev, [card.id]: ok }));
+    setChoices(prev => ({ ...prev, [card.id]: optionIndex }));
     MentorAPI.markPracticeSeen({
       chapter_id: source?.id,
       subject,
@@ -55,45 +57,77 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
     }).then(res => {
       if (res.success) setCoverage(res.data.coverage || coverage);
     });
-    if (ok) {
-      MentorAPI.recordProgress({
-        type: 'flashcard_known',
-        note: source?.title || 'flashcards',
-        meta: { topic: source?.title || 'flashcards', chapterId: source?.id, subject, grade: classLevel }
-      }).then(result => {
-        if (result.success && result.data?.awarded && typeof onRewardClaim === 'function') {
-          onRewardClaim({
-            balance: result.data.summary?.balance,
-            equipped: result.data.summary?.equipped || {},
-            role: result.data.summary?.role,
-            summary: result.data.summary
-          });
-        }
-      });
-    }
+  };
+
+  const goPrev = () => {
+    if (index === 0) return;
+    const nextIndex = index - 1;
+    setIndex(nextIndex);
+    const prevCard = cards[nextIndex];
+    setPicked(prevCard ? choices[prevCard.id] ?? null : null);
   };
 
   const goNext = () => {
-    if (index < cards.length - 1) {
-      setIndex(i => i + 1);
-      setPicked(null);
+    if (index >= cards.length - 1) return;
+    const nextIndex = index + 1;
+    setIndex(nextIndex);
+    const nextCard = cards[nextIndex];
+    setPicked(nextCard ? choices[nextCard.id] ?? null : null);
+  };
+
+  const finish = async () => {
+    if (!source || finishing) return;
+    setFinishing(true);
+    const picks = cards.map(card => ({
+      card_id: card.id,
+      chosen: Number.isInteger(choices[card.id]) ? card.options[choices[card.id]] : ''
+    }));
+    const result = await MentorAPI.finishPractice({
+      kind: 'flashcards',
+      chapter_id: source.id,
+      subject: subject || userData?.subject || 'matematica',
+      class_level: classLevel || userData?.class || 5,
+      title: source.title,
+      picks
+    });
+    if (result.success) {
+      setReport(result.data);
+      const hits = picks.filter((pick, pickIndex) => pick.chosen && pick.chosen === cards[pickIndex].options[cards[pickIndex].correct]).length;
+      if (hits >= 5) {
+        MentorAPI.recordProgress({
+          type: 'flashcard_known',
+          note: source.title,
+          meta: { topic: source.title, chapterId: source.id, subject, grade: classLevel }
+        }).then(award => {
+          if (award.success && award.data?.awarded && typeof onRewardClaim === 'function') {
+            onRewardClaim({
+              balance: award.data.summary?.balance,
+              equipped: award.data.summary?.equipped || {},
+              role: award.data.summary?.role,
+              summary: award.data.summary
+            });
+          }
+        });
+      }
     }
+    setFinishing(false);
   };
 
   const card = cards[index];
-  const hits = Object.values(known).filter(Boolean).length;
-  const reviewed = Object.keys(known).length;
+  const last = cards.length > 0 && index === cards.length - 1;
+  const reviewed = Object.keys(choices).length;
+  const hits = cards.filter(item => Number.isInteger(choices[item.id]) && choices[item.id] === item.correct).length;
 
   return (
     <section className="flashcards-card surface">
       <div className="focus-timer-head">
         <div>
           <div className="eyebrow">Flashcarduri de teorie</div>
-          <h3 className="display-font">4 variante. Alegi. Vezi imediat.</h3>
+          <h3 className="display-font">4 variante. La final vezi nota.</h3>
         </div>
-        {reviewed > 0 && <span className="learn-chip"><i className="fas fa-check" /> {hits}/{reviewed}</span>}
+        {reviewed > 0 && !report && <span className="learn-chip"><i className="fas fa-check" /> {hits}/{reviewed}</span>}
       </div>
-      <p className="flashcards-empty">Alege capitolul. Poți cere alt set până prinzi toate ideile.</p>
+      <p className="flashcards-empty">Alege capitolul. La finalizare vezi ce ai greșit, de ce, și nota.</p>
 
       {chapters.length > 0 && (
         <div className="flashcards-presets">
@@ -117,19 +151,20 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
 
       {loading && <div className="flashcard-skeleton skeleton" aria-hidden="true" />}
 
-      {!loading && card && (
+      {!loading && card && !report && (
         <>
-          <div className="flashcards-progress-track"><div style={{ width: `${((index + (picked != null ? 1 : 0)) / cards.length) * 100}%` }} /></div>
+          <div className="flashcards-progress-track"><div style={{ width: `${((index + 1) / cards.length) * 100}%` }} /></div>
           <p className="quiz-question">{card.question}</p>
           <div className="quiz-options">
             {card.options.map((option, optionIndex) => {
-              const state = picked == null ? '' : optionIndex === card.correct ? 'is-correct' : optionIndex === picked ? 'is-wrong' : '';
+              const locked = Number.isInteger(choices[card.id]);
+              const state = !locked ? '' : optionIndex === card.correct ? 'is-correct' : optionIndex === choices[card.id] ? 'is-wrong' : '';
               return (
                 <button
                   key={`${card.id}-${optionIndex}`}
                   type="button"
                   className={`quiz-option ${state}`}
-                  disabled={picked != null}
+                  disabled={locked}
                   onClick={() => choose(optionIndex)}
                 >
                   <em>{letters[optionIndex]}</em>
@@ -138,29 +173,55 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
               );
             })}
           </div>
-          {picked != null && (
-            <p className={`quiz-feedback ${picked === card.correct ? 'ok' : 'bad'}`}>
-              {picked === card.correct ? 'Corect.' : 'Ai greșit.'} {card.explain}
+          {Number.isInteger(choices[card.id]) && (
+            <p className={`quiz-feedback ${choices[card.id] === card.correct ? 'ok' : 'bad'}`}>
+              {choices[card.id] === card.correct ? 'Corect.' : 'Ai greșit.'} {card.explain}
             </p>
           )}
-          <div className="flashcards-nav">
-            <button type="button" className="ghost-button" disabled={index === 0} onClick={() => { setIndex(i => i - 1); setPicked(null); }}>
-              <i className="fas fa-arrow-left" />
+          <div className="quiz-nav">
+            <button type="button" className="ghost-button" disabled={index === 0} onClick={goPrev}>
+              Exercițiul precedent
             </button>
-            <button type="button" className="accent-button" disabled={picked == null} onClick={index < cards.length - 1 ? goNext : () => generate(source, true)}>
-              {index < cards.length - 1 ? 'Următorul' : 'Alt set'}
-            </button>
-            <button type="button" className="ghost-button" disabled={index === cards.length - 1} onClick={goNext}>
-              <i className="fas fa-arrow-right" />
-            </button>
+            {last ? (
+              <button type="button" className="accent-button" disabled={finishing} onClick={finish}>
+                {finishing ? 'Verific…' : 'Finalizare set'}
+              </button>
+            ) : (
+              <button type="button" className="accent-button" onClick={goNext}>
+                Următorul exercițiu
+              </button>
+            )}
           </div>
           <div className="flashcards-meta">Cardul {index + 1} din {cards.length} · {source?.title}</div>
-          {typeof onAskMentor === 'function' && source && (
-            <button type="button" className="ghost-button" onClick={() => onAskMentor(source)}>
-              Întreabă mentorul <i className="fas fa-comments" />
-            </button>
-          )}
         </>
+      )}
+
+      {report && (
+        <div className="quiz-done">
+          <p className="display-font">Nota {report.grade} · {report.correct} din {report.total} corecte</p>
+          <p>{report.message}</p>
+          {report.strengths?.length > 0 && <p className="quiz-explain">Puncte forte: {report.strengths.join(', ')}</p>}
+          {report.weaknesses?.length > 0 && <p className="quiz-sample">De lucrat: {report.weaknesses.join(', ')}</p>}
+          <ol className="quiz-review-list">
+            {(report.items || []).map((item, itemIndex) => (
+              <li key={item.id || itemIndex} className={item.ok ? 'ok' : 'bad'}>
+                <strong>{item.ok ? 'Corect' : 'Greșit'}</strong>
+                <p>{item.prompt}</p>
+                <p>Tu: {item.given || '—'}</p>
+                <p>Răspuns bun: {item.sample}</p>
+                {item.explain && <p className="quiz-explain">{item.ok ? item.explain : `De ce: ${item.explain}`}</p>}
+              </li>
+            ))}
+          </ol>
+          <div className="learning-actions">
+            {typeof onAskMentor === 'function' && source && (
+              <button type="button" className="ghost-button" onClick={() => onAskMentor(source)}>
+                Întreabă mentorul
+              </button>
+            )}
+            <button type="button" className="accent-button" onClick={() => generate(source, true)}>Alt set</button>
+          </div>
+        </div>
       )}
     </section>
   );

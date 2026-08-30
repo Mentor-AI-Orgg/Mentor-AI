@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 const { pickPractice } = require("../data/practicePicker");
-const { checkExercise } = require("../data/exerciseBank");
-const { ensureUser, getTodayKey } = require("../data/economyStore");
+const { checkExercise, checkMany, scoreToGrade, encouragementFor } = require("../data/exerciseBank");
+const { findQuestion } = require("../data/practiceBank");
+const { ensureUser, getTodayKey, recordProgress, recordSkillReview, getSkillHistory } = require("../data/economyStore");
 
 router.post("/generate", (req, res) => {
   const {
@@ -91,6 +92,117 @@ router.post("/seen", (req, res) => {
       total,
       complete: user.practiceSeen[key].points.length >= total
     }
+  });
+});
+
+router.get("/history", (req, res) => {
+  res.json(getSkillHistory(req.auth.email));
+});
+
+router.post("/finish", (req, res) => {
+  const {
+    kind = "test",
+    chapter_id: chapterId = "",
+    subject = "matematica",
+    class_level: classLevel = 5,
+    title = "",
+    answers = [],
+    picks = []
+  } = req.body || {};
+
+  const isTest = kind !== "flashcards";
+  let items = [];
+
+  if (isTest) {
+    items = checkMany(Array.isArray(answers) ? answers : []);
+  } else {
+    items = (Array.isArray(picks) ? picks : []).map(pick => {
+      const question = findQuestion(pick.card_id || pick.id);
+      if (!question) {
+        return { id: pick.card_id, point: "", prompt: "", given: String(pick.chosen || ""), ok: false, found: false, explain: "", sample: "", steps: [] };
+      }
+      const chosen = String(pick.chosen || "").trim();
+      const sample = question.options[question.correct] || "";
+      const ok = chosen && chosen === sample;
+      return {
+        id: question.id,
+        point: question.point,
+        prompt: question.question,
+        given: chosen,
+        skipped: !chosen,
+        ok,
+        found: true,
+        explain: question.explain,
+        sample,
+        steps: []
+      };
+    });
+  }
+
+  const correct = items.filter(item => item.ok).length;
+  const total = items.length;
+  const gradeNote = scoreToGrade(correct, total);
+  const message = encouragementFor(gradeNote);
+  const strengths = [...new Set(items.filter(item => item.ok).map(item => item.point).filter(Boolean))];
+  const weaknesses = [...new Set(items.filter(item => !item.ok).map(item => item.point).filter(Boolean))];
+
+  const user = ensureUser(req.auth.email);
+  if (!user.practiceSeen) user.practiceSeen = {};
+  const pack = pickPractice({
+    subject,
+    grade: classLevel,
+    chapterId,
+    topic: chapterId,
+    kind: isTest ? "test" : "flashcards",
+    count: 3
+  });
+  if (!user.practiceSeen[pack.key]) user.practiceSeen[pack.key] = { points: [], questionIds: [], day: getTodayKey() };
+  items.forEach(item => {
+    if (item.point && !user.practiceSeen[pack.key].points.includes(item.point)) {
+      user.practiceSeen[pack.key].points.push(item.point);
+    }
+    if (item.id && !user.practiceSeen[pack.key].questionIds.includes(item.id)) {
+      user.practiceSeen[pack.key].questionIds.push(item.id);
+    }
+  });
+  user.practiceSeen[pack.key].questionIds = user.practiceSeen[pack.key].questionIds.slice(-80);
+
+  const review = recordSkillReview(req.auth.email, {
+    kind: isTest ? "test" : "flashcards",
+    subject,
+    grade: classLevel,
+    chapterId,
+    title,
+    correct,
+    total,
+    gradeNote,
+    message,
+    strengths,
+    weaknesses,
+    items
+  });
+
+  let award = null;
+  if (isTest) {
+    award = recordProgress({
+      userId: req.auth.email,
+      type: "chapter_test",
+      note: title || "Test de capitol",
+      meta: { subject, grade: classLevel, chapterId, title, score: correct, total, gradeNote }
+    });
+  }
+
+  res.json({
+    items,
+    correct,
+    total,
+    grade: gradeNote,
+    message,
+    strengths,
+    weaknesses,
+    history: review.snapshot,
+    awarded: award?.awarded || null,
+    summary: award?.summary || null
   });
 });
 

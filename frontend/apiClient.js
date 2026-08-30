@@ -552,6 +552,28 @@ const MentorAPI = {
     }
   },
 
+  async finishPractice(payload) {
+    try {
+      const data = await safeFetchJson('/api/flashcards/finish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async getSkillHistory() {
+    try {
+      const data = await safeFetchJson('/api/flashcards/history');
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: { log: [], strengths: [], weaknesses: [] }, fallback: true };
+    }
+  },
+
   async markPracticeSeen(payload) {
     try {
       const data = await safeFetchJson('/api/flashcards/seen', {

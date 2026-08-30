@@ -276,6 +276,8 @@ function createDefaultUser(userId) {
     sessionAwards: {},
     practiceSeen: {},
     practiceTests: {},
+    skillLog: [],
+    skillPoints: {},
     parentNotify: { studyDate: null, loginDate: null },
     coinsEarned: 0,
     coinsSpent: 0,
@@ -298,6 +300,8 @@ function ensureUser(userId, patch = {}) {
   if (!current.sessionAwards) current.sessionAwards = {};
   if (!current.practiceSeen) current.practiceSeen = {};
   if (!current.practiceTests) current.practiceTests = {};
+  if (!Array.isArray(current.skillLog)) current.skillLog = [];
+  if (!current.skillPoints || typeof current.skillPoints !== 'object') current.skillPoints = {};
   if (!current.parentNotify) current.parentNotify = { studyDate: null, loginDate: null };
   if (current.metrics && current.metrics.lastStudyDate === undefined) current.metrics.lastStudyDate = null;
   if (patch && typeof patch === 'object') {
@@ -753,6 +757,60 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
   return { entry, awarded, summary: buildSummary(user) };
 }
 
+function recordSkillReview(userId, payload = {}) {
+  const user = ensureUser(userId);
+  const items = Array.isArray(payload.items) ? payload.items : [];
+  const entry = {
+    id: `rev_${Date.now()}_${Math.random().toString(16).slice(2, 6)}`,
+    at: new Date().toISOString(),
+    kind: payload.kind === 'flashcards' ? 'flashcards' : 'test',
+    subject: payload.subject || '',
+    grade: String(payload.grade || ''),
+    chapterId: payload.chapterId || '',
+    title: String(payload.title || '').slice(0, 120),
+    correct: Number(payload.correct) || 0,
+    total: Number(payload.total) || items.length,
+    gradeNote: Number(payload.gradeNote) || 1,
+    message: payload.message || '',
+    strengths: payload.strengths || [],
+    weaknesses: payload.weaknesses || []
+  };
+  user.skillLog.unshift(entry);
+  user.skillLog = user.skillLog.slice(0, 50);
+  items.forEach(item => {
+    const key = `${payload.subject || ''}:${item.point || item.id}`;
+    if (!user.skillPoints[key]) {
+      user.skillPoints[key] = { ok: 0, fail: 0, label: item.point || item.id, subject: payload.subject || '' };
+    }
+    if (item.ok) user.skillPoints[key].ok += 1;
+    else user.skillPoints[key].fail += 1;
+  });
+  return { entry, snapshot: skillSnapshot(user) };
+}
+
+function skillSnapshot(user) {
+  const points = Object.entries(user.skillPoints || {}).map(([id, value]) => ({ id, ...value }));
+  const strengths = points
+    .filter(item => item.ok >= 2 && item.ok > item.fail)
+    .sort((a, b) => b.ok - a.ok)
+    .slice(0, 8)
+    .map(item => item.label);
+  const weaknesses = points
+    .filter(item => item.fail > item.ok)
+    .sort((a, b) => b.fail - a.ok)
+    .slice(0, 8)
+    .map(item => item.label);
+  return {
+    log: (user.skillLog || []).slice(0, 20),
+    strengths: [...new Set(strengths)],
+    weaknesses: [...new Set(weaknesses)]
+  };
+}
+
+function getSkillHistory(userId) {
+  return skillSnapshot(ensureUser(userId));
+}
+
 function logActivity({ userId = 'demo_user', type, note = '', meta = {}, amount = 0 }) {
   const progressTypes = new Set(['chapter_open', 'session_complete', 'flashcard_known', 'focus_session', 'learn_module', 'save_session', 'chapter_test']);
   if (type === 'learn_module') {
@@ -1184,6 +1242,8 @@ module.exports = {
   getInventory,
   claimReward,
   recordProgress,
+  recordSkillReview,
+  getSkillHistory,
   logActivity,
   getNotifications,
   markNotificationRead,

@@ -52,7 +52,9 @@ function pickPractice({
   const isTest = kind === 'test';
   const pool = isTest ? listChapterExercises(sid, g, cid) : listChapterQuestions(sid, g, cid);
   const points = isTest ? listExercisePoints(sid, g, cid) : listPoints(sid, g, cid);
-  const want = Math.min(6, Math.max(3, Number(count) || (isTest ? 4 : 6)));
+  const want = isTest
+    ? Math.min(pool.length, 7)
+    : Math.min(pool.length, Math.max(1, Number(count) || 6));
   const excluded = new Set((excludeIds || []).map(String));
   const seen = new Set((seenPoints || []).map(String));
 
@@ -60,7 +62,10 @@ function pickPractice({
   const freshId = pool.filter(item => !excluded.has(item.id) && seen.has(item.point));
   const rest = pool.filter(item => excluded.has(item.id) || (seen.has(item.point) && !freshPoint.includes(item)));
 
-  const ordered = [...shuffle(freshPoint), ...shuffle(freshId), ...shuffle(rest.length ? rest : pool)];
+  const byLevel = list => list.slice().sort((a, b) => (a.level || 99) - (b.level || 99));
+  const ordered = isTest
+    ? byLevel([...freshPoint, ...freshId, ...(rest.length ? rest : pool)])
+    : [...shuffle(freshPoint), ...shuffle(freshId), ...shuffle(rest.length ? rest : pool)];
   const picked = [];
   const used = new Set();
   for (const item of ordered) {
@@ -69,6 +74,9 @@ function pickPractice({
     const reviewCard = seen.has(item.point) && !freshPoint.some(entry => entry.id === item.id);
     picked.push(isTest ? publicExercise(item, reviewCard) : publicCard(item, reviewCard));
     if (picked.length >= want) break;
+  }
+  if (isTest) {
+    picked.sort((a, b) => (a.level || 99) - (b.level || 99));
   }
 
   const afterPoints = new Set([...seen, ...picked.map(card => card.point)]);

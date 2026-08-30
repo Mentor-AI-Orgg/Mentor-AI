@@ -315,10 +315,20 @@ function allChapterKeys() {
   return Object.keys(BANK);
 }
 
+function findQuestion(id) {
+  const needle = String(id || '');
+  for (const list of Object.values(BANK)) {
+    const found = list.find(item => item.id === needle);
+    if (found) return found;
+  }
+  return null;
+}
+
 module.exports = {
   BANK,
   chapterKey,
   listChapterQuestions,
   listPoints,
-  allChapterKeys
+  allChapterKeys,
+  findQuestion
 };

@@ -2,7 +2,7 @@ import { dailySlogan } from '../slogans.js';
 
 const FEATURES = [
   { icon: 'fa-book-open', title: 'Lecții pe capitole', text: 'Română și mate, 5–8, pe înțelesul tău.' },
-  { icon: 'fa-clipboard-check', title: 'Teste de rezolvat', text: 'Exerciții mai grele: scrii tu răspunsul, nu bifezi.' },
+  { icon: 'fa-clipboard-check', title: 'Teste de rezolvat', text: '7 exerciții, de la ușor la greu. Scrii doar rezultatul, nota vine la final.' },
   { icon: 'fa-layer-group', title: 'Flashcarduri cu 4 variante', text: 'Teorie. Alegi varianta corectă dacă ai înțeles.' },
   { icon: 'fa-comments', title: 'Mentor la nevoie', text: 'Îți explică altfel, mai pe îndelete, cu alt exemplu.' }
 ];

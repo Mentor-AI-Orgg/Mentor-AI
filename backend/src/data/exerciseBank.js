@@ -1,6 +1,8 @@
 // Exerciții originale de rezolvat (teste), nu grilă și nu copiate din culegeri.
 // Programa 5–8 e doar lista de teme. Răspunsurile și pașii rămân pe server;
-// clientul primește enunțul, apoi — după ce copilul încearcă — explicația.
+// clientul primește enunțul; rezolvarea apare abia la finalizarea testului.
+
+const { EXTRAS } = require('./exerciseExtras');
 
 function ex(id, point, prompt, answers, explain, extra = {}) {
   return {
@@ -14,7 +16,8 @@ function ex(id, point, prompt, answers, explain, extra = {}) {
     tokens: extra.tokens || [],
     long: Boolean(extra.long),
     minWords: Number(extra.minWords) || 0,
-    steps: Array.isArray(extra.steps) ? extra.steps.slice() : []
+    steps: Array.isArray(extra.steps) ? extra.steps.slice() : [],
+    level: Number(extra.level) || 0
   };
 }
 
@@ -237,7 +240,12 @@ function chapterKey(subject, grade, chapterId) {
 
 function listChapterExercises(subject, grade, chapterId) {
   const key = chapterKey(subject, grade, chapterId);
-  return BANK[key] ? BANK[key].slice() : [];
+  const extra = EXTRAS[key] || [];
+  const base = BANK[key] || [];
+  return [...extra, ...base].map((item, index) => ({
+    ...item,
+    level: item.level || index + 1
+  }));
 }
 
 function listExercisePoints(subject, grade, chapterId) {
@@ -250,7 +258,11 @@ function allExerciseKeys() {
 
 function findExercise(id) {
   const needle = String(id || '');
-  for (const list of Object.values(BANK)) {
+  for (const key of Object.keys(BANK)) {
+    const found = listChapterExercises(...key.split(':')).find(item => item.id === needle);
+    if (found) return found;
+  }
+  for (const list of Object.values(EXTRAS)) {
     const found = list.find(item => item.id === needle);
     if (found) return found;
   }
@@ -314,7 +326,7 @@ function publicExercise(item, review = false) {
     point: item.point,
     prompt: item.prompt,
     hint: item.hint || '',
-    long: Boolean(item.long),
+    level: item.level || 0,
     review
   };
 }
@@ -328,8 +340,43 @@ function checkExercise(id, given) {
     found: true,
     explain: exercise.explain,
     sample: exercise.answers[0] || '',
-    steps: exercise.steps || []
+    steps: exercise.steps || [],
+    point: exercise.point || '',
+    prompt: exercise.prompt || ''
   };
+}
+
+function checkMany(pairs) {
+  return (pairs || []).map(pair => {
+    const id = pair.card_id || pair.id;
+    const given = pair.answer == null ? '' : pair.answer;
+    const result = checkExercise(id, given);
+    return {
+      id,
+      point: result.point || '',
+      prompt: result.prompt || '',
+      given: String(given || ''),
+      skipped: !String(given || '').trim(),
+      ok: result.ok,
+      found: result.found,
+      explain: result.explain || '',
+      sample: result.sample || '',
+      steps: result.steps || []
+    };
+  });
+}
+
+function scoreToGrade(correct, total) {
+  const t = Math.max(1, Number(total) || 0);
+  const c = Math.max(0, Number(correct) || 0);
+  return Math.max(1, Math.min(10, Math.round((c / t) * 10)));
+}
+
+function encouragementFor(grade) {
+  if (grade >= 9) return 'Bravo. Ții calea, chiar și unde se îngroașă.';
+  if (grade >= 7) return 'Bun ritm. Uită-te la cele greșite — acolo crești.';
+  if (grade >= 5) return 'Ai prins o parte. Reia punctele slabe, apoi mai dai un test.';
+  return 'Nu e capăt. Lucrează pe foaie, cere mentorului pașii, apoi mai încerci.';
 }
 
 module.exports = {
@@ -342,5 +389,8 @@ module.exports = {
   normalizeAnswer,
   answersMatch,
   publicExercise,
-  checkExercise
+  checkExercise,
+  checkMany,
+  scoreToGrade,
+  encouragementFor
 };

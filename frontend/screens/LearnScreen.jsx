@@ -193,7 +193,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
         <div className="learn-hero">
           <div className="eyebrow">LECȚII DE GIMNAZIU</div>
           <h1 className="display-font screen-title">Română și matematică, clasele 5–8.</h1>
-          <p className="screen-subtitle">Alege materia, apoi clasa. Testele sunt exerciții de clasă, cu pași după verificare. Flashcardurile sunt grilă de teorie.</p>
+          <p className="screen-subtitle">Alege materia, apoi clasa. În test scrii doar răspunsul final; nota și pașii vin după finalizare.</p>
           <p className="learn-slogan">{dailySlogan()}</p>
         </div>
       </header>

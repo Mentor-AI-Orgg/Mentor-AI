@@ -10,6 +10,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange, 
   const [detectLoading, setDetectLoading] = useState(false);
   const [detectResult, setDetectResult] = useState(null);
   const [inbox, setInbox] = useState([]);
+  const [skills, setSkills] = useState({ log: [], strengths: [], weaknesses: [] });
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -20,7 +21,12 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange, 
         setInbox(result.data.inbox || []);
       }
     };
+    const loadSkills = async () => {
+      const result = await MentorAPI.getSkillHistory();
+      if (result.success) setSkills(result.data);
+    };
     loadInbox();
+    loadSkills();
   }, [userData.email]);
 
   const runDetector = async () => {
@@ -115,6 +121,25 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange, 
       </div>
 
       <div className="mx-5 mt-5 profile-tools-grid">
+        <section className="surface rounded-3xl p-5 profile-tool-card">
+          <div className="eyebrow">Istoric teste</div>
+          <h3 className="display-font profile-tool-title">Note, puncte forte, de lucrat.</h3>
+          {skills.strengths?.length > 0 && <p className="quiz-explain">Forte: {skills.strengths.join(', ')}</p>}
+          {skills.weaknesses?.length > 0 && <p className="quiz-sample">Slabe: {skills.weaknesses.join(', ')}</p>}
+          {(skills.log || []).length === 0 ? (
+            <p className="profile-empty-note">După primul test sau set de flashcarduri, notele rămân aici.</p>
+          ) : (
+            <ul className="skill-log">
+              {skills.log.map(entry => (
+                <li key={entry.id}>
+                  <strong>Nota {entry.gradeNote}</strong>
+                  <span>{entry.kind === 'test' ? 'Test' : 'Flashcarduri'} · {entry.title || entry.chapterId} · {entry.correct}/{entry.total}</span>
+                  {entry.weaknesses?.length > 0 && <small>De lucrat: {entry.weaknesses.join(', ')}</small>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
         <section className="surface rounded-3xl p-5 profile-tool-card">
           <div className="eyebrow">Detector demo</div>
           <h3 className="display-font profile-tool-title">Euristică locală, nu un detector real.</h3>

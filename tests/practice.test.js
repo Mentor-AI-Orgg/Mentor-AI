@@ -44,7 +44,7 @@ describe('chapter practice bank', () => {
       GRADES.forEach(grade => {
         (GUIDES[subject][grade].units || []).forEach(unit => {
           const items = listChapterExercises(subject, grade, unit.id);
-          expect(items.length).toBeGreaterThanOrEqual(4);
+          expect(items.length).toBeGreaterThanOrEqual(7);
           items.forEach(item => {
             expect(item.prompt.length).toBeGreaterThan(12);
             expect(item.answers.length).toBeGreaterThan(0);
@@ -53,8 +53,9 @@ describe('chapter practice bank', () => {
         });
       });
     });
-    const pack = pickPractice({ subject: 'matematica', grade: 5, chapterId: 'naturale', kind: 'test', count: 4 });
-    expect(pack.cards).toHaveLength(4);
+    const pack = pickPractice({ subject: 'matematica', grade: 5, chapterId: 'naturale', kind: 'test', count: 7 });
+    expect(pack.cards).toHaveLength(7);
+    expect(pack.cards.map(card => card.level)).toEqual([1, 2, 3, 4, 5, 6, 7]);
     expect(pack.cards[0].prompt).toBeTruthy();
     expect(pack.cards[0].options).toBeUndefined();
     expect(pack.cards[0].answers).toBeUndefined();
@@ -142,10 +143,10 @@ describe('practice API', () => {
       subject: 'matematica',
       class_level: 5,
       kind: 'test',
-      count: 5
+      count: 7
     });
     expect(generated.status).toBe(200);
-    expect(generated.body.cards).toHaveLength(4);
+    expect(generated.body.cards).toHaveLength(7);
     expect(generated.body.cards[0].prompt).toBeTruthy();
     expect(generated.body.cards[0].options).toBeUndefined();
     expect(generated.body.cards[0].answers).toBeUndefined();
@@ -172,12 +173,27 @@ describe('practice API', () => {
     expect(seen.status).toBe(200);
     expect(seen.body.coverage.seen).toBeGreaterThanOrEqual(1);
 
-    const testAward = await agent.post('/api/economy/progress').send({
-      type: 'chapter_test',
-      note: 'Fracții',
-      meta: { subject: 'matematica', grade: '5', chapterId: 'fractii', score: 4 }
+    const finished = await agent.post('/api/flashcards/finish').send({
+      kind: 'test',
+      chapter_id: 'fractii',
+      subject: 'matematica',
+      class_level: 5,
+      title: 'Fracții',
+      answers: generated.body.cards.map((card, index) => ({
+        card_id: card.id,
+        answer: index === 0 ? '1' : ''
+      }))
     });
-    expect(testAward.status).toBe(200);
-    expect(testAward.body.awarded.coins).toBe(10);
+    expect(finished.status).toBe(200);
+    expect(finished.body.total).toBe(generated.body.cards.length);
+    expect(finished.body.grade).toBeGreaterThanOrEqual(1);
+    expect(finished.body.grade).toBeLessThanOrEqual(10);
+    expect(finished.body.message).toBeTruthy();
+    expect(finished.body.items[0].steps.length).toBeGreaterThan(0);
+    expect(finished.body.history.log.length).toBeGreaterThan(0);
+
+    const history = await agent.get('/api/flashcards/history');
+    expect(history.status).toBe(200);
+    expect(history.body.log[0].gradeNote).toBe(finished.body.grade);
   });
 });
