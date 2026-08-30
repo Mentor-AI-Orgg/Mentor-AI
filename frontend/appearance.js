@@ -44,7 +44,8 @@ function applyProgress(summary = {}, prev = {}) {
     chaptersTotal: summary.chaptersTotal,
     avatarId: summary.equipped?.avatar || prev.avatarId,
     themeId: summary.equipped?.background || prev.themeId,
-    voiceId: summary.equipped?.voice || prev.voiceId,
+    titleId: summary.titleId || summary.equipped?.title || prev.titleId,
+    titleName: summary.titleName || prev.titleName,
     chapters: summary.chapters || prev.chapters,
     savedSessions: summary.savedSessions || prev.savedSessions
   };

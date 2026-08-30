@@ -5,8 +5,7 @@ const CATEGORY_META = {
   daily: { label: 'Zilnic', icon: 'fa-gift' },
   avatar: { label: 'Avatar', icon: 'fa-user-astronaut' },
   background: { label: 'Fundal', icon: 'fa-panorama' },
-  voice: { label: 'Voce', icon: 'fa-volume-high' },
-  boost: { label: 'Surpriză', icon: 'fa-bolt' }
+  titles: { label: 'Titluri', icon: 'fa-award' }
 };
 
 const AUTO_ACTIONS = new Set(['flashcards_5', 'study_1h', 'streak_bonus']);
@@ -41,7 +40,7 @@ const ShopRewardCard = ({ reward, loading, onClaim, claimState }) => {
   );
 };
 
-const ShopItemCard = ({ item, owned, equipped, onBuy, buying }) => {
+const ShopItemCard = ({ item, owned, equipped, onBuy, onEquip, buying, equipping }) => {
   const isEquipped = equipped === item.id;
   return (
     <div className={`shop-item-card surface ${owned ? 'owned' : ''} ${isEquipped ? 'equipped' : ''}`}>
@@ -50,20 +49,46 @@ const ShopItemCard = ({ item, owned, equipped, onBuy, buying }) => {
         <div className="shop-item-price"><i className="fas fa-coins" /> {formatCoins(item.price)}</div>
       </div>
       <div className="shop-item-visual" style={item.accent ? { color: item.accent } : undefined}>
-        <i className={`fas ${item.icon || (item.category === 'avatar' ? 'fa-user-astronaut' : item.category === 'background' ? 'fa-palette' : item.category === 'voice' ? 'fa-volume-high' : 'fa-gift')}`} />
+        <i className={`fas ${item.icon || (item.category === 'avatar' ? 'fa-user-astronaut' : 'fa-palette')}`} />
       </div>
       <h4>{item.name}</h4>
       <p>{item.description}</p>
-      {item.category === 'voice' && <small className="shop-voice-note">Vocea e un semn cosmetic. Nu există citire cu voce reală încă.</small>}
       <div className="shop-item-footer">
         <span>{CATEGORY_META[item.category]?.label || item.category}</span>
-        <button type="button" className="accent-button" disabled={owned || buying} onClick={() => onBuy(item)}>
-          {owned ? (isEquipped ? 'Echipat' : 'Cumpărat') : buying ? '...' : 'Cumpără'}
-        </button>
+        {owned ? (
+          <button type="button" className="accent-button" disabled={isEquipped || equipping} onClick={() => onEquip(item)}>
+            {isEquipped ? 'Pe profil' : equipping ? '...' : 'Poartă'}
+          </button>
+        ) : (
+          <button type="button" className="accent-button" disabled={buying} onClick={() => onBuy(item)}>
+            {buying ? '...' : 'Cumpără'}
+          </button>
+        )}
       </div>
     </div>
   );
 };
+
+const TitleCard = ({ item, equipped, onEquip, equipping }) => (
+  <div className={`shop-item-card surface ${item.unlocked ? 'owned' : ''} ${equipped ? 'equipped' : ''}`}>
+    <div className="shop-item-head">
+      <div className="shop-item-badge">{item.unlocked ? 'Deblocat' : 'Blocat'}</div>
+    </div>
+    <div className="shop-item-visual"><i className="fas fa-award" /></div>
+    <h4>{item.name}</h4>
+    <p>{item.description}</p>
+    <div className="shop-item-footer">
+      <span>Titlu</span>
+      {item.unlocked ? (
+        <button type="button" className="accent-button" disabled={equipped || equipping} onClick={() => onEquip(item.id)}>
+          {equipped ? 'Pe profil' : 'Poartă'}
+        </button>
+      ) : (
+        <span>Se deblochează din faptă, nu cu monede.</span>
+      )}
+    </div>
+  </div>
+);
 
 const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRewardToast, onProgress }) => {
   const [loading, setLoading] = useState(true);
@@ -73,6 +98,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
   const [category, setCategory] = useState('daily');
   const [claiming, setClaiming] = useState(false);
   const [buyingId, setBuyingId] = useState('');
+  const [equippingId, setEquippingId] = useState('');
   const [parentEmail, setParentEmail] = useState(userData.parentEmail || '');
   const [parentMessage, setParentMessage] = useState('');
   const [parentSending, setParentSending] = useState(false);
@@ -95,7 +121,8 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         chaptersTotal: next.chaptersTotal,
         avatarId: next.equipped?.avatar,
         themeId: next.equipped?.background,
-        voiceId: next.equipped?.voice
+        titleId: next.equipped?.title,
+        titleName: next.titleName
       });
     }
   };
@@ -159,17 +186,60 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         onCoinsChange(result.data.balance, result.data.equipped || {}, summary?.role || userData.role || 'student', {
           avatarId: result.data.equipped?.avatar,
           themeId: result.data.equipped?.background,
-          voiceId: result.data.equipped?.voice
+          titleId: result.data.equipped?.title,
+          titleName: result.data.summary?.titleName
         });
       }
       if (typeof onAppearanceChange === 'function') {
-        onAppearanceChange(result.data.equipped || {}, result.data.inventory || []);
+        onAppearanceChange(result.data.equipped || {}, result.data.inventory || [], { titleName: result.data.summary?.titleName });
       }
       await load();
       if (onRewardToast) onRewardToast('Obiect cumpărat. Îl vezi pe Home și în profil.');
       return;
     }
     if (onRewardToast) onRewardToast('Nu ai destule monede pentru obiectul ales.', 'warning');
+  };
+
+  const applyEquip = result => {
+    if (typeof onCoinsChange === 'function') {
+      onCoinsChange(result.data.summary?.balance ?? summary?.balance, result.data.equipped || {}, summary?.role || userData.role || 'student', {
+        avatarId: result.data.equipped?.avatar,
+        themeId: result.data.equipped?.background,
+        titleId: result.data.equipped?.title,
+        titleName: result.data.summary?.titleName || result.data.titles?.catalog?.find(item => item.id === result.data.equipped?.title)?.name || ''
+      });
+    }
+    if (typeof onAppearanceChange === 'function') {
+      onAppearanceChange(result.data.equipped || {}, result.data.inventory || summary?.inventory || [], {
+        titleName: result.data.summary?.titleName
+      });
+    }
+  };
+
+  const handleEquipItem = async item => {
+    setEquippingId(item.id);
+    const result = await MentorAPI.equipItem({ item_id: item.id });
+    setEquippingId('');
+    if (!result.success) {
+      if (onRewardToast) onRewardToast('Nu am putut pune obiectul pe profil.', 'warning');
+      return;
+    }
+    applyEquip(result);
+    await load();
+    if (onRewardToast) onRewardToast(`${item.name} e acum pe profil.`);
+  };
+
+  const handleEquipTitle = async titleId => {
+    setEquippingId(titleId);
+    const result = await MentorAPI.equipItem({ title_id: titleId, slot: 'title' });
+    setEquippingId('');
+    if (!result.success) {
+      if (onRewardToast) onRewardToast('Titlul nu e deblocat încă.', 'warning');
+      return;
+    }
+    applyEquip(result);
+    await load();
+    if (onRewardToast) onRewardToast('Titlul e pe profil.');
   };
 
   const sendParentReview = async () => {
@@ -239,30 +309,46 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         <div className="shop-section-head">
           <div>
             <div className="eyebrow">Catalog</div>
-            <h2 className="display-font">Avatar, fundal, voce și un pachet surpriză.</h2>
+            <h2 className="display-font">Avatar și fundal se cumpără. Titlurile se câștigă.</h2>
           </div>
           <button type="button" className="ghost-button" onClick={load} disabled={refreshing}>{refreshing ? 'Se actualizează...' : 'Actualizează'}</button>
         </div>
         <div className="shop-tabs">
-          {['daily', 'avatar', 'background', 'voice', 'boost'].map(key => (
+          {['daily', 'avatar', 'background', 'titles'].map(key => (
             <button key={key} type="button" className={`shop-tab ${category === key ? 'active' : ''}`} onClick={() => setCategory(key)}>
               {CATEGORY_META[key].label}
             </button>
           ))}
         </div>
 
-        <div className="shop-grid">
-          {items.map(item => (
-            <ShopItemCard
-              key={item.id}
-              item={item}
-              owned={ownedItems.has(item.id)}
-              equipped={summary?.equipped?.[item.category]}
-              buying={buyingId === item.id}
-              onBuy={item => setPendingItem(item)}
-            />
-          ))}
-        </div>
+        {category === 'titles' ? (
+          <div className="shop-grid">
+            {(summary?.titles?.catalog || catalog?.titles || []).map(item => (
+              <TitleCard
+                key={item.id}
+                item={item}
+                equipped={(summary?.titles?.equipped || summary?.equipped?.title) === item.id}
+                equipping={equippingId === item.id}
+                onEquip={handleEquipTitle}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="shop-grid">
+            {items.map(item => (
+              <ShopItemCard
+                key={item.id}
+                item={item}
+                owned={ownedItems.has(item.id)}
+                equipped={summary?.equipped?.[item.category]}
+                buying={buyingId === item.id}
+                equipping={equippingId === item.id}
+                onBuy={item => setPendingItem(item)}
+                onEquip={handleEquipItem}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="shop-section surface shop-parent-review">
@@ -283,7 +369,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         </div>
         <div className="shop-notes">
           <div><strong>Cont elev</strong><span>Monedele vin din învățare verificată.</span></div>
-          <div><strong>Monede</strong><span>Nu sunt lei. Se cheltuie pe avatar, fundal sau voce.</span></div>
+          <div><strong>Monede</strong><span>Nu sunt lei. Se cheltuie pe avatar și fundal. Titlurile se deblochează din faptă.</span></div>
           <div><strong>Acces</strong><span>Mentorul, lecțiile și flashcardurile rămân gratuite.</span></div>
         </div>
       </section>

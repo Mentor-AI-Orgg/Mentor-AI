@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router();
 const { STUDENTS_ONLY } = require('../middleware/auth');
 const { validateBody } = require('../middleware/validate');
-const { claimSchema, buySchema, progressSchema } = require('../validation/schemas');
+const { claimSchema, buySchema, equipSchema, progressSchema } = require('../validation/schemas');
 const {
   getSummary,
   getCatalog,
   purchaseItem,
+  equipCosmetic,
   getInventory,
   claimReward,
   recordProgress,
@@ -89,6 +90,20 @@ router.post('/buy', validateBody(buySchema), async (req, res) => {
       meta: { itemId: item_id }
     });
   }
+  res.status(result.ok ? 200 : 400).json(result);
+});
+
+router.post('/equip', validateBody(equipSchema), (req, res) => {
+  const { item_id, title_id, slot } = req.body || {};
+  if (item_id === undefined && title_id === undefined && !slot) {
+    return res.status(400).json({ error: 'Spune ce vrei să porți: item_id, title_id sau slot.' });
+  }
+  const result = equipCosmetic({
+    userId: req.auth.email,
+    itemId: item_id,
+    titleId: title_id,
+    slot
+  });
   res.status(result.ok ? 200 : 400).json(result);
 });
 

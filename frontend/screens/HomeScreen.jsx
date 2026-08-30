@@ -22,7 +22,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
         <div>
           <div className="eyebrow">{dateLabel}</div>
           <h1 className="display-font home-title">{t('home.hello', { name: userData.name || t('home.studentFallback') })}</h1>
-          <p className="home-role-tag">{t('home.roleStudent')} · {t('home.gradeOnly', { grade: userData.class || '5' })}</p>
+          <p className="home-role-tag">{userData.titleName ? `${userData.titleName} · ` : ''}{t('home.roleStudent')} · {t('home.gradeOnly', { grade: userData.class || '5' })}</p>
           <p className="home-slogan">{dailySlogan()}</p>
         </div>
         <button onClick={() => onNavigate('profile')} className="home-avatar" aria-label={t('home.openProfile')}>

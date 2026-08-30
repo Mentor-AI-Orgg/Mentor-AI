@@ -39,7 +39,11 @@ function applyAccount(user, prev = {}) {
     parentEmail: user.parentEmail || prev.parentEmail || '',
     uiLanguage: user.uiLanguage || prev.uiLanguage || prev.language || 'ro',
     language: user.language || prev.language || 'ro',
-    hasCompletedOnboarding: Boolean(user.hasCompletedOnboarding)
+    hasCompletedOnboarding: Boolean(user.hasCompletedOnboarding),
+    avatarId: user.avatarId !== undefined ? user.avatarId : prev.avatarId,
+    themeId: user.themeId !== undefined ? user.themeId : prev.themeId,
+    titleId: user.titleId !== undefined ? user.titleId : prev.titleId,
+    titleName: user.titleName !== undefined ? user.titleName : prev.titleName
   };
 }
 
@@ -69,9 +73,10 @@ function AppShell({ userData, setUserData }) {
       const next = {
         ...prev,
         coins: typeof balance === 'number' ? balance : prev.coins,
-        avatarId: equipped.avatar || prev.avatarId,
-        themeId: equipped.background || prev.themeId,
-        voiceId: equipped.voice || prev.voiceId,
+        avatarId: equipped.avatar !== undefined ? (equipped.avatar || '') : prev.avatarId,
+        themeId: equipped.background !== undefined ? (equipped.background || '') : prev.themeId,
+        titleId: equipped.title !== undefined ? (equipped.title || extra.titleId || '') : (extra.titleId ?? prev.titleId),
+        titleName: extra.titleName !== undefined ? extra.titleName : prev.titleName,
         role: role || prev.role,
         ...extra
       };
@@ -95,13 +100,14 @@ function AppShell({ userData, setUserData }) {
     return summary;
   }, [userData.class, userData.name]);
 
-  const handleAppearanceChange = useCallback((equipped = {}, inventory = []) => {
+  const handleAppearanceChange = useCallback((equipped = {}, inventory = [], extra = {}) => {
     setUserData(prev => {
       const next = {
         ...prev,
-        avatarId: equipped.avatar || prev.avatarId,
-        themeId: equipped.background || prev.themeId,
-        voiceId: equipped.voice || prev.voiceId,
+        avatarId: equipped.avatar !== undefined ? (equipped.avatar || '') : prev.avatarId,
+        themeId: equipped.background !== undefined ? (equipped.background || '') : prev.themeId,
+        titleId: equipped.title !== undefined ? (equipped.title || '') : prev.titleId,
+        titleName: extra.titleName !== undefined ? extra.titleName : prev.titleName,
         inventory
       };
       applyTheme(next.themeId);

@@ -14,7 +14,7 @@ const FriendCard = ({ person, rank, actionLabel, onAction, disabled }) => (
     </div>
     <div>
       <strong>{person.name}</strong>
-      <small>{person.username ? `@${person.username}` : 'fără username'} · clasa {person.class || '—'} · niv. {person.level} · {person.xp} XP</small>
+      <small>{person.title ? `${person.title} · ` : ''}{person.username ? `@${person.username}` : 'fără username'} · clasa {person.class || '—'} · niv. {person.level} · {person.xp} XP</small>
     </div>
     {actionLabel && (
       <button type="button" className="ghost-button" onClick={onAction} disabled={disabled}>
@@ -43,6 +43,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
     parentEmail: userData.parentEmail || ''
   });
   const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '' });
+  const [wardrobe, setWardrobe] = useState({ items: [], titles: [], inventory: [], equipped: {} });
   const [listOpen, setListOpen] = useState(false);
   const friendsListRef = useRef(null);
   const rankedFriends = [...(friends.friends || [])].sort((a, b) => (
@@ -72,6 +73,15 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
       if (result.success) setSkills(result.data);
     });
     loadSocial();
+    MentorAPI.getShopCatalog().then(async pack => {
+      const summary = await MentorAPI.getEconomySummary({ class_name: userData.class || '', profile_name: userData.name || '' });
+      setWardrobe({
+        items: pack.data?.items || [],
+        titles: summary.data?.summary?.titles?.catalog || pack.data?.titles || [],
+        inventory: summary.data?.summary?.inventory || [],
+        equipped: summary.data?.summary?.equipped || {}
+      });
+    });
   }, [userData.email]);
 
   const saveProfile = async () => {
@@ -197,7 +207,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
           <div>
             <div className="text-xl font-extrabold">{userData.name || t('profile.defaultName')}</div>
             <div className="text-sm text-slate-400">{userData.school || t('profile.personalProfile')}</div>
-            <div className="profile-role-pill">{t('common.student')} · {t('home.level')} {userData.level || 1}</div>
+            <div className="profile-role-pill">{userData.titleName ? `${userData.titleName} · ` : ''}{t('common.student')} · {t('home.level')} {userData.level || 1}</div>
           </div>
         </div>
         <div className="mt-6 grid grid-cols-2 gap-3">
@@ -263,6 +273,64 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
           </label>
         </div>
         <button type="button" className="ghost-button profile-tool-action" onClick={savePassword}>Schimbă parola</button>
+      </section>
+
+      <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
+        <div className="eyebrow">Afișaj</div>
+        <h3 className="display-font profile-tool-title">Ce se vede pe profil.</h3>
+        <p className="profile-empty-note">Avatarul și fundalul se cumpără din magazin. Titlul se deblochează din faptă — prima lecție, streak, prieteni, locul 1.</p>
+        <label className="field-label">Avatar
+          <select className="field form-input" value={userData.avatarId || ''} onChange={async e => {
+            const value = e.target.value;
+            const result = await MentorAPI.equipItem(value ? { item_id: value } : { slot: 'avatar', item_id: '' });
+            if (!result.success) {
+              onToast?.(result.error || 'Nu am putut schimba avatarul.', 'warning');
+              return;
+            }
+            onProfileSaved?.({ ...userData, avatarId: result.data.equipped?.avatar || '', themeId: result.data.equipped?.background || userData.themeId, titleId: result.data.equipped?.title || userData.titleId, titleName: result.data.summary?.titleName || userData.titleName });
+            setWardrobe(prev => ({ ...prev, equipped: result.data.equipped || prev.equipped }));
+          }}>
+            <option value="">Inițiala numelui</option>
+            {wardrobe.items.filter(item => item.category === 'avatar' && wardrobe.inventory.includes(item.id)).map(item => (
+              <option key={item.id} value={item.id}>{item.name}</option>
+            ))}
+          </select>
+        </label>
+        <label className="field-label">Fundal
+          <select className="field form-input" value={userData.themeId || ''} onChange={async e => {
+            const value = e.target.value;
+            const result = await MentorAPI.equipItem(value ? { item_id: value } : { slot: 'background', item_id: '' });
+            if (!result.success) {
+              onToast?.(result.error || 'Nu am putut schimba fundalul.', 'warning');
+              return;
+            }
+            onProfileSaved?.({ ...userData, avatarId: result.data.equipped?.avatar || userData.avatarId, themeId: result.data.equipped?.background || '', titleId: result.data.equipped?.title || userData.titleId, titleName: result.data.summary?.titleName || userData.titleName });
+            setWardrobe(prev => ({ ...prev, equipped: result.data.equipped || prev.equipped }));
+          }}>
+            <option value="">Fundal implicit</option>
+            {wardrobe.items.filter(item => item.category === 'background' && wardrobe.inventory.includes(item.id)).map(item => (
+              <option key={item.id} value={item.id}>{item.name}</option>
+            ))}
+          </select>
+        </label>
+        <label className="field-label">Titlu
+          <select className="field form-input" value={userData.titleId || ''} onChange={async e => {
+            const value = e.target.value;
+            const result = await MentorAPI.equipItem({ title_id: value, slot: 'title' });
+            if (!result.success) {
+              onToast?.(result.error || 'Titlul nu e deblocat.', 'warning');
+              return;
+            }
+            const name = result.data.summary?.titleName || wardrobe.titles.find(item => item.id === value)?.name || '';
+            onProfileSaved?.({ ...userData, titleId: result.data.equipped?.title || '', titleName: name });
+            setWardrobe(prev => ({ ...prev, titles: result.data.titles?.catalog || prev.titles, equipped: result.data.equipped || prev.equipped }));
+          }}>
+            <option value="">Fără titlu</option>
+            {wardrobe.titles.filter(item => item.unlocked).map(item => (
+              <option key={item.id} value={item.id}>{item.name}</option>
+            ))}
+          </select>
+        </label>
       </section>
 
       <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">

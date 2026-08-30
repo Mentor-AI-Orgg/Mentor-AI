@@ -25,7 +25,7 @@ const LeaderboardRow = ({ entry }) => (
     </div>
     <div className="leaderboard-avatar">{entry.initials || (entry.name || '?').charAt(0)}</div>
     <div className="leaderboard-row-copy">
-      <strong>{entry.name}{entry.isCurrentUser && <span className="leaderboard-you-tag">Tu</span>}</strong>
+      <strong>{entry.name}{entry.title ? ` · ${entry.title}` : ''}{entry.isCurrentUser && <span className="leaderboard-you-tag">Tu</span>}</strong>
       <small>{entry.class || `Nivel ${entry.level || 1}`} · streak {entry.streak || 0}z</small>
     </div>
     <div className="leaderboard-xp"><i className="fas fa-bolt" /> {entry.xp?.toLocaleString?.('ro-RO') || entry.xp}</div>

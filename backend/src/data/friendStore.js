@@ -6,6 +6,7 @@ const persistence = require("./persistence");
 const { findAccount, listAccounts, normalizeEmail } = require("./authStore");
 const { ensureUser, getUser } = require("./economyStore");
 const { levelFromXp } = require("./progressEngine");
+const { titleById } = require("./titles");
 
 const SETTINGS = new Map();
 const FRIENDS = new Map();
@@ -110,6 +111,7 @@ function publicCard(account, viewerEmail = "") {
     level: levelFromXp(xp).level,
     xp,
     avatarId: user.equipped?.avatar || "",
+    title: titleById(user.equipped?.title)?.name || "",
     friends: friend,
     outgoing: Boolean(pendingOut),
     incoming: Boolean(pendingIn),

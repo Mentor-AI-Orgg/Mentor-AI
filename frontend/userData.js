@@ -30,6 +30,8 @@ const defaultUserData = {
   teacherEmail: '',
   avatarId: '',
   themeId: '',
+  titleId: '',
+  titleName: '',
   voiceId: '',
   firstLoginRewardClaimed: false,
   isLoggedIn: false,

@@ -86,6 +86,12 @@ const buySchema = z.object({
   item_id: z.string().min(1, "item_id este obligatoriu.").max(80)
 });
 
+const equipSchema = z.object({
+  item_id: z.string().max(80).optional(),
+  title_id: z.string().max(80).optional(),
+  slot: z.enum(["avatar", "background", "title"]).optional()
+});
+
 const progressSchema = z.object({
   type: z.enum([
     "chapter_open",
@@ -172,6 +178,7 @@ module.exports = {
   unlinkSchema,
   claimSchema,
   buySchema,
+  equipSchema,
   progressSchema,
   accessCodeRequestSchema,
   accessCodeVerifySchema,
