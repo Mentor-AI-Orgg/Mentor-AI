@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
 import { allChapterKeys, chapterKey, listChapterQuestions } from '../backend/src/data/practiceBank.js';
+import { allExerciseKeys, checkExercise, listChapterExercises } from '../backend/src/data/exerciseBank.js';
 import { pickPractice } from '../backend/src/data/practicePicker.js';
 import { GRADES, GUIDES, SUBJECT_IDS } from '../backend/src/data/gimnaziuGuide.js';
 
@@ -35,6 +36,29 @@ describe('chapter practice bank', () => {
         expect(item.explain.length).toBeGreaterThan(8);
       });
     });
+  });
+
+  it('has solve-it exercises for every 5–8 chapter, without leaking the key in the public card', () => {
+    expect(allExerciseKeys().length).toBe(35);
+    SUBJECT_IDS.forEach(subject => {
+      GRADES.forEach(grade => {
+        (GUIDES[subject][grade].units || []).forEach(unit => {
+          const items = listChapterExercises(subject, grade, unit.id);
+          expect(items.length).toBeGreaterThanOrEqual(4);
+          items.forEach(item => {
+            expect(item.prompt.length).toBeGreaterThan(12);
+            expect(item.answers.length).toBeGreaterThan(0);
+            expect(item.explain.length).toBeGreaterThan(8);
+          });
+        });
+      });
+    });
+    const pack = pickPractice({ subject: 'matematica', grade: 5, chapterId: 'naturale', kind: 'test', count: 4 });
+    expect(pack.cards).toHaveLength(4);
+    expect(pack.cards[0].prompt).toBeTruthy();
+    expect(pack.cards[0].options).toBeUndefined();
+    expect(pack.cards[0].answers).toBeUndefined();
+    expect(checkExercise(pack.cards[0].id, 'nu-asta').found).toBe(true);
   });
 
   it('can keep generating after coverage by marking review', () => {
@@ -95,9 +119,18 @@ describe('practice API', () => {
       count: 5
     });
     expect(generated.status).toBe(200);
-    expect(generated.body.cards).toHaveLength(5);
-    expect(generated.body.cards[0].options).toHaveLength(4);
+    expect(generated.body.cards).toHaveLength(4);
+    expect(generated.body.cards[0].prompt).toBeTruthy();
+    expect(generated.body.cards[0].options).toBeUndefined();
+    expect(generated.body.cards[0].answers).toBeUndefined();
     expect(generated.body.engine_used).toBe('chapter_bank');
+
+    const checked = await agent.post('/api/flashcards/check').send({
+      card_id: generated.body.cards[0].id,
+      answer: '10'
+    });
+    expect(checked.status).toBe(200);
+    expect(typeof checked.body.ok).toBe('boolean');
 
     const card = generated.body.cards[0];
     const seen = await agent.post('/api/flashcards/seen').send({

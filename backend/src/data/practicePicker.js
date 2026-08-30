@@ -1,4 +1,5 @@
 const { listChapterQuestions, listPoints, chapterKey } = require('./practiceBank');
+const { listChapterExercises, listExercisePoints, publicExercise } = require('./exerciseBank');
 const { getGuide, normalizeGrade, normalizeSubject } = require('./gimnaziuGuide');
 
 function shuffle(list) {
@@ -48,9 +49,10 @@ function pickPractice({
   const sid = normalizeSubject(subject);
   const g = normalizeGrade(grade);
   const cid = resolveChapterId(sid, g, chapterId, topic);
-  const pool = listChapterQuestions(sid, g, cid);
-  const points = listPoints(sid, g, cid);
-  const want = Math.min(kind === 'test' ? 6 : 6, Math.max(3, Number(count) || (kind === 'test' ? 5 : 6)));
+  const isTest = kind === 'test';
+  const pool = isTest ? listChapterExercises(sid, g, cid) : listChapterQuestions(sid, g, cid);
+  const points = isTest ? listExercisePoints(sid, g, cid) : listPoints(sid, g, cid);
+  const want = Math.min(6, Math.max(3, Number(count) || (isTest ? 4 : 6)));
   const excluded = new Set((excludeIds || []).map(String));
   const seen = new Set((seenPoints || []).map(String));
 
@@ -64,7 +66,8 @@ function pickPractice({
   for (const item of ordered) {
     if (used.has(item.id)) continue;
     used.add(item.id);
-    picked.push(publicCard(item, seen.has(item.point) && !freshPoint.some(entry => entry.id === item.id)));
+    const reviewCard = seen.has(item.point) && !freshPoint.some(entry => entry.id === item.id);
+    picked.push(isTest ? publicExercise(item, reviewCard) : publicCard(item, reviewCard));
     if (picked.length >= want) break;
   }
 

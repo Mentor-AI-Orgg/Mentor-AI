@@ -2,8 +2,8 @@ import { dailySlogan } from '../slogans.js';
 
 const FEATURES = [
   { icon: 'fa-book-open', title: 'Lecții pe capitole', text: 'Română și mate, 5–8, pe înțelesul tău.' },
-  { icon: 'fa-clipboard-check', title: 'Teste cât vrei', text: 'După fiecare lecție, un test nou până prinzi tot capitolul.' },
-  { icon: 'fa-layer-group', title: 'Flashcarduri cu 4 variante', text: 'Teorie. Alegi. Vezi instant dacă ai nimerit.' },
+  { icon: 'fa-clipboard-check', title: 'Teste de rezolvat', text: 'Exerciții mai grele: scrii tu răspunsul, nu bifezi.' },
+  { icon: 'fa-layer-group', title: 'Flashcarduri cu 4 variante', text: 'Teorie. Alegi varianta corectă dacă ai înțeles.' },
   { icon: 'fa-comments', title: 'Mentor la nevoie', text: 'Îți explică altfel, mai pe îndelete, cu alt exemplu.' }
 ];
 
