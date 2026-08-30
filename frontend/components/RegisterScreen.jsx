@@ -37,7 +37,7 @@ const FieldStatus = ({ touched, valid }) => {
 const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
   const [form, setForm] = useState({
     name: '', phone: '', email: '', username: '', password: '', confirmPassword: '',
-    role: 'student', school: '', class: '5', subject: 'matematica', parentEmail: '',
+    role: 'student', school: '', class: '5', parentEmail: '',
     parentalConsent: false, privacyAccepted: false
   });
   const [touched, setTouched] = useState({});
@@ -56,7 +56,6 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
     confirmPassword: v => v && v === form.password,
     school: v => (v || '').trim().length >= 2,
     class: v => ['5', '6', '7', '8'].includes(String(v)),
-    subject: v => ['matematica', 'romana'].includes(v),
     parentEmail: v => isValidEmail(v) && v.trim().toLowerCase() !== (form.email || '').trim().toLowerCase(),
     parentalConsent: v => v === true,
     privacyAccepted: v => v === true
@@ -64,7 +63,7 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
 
   const fieldValid = key => (validators[key] ? validators[key](form[key]) : true);
 
-  const requiredFields = ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'school', 'class', 'subject', 'parentEmail', 'parentalConsent', 'privacyAccepted'];
+  const requiredFields = ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'school', 'class', 'parentEmail', 'parentalConsent', 'privacyAccepted'];
   const allValid = requiredFields.every(fieldValid);
 
   const handleSubmit = async () => {
@@ -102,15 +101,6 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
         { value: '6', label: 'Clasa a VI-a' },
         { value: '7', label: 'Clasa a VII-a' },
         { value: '8', label: 'Clasa a VIII-a' }
-      ]
-    },
-    {
-      key: 'subject',
-      label: 'Materia principală',
-      type: 'select',
-      options: [
-        { value: 'matematica', label: 'Matematică' },
-        { value: 'romana', label: 'Limba și literatura română' }
       ]
     }
   ];

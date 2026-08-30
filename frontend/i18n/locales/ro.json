@@ -54,7 +54,7 @@
   "nav": {
     "home": "Home",
     "professor": "Profesor",
-    "learn": "Învață",
+    "learn": "Lecții",
     "shop": "Shop",
     "calendar": "Calendar",
     "subscriptions": "Abonamente",
@@ -66,7 +66,8 @@
   "home": {
     "hello": "Bună, {name}.",
     "studentFallback": "Elev",
-    "gradeSubject": "Clasa a {grade}-a · {subject}",
+    "gradeSubject": "Clasa a {grade}-a",
+    "gradeOnly": "Clasa a {grade}-a",
     "roleStudent": "Cont elev",
     "roleParent": "Cont părinte",
     "roleTeacher": "Cont profesor",
@@ -86,8 +87,8 @@
     "toSpend": "de cheltuit",
     "quickEyebrow": "Acces rapid",
     "quickTitle": "Ce facem azi?",
-    "learnNew": "Învață ceva nou",
-    "learnHint": "Module adaptate",
+    "learnNew": "Capitole de gimnaziu",
+    "learnHint": "Română și mate, clasele 5–8",
     "planRhythm": "Planifică-ți ritmul",
     "seeCalendar": "Vezi calendarul",
     "shopHint": "Daily free & items"

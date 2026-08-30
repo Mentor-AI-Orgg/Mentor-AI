@@ -18,7 +18,7 @@ const FlashCard = ({ card, flipped, onFlip }) => (
   </div>
 );
 
-const FlashCards = ({ userData, presetTopics = [], onRewardClaim }) => {
+const FlashCards = ({ userData, presetTopics = [], onRewardClaim, subject, classLevel }) => {
   const [customPrompt, setCustomPrompt] = useState('');
   const [cards, setCards] = useState([]);
   const [index, setIndex] = useState(0);
@@ -44,8 +44,8 @@ const FlashCards = ({ userData, presetTopics = [], onRewardClaim }) => {
 
     const result = await MentorAPI.generateFlashcards({
       topic: finalTopic,
-      subject: userData?.subject || userData?.profile || 'matematica',
-      class_level: userData?.class || 5,
+      subject: subject || userData?.subject || userData?.profile || 'matematica',
+      class_level: classLevel || userData?.class || 5,
       language: userData?.language || 'ro',
       count: 6
     });
