@@ -66,7 +66,8 @@ router.post("/check", (req, res) => {
   res.json({
     ok: result.ok,
     explain: result.explain,
-    sample: result.ok || String(answer || "").trim() ? result.sample : ""
+    sample: result.ok || String(answer || "").trim() ? result.sample : "",
+    steps: Array.isArray(result.steps) ? result.steps : []
   });
 });
 

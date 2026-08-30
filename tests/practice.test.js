@@ -58,7 +58,33 @@ describe('chapter practice bank', () => {
     expect(pack.cards[0].prompt).toBeTruthy();
     expect(pack.cards[0].options).toBeUndefined();
     expect(pack.cards[0].answers).toBeUndefined();
+    expect(pack.cards[0].steps).toBeUndefined();
+    expect(pack.cards[0].explain).toBeUndefined();
     expect(checkExercise(pack.cards[0].id, 'nu-asta').found).toBe(true);
+  });
+
+  it('keeps unique ids and returns worked steps only after a check', () => {
+    const ids = [];
+    allExerciseKeys().forEach(key => {
+      const [subject, grade, chapterId] = key.split(':');
+      listChapterExercises(subject, grade, chapterId).forEach(item => {
+        ids.push(item.id);
+        expect(item.steps.length).toBeGreaterThan(0);
+        expect(item.explain.length).toBeGreaterThan(8);
+      });
+    });
+    expect(new Set(ids).size).toBe(ids.length);
+
+    const power = checkExercise('e5n1', '20');
+    expect(power.ok).toBe(true);
+    expect(power.steps).toEqual(expect.arrayContaining(['72 − 16 = 20']));
+
+    const identity = checkExercise('e8a1', '24');
+    expect(identity.ok).toBe(true);
+    expect(identity.steps.length).toBeGreaterThan(2);
+
+    const venn = checkExercise('e6m2', '5');
+    expect(venn.ok).toBe(true);
   });
 
   it('can keep generating after coverage by marking review', () => {
@@ -131,6 +157,9 @@ describe('practice API', () => {
     });
     expect(checked.status).toBe(200);
     expect(typeof checked.body.ok).toBe('boolean');
+    expect(Array.isArray(checked.body.steps)).toBe(true);
+    expect(checked.body.steps.length).toBeGreaterThan(0);
+    expect(checked.body.explain).toBeTruthy();
 
     const card = generated.body.cards[0];
     const seen = await agent.post('/api/flashcards/seen').send({

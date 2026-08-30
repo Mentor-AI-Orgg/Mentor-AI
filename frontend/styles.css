@@ -936,6 +936,15 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .quiz-feedback.bad { color: #ffb4b4; }
 .quiz-done { display: grid; gap: 10px; }
 .quiz-work { width: 100%; resize: vertical; }
-.quiz-hint, .quiz-sample { margin: 0; color: var(--aqua); font-size: 14px; line-height: 1.45; }
+.quiz-hint, .quiz-sample, .quiz-explain { margin: 0; color: var(--aqua); font-size: 14px; line-height: 1.45; }
+.quiz-steps {
+  margin: 0;
+  padding-left: 1.25em;
+  display: grid;
+  gap: 4px;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.5;
+}
 .focus-timer-why { margin: 0 0 10px; color: var(--muted); font-size: 13px; line-height: 1.45; }
 .learning-actions { flex-wrap: wrap; }

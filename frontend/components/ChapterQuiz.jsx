@@ -55,7 +55,8 @@ const ChapterQuiz = ({ unit, subject, grade, onClose, onRewardClaim, onAskMentor
     setResult({
       ok,
       explain: checked.data?.explain || '',
-      sample: checked.data?.sample || ''
+      sample: checked.data?.sample || '',
+      steps: Array.isArray(checked.data?.steps) ? checked.data.steps : []
     });
     setAnswers(prev => ({ ...prev, [card.id]: ok }));
     MentorAPI.markPracticeSeen({
@@ -108,7 +109,7 @@ const ChapterQuiz = ({ unit, subject, grade, onClose, onRewardClaim, onAskMentor
         </div>
         <button type="button" className="ghost-button" onClick={onClose} aria-label="Închide testul"><i className="fas fa-xmark" /></button>
       </div>
-      <p className="quiz-coverage">Nu e grilă. Rezolvi tu, scrii răspunsul, apoi verifici.</p>
+      <p className="quiz-coverage">Nu e grilă. Rezolvi tu, scrii răspunsul, apoi vezi pașii — ca la o culegere, dar enunțurile sunt ale noastre.</p>
       {coverage && (
         <p className="quiz-coverage">
           Idei din capitol: {coverage.seen}/{coverage.total}
@@ -165,8 +166,16 @@ const ChapterQuiz = ({ unit, subject, grade, onClose, onRewardClaim, onAskMentor
           ) : (
             <>
               <p className={`quiz-feedback ${result.ok ? 'ok' : 'bad'}`}>
-                {result.ok ? 'Da, ține minte calea.' : 'Nu e fix. Uită-te la pași și mai încearcă la următorul.'} {result.explain}
+                {result.ok ? 'Da, ține minte calea.' : 'Nu e fix. Uită-te la pași și mai încearcă la următorul.'}
               </p>
+              {result.explain && <p className="quiz-explain">{result.explain}</p>}
+              {result.steps.length > 0 && (
+                <ol className="quiz-steps">
+                  {result.steps.map((step, stepIndex) => (
+                    <li key={`${card.id}-step-${stepIndex}`}>{step}</li>
+                  ))}
+                </ol>
+              )}
               {!result.ok && result.sample && <p className="quiz-sample">Un răspuns bun: {result.sample}</p>}
               <button type="button" className="accent-button" onClick={next}>
                 {index + 1 < cards.length ? 'Următorul exercițiu' : 'Vezi scorul'}
