@@ -31,6 +31,13 @@ describe('economy purchases', () => {
     expect(bonus.body.ok).toBe(true);
     expect(bonus.body.balance).toBe(30);
 
+    const study = await agent.post('/api/economy/progress').send({
+      type: 'session_complete',
+      meta: { subject: 'matematica', grade: '5', chapterId: 'start', title: 'Start' }
+    });
+    expect(study.status).toBe(200);
+    expect(study.body.summary.balance).toBeGreaterThanOrEqual(50);
+
     const catalog = await agent.get('/api/economy/catalog');
     expect(catalog.status).toBe(200);
     const items = catalog.body.items || [];
@@ -43,7 +50,7 @@ describe('economy purchases', () => {
     const buy = await agent.post('/api/economy/buy').send({ item_id: 'avatar-neon-fox' });
     expect(buy.status).toBe(200);
     expect(buy.body.ok).toBe(true);
-    expect(buy.body.balance).toBe(bonus.body.balance - 50);
+    expect(buy.body.balance).toBe(study.body.summary.balance - 50);
     expect(buy.body.inventory).toContain('avatar-neon-fox');
 
     const again = await agent.post('/api/economy/buy').send({ item_id: 'avatar-neon-fox' });
