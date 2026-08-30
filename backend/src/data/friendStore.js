@@ -202,7 +202,8 @@ function inboxFor(email) {
     .map(item => ({ id: item.id, at: item.at, to: publicCard(findAccount(item.to), key) }));
   const friends = friendList(key)
     .map(other => publicCard(findAccount(other), key))
-    .filter(Boolean);
+    .filter(Boolean)
+    .sort((a, b) => (Number(b.xp) || 0) - (Number(a.xp) || 0) || String(a.name || '').localeCompare(String(b.name || ''), 'ro'));
   const quota = sendsToday(key);
   return {
     settings: { ...getSettings(key) },

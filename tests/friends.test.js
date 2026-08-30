@@ -96,4 +96,40 @@ describe('friends and profile edit', () => {
     const after = await left.agent.get('/api/friends/me');
     expect(after.body.friends.some(item => item.username === right.username)).toBe(true);
   });
+
+  it('lists friends ordered by XP, highest first', async () => {
+    const me = await registerStudent({ name: 'Eu', username: `me${Date.now().toString(16).slice(-4)}` });
+    const low = await registerStudent({ name: 'Puține XP', username: `low${Date.now().toString(16).slice(-4)}` });
+    const high = await registerStudent({ name: 'Multe XP', username: `hi${Date.now().toString(16).slice(-4)}` });
+
+    await high.agent.post('/api/economy/progress').send({
+      type: 'session_complete',
+      meta: { subject: 'matematica', grade: '5', chapterId: 'high-a', title: 'High A' }
+    });
+    await high.agent.post('/api/economy/progress').send({
+      type: 'session_complete',
+      meta: { subject: 'matematica', grade: '5', chapterId: 'high-b', title: 'High B' }
+    });
+
+    const findAndAdd = async (agent, username) => {
+      const search = await agent.get('/api/friends/search').query({ q: username });
+      expect(search.body.results[0]?.id).toBeTruthy();
+      const sent = await agent.post('/api/friends/request').send({ user_id: search.body.results[0].id });
+      expect(sent.status).toBe(201);
+    };
+
+    await findAndAdd(me.agent, low.username);
+    await findAndAdd(me.agent, high.username);
+
+    const lowInbox = await low.agent.get('/api/friends/me');
+    await low.agent.post('/api/friends/respond').send({ request_id: lowInbox.body.incoming[0].id, action: 'accept' });
+    const highInbox = await high.agent.get('/api/friends/me');
+    await high.agent.post('/api/friends/respond').send({ request_id: highInbox.body.incoming[0].id, action: 'accept' });
+
+    const list = await me.agent.get('/api/friends/me');
+    expect(list.body.friends).toHaveLength(2);
+    expect(list.body.friends[0].username).toBe(high.username);
+    expect(list.body.friends[1].username).toBe(low.username);
+    expect(list.body.friends[0].xp).toBeGreaterThan(list.body.friends[1].xp);
+  });
 });

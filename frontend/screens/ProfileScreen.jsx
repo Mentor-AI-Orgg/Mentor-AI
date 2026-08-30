@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import Leaderboard from '../components/Leaderboard.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -6,8 +6,9 @@ import { avatarIcon } from '../appearance.js';
 
 const CLASSES = ['5', '6', '7', '8'];
 
-const FriendCard = ({ person, actionLabel, onAction, disabled }) => (
-  <article className="friend-card">
+const FriendCard = ({ person, rank, actionLabel, onAction, disabled }) => (
+  <article className={`friend-card ${rank != null ? 'has-rank' : ''}`}>
+    {rank != null && <div className={`friend-rank ${rank <= 3 ? 'is-top' : ''}`}>{rank}</div>}
     <div className="friend-card-avatar">
       {avatarIcon(person.avatarId) ? <i className={`fas ${avatarIcon(person.avatarId)}`} /> : (person.name || 'E').charAt(0)}
     </div>
@@ -42,10 +43,25 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
     parentEmail: userData.parentEmail || ''
   });
   const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '' });
+  const [listOpen, setListOpen] = useState(false);
+  const friendsListRef = useRef(null);
+  const rankedFriends = [...(friends.friends || [])].sort((a, b) => (
+    (Number(b.xp) || 0) - (Number(a.xp) || 0) || String(a.name || '').localeCompare(String(b.name || ''), 'ro')
+  ));
+
+  const openFriendsList = () => {
+    setListOpen(true);
+    requestAnimationFrame(() => {
+      friendsListRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
 
   const loadSocial = async () => {
     const pack = await MentorAPI.getFriends();
-    if (pack.success) setFriends(pack.data);
+    if (pack.success) {
+      setFriends(pack.data);
+      if ((pack.data.incoming || []).length > 0) setListOpen(true);
+    }
   };
 
   useEffect(() => {
@@ -203,6 +219,9 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
           </div>
         </div>
         <div className="profile-shortcut-row">
+          <button type="button" className="accent-button" onClick={openFriendsList}>
+            <i className="fas fa-user-group" /> Lista de prieteni ({rankedFriends.length})
+          </button>
           <button type="button" className="ghost-button" onClick={() => onNavigate?.('calendar')}>
             <i className="fas fa-calendar-check" /> {t('nav.calendar')}
           </button>
@@ -259,6 +278,48 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         </label>
       </section>
 
+      <section ref={friendsListRef} className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
+        <div className="friends-list-head">
+          <div>
+            <div className="eyebrow">Lista de prieteni</div>
+            <h3 className="display-font profile-tool-title">Ordonată după XP, tot timpul.</h3>
+          </div>
+          <button type="button" className="ghost-button" onClick={() => setListOpen(open => !open)}>
+            {listOpen ? 'Ascunde' : `Arată (${rankedFriends.length})`}
+          </button>
+        </div>
+        {friends.incoming.length > 0 && (
+          <p className="profile-empty-note">Ai {friends.incoming.length} {friends.incoming.length === 1 ? 'cerere' : 'cereri'} de prietenie.</p>
+        )}
+        {listOpen && (
+          <div className="friends-list-panel">
+            {friends.incoming.length > 0 && (
+              <>
+                <h4 className="friend-subhead">Cereri primite</h4>
+                {friends.incoming.map(item => (
+                  <FriendCard key={item.id} person={item.from} actionLabel="Acceptă" onAction={() => respond(item.id, 'accept')} />
+                ))}
+              </>
+            )}
+            {rankedFriends.length === 0 ? (
+              <p className="profile-empty-note">Nu ai încă prieteni. Caută un nume mai jos și apasă Adaugă prieten.</p>
+            ) : (
+              <div className="friend-list">
+                {rankedFriends.map((person, index) => (
+                  <FriendCard
+                    key={person.id}
+                    person={person}
+                    rank={index + 1}
+                    actionLabel="Profil"
+                    onAction={() => openPeer(person.id)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
       <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
         <div className="eyebrow">Prieteni</div>
         <h3 className="display-font profile-tool-title">Caută un nume sau un username.</h3>
@@ -299,22 +360,6 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
               </>
             )}
           </div>
-        )}
-        {friends.incoming.length > 0 && (
-          <>
-            <h4 className="friend-subhead">Cereri primite</h4>
-            {friends.incoming.map(item => (
-              <FriendCard key={item.id} person={item.from} actionLabel="Acceptă" onAction={() => respond(item.id, 'accept')} />
-            ))}
-          </>
-        )}
-        {friends.friends.length > 0 && (
-          <>
-            <h4 className="friend-subhead">Prietenii tăi</h4>
-            {friends.friends.map(person => (
-              <FriendCard key={person.id} person={person} actionLabel="Profil" onAction={() => openPeer(person.id)} />
-            ))}
-          </>
         )}
       </section>
 
