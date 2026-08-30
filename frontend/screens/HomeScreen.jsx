@@ -1,7 +1,9 @@
 import { formatRoDate } from '../userData.js';
 import { useI18n } from '../i18n/index.jsx';
 import { avatarIcon, itemEmoji } from '../appearance.js';
+import { xpProgress } from '../xpProgress.js';
 import { dailySlogan } from '../slogans.js';
+import LevelBar from '../components/LevelBar.jsx';
 
 const HomeScreen = ({ userData, onNavigate }) => {
   const { t, locale } = useI18n();
@@ -9,9 +11,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
     ? new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date())
     : formatRoDate();
   const icon = avatarIcon(userData.avatarId);
-  const xpInto = Number(userData.xpIntoLevel || 0);
-  const xpNeed = Number(userData.xpToNext || 80) + xpInto || 80;
-  const xpPct = Math.min(100, Math.round((xpInto / Math.max(1, xpNeed)) * 100));
+  const bar = xpProgress(userData);
   const todayHint = userData.chaptersDone
     ? t('home.todayContinue')
     : t('home.todayStart');
@@ -46,10 +46,9 @@ const HomeScreen = ({ userData, onNavigate }) => {
           <span className="progress-score">{userData.chaptersDone || 0}<small>/{userData.chaptersTotal || 10} {t('home.chapters')}</small></span>
         </div>
         <div className="progress-track"><div style={{ width: `${Math.min(userData.score || 0, 100)}%` }}></div></div>
-        <p className="home-xp-line">{t('home.level')} {userData.level || 1} · {userData.xp || 0} XP · {t('home.nextXp', { count: userData.xpToNext || 80 })}</p>
-        <div className="progress-track progress-track-xp"><div style={{ width: `${xpPct}%` }}></div></div>
+        <LevelBar userData={userData} />
         <div className="stats-grid">
-          <div className="stat-card"><span>{t('home.level')}</span><strong>{userData.level || 1}</strong><small>{t('home.nextStep')}</small></div>
+          <div className="stat-card"><span>{t('home.level')}</span><strong>{userData.level || 1}</strong><small>{t('home.nextXpShort', { count: bar.toNext })}</small></div>
           <div className="stat-card"><span>{t('home.streak')}</span><strong>{userData.streak || 0}</strong><small>{t('home.daysInARow')}</small></div>
           <div className="stat-card"><span>{t('home.coins')}</span><strong>{userData.coins || 0}</strong><small>{t('home.toSpend')}</small></div>
         </div>

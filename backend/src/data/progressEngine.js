@@ -4,24 +4,42 @@ function yesterdayKey(from = new Date()) {
   return date.toISOString().slice(0, 10);
 }
 
+// Cumulative XP to reach each level. Level 1 starts at 0.
+// First finished lesson (login 20 + chapter 20 + session 25) reaches level 2.
+// Mythic cosmetics stay gated at level 5 (650 XP). After the table, +400 / level.
+const XP_THRESHOLDS = [0, 60, 180, 360, 650, 900, 1200, 1550, 1950, 2400, 2900];
+const XP_AFTER = 400;
+
 function levelFromXp(xp) {
   const value = Math.max(0, Number(xp) || 0);
-  const thresholds = [0, 80, 200, 400, 650, 950, 1300, 1700, 2200, 2800, 3500];
+  const last = XP_THRESHOLDS[XP_THRESHOLDS.length - 1];
   let level = 1;
-  for (let i = thresholds.length - 1; i >= 0; i -= 1) {
-    if (value >= thresholds[i]) {
-      level = i + 1;
-      break;
+  let current = 0;
+  let next = XP_THRESHOLDS[1] || XP_AFTER;
+
+  if (value >= last) {
+    const steps = Math.floor((value - last) / XP_AFTER);
+    level = XP_THRESHOLDS.length + steps;
+    current = last + steps * XP_AFTER;
+    next = current + XP_AFTER;
+  } else {
+    for (let i = XP_THRESHOLDS.length - 1; i >= 0; i -= 1) {
+      if (value >= XP_THRESHOLDS[i]) {
+        level = i + 1;
+        current = XP_THRESHOLDS[i];
+        next = XP_THRESHOLDS[i + 1];
+        break;
+      }
     }
   }
-  const current = thresholds[level - 1] || 0;
-  const next = thresholds[level] || current + 800;
+
   return {
     level,
     xp: value,
     xpIntoLevel: value - current,
     xpToNext: Math.max(0, next - value),
-    nextLevelAt: next
+    nextLevelAt: next,
+    levelSpan: next - current
   };
 }
 
@@ -51,4 +69,4 @@ const AWARDS = {
   chapter_test: { coins: 10, xp: 15 }
 };
 
-module.exports = { yesterdayKey, levelFromXp, touchStudy, AWARDS };
+module.exports = { yesterdayKey, levelFromXp, touchStudy, AWARDS, XP_THRESHOLDS, XP_AFTER };

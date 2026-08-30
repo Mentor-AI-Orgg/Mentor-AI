@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
+import LevelBar from './LevelBar.jsx';
 
 const CATEGORY_META = {
   daily: { label: 'Zilnic', icon: 'fa-gift' },
@@ -119,6 +120,8 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         level: next.level,
         xpToNext: next.xpToNext,
         xpIntoLevel: next.xpIntoLevel,
+        nextLevelAt: next.nextLevelAt,
+        levelSpan: next.levelSpan,
         score: next.score,
         chaptersDone: next.chaptersDone,
         chaptersTotal: next.chaptersTotal,
@@ -284,6 +287,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
           <span>Monede de studiu</span>
           <strong>{formatCoins(summary?.balance ?? userData.coins ?? 0)}</strong>
           <small>{summary?.xp || userData.xp || 0} XP · nivel {summary?.level || userData.level || 1}</small>
+          <LevelBar userData={summary || userData} compact />
         </div>
       </section>
 
