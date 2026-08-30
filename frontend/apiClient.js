@@ -462,6 +462,20 @@ const MentorAPI = {
     }
   },
 
+  async equipItem(payload) {
+    try {
+      const data = await safeFetchJson('/api/economy/equip', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (data.ok === false) return { success: false, data, error: data.error || data.reason };
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
   async sendParentReview(payload) {
     try {
       const data = await safeFetchJson('/api/economy/parent-review', {

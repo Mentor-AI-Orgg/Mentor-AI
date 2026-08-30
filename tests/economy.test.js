@@ -43,14 +43,17 @@ describe('economy purchases', () => {
     const items = catalog.body.items || [];
     const item = items.find(entry => entry.id === 'avatar-neon-fox');
     expect(item).toBeTruthy();
-    expect(item.price).toBe(50);
+    expect(item.price).toBe(40);
+    expect(item.name).toBe('Vulpe');
+    expect(items.every(entry => entry.category !== 'voice' && entry.category !== 'boost')).toBe(true);
     expect(items.some(entry => entry.id === 'boost-family-7d')).toBe(false);
     expect(items.some(entry => entry.id === 'boost-xp-doubler')).toBe(false);
+    expect(catalog.body.titles.some(entry => entry.id === 'prima-lectie')).toBe(true);
 
     const buy = await agent.post('/api/economy/buy').send({ item_id: 'avatar-neon-fox' });
     expect(buy.status).toBe(200);
     expect(buy.body.ok).toBe(true);
-    expect(buy.body.balance).toBe(study.body.summary.balance - 50);
+    expect(buy.body.balance).toBe(study.body.summary.balance - 40);
     expect(buy.body.inventory).toContain('avatar-neon-fox');
 
     const again = await agent.post('/api/economy/buy').send({ item_id: 'avatar-neon-fox' });

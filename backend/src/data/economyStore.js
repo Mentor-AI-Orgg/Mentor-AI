@@ -2,212 +2,14 @@ const persistence = require('./persistence');
 const crypto = require('crypto');
 const { getGuide } = require('./gimnaziuGuide');
 const { levelFromXp, touchStudy, AWARDS } = require('./progressEngine');
+const { TITLE_CATALOG, unlockedTitleIds, titleById, noteEarlyBird } = require('./titles');
+const { SHOP_CATALOG } = require('./shopCatalog');
 
 const USERS = new Map();
 const NOTIFICATIONS = [];
 const PURCHASES = new Map();
 
-const SHOP_CATALOG = [
-  {
-    id: 'avatar-neon-fox',
-    category: 'avatar',
-    name: 'Neon Fox',
-    price: 50,
-    rarity: 'Common',
-    icon: 'fa-dog',
-    description: 'Avatar rapid și prietenos, bun pentru început.'
-  },
-  {
-    id: 'avatar-starlight-owl',
-    category: 'avatar',
-    name: 'Starlight Owl',
-    price: 50,
-    rarity: 'Common',
-    icon: 'fa-crow',
-    description: 'Un avatar calm, cu vibe de mentor.'
-  },
-  {
-    id: 'avatar-pixel-tiger',
-    category: 'avatar',
-    name: 'Pixel Tiger',
-    price: 75,
-    rarity: 'Rare',
-    icon: 'fa-cat',
-    description: 'Mai expresiv și mai îndrăzneț.'
-  },
-  {
-    id: 'avatar-cosmic-bear',
-    category: 'avatar',
-    name: 'Cosmic Bear',
-    price: 75,
-    rarity: 'Rare',
-    icon: 'fa-paw',
-    description: 'Un avatar de colecție, cu prezență puternică.'
-  },
-  {
-    id: 'avatar-hero-robot',
-    category: 'avatar',
-    name: 'Hero Robot',
-    price: 100,
-    rarity: 'Epic',
-    icon: 'fa-robot',
-    description: 'Pentru cine vrea un look futurist.'
-  },
-  {
-    id: 'avatar-galaxy-kid',
-    category: 'avatar',
-    name: 'Galaxy Kid',
-    price: 100,
-    rarity: 'Epic',
-    icon: 'fa-user-astronaut',
-    description: 'Avatar special, ușor de recunoscut.'
-  },
-  {
-    id: 'avatar-mentor-legend',
-    category: 'avatar',
-    name: 'Mentor Legend',
-    price: 100,
-    rarity: 'Legendary',
-    icon: 'fa-crown',
-    description: 'Cel mai rar avatar, pentru cei consecvenți.'
-  },
-  {
-    id: 'theme-pink-pulse',
-    category: 'background',
-    name: 'Pink Pulse',
-    price: 75,
-    rarity: 'Common',
-    accent: '#ff8fa3',
-    description: 'Fundal roz cu energie caldă.'
-  },
-  {
-    id: 'theme-orange-ember',
-    category: 'background',
-    name: 'Orange Ember',
-    price: 75,
-    rarity: 'Common',
-    accent: '#ffb347',
-    description: 'Tonalitate portocalie, luminoasă.'
-  },
-  {
-    id: 'theme-red-rush',
-    category: 'background',
-    name: 'Red Rush',
-    price: 75,
-    rarity: 'Rare',
-    accent: '#ff6b6b',
-    description: 'Roșu intens, pentru un look puternic.'
-  },
-  {
-    id: 'theme-mint-aurora',
-    category: 'background',
-    name: 'Mint Aurora',
-    price: 75,
-    rarity: 'Rare',
-    accent: '#63f2c7',
-    description: 'Verde mentă cu aer proaspăt.'
-  },
-  {
-    id: 'theme-golden-sun',
-    category: 'background',
-    name: 'Golden Sun',
-    price: 75,
-    rarity: 'Rare',
-    accent: '#ffd166',
-    description: 'Auriu cald, mai blând pentru ochi.'
-  },
-  {
-    id: 'theme-night-aurora',
-    category: 'background',
-    name: 'Night Aurora',
-    price: 75,
-    rarity: 'Epic',
-    accent: '#6fd7ff',
-    description: 'Fundal rece, modern, cu contrast puternic.'
-  },
-  {
-    id: 'theme-violet-comet',
-    category: 'background',
-    name: 'Violet Comet',
-    price: 75,
-    rarity: 'Epic',
-    accent: '#b9a7ff',
-    description: 'Violet cinematic, mai dramatic.'
-  },
-  {
-    id: 'voice-calm-guide',
-    category: 'voice',
-    name: 'Calm Guide',
-    price: 100,
-    rarity: 'Common',
-    voice: 'calm-guide',
-    description: 'O voce blândă, potrivită pentru explicații lente.'
-  },
-  {
-    id: 'voice-bright-mentor',
-    category: 'voice',
-    name: 'Bright Mentor',
-    price: 100,
-    rarity: 'Common',
-    voice: 'bright-mentor',
-    description: 'Mai clară și energică în timpul sesiunilor.'
-  },
-  {
-    id: 'voice-warm-support',
-    category: 'voice',
-    name: 'Warm Support',
-    price: 100,
-    rarity: 'Rare',
-    voice: 'warm-support',
-    description: 'Sună empatic și prietenos.'
-  },
-  {
-    id: 'voice-focus-spark',
-    category: 'voice',
-    name: 'Focus Spark',
-    price: 100,
-    rarity: 'Rare',
-    voice: 'focus-spark',
-    description: 'Voce scurtă, fermă, bună pentru concentrare.'
-  },
-  {
-    id: 'voice-crystal-ai',
-    category: 'voice',
-    name: 'Crystal AI',
-    price: 100,
-    rarity: 'Epic',
-    voice: 'crystal-ai',
-    description: 'Mai futuristă, pentru o experiență diferită.'
-  },
-  {
-    id: 'voice-night-coach',
-    category: 'voice',
-    name: 'Night Coach',
-    price: 100,
-    rarity: 'Epic',
-    voice: 'night-coach',
-    description: 'Mai gravă, bună pentru sesiuni lungi.'
-  },
-  {
-    id: 'voice-legend-host',
-    category: 'voice',
-    name: 'Legend Host',
-    price: 100,
-    rarity: 'Legendary',
-    voice: 'legend-host',
-    description: 'Voce specială, premium, pentru statut unic.'
-  },
-  {
-    id: 'boost-study-crate',
-    category: 'boost',
-    name: 'Study Crate',
-    price: 150,
-    rarity: 'Common',
-    description: 'Pachet surpriză cosmetic: un accent de culoare pentru profil.'
-  }
-];
-
-const CATEGORY_ORDER = ['daily', 'avatar', 'background', 'voice', 'boost'];
+const CATEGORY_ORDER = ['daily', 'avatar', 'background'];
 
 function getMonthKey(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -240,10 +42,11 @@ function createDefaultUser(userId) {
     jackpotRewardMonths: {},
     lastDailyClaimDate: null,
     inventory: [],
+    earlyBirdDays: [],
     equipped: {
       avatar: null,
       background: null,
-      voice: null
+      title: null
     },
     preferences: {
       parentEmail: '',
@@ -303,6 +106,11 @@ function ensureUser(userId, patch = {}) {
   if (!Array.isArray(current.skillLog)) current.skillLog = [];
   if (!current.skillPoints || typeof current.skillPoints !== 'object') current.skillPoints = {};
   if (!current.parentNotify) current.parentNotify = { studyDate: null, loginDate: null };
+  if (!current.equipped || typeof current.equipped !== 'object') {
+    current.equipped = { avatar: null, background: null, title: null };
+  }
+  if (current.equipped.title === undefined) current.equipped.title = null;
+  if (!Array.isArray(current.earlyBirdDays)) current.earlyBirdDays = [];
   if (current.metrics && current.metrics.lastStudyDate === undefined) current.metrics.lastStudyDate = null;
   if (patch && typeof patch === 'object') {
     if (patch.role) current.role = patch.role;
@@ -656,6 +464,7 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
   const user = ensureUser(userId);
   if (meta.grade) user.preferences.className = String(meta.grade);
   const todayKey = getTodayKey();
+  noteEarlyBird(user, todayKey);
   const study = touchStudy(user, todayKey);
   if (study.firstToday && !user.streakBonusDate) {
     user.streakBonusDate = todayKey;
@@ -893,6 +702,7 @@ function claimReward({ userId = 'demo_user', type, payload = {} }) {
     }
     user.firstLoginClaimed = true;
     user.firstLoginDate = todayKey;
+    noteEarlyBird(user, todayKey);
     const bonus = awardCoins(user, AWARDS.login_bonus.coins, 'reward', 'Bonus de prima logare', { type });
     user.xp = (user.xp || 0) + AWARDS.login_bonus.xp;
     pushNotification(userId, payload.parentEmail || user.preferences.parentEmail, 'Prima logare', `A fost acordat bonusul de ${AWARDS.login_bonus.coins} de monede pentru prima intrare.`, 'reward');
@@ -947,6 +757,7 @@ function getCatalog() {
   return {
     categories,
     items: SHOP_CATALOG,
+    titles: TITLE_CATALOG.map(item => ({ id: item.id, name: item.name, description: item.description })),
     highlights: {
       freeDaily: [
         { id: 'login_bonus', title: `${AWARDS.login_bonus.coins} de monede la prima logare`, description: 'Se acordă o singură dată.' },
@@ -966,6 +777,18 @@ function purchaseItem({ userId = 'demo_user', itemId }) {
   if (user.inventory.includes(item.id)) {
     return { ok: false, reason: 'already_owned', balance: user.balance };
   }
+  const minLevel = Number(item.minLevel || 0);
+  const level = levelFromXp(user.xp || 0).level;
+  if (minLevel && level < minLevel) {
+    return {
+      ok: false,
+      reason: 'level_required',
+      minLevel,
+      level,
+      balance: user.balance,
+      item
+    };
+  }
   const spend = spendCoins(user, item.price, 'purchase', `Cumpărare: ${item.name}`, { itemId: item.id });
   if (!spend) {
     return { ok: false, reason: 'insufficient_coins', balance: user.balance, item };
@@ -976,9 +799,6 @@ function purchaseItem({ userId = 'demo_user', itemId }) {
   }
   if (item.category === 'background') {
     user.equipped.background = item.id;
-  }
-  if (item.category === 'voice') {
-    user.equipped.voice = item.id;
   }
   PURCHASES.set(`${userId}:${item.id}`, {
     itemId: item.id,
@@ -994,11 +814,83 @@ function purchaseItem({ userId = 'demo_user', itemId }) {
   };
 }
 
+function titleState(user) {
+  const unlocked = unlockedTitleIds(user, {
+    countDoneChapters,
+    chapterUniverse,
+    listLeaderboardEntries
+  });
+  const equippedId = unlocked.includes(user.equipped?.title) ? user.equipped.title : null;
+  if (user.equipped && user.equipped.title && user.equipped.title !== equippedId) {
+    user.equipped.title = equippedId;
+  }
+  return {
+    unlocked,
+    equipped: equippedId || '',
+    catalog: TITLE_CATALOG.map(item => ({
+      ...item,
+      unlocked: unlocked.includes(item.id)
+    }))
+  };
+}
+
+function equipCosmetic({ userId, itemId, titleId, slot }) {
+  const user = ensureUser(userId);
+  if (titleId !== undefined || slot === 'title') {
+    const next = titleId === undefined ? '' : String(titleId || '');
+    if (!next) {
+      user.equipped.title = null;
+    } else {
+      const titles = titleState(user);
+      if (!titles.unlocked.includes(next)) {
+        return { ok: false, reason: 'title_locked', titles, equipped: { ...user.equipped } };
+      }
+      user.equipped.title = next;
+    }
+    return {
+      ok: true,
+      inventory: user.inventory.slice(),
+      equipped: { ...user.equipped },
+      titles: titleState(user),
+      summary: buildSummary(user)
+    };
+  }
+
+  const clearSlot = itemId === '' && (slot === 'avatar' || slot === 'background');
+  if (clearSlot) {
+    user.equipped[slot] = null;
+    return {
+      ok: true,
+      inventory: user.inventory.slice(),
+      equipped: { ...user.equipped },
+      titles: titleState(user),
+      summary: buildSummary(user)
+    };
+  }
+
+  const item = SHOP_CATALOG.find(entry => entry.id === itemId);
+  if (!item || (item.category !== 'avatar' && item.category !== 'background')) {
+    return { ok: false, reason: 'item_not_found', equipped: { ...user.equipped } };
+  }
+  if (!user.inventory.includes(item.id)) {
+    return { ok: false, reason: 'not_owned', equipped: { ...user.equipped } };
+  }
+  user.equipped[item.category] = item.id;
+  return {
+    ok: true,
+    inventory: user.inventory.slice(),
+    equipped: { ...user.equipped },
+    titles: titleState(user),
+    summary: buildSummary(user)
+  };
+}
+
 function getInventory(userId = 'demo_user') {
   const user = ensureUser(userId);
   return {
     inventory: user.inventory.slice(),
-    equipped: { ...user.equipped }
+    equipped: { ...user.equipped },
+    titles: titleState(user)
   };
 }
 
@@ -1028,6 +920,9 @@ function buildSummary(user) {
     preferences: { ...user.preferences },
     inventory: user.inventory.slice(),
     equipped: { ...user.equipped },
+    titles: titleState(user),
+    titleId: titleState(user).equipped,
+    titleName: titleById(titleState(user).equipped)?.name || '',
     claims: {
       firstLoginClaimed: user.firstLoginClaimed,
       streakBonusDate: user.streakBonusDate,
@@ -1160,6 +1055,8 @@ function listLeaderboardEntries({ limit = 10, currentEmail = '' } = {}) {
         streak: Number(user.metrics?.streak || 0),
         level: levelFromXp(xp).level,
         class: user.preferences.className || '',
+        title: titleById(user.equipped?.title)?.name || '',
+        titleEmoji: titleById(user.equipped?.title)?.emoji || '',
         isCurrentUser: Boolean(me) && String(user.userId).toLowerCase() === me
       };
     })
@@ -1239,6 +1136,7 @@ module.exports = {
   getSummary,
   getCatalog,
   purchaseItem,
+  equipCosmetic,
   getInventory,
   claimReward,
   recordProgress,
