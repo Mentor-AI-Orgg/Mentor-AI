@@ -233,7 +233,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         <div>
           <div className="eyebrow">Magazinul tău</div>
           <h1 className="display-font shop-title">Câștigă, economisește și personalizează aplicația.</h1>
-          <p className="shop-subtitle">Daily free, bonusuri pentru învățare și obiecte cosmetice pe care le poți cumpăra cu monede. Elite Family Pack începe de la 5000 de monede.</p>
+          <p className="shop-subtitle">Daily free, bonusuri pentru învățare și obiecte cosmetice pe care le poți cumpăra cu monede. Abonamentul Mentor e 50 lei / lună, nelimitat, separat de magazin.</p>
         </div>
         <div className="shop-balance-card">
           <span>Monede disponibile</span>

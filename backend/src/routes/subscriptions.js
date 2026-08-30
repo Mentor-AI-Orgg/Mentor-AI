@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { PLANS, priceForCycle, renewsAtForCycle, normalizeBillingCycle } = require("../data/subscriptions");
+const { PLANS, findPlan, resolvePlanId, priceForCycle, renewsAtForCycle, normalizeBillingCycle } = require("../data/subscriptions");
 const { getSubscription, setSubscription } = require("../data/subscriptionStore");
 const { sendParentReview, ensureUser } = require("../data/economyStore");
 const { notifyParent } = require("../notify/parentActivity");
@@ -19,7 +19,13 @@ router.get("/plans", (req, res) => {
 // Lista de planuri de mai sus este publică. De aici încolo, rutele ating un
 // cont, deci cer autentificare și folosesc identitatea din sesiune.
 router.get("/me", authRequired, studentRequired, (req, res) => {
-  res.json({ subscription: getSubscription(req.auth.email) });
+  const subscription = getSubscription(req.auth.email) || {};
+  res.json({
+    subscription: {
+      ...subscription,
+      planId: resolvePlanId(subscription.planId)
+    }
+  });
 });
 
 router.post("/checkout", authRequired, studentRequired, async (req, res) => {
@@ -34,7 +40,7 @@ router.post("/checkout", authRequired, studentRequired, async (req, res) => {
 
   const userId = req.auth.email;
   const role = req.auth.role;
-  const plan = PLANS.find(p => p.id === plan_id);
+  const plan = findPlan(plan_id);
   if (!plan) return res.status(404).json({ error: "Plan inexistent." });
 
   const billingCycle = normalizeBillingCycle(billing_cycle);

@@ -8,20 +8,24 @@ const SubscriptionSkeleton = () => (
     <div className="skeleton skeleton-line short"></div>
     <div className="skeleton skeleton-line long"></div>
     <div className="skeleton skeleton-line long"></div>
-    <div className="skeleton skeleton-line medium"></div>
   </div>
 );
+
+const resolveClientPlan = id => {
+  const value = String(id || 'free').toLowerCase();
+  if (['mentor', 'pro', 'premium', 'elite', 'unlimited'].includes(value)) return 'mentor';
+  return 'free';
+};
 
 const SubscriptionsScreen = ({ userData, onBack, currentPlanId, currentPlanStatus, onSelectPlan, onToast }) => {
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [fallback, setFallback] = useState(false);
-  const [selectedPlanId, setSelectedPlanId] = useState(currentPlanId || 'free');
+  const [selectedPlanId, setSelectedPlanId] = useState(resolveClientPlan(currentPlanId));
   const [pendingPlanId, setPendingPlanId] = useState(null);
   const [checkingOutPlanId, setCheckingOutPlanId] = useState(null);
-  const [billingCycle, setBillingCycle] = useState('monthly');
-  const [parentEmail, setParentEmail] = useState('');
-  const [parentMessage, setParentMessage] = useState('Vreau să discutăm împreună despre prețuri și beneficii.');
+  const [parentEmail, setParentEmail] = useState(userData?.parentEmail || '');
+  const [parentMessage, setParentMessage] = useState('Vreau planul Mentor, 50 lei pe lună, nelimitat.');
   const [sendingReview, setSendingReview] = useState(false);
 
   useEffect(() => {
@@ -35,100 +39,42 @@ const SubscriptionsScreen = ({ userData, onBack, currentPlanId, currentPlanStatu
   }, []);
 
   useEffect(() => {
-    setSelectedPlanId(currentPlanId || 'free');
-    setPendingPlanId(currentPlanStatus === 'pending_parent_review' ? currentPlanId : null);
+    const planId = resolveClientPlan(currentPlanId);
+    setSelectedPlanId(planId);
+    setPendingPlanId(currentPlanStatus === 'pending_parent_review' ? planId : null);
   }, [currentPlanId, currentPlanStatus]);
 
-  const glowPalette = {
-    free: ['#38bdf8', '#60a5fa', '#8b5cf6'],
-    pro: ['#f472b6', '#fb7185', '#f59e0b'],
-    premium: ['#34d399', '#22c55e', '#38bdf8'],
-    elite: ['#fbbf24', '#fb7185', '#f59e0b']
-  };
+  const paid = subscriptions.find(plan => plan.id === 'mentor') || subscriptions.find(plan => Number(plan.priceMonthly) > 0);
+  const free = subscriptions.find(plan => plan.id === 'free');
 
-  const planLabel = {
-    free: 'Start',
-    premium: 'Popular',
-    pro: 'Pro',
-    elite: 'Family'
-  };
-
-  const billingLabels = {
-    monthly: '1 lună',
-    quarterly: '3 luni',
-    halfYear: '6 luni',
-    yearly: '12 luni'
-  };
-
-  const comparisonRows = [
-    {
-      label: 'Răspunsuri AI',
-      free: 'Fallback basic',
-      pro: 'Gemini → Claude → Wolfram',
-      premium: 'Fallback premium + claritate',
-      elite: 'Consiliu complet + familie'
-    },
-    {
-      label: 'Sesiuni ghidate',
-      free: '2 pe zi',
-      pro: 'Nelimitate + personalizare',
-      premium: 'Nelimitate + personalizare',
-      elite: 'Nelimitate + coordonare avansată'
-    },
-    {
-      label: 'Plan de progres',
-      free: 'General',
-      pro: 'Ritmul tău',
-      premium: 'Ritm + recalcul live',
-      elite: 'Ritm + recalcul live'
-    },
-    {
-      label: 'Memorie de studiu',
-      free: 'Sesiunea curentă',
-      pro: 'Repetiție inteligentă',
-      premium: 'Repetiție avansată + sinteză',
-      elite: 'Repetiție avansată + sinteză'
-    },
-    {
-      label: 'Suport de pregătire',
-      free: 'Standard',
-      pro: 'Prioritate',
-      premium: 'Prioritate + sesiuni premium',
-      elite: 'Prioritate + sesiuni premium'
-    },
-    {
-      label: 'Exerciții generate',
-      free: '3 / săptămână',
-      pro: '5 / săptămână',
-      premium: 'Nelimitate',
-      elite: 'Nelimitate'
-    },
-    {
-      label: 'Traseu de învățare',
-      free: 'Simplu',
-      pro: 'Personalizat',
-      premium: 'Personalizat + complet',
-      elite: 'Personalizat + complet'
-    },
-    {
-      label: 'Atenție pentru examen',
-      free: 'Bază',
-      pro: 'Intensiv',
-      premium: 'Simulare completă',
-      elite: 'Simulare completă'
+  const selectPlan = async planId => {
+    if (planId === selectedPlanId && !pendingPlanId) return;
+    if (!onSelectPlan) return;
+    setCheckingOutPlanId(planId);
+    const result = await onSelectPlan(planId, 'monthly');
+    setCheckingOutPlanId(null);
+    if (result?.success) {
+      setSelectedPlanId(resolveClientPlan(planId));
+      setPendingPlanId(result.status === 'pending_parent_review' ? resolveClientPlan(planId) : null);
     }
-  ];
+  };
 
-  const formatPlanPrice = plan => {
-    const priceMap = {
-      monthly: plan.priceMonthly,
-      quarterly: plan.priceQuarterly,
-      halfYear: plan.priceHalfYear,
-      yearly: plan.priceYearly
-    };
-    const price = Number(priceMap[billingCycle] ?? plan.priceMonthly ?? 0);
-    if (!price) return 'Gratis';
-    return `${price} lei / ${billingLabels[billingCycle]}`;
+  const sendParentReview = async () => {
+    if (!parentEmail.trim()) return;
+    setSendingReview(true);
+    const result = await MentorAPI.sendParentReview({
+      parent_email: parentEmail,
+      plan_id: 'mentor',
+      billing_cycle: 'monthly',
+      role: 'student',
+      message: parentMessage
+    });
+    setSendingReview(false);
+    if (result.success) {
+      onToast?.('Rezumatul a fost trimis către părinte.', 'success');
+    } else {
+      onToast?.('Nu am putut trimite mesajul acum. Încearcă din nou.', 'warning');
+    }
   };
 
   const renderFeature = feature => {
@@ -141,206 +87,104 @@ const SubscriptionsScreen = ({ userData, onBack, currentPlanId, currentPlanStatu
     );
   };
 
-  const selectPlan = async planId => {
-    if (planId === selectedPlanId && !pendingPlanId) return;
-    if (!onSelectPlan) return;
-    setCheckingOutPlanId(planId);
-    const result = await onSelectPlan(planId, billingCycle);
-    setCheckingOutPlanId(null);
-    // Nu presupunem că a mers -- reflectăm exact ce a răspuns backend-ul,
-    // inclusiv statusul "în așteptare de aprobare din partea părintelui".
-    if (result?.success) {
-      setSelectedPlanId(planId);
-      setPendingPlanId(result.status === 'pending_parent_review' ? planId : null);
-    }
-  };
-
-  const sendParentReview = async () => {
-    if (!parentEmail.trim()) return;
-    setSendingReview(true);
-    const result = await MentorAPI.sendParentReview({
-      user_id: userData?.email || 'demo_user',
-      parent_email: parentEmail,
-      plan_id: selectedPlanId,
-      billing_cycle: billingCycle,
-      role: userData?.role || 'student',
-      message: parentMessage
-    });
-    setSendingReview(false);
-    if (result.success) {
-      if (onToast) onToast('Rezumatul a fost trimis către părinte.', 'success');
-    } else {
-      if (onToast) onToast('Nu am putut trimite mesajul acum. Încearcă din nou.', 'warning');
-    }
-  };
-
   return (
     <div className="screen-page animate-fadeIn" aria-busy={loading}>
       <div className="subscription-topbar">
         <button onClick={onBack} className="text-slate-400 text-sm hover:text-white transition"><i className="fas fa-arrow-left mr-2"></i>Înapoi</button>
-        <div className="text-sm text-slate-400">Abonamente</div>
+        <div className="text-sm text-slate-400">Abonament</div>
       </div>
 
       <div className="subscription-shell">
         {loading ? (
-          <div className="grid gap-4" aria-label="Se încarcă abonamentele">
-            <SubscriptionSkeleton />
-            <SubscriptionSkeleton />
+          <div className="grid gap-4" aria-label="Se încarcă abonamentul">
             <SubscriptionSkeleton />
           </div>
         ) : (
           <>
-            {fallback && <div className="subscription-warning">Datele de abonamente sunt afișate din fallback local deoarece backend-ul nu a răspuns.</div>}
+            {fallback && <div className="subscription-warning">Datele de abonament sunt din fallback local, backend-ul nu a răspuns.</div>}
 
             <section className="subscription-hero surface">
               <div className="subscription-hero-copy">
-                <div className="eyebrow">Upgrade-ul tău</div>
-                <h1 className="display-font subscription-title">Alege nivelul care ridică ritmul de învățare.</h1>
-                <p className="subscription-subtitle">Fiecare plan îți oferă acces la mentorul AI, sesiuni ghidate și un progres mai clar. Planul Pro este recomandat pentru performanță reală, în ritm constant.</p>
-                <div className="subscription-cycle-picker">
-                  {Object.entries(billingLabels).map(([key, label]) => (
-                    <button key={key} type="button" className={`subscription-cycle-pill ${billingCycle === key ? 'active' : ''}`} onClick={() => setBillingCycle(key)}>{label}</button>
-                  ))}
-                </div>
-                <div className="subscription-hero-badges">
-                  <span><i className="fas fa-shield-heart"></i> Sprijin premium</span>
-                  <span><i className="fas fa-rocket"></i> Răspuns rapid</span>
-                  <span><i className="fas fa-brain"></i> Memorie de studiu</span>
-                </div>
+                <div className="eyebrow">Un singur plan</div>
+                <h1 className="display-font subscription-title">Mentor, 50 lei pe lună. Nelimitat.</h1>
+                <p className="subscription-subtitle">Nu mai există Pro, Premium sau Elite. Plătești 50 de lei și ai tot: mentor, lecții 5–8, foto-temă, flashcarduri, digest către părinte.</p>
                 <div className="subscription-current-plan">
-                  <span>Planul tău curent</span>
-                  <strong>{planLabel[selectedPlanId] || 'Free'}</strong>
-                </div>
-              </div>
-              <div className="subscription-hero-panel">
-                <div className="subscription-hero-balance">
-                  <small>Valoarea recomandată</small>
-                  <strong>3x mai multă claritate</strong>
-                </div>
-                <div className="subscription-hero-stats">
-                  <div>
-                    <span>10+ limbi</span>
-                    <strong>Răspunsuri personalizate</strong>
-                  </div>
-                  <div>
-                    <span>24/7</span>
-                    <strong>Disponibilitate</strong>
-                  </div>
+                  <span>Planul tău acum</span>
+                  <strong>{selectedPlanId === 'mentor' ? 'Mentor (nelimitat)' : 'Gratuit (de încercare)'}</strong>
                 </div>
               </div>
             </section>
 
-            <section className="subscription-grid">
-              {subscriptions.map(plan => (
-                <div key={plan.id} className={`subscription-card-shell ${plan.id === 'pro' ? 'featured-plan' : ''} ${selectedPlanId === plan.id ? 'current-plan' : ''}`}>
-                  <div className="subscription-ribbon">{planLabel[plan.id] || 'Plan'}</div>
+            {paid && (
+              <section className="subscription-grid subscription-grid-single">
+                <div className={`subscription-card-shell featured-plan ${selectedPlanId === 'mentor' ? 'current-plan' : ''}`}>
+                  <div className="subscription-ribbon">Nelimitat</div>
                   <BorderGlow
                     className="subscription-card"
                     edgeSensitivity={34}
-                    glowColor={plan.id === 'elite' ? '45 95 60' : plan.id === 'pro' ? '300 90 72' : plan.id === 'premium' ? '140 70 65' : '240 70 70'}
+                    glowColor="300 90 72"
                     backgroundColor="#17172E"
                     borderRadius={24}
                     glowRadius={48}
                     glowIntensity={1.15}
                     coneSpread={30}
                     animated={true}
-                    colors={glowPalette[plan.id] || ['#c084fc', '#f472b6', '#38bdf8']}
+                    colors={['#f472b6', '#c084fc', '#38bdf8']}
                     fillOpacity={0.5}
                   >
                     <div className="subscription-card-inner">
                       <div className="subscription-card-head">
                         <div>
-                          <div className="subscription-pill">{plan.name}</div>
-                          <div className="subscription-price">{formatPlanPrice(plan)}</div>
+                          <div className="subscription-pill">{paid.name}</div>
+                          <div className="subscription-price">50 lei / lună</div>
                         </div>
-                        <i className={`fas ${plan.id === 'elite' ? 'fa-people-group' : 'fa-crown'} subscription-icon`}></i>
+                        <i className="fas fa-infinity subscription-icon"></i>
                       </div>
-                      <p className="subscription-description">{plan.description || plan.tagline}</p>
+                      <p className="subscription-description">{paid.tagline || paid.description}</p>
                       <ul className="subscription-features">
-                        {plan.features.map(renderFeature)}
+                        {(paid.features || []).map(renderFeature)}
                       </ul>
-                      {selectedPlanId === plan.id && pendingPlanId === plan.id && (
+                      {selectedPlanId === 'mentor' && pendingPlanId === 'mentor' && (
                         <div className="subscription-pending-badge"><i className="fas fa-clock" /> Așteaptă aprobarea părintelui</div>
                       )}
                       <button
                         type="button"
-                        className={`subscription-button ${plan.id === 'pro' ? 'is-featured' : ''}`}
-                        onClick={() => selectPlan(plan.id)}
-                        disabled={(selectedPlanId === plan.id && pendingPlanId !== plan.id) || checkingOutPlanId === plan.id}
+                        className="subscription-button is-featured"
+                        onClick={() => selectPlan('mentor')}
+                        disabled={(selectedPlanId === 'mentor' && pendingPlanId !== 'mentor') || checkingOutPlanId === 'mentor'}
                       >
-                        {checkingOutPlanId === plan.id
+                        {checkingOutPlanId === 'mentor'
                           ? 'Se activează...'
-                          : selectedPlanId === plan.id
-                            ? (pendingPlanId === plan.id ? 'În așteptare' : 'Plan activ')
-                            : 'Alege planul'}
+                          : selectedPlanId === 'mentor'
+                            ? (pendingPlanId === 'mentor' ? 'În așteptare' : 'Plan activ')
+                            : 'Activează Mentor — 50 lei'}
                       </button>
                     </div>
                   </BorderGlow>
                 </div>
-              ))}
-            </section>
+              </section>
+            )}
+
+            {free && selectedPlanId !== 'mentor' && (
+              <section className="surface subscription-free-note">
+                <div className="eyebrow">Contul gratuit</div>
+                <p>Poți încerca lecțiile și mentorul fără plată. Când vrei totul fără plafon, treci pe Mentor.</p>
+                <button type="button" className="ghost-button" onClick={() => selectPlan('free')} disabled={selectedPlanId === 'free'}>
+                  {selectedPlanId === 'free' ? 'Ești pe gratuit' : 'Rămâi pe gratuit'}
+                </button>
+              </section>
+            )}
 
             <section className="subscription-parent-review surface">
               <div>
-                <div className="eyebrow">Părinte / profesor</div>
-                <h2 className="display-font">Trimite prețurile înainte de abonare.</h2>
-                <p>Poți cere o părere despre prețuri și beneficii direct din aplicație. Mesajul ajunge în inbox-ul mock și poate fi înlocuit cu email real mai târziu.</p>
+                <div className="eyebrow">Părinte</div>
+                <h2 className="display-font">Trimite prețul înainte să plătești.</h2>
+                <p>Părintele nu are cont. Primește pe email că vrei planul Mentor, 50 lei / lună, nelimitat.</p>
               </div>
               <div className="subscription-parent-review-form">
                 <input value={parentEmail} onChange={e => setParentEmail(e.target.value)} placeholder="Email părinte" />
                 <textarea value={parentMessage} onChange={e => setParentMessage(e.target.value)} rows="3" placeholder="Mesaj pentru părinte" />
                 <button type="button" className="accent-button" onClick={sendParentReview} disabled={sendingReview || !parentEmail.trim()}>{sendingReview ? 'Trimit...' : 'Trimite către părinte'}</button>
-              </div>
-            </section>
-
-            <section className="subscription-compare surface">
-              <div className="subscription-compare-copy">
-                <div className="eyebrow">De ce să alegi un plan?</div>
-                <h2 className="display-font">Vei vedea diferența în claritate, ritm și încredere.</h2>
-                <p>Fiecare plan are o funcție clară: Free te ajută să începi, Pro te face să mergi constant, iar Premium te duce la un ritm mai performant și mai strategic.</p>
-              </div>
-              <div className="subscription-compare-list">
-                <div>
-                  <strong>Mentor AI cu feedback</strong>
-                  <span>Răspunsuri clare, adaptate la nivelul tău și la materia aleasă.</span>
-                </div>
-                <div>
-                  <strong>Studii directionate</strong>
-                  <span>Planuri scurte, profesionale și utile pentru fiecare zi, nu pentru «mai târziu».</span>
-                </div>
-                <div>
-                  <strong>Progres vizibil</strong>
-                  <span>Ai o stare de învățare mai organizată și așternut pe ritm real.</span>
-                </div>
-              </div>
-            </section>
-
-            <section className="subscription-comparison surface">
-              <div className="subscription-comparison-head">
-                <div>
-                  <div className="eyebrow">Compară planurile</div>
-                  <h2 className="display-font">Toate diferențele, într-un singur loc.</h2>
-                </div>
-                <div className="subscription-comparison-pill">Desktop-first layout</div>
-              </div>
-
-              <div className="comparison-table" role="table" aria-label="Tabel comparativ abonamente">
-                <div className="comparison-row comparison-row-head" role="row">
-                  <div className="comparison-cell comparison-cell-feature" role="columnheader">Funcție</div>
-                  <div className="comparison-cell" role="columnheader">Free</div>
-                  <div className="comparison-cell" role="columnheader">Pro</div>
-                  <div className="comparison-cell" role="columnheader">Premium</div>
-                  <div className="comparison-cell" role="columnheader">Elite</div>
-                </div>
-                {comparisonRows.map(row => (
-                  <div className="comparison-row" role="row" key={row.label}>
-                    <div className="comparison-cell comparison-cell-feature" role="cell"><strong>{row.label}</strong></div>
-                    <div className="comparison-cell" role="cell">{row.free}</div>
-                    <div className="comparison-cell" role="cell">{row.pro}</div>
-                    <div className="comparison-cell" role="cell">{row.premium}</div>
-                    <div className="comparison-cell" role="cell">{row.elite}</div>
-                  </div>
-                ))}
               </div>
             </section>
           </>

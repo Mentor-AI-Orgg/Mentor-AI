@@ -42,7 +42,7 @@ describe('phase 6 product polish', () => {
     expect(res.body.integrations.notion.status).toBe('online (mock)');
   });
 
-  it('activates a paid plan with mocked checkout when Stripe is not configured', async () => {
+  it('maps a legacy paid plan id to Mentor', async () => {
     const agent = request.agent(app);
     await registerStudent(agent);
     const res = await agent.post('/api/subscriptions/checkout').send({
@@ -50,8 +50,26 @@ describe('phase 6 product polish', () => {
       billing_cycle: 'monthly'
     });
     expect(res.status).toBe(200);
+    expect(res.body.subscription.planId).toBe('mentor');
+  });
+
+  it('exposes only the free trial and the Mentor plan', async () => {
+    const res = await request(app).get('/api/subscriptions');
+    expect(res.status).toBe(200);
+    expect(res.body.subscriptions.map(plan => plan.id)).toEqual(['free', 'mentor']);
+    expect(res.body.subscriptions.find(plan => plan.id === 'mentor').priceMonthly).toBe(50);
+  });
+
+  it('activates a paid plan with mocked checkout when Stripe is not configured', async () => {
+    const agent = request.agent(app);
+    await registerStudent(agent);
+    const res = await agent.post('/api/subscriptions/checkout').send({
+      plan_id: 'mentor',
+      billing_cycle: 'monthly'
+    });
+    expect(res.status).toBe(200);
     expect(res.body.mocked).toBe(true);
-    expect(res.body.subscription.planId).toBe('pro');
+    expect(res.body.subscription.planId).toBe('mentor');
     expect(res.body.subscription.status).toBe('active');
     expect(res.body.url).toBeUndefined();
   });
@@ -140,14 +158,14 @@ describe('phase 6 product polish', () => {
     await registerStudent(agent);
     const res = await agent.post('/api/economy/parent-review').send({
       parent_email: uniqueEmail('review'),
-      plan_id: 'pro',
-      message: 'Vreau Pro'
+      plan_id: 'mentor',
+      message: 'Vreau Mentor'
     });
     expect(res.status).toBe(200);
     expect(res.body.ok).toBe(true);
     expect(res.body.mocked).toBe(true);
     expect(res.body.delivered).toBe(false);
-    expect(res.body.email.body).toContain('Pro');
+    expect(res.body.email.body).toMatch(/Mentor|mentor/i);
   });
 
   it('persists onboarding on the account profile', async () => {

@@ -1,8 +1,11 @@
+// Un singur produs plătit: 50 lei / lună, nelimitat, tot ce e în aplicație.
+// Contul pornește gratuit ca să poți încerca; upgrade-ul e planul Mentor.
+
 const PLANS = [
   {
     id: "free",
-    name: "Free",
-    tagline: "Pentru a începe rapid cu fallback-ul AI",
+    name: "Gratuit",
+    tagline: "Ca să încerci lecțiile și mentorul înainte să plătești.",
     priceMonthly: 0,
     priceQuarterly: 0,
     priceHalfYear: 0,
@@ -10,74 +13,51 @@ const PLANS = [
     currency: "RON",
     badge: null,
     features: [
-      { label: "Fallback AI: GPT-4o → Wolfram → Mathpix → Gemini → Claude", included: true },
-      { label: "10 întrebări / zi către Profesorul AI", included: true },
-      { label: "1 limbă activă (Română)", included: true },
-      { label: "Memorie conversație doar pentru sesiunea curentă", included: true },
-      { label: "Planuri de studiu esențiale", included: true },
-      { label: "Fotografiază lecția (Mathpix OCR)", included: false },
-      { label: "Calculator științific (Wolfram Alpha)", included: false }
+      { label: "Lecții de română și matematică, clasele 5–8", included: true },
+      { label: "Mentor AI cu scaffolding (fără tema gata)", included: true },
+      { label: "Email către părinte cu activitatea copilului", included: true },
+      { label: "Întrebări și sesiuni limitate, ca să vezi dacă ți se potrivește", included: true }
     ]
   },
   {
-    id: "pro",
-    name: "Pro",
-    tagline: "Pentru ritm constant și răspunsuri mai bune",
-    priceMonthly: 75,
-    priceQuarterly: 214,
-    priceHalfYear: 405,
-    priceYearly: 765,
-    currency: "RON",
-    badge: "Popular",
-    features: [
-      { label: "Rutină AI: Gemini → Claude → Wolfram", included: true },
-      { label: "Întrebări nelimitate către Profesorul AI", included: true },
-      { label: "Memorie conversație persistentă", included: true },
-      { label: "Fotografiază lecția (Mathpix OCR)", included: true },
-      { label: "Calculator științific (Wolfram Alpha)", included: true },
-      { label: "Planuri de studiu personalizate", included: true },
-      { label: "Suport prioritar", included: true }
-    ]
-  },
-  {
-    id: "premium",
-    name: "Premium",
-    tagline: "Consiliu AI complet, cu Claude ca judecător",
+    id: "mentor",
+    name: "Mentor",
+    tagline: "50 lei / lună. Nelimitat. Include tot.",
     priceMonthly: 50,
-    priceQuarterly: 143,
-    priceHalfYear: 270,
-    priceYearly: 510,
+    priceQuarterly: 150,
+    priceHalfYear: 300,
+    priceYearly: 600,
     currency: "RON",
-    badge: "Council",
+    badge: "Nelimitat",
     features: [
-      { label: "Consiliu AI: GPT-4o + Wolfram/Mathpix + Gemini + Claude", included: true },
-      { label: "Claude sintetizează și alege răspunsul final", included: true },
-      { label: "Toate răspunsurile sunt comparate și punctate", included: true },
-      { label: "Memorie conversație avansată", included: true },
-      { label: "Planuri de studiu premium", included: true },
-      { label: "Analize de progres detaliate", included: true }
-    ]
-  },
-  {
-    id: "elite",
-    name: "Elite Family Pack",
-    tagline: "Pentru familie, mai multe conturi și control comun",
-    priceMonthly: 100,
-    priceQuarterly: 285,
-    priceHalfYear: 540,
-    priceYearly: 1020,
-    currency: "RON",
-    badge: "Family",
-    features: [
-      { label: "Toate avantajele Premium", included: true },
-      { label: "Cont profesor și cont părinte dedicate", included: true },
-      { label: "Rapoarte trimise pe email către părinte", included: true },
-      { label: "Bonus 5000 monede: 7 zile gratuite Elite Family Pack", included: true },
-      { label: "Monitorizare progres pentru copil", included: true },
-      { label: "Control activ al abonamentului în familie", included: true }
+      { label: "Întrebări nelimitate către mentor", included: true },
+      { label: "Română și matematică, clasele 5–8, toate capitolele", included: true },
+      { label: "Sesiuni, flashcarduri și focus fără plafon", included: true },
+      { label: "Fotografiază tema (OCR) și calculator științific", included: true },
+      { label: "Memorie de conversație și digest către părinte", included: true }
     ]
   }
 ];
+
+const PAID_PLAN_IDS = ["mentor", "pro", "premium", "elite", "unlimited"];
+
+function resolvePlanId(id) {
+  const value = String(id || "free").trim().toLowerCase();
+  if (PAID_PLAN_IDS.includes(value)) return "mentor";
+  return "free";
+}
+
+function isPaidPlan(id) {
+  return resolvePlanId(id) === "mentor";
+}
+
+function findPlan(id) {
+  const raw = String(id || "").trim().toLowerCase();
+  if (!raw) return null;
+  if (raw === "free") return PLANS.find(plan => plan.id === "free");
+  if (PAID_PLAN_IDS.includes(raw)) return PLANS.find(plan => plan.id === "mentor");
+  return null;
+}
 
 const DEFAULT_USER_SUBSCRIPTION = {
   planId: "free",
@@ -118,4 +98,15 @@ function renewsAtForCycle(billingCycle, from = new Date()) {
   return renewsAt.toISOString();
 }
 
-module.exports = { PLANS, DEFAULT_USER_SUBSCRIPTION, priceForCycle, stripeRecurring, renewsAtForCycle, normalizeBillingCycle };
+module.exports = {
+  PLANS,
+  DEFAULT_USER_SUBSCRIPTION,
+  PAID_PLAN_IDS,
+  resolvePlanId,
+  isPaidPlan,
+  findPlan,
+  priceForCycle,
+  stripeRecurring,
+  renewsAtForCycle,
+  normalizeBillingCycle
+};

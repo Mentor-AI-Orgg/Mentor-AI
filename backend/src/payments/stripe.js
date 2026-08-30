@@ -5,7 +5,7 @@
 const crypto = require("crypto");
 const config = require("../config");
 const { setSubscription } = require("../data/subscriptionStore");
-const { PLANS, priceForCycle, stripeRecurring } = require("../data/subscriptions");
+const { PLANS, findPlan, resolvePlanId, priceForCycle, stripeRecurring } = require("../data/subscriptions");
 
 function stripeConfigured() {
   return Boolean(config.STRIPE_SECRET_KEY);
@@ -118,12 +118,12 @@ function activateFromSession(session) {
   const billingCycle = session.metadata?.billingCycle || "monthly";
   if (!email) return null;
 
-  const plan = PLANS.find(entry => entry.id === planId);
+  const plan = findPlan(planId) || PLANS.find(entry => entry.id === resolvePlanId(planId));
   const renewsAt = new Date();
   renewsAt.setMonth(renewsAt.getMonth() + (billingCycle === "yearly" ? 12 : billingCycle === "quarterly" ? 3 : billingCycle === "halfYear" || billingCycle === "half_year" ? 6 : 1));
 
   return setSubscription(email, {
-    planId: plan ? plan.id : planId || "pro",
+    planId: plan ? plan.id : "mentor",
     status: "active",
     billingCycle,
     renewsAt: renewsAt.toISOString(),
