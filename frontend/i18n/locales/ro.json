@@ -49,8 +49,7 @@
     "submit": "Conectează-te",
     "submitting": "Se conectează...",
     "forgot": "Ai uitat parola?",
-    "error": "Email sau parolă incorecte.",
-    "siteHint": "Dacă apare o fereastră „Sign in” pentru site, e parola de acces din DirectAdmin, nu parola contului."
+    "error": "Email sau parolă incorecte."
   },
   "nav": {
     "home": "Acasă",
