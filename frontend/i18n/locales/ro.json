@@ -12,15 +12,15 @@
   },
   "splash": {
     "eyebrow": "Un spațiu pentru idei",
-    "subtitle": "Profesorul personal din buzunarul tău.",
-    "meta1": "10 limbi",
+    "subtitle": "Mentor de gimnaziu: română și matematică, clasele 5–8.",
+    "meta1": "Clasele 5–8",
     "meta2": "Offline fallback",
     "meta3": "Ritm adaptiv"
   },
   "auth": {
     "eyebrow": "Mentor AI / 03",
     "title": "Învață cu direcție.",
-    "subtitle": "Un mentor personal care transformă întrebările tale în progres real.",
+    "subtitle": "Un mentor pentru română și matematică, clasele 5–8.",
     "chooseRole": "Alege tipul de cont",
     "studentDesc": "Învață, acumulează monede și urmărește progresul.",
     "teacherDesc": "Folosește mentorul și vezi analizele clasei.",
@@ -64,6 +64,7 @@
   "home": {
     "hello": "Bună, {name}.",
     "studentFallback": "Elev",
+    "gradeSubject": "Clasa a {grade}-a · {subject}",
     "roleStudent": "Cont elev",
     "roleParent": "Cont părinte",
     "roleTeacher": "Cont profesor",
@@ -99,22 +100,24 @@
     "finish": "Finalizează",
     "step1": { "title": "Cum te cheamă?", "desc": "Spune-mi cum vrei să te strig." },
     "step2": {
-      "title": "Ce clasă ești?",
-      "desc": "Vom personaliza conținutul pentru tine.",
-      "gimnaziu": "Clasele V-VIII",
-      "liceu": "Clasele IX-XII"
+      "title": "În ce clasă ești?",
+      "desc": "Lucrăm doar cu gimnaziul: clasele 5–8.",
+      "grade5": "Clasa a V-a",
+      "grade6": "Clasa a VI-a",
+      "grade7": "Clasa a VII-a",
+      "grade8": "Clasa a VIII-a"
     },
     "step3": {
-      "title": "Ce profil ai?",
-      "desc": "Alegem materia principală pentru tine.",
-      "real": "Real",
-      "uman": "Uman"
+      "title": "Ce materie vrei să lucrezi?",
+      "desc": "Mentorul acoperă română și matematică.",
+      "matematica": "Matematică",
+      "romana": "Limba și literatura română"
     },
     "step4": {
-      "title": "Ce examen urmează?",
-      "desc": "Te ajutăm să te pregătești strategic.",
-      "bac": "BAC",
-      "evaluare": "Evaluare Națională"
+      "title": "Cum vrei să înveți?",
+      "desc": "Putem ține ritmul zilei sau pregătirea de Evaluare Națională.",
+      "daily": "Învățare de zi cu zi",
+      "evaluare": "Pregătire Evaluare Națională"
     },
     "step5": {
       "title": "Câte ore poți învăța pe zi?",

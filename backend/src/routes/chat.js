@@ -4,6 +4,7 @@ const router = express.Router();
 const { safetyCheck } = require("../safety/safetyCheck");
 const { SAFETY_REFUSAL_TEXT, DIRECT_ANSWER_GUARD_TEXT, ALL_ENGINES_DOWN_TEXT } = require("../data/responseTemplates");
 const { getSystemPrompt } = require("../data/systemPrompts");
+const { buildMentorContext, normalizeGrade, normalizeSubject } = require("../data/gimnaziuGuide");
 const memory = require("../memory/memoryStore");
 const { callClaude } = require("../providers/claude");
 const { callGPT4o } = require("../providers/openai");
@@ -14,7 +15,9 @@ const { validateBody } = require("../middleware/validate");
 const { chatSchema } = require("../validation/schemas");
 
 function buildMessages(userMsg, history, subject, classLevel, lang) {
-  const context = `\n[Context: Subject=${subject}, Grade=${classLevel}, Language=${lang}]`;
+  const sid = normalizeSubject(subject);
+  const grade = normalizeGrade(classLevel);
+  const context = `\n[Context: Subject=${sid}, Grade=${grade}, Language=${lang}]\n\n${buildMentorContext(sid, grade)}`;
   const messages = [{ role: "system", content: getSystemPrompt(lang) + context }];
   for (const h of history) messages.push({ role: h.role, content: h.content });
   messages.push({ role: "user", content: userMsg });
@@ -145,7 +148,9 @@ async function runPremiumCouncil({ messages, userMsg, imageBase64, lang }) {
 
 router.post("/", validateBody(chatSchema), async (req, res) => {
   const startTotal = Date.now();
-  const { message, subject = "matematica", class_level = 8, language = "ro", plan_id = "free", image_base64 = "" } = req.body || {};
+  const { message, language = "ro", plan_id = "free", image_base64 = "" } = req.body || {};
+  const subject = normalizeSubject(req.body.subject);
+  const class_level = normalizeGrade(req.body.class_level);
 
   const lang = language || "ro";
   const requestedConversationId = req.body.conversation_id || `conv_${Buffer.from(message).toString("base64").slice(0, 8)}`;

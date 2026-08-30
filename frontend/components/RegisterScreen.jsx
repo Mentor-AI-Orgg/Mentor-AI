@@ -37,7 +37,7 @@ const FieldStatus = ({ touched, valid }) => {
 const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = 'student' }) => {
   const [form, setForm] = useState({
     name: '', phone: '', email: '', username: '', password: '', confirmPassword: '',
-    role: initialRole, school: '', class: '', subject: '', parentEmail: '', teacherEmail: '', childEmail: '',
+    role: initialRole, school: '', class: '5', subject: 'matematica', parentEmail: '', teacherEmail: '', childEmail: '',
     inviteCode: '', parentalConsent: false, privacyAccepted: false
   });
   const [touched, setTouched] = useState({});
@@ -57,8 +57,8 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
     password: v => isPasswordValid(v),
     confirmPassword: v => v && v === form.password,
     school: v => form.role !== 'student' || (v || '').trim().length >= 2,
-    class: v => form.role !== 'student' || (v || '').trim().length >= 1,
-    subject: v => form.role !== 'teacher' || (v || '').trim().length >= 2,
+    class: v => form.role !== 'student' || ['5', '6', '7', '8'].includes(String(v)),
+    subject: v => (form.role !== 'teacher' && form.role !== 'student') || ['matematica', 'romana'].includes(v),
     parentEmail: v => (form.role !== 'parent' && form.role !== 'student') || isValidEmail(v),
     // Contul de profesor vede analitica mai multor elevi, deci serverul cere
     // un cod de invitație. Îl validăm doar ca prezență; corectitudinea o
@@ -73,7 +73,7 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
   // Câmpurile efectiv necesare diferă pe rol: un profesor nu are clasă/
   // școală de elev, un părinte nu are nici clasă/școală, nici materie.
   const requiredByRole = {
-    student: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'school', 'class', 'parentEmail', 'parentalConsent', 'privacyAccepted'],
+    student: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'school', 'class', 'subject', 'parentEmail', 'parentalConsent', 'privacyAccepted'],
     teacher: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'subject', 'inviteCode', 'privacyAccepted'],
     parent: ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'parentEmail', 'privacyAccepted']
   };
@@ -107,15 +107,43 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
       { key: 'phone', label: 'Număr de telefon', type: 'tel', placeholder: '07xx xxx xxx', autoComplete: 'tel', hint: 'Format românesc, 10 cifre.' },
       { key: 'email', label: 'Email', type: 'email', placeholder: 'nume@email.com', autoComplete: 'email' },
       { key: 'username', label: 'Nume de utilizator (public, pe leaderboard)', type: 'text', placeholder: 'Ex: andrei_p', autoComplete: 'off', hint: 'Fără cuvinte nepotrivite.' },
-      { key: 'school', label: 'Școala / Liceul', type: 'text', placeholder: 'Liceul Teoretic „Mihai Eminescu”', autoComplete: 'off' },
-      { key: 'class', label: 'Clasa', type: 'text', placeholder: 'Ex: a XII-a A', autoComplete: 'off' }
+      { key: 'school', label: 'Școala', type: 'text', placeholder: 'Școala Gimnazială nr. 1', autoComplete: 'off' },
+      {
+        key: 'class',
+        label: 'Clasa',
+        type: 'select',
+        options: [
+          { value: '5', label: 'Clasa a V-a' },
+          { value: '6', label: 'Clasa a VI-a' },
+          { value: '7', label: 'Clasa a VII-a' },
+          { value: '8', label: 'Clasa a VIII-a' }
+        ]
+      },
+      {
+        key: 'subject',
+        label: 'Materia principală',
+        type: 'select',
+        options: [
+          { value: 'matematica', label: 'Matematică' },
+          { value: 'romana', label: 'Limba și literatura română' }
+        ]
+      }
     ],
     teacher: [
       { key: 'name', label: 'Nume complet', type: 'text', placeholder: 'Ex: Prof. Ioana Marin', autoComplete: 'name', hint: 'Minim 3 caractere.' },
       { key: 'phone', label: 'Număr de telefon', type: 'tel', placeholder: '07xx xxx xxx', autoComplete: 'tel', hint: 'Format românesc, 10 cifre.' },
       { key: 'email', label: 'Email', type: 'email', placeholder: 'nume@email.com', autoComplete: 'email' },
       { key: 'username', label: 'Nume de utilizator', type: 'text', placeholder: 'Ex: prof_marin', autoComplete: 'off', hint: 'Fără cuvinte nepotrivite.' },
-      { key: 'subject', label: 'Materia predată', type: 'text', placeholder: 'Ex: Matematică', autoComplete: 'off', hint: 'Folosită ca să vezi analitica elevilor tăi pe materie.' }
+      {
+        key: 'subject',
+        label: 'Materia predată',
+        type: 'select',
+        options: [
+          { value: 'matematica', label: 'Matematică' },
+          { value: 'romana', label: 'Limba și literatura română' }
+        ],
+        hint: 'Mentorul acoperă doar aceste două materii de gimnaziu.'
+      }
     ],
     parent: [
       { key: 'name', label: 'Nume complet', type: 'text', placeholder: 'Ex: Maria Popescu', autoComplete: 'name', hint: 'Minim 3 caractere.' },
@@ -155,15 +183,28 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError, initialRole = '
                 {field.label}
                 <FieldStatus touched={Boolean(touched[field.key])} valid={fieldValid(field.key)} />
               </span>
-              <input
-                type={field.type}
-                value={form[field.key]}
-                onChange={e => setField(field.key, e.target.value)}
-                onBlur={() => markTouched(field.key)}
-                placeholder={field.placeholder}
-                autoComplete={field.autoComplete}
-                className={`field form-input ${touched[field.key] ? (fieldValid(field.key) ? 'field-valid' : 'field-invalid') : ''}`}
-              />
+              {field.type === 'select' ? (
+                <select
+                  value={form[field.key]}
+                  onChange={e => setField(field.key, e.target.value)}
+                  onBlur={() => markTouched(field.key)}
+                  className={`field form-input ${touched[field.key] ? (fieldValid(field.key) ? 'field-valid' : 'field-invalid') : ''}`}
+                >
+                  {field.options.map(option => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type={field.type}
+                  value={form[field.key]}
+                  onChange={e => setField(field.key, e.target.value)}
+                  onBlur={() => markTouched(field.key)}
+                  placeholder={field.placeholder}
+                  autoComplete={field.autoComplete}
+                  className={`field form-input ${touched[field.key] ? (fieldValid(field.key) ? 'field-valid' : 'field-invalid') : ''}`}
+                />
+              )}
             </label>
             {field.hint && <small className="field-hint">{field.hint}</small>}
             {touched[field.key] && !fieldValid(field.key) && field.key === 'username' && containsForbiddenWord(form.username) && (

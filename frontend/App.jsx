@@ -31,8 +31,9 @@ function applyAccount(user, prev = {}) {
     name: user.name || prev.name || '',
     username: user.username || prev.username || '',
     school: user.school || prev.school || '',
-    class: user.class || prev.class || '',
-    profile: typeof user.profile === 'string' ? user.profile : (prev.profile || ''),
+    class: user.class || prev.class || '5',
+    subject: user.subject || user.profile || prev.subject || 'matematica',
+    profile: typeof user.profile === 'string' ? user.profile : (user.subject || prev.profile || 'matematica'),
     exam: user.exam || prev.exam || '',
     dailyHours: user.dailyHours || prev.dailyHours || '',
     parentEmail: user.parentEmail || prev.parentEmail || '',
@@ -215,8 +216,8 @@ function AppShell({ userData, setUserData }) {
       username: formData.username,
       phone: formData.phone,
       school: formData.school,
-      class: formData.class,
-      subject: formData.subject,
+      class: formData.class || '5',
+      subject: formData.subject || 'matematica',
       parentEmail: formData.role === 'student' ? (formData.parentEmail || '') : '',
       teacherEmail: formData.teacherEmail || '',
       parental_consent: formData.role === 'student' ? Boolean(formData.parentalConsent) : false,
@@ -237,8 +238,9 @@ function AppShell({ userData, setUserData }) {
       phone: formData.phone || '',
       username: formData.username || '',
       school: formData.school || '',
-      class: formData.class || '',
-      subject: formData.subject || '',
+      class: formData.class || '5',
+      subject: formData.subject || 'matematica',
+      profile: formData.subject || 'matematica',
       role: formData.role || 'student',
       parentEmail: formData.role === 'student' ? (formData.parentEmail || '') : '',
       childEmail: formData.role === 'parent' ? (formData.parentEmail || '') : '',
@@ -277,8 +279,10 @@ function AppShell({ userData, setUserData }) {
       desc: t('onboarding.step2.desc'),
       inputKey: 'class',
       options: [
-        { icon: 'fa-child', label: t('onboarding.step2.gimnaziu'), value: 'gimnaziu' },
-        { icon: 'fa-user-graduate', label: t('onboarding.step2.liceu'), value: 'liceu' }
+        { icon: 'fa-seedling', label: t('onboarding.step2.grade5'), value: '5' },
+        { icon: 'fa-puzzle-piece', label: t('onboarding.step2.grade6'), value: '6' },
+        { icon: 'fa-compass', label: t('onboarding.step2.grade7'), value: '7' },
+        { icon: 'fa-flag-checkered', label: t('onboarding.step2.grade8'), value: '8' }
       ],
       progress: 40
     },
@@ -286,10 +290,10 @@ function AppShell({ userData, setUserData }) {
       step: 3,
       title: t('onboarding.step3.title'),
       desc: t('onboarding.step3.desc'),
-      inputKey: 'profile',
+      inputKey: 'subject',
       options: [
-        { icon: 'fa-flask', label: t('onboarding.step3.real'), value: 'real' },
-        { icon: 'fa-book', label: t('onboarding.step3.uman'), value: 'uman' }
+        { icon: 'fa-square-root-alt', label: t('onboarding.step3.matematica'), value: 'matematica' },
+        { icon: 'fa-book', label: t('onboarding.step3.romana'), value: 'romana' }
       ],
       progress: 60
     },
@@ -299,8 +303,8 @@ function AppShell({ userData, setUserData }) {
       desc: t('onboarding.step4.desc'),
       inputKey: 'exam',
       options: [
-        { icon: 'fa-clipboard-check', label: t('onboarding.step4.bac'), value: 'bac' },
-        { icon: 'fa-book-open', label: t('onboarding.step4.evaluare'), value: 'evaluare' }
+        { icon: 'fa-book-open', label: t('onboarding.step4.daily'), value: 'daily' },
+        { icon: 'fa-clipboard-check', label: t('onboarding.step4.evaluare'), value: 'evaluare' }
       ],
       progress: 80
     },
@@ -322,9 +326,14 @@ function AppShell({ userData, setUserData }) {
 
   const handleOnboardingNext = async () => {
     if (onboardingStep >= onboardingSteps.length) {
-      const payload = { ...onboardingData, hasCompletedOnboarding: true };
+      const payload = {
+        ...onboardingData,
+        profile: onboardingData.subject || onboardingData.profile || 'matematica',
+        subject: onboardingData.subject || 'matematica',
+        hasCompletedOnboarding: true
+      };
       await MentorAPI.updateProfile(payload);
-      setUserData(prev => ({ ...prev, ...onboardingData, hasCompletedOnboarding: true }));
+      setUserData(prev => ({ ...prev, ...payload }));
       setScreen('home');
       setNavScreen('home');
       showToast(t('toast.onboardingDone'), 'success');

@@ -1,7 +1,8 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import FocusTimer from './FocusTimer.jsx';
 import FlashCards from './FlashCards.jsx';
+import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
 
 const makeConversationId = prefix => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 
@@ -21,8 +22,10 @@ const ProfessorScreen = ({ userData }) => {
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(false);
   const [diagMode, setDiagMode] = useState(false);
+  const [subject, setSubject] = useState(normalizeSubject(userData.subject || userData.profile));
+  const [grade, setGrade] = useState(normalizeGrade(userData.class));
   const conversationId = useRef(makeConversationId('mentor'));
-  const classLevel = userData.class || 'liceu';
+  const classLevel = grade;
 
   const formatDiagnostics = checks => {
     const icon = status => (status === 'ok' ? '✅' : '❌');
@@ -57,14 +60,27 @@ const ProfessorScreen = ({ userData }) => {
       MentorAPI.logActivity({ user_id: userData.email || 'demo_user', type: 'mentor_message', note: message, meta: { diagMode } });
     }
     try {
-      const reply = await chatRequest({ message, conversationId: conversationId.current, subject: userData.profile || 'matematica', classLevel, language: userData.language || 'ro', planId: userData.planId || 'free', mockReply: 'Îți explic pas cu pas. Începem cu ideea principală și verificăm împreună fiecare pas.' });
+      const reply = await chatRequest({ message, conversationId: conversationId.current, subject, classLevel, language: userData.language || 'ro', planId: userData.planId || 'free', mockReply: 'Hai să o luăm pe înțelesul tău. Spune-mi mai întâi ce ai încercat și ce ți se pare neclar.' });
       setMessages(previous => [...previous, { role: 'assistant', content: reply.response || 'Am primit întrebarea. Hai să o desfacem în pași simpli.', mocked: reply.mocked, engine: reply.engine_used }]);
     } catch (error) { setMessages(previous => [...previous, { role: 'assistant', content: 'Nu pot răspunde acum. Încearcă din nou în câteva secunde.' }]); }
     finally { setLoading(false); }
   };
 
   return <main className="screen-page mentor-page animate-fadeIn">
-    <header className="screen-header"><div><div className="eyebrow">PROFESORUL TĂU</div><h1 className="display-font screen-title">Întreabă fără să te prefaci că ai înțeles.</h1></div>
+    <header className="screen-header"><div><div className="eyebrow">MENTOR DE GIMNAZIU</div><h1 className="display-font screen-title">Română și matematică, pe înțelesul tău.</h1>
+      <div className="mentor-context-row">
+        <label>Clasa
+          <select value={String(grade)} onChange={event => setGrade(Number(event.target.value))}>
+            {GRADES.map(item => <option key={item} value={item}>{gradeLabel(item)}</option>)}
+          </select>
+        </label>
+        <label>Materia
+          <select value={subject} onChange={event => setSubject(event.target.value)}>
+            {SUBJECTS.map(item => <option key={item.id} value={item.id}>{item.labelRo}</option>)}
+          </select>
+        </label>
+      </div>
+    </div>
       <div className="mentor-header-actions">
         <button
           type="button"
@@ -80,7 +96,7 @@ const ProfessorScreen = ({ userData }) => {
       </div>
     </header>
     {diagMode && <div className="diag-banner"><i className="fas fa-circle-info" /> Mod diagnosticare activ: orice mesaj trimis va verifica memoria și fiecare API (Claude, GPT-4o, Gemini, Wolfram, Mathpix) în loc de un răspuns normal.</div>}
-    <section className="mentor-thread surface">{messages.some(m => m.mocked) && <div className="mock-banner"><i className="fas fa-flask" /> Răspunsurile marcate „demo” nu vin de la un model real: cheia API lipsește sau apelul a eșuat.</div>}{messages.length === 0 && <div className="mentor-empty"><div className="professor-icon"><i className="fas fa-sparkles" /></div><h2 className="display-font">Cu ce începem?</h2><p>Scrie o întrebare. Memoria conversației rămâne în backend pentru următorul tău mesaj.</p><div className="suggestion-row"><button onClick={() => send('Explică-mi un concept pe înțelesul meu')} type="button">Explică-mi un concept</button><button onClick={() => send('Ajută-mă să-mi organizez învățarea')} type="button">Fă-mi un plan</button></div></div>}{messages.map((message, index) => <MessageBubble key={`${message.role}-${index}`} role={message.role}>{message.diagnostic ? <pre className={`diag-report ${message.allOk ? 'all-ok' : 'has-issues'}`}>{message.content}</pre> : message.content}{message.mocked && <small className="mock-label">Răspuns demo{message.engine ? ` · ${message.engine}` : ''} — nu este generat de un model real</small>}</MessageBubble>)}{loading && <LoadingMessage />}</section>
+    <section className="mentor-thread surface">{messages.some(m => m.mocked) && <div className="mock-banner"><i className="fas fa-flask" /> Răspunsurile marcate „demo” nu vin de la un model real: cheia API lipsește sau apelul a eșuat.</div>}{messages.length === 0 && <div className="mentor-empty"><div className="professor-icon"><i className="fas fa-sparkles" /></div><h2 className="display-font">Cu ce începem?</h2><p>Întrebări din {subjectLabel(subject)} pentru {gradeLabel(grade)}. Mentorul ghidează, nu dă tema gata.</p><div className="suggestion-row"><button onClick={() => send(subject === 'romana' ? 'Nu înțeleg ideea principală dintr-un text. Cum o caut?' : 'Nu știu de unde să încep o problemă de matematică.')} type="button">Nu știu de unde să încep</button><button onClick={() => send(subject === 'romana' ? 'Ajută-mă să-mi fac un plan pentru un text scurt.' : 'Explică-mi un concept de clasa mea, fără formulă gata.')} type="button">Fă-mi un plan</button></div></div>}{messages.map((message, index) => <MessageBubble key={`${message.role}-${index}`} role={message.role}>{message.diagnostic ? <pre className={`diag-report ${message.allOk ? 'all-ok' : 'has-issues'}`}>{message.content}</pre> : message.content}{message.mocked && <small className="mock-label">Răspuns demo{message.engine ? ` · ${message.engine}` : ''} — nu este generat de un model real</small>}</MessageBubble>)}{loading && <LoadingMessage />}</section>
     <form className="mentor-composer" onSubmit={event => { event.preventDefault(); send(draft); }}><input value={draft} onChange={event => setDraft(event.target.value)} placeholder={diagMode ? 'Scrie orice, va rula diagnosticarea...' : 'Scrie întrebarea ta...'} aria-label="Întrebarea pentru Mentor AI" /><button className="accent-button" type="submit" disabled={loading || !draft.trim()} aria-label="Trimite întrebarea"><i className={`fas ${diagMode ? 'fa-stethoscope' : 'fa-arrow-up'}`} /></button></form>
   </main>;
 };
@@ -153,12 +169,29 @@ const LearnScreen = ({ userData, onRewardClaim }) => {
   const [detectText, setDetectText] = useState('');
   const [detectLoading, setDetectLoading] = useState(false);
   const [detectResult, setDetectResult] = useState(null);
+  const [guide, setGuide] = useState(null);
+  const subject = normalizeSubject(userData.subject || userData.profile);
+  const grade = normalizeGrade(userData.class);
 
-  const modules = [
-    { id: 'algebra', icon: 'fa-square-root-variable', title: 'Algebră fără panică', meta: '5 min · nivel adaptiv', color: 'module-violet', prompt: 'Creează o sesiune de 5 minute pentru algebră. Include obiectiv, încălzire, exercițiu, verificare și bonus. Fii foarte clar și practică cu un exemplu simplu.' },
-    { id: 'focus', icon: 'fa-bullseye', title: 'Sesiune de focus', meta: '7 min · ritm ghidat', color: 'module-cyan', prompt: 'Creează o sesiune scurtă pentru concentrarea și memorarea. Include obiectiv, încălzire, exercițiu, verificare și bonus. Fii calm și eficient.' },
-    { id: 'exam', icon: 'fa-clipboard-check', title: 'Pregătire pentru examen', meta: '8 min · recapitulare', color: 'module-pink', prompt: 'Creează o sesiune scurtă de pregătire pentru examen. Include un obiectiv clar, un exercițiu, o verificare și un bonus pentru recapitulare.' }
-  ];
+  useEffect(() => {
+    let cancelled = false;
+    MentorAPI.getCurriculum({ subject, class_level: grade }).then(result => {
+      if (!cancelled && result.success) setGuide(result.data);
+    });
+    return () => { cancelled = true; };
+  }, [subject, grade]);
+
+  const sourceUnits = guide?.units?.length
+    ? guide.units
+    : [{ id: 'start', title: subject === 'romana' ? 'Un text pe înțelesul tău' : 'O problemă în pași mici', inOwnWords: 'Începe cu ce știi, apoi un exemplu cotidian.' }];
+  const modules = sourceUnits.map((unit, index) => ({
+    id: unit.id,
+    icon: subject === 'romana' ? 'fa-book-open' : 'fa-square-root-variable',
+    title: unit.title,
+    meta: `${gradeLabel(grade)} · ${subjectLabel(subject)}`,
+    color: ['module-violet', 'module-cyan', 'module-pink'][index % 3],
+    prompt: `Creează o sesiune de 5 minute despre: ${unit.title}. Cum o înțeleg eu: ${unit.inOwnWords}. Include obiectiv, încălzire, exercițiu, verificare și bonus. Nu da rezolvarea gata.`
+  }));
 
   const start = async module => {
     setSelected(module.id);
@@ -169,8 +202,8 @@ const LearnScreen = ({ userData, onRewardClaim }) => {
     const reply = await chatRequest({
       message: module.prompt,
       conversationId: makeConversationId('learn'),
-      subject: userData.profile || 'matematica',
-      classLevel: userData.class || 'liceu',
+      subject,
+      classLevel: grade,
       language: userData.language || 'ro',
       planId: userData.planId || 'free',
       mockReply: `Obiectiv: înțelegi ${module.title.toLowerCase()} în pași simpli. Încălzire: notează 2 lucruri pe care le știi deja. Exercițiu: rezolvă un exemplu scurt și încadrează răspunsul în 3 etape. Verificare: spune cu voce tare ce ai făcut. Bonus: repetă ideea principală într-o propoziție.`
@@ -206,7 +239,7 @@ const LearnScreen = ({ userData, onRewardClaim }) => {
       <div className="learn-hero">
         <div className="eyebrow">LABORATORUL TĂU</div>
         <h1 className="display-font screen-title">Învață ceva care rămâne.</h1>
-        <p className="screen-subtitle">Alege o sesiune scurtă, clară și adaptată profilului tău. Fiecare modul te ghidează pas cu pas.</p>
+        <p className="screen-subtitle">{guide?.howISeeIt || 'Sesiuni scurte de română și matematică, pe programa de gimnaziu.'}</p>
       </div>
       <div className="learn-hero-stats">
         <span className="learn-chip"><i className="fas fa-fire" /> streak {userData.streak || 0}</span>

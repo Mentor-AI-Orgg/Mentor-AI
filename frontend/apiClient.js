@@ -481,6 +481,16 @@ const MentorAPI = {
     }
   },
 
+  async getCurriculum(params = {}) {
+    try {
+      const qs = new URLSearchParams(params).toString();
+      const data = await safeFetchJson(`/api/curriculum${qs ? `?${qs}` : ''}`);
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
   async getLeaderboard(params = {}) {
     try {
       const qs = new URLSearchParams(params).toString();
