@@ -1,4 +1,14 @@
+import {
+  askAndStoreSiteAuth,
+  humanizeFetchError,
+  isAbortError,
+  isSiteGateBody,
+  siteAuthHeaders
+} from './siteAuth.js';
+
 const DEFAULT_API_BASE_URL = 'http://localhost:3001';
+const DEFAULT_TIMEOUT_MS = 20000;
+const getSiteStorage = () => (typeof window === 'undefined' ? null : window.sessionStorage);
 
 const getApiBaseUrl = () => {
   if (typeof window !== 'undefined' && window.__MENTOR_API_BASE_URL__) {
@@ -46,29 +56,75 @@ const normalizePlan = plan => ({
   features: (plan.features || []).map(feature => (typeof feature === 'string' ? { label: feature, included: true } : feature))
 });
 
-const fetchWithTimeout = async (url, options = {}, timeout = 6000) => {
+const mergeFetchOptions = options => {
+  const { headers: extraHeaders, ...rest } = options || {};
+  return {
+    credentials: 'include',
+    ...rest,
+    headers: {
+      ...siteAuthHeaders(getSiteStorage()),
+      ...(extraHeaders || {})
+    }
+  };
+};
+
+const fetchWithTimeout = async (url, options = {}, timeout = DEFAULT_TIMEOUT_MS) => {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
   // `credentials: 'include'` trimite cookie-ul de sesiune. Fara el, fiecare
   // cerere ar parea neautentificata si ar primi 401.
-  const response = await fetch(buildApiUrl(url), {
-    signal: controller.signal,
-    credentials: 'include',
-    ...options
-  });
-  clearTimeout(timer);
-  return response;
+  try {
+    return await fetch(buildApiUrl(url), {
+      ...mergeFetchOptions(options),
+      signal: controller.signal
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+};
+
+const parseErrorPayload = async response => {
+  const text = await response.text();
+  if (isSiteGateBody(text)) {
+    const failure = new Error(text.trim() || 'Acces restricționat.');
+    failure.status = response.status;
+    failure.siteGate = true;
+    return failure;
+  }
+  let payload = null;
+  try { payload = text ? JSON.parse(text) : null; } catch { payload = null; }
+  const failure = new Error(payload?.error || `HTTP ${response.status}`);
+  failure.status = response.status;
+  failure.payload = payload;
+  return failure;
+};
+
+const requestJson = async (url, options, timeout) => {
+  try {
+    return await fetchWithTimeout(url, options, timeout);
+  } catch (error) {
+    if (isAbortError(error) && askAndStoreSiteAuth(getSiteStorage())) {
+      return fetchWithTimeout(url, options, timeout);
+    }
+    if (isAbortError(error)) {
+      const failure = new Error(humanizeFetchError(error));
+      failure.name = 'AbortError';
+      throw failure;
+    }
+    throw error;
+  }
 };
 
 const safeFetchJson = async (url, options, timeout) => {
-  const response = await fetchWithTimeout(url, options, timeout);
+  let response = await requestJson(url, options, timeout);
+  if (response.status === 401) {
+    const preview = await response.clone().text();
+    if (isSiteGateBody(preview) && askAndStoreSiteAuth(getSiteStorage())) {
+      response = await fetchWithTimeout(url, options, timeout);
+    }
+  }
   if (!response.ok) {
-    let payload = null;
-    try { payload = await response.json(); } catch (error) { payload = null; }
-    const failure = new Error(payload?.error || `HTTP ${response.status}`);
-    failure.status = response.status;
-    failure.payload = payload;
-    throw failure;
+    throw await parseErrorPayload(response);
   }
   return response.json();
 };
@@ -83,7 +139,7 @@ const MentorAPI = {
       });
       return { success: true, data, fallback: false };
     } catch (error) {
-      return { success: false, data: null, error: error.message, status: error.status, field: error.payload?.field };
+      return { success: false, data: null, error: humanizeFetchError(error), status: error.status, field: error.payload?.field };
     }
   },
 
@@ -96,7 +152,7 @@ const MentorAPI = {
       });
       return { success: true, data, fallback: false };
     } catch (error) {
-      return { success: false, data: null, error: error.message, status: error.status };
+      return { success: false, data: null, error: humanizeFetchError(error), status: error.status };
     }
   },
 
