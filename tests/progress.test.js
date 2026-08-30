@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
+import { levelFromXp, XP_THRESHOLDS } from '../backend/src/data/progressEngine.js';
+import { xpProgress } from '../frontend/xpProgress.js';
 
 const PASSWORD = 'Testpass1!';
 let app;
@@ -113,5 +115,56 @@ describe('verified study progress', () => {
     expect(second.status).toBe(200);
     expect(second.body.parentNotify.skipped).toBe(true);
     expect(second.body.parentNotify.reason).toBe('study_digest_today');
+  });
+
+  it('fills the current level and keeps climbing after the last table step', () => {
+    expect(XP_THRESHOLDS[1]).toBe(60);
+    expect(XP_THRESHOLDS[4]).toBe(650);
+
+    expect(levelFromXp(0)).toMatchObject({ level: 1, xpIntoLevel: 0, xpToNext: 60, levelSpan: 60, nextLevelAt: 60 });
+    expect(levelFromXp(30)).toMatchObject({ level: 1, xpIntoLevel: 30, xpToNext: 30, levelSpan: 60 });
+    expect(levelFromXp(59)).toMatchObject({ level: 1, xpToNext: 1 });
+    expect(levelFromXp(60)).toMatchObject({ level: 2, xpIntoLevel: 0, xpToNext: 120, nextLevelAt: 180 });
+    expect(levelFromXp(650)).toMatchObject({ level: 5, xpIntoLevel: 0, xpToNext: 250 });
+    expect(levelFromXp(2900)).toMatchObject({ level: 11, xpIntoLevel: 0, xpToNext: 400 });
+    expect(levelFromXp(3300)).toMatchObject({ level: 12, xpIntoLevel: 0, xpToNext: 400 });
+    expect(levelFromXp(3500)).toMatchObject({ level: 12, xpIntoLevel: 200, xpToNext: 200, levelSpan: 400 });
+
+    const mid = xpProgress({ level: 1, xp: 30, xpIntoLevel: 30, xpToNext: 30, levelSpan: 60 });
+    expect(mid.pct).toBe(50);
+    expect(mid.nextLevel).toBe(2);
+    expect(mid.toNext).toBe(30);
+  });
+
+  it('returns level fields on economy summary after study XP', async () => {
+    const agent = request.agent(app);
+    await registerStudent(agent);
+
+    const login = await agent.post('/api/economy/claim').send({ type: 'login_bonus' });
+    expect(login.body.summary.xp).toBe(20);
+    expect(login.body.summary.level).toBe(1);
+    expect(login.body.summary.xpIntoLevel).toBe(20);
+    expect(login.body.summary.xpToNext).toBe(40);
+    expect(login.body.summary.levelSpan).toBe(60);
+    expect(login.body.summary.nextLevelAt).toBe(60);
+
+    const opened = await agent.post('/api/economy/progress').send({
+      type: 'chapter_open',
+      meta: { subject: 'matematica', grade: '6', chapterId: 'nivel-bar', title: 'Nivel' }
+    });
+    expect(opened.body.summary.xp).toBe(45);
+    expect(opened.body.summary.level).toBe(1);
+    expect(opened.body.summary.xpIntoLevel).toBe(45);
+    expect(opened.body.summary.xpToNext).toBe(15);
+
+    const session = await agent.post('/api/economy/progress').send({
+      type: 'session_complete',
+      meta: { subject: 'matematica', grade: '6', chapterId: 'nivel-bar', title: 'Nivel' }
+    });
+    expect(session.body.summary.xp).toBe(70);
+    expect(session.body.summary.level).toBe(2);
+    expect(session.body.summary.xpIntoLevel).toBe(10);
+    expect(session.body.summary.xpToNext).toBe(110);
+    expect(session.body.summary.levelSpan).toBe(120);
   });
 });

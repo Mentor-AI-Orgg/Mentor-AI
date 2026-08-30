@@ -912,6 +912,7 @@ function buildSummary(user) {
     xpIntoLevel: progress.xpIntoLevel,
     xpToNext: progress.xpToNext,
     nextLevelAt: progress.nextLevelAt,
+    levelSpan: progress.levelSpan,
     score: Math.round((done / total) * 100),
     chaptersDone: done,
     chaptersTotal: total,

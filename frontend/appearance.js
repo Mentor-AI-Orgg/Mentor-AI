@@ -15,8 +15,10 @@ function applyProgress(summary = {}, prev = {}) {
     streak: typeof summary.streak === 'number' ? summary.streak : prev.streak,
     xp: typeof summary.xp === 'number' ? summary.xp : prev.xp,
     level: summary.level || prev.level || 1,
-    xpToNext: summary.xpToNext,
-    xpIntoLevel: summary.xpIntoLevel,
+    xpToNext: summary.xpToNext ?? prev.xpToNext,
+    xpIntoLevel: summary.xpIntoLevel ?? prev.xpIntoLevel,
+    nextLevelAt: summary.nextLevelAt ?? prev.nextLevelAt,
+    levelSpan: summary.levelSpan ?? prev.levelSpan,
     score: typeof summary.score === 'number' ? summary.score : prev.score,
     chaptersDone: summary.chaptersDone,
     chaptersTotal: summary.chaptersTotal,
@@ -30,3 +32,4 @@ function applyProgress(summary = {}, prev = {}) {
 }
 
 export { AVATAR_ICONS, THEME_ACCENTS, avatarIcon, itemEmoji, applyTheme, applyProgress };
+export { xpProgress } from './xpProgress.js';

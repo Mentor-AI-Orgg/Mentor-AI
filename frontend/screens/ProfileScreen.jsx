@@ -3,6 +3,7 @@ import { MentorAPI } from '../apiClient.js';
 import Leaderboard from '../components/Leaderboard.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { avatarIcon, itemEmoji } from '../appearance.js';
+import LevelBar from '../components/LevelBar.jsx';
 
 const CLASSES = ['5', '6', '7', '8'];
 
@@ -250,6 +251,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
             <div className="text-lg font-semibold">{userData.chaptersDone || 0}/{userData.chaptersTotal || 0}</div>
           </div>
         </div>
+        <LevelBar userData={userData} />
         <div className="profile-shortcut-row">
           <button type="button" className="accent-button" onClick={openFriendsList}>
             <i className="fas fa-user-group" /> Lista de prieteni ({rankedFriends.length})

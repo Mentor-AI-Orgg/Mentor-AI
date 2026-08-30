@@ -703,6 +703,10 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .shop-balance-card span { color: #e3e8ff; font-size: 10px; text-transform: uppercase; letter-spacing: .14em; }
 .shop-balance-card strong { font: 700 34px 'Space Grotesk', sans-serif; margin-top: 8px; }
 .shop-balance-card small { color: #dde4ff; font-size: 12px; }
+.shop-balance-card .level-bar { margin-top: 12px; }
+.shop-balance-card .level-bar-meta strong,
+.shop-balance-card .home-xp-line { color: #e8ecff; }
+.shop-balance-card .progress-track { background: rgba(255,255,255,.12); }
 .shop-section { padding: 22px; border-radius: 24px; }
 .shop-section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .shop-section-head h2 { margin: 8px 0 0; font-size: clamp(24px, 4vw, 34px); }
@@ -809,9 +813,27 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   background: var(--user-accent, #b9a7ff);
 }
 .home-avatar i { font-size: 20px; }
-.home-xp-line { margin: 10px 0 0; color: var(--muted); font-size: 13px; }
-.progress-track-xp { margin-top: 8px; height: 6px; }
-.progress-track-xp div { background: linear-gradient(90deg, var(--aqua), var(--lime)); }
+.home-xp-line { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+.level-bar { margin-top: 16px; }
+.level-bar-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-size: 13px;
+}
+.level-bar-meta strong { font: 700 14px 'Space Grotesk', sans-serif; }
+.level-bar-meta span { color: var(--lime); font-weight: 700; }
+.progress-track-xp { margin-top: 0; height: 10px; }
+.progress-track-xp div {
+  background: linear-gradient(90deg, var(--aqua), var(--lime));
+  transition: width .35s ease;
+}
+.level-bar.is-compact { margin-top: 10px; }
+.level-bar.is-compact .level-bar-meta { font-size: 12px; }
+.level-bar.is-compact .progress-track-xp { height: 8px; }
 .chapter-status {
   font-style: normal;
   font-size: 10px;
