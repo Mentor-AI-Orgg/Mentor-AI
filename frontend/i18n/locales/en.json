@@ -85,6 +85,10 @@
     "daysInARow": "days in a row",
     "coins": "Coins",
     "toSpend": "to spend",
+    "chapters": "chapters",
+    "nextXp": "{count} XP left to the next level",
+    "todayStart": "Pick Romanian or maths and open a chapter. The first step gives coins and XP.",
+    "todayContinue": "Continue a started chapter or finish a new one. Home, Profile and Shop share the same numbers.",
     "quickEyebrow": "Quick access",
     "quickTitle": "What do we do today?",
     "learnNew": "Middle-school chapters",
@@ -149,9 +153,9 @@
     "logout": "Sign out",
     "parentEyebrow": "Parent",
     "parentTitle": "Your activity is emailed home.",
-    "parentNote": "The parent at {email} gets a message whenever you learn, talk to the mentor, or use the app. They do not create an account.",
+    "parentNote": "The parent at {email} gets one study digest a day. They do not create an account.",
     "parentEmailMissing": "the address given at signup",
-    "parentEmpty": "No message copies yet. Parent emails go out automatically with every activity."
+    "parentEmpty": "No message copies yet. The study email goes out once a day."
   },
   "toast": {
     "welcome": "Welcome!",

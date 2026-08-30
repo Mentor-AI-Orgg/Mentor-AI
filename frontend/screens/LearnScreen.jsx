@@ -5,6 +5,13 @@ import FlashCards from '../components/FlashCards.jsx';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
 
 const makeConversationId = prefix => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+const SESSION_STEPS = [
+  { key: 'objective', label: 'Obiectiv' },
+  { key: 'warmup', label: 'Încălzire' },
+  { key: 'exercise', label: 'Exercițiu' },
+  { key: 'check', label: 'Verificare' },
+  { key: 'bonus', label: 'Bonus' }
+];
 
 const chatRequest = async ({ message, conversationId, subject, classLevel, language, planId, mockReply }) => {
   const result = await MentorAPI.chat({ message, conversation_id: conversationId, subject, class_level: classLevel, language, plan_id: planId });
@@ -45,18 +52,22 @@ const parseSessionPlan = text => {
   return plan;
 };
 
-const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim }) => {
+const chapterStatus = (chapters, subject, grade, chapterId) => {
+  const key = `${String(subject || '').toLowerCase()}:${String(grade || '')}:${String(chapterId || '')}`;
+  return chapters?.[key]?.status || '';
+};
+
+const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onProgress }) => {
   const defaultGrade = normalizeGrade(studyFocus.grade || userData.class);
   const [subject, setSubject] = useState(studyFocus.subject ? normalizeSubject(studyFocus.subject) : null);
   const [grade, setGrade] = useState(defaultGrade);
   const [guide, setGuide] = useState(null);
   const [openChapter, setOpenChapter] = useState(studyFocus.chapter || null);
   const [session, setSession] = useState(null);
+  const [doneSteps, setDoneSteps] = useState({});
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [detectText, setDetectText] = useState('');
-  const [detectLoading, setDetectLoading] = useState(false);
-  const [detectResult, setDetectResult] = useState(null);
+  const [sessionDone, setSessionDone] = useState(false);
 
   useEffect(() => {
     if (studyFocus.subject) setSubject(normalizeSubject(studyFocus.subject));
@@ -77,6 +88,33 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim }) =
   }, [subject, grade]);
 
   const units = guide?.units || [];
+  const savedSessions = userData.savedSessions || [];
+
+  const applyResult = result => {
+    const summary = result?.data?.summary;
+    if (summary && typeof onRewardClaim === 'function') {
+      onRewardClaim({
+        balance: summary.balance,
+        equipped: summary.equipped || {},
+        role: summary.role,
+        summary
+      });
+      return;
+    }
+    onProgress?.();
+  };
+
+  const openUnit = async unit => {
+    const nextOpen = openChapter === unit.id ? null : unit.id;
+    setOpenChapter(nextOpen);
+    if (!nextOpen) return;
+    const result = await MentorAPI.recordProgress({
+      type: 'chapter_open',
+      note: unit.title,
+      meta: { subject, grade, chapterId: unit.id, title: unit.title }
+    });
+    applyResult(result);
+  };
 
   const askMentor = unit => {
     onNavigate?.('professor', {
@@ -90,6 +128,8 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim }) =
     setOpenChapter(unit.id);
     setLoading(true);
     setSaved(false);
+    setSessionDone(false);
+    setDoneSteps({});
     setSession(null);
     const reply = await chatRequest({
       message: `Creează o sesiune de 5 minute despre: ${unit.title}. Cum o înțeleg eu: ${unit.inOwnWords}. Include obiectiv, încălzire, exercițiu, verificare și bonus. Nu da rezolvarea gata.`,
@@ -101,22 +141,47 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim }) =
       mockReply: `Obiectiv: înțelegi ${unit.title.toLowerCase()} în pași simpli. Încălzire: notează 2 lucruri pe care le știi deja. Exercițiu: rezolvă un exemplu scurt și încadrează răspunsul în 3 etape. Verificare: spune cu voce tare ce ai făcut. Bonus: repetă ideea principală într-o propoziție.`
     });
     const plan = parseSessionPlan(reply.response || '');
-    setSession({ title: unit.title, meta: `${gradeLabel(grade)} · ${subjectLabel(subject)}`, ...plan, mocked: !!reply.mocked, engine: reply.engine_used || '' });
+    setSession({
+      title: unit.title,
+      chapterId: unit.id,
+      meta: `${gradeLabel(grade)} · ${subjectLabel(subject)}`,
+      ...plan,
+      mocked: !!reply.mocked,
+      engine: reply.engine_used || ''
+    });
     setLoading(false);
-    MentorAPI.logActivity?.({ type: 'learn_module', note: unit.title, meta: { moduleId: unit.id, title: unit.title, subject, grade } });
+    const result = await MentorAPI.recordProgress({
+      type: 'chapter_open',
+      note: unit.title,
+      meta: { subject, grade, chapterId: unit.id, title: unit.title }
+    });
+    applyResult(result);
   };
 
-  const runDetector = async () => {
-    if (!detectText.trim() || detectLoading) return;
-    setDetectLoading(true);
-    const result = await MentorAPI.detect({ text: detectText.trim() });
-    if (result.success) {
-      setDetectResult(result.data);
-      MentorAPI.logActivity?.({ type: 'ai_detect', note: detectText.trim().slice(0, 120), meta: { ai_probability: result.data.ai_probability || 0 } });
-    } else {
-      setDetectResult({ verdict: 'Detector indisponibil', ai_probability: 0 });
+  const toggleStep = async key => {
+    const next = { ...doneSteps, [key]: !doneSteps[key] };
+    setDoneSteps(next);
+    const complete = SESSION_STEPS.every(step => next[step.key]);
+    if (complete && session && !sessionDone) {
+      setSessionDone(true);
+      const result = await MentorAPI.recordProgress({
+        type: 'session_complete',
+        note: session.title,
+        meta: { subject, grade, chapterId: session.chapterId || openChapter, title: session.title }
+      });
+      applyResult(result);
     }
-    setDetectLoading(false);
+  };
+
+  const saveForLater = async () => {
+    if (!session || saved) return;
+    const result = await MentorAPI.recordProgress({
+      type: 'save_session',
+      note: session.title,
+      meta: { title: session.title, subject, grade }
+    });
+    setSaved(true);
+    applyResult(result);
   };
 
   return (
@@ -177,14 +242,16 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim }) =
           <section className="chapter-list" aria-label="Capitole">
             {units.map((unit, index) => {
               const open = openChapter === unit.id;
+              const status = chapterStatus(userData.chapters, subject, grade, unit.id);
               return (
-                <article key={unit.id} className={`chapter-card ${['module-violet', 'module-cyan', 'module-pink'][index % 3]} ${open ? 'open' : ''}`}>
-                  <button type="button" className="chapter-card-head" onClick={() => setOpenChapter(open ? null : unit.id)}>
+                <article key={unit.id} className={`chapter-card ${['module-violet', 'module-cyan', 'module-pink'][index % 3]} ${open ? 'open' : ''} ${status}`}>
+                  <button type="button" className="chapter-card-head" onClick={() => openUnit(unit)}>
                     <span className="module-icon"><i className={`fas ${subject === 'romana' ? 'fa-book-open' : 'fa-square-root-variable'}`} /></span>
                     <span>
                       <strong>{unit.title}</strong>
                       <small>Capitol {index + 1} · {gradeLabel(grade)}</small>
                     </span>
+                    {status ? <em className={`chapter-status ${status}`}>{status === 'done' ? 'Terminat' : 'Început'}</em> : null}
                     <i className={`fas ${open ? 'fa-chevron-up' : 'fa-chevron-down'}`} />
                   </button>
                   {open && (
@@ -212,39 +279,41 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim }) =
           <div className="eyebrow">SESIUNEA TA</div>
           <h3 className="display-font learning-result-title">{session.title}</h3>
           {session.mocked && <p className="mock-banner session-mock-note">Sesiune demo{session.engine ? ` · ${session.engine}` : ''} — nu este generată de un model real.</p>}
+          <p className="session-check-hint">Bifează fiecare pas. Când le termini pe toate, primești monede și XP.</p>
           <div className="learning-steps">
-            <article className="learn-step"><span>Obiectiv</span><p>{session.objective}</p></article>
-            <article className="learn-step"><span>Încălzire</span><p>{session.warmup}</p></article>
-            <article className="learn-step"><span>Exercițiu</span><p>{session.exercise}</p></article>
-            <article className="learn-step"><span>Verificare</span><p>{session.check}</p></article>
-            <article className="learn-step"><span>Bonus</span><p>{session.bonus}</p></article>
+            {SESSION_STEPS.map(step => (
+              <label key={step.key} className={`learn-step learn-step-check ${doneSteps[step.key] ? 'is-done' : ''}`}>
+                <input type="checkbox" checked={Boolean(doneSteps[step.key])} onChange={() => toggleStep(step.key)} />
+                <span>
+                  <strong>{step.label}</strong>
+                  <p>{session[step.key]}</p>
+                </span>
+              </label>
+            ))}
           </div>
+          {sessionDone && <p className="session-complete-note">Sesiune marcată. Recompensa de azi pentru acest capitol e pe server.</p>}
           <div className="learning-actions">
-            <button type="button" className="ghost-button result-action" onClick={() => setSaved(true)}>{saved ? 'Salvat în lista ta' : 'Salvează pentru mai târziu'} <i className="fas fa-bookmark" /></button>
+            <button type="button" className="ghost-button result-action" onClick={saveForLater}>
+              {saved ? 'Salvat în lista ta' : 'Salvează pentru mai târziu'} <i className="fas fa-bookmark" />
+            </button>
             <button type="button" className="accent-button result-action" onClick={() => askMentor({ id: openChapter, title: session.title, inOwnWords: session.objective })}>Continuă cu mentorul</button>
           </div>
         </section>
       )}
 
-      <section className="surface learn-detector-card">
-        <div className="section-heading">
-          <div>
-            <div className="eyebrow">Detector demo</div>
-            <h2 className="display-font">Un scor euristic, nu un verdict.</h2>
-          </div>
-        </div>
-        <p className="detector-demo-note">Folosește lungimea cuvintelor și termeni academici, plus un jitter aleator. Nu este un detector real de conținut AI.</p>
-        <textarea className="learn-detector-input" rows="5" value={detectText} onChange={e => setDetectText(e.target.value)} placeholder="Lipește un text aici pentru scorul demonstrativ..." />
-        <div className="learning-actions">
-          <button type="button" className="accent-button result-action" onClick={runDetector} disabled={detectLoading || !detectText.trim()}>{detectLoading ? 'Analizez...' : 'Rulează demonstrația'}</button>
-        </div>
-        {detectResult && (
-          <div className="learn-detector-result">
-            <strong>{detectResult.verdict || 'Rezultat demonstrativ'}</strong>
-            <span>Scor demonstrativ: {Number(detectResult.ai_probability || 0).toFixed(0)}% · nu este o probă</span>
-          </div>
-        )}
-      </section>
+      {savedSessions.length > 0 && (
+        <section className="surface saved-sessions-card">
+          <div className="eyebrow">Păstrate pentru mai târziu</div>
+          <ul className="saved-sessions-list">
+            {savedSessions.map(item => (
+              <li key={item.id}>
+                <strong>{item.title}</strong>
+                <small>{item.subject ? subjectLabel(item.subject) : ''} {item.grade ? `· ${gradeLabel(item.grade)}` : ''}</small>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <div className="learn-tools-grid">
         <FocusTimer userData={userData} onRewardClaim={onRewardClaim} />

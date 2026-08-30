@@ -29,7 +29,7 @@ describe('economy purchases', () => {
     const bonus = await agent.post('/api/economy/claim').send({ type: 'login_bonus' });
     expect(bonus.status).toBe(200);
     expect(bonus.body.ok).toBe(true);
-    expect(bonus.body.balance).toBeGreaterThanOrEqual(100);
+    expect(bonus.body.balance).toBe(30);
 
     const catalog = await agent.get('/api/economy/catalog');
     expect(catalog.status).toBe(200);

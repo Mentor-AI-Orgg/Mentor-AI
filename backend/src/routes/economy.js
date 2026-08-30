@@ -2,13 +2,14 @@ const express = require('express');
 const router = express.Router();
 const { STUDENTS_ONLY } = require('../middleware/auth');
 const { validateBody } = require('../middleware/validate');
-const { claimSchema, buySchema } = require('../validation/schemas');
+const { claimSchema, buySchema, progressSchema } = require('../validation/schemas');
 const {
   getSummary,
   getCatalog,
   purchaseItem,
   getInventory,
   claimReward,
+  recordProgress,
   logActivity,
   getNotifications,
   markNotificationRead,
@@ -113,6 +114,29 @@ router.post('/connect-child', (_req, res) => {
 
 router.post('/preferences', (_req, res) => {
   res.status(410).json(STUDENTS_ONLY);
+});
+
+router.post('/progress', validateBody(progressSchema), async (req, res) => {
+  const { type, note = '', meta = {} } = req.body || {};
+  if (type === 'mentor_message') {
+    return res.status(400).json({ error: 'Recompensa pentru mentor se acordă doar din conversație.' });
+  }
+  const result = recordProgress({ userId: req.auth.email, type, note, meta });
+  const parentNotify = await notifyParent({
+    studentEmail: req.auth.email,
+    type,
+    note,
+    meta
+  });
+  res.json({
+    success: true,
+    ...result,
+    parentNotified: !parentNotify.skipped,
+    parentNotify: {
+      skipped: parentNotify.skipped,
+      reason: parentNotify.reason || null
+    }
+  });
 });
 
 router.post('/activity', async (req, res) => {

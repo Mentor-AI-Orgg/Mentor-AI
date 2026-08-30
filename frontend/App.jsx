@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { MentorAPI } from './apiClient.js';
 import { STORAGE_KEY, defaultUserData } from './userData.js';
+import { applyProgress, applyTheme } from './appearance.js';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
 import AdaptiveContainer from './components/AdaptiveContainer.jsx';
 import FloatingLines from './components/FloatingLines.jsx';
@@ -54,30 +55,57 @@ function AppShell({ userData, setUserData }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
   }, [userData]);
 
+  useEffect(() => {
+    applyTheme(userData.themeId);
+  }, [userData.themeId]);
+
   const showToast = useCallback((message, type = 'success') => {
     setToast({ message, type });
   }, []);
 
   const handleEconomyUpdate = useCallback((balance, equipped = {}, role = null, extra = {}) => {
-    setUserData(prev => ({
-      ...prev,
-      coins: typeof balance === 'number' ? balance : prev.coins,
-      avatarId: equipped.avatar || prev.avatarId,
-      themeId: equipped.background || prev.themeId,
-      voiceId: equipped.voice || prev.voiceId,
-      role: role || prev.role,
-      ...extra
-    }));
+    setUserData(prev => {
+      const next = {
+        ...prev,
+        coins: typeof balance === 'number' ? balance : prev.coins,
+        avatarId: equipped.avatar || prev.avatarId,
+        themeId: equipped.background || prev.themeId,
+        voiceId: equipped.voice || prev.voiceId,
+        role: role || prev.role,
+        ...extra
+      };
+      applyTheme(next.themeId);
+      return next;
+    });
   }, []);
 
+  const syncEconomy = useCallback(async (patch = {}) => {
+    const result = await MentorAPI.getEconomySummary({
+      class_name: patch.class || userData.class || '',
+      profile_name: patch.name || userData.name || ''
+    });
+    const summary = result.success ? result.data?.summary : null;
+    if (!summary) return null;
+    setUserData(prev => {
+      const next = applyProgress(summary, prev);
+      applyTheme(next.themeId);
+      return next;
+    });
+    return summary;
+  }, [userData.class, userData.name]);
+
   const handleAppearanceChange = useCallback((equipped = {}, inventory = []) => {
-    setUserData(prev => ({
-      ...prev,
-      avatarId: equipped.avatar || prev.avatarId,
-      themeId: equipped.background || prev.themeId,
-      voiceId: equipped.voice || prev.voiceId,
-      inventory
-    }));
+    setUserData(prev => {
+      const next = {
+        ...prev,
+        avatarId: equipped.avatar || prev.avatarId,
+        themeId: equipped.background || prev.themeId,
+        voiceId: equipped.voice || prev.voiceId,
+        inventory
+      };
+      applyTheme(next.themeId);
+      return next;
+    });
   }, []);
 
   const handleLanguageChange = useCallback(patch => {
@@ -143,6 +171,7 @@ function AppShell({ userData, setUserData }) {
       return;
     }
 
+    await syncEconomy();
     setScreen('home');
     setNavScreen('home');
   };
@@ -159,11 +188,7 @@ function AppShell({ userData, setUserData }) {
     if (!user.hasCompletedOnboarding) {
       setOnboardingStep(1);
       setScreen('onboarding');
-      MentorAPI.claimReward({ type: 'login_bonus' }).then(rewardResult => {
-        if (rewardResult.success) {
-          handleEconomyUpdate(rewardResult.data.balance, {}, null, { firstLoginRewardClaimed: true });
-        }
-      });
+      MentorAPI.claimReward({ type: 'login_bonus' }).then(() => syncEconomy());
       showToast(t('toast.welcome'), 'success');
       return { success: true };
     }
@@ -171,11 +196,8 @@ function AppShell({ userData, setUserData }) {
     setScreen('home');
     setNavScreen('home');
 
-    MentorAPI.claimReward({ type: 'login_bonus' }).then(rewardResult => {
-      if (rewardResult.success) {
-        handleEconomyUpdate(rewardResult.data.balance, {}, null, { firstLoginRewardClaimed: true });
-      }
-    });
+    await MentorAPI.claimReward({ type: 'login_bonus' });
+    await syncEconomy();
     showToast(t('toast.welcome'), 'success');
     return { success: true };
   };
@@ -289,6 +311,8 @@ function AppShell({ userData, setUserData }) {
       };
       await MentorAPI.updateProfile(payload);
       setUserData(prev => ({ ...prev, ...payload }));
+      await MentorAPI.claimReward({ type: 'login_bonus' });
+      await syncEconomy({ class: payload.class, name: payload.name });
       setScreen('home');
       setNavScreen('home');
       showToast(t('toast.onboardingDone'), 'success');
@@ -322,7 +346,7 @@ function AppShell({ userData, setUserData }) {
   const renderScreen = () => {
     switch (screen) {
       case 'splash':
-        return <SplashScreen onFinish={handleSplashFinish} />;
+        return <SplashScreen onFinish={handleSplashFinish} delay={userData.isLoggedIn ? 200 : 2500} />;
       case 'auth':
         return <AuthScreen onLogin={() => setScreen('login')} onRegister={() => setScreen('register')} />;
       case 'login':
@@ -383,13 +407,13 @@ function AppShell({ userData, setUserData }) {
       case 'home':
         return <HomeScreen userData={userData} onNavigate={handleNavigate} />;
       case 'professor':
-        return <ProfessorScreen userData={userData} studyFocus={studyFocus} />;
+        return <ProfessorScreen userData={userData} studyFocus={studyFocus} onProgress={syncEconomy} />;
       case 'learn':
-        return <LearnScreen userData={userData} studyFocus={studyFocus} onNavigate={handleNavigate} onRewardClaim={data => handleEconomyUpdate(data?.balance, data?.equipped || {}, data?.role)} />;
+        return <LearnScreen userData={userData} studyFocus={studyFocus} onNavigate={handleNavigate} onRewardClaim={data => handleEconomyUpdate(data?.balance, data?.equipped || {}, data?.role, applyProgress(data?.summary || {}, {}))} onProgress={syncEconomy} />;
       case 'shop':
-        return <ShopScreen userData={userData} onBack={() => handleNavigate('home')} onCoinsChange={handleEconomyUpdate} onAppearanceChange={handleAppearanceChange} onRewardToast={showToast} />;
+        return <ShopScreen userData={userData} onBack={() => handleNavigate('home')} onCoinsChange={handleEconomyUpdate} onAppearanceChange={handleAppearanceChange} onRewardToast={showToast} onProgress={syncEconomy} />;
       case 'calendar':
-        return <CalendarScreen onBack={() => handleNavigate('home')} />;
+        return <CalendarScreen onBack={() => handleNavigate('home')} userData={userData} />;
       case 'subscriptions':
         return <SubscriptionsScreen onBack={() => handleNavigate('home')} />;
       case 'profile':
@@ -400,6 +424,7 @@ function AppShell({ userData, setUserData }) {
             onLogout={handleLogout}
             onToast={showToast}
             onLanguageChange={handleLanguageChange}
+            onNavigate={handleNavigate}
           />
         );
       default:
@@ -407,7 +432,7 @@ function AppShell({ userData, setUserData }) {
     }
   };
 
-  const showNav = ['home', 'professor', 'learn', 'shop', 'calendar', 'subscriptions', 'profile'].includes(screen);
+  const showNav = ['home', 'professor', 'learn', 'shop', 'profile'].includes(screen);
 
   return (
     <div className="app-shell">

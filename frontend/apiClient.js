@@ -350,6 +350,19 @@ const MentorAPI = {
     }
   },
 
+  async recordProgress(payload) {
+    try {
+      const data = await safeFetchJson('/api/economy/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
   async logActivity(payload) {
     try {
       const data = await safeFetchJson('/api/economy/activity', {

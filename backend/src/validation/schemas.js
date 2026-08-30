@@ -86,6 +86,20 @@ const buySchema = z.object({
   item_id: z.string().min(1, "item_id este obligatoriu.").max(80)
 });
 
+const progressSchema = z.object({
+  type: z.enum([
+    "chapter_open",
+    "session_complete",
+    "flashcard_known",
+    "focus_session",
+    "save_session",
+    "learn_module",
+    "mentor_message"
+  ], { errorMap: () => ({ message: "Tip de progres necunoscut." }) }),
+  note: z.string().max(200).optional().default(""),
+  meta: z.record(z.any()).optional().default({})
+});
+
 const accessCodeRequestSchema = z.object({
   child_email: email,
   phone: z.string().max(20).optional().default("")
@@ -102,7 +116,8 @@ const accessCodeVerifySchema = z.object({
 const calendarEventSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data trebuie să fie în format YYYY-MM-DD."),
   title: z.string().trim().min(1, "Titlul este obligatoriu.").max(200),
-  type: z.string().max(40).optional()
+  type: z.string().max(40).optional(),
+  time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Ora trebuie să fie HH:MM.").optional()
 });
 
 const deleteAccountSchema = z.object({
@@ -136,6 +151,7 @@ module.exports = {
   unlinkSchema,
   claimSchema,
   buySchema,
+  progressSchema,
   accessCodeRequestSchema,
   accessCodeVerifySchema,
   calendarEventSchema,

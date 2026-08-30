@@ -68,19 +68,20 @@ const FocusTimer = ({ userData, onRewardClaim }) => {
           if (!completedRef.current) {
             completedRef.current = true;
             setSessionsDone(s => s + 1);
-            if (MentorAPI.logActivity) {
-              MentorAPI.logActivity({ type: 'focus_session', note: `Focus completat: ${preset.label}`, meta: { minutes: Math.round(preset.seconds / 60) } });
-            }
-            if (preset.seconds >= 60 * 60) {
-              MentorAPI.claimReward({
-                type: 'study_1h',
-                hours: 1
-              }).then(result => {
-                if (result.success && typeof onRewardClaim === 'function') {
-                  onRewardClaim(result.data);
-                }
-              });
-            }
+            MentorAPI.recordProgress({
+              type: 'focus_session',
+              note: `Focus completat: ${preset.label}`,
+              meta: { minutes: Math.round(preset.seconds / 60) }
+            }).then(result => {
+              if (result.success && typeof onRewardClaim === 'function') {
+                onRewardClaim({
+                  balance: result.data.summary?.balance,
+                  equipped: result.data.summary?.equipped || {},
+                  role: result.data.summary?.role,
+                  summary: result.data.summary
+                });
+              }
+            });
           }
           return 0;
         }

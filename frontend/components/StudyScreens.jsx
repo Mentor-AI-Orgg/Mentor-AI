@@ -15,7 +15,7 @@ const chatRequest = async ({ message, conversationId, subject, classLevel, langu
 const MessageBubble = ({ role, children }) => <div className={`mentor-message ${role === 'user' ? 'mentor-message-user' : 'mentor-message-ai'}`}><span className="mentor-message-role">{role === 'user' ? 'Tu' : 'Mentor AI'}</span><div>{children}</div></div>;
 const LoadingMessage = () => <div className="mentor-message mentor-message-ai"><span className="mentor-message-role">Mentor AI</span><div className="loading-dots"><i /><i /><i /></div></div>;
 
-const ProfessorScreen = ({ userData, studyFocus = {} }) => {
+const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(false);
@@ -67,12 +67,10 @@ const ProfessorScreen = ({ userData, studyFocus = {} }) => {
     setDraft('');
     if (diagMode) { await runDiagnostics(message); return; }
     setMessages(previous => [...previous, { role: 'user', content: message }]); setLoading(true);
-    if (MentorAPI.logActivity) {
-      MentorAPI.logActivity({ user_id: userData.email || 'demo_user', type: 'mentor_message', note: message, meta: { diagMode } });
-    }
     try {
       const reply = await chatRequest({ message, conversationId: conversationId.current, subject, classLevel, language: userData.language || 'ro', planId: userData.planId || 'free', mockReply: 'Hai să o luăm pe înțelesul tău. Spune-mi mai întâi ce ai încercat și ce ți se pare neclar.' });
       setMessages(previous => [...previous, { role: 'assistant', content: reply.response || 'Am primit întrebarea. Hai să o desfacem în pași simpli.', mocked: reply.mocked, engine: reply.engine_used }]);
+      if (reply.progress && onProgress) onProgress(reply.progress);
     } catch (error) { setMessages(previous => [...previous, { role: 'assistant', content: 'Nu pot răspunde acum. Încearcă din nou în câteva secunde.' }]); }
     finally { setLoading(false); }
   };

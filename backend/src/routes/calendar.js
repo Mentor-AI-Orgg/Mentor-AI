@@ -29,8 +29,8 @@ router.get("/events", (req, res) => {
 // POST /api/calendar/events  { date: 'YYYY-MM-DD', title, type }
 router.post("/events", validateBody(calendarEventSchema), async (req, res) => {
   const userId = resolveUserId(req);
-  const { date, title, type } = req.body || {};
-  const event = store.addEvent(userId, { date, title, type });
+  const { date, title, type, time } = req.body || {};
+  const event = store.addEvent(userId, { date, title, type, time });
   await notifyParent({
     studentEmail: userId,
     type: "calendar_event",

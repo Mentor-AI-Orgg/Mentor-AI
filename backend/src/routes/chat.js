@@ -136,6 +136,26 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
   memory.add(conversationId, "assistant", result.response, { engine: result.engine_used, plan_id: normalizedPlanId });
   const scaffoldingLevel = Math.min(3, 1 + Math.floor(history.length / 3));
 
+  let progress = null;
+  try {
+    const { recordProgress } = require("../data/economyStore");
+    progress = recordProgress({
+      userId: req.auth.email,
+      type: "mentor_message",
+      note: message.slice(0, 80),
+      meta: { subject, grade: class_level }
+    });
+    const { notifyParentSoon } = require("../notify/parentActivity");
+    notifyParentSoon({
+      studentEmail: req.auth.email,
+      type: "mentor_message",
+      note: message.slice(0, 80),
+      meta: { subject, grade: class_level }
+    });
+  } catch {
+    progress = null;
+  }
+
   res.json({
     response: result.response,
     engine_used: result.engine_used,
@@ -146,7 +166,8 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
     safety_flags: safety.flags,
     processing_time_ms: Date.now() - startTotal,
     conversation_id: requestedConversationId,
-    plan_id: normalizedPlanId
+    plan_id: normalizedPlanId,
+    progress: progress ? { awarded: progress.awarded, summary: progress.summary } : null
   });
 });
 

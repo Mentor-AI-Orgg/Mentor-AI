@@ -1,5 +1,7 @@
 const persistence = require('./persistence');
 const crypto = require('crypto');
+const { getGuide } = require('./gimnaziuGuide');
+const { levelFromXp, touchStudy, AWARDS } = require('./progressEngine');
 
 const USERS = new Map();
 const NOTIFICATIONS = [];
@@ -12,7 +14,7 @@ const SHOP_CATALOG = [
     name: 'Neon Fox',
     price: 50,
     rarity: 'Common',
-    icon: 'fa-fox',
+    icon: 'fa-dog',
     description: 'Avatar rapid și prietenos, bun pentru început.'
   },
   {
@@ -21,7 +23,7 @@ const SHOP_CATALOG = [
     name: 'Starlight Owl',
     price: 50,
     rarity: 'Common',
-    icon: 'fa-owl',
+    icon: 'fa-crow',
     description: 'Un avatar calm, cu vibe de mentor.'
   },
   {
@@ -262,8 +264,17 @@ function createDefaultUser(userId) {
       streak: 0,
       hoursToday: 0,
       lastTouch: now,
+      lastStudyDate: null,
       monthKey
     },
+    xp: 0,
+    chapters: {},
+    savedSessions: [],
+    flashKnown: {},
+    mentorAwards: {},
+    focusAwards: {},
+    sessionAwards: {},
+    parentNotify: { studyDate: null, loginDate: null },
     coinsEarned: 0,
     coinsSpent: 0,
     activityLog: []
@@ -276,6 +287,15 @@ function ensureUser(userId, patch = {}) {
     USERS.set(key, createDefaultUser(key));
   }
   const current = USERS.get(key);
+  if (current.xp == null) current.xp = 0;
+  if (!current.chapters || typeof current.chapters !== 'object') current.chapters = {};
+  if (!Array.isArray(current.savedSessions)) current.savedSessions = [];
+  if (!current.flashKnown) current.flashKnown = {};
+  if (!current.mentorAwards) current.mentorAwards = {};
+  if (!current.focusAwards) current.focusAwards = {};
+  if (!current.sessionAwards) current.sessionAwards = {};
+  if (!current.parentNotify) current.parentNotify = { studyDate: null, loginDate: null };
+  if (current.metrics && current.metrics.lastStudyDate === undefined) current.metrics.lastStudyDate = null;
   if (patch && typeof patch === 'object') {
     if (patch.role) current.role = patch.role;
     if (patch.parentEmail !== undefined) current.preferences.parentEmail = patch.parentEmail || '';
@@ -284,9 +304,7 @@ function ensureUser(userId, patch = {}) {
     if (patch.className !== undefined) current.preferences.className = patch.className || '';
     if (patch.profileName !== undefined) current.preferences.profileName = patch.profileName || '';
     if (patch.username !== undefined) current.preferences.username = String(patch.username || '').trim().slice(0, 40);
-    if (typeof patch.streak === 'number') current.metrics.streak = patch.streak;
     if (typeof patch.hoursToday === 'number') current.metrics.hoursToday = patch.hoursToday;
-    if (patch.coins !== undefined && Number.isFinite(Number(patch.coins))) current.balance = Number(patch.coins);
   }
   current.metrics.lastTouch = new Date().toISOString();
   return current;
@@ -604,7 +622,137 @@ function getParentAnalytics(parentEmail = '') {
   };
 }
 
+function chapterKey(subject, grade, chapterId) {
+  return `${String(subject || '').toLowerCase()}:${String(grade || '')}:${String(chapterId || '')}`;
+}
+
+function countDoneChapters(user, grade) {
+  const chapters = user.chapters && typeof user.chapters === 'object' ? user.chapters : {};
+  return Object.values(chapters).filter(item => item && item.status === 'done' && String(item.grade) === String(grade)).length;
+}
+
+function chapterUniverse(grade) {
+  const g = Number(grade) || 5;
+  const mate = (getGuide('matematica', g).units || []).length;
+  const romana = (getGuide('romana', g).units || []).length;
+  return Math.max(1, mate + romana);
+}
+
+function grantAward(user, award, type, note, meta = {}) {
+  const coins = awardCoins(user, award.coins, type, note, { ...meta, xp: award.xp });
+  user.xp = (user.xp || 0) + award.xp;
+  return { coins: coins.amount, xp: award.xp, balance: coins.balance };
+}
+
+function recordProgress({ userId, type, meta = {}, note = '' }) {
+  const user = ensureUser(userId);
+  if (meta.grade) user.preferences.className = String(meta.grade);
+  const todayKey = getTodayKey();
+  const study = touchStudy(user, todayKey);
+  if (study.firstToday && !user.streakBonusDate) {
+    user.streakBonusDate = todayKey;
+    grantAward(user, AWARDS.streak_day, 'reward', `Streak ${user.metrics.streak} zile`, { streak: user.metrics.streak });
+  } else if (study.firstToday && user.streakBonusDate !== todayKey) {
+    user.streakBonusDate = todayKey;
+    grantAward(user, AWARDS.streak_day, 'reward', `Streak ${user.metrics.streak} zile`, { streak: user.metrics.streak });
+  }
+
+  let awarded = null;
+
+  if (type === 'chapter_open') {
+    const key = chapterKey(meta.subject, meta.grade, meta.chapterId);
+    if (key && !user.chapters[key]) {
+      user.chapters[key] = {
+        status: 'started',
+        subject: meta.subject,
+        grade: String(meta.grade || ''),
+        chapterId: meta.chapterId,
+        title: meta.title || '',
+        at: new Date().toISOString()
+      };
+      awarded = grantAward(user, AWARDS.chapter_open, 'chapter_open', note || meta.title || 'Capitol deschis', meta);
+    } else if (key && user.chapters[key] && user.chapters[key].status !== 'done') {
+      user.chapters[key].at = new Date().toISOString();
+    }
+  }
+
+  if (type === 'session_complete') {
+    const key = chapterKey(meta.subject, meta.grade, meta.chapterId);
+    const stamp = `${key}:${todayKey}`;
+    if (key && !user.sessionAwards[stamp]) {
+      user.sessionAwards[stamp] = true;
+      if (user.chapters[key]) user.chapters[key].status = 'done';
+      else {
+        user.chapters[key] = {
+          status: 'done',
+          subject: meta.subject,
+          grade: String(meta.grade || ''),
+          chapterId: meta.chapterId,
+          title: meta.title || '',
+          at: new Date().toISOString()
+        };
+      }
+      awarded = grantAward(user, AWARDS.session_complete, 'session_complete', note || 'Sesiune terminată', meta);
+    }
+  }
+
+  if (type === 'flashcard_known') {
+    const topic = String(meta.topic || todayKey).slice(0, 80);
+    if (!user.flashKnown[todayKey]) user.flashKnown[todayKey] = {};
+    user.flashKnown[todayKey][topic] = (user.flashKnown[todayKey][topic] || 0) + 1;
+    const count = user.flashKnown[todayKey][topic];
+    if (count >= 5 && !user.flashcardRewardDates[todayKey]) {
+      user.flashcardRewardDates[todayKey] = true;
+      awarded = grantAward(user, AWARDS.flashcards_5, 'flashcards_5', '5 flashcarduri corecte', { topic, count });
+    }
+  }
+
+  if (type === 'focus_session') {
+    const minutes = Math.max(0, Number(meta.minutes || meta.durationMinutes) || 0);
+    if (!user.focusAwards[todayKey] && minutes >= 25) {
+      user.focusAwards[todayKey] = minutes >= 50 ? 'focus_50' : 'focus_25';
+      const award = minutes >= 50 ? AWARDS.focus_50 : AWARDS.focus_25;
+      awarded = grantAward(user, award, 'focus_session', `Focus ${minutes} minute`, { minutes });
+    }
+  }
+
+  if (type === 'mentor_message') {
+    const today = user.mentorAwards[todayKey] || 0;
+    if (today < 5) {
+      user.mentorAwards[todayKey] = today + 1;
+      awarded = grantAward(user, AWARDS.mentor_message, 'mentor_message', note || 'Mesaj către mentor', meta);
+    }
+  }
+
+  if (type === 'save_session' && meta.title) {
+    user.savedSessions = Array.isArray(user.savedSessions) ? user.savedSessions : [];
+    user.savedSessions.unshift({
+      id: `saved_${Date.now()}`,
+      title: String(meta.title).slice(0, 120),
+      subject: meta.subject || '',
+      grade: String(meta.grade || ''),
+      at: new Date().toISOString()
+    });
+    user.savedSessions = user.savedSessions.slice(0, 20);
+  }
+
+  const entry = recordActivity(user, type, awarded?.coins || 0, note, { ...meta, awarded });
+  return { entry, awarded, summary: buildSummary(user) };
+}
+
 function logActivity({ userId = 'demo_user', type, note = '', meta = {}, amount = 0 }) {
+  const progressTypes = new Set(['chapter_open', 'session_complete', 'flashcard_known', 'focus_session', 'learn_module', 'save_session']);
+  if (type === 'learn_module') {
+    return recordProgress({
+      userId,
+      type: 'chapter_open',
+      note,
+      meta: { subject: meta.subject, grade: meta.grade, chapterId: meta.moduleId || meta.chapterId, title: meta.title || note }
+    });
+  }
+  if (progressTypes.has(type)) {
+    return recordProgress({ userId, type, note, meta });
+  }
   const user = ensureUser(userId);
   const entry = recordActivity(user, type, amount, note, meta);
   return { entry, summary: buildSummary(user) };
@@ -620,8 +768,8 @@ function buildDailyClaims(user) {
     {
       id: 'first-login',
       title: 'Prima logare',
-      subtitle: user.firstLoginClaimed ? '100 monede deja claim-uite' : 'Primești 100 de monede la prima intrare',
-      coins: 100,
+      subtitle: user.firstLoginClaimed ? `${AWARDS.login_bonus.coins} monede deja primite` : `Primești ${AWARDS.login_bonus.coins} de monede la prima intrare`,
+      coins: AWARDS.login_bonus.coins,
       claimed: Boolean(user.firstLoginClaimed),
       action: 'login_bonus'
     },
@@ -634,44 +782,20 @@ function buildDailyClaims(user) {
       action: 'streak_bonus'
     },
     {
-      id: 'test-complete',
-      title: 'Test terminat',
-      subtitle: 'Răsplata pentru un test din lecția învățată.',
-      coins: 15,
-      claimed: Boolean(user.testRewardDates[todayKey]),
-      action: 'test_completed'
-    },
-    {
-      id: 'test-perfect',
-      title: 'Notă 10',
-      subtitle: 'Bonus suplimentar pentru test perfect.',
-      coins: 10,
-      claimed: Boolean(user.testRewardDates[`${todayKey}:perfect`]),
-      action: 'test_perfect'
-    },
-    {
       id: 'flashcards-5',
       title: '5 flashcarduri corecte',
-      subtitle: 'Primești 5 monede după minim 5 carduri rezolvate corect.',
-      coins: 5,
+      subtitle: 'Se acordă singur după 5 carduri „știu”, numărate de server.',
+      coins: AWARDS.flashcards_5.coins,
       claimed: Boolean(user.flashcardRewardDates[todayKey]),
       action: 'flashcards_5'
     },
     {
       id: 'study-1h',
-      title: '1 oră pe zi în aplicație',
-      subtitle: 'Bonus zilnic pentru timp petrecut la studiu.',
-      coins: 5,
-      claimed: Boolean(user.studyRewardDates[todayKey]),
+      title: 'Focus 25+ minute',
+      subtitle: 'Se acordă singur când termini un timer de 25 sau 50 de minute.',
+      coins: AWARDS.focus_25.coins,
+      claimed: Boolean(user.focusAwards?.[todayKey]),
       action: 'study_1h'
-    },
-    {
-      id: 'referral-3',
-      title: 'Recomandă la 3 prieteni',
-      subtitle: 'O dată pe lună, dacă trimiți aplicația la 3 prieteni.',
-      coins: 50,
-      claimed: Boolean(user.referralRewardMonths[monthKey]),
-      action: 'referral_3'
     },
     {
       id: 'jackpot-monthly',
@@ -696,81 +820,33 @@ function claimReward({ userId = 'demo_user', type, payload = {} }) {
     }
     user.firstLoginClaimed = true;
     user.firstLoginDate = todayKey;
-    const bonus = awardCoins(user, 100, 'reward', 'Bonus de prima logare', { type });
-    pushNotification(userId, payload.parentEmail || user.preferences.parentEmail, 'Prima logare', `A fost acordat bonusul de 100 de monede pentru prima intrare.`, 'reward');
-    return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'login_bonus' };
+    const bonus = awardCoins(user, AWARDS.login_bonus.coins, 'reward', 'Bonus de prima logare', { type });
+    user.xp = (user.xp || 0) + AWARDS.login_bonus.xp;
+    pushNotification(userId, payload.parentEmail || user.preferences.parentEmail, 'Prima logare', `A fost acordat bonusul de ${AWARDS.login_bonus.coins} de monede pentru prima intrare.`, 'reward');
+    return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'login_bonus', summary: buildSummary(user) };
   }
 
   if (type === 'streak_bonus') {
     if (user.streakBonusDate === todayKey) {
       return { ok: false, reason: 'already_claimed', balance: user.balance, summary: buildSummary(user) };
     }
-    user.streakBonusDate = todayKey;
-    const streak = Math.max(0, Number(payload.streak ?? user.metrics.streak) || 0);
+    const streak = Math.max(0, Number(user.metrics.streak) || 0);
     if (streak <= 0) {
       return { ok: false, reason: 'no_streak', balance: user.balance, summary: buildSummary(user) };
     }
+    user.streakBonusDate = todayKey;
     const bonus = awardCoins(user, 5, 'reward', `Bonus streak pentru ${streak} zile`, { streak });
-    return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'streak_bonus' };
+    return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'streak_bonus', summary: buildSummary(user) };
   }
 
-  if (type === 'test_completed') {
-    if (user.testRewardDates[todayKey]) {
-      return { ok: false, reason: 'already_claimed', balance: user.balance, summary: buildSummary(user) };
-    }
-    user.testRewardDates[todayKey] = true;
-    const bonus = awardCoins(user, 15, 'reward', 'Test din lecție finalizat', {});
-    return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'test_completed' };
-  }
-
-  if (type === 'test_perfect') {
-    const key = `${todayKey}:perfect`;
-    if (user.testRewardDates[key]) {
-      return { ok: false, reason: 'already_claimed', balance: user.balance, summary: buildSummary(user) };
-    }
-    user.testRewardDates[key] = true;
-    const bonus = awardCoins(user, 10, 'reward', 'Notă 10 la test', {});
-    return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'test_perfect' };
-  }
-
-  if (type === 'flashcards_5') {
-    const topicKey = payload.topic || todayKey;
-    if (user.flashcardRewardDates[topicKey]) {
-      return { ok: false, reason: 'already_claimed', balance: user.balance, summary: buildSummary(user) };
-    }
-    const correctCount = Math.max(0, Number(payload.correct_count) || 0);
-    if (correctCount < 5) {
-      return { ok: false, reason: 'not_enough_correct', balance: user.balance, summary: buildSummary(user) };
-    }
-    user.flashcardRewardDates[topicKey] = true;
-    const bonus = awardCoins(user, 5, 'reward', '5 flashcarduri corecte', { correctCount });
-    return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'flashcards_5' };
-  }
-
-  if (type === 'study_1h') {
-    if (user.studyRewardDates[todayKey]) {
-      return { ok: false, reason: 'already_claimed', balance: user.balance, summary: buildSummary(user) };
-    }
-    const hours = Math.max(0, Number(payload.hours) || 0);
-    if (hours < 1) {
-      return { ok: false, reason: 'not_enough_time', balance: user.balance, summary: buildSummary(user) };
-    }
-    user.studyRewardDates[todayKey] = true;
-    const bonus = awardCoins(user, 5, 'reward', 'Cel puțin 1 oră petrecută în aplicație', { hours });
-    return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'study_1h' };
-  }
-
-  if (type === 'referral_3') {
-    if (user.referralRewardMonths[monthKey]) {
-      return { ok: false, reason: 'already_claimed', balance: user.balance, summary: buildSummary(user) };
-    }
-    const referrals = Math.max(0, Number(payload.referrals) || 0);
-    if (referrals < 3) {
-      return { ok: false, reason: 'not_enough_referrals', balance: user.balance, summary: buildSummary(user) };
-    }
-    user.referralRewardMonths[monthKey] = true;
-    const bonus = awardCoins(user, 50, 'reward', 'Recomandare la 3 prieteni', { referrals });
-    return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'referral_3' };
+  if (type === 'test_completed' || type === 'test_perfect' || type === 'referral_3' || type === 'flashcards_5' || type === 'study_1h') {
+    return {
+      ok: false,
+      reason: 'use_study_actions',
+      message: 'Recompensa se acordă automat când înveți, nu din magazin.',
+      balance: user.balance,
+      summary: buildSummary(user)
+    };
   }
 
   if (type === 'jackpot_monthly') {
@@ -784,7 +860,7 @@ function claimReward({ userId = 'demo_user', type, payload = {} }) {
     }
     user.jackpotRewardMonths[monthKey] = true;
     const bonus = awardCoins(user, 50, 'reward', 'Jackpot lunar', { jackpotDay, monthKey });
-    return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'jackpot_monthly', jackpotDay };
+    return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'jackpot_monthly', jackpotDay, summary: buildSummary(user) };
   }
 
   return { ok: false, reason: 'unknown_reward', balance: user.balance, summary: buildSummary(user) };
@@ -800,8 +876,8 @@ function getCatalog() {
     items: SHOP_CATALOG,
     highlights: {
       freeDaily: [
-        { id: 'login_bonus', title: '100 de monede la prima logare', description: 'Se acordă o singură dată.' },
-        { id: 'referral_3', title: '50 de monede pentru 3 prieteni', description: 'O dată pe lună.' },
+        { id: 'login_bonus', title: `${AWARDS.login_bonus.coins} de monede la prima logare`, description: 'Se acordă o singură dată.' },
+        { id: 'chapter_open', title: '8 monede + 20 XP la un capitol nou', description: 'Când deschizi și lucrezi un capitol.' },
         { id: 'jackpot_monthly', title: 'Jackpot lunar de 50', description: 'Într-o zi random din lună.' }
       ]
     }
@@ -854,6 +930,10 @@ function getInventory(userId = 'demo_user') {
 }
 
 function buildSummary(user) {
+  const grade = user.preferences.className || '5';
+  const progress = levelFromXp(user.xp || 0);
+  const done = countDoneChapters(user, grade);
+  const total = chapterUniverse(grade);
   return {
     userId: user.userId,
     role: user.role,
@@ -862,6 +942,16 @@ function buildSummary(user) {
     coinsSpent: user.coinsSpent,
     streak: user.metrics.streak,
     hoursToday: user.metrics.hoursToday,
+    xp: progress.xp,
+    level: progress.level,
+    xpIntoLevel: progress.xpIntoLevel,
+    xpToNext: progress.xpToNext,
+    nextLevelAt: progress.nextLevelAt,
+    score: Math.round((done / total) * 100),
+    chaptersDone: done,
+    chaptersTotal: total,
+    chapters: { ...user.chapters },
+    savedSessions: Array.isArray(user.savedSessions) ? user.savedSessions.slice(0, 8) : [],
     preferences: { ...user.preferences },
     inventory: user.inventory.slice(),
     equipped: { ...user.equipped },
@@ -976,6 +1066,8 @@ function initialsFromPseudonym(name) {
 }
 
 function xpFromUser(user) {
+  const stored = Number(user.xp || 0);
+  if (stored > 0) return stored;
   return Math.max(0, Number(user.coinsEarned || 0) + Number(user.metrics?.streak || 0) * 10);
 }
 
@@ -993,7 +1085,7 @@ function listLeaderboardEntries({ limit = 10, currentEmail = '' } = {}) {
         initials: initialsFromPseudonym(name),
         xp,
         streak: Number(user.metrics?.streak || 0),
-        level: Math.max(1, Math.floor(xp / 400) + 1),
+        level: levelFromXp(xp).level,
         class: user.preferences.className || '',
         isCurrentUser: Boolean(me) && String(user.userId).toLowerCase() === me
       };
@@ -1076,6 +1168,7 @@ module.exports = {
   purchaseItem,
   getInventory,
   claimReward,
+  recordProgress,
   logActivity,
   getNotifications,
   markNotificationRead,
