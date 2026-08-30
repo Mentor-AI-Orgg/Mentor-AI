@@ -137,9 +137,29 @@ const profileSchema = z.object({
   profile: z.string().max(40).optional(),
   exam: z.string().max(40).optional(),
   dailyHours: z.string().max(20).optional(),
+  parentEmail: optionalEmail,
   uiLanguage: z.string().max(8).optional(),
   language: z.string().max(8).optional(),
   hasCompletedOnboarding: z.boolean().optional()
+});
+
+const passwordChangeSchema = z.object({
+  currentPassword: z.string().min(1, "Parola actuală este obligatorie.").max(200),
+  newPassword: z.string().min(1, "Parola nouă este obligatorie.").max(200)
+});
+
+const friendSettingsSchema = z.object({
+  profilePrivate: z.boolean(),
+  acceptFriendRequests: z.boolean()
+});
+
+const friendRequestSchema = z.object({
+  user_id: z.string().trim().min(4).max(40)
+});
+
+const friendRespondSchema = z.object({
+  request_id: z.string().trim().min(4).max(80),
+  action: z.enum(["accept", "decline"])
 });
 
 module.exports = {
@@ -157,5 +177,9 @@ module.exports = {
   accessCodeVerifySchema,
   calendarEventSchema,
   deleteAccountSchema,
-  profileSchema
+  profileSchema,
+  passwordChangeSchema,
+  friendSettingsSchema,
+  friendRequestSchema,
+  friendRespondSchema
 };

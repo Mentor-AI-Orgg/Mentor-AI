@@ -17,6 +17,7 @@ const economyRoute = require("./routes/economy");
 const authRoute = require("./routes/auth");
 const linksRoute = require("./routes/links");
 const accountRoute = require("./routes/account");
+const friendsRoute = require("./routes/friends");
 const { spec: openapiSpec } = require("./openapi");
 const { basicAuth } = require("./middleware/basicAuth");
 const { attachUser, authRequired, studentRequired } = require("./middleware/auth");
@@ -89,6 +90,7 @@ function createApp(options = {}) {
     app.use(`${prefix}/economy`, ...studentOnly, economyRoute);
     app.use(`${prefix}/links`, ...studentOnly, linksRoute);
     app.use(`${prefix}/account`, ...studentOnly, accountRoute);
+    app.use(`${prefix}/friends`, ...studentOnly, friendsRoute);
     app.use(`${prefix}/subscriptions`, subscriptionsRoute);
   }
 

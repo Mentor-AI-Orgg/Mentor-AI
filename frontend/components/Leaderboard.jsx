@@ -51,8 +51,8 @@ const Leaderboard = () => {
     <section className="leaderboard-card surface" aria-busy={state.loading}>
       <div className="leaderboard-head">
         <div>
-          <div className="eyebrow">Clasament</div>
-          <h3 className="display-font">Cei mai buni elevi</h3>
+          <div className="eyebrow">Clasament · tot timpul</div>
+          <h3 className="display-font">După XP, fără reset</h3>
         </div>
         <i className="fas fa-ranking-star leaderboard-head-icon" />
       </div>

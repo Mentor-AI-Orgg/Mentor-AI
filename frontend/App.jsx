@@ -109,10 +109,6 @@ function AppShell({ userData, setUserData }) {
     });
   }, []);
 
-  const handleLanguageChange = useCallback(patch => {
-    setUserData(prev => ({ ...prev, ...patch }));
-  }, []);
-
   const handleSplashFinish = async () => {
     const session = await MentorAPI.me();
     if (!session.success) {
@@ -426,7 +422,7 @@ function AppShell({ userData, setUserData }) {
             onBack={() => handleNavigate('home')}
             onLogout={handleLogout}
             onToast={showToast}
-            onLanguageChange={handleLanguageChange}
+            onProfileSaved={user => setUserData(prev => applyAccount(user, prev))}
             onNavigate={handleNavigate}
           />
         );
@@ -473,9 +469,8 @@ export default function App() {
       return defaultUserData;
     }
   });
-  const locale = userData.uiLanguage || userData.language || 'ro';
   return (
-    <I18nProvider locale={locale}>
+    <I18nProvider locale="ro">
       <AppShell userData={userData} setUserData={setUserData} />
     </I18nProvider>
   );

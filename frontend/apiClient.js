@@ -198,6 +198,85 @@ const MentorAPI = {
       });
       return { success: true, data, user: data.user };
     } catch (error) {
+      return { success: false, error: error.message, field: error.payload?.field };
+    }
+  },
+
+  async changePassword(payload) {
+    try {
+      const data = await safeFetchJson('/api/account/password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async getFriends() {
+    try {
+      const data = await safeFetchJson('/api/friends/me');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, data: null, error: error.message };
+    }
+  },
+
+  async updateFriendSettings(payload) {
+    try {
+      const data = await safeFetchJson('/api/friends/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async searchStudents(query) {
+    try {
+      const data = await safeFetchJson(`/api/friends/search?q=${encodeURIComponent(query)}`);
+      return { success: true, data: data.results || [] };
+    } catch (error) {
+      return { success: false, data: [], error: error.message };
+    }
+  },
+
+  async getStudentProfile(id) {
+    try {
+      const data = await safeFetchJson(`/api/friends/profile/${encodeURIComponent(id)}`);
+      return { success: true, data: data.profile };
+    } catch (error) {
+      return { success: false, data: null, error: error.message };
+    }
+  },
+
+  async sendFriendRequest(userId) {
+    try {
+      const data = await safeFetchJson('/api/friends/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId })
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message, status: error.status };
+    }
+  },
+
+  async respondFriendRequest(requestId, action) {
+    try {
+      const data = await safeFetchJson('/api/friends/respond', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ request_id: requestId, action })
+      });
+      return { success: true, data };
+    } catch (error) {
       return { success: false, error: error.message };
     }
   },

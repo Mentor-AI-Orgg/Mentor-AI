@@ -19,7 +19,8 @@ const LABELS = {
   claim: "a revendicat o recompensă",
   buy: "a cumpărat din magazin",
   calendar_event: "a adăugat un eveniment în calendar",
-  checkout: "folosește mentorul gratuit"
+  checkout: "folosește mentorul gratuit",
+  friend_request: "a trimis o cerere de prietenie"
 };
 
 const ALWAYS_SEND = new Set(["account_created"]);
@@ -32,7 +33,8 @@ const STUDY_TYPES = new Set([
   "focus_session",
   "chapter_open",
   "session_complete",
-  "chapter_test"
+  "chapter_test",
+  "friend_request"
 ]);
 const SKIP_TYPES = new Set(["claim", "buy", "ai_detect", "checkout", "calendar_event"]);
 

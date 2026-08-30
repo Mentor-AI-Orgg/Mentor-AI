@@ -965,3 +965,66 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 }
 .focus-timer-why { margin: 0 0 10px; color: var(--muted); font-size: 13px; line-height: 1.45; }
 .learning-actions { flex-wrap: wrap; }
+.settings-toggle {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 10px;
+  align-items: start;
+  margin: 10px 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.profile-password-row { display: grid; gap: 10px; margin-top: 14px; }
+.friend-search { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin: 12px 0; }
+.friend-list, .peer-profile { display: grid; gap: 10px; margin-top: 12px; }
+.friends-list-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.friends-list-panel { margin-top: 8px; }
+.friend-card {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.04);
+}
+.friend-card.has-rank { grid-template-columns: 28px 40px 1fr auto; }
+.friend-rank {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 12px;
+  background: rgba(255,255,255,.08);
+  color: var(--muted);
+}
+.friend-rank.is-top {
+  background: rgba(185, 167, 255, .22);
+  color: #fff;
+}
+.friend-card-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #5a4fcf, #6fd7ff);
+  font-weight: 800;
+}
+.friend-card small, .peer-profile span { display: block; color: var(--muted); font-size: 12px; }
+.friend-subhead { margin: 16px 0 8px; font-size: 14px; }
+.peer-profile { padding: 14px; border-radius: 16px; border: 1px solid var(--line); }
+@media (max-width: 640px) {
+  .friend-search { grid-template-columns: 1fr; }
+  .friend-card { grid-template-columns: 40px 1fr; }
+  .friend-card.has-rank { grid-template-columns: 28px 40px 1fr; }
+}
