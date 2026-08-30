@@ -4,41 +4,133 @@ import Leaderboard from '../components/Leaderboard.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { avatarIcon } from '../appearance.js';
 
-const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange, onNavigate }) => {
-  const { t, uiLocales, mentorLocales } = useI18n();
-  const [detectText, setDetectText] = useState('');
-  const [detectLoading, setDetectLoading] = useState(false);
-  const [detectResult, setDetectResult] = useState(null);
+const CLASSES = ['5', '6', '7', '8'];
+
+const FriendCard = ({ person, actionLabel, onAction, disabled }) => (
+  <article className="friend-card">
+    <div className="friend-card-avatar">
+      {avatarIcon(person.avatarId) ? <i className={`fas ${avatarIcon(person.avatarId)}`} /> : (person.name || 'E').charAt(0)}
+    </div>
+    <div>
+      <strong>{person.name}</strong>
+      <small>{person.username ? `@${person.username}` : 'fără username'} · clasa {person.class || '—'} · niv. {person.level} · {person.xp} XP</small>
+    </div>
+    {actionLabel && (
+      <button type="button" className="ghost-button" onClick={onAction} disabled={disabled}>
+        {actionLabel}
+      </button>
+    )}
+  </article>
+);
+
+const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, onNavigate }) => {
+  const { t } = useI18n();
   const [inbox, setInbox] = useState([]);
   const [skills, setSkills] = useState({ log: [], strengths: [], weaknesses: [] });
+  const [friends, setFriends] = useState({ settings: { profilePrivate: false, acceptFriendRequests: true }, friends: [], incoming: [], outgoing: [], remainingToday: 10, dailyLimit: 10 });
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [peer, setPeer] = useState(null);
+  const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [form, setForm] = useState({
+    name: userData.name || '',
+    username: userData.username || '',
+    school: userData.school || '',
+    class: String(userData.class || '5'),
+    parentEmail: userData.parentEmail || ''
+  });
+  const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '' });
+
+  const loadSocial = async () => {
+    const pack = await MentorAPI.getFriends();
+    if (pack.success) setFriends(pack.data);
+  };
 
   useEffect(() => {
-    const loadInbox = async () => {
-      const result = await MentorAPI.getNotifications();
-      if (result.success) {
-        setInbox(result.data.inbox || []);
-      }
-    };
-    const loadSkills = async () => {
-      const result = await MentorAPI.getSkillHistory();
+    MentorAPI.getNotifications().then(result => {
+      if (result.success) setInbox(result.data.inbox || []);
+    });
+    MentorAPI.getSkillHistory().then(result => {
       if (result.success) setSkills(result.data);
-    };
-    loadInbox();
-    loadSkills();
+    });
+    loadSocial();
   }, [userData.email]);
 
-  const runDetector = async () => {
-    if (!detectText.trim()) return;
-    setDetectLoading(true);
-    const result = await MentorAPI.detect({ text: detectText.trim() });
-    if (result.success) {
-      setDetectResult(result.data);
-    } else {
-      setDetectResult({ verdict: 'Detector indisponibil', ai_probability: 0 });
+  const saveProfile = async () => {
+    setSaving(true);
+    const result = await MentorAPI.updateProfile(form);
+    setSaving(false);
+    if (!result.success) {
+      onToast?.(result.error || 'Nu am putut salva profilul.', 'warning');
+      return;
     }
-    setDetectLoading(false);
+    onProfileSaved?.(result.user);
+    onToast?.('Profilul a fost salvat.', 'success');
+  };
+
+  const savePassword = async () => {
+    if (!passwords.currentPassword || !passwords.newPassword) return;
+    const result = await MentorAPI.changePassword(passwords);
+    if (!result.success) {
+      onToast?.(result.error || 'Nu am putut schimba parola.', 'warning');
+      return;
+    }
+    setPasswords({ currentPassword: '', newPassword: '' });
+    onToast?.('Parola a fost schimbată.', 'success');
+  };
+
+  const toggleSetting = async (key, value) => {
+    const next = { ...friends.settings, [key]: value };
+    const result = await MentorAPI.updateFriendSettings(next);
+    if (!result.success) {
+      onToast?.(result.error || 'Nu am putut salva setarea.', 'warning');
+      return;
+    }
+    setFriends(prev => ({ ...prev, settings: result.data.settings }));
+  };
+
+  const runSearch = async event => {
+    event?.preventDefault();
+    if (query.trim().length < 2) {
+      setResults([]);
+      return;
+    }
+    const pack = await MentorAPI.searchStudents(query.trim());
+    setResults(pack.data || []);
+    setPeer(null);
+  };
+
+  const openPeer = async id => {
+    const pack = await MentorAPI.getStudentProfile(id);
+    if (!pack.success) {
+      onToast?.(pack.error || 'Profil indisponibil.', 'warning');
+      return;
+    }
+    setPeer(pack.data);
+  };
+
+  const addFriend = async id => {
+    const result = await MentorAPI.sendFriendRequest(id);
+    if (!result.success) {
+      onToast?.(result.error || 'Nu am putut trimite cererea.', 'warning');
+      return;
+    }
+    onToast?.(`Cerere trimisă. Mai ai ${result.data.remaining} azi.`, 'success');
+    await loadSocial();
+    if (peer?.id === id) openPeer(id);
+    runSearch();
+  };
+
+  const respond = async (requestId, action) => {
+    const result = await MentorAPI.respondFriendRequest(requestId, action);
+    if (!result.success) {
+      onToast?.(result.error || 'Nu am putut răspunde.', 'warning');
+      return;
+    }
+    await loadSocial();
+    setPeer(null);
   };
 
   const exportAccount = async () => {
@@ -120,6 +212,112 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange, 
         </div>
       </div>
 
+      <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
+        <div className="eyebrow">Editează</div>
+        <h3 className="display-font profile-tool-title">Datele tale de elev.</h3>
+        <label className="field-label">Nume
+          <input className="field form-input" value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} />
+        </label>
+        <label className="field-label">Username
+          <input className="field form-input" value={form.username} onChange={e => setForm(prev => ({ ...prev, username: e.target.value }))} />
+        </label>
+        <label className="field-label">Școală
+          <input className="field form-input" value={form.school} onChange={e => setForm(prev => ({ ...prev, school: e.target.value }))} />
+        </label>
+        <label className="field-label">Clasă
+          <select className="field form-input" value={form.class} onChange={e => setForm(prev => ({ ...prev, class: e.target.value }))}>
+            {CLASSES.map(item => <option key={item} value={item}>Clasa a {item}-a</option>)}
+          </select>
+        </label>
+        <label className="field-label">Email părinte
+          <input className="field form-input" type="email" value={form.parentEmail} onChange={e => setForm(prev => ({ ...prev, parentEmail: e.target.value }))} />
+        </label>
+        <button type="button" className="accent-button profile-tool-action" onClick={saveProfile} disabled={saving}>
+          {saving ? 'Salvez…' : 'Salvează profilul'}
+        </button>
+        <div className="profile-password-row">
+          <label className="field-label">Parola actuală
+            <input className="field form-input" type="password" value={passwords.currentPassword} onChange={e => setPasswords(prev => ({ ...prev, currentPassword: e.target.value }))} />
+          </label>
+          <label className="field-label">Parola nouă
+            <input className="field form-input" type="password" value={passwords.newPassword} onChange={e => setPasswords(prev => ({ ...prev, newPassword: e.target.value }))} />
+          </label>
+        </div>
+        <button type="button" className="ghost-button profile-tool-action" onClick={savePassword}>Schimbă parola</button>
+      </section>
+
+      <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
+        <div className="eyebrow">Setări</div>
+        <h3 className="display-font profile-tool-title">Cine te poate găsi.</h3>
+        <label className="settings-toggle">
+          <input type="checkbox" checked={Boolean(friends.settings.profilePrivate)} onChange={e => toggleSetting('profilePrivate', e.target.checked)} />
+          <span>Profil privat — nu apar la căutare și nici în clasament (în afară de tine).</span>
+        </label>
+        <label className="settings-toggle">
+          <input type="checkbox" checked={friends.settings.acceptFriendRequests !== false} onChange={e => toggleSetting('acceptFriendRequests', e.target.checked)} />
+          <span>Accept cereri de prietenie.</span>
+        </label>
+      </section>
+
+      <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
+        <div className="eyebrow">Prieteni</div>
+        <h3 className="display-font profile-tool-title">Caută un nume sau un username.</h3>
+        <p className="profile-empty-note">Poți trimite {friends.dailyLimit} cereri pe zi. Mai ai {friends.remainingToday} azi. Fără mesaje între voi — doar prietenie.</p>
+        <form className="friend-search" onSubmit={runSearch}>
+          <input className="field form-input" value={query} onChange={e => setQuery(e.target.value)} placeholder="Caută Ana sau @ana5" />
+          <button type="submit" className="accent-button">Caută</button>
+        </form>
+        {results.length > 0 && (
+          <div className="friend-list">
+            {results.map(person => (
+              <FriendCard
+                key={person.id}
+                person={person}
+                actionLabel={person.friends ? 'Prieten' : person.outgoing ? 'Trimisă' : person.incoming ? 'Acceptă' : 'Adaugă prieten'}
+                disabled={person.friends || person.outgoing}
+                onAction={() => (person.incoming ? respond(person.incomingRequestId, 'accept') : addFriend(person.id))}
+              />
+            ))}
+          </div>
+        )}
+        {peer && (
+          <div className="peer-profile">
+            {peer.private ? (
+              <p>Acest profil este privat.</p>
+            ) : (
+              <>
+                <strong>{peer.name}</strong>
+                <span>@{peer.username || 'fără username'} · clasa {peer.class || '—'} · {peer.school || 'școală nespusă'}</span>
+                <span>Nivel {peer.level} · {peer.xp} XP</span>
+                {peer.friends ? <em>Sunteți prieteni.</em> : peer.outgoing ? <em>Cerere trimisă.</em> : peer.incoming ? (
+                  <button type="button" className="accent-button" onClick={() => respond(peer.incomingRequestId, 'accept')}>Acceptă cererea</button>
+                ) : (
+                  <button type="button" className="accent-button" disabled={!peer.acceptFriendRequests} onClick={() => addFriend(peer.id)}>
+                    {peer.acceptFriendRequests ? 'Adaugă prieten' : 'Nu acceptă cereri'}
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+        )}
+        {friends.incoming.length > 0 && (
+          <>
+            <h4 className="friend-subhead">Cereri primite</h4>
+            {friends.incoming.map(item => (
+              <FriendCard key={item.id} person={item.from} actionLabel="Acceptă" onAction={() => respond(item.id, 'accept')} />
+            ))}
+          </>
+        )}
+        {friends.friends.length > 0 && (
+          <>
+            <h4 className="friend-subhead">Prietenii tăi</h4>
+            {friends.friends.map(person => (
+              <FriendCard key={person.id} person={person} actionLabel="Profil" onAction={() => openPeer(person.id)} />
+            ))}
+          </>
+        )}
+      </section>
+
       <div className="mx-5 mt-5 profile-tools-grid">
         <section className="surface rounded-3xl p-5 profile-tool-card">
           <div className="eyebrow">Istoric teste</div>
@@ -138,28 +336,6 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange, 
                 </li>
               ))}
             </ul>
-          )}
-        </section>
-        <section className="surface rounded-3xl p-5 profile-tool-card">
-          <div className="eyebrow">Detector demo</div>
-          <h3 className="display-font profile-tool-title">Euristică locală, nu un detector real.</h3>
-          <p className="detector-demo-note">Scorul folosește lungimea cuvintelor, termeni academici și un jitter aleator. Nu este GPTZero și nu trebuie folosit ca dovadă că un text a fost generat de AI.</p>
-          <textarea
-            className="profile-detector-input"
-            rows="5"
-            value={detectText}
-            onChange={e => setDetectText(e.target.value)}
-            placeholder="Lipește aici un text pentru scorul demonstrativ..."
-          />
-          <button type="button" className="accent-button profile-tool-action" onClick={runDetector} disabled={detectLoading || !detectText.trim()}>
-            {detectLoading ? 'Analizez...' : 'Rulează demonstrația'}
-          </button>
-          {detectResult && (
-            <div className="profile-detector-result">
-              <strong>{detectResult.verdict || 'Rezultat demonstrativ'}</strong>
-              <span>Scor demonstrativ: {Number(detectResult.ai_probability || 0).toFixed(0)}% · nu este o probă</span>
-              {detectResult.disclaimer && <small>{detectResult.disclaimer}</small>}
-            </div>
           )}
         </section>
 
@@ -182,34 +358,6 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange, 
         </section>
       </div>
 
-      <div className="mx-5 mt-5">
-        <section className="surface rounded-3xl p-5 profile-tool-card">
-          <div className="eyebrow">{t('profile.languageEyebrow')}</div>
-          <h3 className="display-font profile-tool-title">{t('profile.languageTitle')}</h3>
-          <label className="field-label">{t('profile.uiLanguage')}
-            <select
-              className="field form-input"
-              value={userData.uiLanguage || userData.language || 'ro'}
-              onChange={e => onLanguageChange?.({ uiLanguage: e.target.value })}
-            >
-              {uiLocales.map(code => (
-                <option key={code} value={code}>{t(`languages.${code}`)}</option>
-              ))}
-            </select>
-          </label>
-          <label className="field-label">{t('profile.mentorLanguage')}
-            <select
-              className="field form-input"
-              value={userData.language || 'ro'}
-              onChange={e => onLanguageChange?.({ language: e.target.value })}
-            >
-              {mentorLocales.map(code => (
-                <option key={code} value={code}>{t(`languages.${code}`)}</option>
-              ))}
-            </select>
-          </label>
-        </section>
-      </div>
       <div className="mx-5 mt-5">
         <Leaderboard userData={userData} />
       </div>

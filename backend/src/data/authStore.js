@@ -50,6 +50,30 @@ function findAccount(email) {
   return ACCOUNTS.get(normalizeEmail(email)) || null;
 }
 
+function listAccounts() {
+  return [...ACCOUNTS.values()];
+}
+
+function usernameTaken(username, exceptEmail = "") {
+  const needle = String(username || "").trim().toLowerCase();
+  if (!needle) return false;
+  const skip = normalizeEmail(exceptEmail);
+  return listAccounts().some(account => (
+    account.email !== skip && String(account.profile?.username || "").trim().toLowerCase() === needle
+  ));
+}
+
+async function changePassword(email, currentPassword, nextPassword) {
+  const account = findAccount(email);
+  if (!account) return { ok: false, reason: "missing" };
+  const valid = await verifyPassword(currentPassword, account.salt, account.passwordHash);
+  if (!valid) return { ok: false, reason: "wrong" };
+  const { salt, hash } = await hashPassword(nextPassword);
+  account.salt = salt;
+  account.passwordHash = hash;
+  return { ok: true };
+}
+
 async function createAccount({ email, password, role = "student", profile = {} }) {
   const key = normalizeEmail(email);
   if (ACCOUNTS.has(key)) return { ok: false, reason: "email_taken" };
@@ -218,6 +242,9 @@ module.exports = {
   authenticate,
   publicAccount,
   updateProfile,
+  listAccounts,
+  usernameTaken,
+  changePassword,
   createSession,
   getSession,
   destroySession,
