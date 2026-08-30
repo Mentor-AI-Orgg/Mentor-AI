@@ -4,7 +4,7 @@ import { MentorAPI } from '../apiClient.js';
 const MONTH_NAMES_RO = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'];
 const WEEKDAY_LABELS_RO = ['L', 'Ma', 'Mi', 'J', 'V', 'S', 'D'];
 
-const CalendarScreen = ({ onBack }) => {
+const CalendarScreen = ({ onBack, userData }) => {
   const [cursor, setCursor] = useState(() => { const d = new Date(); d.setDate(1); return d; });
   const [events, setEvents] = useState([]);
   const [connections, setConnections] = useState({ google: { connected: false }, notion: { connected: false } });
@@ -13,6 +13,7 @@ const CalendarScreen = ({ onBack }) => {
   const [connecting, setConnecting] = useState('');
   const [selectedDay, setSelectedDay] = useState(null);
   const [newTitle, setNewTitle] = useState('');
+  const [newTime, setNewTime] = useState('');
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
@@ -69,10 +70,16 @@ const CalendarScreen = ({ onBack }) => {
   const addEvent = async () => {
     if (!selectedDay || !newTitle.trim()) return;
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
-    const result = await MentorAPI.addCalendarEvent({ date: dateStr, title: newTitle.trim(), type: 'custom' });
+    const result = await MentorAPI.addCalendarEvent({
+      date: dateStr,
+      title: newTitle.trim(),
+      type: 'custom',
+      ...(newTime ? { time: newTime } : {})
+    });
     if (result.success) {
       setEvents(prev => [...prev, result.data.event]);
       setNewTitle('');
+      setNewTime('');
     }
   };
 
@@ -172,14 +179,20 @@ const CalendarScreen = ({ onBack }) => {
               {(eventsByDay[selectedDay] || []).map(ev => (
                 <div key={ev.id} className="calendar-event-row">
                   <span className={`calendar-dot source-${ev.source}`} />
-                  <span className="calendar-event-title">{ev.title}</span>
+                  <span className="calendar-event-title">{ev.time ? `${ev.time} · ` : ''}{ev.title}</span>
                   {ev.source === 'manual' && <button type="button" className="calendar-event-remove" onClick={() => removeEvent(ev.id)}><i className="fas fa-trash" /></button>}
                 </div>
               ))}
             </div>
             <div className="calendar-add-row">
-              <input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Ex: Test la fizică" onKeyDown={e => { if (e.key === 'Enter') addEvent(); }} />
+              <input type="time" value={newTime} onChange={e => setNewTime(e.target.value)} aria-label="Ora (opțional)" />
+              <input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Ex: Temă la mate" onKeyDown={e => { if (e.key === 'Enter') addEvent(); }} />
               <button type="button" className="accent-button" onClick={addEvent} disabled={!newTitle.trim()}><i className="fas fa-plus" /></button>
+            </div>
+            <div className="calendar-suggest-row">
+              {['Temă la mate', 'Lectură la română', userData?.dailyHours === '0.5' ? 'Sesiune 30 min' : userData?.dailyHours === '2' ? 'Sesiune 2 ore' : 'Sesiune 1 oră'].map(label => (
+                <button key={label} type="button" className="ghost-button" onClick={() => setNewTitle(label)}>{label}</button>
+              ))}
             </div>
           </section>
         )}

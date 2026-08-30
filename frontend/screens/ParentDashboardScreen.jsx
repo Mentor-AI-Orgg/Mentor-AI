@@ -167,7 +167,7 @@ const ParentDashboardScreen = ({ userData, onBack, onNavigate, showToast }) => {
         <h3 className="display-font">Păstrezi controlul pentru contul de familie.</h3>
         <p className="parent-subtitle">Poți deschide abonamentele, poți conecta încă un elev și vezi clar ce urmează în contul familiei.</p>
         <div className="learning-actions">
-          <button type="button" className="ghost-button result-action" onClick={() => onNavigate('subscriptions')}>Vezi abonamentele</button>
+          <button type="button" className="ghost-button result-action" onClick={() => onNavigate('subscriptions')}>Vezi accesul gratuit</button>
           <button type="button" className="ghost-button result-action" onClick={loadAnalytics}>Reîncarcă analitica</button>
         </div>
       </section>

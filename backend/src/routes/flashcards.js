@@ -1,99 +1,209 @@
 const express = require("express");
 const router = express.Router();
 
-const { callClaude } = require("../providers/claude");
-const { callGPT4o } = require("../providers/openai");
-const { callGemini } = require("../providers/gemini");
+const { pickPractice } = require("../data/practicePicker");
+const { checkExercise, checkMany, scoreToGrade, encouragementFor } = require("../data/exerciseBank");
+const { findQuestion } = require("../data/practiceBank");
+const { ensureUser, getTodayKey, recordProgress, recordSkillReview, getSkillHistory } = require("../data/economyStore");
 
-const ENGINE_CHAIN = [
-  ["claude", callClaude],
-  ["gpt4o", callGPT4o],
-  ["gemini", callGemini]
-];
-
-function buildFlashcardPrompt({ topic, sourceText, subject, classLevel, language, count }) {
-  const base = sourceText
-    ? `Text/lecție sursă:\n"""${sourceText.slice(0, 3000)}"""`
-    : `Subiect: ${topic}`;
-
-  return `${base}\n\nGenerează exact ${count} flashcarduri de studiu pentru un elev de clasa ${classLevel}, materia ${subject}, în limba ${language}.\nRăspunde STRICT cu JSON valid, fără text în plus, fără markdown, în formatul:\n[{"question":"...","answer":"..."}, ...]`;
-}
-
-// Extrage un array JSON din raspunsul modelului, chiar daca modelul mai adauga
-// text/backtick-uri in jur (des intalnit la modele mock/reale).
-function extractJsonArray(text) {
-  if (!text) return null;
-  const match = text.match(/\[[\s\S]*\]/);
-  if (!match) return null;
-  try {
-    const parsed = JSON.parse(match[0]);
-    if (Array.isArray(parsed)) return parsed;
-  } catch (err) {
-    return null;
-  }
-  return null;
-}
-
-function fallbackFlashcards(topicLabel, count) {
-  const generic = [
-    { question: `Ce este ${topicLabel}? Definește pe scurt.`, answer: "Notează definiția cu cuvintele tale, apoi verifică în manual." },
-    { question: `Care este cea mai importantă idee despre ${topicLabel}?`, answer: "Identifică ideea principală și un exemplu concret." },
-    { question: `Dă un exemplu practic pentru ${topicLabel}.`, answer: "Gândește-te la o situație din viața reală unde se aplică." },
-    { question: `Ce greșeală comună apare la ${topicLabel}?`, answer: "Recitește secțiunea și notează unde ai putea greși." },
-    { question: `Cum verifici dacă ai înțeles ${topicLabel}?`, answer: "Explică subiectul cuiva sau ție însuți, fără să te uiți în notițe." }
-  ];
-  return generic.slice(0, count);
-}
-
-router.post("/generate", async (req, res) => {
+router.post("/generate", (req, res) => {
   const {
     topic = "",
-    source_text: sourceText = "",
+    chapter_id: chapterId = "",
     subject = "matematica",
-    class_level: classLevel = 7,
-    language = "ro",
-    count = 6
+    class_level: classLevel = 5,
+    kind = "flashcards",
+    exclude_ids: excludeIds = [],
+    count
   } = req.body || {};
 
-  const topicLabel = topic || subject;
-  if (!topic && !sourceText) {
-    return res.status(400).json({ error: "Trimite fie 'topic', fie 'source_text'." });
+  if (!topic && !chapterId) {
+    return res.status(400).json({ error: "Trimite chapter_id sau topic." });
   }
 
-  const safeCount = Math.min(12, Math.max(3, parseInt(count, 10) || 6));
-  const prompt = buildFlashcardPrompt({ topic: topicLabel, sourceText, subject, classLevel, language, count: safeCount });
-  const messages = [
-    { role: "system", content: "Ești un generator de flashcarduri educaționale. Răspunzi STRICT cu JSON valid." },
-    { role: "user", content: prompt }
-  ];
+  const user = ensureUser(req.auth.email);
+  if (!user.practiceSeen || typeof user.practiceSeen !== "object") user.practiceSeen = {};
 
-  let cards = null;
-  let usedEngine = "fallback";
-  let mocked = true;
+  const preview = pickPractice({
+    subject,
+    grade: classLevel,
+    chapterId,
+    topic,
+    kind: kind === "test" ? "test" : "flashcards",
+    excludeIds: Array.isArray(excludeIds) ? excludeIds : [],
+    seenPoints: [],
+    count
+  });
 
-  for (const [engineName, engineFn] of ENGINE_CHAIN) {
-    const result = await engineFn(messages, language);
-    if (result && result.success) {
-      const parsed = extractJsonArray(result.content);
-      if (parsed && parsed.length) {
-        cards = parsed
-          .filter(c => c && c.question && c.answer)
-          .slice(0, safeCount)
-          .map((c, i) => ({ id: `fc_${i}`, question: String(c.question), answer: String(c.answer) }));
-        usedEngine = result.engine || engineName;
-        mocked = !!result.mocked;
-        if (cards.length) break;
-      }
+  const stored = user.practiceSeen[preview.key] || { points: [], questionIds: [], day: null };
+  const pack = pickPractice({
+    subject,
+    grade: classLevel,
+    chapterId: preview.chapterId,
+    topic,
+    kind: kind === "test" ? "test" : "flashcards",
+    excludeIds: [...new Set([...(Array.isArray(excludeIds) ? excludeIds : []), ...(stored.questionIds || [])])],
+    seenPoints: stored.points || [],
+    count
+  });
+
+  res.json({
+    ...pack,
+    engine_used: "chapter_bank",
+    mocked: false,
+    topic: topic || pack.chapterId
+  });
+});
+
+router.post("/check", (req, res) => {
+  const { card_id: cardId = "", answer = "" } = req.body || {};
+  if (!cardId) {
+    return res.status(400).json({ error: "Trimite card_id." });
+  }
+  const result = checkExercise(cardId, answer);
+  if (!result.found) {
+    return res.status(404).json({ error: "Exercițiul nu a fost găsit." });
+  }
+  res.json({
+    ok: result.ok,
+    explain: result.explain,
+    sample: result.ok || String(answer || "").trim() ? result.sample : "",
+    steps: Array.isArray(result.steps) ? result.steps : []
+  });
+});
+
+router.post("/seen", (req, res) => {
+  const { chapter_id: chapterId = "", subject = "matematica", class_level: classLevel = 5, point = "", card_id: cardId = "", kind = "flashcards" } = req.body || {};
+  const user = ensureUser(req.auth.email);
+  if (!user.practiceSeen) user.practiceSeen = {};
+  const pack = pickPractice({ subject, grade: classLevel, chapterId, topic: chapterId, kind: kind === "test" ? "test" : "flashcards", count: 3 });
+  const key = pack.key;
+  if (!user.practiceSeen[key]) user.practiceSeen[key] = { points: [], questionIds: [], day: getTodayKey() };
+  if (point && !user.practiceSeen[key].points.includes(point)) user.practiceSeen[key].points.push(point);
+  if (cardId && !user.practiceSeen[key].questionIds.includes(cardId)) {
+    user.practiceSeen[key].questionIds.push(cardId);
+    user.practiceSeen[key].questionIds = user.practiceSeen[key].questionIds.slice(-80);
+  }
+  const total = pack.coverage.total;
+  res.json({
+    ok: true,
+    coverage: {
+      seen: user.practiceSeen[key].points.length,
+      total,
+      complete: user.practiceSeen[key].points.length >= total
     }
+  });
+});
+
+router.get("/history", (req, res) => {
+  res.json(getSkillHistory(req.auth.email));
+});
+
+router.post("/finish", (req, res) => {
+  const {
+    kind = "test",
+    chapter_id: chapterId = "",
+    subject = "matematica",
+    class_level: classLevel = 5,
+    title = "",
+    answers = [],
+    picks = []
+  } = req.body || {};
+
+  const isTest = kind !== "flashcards";
+  let items = [];
+
+  if (isTest) {
+    items = checkMany(Array.isArray(answers) ? answers : []);
+  } else {
+    items = (Array.isArray(picks) ? picks : []).map(pick => {
+      const question = findQuestion(pick.card_id || pick.id);
+      if (!question) {
+        return { id: pick.card_id, point: "", prompt: "", given: String(pick.chosen || ""), ok: false, found: false, explain: "", sample: "", steps: [] };
+      }
+      const chosen = String(pick.chosen || "").trim();
+      const sample = question.options[question.correct] || "";
+      const ok = chosen && chosen === sample;
+      return {
+        id: question.id,
+        point: question.point,
+        prompt: question.question,
+        given: chosen,
+        skipped: !chosen,
+        ok,
+        found: true,
+        explain: question.explain,
+        sample,
+        steps: []
+      };
+    });
   }
 
-  if (!cards || !cards.length) {
-    cards = fallbackFlashcards(topicLabel, safeCount).map((c, i) => ({ id: `fc_${i}`, ...c }));
-    usedEngine = "fallback";
-    mocked = true;
+  const correct = items.filter(item => item.ok).length;
+  const total = items.length;
+  const gradeNote = scoreToGrade(correct, total);
+  const message = encouragementFor(gradeNote);
+  const strengths = [...new Set(items.filter(item => item.ok).map(item => item.point).filter(Boolean))];
+  const weaknesses = [...new Set(items.filter(item => !item.ok).map(item => item.point).filter(Boolean))];
+
+  const user = ensureUser(req.auth.email);
+  if (!user.practiceSeen) user.practiceSeen = {};
+  const pack = pickPractice({
+    subject,
+    grade: classLevel,
+    chapterId,
+    topic: chapterId,
+    kind: isTest ? "test" : "flashcards",
+    count: 3
+  });
+  if (!user.practiceSeen[pack.key]) user.practiceSeen[pack.key] = { points: [], questionIds: [], day: getTodayKey() };
+  items.forEach(item => {
+    if (item.point && !user.practiceSeen[pack.key].points.includes(item.point)) {
+      user.practiceSeen[pack.key].points.push(item.point);
+    }
+    if (item.id && !user.practiceSeen[pack.key].questionIds.includes(item.id)) {
+      user.practiceSeen[pack.key].questionIds.push(item.id);
+    }
+  });
+  user.practiceSeen[pack.key].questionIds = user.practiceSeen[pack.key].questionIds.slice(-80);
+
+  const review = recordSkillReview(req.auth.email, {
+    kind: isTest ? "test" : "flashcards",
+    subject,
+    grade: classLevel,
+    chapterId,
+    title,
+    correct,
+    total,
+    gradeNote,
+    message,
+    strengths,
+    weaknesses,
+    items
+  });
+
+  let award = null;
+  if (isTest) {
+    award = recordProgress({
+      userId: req.auth.email,
+      type: "chapter_test",
+      note: title || "Test de capitol",
+      meta: { subject, grade: classLevel, chapterId, title, score: correct, total, gradeNote }
+    });
   }
 
-  res.json({ cards, engine_used: usedEngine, mocked, topic: topicLabel });
+  res.json({
+    items,
+    correct,
+    total,
+    grade: gradeNote,
+    message,
+    strengths,
+    weaknesses,
+    history: review.snapshot,
+    awarded: award?.awarded || null,
+    summary: award?.summary || null
+  });
 });
 
 module.exports = router;

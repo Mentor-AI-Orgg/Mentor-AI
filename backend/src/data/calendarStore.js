@@ -27,6 +27,7 @@ function addEvent(userId, event) {
     id: `evt_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
     date: event.date,
     title: event.title,
+    time: event.time || "",
     type: event.type || "custom",
     source: event.source || "manual"
   };
@@ -75,9 +76,9 @@ function connectProvider(userId, provider, extra = {}) {
 
   const today = new Date();
   const demoEvents = [
-    { offset: 1, title: provider === "google" ? "Curs Matematică (sincronizat)" : "Recapitulare Notion – Fizică", type: "sync" },
-    { offset: 3, title: provider === "google" ? "Test Chimie (Google Calendar)" : "Deadline temă – Notion", type: "sync" },
-    { offset: 6, title: provider === "google" ? "Simulare BAC (Google Calendar)" : "Sesiune focus – Notion", type: "sync" }
+    { offset: 1, title: provider === "google" ? "Curs Matematică (sincronizat)" : "Recapitulare Notion – Română", type: "sync" },
+    { offset: 3, title: provider === "google" ? "Exerciții de mate (Google Calendar)" : "Deadline temă – Notion", type: "sync" },
+    { offset: 6, title: provider === "google" ? "Pregătire Evaluare (Google Calendar)" : "Sesiune focus – Notion", type: "sync" }
   ];
 
   const added = demoEvents.map(({ offset, title, type }) => {

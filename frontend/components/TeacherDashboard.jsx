@@ -159,7 +159,7 @@ const TeacherDashboard = ({ userData, onNavigate, showToast }) => {
         <div className="eyebrow">Cont</div>
         <h3 className="display-font">Gestionează abonamentul clasei.</h3>
         <div className="learning-actions">
-          <button type="button" className="ghost-button result-action" onClick={() => onNavigate?.('subscriptions')}>Vezi abonamentele</button>
+          <button type="button" className="ghost-button result-action" onClick={() => onNavigate?.('subscriptions')}>Vezi accesul gratuit</button>
         </div>
       </section>
     </div>

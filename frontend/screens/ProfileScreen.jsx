@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import Leaderboard from '../components/Leaderboard.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { avatarIcon } from '../appearance.js';
 
-const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange }) => {
+const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange, onNavigate }) => {
   const { t, uiLocales, mentorLocales } = useI18n();
   const [detectText, setDetectText] = useState('');
   const [detectLoading, setDetectLoading] = useState(false);
   const [detectResult, setDetectResult] = useState(null);
   const [inbox, setInbox] = useState([]);
+  const [skills, setSkills] = useState({ log: [], strengths: [], weaknesses: [] });
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -19,7 +21,12 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange }
         setInbox(result.data.inbox || []);
       }
     };
+    const loadSkills = async () => {
+      const result = await MentorAPI.getSkillHistory();
+      if (result.success) setSkills(result.data);
+    };
     loadInbox();
+    loadSkills();
   }, [userData.email]);
 
   const runDetector = async () => {
@@ -76,26 +83,63 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onLanguageChange }
       </div>
       <div className="surface mx-5 mt-6 rounded-3xl p-5 shadow-xl profile-hero-card">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-3xl gradient-primary flex items-center justify-center text-3xl">{(userData.name || 'M').charAt(0).toUpperCase()}</div>
+          <div className="w-16 h-16 rounded-3xl gradient-primary flex items-center justify-center text-3xl">
+            {avatarIcon(userData.avatarId) ? <i className={`fas ${avatarIcon(userData.avatarId)}`} /> : (userData.name || 'M').charAt(0).toUpperCase()}
+          </div>
           <div>
             <div className="text-xl font-extrabold">{userData.name || t('profile.defaultName')}</div>
             <div className="text-sm text-slate-400">{userData.school || t('profile.personalProfile')}</div>
-            <div className="profile-role-pill">{t('common.student')}</div>
+            <div className="profile-role-pill">{t('common.student')} · {t('home.level')} {userData.level || 1}</div>
           </div>
         </div>
         <div className="mt-6 grid grid-cols-2 gap-3">
           <div className="surface-soft rounded-3xl p-4 text-sm">
-            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">Coins</div>
-            <div className="text-lg font-semibold">{userData.coins}</div>
+            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">{t('home.coins')}</div>
+            <div className="text-lg font-semibold">{userData.coins || 0}</div>
           </div>
           <div className="surface-soft rounded-3xl p-4 text-sm">
-            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">Streak</div>
-            <div className="text-lg font-semibold">{t('profile.days', { count: userData.streak })}</div>
+            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">{t('home.streak')}</div>
+            <div className="text-lg font-semibold">{t('profile.days', { count: userData.streak || 0 })}</div>
           </div>
+          <div className="surface-soft rounded-3xl p-4 text-sm">
+            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">XP</div>
+            <div className="text-lg font-semibold">{userData.xp || 0}</div>
+          </div>
+          <div className="surface-soft rounded-3xl p-4 text-sm">
+            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">{t('home.chapters')}</div>
+            <div className="text-lg font-semibold">{userData.chaptersDone || 0}/{userData.chaptersTotal || 0}</div>
+          </div>
+        </div>
+        <div className="profile-shortcut-row">
+          <button type="button" className="ghost-button" onClick={() => onNavigate?.('calendar')}>
+            <i className="fas fa-calendar-check" /> {t('nav.calendar')}
+          </button>
+          <button type="button" className="ghost-button" onClick={() => onNavigate?.('subscriptions')}>
+            <i className="fas fa-unlock" /> {t('nav.subscriptions')}
+          </button>
         </div>
       </div>
 
       <div className="mx-5 mt-5 profile-tools-grid">
+        <section className="surface rounded-3xl p-5 profile-tool-card">
+          <div className="eyebrow">Istoric teste</div>
+          <h3 className="display-font profile-tool-title">Note, puncte forte, de lucrat.</h3>
+          {skills.strengths?.length > 0 && <p className="quiz-explain">Forte: {skills.strengths.join(', ')}</p>}
+          {skills.weaknesses?.length > 0 && <p className="quiz-sample">Slabe: {skills.weaknesses.join(', ')}</p>}
+          {(skills.log || []).length === 0 ? (
+            <p className="profile-empty-note">După primul test sau set de flashcarduri, notele rămân aici.</p>
+          ) : (
+            <ul className="skill-log">
+              {skills.log.map(entry => (
+                <li key={entry.id}>
+                  <strong>Nota {entry.gradeNote}</strong>
+                  <span>{entry.kind === 'test' ? 'Test' : 'Flashcarduri'} · {entry.title || entry.chapterId} · {entry.correct}/{entry.total}</span>
+                  {entry.weaknesses?.length > 0 && <small>De lucrat: {entry.weaknesses.join(', ')}</small>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
         <section className="surface rounded-3xl p-5 profile-tool-card">
           <div className="eyebrow">Detector demo</div>
           <h3 className="display-font profile-tool-title">Euristică locală, nu un detector real.</h3>

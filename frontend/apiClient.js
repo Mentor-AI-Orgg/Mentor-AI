@@ -22,65 +22,19 @@ const buildApiUrl = url => {
 const DEFAULT_SUBSCRIPTIONS = [
   {
     id: 'free',
-    name: 'Free',
+    name: 'Gratuit',
     priceMonthly: 0,
     priceQuarterly: 0,
     priceHalfYear: 0,
     priceYearly: 0,
     currency: 'RON',
-    tagline: 'Pentru a începe rapid cu fallback-ul AI',
+    tagline: 'Mentorul de gimnaziu, fără abonament',
     features: [
-      { label: 'Fallback AI: GPT-4o → Wolfram → Mathpix → Gemini → Claude', included: true },
-      { label: '10 întrebări / zi către Profesorul AI', included: true },
-      { label: '1 limbă activă (Română)', included: true },
-      { label: 'Memorie conversație doar pentru sesiunea curentă', included: true }
-    ]
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    priceMonthly: 75,
-    priceQuarterly: 214,
-    priceHalfYear: 405,
-    priceYearly: 765,
-    currency: 'RON',
-    tagline: 'Pentru ritm constant și răspunsuri mai bune',
-    features: [
-      { label: 'Rutină AI: Gemini → Claude → Wolfram', included: true },
-      { label: 'Întrebări nelimitate către Profesorul AI', included: true },
-      { label: 'Memorie conversație persistentă', included: true },
-      { label: 'Fotografiază lecția (Mathpix OCR)', included: true }
-    ]
-  },
-  {
-    id: 'premium',
-    name: 'Premium',
-    priceMonthly: 50,
-    priceQuarterly: 143,
-    priceHalfYear: 270,
-    priceYearly: 510,
-    currency: 'RON',
-    tagline: 'Consiliu AI complet, cu Claude ca judecător',
-    features: [
-      { label: 'Consiliu AI: GPT-4o + Wolfram/Mathpix + Gemini + Claude', included: true },
-      { label: 'Claude sintetizează și alege răspunsul final', included: true },
-      { label: 'Toate răspunsurile sunt comparate și punctate', included: true }
-    ]
-  },
-  {
-    id: 'elite',
-    name: 'Elite Family Pack',
-    priceMonthly: 100,
-    priceQuarterly: 285,
-    priceHalfYear: 540,
-    priceYearly: 1020,
-    currency: 'RON',
-    tagline: 'Pentru familie, mai multe conturi și control comun',
-    features: [
-      { label: 'Toate avantajele Premium', included: true },
-      { label: 'Cont profesor și cont părinte dedicate', included: true },
-      { label: 'Rapoarte trimise pe email către părinte', included: true },
-      { label: 'Bonus 5000 monede: 7 zile gratuite Elite Family Pack', included: true }
+      { label: 'Mentor AI la română și matematică, clasele 5–8', included: true },
+      { label: 'Întrebări nelimitate către mentor', included: true },
+      { label: 'Capitole, flashcarduri și sesiuni de focus', included: true },
+      { label: 'Magazin cosmetic cu monede câștigate din învățare', included: true },
+      { label: 'Email către părinte la activitatea copilului', included: true }
     ]
   }
 ];
@@ -396,6 +350,19 @@ const MentorAPI = {
     }
   },
 
+  async recordProgress(payload) {
+    try {
+      const data = await safeFetchJson('/api/economy/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
   async logActivity(payload) {
     try {
       const data = await safeFetchJson('/api/economy/activity', {
@@ -562,6 +529,54 @@ const MentorAPI = {
   async generateFlashcards(payload) {
     try {
       const data = await safeFetchJson('/api/flashcards/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async checkExercise(payload) {
+    try {
+      const data = await safeFetchJson('/api/flashcards/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async finishPractice(payload) {
+    try {
+      const data = await safeFetchJson('/api/flashcards/finish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async getSkillHistory() {
+    try {
+      const data = await safeFetchJson('/api/flashcards/history');
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: { log: [], strengths: [], weaknesses: [] }, fallback: true };
+    }
+  },
+
+  async markPracticeSeen(payload) {
+    try {
+      const data = await safeFetchJson('/api/flashcards/seen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

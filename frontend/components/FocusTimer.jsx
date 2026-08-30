@@ -68,19 +68,20 @@ const FocusTimer = ({ userData, onRewardClaim }) => {
           if (!completedRef.current) {
             completedRef.current = true;
             setSessionsDone(s => s + 1);
-            if (MentorAPI.logActivity) {
-              MentorAPI.logActivity({ type: 'focus_session', note: `Focus completat: ${preset.label}`, meta: { minutes: Math.round(preset.seconds / 60) } });
-            }
-            if (preset.seconds >= 60 * 60) {
-              MentorAPI.claimReward({
-                type: 'study_1h',
-                hours: 1
-              }).then(result => {
-                if (result.success && typeof onRewardClaim === 'function') {
-                  onRewardClaim(result.data);
-                }
-              });
-            }
+            MentorAPI.recordProgress({
+              type: 'focus_session',
+              note: `Focus completat: ${preset.label}`,
+              meta: { minutes: Math.round(preset.seconds / 60) }
+            }).then(result => {
+              if (result.success && typeof onRewardClaim === 'function') {
+                onRewardClaim({
+                  balance: result.data.summary?.balance,
+                  equipped: result.data.summary?.equipped || {},
+                  role: result.data.summary?.role,
+                  summary: result.data.summary
+                });
+              }
+            });
           }
           return 0;
         }
@@ -151,10 +152,11 @@ const FocusTimer = ({ userData, onRewardClaim }) => {
         <div className="focus-timer-head">
           <div>
             <div className="eyebrow">Cronometru · Mod Focus</div>
-            <h3 className="display-font">Ține ritmul, pas cu pas.</h3>
+            <h3 className="display-font">O singură treabă, un interval.</h3>
           </div>
           <span className="learn-chip"><i className="fas fa-fire" /> {sessionsDone} sesiuni azi</span>
         </div>
+        <p className="focus-timer-why">Te pune să stai pe temă, test sau lectură, fără să sari pe altceva. La 25 sau 50 de minute terminate, primești monede și XP.</p>
         <div className="focus-timer-presets">
           {PRESETS.map(p => (
             <button

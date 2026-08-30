@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 
-const SplashScreen = ({ onFinish }) => {
+const SplashScreen = ({ onFinish, delay = 2500 }) => {
   const { t } = useI18n();
   useEffect(() => {
-    const timer = setTimeout(onFinish, 2500);
+    const timer = setTimeout(onFinish, delay);
     return () => clearTimeout(timer);
-  }, [onFinish]);
+  }, [onFinish, delay]);
 
   return (
     <div className="splash-page animate-fadeIn">
