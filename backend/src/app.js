@@ -24,6 +24,7 @@ const { corsAllowlist } = require("./middleware/corsAllowlist");
 const { generalApiLimiter, chatLimiter, detectLimiter } = require("./middleware/rateLimits");
 const persistence = require("./data/persistence");
 const calendarOauthRoute = require("./routes/calendarOauth");
+const curriculumRoute = require("./routes/curriculum");
 const { handleStripeWebhook } = require("./payments/stripe");
 
 function createApp(options = {}) {
@@ -73,6 +74,7 @@ function createApp(options = {}) {
     app.use(`${prefix}/auth`, authRoute);
     app.use(`${prefix}/health`, healthRoute);
     app.use(`${prefix}/leaderboard`, leaderboardRoute);
+    app.use(`${prefix}/curriculum`, curriculumRoute);
 
     app.use(`${prefix}/calendar/oauth`, calendarOauthRoute);
     app.use(`${prefix}/chat`, authRequired, chatLimiter, chatRoute);

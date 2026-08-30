@@ -11,7 +11,8 @@ const spec = {
     title: config.APP_NAME,
     version: config.APP_VERSION,
     description:
-      "API-ul Mentor AI. Autentificarea este pe cookie httpOnly (`mentor_session`). " +
+      "API-ul Mentor AI pentru gimnaziu (clasele 5–8, română și matematică). " +
+      "Autentificarea este pe cookie httpOnly (`mentor_session`). " +
       "Prefixul `/api` rămâne valid; `/api/v1` este aliasul versiunii."
   },
   servers: [{ url: "/api/v1" }, { url: "/api" }],
@@ -28,6 +29,13 @@ const spec = {
     }
   },
   paths: {
+    "/curriculum": {
+      get: {
+        tags: ["health"],
+        summary: "Rezumate proprii ale programei de gimnaziu (română și matematică)",
+        responses: { 200: { description: "Catalog sau ghid pe materie/clasă" } }
+      }
+    },
     "/health": {
       get: {
         tags: ["health"],

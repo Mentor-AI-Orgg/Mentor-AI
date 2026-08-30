@@ -563,6 +563,9 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 
 /* ============ Mentor diagnostics mode ============ */
 .mentor-header-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.mentor-context-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.mentor-context-row label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: #9aa0c3; font-weight: 700; }
+.mentor-context-row select { min-width: 160px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(15,16,40,.8); color: #e8eaf8; }
 .diag-toggle { cursor: pointer; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); color: var(--muted); }
 .diag-toggle.active { color: #171633; background: var(--lime); border-color: var(--lime); }
 .diag-banner { display: flex; align-items: center; gap: 8px; margin: -10px 0 16px; padding: 10px 14px; border-radius: 14px; background: rgba(185,167,255,.1); border: 1px solid rgba(185,167,255,.28); color: #e2ddff; font-size: 12px; line-height: 1.5; }

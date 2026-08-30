@@ -44,8 +44,8 @@ const FlashCards = ({ userData, presetTopics = [], onRewardClaim }) => {
 
     const result = await MentorAPI.generateFlashcards({
       topic: finalTopic,
-      subject: userData?.profile || 'matematica',
-      class_level: userData?.class || 'liceu',
+      subject: userData?.subject || userData?.profile || 'matematica',
+      class_level: userData?.class || 5,
       language: userData?.language || 'ro',
       count: 6
     });

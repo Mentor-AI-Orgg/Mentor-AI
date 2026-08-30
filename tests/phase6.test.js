@@ -156,20 +156,21 @@ describe('phase 6 product polish', () => {
     const patch = await agent.patch('/api/account/profile').send({
       name: 'Mara',
       username: 'mara-focus',
-      class: 'liceu',
-      profile: 'real',
-      exam: 'bac',
+      class: '7',
+      subject: 'matematica',
+      profile: 'matematica',
+      exam: 'evaluare',
       dailyHours: '1',
       hasCompletedOnboarding: true
     });
     expect(patch.status).toBe(200);
     expect(patch.body.user.hasCompletedOnboarding).toBe(true);
     expect(patch.body.user.username).toBe('mara-focus');
-    expect(patch.body.user.class).toBe('liceu');
+    expect(patch.body.user.class).toBe('7');
 
     const me = await agent.get('/api/auth/me');
     expect(me.body.user.hasCompletedOnboarding).toBe(true);
     expect(me.body.user.username).toBe('mara-focus');
-    expect(me.body.user.exam).toBe('bac');
+    expect(me.body.user.exam).toBe('evaluare');
   });
 });

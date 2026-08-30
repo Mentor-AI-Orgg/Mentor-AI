@@ -1,7 +1,9 @@
 # Mentor AI
 
-Aplicație educațională pentru clasele 1–12: un mentor AI cu scaffolding,
-gamificare și dashboard-uri pentru părinte și profesor.
+Aplicație educațională pentru gimnaziu (clasele 5–8): un mentor AI de
+română și matematică, cu scaffolding, gamificare și dashboard-uri pentru
+părinte și profesor. Conținutul urmează programa oficială (OMEN 3393/2017)
+și e scris ca rezumat propriu, nu ca text de manual.
 
 ## Cum rulezi local
 

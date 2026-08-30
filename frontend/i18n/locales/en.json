@@ -12,15 +12,15 @@
   },
   "splash": {
     "eyebrow": "A space for ideas",
-    "subtitle": "The personal teacher in your pocket.",
-    "meta1": "10 languages",
+    "subtitle": "Middle-school mentor: Romanian and maths, grades 5–8.",
+    "meta1": "Grades 5–8",
     "meta2": "Offline fallback",
     "meta3": "Adaptive pace"
   },
   "auth": {
     "eyebrow": "Mentor AI / 03",
     "title": "Learn with direction.",
-    "subtitle": "A personal mentor that turns your questions into real progress.",
+    "subtitle": "A mentor for Romanian and mathematics, grades 5–8.",
     "chooseRole": "Choose an account type",
     "studentDesc": "Learn, earn coins and track your progress.",
     "teacherDesc": "Use the mentor and see class analytics.",
@@ -64,6 +64,7 @@
   "home": {
     "hello": "Hi, {name}.",
     "studentFallback": "Student",
+    "gradeSubject": "Grade {grade} · {subject}",
     "roleStudent": "Student account",
     "roleParent": "Parent account",
     "roleTeacher": "Teacher account",
@@ -100,21 +101,23 @@
     "step1": { "title": "What should I call you?", "desc": "Tell me how you want to be addressed." },
     "step2": {
       "title": "Which grade are you in?",
-      "desc": "We will personalize content for you.",
-      "gimnaziu": "Grades 5–8",
-      "liceu": "Grades 9–12"
+      "desc": "We only cover middle school: grades 5–8.",
+      "grade5": "Grade 5",
+      "grade6": "Grade 6",
+      "grade7": "Grade 7",
+      "grade8": "Grade 8"
     },
     "step3": {
-      "title": "What is your track?",
-      "desc": "We pick the main subject for you.",
-      "real": "Science",
-      "uman": "Humanities"
+      "title": "Which subject do you want to work on?",
+      "desc": "The mentor covers Romanian and mathematics.",
+      "matematica": "Mathematics",
+      "romana": "Romanian language and literature"
     },
     "step4": {
-      "title": "Which exam is next?",
-      "desc": "We help you prepare strategically.",
-      "bac": "Baccalaureate",
-      "evaluare": "National assessment"
+      "title": "How do you want to learn?",
+      "desc": "Daily practice or National Assessment prep.",
+      "daily": "Day-to-day learning",
+      "evaluare": "National Assessment prep"
     },
     "step5": {
       "title": "How many hours can you study per day?",
