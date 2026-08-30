@@ -63,17 +63,53 @@ describe('auth', () => {
     expect(res.status).toBe(409);
   });
 
-  it('rejects teacher signup without the invite code', async () => {
+  it('rejects parent and teacher signup', async () => {
+    for (const role of ['parent', 'teacher']) {
+      const res = await request(app)
+        .post('/api/auth/register')
+        .send({
+          email: uniqueEmail(role),
+          password: PASSWORD,
+          role,
+          privacy_accepted: true
+        });
+      expect(res.status).toBe(403);
+      expect(res.body.field).toBe('role');
+      expect(res.body.code).toBe('students_only');
+    }
+  });
+
+  it('emails the parent when the student account is created', async () => {
     const res = await request(app)
       .post('/api/auth/register')
       .send({
-        email: uniqueEmail('prof'),
+        email: uniqueEmail('notify'),
         password: PASSWORD,
-        role: 'teacher',
+        role: 'student',
+        name: 'Ionel Test',
+        parentEmail: uniqueEmail('parinte'),
+        parental_consent: true,
         privacy_accepted: true
       });
-    expect(res.status).toBe(403);
-    expect(res.body.field).toBe('invite_code');
+    expect(res.status).toBe(201);
+    expect(res.body.parentNotified).toBe(true);
+  });
+
+  it('emails the parent when the student logs in', async () => {
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: studentEmail, password: PASSWORD });
+    expect(res.status).toBe(200);
+    expect(res.body.parentNotified).toBe(true);
+  });
+
+  it('emails the parent when the student logs an activity', async () => {
+    const res = await studentAgent
+      .post('/api/economy/activity')
+      .send({ type: 'mentor_message', note: 'Cât face 2+2?' });
+    expect(res.status).toBe(200);
+    expect(res.body.parentNotified).toBe(true);
+    expect(res.body.parentNotify.delivery.mocked).toBe(true);
   });
 
   it('exposes the session at /api/auth/me', async () => {

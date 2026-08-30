@@ -1,14 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { roleGuard } = require('../middleware/auth');
+const { STUDENTS_ONLY } = require('../middleware/auth');
 const { validateBody } = require('../middleware/validate');
-const { accessCodeVerifyLimiter } = require('../middleware/rateLimits');
-const {
-  claimSchema,
-  buySchema,
-  accessCodeRequestSchema,
-  accessCodeVerifySchema
-} = require('../validation/schemas');
+const { claimSchema, buySchema } = require('../validation/schemas');
 const {
   getSummary,
   getCatalog,
@@ -18,14 +12,9 @@ const {
   logActivity,
   getNotifications,
   markNotificationRead,
-  updateNotificationPreferences,
-  getParentAnalytics,
-  sendParentReview,
-  getTeacherAnalytics,
-  requestTest,
-  generateAccessCode,
-  verifyAccessCode
+  sendParentReview
 } = require('../data/economyStore');
+const { notifyParent } = require('../notify/parentActivity');
 
 // Toate rutele de aici sunt montate în spatele `authRequired` (vezi
 // backend/server.js), deci `req.auth` există mereu. Identitatea vine exclusiv
@@ -68,21 +57,37 @@ router.post('/notifications/:notificationId/read', (req, res) => {
   res.json({ success: true, notification });
 });
 
-router.post('/claim', validateBody(claimSchema), (req, res) => {
+router.post('/claim', validateBody(claimSchema), async (req, res) => {
   const { type, ...payload } = req.body || {};
   if (!type) {
     return res.status(400).json({ error: 'Tipul recompensei este obligatoriu.' });
   }
   const result = claimReward({ userId: req.auth.email, type, payload });
+  if (result.ok) {
+    await notifyParent({
+      studentEmail: req.auth.email,
+      type: 'claim',
+      note: `Recompensă: ${type}`,
+      meta: { type }
+    });
+  }
   res.status(result.ok ? 200 : 400).json(result);
 });
 
-router.post('/buy', validateBody(buySchema), (req, res) => {
+router.post('/buy', validateBody(buySchema), async (req, res) => {
   const { item_id } = req.body || {};
   if (!item_id) {
     return res.status(400).json({ error: 'item_id este obligatoriu.' });
   }
   const result = purchaseItem({ userId: req.auth.email, itemId: item_id });
+  if (result.ok) {
+    await notifyParent({
+      studentEmail: req.auth.email,
+      type: 'buy',
+      note: `Cumpărare: ${item_id}`,
+      meta: { itemId: item_id }
+    });
+  }
   res.status(result.ok ? 200 : 400).json(result);
 });
 
@@ -102,69 +107,56 @@ router.post('/parent-review', async (req, res) => {
 // Legarea directă a fost înlocuită cu invitație acceptată de celălalt cont
 // (POST /api/links/invite). Păstrăm ruta ca să răspundă explicit, în loc să
 // dea 404 unui client mai vechi care încă o apelează.
-router.post('/connect-child', roleGuard('parent'), (req, res) => {
-  res.status(410).json({
-    error: 'Legarea directă nu mai este disponibilă. Trimite o invitație prin POST /api/links/invite; elevul trebuie să o accepte.',
-    replacement: '/api/links/invite'
-  });
+router.post('/connect-child', (_req, res) => {
+  res.status(410).json(STUDENTS_ONLY);
 });
 
-router.post('/preferences', roleGuard('parent'), (req, res) => {
-  const { preferences = {} } = req.body || {};
-  const updated = updateNotificationPreferences({ parentEmail: req.auth.email, preferences });
-  res.json({ success: true, preferences: updated });
+router.post('/preferences', (_req, res) => {
+  res.status(410).json(STUDENTS_ONLY);
 });
 
-router.post('/activity', (req, res) => {
+router.post('/activity', async (req, res) => {
   const { type, note = '', meta = {}, amount = 0 } = req.body || {};
   if (!type) {
     return res.status(400).json({ error: 'type este obligatoriu.' });
   }
   const result = logActivity({ userId: req.auth.email, type, note, meta, amount });
-  res.json({ success: true, ...result });
-});
-
-// Analitica despre un copil este cea mai sensibilă parte a aplicației, deci
-// cere rolul potrivit și se raportează strict la contul autentificat.
-router.get('/parent-analytics', roleGuard('parent'), (req, res) => {
-  res.json(getParentAnalytics(req.auth.email));
-});
-
-router.get('/teacher-analytics', roleGuard('teacher'), (req, res) => {
-  res.json(getTeacherAnalytics(req.auth.email));
-});
-
-router.post('/request-test', roleGuard('parent', 'teacher'), (req, res) => {
-  const { student_email = '', subject = '', note = '', due_date = '' } = req.body || {};
-  if (!student_email) {
-    return res.status(400).json({ error: 'student_email este obligatoriu.' });
-  }
-  const result = requestTest({
-    requesterEmail: req.auth.email,
-    requesterRole: req.auth.role,
-    studentEmail: student_email,
-    subject,
+  const parentNotify = await notifyParent({
+    studentEmail: req.auth.email,
+    type,
     note,
-    dueDate: due_date
+    meta
   });
-  res.json({ success: true, ...result });
+  res.json({
+    success: true,
+    ...result,
+    parentNotified: !parentNotify.skipped,
+    parentNotify: {
+      skipped: parentNotify.skipped,
+      reason: parentNotify.reason || null,
+      delivery: parentNotify.delivery || null
+    }
+  });
 });
 
-// Cod de acces temporar prin SMS (nu parola reala -- vezi economyStore.js).
-router.post('/access-code/request', roleGuard('parent'), validateBody(accessCodeRequestSchema), async (req, res) => {
-  const { child_email = '', phone = '' } = req.body || {};
-  const result = await generateAccessCode({ parentEmail: req.auth.email, childEmail: child_email, phone });
-  res.json(result || { ok: false, reason: 'invalid_request' });
+router.get('/parent-analytics', (_req, res) => {
+  res.status(410).json(STUDENTS_ONLY);
 });
 
-router.post('/access-code/verify', roleGuard('parent'), accessCodeVerifyLimiter, validateBody(accessCodeVerifySchema), (req, res) => {
-  const { child_email = '', code = '' } = req.body || {};
-  const result = verifyAccessCode({ parentEmail: req.auth.email, childEmail: child_email, code });
-  if (!result.ok) {
-    const status = result.reason === 'locked' ? 429 : 400;
-    return res.status(status).json(result);
-  }
-  res.json(result);
+router.get('/teacher-analytics', (_req, res) => {
+  res.status(410).json(STUDENTS_ONLY);
+});
+
+router.post('/request-test', (_req, res) => {
+  res.status(410).json(STUDENTS_ONLY);
+});
+
+router.post('/access-code/request', (_req, res) => {
+  res.status(410).json(STUDENTS_ONLY);
+});
+
+router.post('/access-code/verify', (_req, res) => {
+  res.status(410).json(STUDENTS_ONLY);
 });
 
 router.post('/bootstrap', (req, res) => {

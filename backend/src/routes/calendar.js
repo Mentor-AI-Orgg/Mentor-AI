@@ -5,6 +5,7 @@ const oauth = require("../calendar/oauth");
 const { publicBaseUrl } = require("../publicUrl");
 const { validateBody } = require("../middleware/validate");
 const { calendarEventSchema } = require("../validation/schemas");
+const { notifyParent } = require("../notify/parentActivity");
 
 // Montat în spatele `authRequired`, deci `req.auth` există mereu. Înainte,
 // user_id venea din query/body, deci oricine putea citi sau șterge
@@ -26,10 +27,16 @@ router.get("/events", (req, res) => {
 });
 
 // POST /api/calendar/events  { date: 'YYYY-MM-DD', title, type }
-router.post("/events", validateBody(calendarEventSchema), (req, res) => {
+router.post("/events", validateBody(calendarEventSchema), async (req, res) => {
   const userId = resolveUserId(req);
   const { date, title, type } = req.body || {};
   const event = store.addEvent(userId, { date, title, type });
+  await notifyParent({
+    studentEmail: userId,
+    type: "calendar_event",
+    note: title || "Eveniment nou",
+    meta: { date, eventType: type }
+  });
   res.json({ success: true, event });
 });
 

@@ -238,7 +238,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         <div className="shop-balance-card">
           <span>Monede disponibile</span>
           <strong>{formatCoins(summary?.balance ?? userData.coins ?? 0)}</strong>
-          <small>{summary?.role === 'student' ? 'cont elev' : summary?.role === 'parent' ? 'cont părinte' : 'cont profesor'}</small>
+          <small>cont elev</small>
         </div>
       </section>
 

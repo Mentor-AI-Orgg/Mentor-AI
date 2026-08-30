@@ -49,6 +49,21 @@ function authRequired(req, res, next) {
   next();
 }
 
+const STUDENTS_ONLY = {
+  error: "Mentor AI este doar pentru elevi. Părinții primesc email cu activitatea copilului, fără cont.",
+  code: "students_only"
+};
+
+function studentRequired(req, res, next) {
+  if (!req.auth) {
+    return res.status(401).json({ error: "Autentificare necesară.", code: "unauthenticated" });
+  }
+  if (req.auth.role !== "student") {
+    return res.status(403).json(STUDENTS_ONLY);
+  }
+  next();
+}
+
 // Verifică rolul DUPĂ autentificare. Rolul vine din contul stocat pe server,
 // nu din body-ul cererii, deci un client nu poate pretinde că e profesor.
 function roleGuard(...roles) {
@@ -66,4 +81,4 @@ function roleGuard(...roles) {
   };
 }
 
-module.exports = { SESSION_COOKIE, readCookie, attachUser, authRequired, roleGuard };
+module.exports = { SESSION_COOKIE, readCookie, attachUser, authRequired, studentRequired, roleGuard, STUDENTS_ONLY };

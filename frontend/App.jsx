@@ -12,22 +12,19 @@ import LoginScreen from './components/LoginScreen.jsx';
 import RegisterScreen from './components/RegisterScreen.jsx';
 import OnboardingScreen from './components/OnboardingScreen.jsx';
 import { ProfessorScreen, LearnScreen } from './components/StudyScreens.jsx';
-import TeacherDashboard from './components/TeacherDashboard.jsx';
 import ShopScreen from './components/ShopScreen.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
 import SubscriptionsScreen from './screens/SubscriptionsScreen.jsx';
 import ProfileScreen from './screens/ProfileScreen.jsx';
-import ParentDashboardScreen from './screens/ParentDashboardScreen.jsx';
 import CalendarScreen from './screens/CalendarScreen.jsx';
 
 function applyAccount(user, prev = {}) {
   if (!user) return prev;
-  const role = user.role || prev.role || 'student';
   return {
     ...prev,
     isLoggedIn: true,
     email: user.email || prev.email || '',
-    role,
+    role: 'student',
     name: user.name || prev.name || '',
     username: user.username || prev.username || '',
     school: user.school || prev.school || '',
@@ -37,10 +34,9 @@ function applyAccount(user, prev = {}) {
     exam: user.exam || prev.exam || '',
     dailyHours: user.dailyHours || prev.dailyHours || '',
     parentEmail: user.parentEmail || prev.parentEmail || '',
-    teacherEmail: user.teacherEmail || prev.teacherEmail || '',
     uiLanguage: user.uiLanguage || prev.uiLanguage || prev.language || 'ro',
     language: user.language || prev.language || 'ro',
-    hasCompletedOnboarding: role !== 'student' ? true : Boolean(user.hasCompletedOnboarding)
+    hasCompletedOnboarding: Boolean(user.hasCompletedOnboarding)
   };
 }
 
@@ -49,7 +45,6 @@ function AppShell({ userData, setUserData }) {
   const [screen, setScreen] = useState('splash');
   const [navScreen, setNavScreen] = useState('home');
   const [toast, setToast] = useState(null);
-  const [authRole, setAuthRole] = useState('student');
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [onboardingData, setOnboardingData] = useState({});
 
@@ -60,12 +55,6 @@ function AppShell({ userData, setUserData }) {
   const showToast = useCallback((message, type = 'success') => {
     setToast({ message, type });
   }, []);
-
-  const routeByRole = role => {
-    if (role === 'parent') return 'parent';
-    if (role === 'teacher') return 'teacher';
-    return 'home';
-  };
 
   const handleEconomyUpdate = useCallback((balance, equipped = {}, role = null, extra = {}) => {
     setUserData(prev => ({
@@ -101,7 +90,6 @@ function AppShell({ userData, setUserData }) {
       return;
     }
 
-    const role = session.user.role || 'student';
     let merged = null;
     setUserData(prev => {
       merged = applyAccount(session.user, prev);
@@ -116,8 +104,8 @@ function AppShell({ userData, setUserData }) {
       window.history.replaceState({}, '', window.location.pathname);
     }
 
-    const completed = role !== 'student' || Boolean(session.user.hasCompletedOnboarding) || Boolean(merged?.hasCompletedOnboarding);
-    if (role === 'student' && !completed) {
+    const completed = Boolean(session.user.hasCompletedOnboarding) || Boolean(merged?.hasCompletedOnboarding);
+    if (!completed) {
       setOnboardingStep(1);
       setScreen('onboarding');
       return;
@@ -153,9 +141,8 @@ function AppShell({ userData, setUserData }) {
       return;
     }
 
-    const nextScreen = routeByRole(role);
-    setScreen(nextScreen);
-    setNavScreen(nextScreen);
+    setScreen('home');
+    setNavScreen('home');
   };
 
   const handleLogin = async credentials => {
@@ -165,10 +152,9 @@ function AppShell({ userData, setUserData }) {
     }
 
     const user = result.data.user || {};
-    const role = user.role || 'student';
     setUserData(prev => applyAccount(user, prev));
 
-    if (role === 'student' && !user.hasCompletedOnboarding) {
+    if (!user.hasCompletedOnboarding) {
       setOnboardingStep(1);
       setScreen('onboarding');
       MentorAPI.claimReward({ type: 'login_bonus' }).then(rewardResult => {
@@ -180,9 +166,8 @@ function AppShell({ userData, setUserData }) {
       return { success: true };
     }
 
-    const nextScreen = routeByRole(role);
-    setScreen(nextScreen);
-    setNavScreen(nextScreen);
+    setScreen('home');
+    setNavScreen('home');
 
     MentorAPI.claimReward({ type: 'login_bonus' }).then(rewardResult => {
       if (rewardResult.success) {
@@ -210,17 +195,15 @@ function AppShell({ userData, setUserData }) {
     const registration = await MentorAPI.register({
       email: formData.email,
       password: formData.password,
-      role: formData.role || 'student',
-      invite_code: formData.inviteCode || '',
+      role: 'student',
       name: formData.name,
       username: formData.username,
       phone: formData.phone,
       school: formData.school,
       class: formData.class || '5',
       subject: formData.subject || 'matematica',
-      parentEmail: formData.role === 'student' ? (formData.parentEmail || '') : '',
-      teacherEmail: formData.teacherEmail || '',
-      parental_consent: formData.role === 'student' ? Boolean(formData.parentalConsent) : false,
+      parentEmail: formData.parentEmail || '',
+      parental_consent: Boolean(formData.parentalConsent),
       privacy_accepted: Boolean(formData.privacyAccepted)
     });
 
@@ -241,24 +224,10 @@ function AppShell({ userData, setUserData }) {
       class: formData.class || '5',
       subject: formData.subject || 'matematica',
       profile: formData.subject || 'matematica',
-      role: formData.role || 'student',
-      parentEmail: formData.role === 'student' ? (formData.parentEmail || '') : '',
-      childEmail: formData.role === 'parent' ? (formData.parentEmail || '') : '',
-      teacherEmail: formData.teacherEmail || '',
+      role: 'student',
+      parentEmail: formData.parentEmail || '',
       isLoggedIn: true
     }));
-    if (formData.role === 'parent') {
-      setUserData(prev => ({ ...prev, hasCompletedOnboarding: true, role: 'parent', childEmail: formData.parentEmail || '' }));
-      setScreen('parent');
-      setNavScreen('parent');
-      return { success: true };
-    }
-    if (formData.role === 'teacher') {
-      setUserData(prev => ({ ...prev, hasCompletedOnboarding: true, role: 'teacher' }));
-      setScreen('teacher');
-      setNavScreen('teacher');
-      return { success: true };
-    }
     setOnboardingStep(1);
     setScreen('onboarding');
     return { success: true };
@@ -398,11 +367,11 @@ function AppShell({ userData, setUserData }) {
       case 'splash':
         return <SplashScreen onFinish={handleSplashFinish} />;
       case 'auth':
-        return <AuthScreen onLogin={() => setScreen('login')} onRegisterRole={role => { setAuthRole(role); setScreen('register'); }} />;
+        return <AuthScreen onLogin={() => setScreen('login')} onRegister={() => setScreen('register')} />;
       case 'login':
         return <LoginScreen onBack={() => setScreen('auth')} onLogin={handleLogin} onForgotPassword={handleForgotPassword} />;
       case 'register':
-        return <RegisterScreen onBack={() => setScreen('auth')} onContinue={handleRegister} onValidationError={message => showToast(message, 'warning')} initialRole={authRole} />;
+        return <RegisterScreen onBack={() => setScreen('auth')} onContinue={handleRegister} onValidationError={message => showToast(message, 'warning')} />;
       case 'onboarding':
         return currentOnboarding.step === 1 ? (
           <main className="onboarding-page animate-fadeIn">
@@ -458,10 +427,6 @@ function AppShell({ userData, setUserData }) {
         return <HomeScreen userData={userData} onNavigate={handleNavigate} />;
       case 'professor':
         return <ProfessorScreen userData={userData} />;
-      case 'teacher':
-        return <TeacherDashboard userData={userData} onNavigate={handleNavigate} showToast={showToast} />;
-      case 'parent':
-        return <ParentDashboardScreen userData={userData} onBack={() => handleNavigate('parent')} onNavigate={handleNavigate} showToast={showToast} />;
       case 'learn':
         return <LearnScreen userData={userData} onRewardClaim={data => handleEconomyUpdate(data?.balance, data?.equipped || {}, data?.role)} />;
       case 'shop':
@@ -485,7 +450,7 @@ function AppShell({ userData, setUserData }) {
     }
   };
 
-  const showNav = ['home', 'parent', 'teacher', 'professor', 'learn', 'shop', 'calendar', 'subscriptions', 'profile'].includes(screen);
+  const showNav = ['home', 'professor', 'learn', 'shop', 'calendar', 'subscriptions', 'profile'].includes(screen);
 
   return (
     <div className="app-shell">
@@ -508,7 +473,7 @@ function AppShell({ userData, setUserData }) {
         />
       </div>
       {renderScreen()}
-      {showNav && <BottomNav active={navScreen} onNavigate={handleNavigate} role={userData.role || 'student'} />}
+      {showNav && <BottomNav active={navScreen} onNavigate={handleNavigate} />}
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );

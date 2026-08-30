@@ -20,11 +20,13 @@
   "auth": {
     "eyebrow": "Mentor AI / 03",
     "title": "Learn with direction.",
-    "subtitle": "A mentor for Romanian and mathematics, grades 5–8.",
-    "chooseRole": "Choose an account type",
+    "subtitle": "A mentor for students, for Romanian and mathematics, grades 5–8.",
+    "studentsOnly": "Student accounts only",
+    "parentEmailNote": "Parents do not get an account. You use the mentor; they receive every activity by email.",
+    "chooseRole": "Student account",
     "studentDesc": "Learn, earn coins and track your progress.",
-    "teacherDesc": "Use the mentor and see class analytics.",
-    "parentDesc": "Get analytics and notifications about the student.",
+    "teacherDesc": "Mentor AI has no teacher section.",
+    "parentDesc": "Parents receive the child's activity by email, without an account.",
     "orEmail": "or continue with email",
     "orUseEmail": "or use email",
     "google": "Continue with Google",
@@ -143,7 +145,12 @@
     "delete": "Delete account",
     "deleting": "Deleting...",
     "privacy": "Privacy policy",
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "parentEyebrow": "Parent",
+    "parentTitle": "Your activity is emailed home.",
+    "parentNote": "The parent at {email} gets a message whenever you learn, talk to the mentor, or use the app. They do not create an account.",
+    "parentEmailMissing": "the address given at signup",
+    "parentEmpty": "No message copies yet. Parent emails go out automatically with every activity."
   },
   "toast": {
     "welcome": "Welcome!",

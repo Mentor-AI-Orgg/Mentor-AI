@@ -39,29 +39,17 @@ const DockItem = ({ item, active, onNavigate, pointerX, baseSize, maxScale }) =>
   );
 };
 
-const BottomNav = ({ active, onNavigate, role = 'student' }) => {
+const BottomNav = ({ active, onNavigate }) => {
   const { t } = useI18n();
-  const items = role === 'parent'
-    ? [
-        { id: 'parent', icon: 'fa-people-roof', label: t('nav.parent') },
-        { id: 'subscriptions', icon: 'fa-crown', label: t('nav.subscriptions') },
-        { id: 'profile', icon: 'fa-user', label: t('nav.profile') }
-      ]
-    : role === 'teacher'
-      ? [
-          { id: 'teacher', icon: 'fa-chalkboard-user', label: t('nav.teacher') },
-          { id: 'subscriptions', icon: 'fa-crown', label: t('nav.subscriptions') },
-          { id: 'profile', icon: 'fa-user', label: t('nav.profile') }
-        ]
-      : [
-          { id: 'home', icon: 'fa-home', label: t('nav.home') },
-          { id: 'professor', icon: 'fa-graduation-cap', label: t('nav.professor') },
-          { id: 'learn', icon: 'fa-book-open', label: t('nav.learn') },
-          { id: 'shop', icon: 'fa-store', label: t('nav.shop') },
-          { id: 'calendar', icon: 'fa-calendar-alt', label: t('nav.calendar') },
-          { id: 'subscriptions', icon: 'fa-crown', label: t('nav.subscriptions') },
-          { id: 'profile', icon: 'fa-user', label: t('nav.profile') }
-        ];
+  const items = [
+    { id: 'home', icon: 'fa-home', label: t('nav.home') },
+    { id: 'professor', icon: 'fa-graduation-cap', label: t('nav.professor') },
+    { id: 'learn', icon: 'fa-book-open', label: t('nav.learn') },
+    { id: 'shop', icon: 'fa-store', label: t('nav.shop') },
+    { id: 'calendar', icon: 'fa-calendar-alt', label: t('nav.calendar') },
+    { id: 'subscriptions', icon: 'fa-crown', label: t('nav.subscriptions') },
+    { id: 'profile', icon: 'fa-user', label: t('nav.profile') }
+  ];
 
   const [pointerX, setPointerX] = useState(null);
 

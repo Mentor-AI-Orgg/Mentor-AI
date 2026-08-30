@@ -20,11 +20,13 @@
   "auth": {
     "eyebrow": "Mentor AI / 03",
     "title": "Învață cu direcție.",
-    "subtitle": "Un mentor pentru română și matematică, clasele 5–8.",
-    "chooseRole": "Alege tipul de cont",
+    "subtitle": "Un mentor pentru elevi, la română și matematică, clasele 5–8.",
+    "studentsOnly": "Cont doar pentru elevi",
+    "parentEmailNote": "Părinții nu au cont. Primești tu mentorul; ei primesc pe email tot ce faci în aplicație.",
+    "chooseRole": "Cont de elev",
     "studentDesc": "Învață, acumulează monede și urmărește progresul.",
-    "teacherDesc": "Folosește mentorul și vezi analizele clasei.",
-    "parentDesc": "Primești analitică și notificări despre elev.",
+    "teacherDesc": "Mentor AI nu are secțiune de profesor.",
+    "parentDesc": "Părinții primesc email cu activitatea copilului, fără cont.",
     "orEmail": "sau continuă cu emailul",
     "orUseEmail": "sau folosește emailul",
     "google": "Continuă cu Google",
@@ -143,7 +145,12 @@
     "delete": "Șterge contul",
     "deleting": "Se șterge...",
     "privacy": "Politica de confidențialitate",
-    "logout": "Deconectează-te"
+    "logout": "Deconectează-te",
+    "parentEyebrow": "Părinte",
+    "parentTitle": "Activitatea ta pleacă pe email.",
+    "parentNote": "Părintele de la {email} primește un mesaj de fiecare dată când înveți, vorbești cu mentorul sau folosești aplicația. Nu își face cont.",
+    "parentEmailMissing": "adresa dată la înregistrare",
+    "parentEmpty": "Încă nu există copii ale mesajelor trimise. Emailurile către părinte pleacă automat la fiecare activitate."
   },
   "toast": {
     "welcome": "Bun venit!",

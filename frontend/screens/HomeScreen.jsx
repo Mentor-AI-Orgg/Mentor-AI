@@ -3,11 +3,6 @@ import { useI18n } from '../i18n/index.jsx';
 
 const HomeScreen = ({ userData, onNavigate }) => {
   const { t, locale } = useI18n();
-  const roleLabel = userData.role === 'parent'
-    ? t('home.roleParent')
-    : userData.role === 'teacher'
-      ? t('home.roleTeacher')
-      : t('home.roleStudent');
   const dateLabel = locale === 'en'
     ? new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date())
     : formatRoDate();
@@ -18,7 +13,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
         <div>
           <div className="eyebrow">{dateLabel}</div>
           <h1 className="display-font home-title">{t('home.hello', { name: userData.name || t('home.studentFallback') })}</h1>
-          <p className="home-role-tag">{roleLabel}{userData.role === 'student' ? ` · ${t('home.gradeSubject', { grade: userData.class || '5', subject: userData.subject === 'romana' ? t('onboarding.step3.romana') : t('onboarding.step3.matematica') })}` : ''}</p>
+          <p className="home-role-tag">{t('home.roleStudent')} · {t('home.gradeSubject', { grade: userData.class || '5', subject: userData.subject === 'romana' ? t('onboarding.step3.romana') : t('onboarding.step3.matematica') })}</p>
         </div>
         <button onClick={() => onNavigate('profile')} className="home-avatar" aria-label={t('home.openProfile')}>{(userData.name || 'E').charAt(0).toUpperCase()}</button>
       </header>
