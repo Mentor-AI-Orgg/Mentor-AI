@@ -49,5 +49,10 @@ describe('gimnaziu curriculum', () => {
     expect(one.body.grade).toBe(6);
     expect(one.body.subject).toBe('romana');
     expect(one.body.units[0].inOwnWords).toBeTruthy();
+    expect(catalog.body.guides).toHaveLength(8);
+    for (const guide of catalog.body.guides) {
+      expect(guide.units.length).toBeGreaterThan(2);
+      expect(guide.howISeeIt.length).toBeGreaterThan(30);
+    }
   });
 });

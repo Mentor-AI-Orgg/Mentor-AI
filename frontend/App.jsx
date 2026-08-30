@@ -11,7 +11,8 @@ import AuthScreen from './components/AuthScreen.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
 import RegisterScreen from './components/RegisterScreen.jsx';
 import OnboardingScreen from './components/OnboardingScreen.jsx';
-import { ProfessorScreen, LearnScreen } from './components/StudyScreens.jsx';
+import { ProfessorScreen } from './components/StudyScreens.jsx';
+import LearnScreen from './screens/LearnScreen.jsx';
 import ShopScreen from './components/ShopScreen.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
 import SubscriptionsScreen from './screens/SubscriptionsScreen.jsx';
@@ -47,6 +48,7 @@ function AppShell({ userData, setUserData }) {
   const [toast, setToast] = useState(null);
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [onboardingData, setOnboardingData] = useState({});
+  const [studyFocus, setStudyFocus] = useState({ subject: null, grade: null, chapter: null });
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
@@ -201,7 +203,6 @@ function AppShell({ userData, setUserData }) {
       phone: formData.phone,
       school: formData.school,
       class: formData.class || '5',
-      subject: formData.subject || 'matematica',
       parentEmail: formData.parentEmail || '',
       parental_consent: Boolean(formData.parentalConsent),
       privacy_accepted: Boolean(formData.privacyAccepted)
@@ -222,8 +223,6 @@ function AppShell({ userData, setUserData }) {
       username: formData.username || '',
       school: formData.school || '',
       class: formData.class || '5',
-      subject: formData.subject || 'matematica',
-      profile: formData.subject || 'matematica',
       role: 'student',
       parentEmail: formData.parentEmail || '',
       isLoggedIn: true
@@ -253,21 +252,10 @@ function AppShell({ userData, setUserData }) {
         { icon: 'fa-compass', label: t('onboarding.step2.grade7'), value: '7' },
         { icon: 'fa-flag-checkered', label: t('onboarding.step2.grade8'), value: '8' }
       ],
-      progress: 40
+      progress: 50
     },
     {
       step: 3,
-      title: t('onboarding.step3.title'),
-      desc: t('onboarding.step3.desc'),
-      inputKey: 'subject',
-      options: [
-        { icon: 'fa-square-root-alt', label: t('onboarding.step3.matematica'), value: 'matematica' },
-        { icon: 'fa-book', label: t('onboarding.step3.romana'), value: 'romana' }
-      ],
-      progress: 60
-    },
-    {
-      step: 4,
       title: t('onboarding.step4.title'),
       desc: t('onboarding.step4.desc'),
       inputKey: 'exam',
@@ -275,10 +263,10 @@ function AppShell({ userData, setUserData }) {
         { icon: 'fa-book-open', label: t('onboarding.step4.daily'), value: 'daily' },
         { icon: 'fa-clipboard-check', label: t('onboarding.step4.evaluare'), value: 'evaluare' }
       ],
-      progress: 80
+      progress: 75
     },
     {
-      step: 5,
+      step: 4,
       title: t('onboarding.step5.title'),
       desc: t('onboarding.step5.desc'),
       inputKey: 'dailyHours',
@@ -297,8 +285,6 @@ function AppShell({ userData, setUserData }) {
     if (onboardingStep >= onboardingSteps.length) {
       const payload = {
         ...onboardingData,
-        profile: onboardingData.subject || onboardingData.profile || 'matematica',
-        subject: onboardingData.subject || 'matematica',
         hasCompletedOnboarding: true
       };
       await MentorAPI.updateProfile(payload);
@@ -319,7 +305,12 @@ function AppShell({ userData, setUserData }) {
     }
   };
 
-  const handleNavigate = target => {
+  const handleNavigate = (target, extras = {}) => {
+    setStudyFocus(prev => ({
+      subject: extras.subject || prev.subject,
+      grade: extras.grade || prev.grade,
+      chapter: extras.chapter || null
+    }));
     setNavScreen(target);
     setScreen(target);
   };
@@ -375,10 +366,10 @@ function AppShell({ userData, setUserData }) {
       case 'onboarding':
         return currentOnboarding.step === 1 ? (
           <main className="onboarding-page animate-fadeIn">
-            <div className="onboarding-topline"><span>{t('onboarding.setup')}</span><span>01 / 05</span></div>
+            <div className="onboarding-topline"><span>{t('onboarding.setup')}</span><span>01 / 04</span></div>
             <div className="onboarding-progress"><div style={{ width: currentOnboarding.progress + '%' }}></div></div>
             <div className="onboarding-copy">
-              <div className="eyebrow">{t('onboarding.stepOf', { step: 1, total: 5 })}</div>
+              <div className="eyebrow">{t('onboarding.stepOf', { step: 1, total: 4 })}</div>
               <h1 className="display-font onboarding-title">{currentOnboarding.title}</h1>
               <p className="form-subtitle">{currentOnboarding.desc}</p>
             </div>
@@ -426,9 +417,9 @@ function AppShell({ userData, setUserData }) {
       case 'home':
         return <HomeScreen userData={userData} onNavigate={handleNavigate} />;
       case 'professor':
-        return <ProfessorScreen userData={userData} />;
+        return <ProfessorScreen userData={userData} studyFocus={studyFocus} />;
       case 'learn':
-        return <LearnScreen userData={userData} onRewardClaim={data => handleEconomyUpdate(data?.balance, data?.equipped || {}, data?.role)} />;
+        return <LearnScreen userData={userData} studyFocus={studyFocus} onNavigate={handleNavigate} onRewardClaim={data => handleEconomyUpdate(data?.balance, data?.equipped || {}, data?.role)} />;
       case 'shop':
         return <ShopScreen userData={userData} onBack={() => handleNavigate('home')} onCoinsChange={handleEconomyUpdate} onAppearanceChange={handleAppearanceChange} onRewardToast={showToast} />;
       case 'calendar':

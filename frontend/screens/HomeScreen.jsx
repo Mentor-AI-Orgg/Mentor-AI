@@ -13,7 +13,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
         <div>
           <div className="eyebrow">{dateLabel}</div>
           <h1 className="display-font home-title">{t('home.hello', { name: userData.name || t('home.studentFallback') })}</h1>
-          <p className="home-role-tag">{t('home.roleStudent')} · {t('home.gradeSubject', { grade: userData.class || '5', subject: userData.subject === 'romana' ? t('onboarding.step3.romana') : t('onboarding.step3.matematica') })}</p>
+          <p className="home-role-tag">{t('home.roleStudent')} · {t('home.gradeOnly', { grade: userData.class || '5' })}</p>
         </div>
         <button onClick={() => onNavigate('profile')} className="home-avatar" aria-label={t('home.openProfile')}>{(userData.name || 'E').charAt(0).toUpperCase()}</button>
       </header>
@@ -48,9 +48,9 @@ const HomeScreen = ({ userData, onNavigate }) => {
           </div>
         </div>
         <div className="quick-grid">
-          <button onClick={() => onNavigate('learn')} className="quick-card quick-aqua"><i className="fas fa-book-open" /><span>{t('home.learnNew')}</span><small>{t('home.learnHint')}</small></button>
+          <button onClick={() => onNavigate('learn', { subject: 'romana', grade: userData.class || '5' })} className="quick-card quick-aqua"><i className="fas fa-book" /><span>{t('onboarding.step3.romana')}</span><small>{t('home.learnHint')}</small></button>
+          <button onClick={() => onNavigate('learn', { subject: 'matematica', grade: userData.class || '5' })} className="quick-card quick-gold"><i className="fas fa-square-root-alt" /><span>{t('onboarding.step3.matematica')}</span><small>{t('home.learnHint')}</small></button>
           <button onClick={() => onNavigate('calendar')} className="quick-card quick-coral"><i className="fas fa-calendar-check" /><span>{t('home.planRhythm')}</span><small>{t('home.seeCalendar')}</small></button>
-          <button onClick={() => onNavigate('shop')} className="quick-card quick-gold"><i className="fas fa-store" /><span>{t('nav.shop')}</span><small>{t('home.shopHint')}</small></button>
         </div>
       </section>
     </main>

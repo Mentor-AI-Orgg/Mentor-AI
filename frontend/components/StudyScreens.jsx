@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
-import FocusTimer from './FocusTimer.jsx';
-import FlashCards from './FlashCards.jsx';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
 
 const makeConversationId = prefix => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
@@ -17,15 +15,28 @@ const chatRequest = async ({ message, conversationId, subject, classLevel, langu
 const MessageBubble = ({ role, children }) => <div className={`mentor-message ${role === 'user' ? 'mentor-message-user' : 'mentor-message-ai'}`}><span className="mentor-message-role">{role === 'user' ? 'Tu' : 'Mentor AI'}</span><div>{children}</div></div>;
 const LoadingMessage = () => <div className="mentor-message mentor-message-ai"><span className="mentor-message-role">Mentor AI</span><div className="loading-dots"><i /><i /><i /></div></div>;
 
-const ProfessorScreen = ({ userData }) => {
+const ProfessorScreen = ({ userData, studyFocus = {} }) => {
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(false);
   const [diagMode, setDiagMode] = useState(false);
-  const [subject, setSubject] = useState(normalizeSubject(userData.subject || userData.profile));
-  const [grade, setGrade] = useState(normalizeGrade(userData.class));
+  const [subject, setSubject] = useState(normalizeSubject(studyFocus.subject || userData.subject || userData.profile || 'matematica'));
+  const [grade, setGrade] = useState(normalizeGrade(studyFocus.grade || userData.class));
   const conversationId = useRef(makeConversationId('mentor'));
   const classLevel = grade;
+
+  useEffect(() => {
+    if (studyFocus.subject) setSubject(normalizeSubject(studyFocus.subject));
+    if (studyFocus.grade) setGrade(normalizeGrade(studyFocus.grade));
+  }, [studyFocus.subject, studyFocus.grade]);
+
+  useEffect(() => {
+    conversationId.current = makeConversationId('mentor');
+    setMessages([]);
+    if (studyFocus.chapter?.title) {
+      setDraft(`Ajută-mă la capitolul „${studyFocus.chapter.title}”. ${studyFocus.chapter.inOwnWords || ''}`.trim());
+    }
+  }, [subject, grade, studyFocus.chapter]);
 
   const formatDiagnostics = checks => {
     const icon = status => (status === 'ok' ? '✅' : '❌');
@@ -67,18 +78,26 @@ const ProfessorScreen = ({ userData }) => {
   };
 
   return <main className="screen-page mentor-page animate-fadeIn">
-    <header className="screen-header"><div><div className="eyebrow">MENTOR DE GIMNAZIU</div><h1 className="display-font screen-title">Română și matematică, pe înțelesul tău.</h1>
-      <div className="mentor-context-row">
-        <label>Clasa
-          <select value={String(grade)} onChange={event => setGrade(Number(event.target.value))}>
-            {GRADES.map(item => <option key={item} value={item}>{gradeLabel(item)}</option>)}
-          </select>
-        </label>
-        <label>Materia
-          <select value={subject} onChange={event => setSubject(event.target.value)}>
-            {SUBJECTS.map(item => <option key={item.id} value={item.id}>{item.labelRo}</option>)}
-          </select>
-        </label>
+    <header className="screen-header"><div><div className="eyebrow">MENTOR DE GIMNAZIU</div><h1 className="display-font screen-title">Alege materia, apoi întreabă.</h1>
+      <p className="screen-subtitle">Nu există materie principală. La fiecare conversație alegi română sau matematică și clasa.</p>
+      <div className="mentor-subject-picks" role="group" aria-label="Materia">
+        {SUBJECTS.map(item => (
+          <button
+            key={item.id}
+            type="button"
+            className={`mentor-subject-chip ${subject === item.id ? 'selected' : ''}`}
+            onClick={() => setSubject(item.id)}
+          >
+            <i className={`fas ${item.icon}`} /> {item.labelRo}
+          </button>
+        ))}
+      </div>
+      <div className="grade-chip-row mentor-grade-row" aria-label="Clasa">
+        {GRADES.map(item => (
+          <button key={item} type="button" className={`grade-chip ${grade === item ? 'selected' : ''}`} onClick={() => setGrade(item)}>
+            {gradeLabel(item)}
+          </button>
+        ))}
       </div>
     </div>
       <div className="mentor-header-actions">
@@ -101,231 +120,5 @@ const ProfessorScreen = ({ userData }) => {
   </main>;
 };
 
-const parseSessionPlan = text => {
-  const lines = (text || '').split(/\n+/).map(line => line.trim()).filter(Boolean);
-  const fallback = {
-    objective: lines[0] || 'Făc un pas mic, clar și memorabil.',
-    warmup: 'Notează 2 lucruri pe care le știi deja despre subiect.',
-    exercise: 'Rezolvă primul exemplu într-un mod simplu, pas cu pas.',
-    check: 'Verifică dacă ai răspuns la întrebarea principală.',
-    bonus: 'Repetă ideea într-o propoziție scurtă, cu cuvintele tale.'
-  };
 
-  const plan = { ...fallback };
-  let current = null;
-
-  lines.forEach(line => {
-    const normalized = line.toLowerCase();
-    if (normalized.startsWith('obiectiv')) {
-      plan.objective = line.replace(/^obiectiv\s*[:-]?\s*/i, '');
-      current = 'objective';
-      return;
-    }
-    if (normalized.startsWith('încălzire') || normalized.startsWith('incalzire')) {
-      plan.warmup = line.replace(/^încălzire\s*[:-]?\s*/i, '').replace(/^incalzire\s*[:-]?\s*/i, '');
-      current = 'warmup';
-      return;
-    }
-    if (normalized.startsWith('exercițiu') || normalized.startsWith('exercitiu')) {
-      plan.exercise = line.replace(/^exercițiu\s*[:-]?\s*/i, '').replace(/^exercitiu\s*[:-]?\s*/i, '');
-      current = 'exercise';
-      return;
-    }
-    if (normalized.startsWith('verificare')) {
-      plan.check = line.replace(/^verificare\s*[:-]?\s*/i, '');
-      current = 'check';
-      return;
-    }
-    if (normalized.startsWith('bonus')) {
-      plan.bonus = line.replace(/^bonus\s*[:-]?\s*/i, '');
-      current = 'bonus';
-      return;
-    }
-    if (current === 'objective' && !plan.objective) {
-      plan.objective = line;
-    }
-    if (current === 'warmup' && !plan.warmup) {
-      plan.warmup = line;
-    }
-    if (current === 'exercise' && !plan.exercise) {
-      plan.exercise = line;
-    }
-    if (current === 'check' && !plan.check) {
-      plan.check = line;
-    }
-    if (current === 'bonus' && !plan.bonus) {
-      plan.bonus = line;
-    }
-  });
-
-  return plan;
-};
-
-const LearnScreen = ({ userData, onRewardClaim }) => {
-  const [selected, setSelected] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [session, setSession] = useState(null);
-  const [saved, setSaved] = useState(false);
-  const [detectText, setDetectText] = useState('');
-  const [detectLoading, setDetectLoading] = useState(false);
-  const [detectResult, setDetectResult] = useState(null);
-  const [guide, setGuide] = useState(null);
-  const subject = normalizeSubject(userData.subject || userData.profile);
-  const grade = normalizeGrade(userData.class);
-
-  useEffect(() => {
-    let cancelled = false;
-    MentorAPI.getCurriculum({ subject, class_level: grade }).then(result => {
-      if (!cancelled && result.success) setGuide(result.data);
-    });
-    return () => { cancelled = true; };
-  }, [subject, grade]);
-
-  const sourceUnits = guide?.units?.length
-    ? guide.units
-    : [{ id: 'start', title: subject === 'romana' ? 'Un text pe înțelesul tău' : 'O problemă în pași mici', inOwnWords: 'Începe cu ce știi, apoi un exemplu cotidian.' }];
-  const modules = sourceUnits.map((unit, index) => ({
-    id: unit.id,
-    icon: subject === 'romana' ? 'fa-book-open' : 'fa-square-root-variable',
-    title: unit.title,
-    meta: `${gradeLabel(grade)} · ${subjectLabel(subject)}`,
-    color: ['module-violet', 'module-cyan', 'module-pink'][index % 3],
-    prompt: `Creează o sesiune de 5 minute despre: ${unit.title}. Cum o înțeleg eu: ${unit.inOwnWords}. Include obiectiv, încălzire, exercițiu, verificare și bonus. Nu da rezolvarea gata.`
-  }));
-
-  const start = async module => {
-    setSelected(module.id);
-    setLoading(true);
-    setSaved(false);
-    setSession(null);
-
-    const reply = await chatRequest({
-      message: module.prompt,
-      conversationId: makeConversationId('learn'),
-      subject,
-      classLevel: grade,
-      language: userData.language || 'ro',
-      planId: userData.planId || 'free',
-      mockReply: `Obiectiv: înțelegi ${module.title.toLowerCase()} în pași simpli. Încălzire: notează 2 lucruri pe care le știi deja. Exercițiu: rezolvă un exemplu scurt și încadrează răspunsul în 3 etape. Verificare: spune cu voce tare ce ai făcut. Bonus: repetă ideea principală într-o propoziție.`
-    });
-
-    const plan = parseSessionPlan(reply.response || '');
-    setSession({ title: module.title, meta: module.meta, ...plan, raw: reply.response || '', mocked: !!reply.mocked, engine: reply.engine_used || '' });
-    setLoading(false);
-    if (MentorAPI.logActivity) {
-      MentorAPI.logActivity({ user_id: userData.email || 'demo_user', type: 'learn_module', note: module.title, meta: { moduleId: module.id, title: module.title } });
-    }
-  };
-
-  const runDetector = async () => {
-    if (!detectText.trim() || detectLoading) return;
-    setDetectLoading(true);
-    const result = await MentorAPI.detect({ text: detectText.trim() });
-    if (result.success) {
-      setDetectResult(result.data);
-      if (MentorAPI.logActivity) {
-        MentorAPI.logActivity({ user_id: userData.email || 'demo_user', type: 'ai_detect', note: detectText.trim().slice(0, 120), meta: { ai_probability: result.data.ai_probability || 0, verdict: result.data.verdict || '' } });
-      }
-    } else {
-      setDetectResult({ verdict: 'Detector indisponibil', ai_probability: 0 });
-    }
-    setDetectLoading(false);
-  };
-
-  const focusMinutes = userData.dailyHours ? `${Math.max(30, Number(userData.dailyHours) * 30)} min` : '30 min';
-
-  return <main className="screen-page learn-page animate-fadeIn">
-    <header className="screen-header">
-      <div className="learn-hero">
-        <div className="eyebrow">LABORATORUL TĂU</div>
-        <h1 className="display-font screen-title">Învață ceva care rămâne.</h1>
-        <p className="screen-subtitle">{guide?.howISeeIt || 'Sesiuni scurte de română și matematică, pe programa de gimnaziu.'}</p>
-      </div>
-      <div className="learn-hero-stats">
-        <span className="learn-chip"><i className="fas fa-fire" /> streak {userData.streak || 0}</span>
-        <span className="learn-chip"><i className="fas fa-clock" /> focus {focusMinutes}</span>
-      </div>
-    </header>
-
-    <section className="learn-dashboard surface">
-      <div className="learn-dashboard-copy">
-        <div className="eyebrow">Astăzi</div>
-        <h2 className="display-font">Un pas mic, dar cu sens.</h2>
-        <p>Începe cu un modul, urmărește obiectivul și încheie cu o verificare rapidă pentru a păstra ritmul.</p>
-      </div>
-      <div className="learn-metrics">
-        <div className="learn-metric"><span>Ritmul</span><strong>+{userData.score || 0}%</strong></div>
-        <div className="learn-metric"><span>Memorie</span><strong>{Math.max(3, userData.streak || 3)} zile</strong></div>
-        <div className="learn-metric"><span>Durată</span><strong>5–8 min</strong></div>
-      </div>
-    </section>
-
-    <section className="module-grid">
-      {modules.map(module => <button key={module.id} type="button" className={`module-card ${module.color} ${selected === module.id ? 'selected' : ''}`} onClick={() => start(module)}>
-        <span className="module-icon"><i className={`fas ${module.icon}`} /></span>
-        <span className="module-copy">
-          <strong>{module.title}</strong>
-          <small>{module.meta}</small>
-        </span>
-        <i className="fas fa-arrow-up-right-from-square module-arrow" />
-      </button>)}
-    </section>
-
-    {selected && <section className="learning-result surface" aria-busy={loading}>
-      {loading ? <>
-        <div className="skeleton skeleton-line medium" />
-        <div className="skeleton skeleton-line long" />
-        <div className="skeleton skeleton-line long" />
-      </> : session ? <>
-        <div className="eyebrow">SESIUNEA TA</div>
-        <h3 className="display-font learning-result-title">{session.title}</h3>
-        {session.mocked && <p className="mock-banner session-mock-note">Sesiune demo{session.engine ? ` · ${session.engine}` : ''} — nu este generată de un model real.</p>}
-        <div className="learning-steps">
-          <article className="learn-step"><span>Obiectiv</span><p>{session.objective}</p></article>
-          <article className="learn-step"><span>Încălzire</span><p>{session.warmup}</p></article>
-          <article className="learn-step"><span>Exercițiu</span><p>{session.exercise}</p></article>
-          <article className="learn-step"><span>Verificare</span><p>{session.check}</p></article>
-          <article className="learn-step"><span>Bonus</span><p>{session.bonus}</p></article>
-        </div>
-        <div className="learning-actions">
-          <button type="button" className="ghost-button result-action" onClick={() => setSaved(true)}>{saved ? 'Salvat în lista ta' : 'Salvează pentru mai târziu'} <i className="fas fa-bookmark" /></button>
-          <button type="button" className="accent-button result-action" onClick={() => start(modules.find(item => item.id === selected))}>Generează din nou</button>
-        </div>
-      </> : <><div className="eyebrow">SESIUNEA TA</div><p>Pregătim acum un plan de lucru clar și eficient.</p></>}
-    </section>}
-
-    <section className="surface learn-detector-card">
-      <div className="section-heading">
-        <div>
-          <div className="eyebrow">Detector demo</div>
-          <h2 className="display-font">Un scor euristic, nu un verdict.</h2>
-        </div>
-      </div>
-      <p className="detector-demo-note">Folosește lungimea cuvintelor și termeni academici, plus un jitter aleator. Nu este un detector real de conținut AI.</p>
-      <textarea
-        className="learn-detector-input"
-        rows="5"
-        value={detectText}
-        onChange={e => setDetectText(e.target.value)}
-        placeholder="Lipește un text aici pentru scorul demonstrativ..."
-      />
-      <div className="learning-actions">
-        <button type="button" className="accent-button result-action" onClick={runDetector} disabled={detectLoading || !detectText.trim()}>{detectLoading ? 'Analizez...' : 'Rulează demonstrația'}</button>
-      </div>
-      {detectResult && (
-        <div className="learn-detector-result">
-          <strong>{detectResult.verdict || 'Rezultat demonstrativ'}</strong>
-          <span>Scor demonstrativ: {Number(detectResult.ai_probability || 0).toFixed(0)}% · nu este o probă</span>
-          {detectResult.disclaimer && <small>{detectResult.disclaimer}</small>}
-        </div>
-      )}
-    </section>
-
-    <div className="learn-tools-grid">
-      <FocusTimer userData={userData} onRewardClaim={onRewardClaim} />
-      <FlashCards userData={userData} presetTopics={modules.map(m => m.title)} onRewardClaim={onRewardClaim} />
-    </div>
-  </main>;
-};
-
-export { ProfessorScreen, LearnScreen };
+export { ProfessorScreen };

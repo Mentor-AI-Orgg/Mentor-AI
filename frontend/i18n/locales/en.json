@@ -54,7 +54,7 @@
   "nav": {
     "home": "Home",
     "professor": "Mentor",
-    "learn": "Learn",
+    "learn": "Lessons",
     "shop": "Shop",
     "calendar": "Calendar",
     "subscriptions": "Plans",
@@ -66,7 +66,8 @@
   "home": {
     "hello": "Hi, {name}.",
     "studentFallback": "Student",
-    "gradeSubject": "Grade {grade} · {subject}",
+    "gradeSubject": "Grade {grade}",
+    "gradeOnly": "Grade {grade}",
     "roleStudent": "Student account",
     "roleParent": "Parent account",
     "roleTeacher": "Teacher account",
@@ -86,8 +87,8 @@
     "toSpend": "to spend",
     "quickEyebrow": "Quick access",
     "quickTitle": "What do we do today?",
-    "learnNew": "Learn something new",
-    "learnHint": "Adaptive modules",
+    "learnNew": "Middle-school chapters",
+    "learnHint": "Romanian and maths, grades 5–8",
     "planRhythm": "Plan your rhythm",
     "seeCalendar": "See the calendar",
     "shopHint": "Daily free & items"
