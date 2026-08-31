@@ -33,9 +33,9 @@ const BY_CHAPTER = {
       (rand) => { const n = int(rand, 21, 98); const even = n % 2 === 0; return flash('div2', `Numărul ${n} se împarte exact la 2?`, [even ? 'Da, ultima cifră e pară' : 'Nu, ultima cifră e impară', even ? 'Nu, e impar' : 'Da, orice număr de 2 cifre', 'Doar dacă se termină cu 5', 'Doar dacă suma cifrelor e 9'], even ? 'Par = 0, 2, 4, 6 sau 8 la final.' : 'Imparul nu se împarte exact la 2.', 3); },
       (rand) => { const n = pick(rand, [15, 20, 24, 35, 42, 50]); const ok = n % 5 === 0; return flash('div5', `${n} se împarte exact la 5?`, [ok ? 'Da, se termină cu 0 sau 5' : 'Nu, ultima cifră nu e 0 sau 5', 'Da, e impar', 'Doar dacă e prim', 'Doar dacă e par'], 'Criteriul lui 5: ultima cifră 0 sau 5.', 4); },
       (rand) => { const p = pick(rand, [11, 13, 17, 19, 23, 29]); return flash('prime', `${p} e prim pentru că…`, ['are exact doi divizori: 1 și el', 'se împarte la 3', 'e par', 'are mulți divizori'], 'Prim = doar 1 și el însuși.', 5); },
-      (rand) => flash('paranteze', 'În 3 + 4 × 2, întâi…', ['înmulțești 4 × 2', 'aduni 3 + 4', 'faci 3 × 2', 'scazi 4'], 'Înmulțirea bate adunarea, dacă nu sunt paranteze.', 6),
-      (rand) => flash('cmmdc', 'c.m.m.d.c. a două numere e…', ['cel mai mare număr care le împarte pe amândouă', 'cel mai mic multiplu comun', 'suma lor', 'produsul lor'], 'Cel mai mare „prieten” la împărțire.', 7),
-      (rand) => flash('cmmmc', 'c.m.m.m.c. e…', ['cel mai mic număr care se împarte la amândouă', 'cel mai mare divizor', 'diferența lor', 'un număr prim'], 'Prima stație comună pe axa multiplilor.', 8)
+      () => flash('paranteze', 'În 3 + 4 × 2, întâi…', ['înmulțești 4 × 2', 'aduni 3 + 4', 'faci 3 × 2', 'scazi 4'], 'Înmulțirea bate adunarea, dacă nu sunt paranteze.', 6),
+      () => flash('cmmdc', 'c.m.m.d.c. a două numere e…', ['cel mai mare număr care le împarte pe amândouă', 'cel mai mic multiplu comun', 'suma lor', 'produsul lor'], 'Cel mai mare „prieten” la împărțire.', 7),
+      () => flash('cmmmc', 'c.m.m.m.c. e…', ['cel mai mic număr care se împarte la amândouă', 'cel mai mare divizor', 'diferența lor', 'un număr prim'], 'Prima stație comună pe axa multiplilor.', 8)
     ],
     tests: [
       (rand, lv) => { const a = int(rand, 2, 9); const b = int(rand, 2, 9); return test('adunare', `Calculează ${a} + ${b}. Doar rezultatul.`, a + b, [`${a} + ${b} = ${a + b}`], { level: lv }); },
@@ -49,14 +49,14 @@ const BY_CHAPTER = {
   },
   fractii: {
     flashes: [
-      (rand) => flash('parte', 'O fracție arată…', ['câte părți egale luăm dintr-un întreg', 'doar un număr mic', 'o temperatură', 'un unghi'], 'Numitorul taie; numărătorul spune câte felii.', 1),
+      () => flash('parte', 'O fracție arată…', ['câte părți egale luăm dintr-un întreg', 'doar un număr mic', 'o temperatură', 'un unghi'], 'Numitorul taie; numărătorul spune câte felii.', 1),
       (rand) => { const k = int(rand, 2, 7); return flash('amplif', `Amplifici 1/${k} cu 2. Ce obții?`, [`2/${k * 2}`, `1/${k * 2}`, `${k}/2`, `2/${k}`], `Înmulțești sus și jos cu 2: 2/${k * 2}.`, 2); },
       (rand) => { const k = int(rand, 2, 5); return flash('simplif', `Fracția ${2 * k}/${4 * k} se simplifică la…`, ['1/2', '2/4', `${k}/${2 * k}`, '1/4'], `Împarți sus și jos cu ${2 * k}.`, 3); },
       (rand) => { const p = pick(rand, [10, 20, 25, 50]); return flash('procent', `${p}% înseamnă…`, [`${p}/100`, `${p}/10`, `${100 - p}/100`, `${p * 2}/100`], 'Procentul e o sutime.', 4); },
-      (rand) => flash('numitor', 'Ca să aduni 1/3 cu 1/6 trebuie…', ['același numitor', 'același numărător', 'să le înmulțești', 'să le faci zecimale obligatoriu'], 'Părțile trebuie să fie de aceeași mărime.', 5),
-      (rand) => flash('zecimal', '0,5 e aceeași idee cu…', ['1/2', '5/1', '1/5', '2/5'], 'Virgula e altă scriere a fracției.', 6),
-      (rand) => flash('media', 'Media a două note e…', ['suma împărțită la 2', 'produsul lor', 'nota cea mare', 'diferența'], 'Aduni, apoi împarți la câți termeni ai.', 7),
-      (rand) => flash('parte-din', '1/4 din 20 e…', ['5', '4', '16', '24'], 'Împarți 20 la 4.', 8)
+      () => flash('numitor', 'Ca să aduni 1/3 cu 1/6 trebuie…', ['același numitor', 'același numărător', 'să le înmulțești', 'să le faci zecimale obligatoriu'], 'Părțile trebuie să fie de aceeași mărime.', 5),
+      () => flash('zecimal', '0,5 e aceeași idee cu…', ['1/2', '5/1', '1/5', '2/5'], 'Virgula e altă scriere a fracției.', 6),
+      () => flash('media', 'Media a două note e…', ['suma împărțită la 2', 'produsul lor', 'nota cea mare', 'diferența'], 'Aduni, apoi împarți la câți termeni ai.', 7),
+      () => flash('parte-din', '1/4 din 20 e…', ['5', '4', '16', '24'], 'Împarți 20 la 4.', 8)
     ],
     tests: [
       (rand, lv) => { const n = pick(rand, [8, 10, 12, 16, 20]); return test('parte', `Cât este 1/2 din ${n}?`, n / 2, [`${n} : 2 = ${n / 2}`], { level: lv }); },
@@ -70,14 +70,14 @@ const BY_CHAPTER = {
   },
   geometrie: {
     flashes: [
-      (rand) => flash('unghi', 'Un unghi drept măsoară…', ['90 de grade', '45 de grade', '180 de grade', '360 de grade'], 'Colțul pătratului.', 1),
-      (rand) => flash('ascutit', 'Un unghi ascuțit e…', ['mai mic decât 90°', 'exact 90°', 'mai mare decât 90°', 'doar 0°'], 'Ascuțit = îngust, sub un drept.', 2),
+      () => flash('unghi', 'Un unghi drept măsoară…', ['90 de grade', '45 de grade', '180 de grade', '360 de grade'], 'Colțul pătratului.', 1),
+      () => flash('ascutit', 'Un unghi ascuțit e…', ['mai mic decât 90°', 'exact 90°', 'mai mare decât 90°', 'doar 0°'], 'Ascuțit = îngust, sub un drept.', 2),
       (rand) => { const a = int(rand, 3, 9); return flash('arie-patrat', `Aria pătratului de latură ${a} cm e…`, uniqueOptions(rand, `${a * a} cm²`, [`${4 * a} cm²`, `${2 * a} cm²`, `${a + a} cm²`]), `latura × latura = ${a * a}.`, 3); },
       (rand) => { const L = int(rand, 4, 12); const l = int(rand, 3, 8); const p = 2 * (L + l); return flash('perimetru', `Perimetrul unui dreptunghi ${L} cm × ${l} cm e…`, uniqueOptions(rand, `${p} cm`, [`${L * l} cm`, `${L + l} cm`, `${2 * L} cm`]), `2 × (${L}+${l}) = ${p}.`, 4); },
       (rand) => { const L = int(rand, 5, 10); const l = int(rand, 3, 7); return flash('arie-drep', `Aria dreptunghiului ${L}×${l} e…`, uniqueOptions(rand, L * l, [2 * (L + l), L + l, L * 2]), `lungime × lățime = ${L * l}.`, 5); },
-      (rand) => flash('volum-cub', 'Volumul cubului e…', ['latură × latură × latură', '4 × latură', 'suma muchiilor', 'doar o față'], 'Câte cubulețe umplu cutia.', 6),
-      (rand) => flash('unitati', 'Când treci de la metri la centimetri…', ['înmulțești cu 100', 'împarți cu 100', 'aduni 100', 'nu schimbi nimic'], '1 m = 100 cm.', 7),
-      (rand) => flash('alungit', 'Un unghi alungit măsoară…', ['180°', '90°', '360°', '45°'], 'O linie dreaptă, văzută ca unghi.', 8)
+      () => flash('volum-cub', 'Volumul cubului e…', ['latură × latură × latură', '4 × latură', 'suma muchiilor', 'doar o față'], 'Câte cubulețe umplu cutia.', 6),
+      () => flash('unitati', 'Când treci de la metri la centimetri…', ['înmulțești cu 100', 'împarți cu 100', 'aduni 100', 'nu schimbi nimic'], '1 m = 100 cm.', 7),
+      () => flash('alungit', 'Un unghi alungit măsoară…', ['180°', '90°', '360°', '45°'], 'O linie dreaptă, văzută ca unghi.', 8)
     ],
     tests: [
       (rand, lv) => test('unghi', 'Câte grade are un unghi drept?', 90, ['Unghi drept = 90°'], { level: lv }),
@@ -91,14 +91,14 @@ const BY_CHAPTER = {
   },
   multimi: {
     flashes: [
-      (rand) => flash('apartine', '„x aparține mulțimii A” înseamnă…', ['x e un element din A', 'A e mai mare decât x', 'x e în afara lui A', 'A e vidă'], '∈ spune „face parte din”.', 1),
-      (rand) => flash('reuniune', 'Reuniunea conține…', ['tot din cel puțin una, fără dubluri', 'doar elementele comune', 'doar ce lipsește', 'numerele impare'], 'Strângi tot, o dată.', 2),
-      (rand) => flash('intersectie', 'Intersecția a două mulțimi conține…', ['doar elementele comune', 'tot din amândouă', 'doar ce lipsește', 'numerele pare'], 'Doar oaspeții de la ambele petreceri.', 3),
-      (rand) => flash('factori', 'Descompunerea în factori primi…', ['scrii numărul ca produs de prime', 'aduni cifrele', 'îl faci par', 'îl rotunjești'], '12 = 2 × 2 × 3.', 4),
-      (rand) => flash('cmmdc', 'c.m.m.d.c. e…', ['cel mai mare număr care împarte pe amândoi', 'cel mai mic multiplu comun', 'suma lor', 'produsul lor'], 'Cel mai mare prieten la împărțire.', 5),
-      (rand) => flash('cmmmc', 'c.m.m.m.c. e…', ['cel mai mic număr care se împarte la amândoi', 'cel mai mare divizor', 'diferența lor', 'un număr prim'], 'Prima stație comună.', 6),
-      (rand) => flash('vida', 'Mulțimea vidă…', ['nu are niciun element', 'are un zero', 'e infinită', 'e {0}'], 'Simbol: ∅. Zero e un element; vida e goală.', 7),
-      (rand) => flash('cardinal', '|A| înseamnă…', ['câte elemente distincte are A', 'cel mai mare element', 'suma elementelor', 'un unghi'], 'Cardinalul e numărul de oaspeți, nu numele lor.', 8)
+      () => flash('apartine', '„x aparține mulțimii A” înseamnă…', ['x e un element din A', 'A e mai mare decât x', 'x e în afara lui A', 'A e vidă'], '∈ spune „face parte din”.', 1),
+      () => flash('reuniune', 'Reuniunea conține…', ['tot din cel puțin una, fără dubluri', 'doar elementele comune', 'doar ce lipsește', 'numerele impare'], 'Strângi tot, o dată.', 2),
+      () => flash('intersectie', 'Intersecția a două mulțimi conține…', ['doar elementele comune', 'tot din amândouă', 'doar ce lipsește', 'numerele pare'], 'Doar oaspeții de la ambele petreceri.', 3),
+      () => flash('factori', 'Descompunerea în factori primi…', ['scrii numărul ca produs de prime', 'aduni cifrele', 'îl faci par', 'îl rotunjești'], '12 = 2 × 2 × 3.', 4),
+      () => flash('cmmdc', 'c.m.m.d.c. e…', ['cel mai mare număr care împarte pe amândoi', 'cel mai mic multiplu comun', 'suma lor', 'produsul lor'], 'Cel mai mare prieten la împărțire.', 5),
+      () => flash('cmmmc', 'c.m.m.m.c. e…', ['cel mai mic număr care se împarte la amândoi', 'cel mai mare divizor', 'diferența lor', 'un număr prim'], 'Prima stație comună.', 6),
+      () => flash('vida', 'Mulțimea vidă…', ['nu are niciun element', 'are un zero', 'e infinită', 'e {0}'], 'Simbol: ∅. Zero e un element; vida e goală.', 7),
+      () => flash('cardinal', '|A| înseamnă…', ['câte elemente distincte are A', 'cel mai mare element', 'suma elementelor', 'un unghi'], 'Cardinalul e numărul de oaspeți, nu numele lor.', 8)
     ],
     tests: [
       (rand, lv) => { const n = int(rand, 3, 6); return test('cardinal', `Câte elemente are {${Array.from({ length: n }, (_, i) => 2 * i + 1).join(', ')}}?`, n, [`Sunt ${n} numere distincte`], { level: lv }); },
@@ -112,14 +112,14 @@ const BY_CHAPTER = {
   },
   proportii: {
     flashes: [
-      (rand) => flash('raport', 'Un raport compară…', ['două mărimi printr-o împărțire', 'doar unghiuri', 'doar mulțimi', 'trei numere obligatoriu'], '3:4 spune „cât dintr-una față de cealaltă”.', 1),
+      () => flash('raport', 'Un raport compară…', ['două mărimi printr-o împărțire', 'doar unghiuri', 'doar mulțimi', 'trei numere obligatoriu'], '3:4 spune „cât dintr-una față de cealaltă”.', 1),
       (rand) => { const a = int(rand, 2, 5); const b = a * int(rand, 2, 4); return flash('raport', `Raportul ${a}:${b} se simplifică la…`, [`1:${b / a}`, `${a}:${b}`, `${b}:${a}`, '1:1'], `Împarți ambele părți cu ${a}.`, 2); },
-      (rand) => flash('direct', 'Mărimi direct proporționale…', ['cresc sau scad împreună, în același ritm', 'una crește când cealaltă scade', 'nu se leagă', 'sunt mereu egale'], 'Dublu cantitate, dublu preț dacă prețul e fix.', 3),
-      (rand) => flash('invers', 'Mărimi invers proporționale…', ['una crește când cealaltă scade, produsul rămâne', 'cresc mereu împreună', 'sunt unghiuri', 'sunt fracții improprii'], 'Mai mulți lucrători, mai puțin timp.', 4),
-      (rand) => flash('regula3', 'Regula de trei e…', ['o proporție cu un loc gol', 'o înmulțire de trei numere oarecare', 'o teoremă de geometrie', 'o medie'], 'Trei valori știute, a patra se află.', 5),
-      (rand) => flash('procent6', 'Procentul, la rapoarte, e tot…', ['o parte din 100', 'un unghi', 'un prim', 'un volum'], 'Poți trece de la raport la procent.', 6),
-      (rand) => flash('scara', 'Scara 1:100 pe o hartă înseamnă…', ['1 cm pe hartă e 100 cm în realitate', 'harta e de 100 de ori mai mare', 'sunt 100 de orașe', 'e un procent de 1%'], 'Scara e un raport între desen și real.', 7),
-      (rand) => flash('regula3', 'Dacă 3 caiete = 18 lei, un caiet e…', ['6 lei', '15 lei', '21 lei', '9 lei'], 'Reduci la unitate: 18:3=6.', 8)
+      () => flash('direct', 'Mărimi direct proporționale…', ['cresc sau scad împreună, în același ritm', 'una crește când cealaltă scade', 'nu se leagă', 'sunt mereu egale'], 'Dublu cantitate, dublu preț dacă prețul e fix.', 3),
+      () => flash('invers', 'Mărimi invers proporționale…', ['una crește când cealaltă scade, produsul rămâne', 'cresc mereu împreună', 'sunt unghiuri', 'sunt fracții improprii'], 'Mai mulți lucrători, mai puțin timp.', 4),
+      () => flash('regula3', 'Regula de trei e…', ['o proporție cu un loc gol', 'o înmulțire de trei numere oarecare', 'o teoremă de geometrie', 'o medie'], 'Trei valori știute, a patra se află.', 5),
+      () => flash('procent6', 'Procentul, la rapoarte, e tot…', ['o parte din 100', 'un unghi', 'un prim', 'un volum'], 'Poți trece de la raport la procent.', 6),
+      () => flash('scara', 'Scara 1:100 pe o hartă înseamnă…', ['1 cm pe hartă e 100 cm în realitate', 'harta e de 100 de ori mai mare', 'sunt 100 de orașe', 'e un procent de 1%'], 'Scara e un raport între desen și real.', 7),
+      () => flash('regula3', 'Dacă 3 caiete = 18 lei, un caiet e…', ['6 lei', '15 lei', '21 lei', '9 lei'], 'Reduci la unitate: 18:3=6.', 8)
     ],
     tests: [
       (rand, lv) => { const n = int(rand, 2, 5); const unit = int(rand, 4, 9); return test('regula3', `${n} caiete costă ${n * unit} lei. Cât costă 1 caiet?`, unit, [`${n * unit} : ${n} = ${unit}`], { level: lv }); },
@@ -135,12 +135,12 @@ const BY_CHAPTER = {
     flashes: [
       (rand) => { const n = int(rand, 2, 9); return flash('opus', `Opusul lui ${n} este…`, uniqueOptions(rand, `-${n}`, [String(n), '0', String(n + 1)]), 'Opusul schimbă semnul; suma e 0.', 1); },
       (rand) => { const n = int(rand, 2, 9); return flash('modul', `|−${n}| este…`, uniqueOptions(rand, String(n), [`-${n}`, '0', String(n + 1)]), 'Modulul e distanța până la zero.', 2); },
-      (rand) => flash('semn', 'Minusul la întregi arată…', ['direcția pe axă, nu „un număr urât”', 'că e fracție', 'că e prim', 'că e volum'], '−3 e trei pași în stânga lui zero.', 3),
-      (rand) => flash('adunare', 'Când aduni un negativ, de fapt…', ['te muți spre stânga pe axă', 'înmulțești', 'ștergi semnul', 'faci o putere'], '5 + (−2) = 3.', 4),
-      (rand) => flash('rationale', 'Un număr rațional se poate scrie…', ['ca o fracție de întregi (numitor ≠ 0)', 'doar ca radical', 'doar ca procent', 'doar ca volum'], '−3/4, 0,7, 5 sunt raționale.', 5),
-      (rand) => flash('produs', '(−) × (+) dă…', ['minus', 'plus', 'zero', 'un unghi'], 'Semne diferite → rezultat negativ.', 6),
-      (rand) => flash('ecuatie', 'x + 5 = 12 întreabă…', ['ce număr plus 5 face 12', 'cât e 5 × 12', 'dacă 12 e prim', 'perimetrul'], 'Scazi 5 din ambele părți: x = 7.', 7),
-      (rand) => flash('verificare', 'După ce găsești x, ce faci?', ['Îl pui înapoi în enunț să vezi dacă iese', 'Îl ștergi', 'Îl înmulțești cu 10', 'Îl faci procent'], 'Verificarea e parte din treabă.', 8)
+      () => flash('semn', 'Minusul la întregi arată…', ['direcția pe axă, nu „un număr urât”', 'că e fracție', 'că e prim', 'că e volum'], '−3 e trei pași în stânga lui zero.', 3),
+      () => flash('adunare', 'Când aduni un negativ, de fapt…', ['te muți spre stânga pe axă', 'înmulțești', 'ștergi semnul', 'faci o putere'], '5 + (−2) = 3.', 4),
+      () => flash('rationale', 'Un număr rațional se poate scrie…', ['ca o fracție de întregi (numitor ≠ 0)', 'doar ca radical', 'doar ca procent', 'doar ca volum'], '−3/4, 0,7, 5 sunt raționale.', 5),
+      () => flash('produs', '(−) × (+) dă…', ['minus', 'plus', 'zero', 'un unghi'], 'Semne diferite → rezultat negativ.', 6),
+      () => flash('ecuatie', 'x + 5 = 12 întreabă…', ['ce număr plus 5 face 12', 'cât e 5 × 12', 'dacă 12 e prim', 'perimetrul'], 'Scazi 5 din ambele părți: x = 7.', 7),
+      () => flash('verificare', 'După ce găsești x, ce faci?', ['Îl pui înapoi în enunț să vezi dacă iese', 'Îl ștergi', 'Îl înmulțești cu 10', 'Îl faci procent'], 'Verificarea e parte din treabă.', 8)
     ],
     tests: [
       (rand, lv) => { const a = int(rand, 2, 8); const b = int(rand, 3, 9); return test('adunare', `Calculează (−${a}) + ${b}.`, -a + b, [`−${a} + ${b} = ${-a + b}`], { level: lv }); },
@@ -154,14 +154,14 @@ const BY_CHAPTER = {
   },
   triunghi: {
     flashes: [
-      (rand) => flash('suma180', 'Suma unghiurilor unui triunghi e…', ['180°', '90°', '360°', '60°'], 'Cele trei colțuri fac un unghi alungit.', 1),
-      (rand) => flash('drept', 'În triunghiul dreptunghic, cea mai lungă latură e…', ['ipotenuza, vizavi de unghiul de 90°', 'o catetă oarecare', 'înălțimea', 'baza isoscelului'], 'Ipotenuza e față de unghiul drept.', 2),
-      (rand) => flash('opuse', 'Unghiurile opuse la vârf…', ['sunt egale', 'sunt suplementare mereu', 'sunt 90°', 'nu există'], 'Față în față, când două drepte se taie.', 3),
-      (rand) => flash('paralele', 'Două drepte paralele tăiate de o secantă…', ['produc unghiuri corespunzătoare egale', 'se întâlnesc obligatoriu', 'formează un cub', 'anulează unghiurile'], 'Paralelele păstrează aceleași unghiuri cu tăietura.', 4),
-      (rand) => flash('cerc', 'Diametrul unui cerc e…', ['de două ori raza, trece prin centru', 'jumătate din rază', 'o coardă oarecare', 'perimetrul'], 'Rază = centru la cerc; diametru = 2 raze.', 5),
-      (rand) => flash('clasif', 'Un triunghi dreptunghic are…', ['un unghi de 90°', 'toate unghiurile obtuze', 'laturi paralele', 'un cerc de rază 1'], 'Un colț drept; celelalte două ascuțite.', 6),
-      (rand) => flash('pitagora', 'Pitagora spune…', ['a² + b² = c² pe ipotenuză', 'o regulă de trei', 'o medie', 'o fracție'], 'c e latura din fața unghiului drept.', 7),
-      (rand) => flash('congr', 'Triunghiuri congruente…', ['au aceeași formă și aceleași mărimi', 'doar aceeași arie, formă diferită', 'sunt cercuri', 'au un singur unghi egal'], 'Se potrivesc dacă le suprapui.', 8)
+      () => flash('suma180', 'Suma unghiurilor unui triunghi e…', ['180°', '90°', '360°', '60°'], 'Cele trei colțuri fac un unghi alungit.', 1),
+      () => flash('drept', 'În triunghiul dreptunghic, cea mai lungă latură e…', ['ipotenuza, vizavi de unghiul de 90°', 'o catetă oarecare', 'înălțimea', 'baza isoscelului'], 'Ipotenuza e față de unghiul drept.', 2),
+      () => flash('opuse', 'Unghiurile opuse la vârf…', ['sunt egale', 'sunt suplementare mereu', 'sunt 90°', 'nu există'], 'Față în față, când două drepte se taie.', 3),
+      () => flash('paralele', 'Două drepte paralele tăiate de o secantă…', ['produc unghiuri corespunzătoare egale', 'se întâlnesc obligatoriu', 'formează un cub', 'anulează unghiurile'], 'Paralelele păstrează aceleași unghiuri cu tăietura.', 4),
+      () => flash('cerc', 'Diametrul unui cerc e…', ['de două ori raza, trece prin centru', 'jumătate din rază', 'o coardă oarecare', 'perimetrul'], 'Rază = centru la cerc; diametru = 2 raze.', 5),
+      () => flash('clasif', 'Un triunghi dreptunghic are…', ['un unghi de 90°', 'toate unghiurile obtuze', 'laturi paralele', 'un cerc de rază 1'], 'Un colț drept; celelalte două ascuțite.', 6),
+      () => flash('pitagora', 'Pitagora spune…', ['a² + b² = c² pe ipotenuză', 'o regulă de trei', 'o medie', 'o fracție'], 'c e latura din fața unghiului drept.', 7),
+      () => flash('congr', 'Triunghiuri congruente…', ['au aceeași formă și aceleași mărimi', 'doar aceeași arie, formă diferită', 'sunt cercuri', 'au un singur unghi egal'], 'Se potrivesc dacă le suprapui.', 8)
     ],
     tests: [
       (rand, lv) => test('suma180', 'Câte grade au împreună unghiurile unui triunghi?', 180, ['Mereu 180°'], { level: lv }),
@@ -176,13 +176,13 @@ const BY_CHAPTER = {
   reale: {
     flashes: [
       (rand) => { const n = pick(rand, [4, 9, 16, 25, 36]); return flash('radical', `√${n} =`, uniqueOptions(rand, Math.sqrt(n), [n / 2, n, Math.sqrt(n) + 1]), `${Math.sqrt(n)} × ${Math.sqrt(n)} = ${n}.`, 1); },
-      (rand) => flash('irațional', 'Un irațional…', ['nu se scrie frumos ca fracție de întregi', 'e mereu negativ', 'e un unghi', 'e 0'], '√2 nu e o fracție exactă, dar e pe axă.', 2),
-      (rand) => flash('reale', 'Mulțimea numerelor reale cuprinde…', ['raționale și iraționale, pe aceeași axă', 'doar naturale', 'doar procente', 'doar volume'], 'Tot ce poți arăta pe o dreaptă continuă.', 3),
-      (rand) => flash('ordin', 'Pe axă, √2 stă…', ['între 1 și 2', 'înainte de 0', 'după 10', 'pe 4'], '≈1,41, deci între 1 și 2.', 4),
-      (rand) => flash('rationaliz', 'Raționalizarea unui numitor simplu…', ['scapi de radicalul de la numitor, înmulțind sus și jos', 'ștergi numitorul', 'faci procent', 'aduni 1'], 'Valoarea rămâne, scrierea se liniștește.', 5),
-      (rand) => flash('produs-rad', '√a × √b = …', ['√(a×b)', '√(a+b)', 'a×b', '√a + √b'], 'Radicalii se strâng sub același acoperiș la produs.', 6),
-      (rand) => flash('medii', 'Media geometrică a lui a și b e…', ['√(a×b)', '(a+b)/2', 'a−b', 'a/b'], 'Pentru 4 și 16: √64 = 8.', 7),
-      (rand) => flash('radical', '√(a²) pentru a > 0 e…', ['a', '2a', 'a²', '0'], 'Rădăcina desfăce pătratul.', 8)
+      () => flash('irațional', 'Un irațional…', ['nu se scrie frumos ca fracție de întregi', 'e mereu negativ', 'e un unghi', 'e 0'], '√2 nu e o fracție exactă, dar e pe axă.', 2),
+      () => flash('reale', 'Mulțimea numerelor reale cuprinde…', ['raționale și iraționale, pe aceeași axă', 'doar naturale', 'doar procente', 'doar volume'], 'Tot ce poți arăta pe o dreaptă continuă.', 3),
+      () => flash('ordin', 'Pe axă, √2 stă…', ['între 1 și 2', 'înainte de 0', 'după 10', 'pe 4'], '≈1,41, deci între 1 și 2.', 4),
+      () => flash('rationaliz', 'Raționalizarea unui numitor simplu…', ['scapi de radicalul de la numitor, înmulțind sus și jos', 'ștergi numitorul', 'faci procent', 'aduni 1'], 'Valoarea rămâne, scrierea se liniștește.', 5),
+      () => flash('produs-rad', '√a × √b = …', ['√(a×b)', '√(a+b)', 'a×b', '√a + √b'], 'Radicalii se strâng sub același acoperiș la produs.', 6),
+      () => flash('medii', 'Media geometrică a lui a și b e…', ['√(a×b)', '(a+b)/2', 'a−b', 'a/b'], 'Pentru 4 și 16: √64 = 8.', 7),
+      () => flash('radical', '√(a²) pentru a > 0 e…', ['a', '2a', 'a²', '0'], 'Rădăcina desfăce pătratul.', 8)
     ],
     tests: [
       (rand, lv) => { const r = int(rand, 3, 12); return test('radical', `Calculează √${r * r}.`, r, [`${r} × ${r} = ${r * r}`], { level: lv }); },
@@ -196,14 +196,14 @@ const BY_CHAPTER = {
   },
   ecuati: {
     flashes: [
-      (rand) => flash('cantar', 'O ecuație e ca un cântar: …', ['ce faci într-o parte faci și în cealaltă', 'schimbi doar stânga', 'ștergi necunoscuta', 'înmulțești doar cu zero'], 'Egalitatea trebuie să rămână adevărată.', 1),
-      (rand) => flash('necunoscuta', 'x e…', ['numărul pe care îl căutăm', 'mereu 0', 'un unghi', 'un procent'], 'Îl afli astfel încât egalitatea să țină.', 2),
-      (rand) => flash('sistem', 'Un sistem e…', ['două (sau mai multe) ecuații cu aceleași necunoscute', 'o singură putere', 'un cerc', 'o medie'], 'Cauți perechea (x, y) care le satisface pe amândouă.', 3),
-      (rand) => flash('substituie', 'Metoda substituției…', ['afli o necunoscută dintr-una și o pui în cealaltă', 'aduni orbește', 'ștergi y', 'înmulțești cu zero'], 'Înlocuiești, nu ghicești.', 4),
-      (rand) => flash('reducere', 'Metoda reducerii…', ['aduni sau scazi ecuațiile ca să dispară o necunoscută', 'împarți la zero', 'faci procent', 'desenezi un cub'], 'Poți înmulți mai întâi ca termenii să se anuleze.', 5),
-      (rand) => flash('verificare', 'Soluția unui sistem se verifică…', ['în ambele ecuații', 'doar în prima', 'doar pe grafic', 'nu se verifică'], 'Dacă una minte, perechea nu e bună.', 6),
-      (rand) => flash('cantar', 'Dacă 2x = 10, x e…', ['5', '12', '8', '20'], 'Împarți ambele părți la 2.', 7),
-      (rand) => flash('cantar', 'x − 3 = 4 dă x = …', ['7', '1', '12', '−1'], 'Treci −3 în dreapta: 4+3=7.', 8)
+      () => flash('cantar', 'O ecuație e ca un cântar: …', ['ce faci într-o parte faci și în cealaltă', 'schimbi doar stânga', 'ștergi necunoscuta', 'înmulțești doar cu zero'], 'Egalitatea trebuie să rămână adevărată.', 1),
+      () => flash('necunoscuta', 'x e…', ['numărul pe care îl căutăm', 'mereu 0', 'un unghi', 'un procent'], 'Îl afli astfel încât egalitatea să țină.', 2),
+      () => flash('sistem', 'Un sistem e…', ['două (sau mai multe) ecuații cu aceleași necunoscute', 'o singură putere', 'un cerc', 'o medie'], 'Cauți perechea (x, y) care le satisface pe amândouă.', 3),
+      () => flash('substituie', 'Metoda substituției…', ['afli o necunoscută dintr-una și o pui în cealaltă', 'aduni orbește', 'ștergi y', 'înmulțești cu zero'], 'Înlocuiești, nu ghicești.', 4),
+      () => flash('reducere', 'Metoda reducerii…', ['aduni sau scazi ecuațiile ca să dispară o necunoscută', 'împarți la zero', 'faci procent', 'desenezi un cub'], 'Poți înmulți mai întâi ca termenii să se anuleze.', 5),
+      () => flash('verificare', 'Soluția unui sistem se verifică…', ['în ambele ecuații', 'doar în prima', 'doar pe grafic', 'nu se verifică'], 'Dacă una minte, perechea nu e bună.', 6),
+      () => flash('cantar', 'Dacă 2x = 10, x e…', ['5', '12', '8', '20'], 'Împarți ambele părți la 2.', 7),
+      () => flash('cantar', 'x − 3 = 4 dă x = …', ['7', '1', '12', '−1'], 'Treci −3 în dreapta: 4+3=7.', 8)
     ],
     tests: [
       (rand, lv) => { const x = int(rand, 2, 12); const b = int(rand, 2, 9); return test('cantar', `Află x: x + ${b} = ${x + b}.`, x, [`x = ${x + b} − ${b} = ${x}`], { level: lv }); },
@@ -217,14 +217,14 @@ const BY_CHAPTER = {
   },
   date: {
     flashes: [
-      (rand) => flash('origine', 'Originea e punctul…', ['(0, 0)', '(1, 1)', '(0, 1)', '(1, 0)'], 'Acolo se taie axele.', 1),
+      () => flash('origine', 'Originea e punctul…', ['(0, 0)', '(1, 1)', '(0, 1)', '(1, 0)'], 'Acolo se taie axele.', 1),
       (rand) => { const x = int(rand, 1, 5); const y = int(rand, 1, 6); return flash('origine', `Simetricul lui A(${x}, −${y}) față de origine e…`, [`(−${x}, ${y})`, `(${x}, ${y})`, `(−${x}, −${y})`, '(0, 0)'], 'Schimbi ambele semne.', 2); },
-      (rand) => flash('abscisa', 'Abscisa e…', ['coordonata x, prima', 'coordonata y', 'originea', 'un unghi'], 'A(2, 3): abscisa e 2.', 3),
-      (rand) => flash('ordonata', 'Ordonata e…', ['coordonata y, a doua', 'doar x', 'perimetrul', 'un prim'], 'A(2, 3): ordonata e 3.', 4),
-      (rand) => flash('depend', 'y = x + 1 e o dependență: …', ['fiecărui x îi corespunde un y', 'x e mereu 0', 'e un cub', 'e un procent'], 'Tabel: x=0 → y=1; x=2 → y=3.', 5),
-      (rand) => flash('grafic', 'Punctele unei dependențe liniare…', ['stau pe o dreaptă', 'formează un cerc', 'sunt un cub', 'nu se pot desena'], 'Unești punctele din tabel.', 6),
-      (rand) => flash('tabel', 'Un tabel de date…', ['leagă valori, nu e o listă oarecare', 'e un unghi', 'e o poezie', 'e un prim'], 'Cauți regula dintre coloane.', 7),
-      (rand) => flash('simetric-x', 'Simetricul față de axa Ox schimbă…', ['semnul lui y', 'semnul lui x', 'ambele', 'nimic'], 'A(2, 3) → (2, −3).', 8)
+      () => flash('abscisa', 'Abscisa e…', ['coordonata x, prima', 'coordonata y', 'originea', 'un unghi'], 'A(2, 3): abscisa e 2.', 3),
+      () => flash('ordonata', 'Ordonata e…', ['coordonata y, a doua', 'doar x', 'perimetrul', 'un prim'], 'A(2, 3): ordonata e 3.', 4),
+      () => flash('depend', 'y = x + 1 e o dependență: …', ['fiecărui x îi corespunde un y', 'x e mereu 0', 'e un cub', 'e un procent'], 'Tabel: x=0 → y=1; x=2 → y=3.', 5),
+      () => flash('grafic', 'Punctele unei dependențe liniare…', ['stau pe o dreaptă', 'formează un cerc', 'sunt un cub', 'nu se pot desena'], 'Unești punctele din tabel.', 6),
+      () => flash('tabel', 'Un tabel de date…', ['leagă valori, nu e o listă oarecare', 'e un unghi', 'e o poezie', 'e un prim'], 'Cauți regula dintre coloane.', 7),
+      () => flash('simetric-x', 'Simetricul față de axa Ox schimbă…', ['semnul lui y', 'semnul lui x', 'ambele', 'nimic'], 'A(2, 3) → (2, −3).', 8)
     ],
     tests: [
       (rand, lv) => { const x = int(rand, 1, 8); const y = int(rand, 1, 8); return test('origine', `La punctul A(${x}, ${y}), care e abscisa (x)?`, x, [`Prima coordonată e ${x}`], { level: lv }); },
@@ -238,14 +238,14 @@ const BY_CHAPTER = {
   },
   geo7: {
     flashes: [
-      (rand) => flash('paralelogram', 'Aria unui paralelogram e…', ['bază × înălțime', 'suma laturilor', 'doar baza', 'doar un unghi'], 'Ca un dreptunghi „împins”.', 1),
-      (rand) => flash('romb', 'Un romb are…', ['toate laturile egale', 'un singur unghi drept obligatoriu', 'laturi diferite', 'doar un cerc'], 'Ca un pătrat lățit; diagonalele sunt perpendiculare.', 2),
-      (rand) => flash('trapez', 'Un trapez are…', ['exact o pereche de laturi paralele', 'toate laturile paralele', 'niciun unghi', 'doar un cerc'], 'Baza mare și baza mică sunt paralele.', 3),
-      (rand) => flash('cerc-pi', 'Lungimea cercului e…', ['2πr sau πd', 'πr²', '4r', 'r²'], 'Gardul din jurul discului.', 4),
-      (rand) => flash('disc', 'Aria discului e…', ['πr²', '2πr', 'πd', '4r'], 'Câte pătrățele umplu rontul.', 5),
-      (rand) => flash('thales', 'Thales (la gimnaziu) spune, pe scurt…', ['o paralelă taie laturile proporțional', 'toate unghiurile sunt 90°', 'volumul cubului', 'o medie'], 'Aceeași formă, altă scară pe segmente.', 6),
-      (rand) => flash('asemanare', 'La triunghiuri asemenea, raportul ariilor e…', ['pătratul raportului laturilor', 'același cu raportul laturilor', 'suma laturilor', 'un unghi'], 'Ariile cresc cu pătratul scării.', 7),
-      (rand) => flash('trig', 'În triunghiul dreptunghic, sin α e…', ['cateta opusă / ipotenuză', 'cateta alăturată / ipotenuză', 'opusă / alăturată', 'perimetrul'], 'SOH: sinus = opposite / hypotenuse.', 8)
+      () => flash('paralelogram', 'Aria unui paralelogram e…', ['bază × înălțime', 'suma laturilor', 'doar baza', 'doar un unghi'], 'Ca un dreptunghi „împins”.', 1),
+      () => flash('romb', 'Un romb are…', ['toate laturile egale', 'un singur unghi drept obligatoriu', 'laturi diferite', 'doar un cerc'], 'Ca un pătrat lățit; diagonalele sunt perpendiculare.', 2),
+      () => flash('trapez', 'Un trapez are…', ['exact o pereche de laturi paralele', 'toate laturile paralele', 'niciun unghi', 'doar un cerc'], 'Baza mare și baza mică sunt paralele.', 3),
+      () => flash('cerc-pi', 'Lungimea cercului e…', ['2πr sau πd', 'πr²', '4r', 'r²'], 'Gardul din jurul discului.', 4),
+      () => flash('disc', 'Aria discului e…', ['πr²', '2πr', 'πd', '4r'], 'Câte pătrățele umplu rontul.', 5),
+      () => flash('thales', 'Thales (la gimnaziu) spune, pe scurt…', ['o paralelă taie laturile proporțional', 'toate unghiurile sunt 90°', 'volumul cubului', 'o medie'], 'Aceeași formă, altă scară pe segmente.', 6),
+      () => flash('asemanare', 'La triunghiuri asemenea, raportul ariilor e…', ['pătratul raportului laturilor', 'același cu raportul laturilor', 'suma laturilor', 'un unghi'], 'Ariile cresc cu pătratul scării.', 7),
+      () => flash('trig', 'În triunghiul dreptunghic, sin α e…', ['cateta opusă / ipotenuză', 'cateta alăturată / ipotenuză', 'opusă / alăturată', 'perimetrul'], 'SOH: sinus = opposite / hypotenuse.', 8)
     ],
     tests: [
       (rand, lv) => { const a = int(rand, 3, 9); return test('paralelogram', `Pătrat de latură ${a} cm. Aria, cm²?`, a * a, [`${a}² = ${a * a}`], { level: lv }); },
@@ -259,14 +259,14 @@ const BY_CHAPTER = {
   },
   intervale: {
     flashes: [
-      (rand) => flash('interval', 'Un interval e…', ['o bucată de axă', 'un unghi', 'un cub', 'un procent'], 'De la un capăt la altul, cu sau fără capete.', 1),
+      () => flash('interval', 'Un interval e…', ['o bucată de axă', 'un unghi', 'un cub', 'un procent'], 'De la un capăt la altul, cu sau fără capete.', 1),
       (rand) => { const a = int(rand, 1, 4); const b = a + int(rand, 2, 5); return flash('interval', `Intervalul (${a}, ${b}] conține…`, [`${a + 1} … ${b}, dar nu pe ${a}`, `${a} … ${b}`, `doar ${a}`, `doar ${b}`], 'Rotunda taie capătul; dreapta îl ține.', 2); },
-      (rand) => flash('inecuatie', 'O inecuație întreabă…', ['pentru ce x rămâne adevărat', 'care e singurul x', 'cât e perimetrul', 'dacă e prim'], 'Răspunsul e o mulțime, adesea un interval.', 3),
-      (rand) => flash('deschis', '(2, 5) e deschis: …', ['nu conține pe 2 și nici pe 5', 'conține 2 și 5', 'conține doar 2', 'e un punct'], 'Paranteze rotunde = fără capete.', 4),
-      (rand) => flash('inchis', '[2, 5] e închis: …', ['ține și 2, și 5', 'taie ambele capete', 'e vid', 'e un cerc'], 'Paranteze drepte = cu capete.', 5),
-      (rand) => flash('reuniune-int', '[1, 2] ∪ (2, 3] e…', ['[1, 3] fără să lipsească 2? stai: 2 e în prima, deci [1, 3]', 'vid', 'doar {2}', 'un unghi'], '2 e deja în [1, 2], deci se lipește.', 6),
-      (rand) => flash('semn', 'x > 3 pe axă e…', ['tot ce e la dreapta lui 3, fără 3', 'doar 3', 'totul la stânga', 'doar naturale'], 'Săgeată deschisă la 3.', 7),
-      (rand) => flash('si', 'x ≥ 0 și x < 4 e…', ['[0, 4)', '(0, 4]', 'doar 0', 'toată axa'], 'Intersecție de condiții.', 8)
+      () => flash('inecuatie', 'O inecuație întreabă…', ['pentru ce x rămâne adevărat', 'care e singurul x', 'cât e perimetrul', 'dacă e prim'], 'Răspunsul e o mulțime, adesea un interval.', 3),
+      () => flash('deschis', '(2, 5) e deschis: …', ['nu conține pe 2 și nici pe 5', 'conține 2 și 5', 'conține doar 2', 'e un punct'], 'Paranteze rotunde = fără capete.', 4),
+      () => flash('inchis', '[2, 5] e închis: …', ['ține și 2, și 5', 'taie ambele capete', 'e vid', 'e un cerc'], 'Paranteze drepte = cu capete.', 5),
+      () => flash('reuniune-int', '[1, 2] ∪ (2, 3] e…', ['[1, 3] fără să lipsească 2? stai: 2 e în prima, deci [1, 3]', 'vid', 'doar {2}', 'un unghi'], '2 e deja în [1, 2], deci se lipește.', 6),
+      () => flash('semn', 'x > 3 pe axă e…', ['tot ce e la dreapta lui 3, fără 3', 'doar 3', 'totul la stânga', 'doar naturale'], 'Săgeată deschisă la 3.', 7),
+      () => flash('si', 'x ≥ 0 și x < 4 e…', ['[0, 4)', '(0, 4]', 'doar 0', 'toată axa'], 'Intersecție de condiții.', 8)
     ],
     tests: [
       (rand, lv) => { const a = int(rand, 1, 3); const b = a + int(rand, 3, 6); return test('interval', `Câte întregi sunt în [${a}, ${b}]?`, b - a + 1, [`De la ${a} la ${b} inclusiv: ${b - a + 1}`], { level: lv }); },
@@ -280,14 +280,14 @@ const BY_CHAPTER = {
   },
   algebric: {
     flashes: [
-      (rand) => flash('asemenea', 'Termeni asemenea au…', ['aceeași parte cu litere', 'doar același număr', 'un unghi', 'un volum'], '3x și −5x se strâng; 3x și 3y nu.', 1),
-      (rand) => flash('binom', '(a+b)² se deschide…', ['a² + 2ab + b²', 'a² + b²', 'a² − b²', '(a+b)(a−b)'], 'Pătratul sumei: două pătrate și dublul produsului.', 2),
-      (rand) => flash('diferenta', 'a² − b² se descompune…', ['(a−b)(a+b)', '(a−b)²', 'a − b', '(a+b)²'], 'Diferență de pătrate.', 3),
-      (rand) => flash('factor', 'Scoaterea factorului comun…', ['tragi în față ce e în toți termenii', 'aduni coeficienții orbește', 'ștergi x', 'faci procent'], '2x + 6 = 2(x+3).', 4),
-      (rand) => flash('fractie-lit', 'O fracție algebrică se simplifică dacă…', ['numărătorul și numitorul au un factor comun', 'aduni 1', 'ștergi numitorul', 'faci radical'], 'Ca la fracțiile obișnuite, dar cu litere.', 5),
-      (rand) => flash('grad2', 'O ecuație de tip x² = 9 are soluții…', ['3 și −3', 'doar 3', 'doar 0', '9'], 'Două numere, înmulțite cu ele, dau 9.', 6),
-      (rand) => flash('zero', 'Un produs e 0 dacă…', ['cel puțin un factor e 0', 'toți sunt 1', 'e un unghi', 'e un procent'], 'Asta deschide ecuații prin factori.', 7),
-      (rand) => flash('minus-binom', '(a−b)² e…', ['a² − 2ab + b²', 'a² − b²', 'a² + 2ab + b²', '(a−b)(a+b)'], 'Atenție la mijloc: minus dublul produsului.', 8)
+      () => flash('asemenea', 'Termeni asemenea au…', ['aceeași parte cu litere', 'doar același număr', 'un unghi', 'un volum'], '3x și −5x se strâng; 3x și 3y nu.', 1),
+      () => flash('binom', '(a+b)² se deschide…', ['a² + 2ab + b²', 'a² + b²', 'a² − b²', '(a+b)(a−b)'], 'Pătratul sumei: două pătrate și dublul produsului.', 2),
+      () => flash('diferenta', 'a² − b² se descompune…', ['(a−b)(a+b)', '(a−b)²', 'a − b', '(a+b)²'], 'Diferență de pătrate.', 3),
+      () => flash('factor', 'Scoaterea factorului comun…', ['tragi în față ce e în toți termenii', 'aduni coeficienții orbește', 'ștergi x', 'faci procent'], '2x + 6 = 2(x+3).', 4),
+      () => flash('fractie-lit', 'O fracție algebrică se simplifică dacă…', ['numărătorul și numitorul au un factor comun', 'aduni 1', 'ștergi numitorul', 'faci radical'], 'Ca la fracțiile obișnuite, dar cu litere.', 5),
+      () => flash('grad2', 'O ecuație de tip x² = 9 are soluții…', ['3 și −3', 'doar 3', 'doar 0', '9'], 'Două numere, înmulțite cu ele, dau 9.', 6),
+      () => flash('zero', 'Un produs e 0 dacă…', ['cel puțin un factor e 0', 'toți sunt 1', 'e un unghi', 'e un procent'], 'Asta deschide ecuații prin factori.', 7),
+      () => flash('minus-binom', '(a−b)² e…', ['a² − 2ab + b²', 'a² − b²', 'a² + 2ab + b²', '(a−b)(a+b)'], 'Atenție la mijloc: minus dublul produsului.', 8)
     ],
     tests: [
       (rand, lv) => { const a = int(rand, 2, 8); const b = int(rand, 2, 8); return test('asemenea', `Calculează ${a}x + ${b}x pentru x=1. (Doar coeficientul sumei, sau valoarea: ${a + b}.)`, a + b, [`${a}x + ${b}x = ${a + b}x`, `Pentru x=1: ${a + b}`], { level: lv }); },
@@ -301,14 +301,14 @@ const BY_CHAPTER = {
   },
   functii: {
     flashes: [
-      (rand) => flash('dreapta', 'f(x)=ax+b e…', ['o dreaptă', 'un cerc', 'un cub', 'un procent'], 'Funcție de gradul I: graficul e o dreaptă.', 1),
-      (rand) => flash('f', 'f(2) înseamnă…', ['valoarea funcției când x=2', 'f ori 2', 'un unghi', 'un prim'], 'Înlocuiești x cu 2.', 2),
-      (rand) => flash('a', 'În f(x)=ax+b, a spune…', ['cât de înclinată e dreapta (pantă)', 'unde taie Oy obligatoriu doar', 'volumul', 'un procent'], 'a>0 urcă; a<0 coboară.', 3),
-      (rand) => flash('b', 'b e…', ['unde dreapta taie axa Oy', 'pantă', 'un cub', 'un prim'], 'f(0)=b.', 4),
-      (rand) => flash('medie', 'Media unui set de date e…', ['suma împărțită la câți sunt', 'cel mai mare', 'cel mai mic', 'un unghi'], 'Un rezumat, nu fiecare valoare.', 5),
-      (rand) => flash('mediana', 'Mediana e…', ['valoarea din mijloc, după ce sortezi', 'media', 'produsul', 'un prim'], 'Împarte șirul în două jumătăți egale ca număr.', 6),
-      (rand) => flash('modul-stat', 'Modulul (moda) e…', ['valoarea care apare cel mai des', 'media', 'un unghi', 'un cub'], 'Cea mai „populară” notă.', 7),
-      (rand) => flash('amplitudine', 'Amplitudinea e…', ['max − min', 'media', 'suma', 'un prim'], 'Cât de „întins” e setul.', 8)
+      () => flash('dreapta', 'f(x)=ax+b e…', ['o dreaptă', 'un cerc', 'un cub', 'un procent'], 'Funcție de gradul I: graficul e o dreaptă.', 1),
+      () => flash('f', 'f(2) înseamnă…', ['valoarea funcției când x=2', 'f ori 2', 'un unghi', 'un prim'], 'Înlocuiești x cu 2.', 2),
+      () => flash('a', 'În f(x)=ax+b, a spune…', ['cât de înclinată e dreapta (pantă)', 'unde taie Oy obligatoriu doar', 'volumul', 'un procent'], 'a>0 urcă; a<0 coboară.', 3),
+      () => flash('b', 'b e…', ['unde dreapta taie axa Oy', 'pantă', 'un cub', 'un prim'], 'f(0)=b.', 4),
+      () => flash('medie', 'Media unui set de date e…', ['suma împărțită la câți sunt', 'cel mai mare', 'cel mai mic', 'un unghi'], 'Un rezumat, nu fiecare valoare.', 5),
+      () => flash('mediana', 'Mediana e…', ['valoarea din mijloc, după ce sortezi', 'media', 'produsul', 'un prim'], 'Împarte șirul în două jumătăți egale ca număr.', 6),
+      () => flash('modul-stat', 'Modulul (moda) e…', ['valoarea care apare cel mai des', 'media', 'un unghi', 'un cub'], 'Cea mai „populară” notă.', 7),
+      () => flash('amplitudine', 'Amplitudinea e…', ['max − min', 'media', 'suma', 'un prim'], 'Cât de „întins” e setul.', 8)
     ],
     tests: [
       (rand, lv) => { const a = int(rand, 1, 5); const b = int(rand, 0, 8); const x = int(rand, 1, 6); return test('dreapta', `f(x)=${a}x + ${b}. Calculează f(${x}).`, a * x + b, [`${a} × ${x} = ${a * x}`, `+ ${b} = ${a * x + b}`], { level: lv }); },
@@ -322,14 +322,14 @@ const BY_CHAPTER = {
   },
   spatiu: {
     flashes: [
-      (rand) => flash('prisma', 'Volumul cubului de latură a e…', ['a × a × a', '6a', '4a', 'a + a + a'], 'Câte cubulețe umplu cutia.', 1),
-      (rand) => flash('desfasurare', 'Aria totală a cubului de latură a e…', ['6a²', 'a³', '4a', '2a'], 'Șase fețe pătrate.', 2),
-      (rand) => flash('prisma-v', 'Volumul prismei e…', ['aria bazei × înălțimea', 'suma muchiilor', '6a', 'un unghi'], 'Câte „felii” de baza stivuite.', 3),
-      (rand) => flash('piramida', 'Volumul piramidei e…', ['(aria bazei × înălțimea) : 3', 'bază × înălțime', '6a²', 'perimetrul'], 'Cam o treime din prismă cu aceeași bază și înălțime.', 4),
-      (rand) => flash('cilindru', 'Volumul cilindrului e…', ['πr²h', '2πr', 'πr²', '4πr²'], 'Disc × înălțime.', 5),
-      (rand) => flash('con', 'Volumul conului e…', ['(πr²h) : 3', 'πr²h', '2πr', '4πr²'], 'O treime din cilindru.', 6),
-      (rand) => flash('sfera', 'Volumul sferei e…', ['(4/3)πr³', '4πr²', 'πr²', '2πr'], 'Umplutura mingii, nu coaja.', 7),
-      (rand) => flash('paralel', 'O dreaptă paralelă cu un plan…', ['nu-l înțeapă, rămâne la distanță constantă', 'trece mereu prin centru', 'e o rază', 'e un unghi'], 'Ca un creion ținut deasupra mesei.', 8)
+      () => flash('prisma', 'Volumul cubului de latură a e…', ['a × a × a', '6a', '4a', 'a + a + a'], 'Câte cubulețe umplu cutia.', 1),
+      () => flash('desfasurare', 'Aria totală a cubului de latură a e…', ['6a²', 'a³', '4a', '2a'], 'Șase fețe pătrate.', 2),
+      () => flash('prisma-v', 'Volumul prismei e…', ['aria bazei × înălțimea', 'suma muchiilor', '6a', 'un unghi'], 'Câte „felii” de baza stivuite.', 3),
+      () => flash('piramida', 'Volumul piramidei e…', ['(aria bazei × înălțimea) : 3', 'bază × înălțime', '6a²', 'perimetrul'], 'Cam o treime din prismă cu aceeași bază și înălțime.', 4),
+      () => flash('cilindru', 'Volumul cilindrului e…', ['πr²h', '2πr', 'πr²', '4πr²'], 'Disc × înălțime.', 5),
+      () => flash('con', 'Volumul conului e…', ['(πr²h) : 3', 'πr²h', '2πr', '4πr²'], 'O treime din cilindru.', 6),
+      () => flash('sfera', 'Volumul sferei e…', ['(4/3)πr³', '4πr²', 'πr²', '2πr'], 'Umplutura mingii, nu coaja.', 7),
+      () => flash('paralel', 'O dreaptă paralelă cu un plan…', ['nu-l înțeapă, rămâne la distanță constantă', 'trece mereu prin centru', 'e o rază', 'e un unghi'], 'Ca un creion ținut deasupra mesei.', 8)
     ],
     tests: [
       (rand, lv) => { const a = int(rand, 3, 8); return test('desfasurare', `Cub de latură ${a}. Volumul.`, a ** 3, [`${a}³ = ${a ** 3}`], { level: lv }); },
