@@ -97,7 +97,7 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
         MentorAPI.recordProgress({
           type: 'flashcard_known',
           note: source.title,
-          meta: { topic: source.title, chapterId: source.id, subject, grade: classLevel }
+          meta: { topic: source.title, chapterId: source.id, subject, grade: classLevel, correct: hits }
         }).then(award => {
           if (award.success && award.data?.awarded && typeof onRewardClaim === 'function') {
             onRewardClaim({

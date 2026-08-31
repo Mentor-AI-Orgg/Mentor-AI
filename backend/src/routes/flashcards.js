@@ -197,6 +197,13 @@ router.post("/finish", (req, res) => {
       note: title || "Test de capitol",
       meta: { subject, grade: classLevel, chapterId, title, score: correct, total, gradeNote }
     });
+  } else if (correct >= 5) {
+    award = recordProgress({
+      userId: req.auth.email,
+      type: "flashcard_known",
+      note: title || "Flashcarduri",
+      meta: { subject, grade: classLevel, chapterId, title, topic: title || chapterId, correct }
+    });
   }
 
   res.json({

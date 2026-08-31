@@ -516,7 +516,8 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
   if (type === 'flashcard_known') {
     const topic = String(meta.topic || todayKey).slice(0, 80);
     if (!user.flashKnown[todayKey]) user.flashKnown[todayKey] = {};
-    user.flashKnown[todayKey][topic] = (user.flashKnown[todayKey][topic] || 0) + 1;
+    const reported = Math.max(1, Math.min(20, Number(meta.correct || meta.count) || 1));
+    user.flashKnown[todayKey][topic] = (user.flashKnown[todayKey][topic] || 0) + reported;
     const count = user.flashKnown[todayKey][topic];
     if (count >= 5 && !user.flashcardRewardDates[todayKey]) {
       user.flashcardRewardDates[todayKey] = true;
