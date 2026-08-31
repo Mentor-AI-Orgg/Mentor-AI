@@ -98,8 +98,13 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
       setTrack(null);
     }
     if (studyFocus.subject) setSubject(normalizeSubject(studyFocus.subject));
+    else if (studyFocus.subject === null && studyFocus.track !== 'en') {
+      setSubject(null);
+      setOpenChapter(null);
+    }
     if (studyFocus.grade && studyFocus.track !== 'en') setGrade(normalizeGrade(studyFocus.grade));
     if (studyFocus.chapter) setOpenChapter(studyFocus.chapter);
+    else if (studyFocus.chapter === null) setOpenChapter(null);
   }, [studyFocus.subject, studyFocus.grade, studyFocus.chapter, studyFocus.track]);
 
   useEffect(() => {
