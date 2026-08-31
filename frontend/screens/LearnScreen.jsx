@@ -63,7 +63,11 @@ const chapterStatus = (chapters, subject, grade, chapterId) => {
 const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onProgress }) => {
   const defaultGrade = normalizeGrade(studyFocus.grade || userData.class);
   const [track, setTrack] = useState(studyFocus.track === 'en' ? 'en' : null);
-  const [subject, setSubject] = useState(studyFocus.subject ? normalizeSubject(studyFocus.subject) : null);
+  const [subject, setSubject] = useState(
+    studyFocus.subject
+      ? normalizeSubject(studyFocus.subject)
+      : (studyFocus.track === 'en' ? 'matematica' : null)
+  );
   const [grade, setGrade] = useState(studyFocus.track === 'en' ? 8 : defaultGrade);
   const [guide, setGuide] = useState(null);
   const [openChapter, setOpenChapter] = useState(studyFocus.chapter || null);
@@ -83,6 +87,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     if (studyFocus.track === 'en') {
       setTrack('en');
       setGrade(8);
+      if (!studyFocus.subject) setSubject(prev => prev || 'matematica');
     } else if (studyFocus.track === null) {
       setTrack(null);
     }
