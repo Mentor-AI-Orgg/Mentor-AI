@@ -3,7 +3,7 @@ import { MentorAPI } from '../apiClient.js';
 
 const letters = ['A', 'B', 'C', 'D'];
 
-const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLevel, onAskMentor }) => {
+const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMentor, track = '', mode = '' }) => {
   const [cards, setCards] = useState([]);
   const [index, setIndex] = useState(0);
   const [picked, setPicked] = useState(null);
@@ -30,11 +30,13 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
     const result = await MentorAPI.generateFlashcards({
       chapter_id: unit.id,
       topic: unit.title,
-      subject: subject || userData?.subject || '',
-      class_level: classLevel || userData?.class || 5,
+      subject,
+      class_level: classLevel,
       kind: 'flashcards',
       exclude_ids: skip,
-      count: 8
+      count: 8,
+      track,
+      mode
     });
     const next = result.success && result.data?.cards?.length ? result.data.cards : [];
     setCards(next);
@@ -85,8 +87,8 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
     const result = await MentorAPI.finishPractice({
       kind: 'flashcards',
       chapter_id: source.id,
-      subject: subject || userData?.subject || 'matematica',
-      class_level: classLevel || userData?.class || 5,
+      subject,
+      class_level: classLevel,
       title: source.title,
       picks
     });
@@ -127,7 +129,7 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
         </div>
         {reviewed > 0 && !report && <span className="learn-chip"><i className="fas fa-check" /> {hits}/{reviewed}</span>}
       </div>
-      <p className="flashcards-empty">Alege capitolul. Cardurile urcă treaptă cu treaptă: întâi foarte ușoare, la final grele. După banca de lecție apar variante noi, generate pe programă — nu se termină.</p>
+      <p className="flashcards-empty">{subject ? 'Alege capitolul. Cardurile urcă de la ușor la greu și nu se repetă. Revino în 3 zile, apoi în 7, la ideile greșite.' : 'Alege mai întâi materia (română sau matematică), apoi un capitol. Nu cad implicit pe mate.'}</p>
 
       {chapters.length > 0 && (
         <div className="flashcards-presets">
@@ -179,6 +181,13 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
               {choices[card.id] === card.correct ? 'Corect.' : 'Ai greșit.'} {card.explain}
             </p>
           )}
+          {Number.isInteger(choices[card.id]) && (
+            <ol className="quiz-steps">
+              <li>Citești enunțul cu voce tare.</li>
+              <li>Tai variantele care nu se potrivesc.</li>
+              <li>{card.explain || 'Rămâne varianta care ține de idee, nu de o vorbă frumoasă.'}</li>
+            </ol>
+          )}
           <div className="quiz-nav">
             <button type="button" className="ghost-button" disabled={index === 0} onClick={goPrev}>
               Exercițiul precedent
@@ -203,6 +212,9 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
           <p>{report.message}</p>
           {report.strengths?.length > 0 && <p className="quiz-explain">Puncte forte: {report.strengths.join(', ')}</p>}
           {report.weaknesses?.length > 0 && <p className="quiz-sample">De lucrat: {report.weaknesses.join(', ')}</p>}
+          {report.homework?.length > 0 && (
+            <ul className="quiz-homework">{report.homework.map(row => <li key={row.point}>{row.task}</li>)}</ul>
+          )}
           <ol className="quiz-review-list">
             {(report.items || []).map((item, itemIndex) => (
               <li key={item.id || itemIndex} className={item.ok ? 'ok' : 'bad'}>

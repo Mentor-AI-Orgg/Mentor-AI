@@ -4,6 +4,7 @@ import FocusTimer from '../components/FocusTimer.jsx';
 import FlashCards from '../components/FlashCards.jsx';
 import ChapterQuiz from '../components/ChapterQuiz.jsx';
 import EnPaperView from '../components/EnPaperView.jsx';
+import QuoteCard from '../components/QuoteCard.jsx';
 import { dailySlogan } from '../slogans.js';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
 
@@ -78,6 +79,10 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [sessionDone, setSessionDone] = useState(false);
   const [quizUnit, setQuizUnit] = useState(null);
   const [openPaper, setOpenPaper] = useState(null);
+  const [paperSession, setPaperSession] = useState(null);
+  const [seenPapers, setSeenPapers] = useState([]);
+  const [enTrainUnit, setEnTrainUnit] = useState(null);
+  const [workSprint, setWorkSprint] = useState(false);
   const [guideError, setGuideError] = useState(false);
   const [guideLoading, setGuideLoading] = useState(false);
   const isEn = track === 'en';
@@ -213,7 +218,20 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     const result = await MentorAPI.recordProgress({
       type: 'save_session',
       note: session.title,
-      meta: { title: session.title, subject, grade: activeGrade, chapterId: session.chapterId || openChapter, track: isEn ? 'en' : '' }
+      meta: {
+        title: session.title,
+        subject,
+        grade: activeGrade,
+        chapterId: session.chapterId || openChapter,
+        track: isEn ? 'en' : '',
+        plan: {
+          objective: session.objective,
+          warmup: session.warmup,
+          exercise: session.exercise,
+          check: session.check,
+          bonus: session.bonus
+        }
+      }
     });
     setSaved(true);
     applyResult(result);
@@ -231,6 +249,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
               : 'Alege materia, apoi clasa. În fiecare capitol ai lecțiile pe tavă — cu exemple lucrate, nu copiate din manual. Testele și flashcardurile urcă de la foarte ușor la greu. La test scrii doar răspunsul final; nota și pașii vin după finalizare. După banca de capitol apar variante noi, generate pe programă.'}
           </p>
           <p className="learn-slogan">{dailySlogan()}</p>
+          <QuoteCard />
         </div>
       </header>
 
@@ -323,7 +342,17 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             <div className="eyebrow">{guide?.title || `${subjectLabel(subject)} · ${isEn ? 'Evaluare Națională' : gradeLabel(grade)}`}</div>
             <h2 className="display-font">{guide?.title || 'Capitolele clasei'}</h2>
             <p>{guideLoading ? 'Încărcăm ghidul…' : (guide?.howISeeIt || 'Încărcăm ghidul…')}</p>
-            {guideError && <p className="guide-error">Nu am putut încărca programa. Verifică conexiunea și alege din nou materia.</p>}
+            {guideError && (
+              <p className="guide-error">
+                Nu am putut încărca programa.{' '}
+                <button type="button" className="ghost-button" onClick={() => { setGuide(null); setGuideError(false); setGuideLoading(true); MentorAPI.getCurriculum(isEn ? { subject, track: 'en' } : { subject, class_level: grade }).then(result => { setGuideLoading(false); if (result.success) { setGuide(result.data); setGuideError(false); } else setGuideError(true); }); }}>
+                  Reîncearcă
+                </button>
+              </p>
+            )}
+            {!guideLoading && !guideError && units.length === 0 && subject && (
+              <p className="empty-state">Niciun capitol aici. Alege cealaltă materie sau Evaluarea Națională.</p>
+            )}
             {guide?.source?.disclaimer && <small className="chapter-disclaimer">{guide.source.disclaimer}</small>}
           </section>
 
@@ -340,7 +369,10 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                     key={paper.id}
                     type="button"
                     className={`en-paper-pick ${openPaper?.id === paper.id ? 'selected' : ''}`}
-                    onClick={() => setOpenPaper(openPaper?.id === paper.id ? null : paper)}
+                    onClick={() => {
+                      setPaperSession(null);
+                      setOpenPaper(openPaper?.id === paper.id ? null : paper);
+                    }}
                   >
                     <i className="fas fa-file-alt" />
                     <span>
@@ -350,7 +382,21 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                   </button>
                 ))}
               </div>
-              {openPaper && <EnPaperView paper={openPaper} onClose={() => setOpenPaper(null)} />}
+              <button
+                type="button"
+                className="accent-button result-action"
+                onClick={async () => {
+                  const result = await MentorAPI.generateEnPaper({ subject, exclude_ids: seenPapers });
+                  if (result.success && result.data?.paper) {
+                    setSeenPapers(prev => [...prev, result.data.paper.id]);
+                    setOpenPaper(result.data.paper);
+                    setPaperSession(result.data.session);
+                  }
+                }}
+              >
+                Alt model, fără repetare <i className="fas fa-random" />
+              </button>
+              {openPaper && <EnPaperView paper={openPaper} session={paperSession} onClose={() => { setOpenPaper(null); setPaperSession(null); }} />}
             </section>
           )}
 
@@ -372,12 +418,35 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                   {open && (
                     <div className="chapter-card-body">
                       <p>{unit.inOwnWords}</p>
+                      {(unit.glossary || []).length > 0 && (
+                        <dl className="chapter-glossary">
+                          {unit.glossary.map(row => (
+                            <div key={row.term}>
+                              <dt>{row.term}</dt>
+                              <dd>{row.meaning}</dd>
+                            </div>
+                          ))}
+                        </dl>
+                      )}
+                      {userData.chapterMaps?.[`${subject}:${activeGrade}:${unit.id}`] && (
+                        <p className="chapter-map-line">
+                          Hartă: {userData.chapterMaps[`${subject}:${activeGrade}:${unit.id}`].read ? 'citit' : 'necitit'}
+                          {' · '}
+                          {userData.chapterMaps[`${subject}:${activeGrade}:${unit.id}`].tested ? 'testat' : 'netestat'}
+                          {' · '}
+                          {userData.chapterMaps[`${subject}:${activeGrade}:${unit.id}`].flash || 0} flashcarduri
+                        </p>
+                      )}
                       {(unit.lessons || []).length > 0 && (
                         <ol className="lesson-platter-list">
                           {unit.lessons.map((entry, lessonIndex) => (
                             <li key={entry.id} className="lesson-platter">
                               <h4>Lecția {lessonIndex + 1}. {entry.title}</h4>
-                              {(entry.platter || '').split(/\n\n+/).map((para, paraIndex) => (
+                              {entry.theory && <p><strong>Teorie. </strong>{entry.theory}</p>}
+                              {entry.example && <p><strong>Exemplu. </strong>{entry.example}</p>}
+                              {entry.tryThis && <p className="lesson-try"><strong>Încearcă tu. </strong>{entry.tryThis}</p>}
+                              {entry.recap && <p><strong>Recap. </strong>{entry.recap}</p>}
+                              {!entry.theory && (entry.platter || '').split(/\n\n+/).map((para, paraIndex) => (
                                 <p key={`${entry.id}-${paraIndex}`}>{para}</p>
                               ))}
                             </li>
@@ -386,9 +455,10 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                       )}
                       <p className="lesson-practice-hint">
                         {isEn
-                          ? 'Aici citești lecția. Modelele de teste EN sunt deasupra capitolelor, doar pe foaie — nu se completează în aplicație.'
-                          : 'Testul și flashcardurile urcă de la foarte ușor la greu. Scrii răspunsul la test; la flashcarduri alegi A–D.'}
+                          ? 'Lecția e aici. Modelele EN (cu 4 variante) sunt deasupra, doar pe foaie. Antrenamentul EN e exercițiu în aplicație, separat de baremul probei.'
+                          : 'Testul și flashcardurile urcă de la foarte ușor la greu. Scrii răspunsul la test; la flashcarduri alegi A–D. Nu se repetă: fiecare rundă aduce itemi noi.'}
                       </p>
+                      <small className="chapter-disclaimer">Ghid intern Mentor AI, nu manual. „Cum o văd eu”, după programă.</small>
                       <div className="learning-actions">
                         <button type="button" className="ghost-button result-action" onClick={() => askMentor(unit)}>
                           Întreabă mentorul <i className="fas fa-comments" />
@@ -398,8 +468,25 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                             Generează test <i className="fas fa-clipboard-check" />
                           </button>
                         )}
+                        {isEn && (
+                          <button type="button" className="ghost-button result-action" onClick={() => setEnTrainUnit(unit)}>
+                            Antrenament EN <i className="fas fa-dumbbell" />
+                          </button>
+                        )}
                         <button type="button" className="accent-button result-action" onClick={() => startSession(unit)} disabled={loading}>
                           {loading && openChapter === unit.id ? 'Pregătesc sesiunea…' : 'Sesiune de 5 minute'}
+                        </button>
+                        <button
+                          type="button"
+                          className="ghost-button result-action"
+                          onClick={() => {
+                            setWorkSprint(true);
+                            startSession(unit);
+                            if (isEn) setEnTrainUnit(unit);
+                            else setQuizUnit(unit);
+                          }}
+                        >
+                          Lucrează 15 minute
                         </button>
                       </div>
                     </div>
@@ -457,6 +544,26 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
         />
       )}
 
+      {enTrainUnit && isEn && (
+        <ChapterQuiz
+          unit={enTrainUnit}
+          subject={subject}
+          grade={8}
+          track="en"
+          mode="training"
+          onClose={() => setEnTrainUnit(null)}
+          onRewardClaim={onRewardClaim}
+          onAskMentor={unit => {
+            setEnTrainUnit(null);
+            askMentor(unit);
+          }}
+        />
+      )}
+
+      {workSprint && (
+        <p className="mock-banner">Mod 15 minute: un capitol + 3 itemi de antrenament. Timerul e jos, la Focus — alege 15 min.</p>
+      )}
+
       {savedSessions.length > 0 && (
         <section className="surface saved-sessions-card">
           <div className="eyebrow">Păstrate pentru mai târziu</div>
@@ -476,6 +583,17 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                     }
                     if (item.subject) setSubject(normalizeSubject(item.subject));
                     if (item.chapterId) setOpenChapter(item.chapterId);
+                    if (item.plan) {
+                      setSession({
+                        title: item.title,
+                        chapterId: item.chapterId,
+                        meta: item.track === 'en' ? 'Evaluare Națională' : '',
+                        ...item.plan
+                      });
+                      setSaved(true);
+                      setDoneSteps({});
+                      setSessionDone(false);
+                    }
                   }}
                 >
                   <strong>{item.title}</strong>
@@ -489,16 +607,15 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
 
       <div className="learn-tools-grid">
         <FocusTimer userData={userData} onRewardClaim={onRewardClaim} />
-        {!isEn && (
-          <FlashCards
-            userData={userData}
-            subject={subject}
-            classLevel={grade}
-            chapters={units}
-            onRewardClaim={onRewardClaim}
-            onAskMentor={askMentor}
-          />
-        )}
+        <FlashCards
+          subject={subject}
+          classLevel={activeGrade}
+          chapters={units}
+          track={isEn ? 'en' : ''}
+          mode={isEn ? 'training' : ''}
+          onRewardClaim={onRewardClaim}
+          onAskMentor={askMentor}
+        />
       </div>
     </main>
   );

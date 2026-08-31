@@ -88,7 +88,7 @@ const TitleCard = ({ item, equipped, onEquip, equipping }) => (
           {equipped ? 'Pe profil' : 'Poartă'}
         </button>
       ) : (
-        <span>Se deblochează din faptă, nu cu monede.</span>
+        <span>Cum se deblochează: {item.description || 'din faptă, nu cu monede.'}</span>
       )}
     </div>
   </div>

@@ -54,7 +54,7 @@ function pickPractice({
   const isTest = kind === 'test';
   const pool = isTest ? listChapterExercises(sid, g, cid) : listChapterQuestions(sid, g, cid);
   const points = isTest ? listExercisePoints(sid, g, cid) : listPoints(sid, g, cid);
-  const want = isTest ? 7 : Math.max(1, Number(count) || 8);
+  const want = isTest ? Math.max(1, Number(count) || 10) : Math.max(1, Number(count) || 8);
   const excluded = new Set((excludeIds || []).map(String));
   const seen = new Set((seenPoints || []).map(String));
 

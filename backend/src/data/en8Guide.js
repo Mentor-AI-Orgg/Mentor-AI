@@ -5,7 +5,10 @@
 // sunt originale, inspirate de structura probei, nu de un subiect publicat.
 
 const { lessonsForEn } = require('./en8Lessons');
-const { papersForEn } = require('./en8Papers');
+const { recommendedList } = require('./enPaperFactory');
+const { shapeUnit } = require('./lessonShape');
+const { glossaryFor } = require('./chapterGlossary');
+const { dailyQuote, formatQuote } = require('./quotes');
 
 const EN_SOURCE = {
   authority: "Ministerul Educației",
@@ -138,13 +141,16 @@ function getEnGuide(subject) {
     title: entry.title,
     howISeeIt: entry.howISeeIt,
     completablePractice: false,
+    trainingAvailable: true,
+    quote: formatQuote(dailyQuote()),
     papersNote:
-      "Modelele de mai jos se lucrează pe caiet sau pe foaie. În aplicație vezi doar testul, fără câmpuri de răspuns și fără notare.",
-    units: (entry.units || []).map(unit => ({
+      "Modelele au 4 variante, ca la examen, și două texte la română. Lucrezi pe foaie. Baremul se deschide item cu item, după un timp de lucru — nu există „arată toate răspunsurile”. Antrenamentul EN (mai jos, la capitole) e separat: acolo poți exersa fără să copiezi baremul probei.",
+    units: (entry.units || []).map(unit => shapeUnit({
       ...unit,
-      lessons: lessonsForEn(sid, unit.id)
+      lessons: lessonsForEn(sid, unit.id),
+      glossary: glossaryFor(sid, 8, unit.id, 'en')
     })),
-    papers: papersForEn(sid)
+    papers: recommendedList(sid)
   };
 }
 

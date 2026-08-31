@@ -343,8 +343,18 @@ const BY_CHAPTER = {
   }
 };
 
+const CHAPTER_ALIAS = {
+  'algebra-en': 'algebric',
+  'functii-en': 'functii',
+  'geo-plana': 'geo7',
+  'geo-spatiu': 'spatiu',
+  numere: 'intervale',
+  proba: 'naturale',
+  date: 'date'
+};
+
 function generateMath(chapterId, kind, rand, level) {
-  const pack = BY_CHAPTER[chapterId];
+  const pack = BY_CHAPTER[chapterId] || BY_CHAPTER[CHAPTER_ALIAS[chapterId]];
   if (!pack) return null;
   const lv = Math.max(1, Number(level) || 1);
   if (kind === 'test') {

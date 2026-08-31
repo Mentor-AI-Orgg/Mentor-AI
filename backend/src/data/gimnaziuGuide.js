@@ -12,6 +12,9 @@
 // ghideze fără să predea dintr-un manual anume.
 
 const { lessonsFor } = require('./gimnaziuLessons');
+const { shapeUnit } = require('./lessonShape');
+const { glossaryFor } = require('./chapterGlossary');
+const { dailyQuote, formatQuote } = require('./quotes');
 
 const SOURCE = {
   authority: "Ministerul Educației",
@@ -342,9 +345,11 @@ function getGuide(subject, grade) {
     grade: g,
     source: SOURCE,
     ...entry,
-    units: (entry.units || []).map(unit => ({
+    quote: formatQuote(dailyQuote()),
+    units: (entry.units || []).map(unit => shapeUnit({
       ...unit,
-      lessons: lessonsFor(sid, g, unit.id)
+      lessons: lessonsFor(sid, g, unit.id),
+      glossary: glossaryFor(sid, g, unit.id)
     }))
   };
 }

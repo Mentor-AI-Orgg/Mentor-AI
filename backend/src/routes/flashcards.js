@@ -25,9 +25,11 @@ router.post("/generate", (req, res) => {
     track = ""
   } = req.body || {};
 
-  if (String(track).toLowerCase() === "en" || String(classLevel).toLowerCase() === "en") {
+  const isEn = String(track).toLowerCase() === "en" || String(classLevel).toLowerCase() === "en";
+  const training = String(req.body?.mode || "").toLowerCase() === "training";
+  if (isEn && !training) {
     return res.status(400).json({
-      error: "Modelele de Evaluare Națională se lucrează pe foaie. În aplicație vezi doar testul, fără completare."
+      error: "Modelele oficiale EN se lucrează pe foaie. Pentru exerciții în aplicație deschide Antrenament EN."
     });
   }
 
@@ -58,14 +60,16 @@ router.post("/generate", (req, res) => {
     kind: kind === "test" ? "test" : "flashcards",
     excludeIds: [...new Set([...(Array.isArray(excludeIds) ? excludeIds : []), ...(stored.questionIds || [])])],
     seenPoints: stored.points || [],
-    count
+    count: Number(count) || (kind === "test" ? 10 : 8)
   });
 
   res.json({
     ...pack,
-    engine_used: "chapter_bank",
+    engine_used: isEn ? "en_training" : "chapter_bank",
     mocked: false,
-    topic: topic || pack.chapterId
+    track: isEn ? "en" : "",
+    topic: topic || pack.chapterId,
+    infinite: true
   });
 });
 
@@ -213,6 +217,13 @@ router.post("/finish", (req, res) => {
     });
   }
 
+  const homework = weaknesses.slice(0, 3).map(point => ({
+    point,
+    task: isTest
+      ? `Temă scurtă: ia ideea „${point}” și rezolvă un exemplu nou, cu alte numere, pe caiet. Apoi spune mentorului primul pas, nu tot.`
+      : `Repetă mâine ideea „${point}”: o întrebare, apoi explică de ce varianta ta e bună.`
+  }));
+
   res.json({
     items,
     correct,
@@ -221,6 +232,7 @@ router.post("/finish", (req, res) => {
     message,
     strengths,
     weaknesses,
+    homework,
     history: review.snapshot,
     awarded: award?.awarded || null,
     summary: award?.summary || null

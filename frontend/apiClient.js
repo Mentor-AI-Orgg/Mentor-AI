@@ -675,6 +675,45 @@ const MentorAPI = {
     }
   },
 
+  async generateEnPaper(payload) {
+    try {
+      const data = await safeFetchJson('/api/curriculum/en/papers/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true, error: error.message };
+    }
+  },
+
+  async openEnPaper(payload) {
+    try {
+      const data = await safeFetchJson('/api/curriculum/en/papers/open', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true, error: error.message };
+    }
+  },
+
+  async revealEnBarem(payload) {
+    try {
+      const data = await safeFetchJson('/api/curriculum/en/barem', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true, error: error.message, waitMs: error.payload?.waitMs };
+    }
+  },
+
   async generateFlashcards(payload) {
     try {
       const data = await safeFetchJson('/api/flashcards/generate', {

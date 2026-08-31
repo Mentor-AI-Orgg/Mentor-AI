@@ -46,6 +46,7 @@ const BottomNav = ({ active, onNavigate }) => {
     { id: 'professor', icon: 'fa-graduation-cap', label: t('nav.professor') },
     { id: 'learn', icon: 'fa-book-open', label: t('nav.learn') },
     { id: 'shop', icon: 'fa-store', label: t('nav.shop') },
+    { id: 'calendar', icon: 'fa-calendar-check', label: t('nav.calendar') },
     { id: 'profile', icon: 'fa-user', label: t('nav.profile') }
   ];
 

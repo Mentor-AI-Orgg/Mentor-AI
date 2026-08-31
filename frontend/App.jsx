@@ -9,7 +9,6 @@ import BottomNav from './components/BottomNav.jsx';
 import Toast from './components/Toast.jsx';
 import SplashScreen from './components/SplashScreen.jsx';
 import WelcomeScreen from './components/WelcomeScreen.jsx';
-import AuthScreen from './components/AuthScreen.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
 import RegisterScreen from './components/RegisterScreen.jsx';
 import OnboardingScreen from './components/OnboardingScreen.jsx';
@@ -366,8 +365,19 @@ function AppShell({ userData, setUserData }) {
       chapter: extras.chapter || null,
       track: extras.track !== undefined ? extras.track : prev.track
     }));
-    setNavScreen(target);
+    setNavScreen(target === 'calendar' ? 'calendar' : target);
     setScreen(target);
+    const hash = target === 'learn' && extras.track === 'en'
+      ? `#/en/${extras.subject || 'matematica'}`
+      : target === 'learn' && extras.subject
+        ? `#/lectii/${extras.subject}/${extras.grade || ''}/${extras.chapter || ''}`
+        : target === 'home' ? '#/acasa'
+          : target === 'professor' ? '#/mentor'
+            : target === 'shop' ? '#/magazin'
+              : target === 'profile' ? '#/profil'
+                : target === 'calendar' ? '#/calendar'
+                  : '';
+    if (hash) window.history.pushState({}, '', hash);
     if (target === 'home' || target === 'shop' || target === 'profile') {
       syncEconomy();
     }
@@ -383,8 +393,6 @@ function AppShell({ userData, setUserData }) {
         return <SplashScreen onFinish={handleSplashFinish} delay={userData.isLoggedIn ? 200 : 2500} />;
       case 'welcome':
         return <WelcomeScreen onConnect={() => setScreen('login')} onRegister={() => setScreen('register')} />;
-      case 'auth':
-        return <AuthScreen onLogin={() => setScreen('login')} onRegister={() => setScreen('register')} />;
       case 'login':
         return <LoginScreen onBack={() => setScreen('welcome')} onLogin={handleLogin} onForgotPassword={handleForgotPassword} />;
       case 'register':
@@ -464,11 +472,20 @@ function AppShell({ userData, setUserData }) {
           />
         );
       default:
-        return <HomeScreen userData={userData} onNavigate={handleNavigate} />;
+        return (
+          <main className="screen-page animate-fadeIn">
+            <header className="screen-header">
+              <div className="eyebrow">Pagină lipsă</div>
+              <h1 className="display-font screen-title">Nu am găsit ecranul.</h1>
+              <p>Sesiunea e în regulă. Întoarce-te acasă sau la lecții.</p>
+              <button type="button" className="accent-button" onClick={() => handleNavigate('home')}>Acasă</button>
+            </header>
+          </main>
+        );
     }
   };
 
-  const showNav = ['home', 'professor', 'learn', 'shop', 'profile'].includes(screen);
+  const showNav = ['home', 'professor', 'learn', 'shop', 'profile', 'calendar'].includes(screen);
 
   return (
     <div className="app-shell">

@@ -263,7 +263,10 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
           </div>
           <div className="surface-soft rounded-3xl p-4 text-sm col-span-2">
             <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">Colecție magazin</div>
-            <div className="text-lg font-semibold">{(wardrobe.inventory || []).length}/{wardrobe.items.length || 0}</div>
+            <div className="text-lg font-semibold">
+              {(wardrobe.inventory || []).length}/{wardrobe.items.length || 0} obiecte
+              {userData.collection?.avatarsTotal ? ` · ${userData.collection.avatarsOwned || wardrobe.items.filter(item => item.category === 'avatar' && wardrobe.inventory.includes(item.id)).length}/${userData.collection.avatarsTotal} avataruri` : ''}
+            </div>
           </div>
         </div>
         <LevelBar userData={userData} />
@@ -526,7 +529,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
       </div>
 
       <div className="mx-5 mt-5">
-        <Leaderboard userData={userData} />
+        <Leaderboard />
       </div>
       <div className="mx-5 mt-5 grid gap-3">
         <button type="button" onClick={exportAccount} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition" disabled={exporting}>

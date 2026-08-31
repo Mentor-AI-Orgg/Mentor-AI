@@ -119,6 +119,10 @@ describe('gimnaziu curriculum', () => {
       expect(paper.workOnPaper).toBe(true);
       expect(paper.blocks.length).toBe(3);
       expect(JSON.stringify(paper)).not.toMatch(/<input|<textarea/i);
+      const mcq = paper.blocks.flatMap(block => block.items).filter(item => item.choices);
+      expect(mcq.length).toBeGreaterThan(10);
+      mcq.forEach(item => expect(item.choices).toHaveLength(4));
+      expect(JSON.stringify(paper)).not.toMatch(/"letter":\s*"A"/);
     });
 
     const catalog = await request(app).get('/api/curriculum').query({ track: 'en' });

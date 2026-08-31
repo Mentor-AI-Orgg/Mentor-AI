@@ -1120,3 +1120,32 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   .friend-card { grid-template-columns: 40px 1fr; }
   .friend-card.has-rank { grid-template-columns: 28px 40px 1fr; }
 }
+
+.quote-card { margin: 10px 0 0; color: #f0e6c8; font-size: 14px; line-height: 1.55; }
+.quote-text { font-style: italic; }
+.quote-by { color: rgba(255,255,255,.62); font-style: normal; }
+.quote-inline { margin: 0 0 14px; }
+.en-choices { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.en-choices li { padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,.05); }
+.en-choices span { color: #f0c36a; margin-right: 8px; font-weight: 700; }
+.en-barem-gate { margin-top: 10px; }
+.en-hold-btn { width: 100%; }
+.en-barem-card { padding: 10px 12px; border-radius: 12px; background: rgba(240,195,106,.1); }
+.en-barem-ideas { margin: 8px 0 0; padding-left: 18px; }
+.chapter-glossary { display: grid; gap: 8px; margin: 0 0 14px; }
+.chapter-glossary dt { font-weight: 700; color: #f0c36a; }
+.chapter-glossary dd { margin: 0; color: #d7d9ea; font-size: 13px; }
+.chapter-map-line, .empty-state { color: #c9cbe0; font-size: 13px; }
+.lesson-try { border-left: 3px solid #f0c36a; padding-left: 10px; }
+.mission-list { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 8px; }
+.mission-list li { display: flex; gap: 8px; align-items: center; }
+.mission-list li.done { color: #b8f0c4; }
+.streak-week { display: flex; align-items: center; gap: 6px; margin: 12px 0; }
+.streak-box { width: 16px; height: 16px; border-radius: 4px; background: rgba(255,255,255,.12); }
+.streak-box.on { background: #f0c36a; }
+.quiz-homework { margin: 10px 0; padding-left: 18px; }
+.composer-thumb { width: 36px; height: 36px; object-fit: cover; border-radius: 8px; }
+.mentor-limit { color: #c9cbe0; font-size: 13px; }
+@media (max-width: 700px) {
+  .app-background { opacity: 0.35; }
+}

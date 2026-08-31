@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 
-const ChapterQuiz = ({ unit, subject, grade, onClose, onRewardClaim, onAskMentor }) => {
+const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onRewardClaim, onAskMentor }) => {
   const [cards, setCards] = useState([]);
   const [index, setIndex] = useState(0);
   const [drafts, setDrafts] = useState({});
@@ -25,7 +25,9 @@ const ChapterQuiz = ({ unit, subject, grade, onClose, onRewardClaim, onAskMentor
       class_level: grade,
       kind: 'test',
       exclude_ids: skip,
-      count: 7
+      count: 10,
+      track,
+      mode
     });
     const next = pack.success ? (pack.data.cards || []) : [];
     setCards(next);
@@ -83,7 +85,7 @@ const ChapterQuiz = ({ unit, subject, grade, onClose, onRewardClaim, onAskMentor
     <section className="chapter-quiz surface animate-fadeIn" aria-label={`Test: ${unit.title}`}>
       <div className="chapter-quiz-head">
         <div>
-          <div className="eyebrow">Test de capitol · 7 exerciții</div>
+          <div className="eyebrow">{track === 'en' ? 'Antrenament EN' : 'Test de capitol'} · 10 exerciții, fără repetare</div>
           <h3 className="display-font">{unit.title}</h3>
         </div>
         <button type="button" className="ghost-button" onClick={onClose} aria-label="Închide testul"><i className="fas fa-xmark" /></button>
@@ -138,6 +140,14 @@ const ChapterQuiz = ({ unit, subject, grade, onClose, onRewardClaim, onAskMentor
           <p>{report.message}</p>
           {report.strengths?.length > 0 && <p className="quiz-explain">Puncte forte: {report.strengths.join(', ')}</p>}
           {report.weaknesses?.length > 0 && <p className="quiz-sample">De lucrat: {report.weaknesses.join(', ')}</p>}
+          {report.homework?.length > 0 && (
+            <div className="quiz-homework">
+              <strong>Temă scurtă pe punctele slabe</strong>
+              <ul>
+                {report.homework.map(row => <li key={row.point}>{row.task}</li>)}
+              </ul>
+            </div>
+          )}
           <ol className="quiz-review-list">
             {(report.items || []).map((item, itemIndex) => (
               <li key={item.id || itemIndex} className={item.ok ? 'ok' : 'bad'}>

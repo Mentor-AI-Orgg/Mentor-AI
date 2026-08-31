@@ -28,7 +28,12 @@ function applyProgress(summary = {}, prev = {}) {
     titleName: summary.titleName || prev.titleName,
     chapters: summary.chapters || prev.chapters,
     lastStudy: summary.lastStudy || prev.lastStudy,
-    savedSessions: summary.savedSessions || prev.savedSessions
+    savedSessions: summary.savedSessions || prev.savedSessions,
+    streakDays: summary.streakDays || prev.streakDays,
+    missions: summary.missions || prev.missions,
+    chapterMaps: summary.chapterMaps || prev.chapterMaps,
+    mentorLeft: summary.mentorLeft ?? prev.mentorLeft,
+    collection: summary.collection || prev.collection
   };
 }
 

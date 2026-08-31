@@ -79,6 +79,9 @@ function createDefaultUser(userId) {
     sessionAwards: {},
     practiceSeen: {},
     practiceTests: {},
+    enPapers: {},
+    streakDays: [],
+    lastAnalogy: {},
     skillLog: [],
     skillPoints: {},
     parentNotify: { studyDate: null, loginDate: null },
@@ -103,6 +106,9 @@ function ensureUser(userId, patch = {}) {
   if (!current.sessionAwards) current.sessionAwards = {};
   if (!current.practiceSeen) current.practiceSeen = {};
   if (!current.practiceTests) current.practiceTests = {};
+  if (!current.enPapers) current.enPapers = {};
+  if (!Array.isArray(current.streakDays)) current.streakDays = [];
+  if (!current.lastAnalogy) current.lastAnalogy = {};
   if (!Array.isArray(current.skillLog)) current.skillLog = [];
   if (!current.skillPoints || typeof current.skillPoints !== 'object') current.skillPoints = {};
   if (!current.parentNotify) current.parentNotify = { studyDate: null, loginDate: null };
@@ -466,6 +472,11 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
   const todayKey = getTodayKey();
   noteEarlyBird(user, todayKey);
   const study = touchStudy(user, todayKey);
+  if (!Array.isArray(user.streakDays)) user.streakDays = [];
+  if (study.firstToday && !user.streakDays.includes(todayKey)) {
+    user.streakDays.push(todayKey);
+    user.streakDays = user.streakDays.slice(-60);
+  }
   if (study.firstToday && !user.streakBonusDate) {
     user.streakBonusDate = todayKey;
     grantAward(user, AWARDS.streak_day, 'reward', `Streak ${user.metrics.streak} zile`, { streak: user.metrics.streak });
@@ -485,11 +496,13 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
         grade: String(meta.grade || ''),
         chapterId: meta.chapterId,
         title: meta.title || '',
+        track: meta.track || '',
         at: new Date().toISOString()
       };
       awarded = grantAward(user, AWARDS.chapter_open, 'chapter_open', note || meta.title || 'Capitol deschis', meta);
     } else if (key && user.chapters[key] && user.chapters[key].status !== 'done') {
       user.chapters[key].at = new Date().toISOString();
+      if (meta.track) user.chapters[key].track = meta.track;
     }
   }
 
@@ -559,6 +572,8 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
       subject: meta.subject || '',
       grade: String(meta.grade || ''),
       chapterId: meta.chapterId || '',
+      track: meta.track || '',
+      plan: meta.plan && typeof meta.plan === 'object' ? meta.plan : null,
       at: new Date().toISOString()
     });
     user.savedSessions = user.savedSessions.slice(0, 20);
@@ -896,6 +911,46 @@ function getInventory(userId = 'demo_user') {
   };
 }
 
+function missionState(user) {
+  const today = getTodayKey();
+  const opened = Object.values(user.chapters || {}).some(row => String(row.at || '').slice(0, 10) === today);
+  const tested = Object.keys(user.practiceTests || {}).some(key => key.endsWith(`:${today}`));
+  const flash = Object.values(user.practiceSeen || {}).some(row => (row.day === today) && (row.questionIds || []).length >= 5);
+  return {
+    day: today,
+    items: [
+      { id: 'chapter', label: 'Deschide un capitol', done: opened },
+      { id: 'flash', label: '5 flashcarduri', done: flash },
+      { id: 'test', label: 'Un test de capitol', done: tested }
+    ]
+  };
+}
+
+function chapterMapsFrom(user) {
+  const maps = {};
+  const chapters = user.chapters && typeof user.chapters === 'object' ? user.chapters : {};
+  Object.entries(chapters).forEach(([key, row]) => {
+    const seen = user.practiceSeen[key] || {};
+    const tested = Object.keys(user.practiceTests || {}).some(stamp => stamp.startsWith(`${key}:`));
+    const read = row.status === 'done' || row.status === 'started';
+    const flash = (seen.questionIds || []).length;
+    maps[key] = {
+      read: Boolean(read),
+      tested: Boolean(tested),
+      flash,
+      status: row.status || '',
+      title: row.title || '',
+      grades: Array.isArray(user.practiceTests && Object.values(user.practiceTests))
+        ? Object.entries(user.practiceTests)
+          .filter(([stamp]) => stamp.startsWith(`${key}:`))
+          .map(([, val]) => ({ at: val.at, score: val.score }))
+          .slice(-8)
+        : []
+    };
+  });
+  return maps;
+}
+
 function lastStudyFrom(user) {
   const chapters = user.chapters && typeof user.chapters === 'object' ? user.chapters : {};
   const rows = Object.values(chapters).filter(item => item && item.chapterId);
@@ -908,6 +963,7 @@ function lastStudyFrom(user) {
     chapterId: last.chapterId || '',
     title: last.title || '',
     status: last.status || '',
+    track: last.track || '',
     at: last.at || ''
   };
 }
@@ -937,6 +993,14 @@ function buildSummary(user) {
     chapters: { ...user.chapters },
     lastStudy: lastStudyFrom(user),
     savedSessions: Array.isArray(user.savedSessions) ? user.savedSessions.slice(0, 8) : [],
+    streakDays: Array.isArray(user.streakDays) ? user.streakDays.slice(-30) : [],
+    missions: missionState(user),
+    chapterMaps: chapterMapsFrom(user),
+    mentorLeft: Math.max(0, 5 - Number((user.mentorAwards || {})[getTodayKey()] || 0)),
+    collection: {
+      avatarsOwned: SHOP_CATALOG.filter(item => item.category === 'avatar' && (user.inventory || []).includes(item.id)).length,
+      avatarsTotal: SHOP_CATALOG.filter(item => item.category === 'avatar').length
+    },
     preferences: { ...user.preferences },
     inventory: user.inventory.slice(),
     equipped: { ...user.equipped },

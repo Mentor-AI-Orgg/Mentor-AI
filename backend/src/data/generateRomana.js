@@ -376,13 +376,24 @@ TESTS.inter8 = makeTests(
   (_r, lv) => test('reflectie', 'O reflecție întreabă „ce rămâne după”. Completează în 8–12 cuvinte, cu „după”.', ['dupa', 'după'], ['Nu doar faptele'], { long: true, minWords: 8, level: lv })
 );
 
+const CHAPTER_ALIAS = {
+  'proba-ro': 'lectura8',
+  receptare: 'lectura8',
+  'limba-en': 'limba8',
+  narativ: 'redactare8',
+  descriptiv: 'redactare8',
+  argumentativ: 'redactare8',
+  strategie: 'oral8'
+};
+
 function generateRomana(chapterId, kind, rand, level) {
   const lv = Math.max(1, Number(level) || 1);
+  const cid = CHAPTER_ALIAS[chapterId] || chapterId;
   if (kind === 'test') {
-    const list = TESTS[chapterId] || TESTS.lectura;
+    const list = TESTS[cid] || TESTS.lectura;
     return rung(lv, list)(rand, ((lv - 1) % list.length) + 1);
   }
-  const list = FLASHES[chapterId] || FLASHES.lectura;
+  const list = FLASHES[cid] || FLASHES.lectura;
   return rung(lv, list)(rand);
 }
 
