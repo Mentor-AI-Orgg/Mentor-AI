@@ -294,7 +294,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         <div>
           <div className="eyebrow">Magazinul tău</div>
           <h1 className="display-font shop-title">Câștigă din învățare și personalizează aplicația.</h1>
-          <p className="shop-subtitle">Plătești cu monede de studiu — nu cu lei. Le iei din capitole, teste, flashcarduri, focus și mentor. Mythic cere nivelul 5.</p>
+          <p className="shop-subtitle">Plătești cu monede de studiu — nu cu lei. Le iei din capitole, teste, flashcarduri, concentrare și mentor. Mitic cere nivelul 5.</p>
         </div>
         <div className="shop-balance-card">
           <span>Monede de studiu</span>
