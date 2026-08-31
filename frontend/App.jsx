@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Component, useState, useEffect, useCallback, useMemo } from 'react';
 import { MentorAPI } from './apiClient.js';
 import { STORAGE_KEY, defaultUserData } from './userData.js';
 import { applyProgress, applyTheme } from './appearance.js';
@@ -20,6 +20,23 @@ import HomeScreen from './screens/HomeScreen.jsx';
 import SubscriptionsScreen from './screens/SubscriptionsScreen.jsx';
 import ProfileScreen from './screens/ProfileScreen.jsx';
 import CalendarScreen from './screens/CalendarScreen.jsx';
+
+class BackgroundSafe extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { ok: true };
+  }
+
+  static getDerivedStateFromError() {
+    return { ok: false };
+  }
+
+  componentDidCatch() {}
+
+  render() {
+    return this.state.ok ? this.props.children : null;
+  }
+}
 
 function applyAccount(user, prev = {}) {
   if (!user) return prev;
@@ -208,7 +225,7 @@ function AppShell({ userData, setUserData }) {
     setScreen('home');
     setNavScreen('home');
 
-    await MentorAPI.claimReward({ type: 'login_bonus' });
+    await MentorAPI.claimReward({ type: 'login_bonus' }).catch(() => null);
     await syncEconomy();
     showToast(t('toast.welcome'), 'success');
     return { success: true };
@@ -350,6 +367,9 @@ function AppShell({ userData, setUserData }) {
     }));
     setNavScreen(target);
     setScreen(target);
+    if (target === 'home' || target === 'shop' || target === 'profile') {
+      syncEconomy();
+    }
   };
 
   const handleOnboardingSelect = value => {
@@ -453,21 +473,23 @@ function AppShell({ userData, setUserData }) {
     <div className="app-shell">
       <AdaptiveContainer />
       <div className="app-background">
-        <FloatingLines
-          linesGradient={['#b9a7ff', '#6fd7ff', '#5a4fcf', '#5353b8']}
-          enabledWaves={['top', 'middle', 'bottom']}
-          lineCount={[6, 8, 10]}
-          lineDistance={[5, 4, 3]}
-          topWavePosition={{ x: 0.8, y: 0.25, rotate: -0.4 }}
-          middleWavePosition={{ x: 1.0, y: -0.05, rotate: 0.2 }}
-          bottomWavePosition={{ x: 2.0, y: -0.65, rotate: 0.4 }}
-          animationSpeed={0.8}
-          interactive={false}
-          bendRadius={10}
-          bendStrength={0.4}
-          parallax={true}
-          parallaxStrength={0.12}
-        />
+        <BackgroundSafe>
+          <FloatingLines
+            linesGradient={['#b9a7ff', '#6fd7ff', '#5a4fcf', '#5353b8']}
+            enabledWaves={['top', 'middle', 'bottom']}
+            lineCount={[6, 8, 10]}
+            lineDistance={[5, 4, 3]}
+            topWavePosition={{ x: 0.8, y: 0.25, rotate: -0.4 }}
+            middleWavePosition={{ x: 1.0, y: -0.05, rotate: 0.2 }}
+            bottomWavePosition={{ x: 2.0, y: -0.65, rotate: 0.4 }}
+            animationSpeed={0.8}
+            interactive={false}
+            bendRadius={10}
+            bendStrength={0.4}
+            parallax={true}
+            parallaxStrength={0.12}
+          />
+        </BackgroundSafe>
       </div>
       {renderScreen()}
       {showNav && <BottomNav active={navScreen} onNavigate={handleNavigate} />}
