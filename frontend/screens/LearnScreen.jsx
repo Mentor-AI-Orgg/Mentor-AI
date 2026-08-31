@@ -322,6 +322,33 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             {guide?.source?.disclaimer && <small className="chapter-disclaimer">{guide.source.disclaimer}</small>}
           </section>
 
+          {isEn && (guide?.papers || []).length > 0 && (
+            <section className="en-papers-section" aria-label="Modele recomandate de teste">
+              <div className="surface chapter-intro">
+                <div className="eyebrow">Modele recomandate</div>
+                <h2 className="display-font">Teste de tip examen, doar pe foaie</h2>
+                <p>{guide.papersNote || 'Vezi testul aici. Rezolvi pe caiet. Aplicația nu are câmpuri de răspuns și nu notează.'}</p>
+              </div>
+              <div className="en-paper-card-list">
+                {guide.papers.map(paper => (
+                  <button
+                    key={paper.id}
+                    type="button"
+                    className={`en-paper-pick ${openPaper?.id === paper.id ? 'selected' : ''}`}
+                    onClick={() => setOpenPaper(openPaper?.id === paper.id ? null : paper)}
+                  >
+                    <i className="fas fa-file-alt" />
+                    <span>
+                      <strong>{paper.title}</strong>
+                      <small>{paper.duration} · {paper.oficiu} puncte din oficiu · nu se completează aici</small>
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {openPaper && <EnPaperView paper={openPaper} onClose={() => setOpenPaper(null)} />}
+            </section>
+          )}
+
           <section className="chapter-list" aria-label="Capitole">
             {units.map((unit, index) => {
               const open = openChapter === unit.id;
@@ -354,7 +381,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                       )}
                       <p className="lesson-practice-hint">
                         {isEn
-                          ? 'Aici citești lecția. Modelele de teste EN sunt mai jos, doar pe foaie — nu se completează în aplicație.'
+                          ? 'Aici citești lecția. Modelele de teste EN sunt deasupra capitolelor, doar pe foaie — nu se completează în aplicație.'
                           : 'Testul și flashcardurile urcă de la foarte ușor la greu. Scrii răspunsul la test; la flashcarduri alegi A–D.'}
                       </p>
                       <div className="learning-actions">
@@ -376,33 +403,6 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
               );
             })}
           </section>
-
-          {isEn && (guide?.papers || []).length > 0 && (
-            <section className="en-papers-section" aria-label="Modele recomandate de teste">
-              <div className="surface chapter-intro">
-                <div className="eyebrow">Modele recomandate</div>
-                <h2 className="display-font">Teste de tip examen, doar pe foaie</h2>
-                <p>{guide.papersNote || 'Vezi testul aici. Rezolvi pe caiet. Aplicația nu are câmpuri de răspuns și nu notează.'}</p>
-              </div>
-              <div className="en-paper-card-list">
-                {guide.papers.map(paper => (
-                  <button
-                    key={paper.id}
-                    type="button"
-                    className={`en-paper-pick ${openPaper?.id === paper.id ? 'selected' : ''}`}
-                    onClick={() => setOpenPaper(openPaper?.id === paper.id ? null : paper)}
-                  >
-                    <i className="fas fa-file-alt" />
-                    <span>
-                      <strong>{paper.title}</strong>
-                      <small>{paper.duration} · {paper.oficiu} puncte din oficiu · nu se completează aici</small>
-                    </span>
-                  </button>
-                ))}
-              </div>
-              {openPaper && <EnPaperView paper={openPaper} onClose={() => setOpenPaper(null)} />}
-            </section>
-          )}
         </>
       )}
 
