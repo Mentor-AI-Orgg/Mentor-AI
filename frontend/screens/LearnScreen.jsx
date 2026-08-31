@@ -252,7 +252,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           <h1 className="display-font screen-title">{isEn ? 'Pregătire pentru Evaluarea Națională.' : 'Română și matematică, clasele 5–8.'}</h1>
           <p className="screen-subtitle">
             {isEn
-              ? 'Secțiune separată față de capitolele pe clase. Lecțiile sunt rezumate originale, cu exemple lucrate, după programa de examen (OM 4.730/2022), nu copiate din manuale sau culegeri. Modelele de teste se văd aici și se lucrează pe foaie: fără câmpuri, fără finalizare, fără notare în aplicație.'
+              ? 'Secțiune separată față de capitolele pe clase. Lecțiile sunt rezumate originale, cu exemple lucrate, după programa de examen (OM 4.730/2022). Modelele de teste se lucrează ca la examen: începi, stai minim o oră (predare anticipată), apoi finalizezi. Baremul și nota apar după predare; părintele le primește împreună cu durata.'
               : 'Alege materia, apoi clasa. În fiecare capitol ai lecțiile pe tavă — cu exemple lucrate, nu copiate din manual. Testele și flashcardurile urcă de la foarte ușor la greu. La test scrii doar răspunsul final; nota și pașii vin după finalizare. După banca de capitol apar variante noi, generate pe programă.'}
           </p>
           <p className="learn-slogan">{dailySlogan()}</p>
@@ -371,8 +371,8 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             <section className="en-papers-section" aria-label="Modele recomandate de teste">
               <div className="surface chapter-intro">
                 <div className="eyebrow">Modele recomandate</div>
-                <h2 className="display-font">Teste de tip examen, doar pe foaie</h2>
-                <p>{guide.papersNote || 'Vezi testul aici. Rezolvi pe caiet. Aplicația nu are câmpuri de răspuns și nu notează.'}</p>
+                <h2 className="display-font">Teste de tip examen, ca la Evaluarea Națională</h2>
+                <p>{guide.papersNote || 'Începi testul, stai minim o oră, apoi finalizezi. Baremul apare după predare.'}</p>
               </div>
               <div className="en-paper-card-list">
                 {guide.papers.map(paper => (
@@ -388,7 +388,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                     <i className="fas fa-file-alt" />
                     <span>
                       <strong>{paper.title}</strong>
-                      <small>{paper.duration} · {paper.oficiu} puncte din oficiu · nu se completează aici</small>
+                      <small>{paper.duration} · {paper.oficiu} puncte din oficiu · start, apoi predare după o oră</small>
                     </span>
                   </button>
                 ))}
@@ -471,7 +471,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                       )}
                       <p className="lesson-practice-hint">
                         {isEn
-                          ? 'Lecția e aici. Modelele EN (cu 4 variante) sunt deasupra, doar pe foaie. Antrenamentul EN e exercițiu în aplicație, separat de baremul probei.'
+                          ? 'Lecția e aici. Modelele EN (cu 4 variante) sunt deasupra: începi, stai timpul de sală, apoi vezi baremul. Antrenamentul EN e exercițiu scurt, separat de proba cronometrată.'
                           : 'Testul și flashcardurile urcă de la foarte ușor la greu. Scrii răspunsul la test; la flashcarduri alegi A–D. Nu se repetă: fiecare rundă aduce itemi noi.'}
                       </p>
                       <small className="chapter-disclaimer">Ghid intern Mentor AI, nu manual. „Cum o văd eu”, după programă.</small>

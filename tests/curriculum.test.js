@@ -130,9 +130,10 @@ describe('gimnaziu curriculum', () => {
       expect(entry.figure).toMatch(/parallels|triangle|planes|pyramid|cone|sphere|thales|circle/);
     });
     math.papers.forEach(paper => {
-      expect(paper.completable).toBe(false);
-      expect(paper.workOnPaper).toBe(true);
+      expect(paper.completable).toBe(true);
+      expect(paper.workOnPaper).toBe(false);
       expect(paper.blocks.length).toBe(3);
+      expect(paper.hint).toMatch(/Începe test|oră|finaliz/i);
       expect(JSON.stringify(paper)).not.toMatch(/<input|<textarea/i);
       const mcq = paper.blocks.flatMap(block => block.items).filter(item => item.choices);
       expect(mcq.length).toBeGreaterThan(10);
@@ -148,8 +149,8 @@ describe('gimnaziu curriculum', () => {
     const one = await request(app).get('/api/curriculum').query({ track: 'en', subject: 'romana' });
     expect(one.status).toBe(200);
     expect(one.body.subject).toBe('romana');
-    expect(one.body.papers[0].hint).toMatch(/foaie|caiet/i);
-    expect(one.body.papers[0].completable).toBe(false);
+    expect(one.body.papers[0].hint).toMatch(/Începe test|oră|finaliz|barem/i);
+    expect(one.body.papers[0].completable).toBe(true);
     expect(JSON.stringify(one.body.papers)).not.toMatch(/<input|<textarea/);
 
     const countsApi = await request(app).get('/api/curriculum/en/counts');

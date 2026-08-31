@@ -714,6 +714,32 @@ const MentorAPI = {
     }
   },
 
+  async startEnPaper(payload) {
+    try {
+      const data = await safeFetchJson('/api/curriculum/en/papers/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true, error: error.message };
+    }
+  },
+
+  async finishEnPaper(payload) {
+    try {
+      const data = await safeFetchJson('/api/curriculum/en/papers/finish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true, error: error.message, waitMs: error.payload?.waitMs };
+    }
+  },
+
   async revealEnBarem(payload) {
     try {
       const data = await safeFetchJson('/api/curriculum/en/barem', {

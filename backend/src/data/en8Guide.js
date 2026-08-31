@@ -17,7 +17,7 @@ const EN_SOURCE = {
   published: "Monitorul Oficial nr. 842 bis / 2022",
   exam: "Evaluarea Națională pentru absolvenții clasei a VIII-a",
   disclaimer:
-    "Rezumat propriu după programa de examen. Nu înlocuiește subiectele oficiale și nu reproduce culegeri sau manuale protejate. Modelele de teste se lucrează pe foaie, nu în aplicație."
+    "Rezumat propriu după programa de examen. Nu înlocuiește subiectele oficiale și nu reproduce culegeri sau manuale protejate. Modelele de teste se lucrează ca la examen: începi, stai minim o oră, apoi finalizezi. Baremul apare după predare."
 };
 
 const EN_SUBJECT_IDS = ["matematica", "romana"];
@@ -32,7 +32,7 @@ const EN_GUIDES = {
         id: "proba",
         title: "Cum arată proba de matematică",
         inOwnWords:
-          "Două ore, trei subiecte de câte 30 de puncte, plus 10 din oficiu. Subiectul I e scurt și variat, II e algebră, III e geometrie. Baremul acceptă orice metodă corectă. Lucrezi pe foaie, nu în cap."
+          "Două ore, trei subiecte de câte 30 de puncte, plus 10 din oficiu. Subiectul I e scurt și variat, II e algebră, III e geometrie. Predarea anticipată e permisă după o oră. Baremul acceptă orice metodă corectă. Începi testul, stai timpul de sală, apoi predai."
       },
       {
         id: "numere",
@@ -81,7 +81,7 @@ const EN_GUIDES = {
         id: "proba-ro",
         title: "Cum arată proba de română",
         inOwnWords:
-          "Text la prima vedere, itemi de înțelegere și de limbă, apoi o redactare (narativ, descriptiv sau argumentativ). Se punctează conținutul, organizarea, vocabularul și corectitudinea. Timpul se împarte, nu se lasă totul pe ultimele minute."
+          "Text la prima vedere, itemi de înțelegere și de limbă, apoi o redactare (narativ, descriptiv sau argumentativ). Se punctează conținutul, organizarea, vocabularul și corectitudinea. Lucrarea ține două ore; predarea anticipată e după o oră."
       },
       {
         id: "receptare",
@@ -144,7 +144,7 @@ function getEnGuide(subject) {
     trainingAvailable: true,
     quote: formatQuote(dailyQuote()),
     papersNote:
-      "Modelele au 4 variante, ca la examen, și două texte la română. Lucrezi pe foaie. Baremul se deschide item cu item, după un timp de lucru — nu există „arată toate răspunsurile”. Antrenamentul EN (mai jos, la capitole) e separat: acolo poți exersa fără să copiezi baremul probei.",
+      "Modelele au 4 variante, ca la examen, și două texte la română. Apasă „Începe test Evaluare Națională”, stai cu lucrarea deschisă cel puțin o oră (predare anticipată, metodologia EN), apoi finalizezi. Baremul și nota apar după predare. Antrenamentul EN (mai jos, la capitole) e separat: exerciții scurte, fără cronometrul probei.",
     units: (entry.units || []).map(unit => shapeUnit({
       ...unit,
       lessons: lessonsForEn(sid, unit.id),

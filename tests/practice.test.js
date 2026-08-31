@@ -179,6 +179,7 @@ describe('practice API', () => {
       subject: 'matematica',
       class_level: 5,
       title: 'Fracții',
+      duration_ms: 185000,
       answers: generated.body.cards.map((card, index) => ({
         card_id: card.id,
         answer: index === 0 ? '1' : ''
@@ -191,6 +192,9 @@ describe('practice API', () => {
     expect(finished.body.message).toBeTruthy();
     expect(finished.body.items[0].steps.length).toBeGreaterThan(0);
     expect(finished.body.history.log.length).toBeGreaterThan(0);
+    expect(finished.body.parentNotified).toBe(true);
+    expect(finished.body.parentNotify.skipped).toBe(false);
+    expect(finished.body.durationMs).toBe(185000);
 
     const history = await agent.get('/api/flashcards/history');
     expect(history.status).toBe(200);

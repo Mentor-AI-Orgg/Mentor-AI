@@ -1,81 +1,108 @@
 const { ensureUser } = require('./economyStore');
-const {
-  WORK_LOCK_MS,
-  REVEAL_GAP_MS,
-  FAST_WINDOW_MS,
-  FAST_LIMIT,
-  FAST_COOLDOWN_MS
-} = require('./enPaperFactory');
+const { minStayMs, examMs } = require('./enPaperFactory');
 
 function paperState(user, paperId) {
   if (!user.enPapers || typeof user.enPapers !== 'object') user.enPapers = {};
   if (!user.enPapers[paperId]) {
-    user.enPapers[paperId] = { openedAt: 0, reveals: [], lastRevealAt: 0 };
+    user.enPapers[paperId] = {
+      openedAt: 0,
+      startedAt: 0,
+      finishedAt: 0,
+      durationMs: 0,
+      answers: [],
+      score: null
+    };
   }
   return user.enPapers[paperId];
 }
 
-function openPaper(userId, paperId) {
-  const user = ensureUser(userId);
-  const state = paperState(user, paperId);
-  if (!state.openedAt) state.openedAt = Date.now();
-  const wait = Math.max(0, WORK_LOCK_MS - (Date.now() - state.openedAt));
+function sessionView(state, paperId) {
+  const now = Date.now();
+  const started = Boolean(state.startedAt);
+  const finished = Boolean(state.finishedAt);
+  const elapsed = started ? Math.max(0, (state.finishedAt || now) - state.startedAt) : 0;
+  const stayLeft = started && !finished ? Math.max(0, minStayMs() - (now - state.startedAt)) : 0;
+  const examLeft = started && !finished ? Math.max(0, examMs() - (now - state.startedAt)) : 0;
   return {
     paperId,
-    openedAt: state.openedAt,
-    unlocked: wait === 0,
-    waitMs: wait,
-    revealed: state.reveals.map(row => row.key)
+    started,
+    finished,
+    startedAt: state.startedAt || 0,
+    finishedAt: state.finishedAt || 0,
+    durationMs: finished ? state.durationMs : elapsed,
+    minStayMs: minStayMs(),
+    examMs: examMs(),
+    canFinish: started && !finished && stayLeft === 0,
+    waitMs: stayLeft,
+    examLeftMs: examLeft,
+    result: finished && state.score ? state.score : null
   };
 }
 
-function canReveal(userId, paperId, key) {
+function previewPaper(userId, paperId) {
   const user = ensureUser(userId);
   const state = paperState(user, paperId);
-  const now = Date.now();
-  if (!state.openedAt) {
-    return { ok: false, reason: 'Deschide mai întâi testul și lucrează pe foaie.' };
-  }
-  const lockWait = WORK_LOCK_MS - (now - state.openedAt);
-  if (lockWait > 0) {
-    return {
-      ok: false,
-      reason: `Baremul acestui item se deschide după ${Math.ceil(lockWait / 60000)} minute de lucru pe foaie. Nu există un buton „arată toate răspunsurile”.`,
-      waitMs: lockWait
-    };
-  }
-  if (state.reveals.some(row => row.key === key)) {
+  if (!state.openedAt) state.openedAt = Date.now();
+  return sessionView(state, paperId);
+}
+
+function startPaper(userId, paperId) {
+  const user = ensureUser(userId);
+  const state = paperState(user, paperId);
+  if (!state.openedAt) state.openedAt = Date.now();
+  if (!state.startedAt && !state.finishedAt) state.startedAt = Date.now();
+  return sessionView(state, paperId);
+}
+
+function canFinish(userId, paperId) {
+  const user = ensureUser(userId);
+  const state = paperState(user, paperId);
+  if (state.finishedAt) {
     return { ok: true, already: true };
   }
-  const recent = state.reveals.filter(row => now - row.at < FAST_WINDOW_MS);
-  if (recent.length >= FAST_LIMIT && now - state.lastRevealAt < FAST_COOLDOWN_MS) {
-    const wait = FAST_COOLDOWN_MS - (now - state.lastRevealAt);
-    return {
-      ok: false,
-      reason: 'Ai desfăcut prea multe itemi prea repede. Baremul e pentru verificare, nu pentru copiat. Mai așteaptă un pic.',
-      waitMs: wait
-    };
+  if (!state.startedAt) {
+    return { ok: false, reason: 'Apasă mai întâi „Începe test Evaluare Națională”.' };
   }
-  if (state.lastRevealAt && now - state.lastRevealAt < REVEAL_GAP_MS) {
-    const wait = REVEAL_GAP_MS - (now - state.lastRevealAt);
+  const wait = minStayMs() - (Date.now() - state.startedAt);
+  if (wait > 0) {
     return {
       ok: false,
-      reason: `Un item pe rând. Mai așteaptă ${Math.ceil(wait / 1000)} secunde înainte să desfaci alt barem.`,
+      reason: `Ca la examen, poți preda lucrarea abia după timpul minim de sală (${Math.ceil(minStayMs() / 60000)} minute). Mai așteaptă ${Math.ceil(wait / 60000)} minute.`,
       waitMs: wait
     };
   }
   return { ok: true };
 }
 
-function markReveal(userId, paperId, key) {
+function finishPaper(userId, paperId, score, answers) {
   const user = ensureUser(userId);
   const state = paperState(user, paperId);
-  const now = Date.now();
-  if (!state.reveals.some(row => row.key === key)) {
-    state.reveals.push({ key, at: now });
+  if (state.finishedAt && state.score) {
+    return sessionView(state, paperId);
   }
-  state.lastRevealAt = now;
-  return state;
+  const now = Date.now();
+  state.finishedAt = now;
+  state.durationMs = Math.max(0, now - (state.startedAt || now));
+  state.answers = Array.isArray(answers) ? answers : [];
+  state.score = score;
+  return sessionView(state, paperId);
 }
 
-module.exports = { openPaper, canReveal, markReveal, paperState };
+function isFinished(userId, paperId) {
+  const user = ensureUser(userId);
+  return Boolean(paperState(user, paperId).finishedAt);
+}
+
+// Compat: open = preview, fără cronometru de examen.
+const openPaper = previewPaper;
+
+module.exports = {
+  previewPaper,
+  openPaper,
+  startPaper,
+  canFinish,
+  finishPaper,
+  isFinished,
+  paperState,
+  sessionView
+};

@@ -29,7 +29,7 @@ router.post("/generate", (req, res) => {
   const training = String(req.body?.mode || "").toLowerCase() === "training";
   if (isEn && !training) {
     return res.status(400).json({
-      error: "Modelele oficiale EN se lucrează pe foaie. Pentru exerciții în aplicație deschide Antrenament EN."
+      error: "Modelele oficiale EN se deschid din lista de teste (Începe test Evaluare Națională). Pentru exerciții scurte deschide Antrenament EN."
     });
   }
 
@@ -118,7 +118,7 @@ router.get("/history", (req, res) => {
   res.json(getSkillHistory(req.auth.email));
 });
 
-router.post("/finish", (req, res) => {
+router.post("/finish", async (req, res) => {
   const {
     kind = "test",
     chapter_id: chapterId = "",
@@ -126,7 +126,8 @@ router.post("/finish", (req, res) => {
     class_level: classLevel = 5,
     title = "",
     answers = [],
-    picks = []
+    picks = [],
+    duration_ms: durationMs = 0
   } = req.body || {};
 
   const isTest = kind !== "flashcards";
@@ -202,12 +203,14 @@ router.post("/finish", (req, res) => {
   });
 
   let award = null;
+  const duration = Math.max(0, Number(durationMs) || 0);
+
   if (isTest) {
     award = recordProgress({
       userId: req.auth.email,
       type: "chapter_test",
       note: title || "Test de capitol",
-      meta: { subject, grade: classLevel, chapterId, title, score: correct, total, gradeNote }
+      meta: { subject, grade: classLevel, chapterId, title, score: correct, total, gradeNote, durationMs: duration }
     });
   } else if (correct >= 5) {
     award = recordProgress({
@@ -225,18 +228,45 @@ router.post("/finish", (req, res) => {
       : `Repetă mâine ideea „${point}”: o întrebare, apoi explică de ce varianta ta e bună.`
   }));
 
+  let parentNotify = { skipped: true, reason: "not_a_test" };
+  if (isTest) {
+    const { notifyParent } = require("../notify/parentActivity");
+    parentNotify = await notifyParent({
+      studentEmail: req.auth.email,
+      type: "chapter_test",
+      note: title || "Test de capitol",
+      meta: {
+        title: title || "Test de capitol",
+        subject,
+        gradeNote,
+        durationMs: duration,
+        answers: items.map(item => ({
+          prompt: item.prompt,
+          given: item.given,
+          ok: item.ok
+        }))
+      }
+    });
+  }
+
   res.json({
     items,
     correct,
     total,
     grade: gradeNote,
+    durationMs: duration,
     message,
     strengths,
     weaknesses,
     homework,
     history: review.snapshot,
     awarded: award?.awarded || null,
-    summary: award?.summary || null
+    summary: award?.summary || null,
+    parentNotified: !parentNotify.skipped,
+    parentNotify: {
+      skipped: parentNotify.skipped,
+      reason: parentNotify.reason || null
+    }
   });
 });
 

@@ -9,7 +9,7 @@ const STEPS = [
 const FEATURES = [
   { icon: 'fa-book-open', title: 'Română și matematică', text: 'Clasele 5–8. Capitole, lecții, recapitulare.' },
   { icon: 'fa-clipboard-check', title: 'Teste și flashcarduri', text: 'De la ușor la greu. Itemii nu se repetă.' },
-  { icon: 'fa-flag-checkered', title: 'Evaluare Națională', text: 'Modele pe foaie, ca la examen. Aplicația nu completează în locul tău.' },
+  { icon: 'fa-flag-checkered', title: 'Evaluare Națională', text: 'Începi testul, stai ca la examen, apoi vezi baremul. Părintele primește nota.' },
   { icon: 'fa-comments', title: 'Mentor când te blochezi', text: 'Îți dă primul pas și un exemplu nou. Nu îți dă rezolvarea gata.' }
 ];
 

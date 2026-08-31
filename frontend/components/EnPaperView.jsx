@@ -1,72 +1,146 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
-const HOLD_MS = 6000;
+
+function clock(ms) {
+  const total = Math.max(0, Math.ceil(Number(ms) || 0) / 1000);
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = Math.floor(total % 60);
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+  return `${minutes}:${String(seconds).padStart(2, '0')}`;
+}
+
+function stayLabel(ms) {
+  if (ms >= 50 * 60 * 1000) {
+    const hours = Math.round(ms / 3600000);
+    return hours <= 1 ? 'o oră' : `${hours} ore`;
+  }
+  const minutes = Math.max(1, Math.round(ms / 60000));
+  return minutes === 1 ? 'un minut' : `${minutes} minute`;
+}
+
+function draftKey(paperId) {
+  return `en-draft:${paperId}`;
+}
+
+function loadDraft(paperId) {
+  if (typeof window === 'undefined' || !paperId) return {};
+  try {
+    const raw = window.sessionStorage.getItem(draftKey(paperId));
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveDraft(paperId, answers) {
+  if (typeof window === 'undefined' || !paperId) return;
+  try {
+    window.sessionStorage.setItem(draftKey(paperId), JSON.stringify(answers));
+  } catch {
+    // sessionStorage full or private mode — answers stay only in memory
+  }
+}
 
 const EnPaperView = ({ paper, onClose, session: initialSession }) => {
   const [session, setSession] = useState(initialSession || null);
-  const [waitLabel, setWaitLabel] = useState('');
-  const [reveals, setReveals] = useState({});
-  const [holding, setHolding] = useState(null);
-  const [holdPct, setHoldPct] = useState(0);
+  const [answers, setAnswers] = useState(() => loadDraft(paper?.id));
+  const [starting, setStarting] = useState(false);
+  const [finishing, setFinishing] = useState(false);
   const [error, setError] = useState('');
-  const holdRef = useRef(null);
+  const [now, setNow] = useState(Date.now());
+  const [result, setResult] = useState(initialSession?.result || null);
 
   useEffect(() => {
     if (!paper?.id) return undefined;
-    MentorAPI.openEnPaper({ paper_id: paper.id }).then(result => {
-      if (result.success) setSession(result.data.session);
+    MentorAPI.openEnPaper({ paper_id: paper.id }).then(response => {
+      if (!response.success) return;
+      setSession(response.data.session);
+      if (response.data.session?.result) setResult(response.data.session.result);
     });
     return undefined;
   }, [paper?.id]);
 
   useEffect(() => {
-    if (!session || session.unlocked) {
-      setWaitLabel('');
-      return undefined;
-    }
-    const tick = () => {
-      const left = Math.max(0, (session.waitMs || 0) - (Date.now() - (session.clientAt || Date.now())));
-      if (left <= 0) {
-        setSession(prev => (prev ? { ...prev, unlocked: true, waitMs: 0 } : prev));
-        setWaitLabel('');
-        return;
-      }
-      const min = Math.floor(left / 60000);
-      const sec = Math.floor((left % 60000) / 1000);
-      setWaitLabel(`${min}:${String(sec).padStart(2, '0')}`);
-    };
-    setSession(prev => (prev && !prev.clientAt ? { ...prev, clientAt: Date.now() } : prev));
-    tick();
-    const timer = setInterval(tick, 1000);
+    if (!session?.started || session.finished) return undefined;
+    const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
-  }, [session]);
+  }, [session?.started, session?.finished]);
 
-  const stopHold = () => {
-    if (holdRef.current) clearInterval(holdRef.current);
-    holdRef.current = null;
-    setHolding(null);
-    setHoldPct(0);
+  const stayMs = session?.minStayMs || (paper?.minStayMinutes || 60) * 60000;
+  const examLimit = session?.examMs || (paper?.examMinutes || 120) * 60000;
+  const startedAt = session?.startedAt || 0;
+  const elapsed = session?.finished
+    ? (session.durationMs || 0)
+    : (startedAt ? Math.max(0, now - startedAt) : 0);
+  const stayLeft = session?.started && !session?.finished ? Math.max(0, stayMs - elapsed) : 0;
+  const examLeft = session?.started && !session?.finished ? Math.max(0, examLimit - elapsed) : 0;
+  const canFinish = session?.started && !session?.finished && stayLeft === 0;
+  const finished = Boolean(session?.finished || result);
+
+  const scored = useMemo(() => {
+    const map = new Map();
+    (result?.items || []).forEach(item => {
+      map.set(`${item.block}:${item.n}`, item);
+    });
+    return map;
+  }, [result]);
+
+  const setAnswer = (blockLabel, n, patch) => {
+    const key = `${blockLabel}:${n}`;
+    setAnswers(prev => {
+      const next = { ...prev, [key]: { ...(prev[key] || {}), ...patch } };
+      saveDraft(paper.id, next);
+      return next;
+    });
   };
 
-  const startHold = (blockLabel, n) => {
-    if (holding) return;
+  const startExam = async () => {
+    if (starting || session?.started) return;
+    setStarting(true);
     setError('');
-    setHolding(`${blockLabel}:${n}`);
-    const started = Date.now();
-    holdRef.current = setInterval(async () => {
-      const pct = Math.min(100, ((Date.now() - started) / HOLD_MS) * 100);
-      setHoldPct(pct);
-      if (pct < 100) return;
-      stopHold();
-      const result = await MentorAPI.revealEnBarem({ paper_id: paper.id, block: blockLabel, n });
-      if (!result.success) {
-        setError(result.error || 'Baremul nu e gata. Lucrează pe foaie, apoi încearcă din nou.');
-        return;
+    const response = await MentorAPI.startEnPaper({ paper_id: paper.id });
+    setStarting(false);
+    if (!response.success) {
+      setError(response.error || 'Nu am putut porni testul.');
+      return;
+    }
+    setSession(response.data.session);
+    setNow(Date.now());
+  };
+
+  const finishExam = async () => {
+    if (finishing || !canFinish) return;
+    setFinishing(true);
+    setError('');
+    const payload = [];
+    (paper.blocks || []).forEach(block => {
+      (block.items || []).forEach(item => {
+        if (!item.n || item.kind === 'passage' || item.passage) return;
+        const draft = answers[`${block.label}:${item.n}`] || {};
+        payload.push({
+          block: block.label,
+          n: item.n,
+          letter: draft.letter || '',
+          text: draft.text || ''
+        });
+      });
+    });
+    const response = await MentorAPI.finishEnPaper({ paper_id: paper.id, answers: payload });
+    setFinishing(false);
+    if (!response.success) {
+      setError(response.error || 'Nu poți finaliza încă. Stai cu testul deschis până se scurge timpul minim de sală.');
+      if (response.waitMs) {
+        setSession(prev => (prev ? { ...prev, waitMs: response.waitMs, canFinish: false } : prev));
       }
-      setReveals(prev => ({ ...prev, [`${blockLabel}:${n}`]: result.data }));
-    }, 80);
+      return;
+    }
+    setSession(response.data.session);
+    setResult(response.data.result || response.data.session?.result || null);
   };
 
   if (!paper) return null;
@@ -75,15 +149,57 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
     <section className="en-paper-sheet surface" aria-label={paper.title}>
       <header className="en-paper-head">
         <div>
-          <div className="eyebrow">Model EN · doar pe foaie · 4 variante</div>
+          <div className="eyebrow">Model EN · 4 variante · ca la examen</div>
           <h3 className="display-font en-paper-title">{paper.title}</h3>
-          <p className="en-paper-meta">Timp orientativ: {paper.duration} · {paper.oficiu} puncte din oficiu · Nu se completează în aplicație</p>
+          <p className="en-paper-meta">
+            Timp de lucru: {paper.duration} · minim {stayLabel(stayMs)} în sală · {paper.oficiu} puncte din oficiu
+          </p>
         </div>
         <button type="button" className="ghost-button result-action" onClick={onClose}>
-          Închide testul <i className="fas fa-times" />
+          Închide {finished ? 'baremul' : 'testul'} <i className="fas fa-times" />
         </button>
       </header>
-      <p className="en-paper-lock"><i className="fas fa-ban" /> {paper.hint}</p>
+
+      {!session?.started && !finished && (
+        <>
+          <p className="en-paper-lock">
+            <i className="fas fa-hourglass-start" /> Citește enunțurile. Cronometrul pornește abia când apeși
+            „Începe test Evaluare Națională”. Apoi trebuie să ții lucrarea deschisă cel puțin {stayLabel(stayMs)}
+            — ca predarea anticipată la examen. Baremul apare după finalizare.
+          </p>
+          <button type="button" className="accent-button en-start-btn" disabled={starting} onClick={startExam}>
+            {starting ? 'Se deschide sala…' : 'Începe test Evaluare Națională'}
+          </button>
+        </>
+      )}
+
+      {session?.started && !finished && (
+        <div className="en-timer" role="status">
+          <p>
+            <strong>Timp scurs:</strong> {clock(elapsed)}
+            {' · '}
+            <strong>Până poți preda:</strong> {stayLeft > 0 ? clock(stayLeft) : 'acum'}
+            {' · '}
+            <strong>Rămas din cele 2 ore:</strong> {examLeft > 0 ? clock(examLeft) : 'predă lucrarea'}
+          </p>
+          <button
+            type="button"
+            className="accent-button"
+            disabled={!canFinish || finishing}
+            onClick={finishExam}
+          >
+            {finishing ? 'Predau…' : canFinish ? 'Finalizare test' : `Finalizare după ${clock(stayLeft)}`}
+          </button>
+        </div>
+      )}
+
+      {finished && result && (
+        <div className="en-result-banner">
+          <p className="display-font">Nota {result.grade} · {result.points}/{result.max} puncte</p>
+          <p>Timp de lucru: {clock(session?.durationMs || elapsed)}. Baremul e mai jos, după predare. Părintele primește nota, durata și ce ai răspuns.</p>
+        </div>
+      )}
+
       <p className="quote-card quote-inline">„Nu lăsa pe mâine ce poți face azi.” — proverb</p>
 
       {(paper.blocks || []).map(block => (
@@ -93,8 +209,9 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
           <ol className="en-paper-items">
             {(block.items || []).map((entry, idx) => {
               const key = `${block.label}:${entry.n}`;
-              const shown = reveals[key];
               const isPassage = entry.n === 0 || entry.kind === 'passage' || entry.passage;
+              const draft = answers[key] || {};
+              const scoredItem = scored.get(key);
               return (
                 <li key={`${block.label}-${entry.n}-${idx}`} className={isPassage ? 'en-paper-passage' : 'en-paper-item'}>
                   {isPassage ? (
@@ -107,71 +224,74 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                         {entry.points ? <small>{entry.points} puncte{entry.lines ? ` · ${entry.lines}` : ''}</small> : null}
                         {entry.choices?.length > 0 && (
                           <ol className="en-choices">
-                            {entry.choices.map((choice, choiceIndex) => (
-                              <li key={`${key}-${choiceIndex}`}>
-                                <span>{LETTERS[choiceIndex]}.</span> {choice}
-                              </li>
-                            ))}
+                            {entry.choices.map((choice, choiceIndex) => {
+                              const letter = LETTERS[choiceIndex];
+                              const selected = draft.letter === letter;
+                              const showKey = finished;
+                              return (
+                                <li key={`${key}-${choiceIndex}`}>
+                                  {session?.started && !finished ? (
+                                    <label className={`en-choice-btn ${selected ? 'selected' : ''}`}>
+                                      <input
+                                        type="radio"
+                                        name={key}
+                                        value={letter}
+                                        checked={selected}
+                                        onChange={() => setAnswer(block.label, entry.n, { letter })}
+                                      />
+                                      <span>{letter}.</span> {choice}
+                                    </label>
+                                  ) : (
+                                    <span className={selected ? 'en-choice-picked' : undefined}>
+                                      <span>{letter}.</span> {choice}
+                                    </span>
+                                  )}
+                                  {showKey && scoredItem?.expected === letter ? <em className="en-barem-mark">barem</em> : null}
+                                </li>
+                              );
+                            })}
                           </ol>
                         )}
-                        {entry.kind !== 'write' && (
-                          <div className="en-barem-gate">
-                            {!session?.unlocked ? (
-                              <small>Baremul acestui item se deblochează după timpul de lucru pe foaie{waitLabel ? ` (${waitLabel})` : ''}.</small>
-                            ) : shown ? (
-                              <div className="en-barem-card">
-                                {shown.letter ? <p><strong>Varianta din barem: {shown.letter}</strong></p> : null}
-                                {shown.explain ? <p>{shown.explain}</p> : null}
-                                {shown.steps?.length > 0 && (
-                                  <ol className="quiz-steps">
-                                    {shown.steps.map((step, stepIndex) => <li key={`${key}-s-${stepIndex}`}>{step}</li>)}
-                                  </ol>
-                                )}
-                                {shown.ideas?.length > 0 && (
-                                  <ul className="en-barem-ideas">
-                                    {shown.ideas.map((idea, ideaIndex) => <li key={`${key}-i-${ideaIndex}`}>{idea}</li>)}
-                                  </ul>
-                                )}
-                              </div>
-                            ) : (
-                              <button
-                                type="button"
-                                className="ghost-button en-hold-btn"
-                                onMouseDown={() => startHold(block.label, entry.n)}
-                                onMouseUp={stopHold}
-                                onMouseLeave={stopHold}
-                                onTouchStart={() => startHold(block.label, entry.n)}
-                                onTouchEnd={stopHold}
-                              >
-                                {holding === key ? `Ține apăsat… ${Math.round(holdPct)}%` : 'Ține 6 secunde ca să desfaci DOAR acest item'}
-                              </button>
-                            )}
-                          </div>
+                        {entry.kind === 'write' && session?.started && !finished && (
+                          <textarea
+                            className="field form-input quiz-work quiz-write en-write"
+                            value={draft.text || ''}
+                            onChange={event => setAnswer(block.label, entry.n, { text: event.target.value })}
+                            placeholder="Scrie redactarea aici. Baremul (idei, nu text-model) apare după finalizare."
+                            aria-label="Redactare Evaluare Națională"
+                            rows={8}
+                          />
                         )}
-                        {entry.kind === 'write' && (
-                          <div className="en-barem-gate">
-                            {!session?.unlocked ? (
-                              <small>Ideile de barem (nu un text gata) se deschid după timpul de lucru.</small>
-                            ) : shown ? (
-                              <div className="en-barem-card">
-                                <p>{shown.explain}</p>
-                                <ul className="en-barem-ideas">
-                                  {(shown.ideas || []).map((idea, ideaIndex) => <li key={`${key}-w-${ideaIndex}`}>{idea}</li>)}
-                                </ul>
-                              </div>
+                        {entry.kind === 'write' && !session?.started && !finished && (
+                          <small>Câmpul de redactare se deschide după ce începi testul.</small>
+                        )}
+                        {finished && scoredItem && (
+                          <div className="en-barem-card">
+                            {scoredItem.letter || scoredItem.given ? (
+                              <p><strong>Tu:</strong> {scoredItem.letter || scoredItem.given || '—'}</p>
                             ) : (
-                              <button
-                                type="button"
-                                className="ghost-button en-hold-btn"
-                                onMouseDown={() => startHold(block.label, entry.n)}
-                                onMouseUp={stopHold}
-                                onMouseLeave={stopHold}
-                                onTouchStart={() => startHold(block.label, entry.n)}
-                                onTouchEnd={stopHold}
-                              >
-                                {holding === key ? `Ține apăsat… ${Math.round(holdPct)}%` : 'Ține 6 secunde pentru ideile de barem (nu un text gata)'}
-                              </button>
+                              <p><strong>Tu:</strong> fără răspuns</p>
                             )}
+                            {scoredItem.expected ? <p><strong>Varianta din barem: {scoredItem.expected}</strong></p> : null}
+                            {scoredItem.explain ? <p>{scoredItem.explain}</p> : null}
+                            {scoredItem.steps?.length > 0 && (
+                              <ol className="quiz-steps">
+                                {scoredItem.steps.map((step, stepIndex) => <li key={`${key}-s-${stepIndex}`}>{step}</li>)}
+                              </ol>
+                            )}
+                            {scoredItem.ideas?.length > 0 && (
+                              <ul className="en-barem-ideas">
+                                {scoredItem.ideas.map((idea, ideaIndex) => <li key={`${key}-i-${ideaIndex}`}>{idea}</li>)}
+                              </ul>
+                            )}
+                            {scoredItem.rubric && (
+                              <p className="quiz-explain">
+                                Redactare: {scoredItem.rubric.total}/{scoredItem.rubric.max} · {scoredItem.points}/{scoredItem.maxPoints} puncte
+                              </p>
+                            )}
+                            {scoredItem.maxPoints ? (
+                              <small>{scoredItem.points}/{scoredItem.maxPoints} puncte{scoredItem.ok ? ' · corect' : ''}</small>
+                            ) : null}
                           </div>
                         )}
                       </div>
@@ -183,8 +303,25 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
           </ol>
         </article>
       ))}
+
+      {session?.started && !finished && (
+        <div className="en-timer en-timer-foot">
+          <button
+            type="button"
+            className="accent-button"
+            disabled={!canFinish || finishing}
+            onClick={finishExam}
+          >
+            {finishing ? 'Predau…' : canFinish ? 'Finalizare test' : `Finalizare după ${clock(stayLeft)}`}
+          </button>
+        </div>
+      )}
+
       {error ? <p className="guide-error">{error}</p> : null}
-      <p className="en-paper-foot">Nu există „arată toate răspunsurile”. Un item pe rând, după ce ai scris pe foaie. Compunerea are doar idei, nu un model de copiat.</p>
+      <p className="en-paper-foot">
+        Baremul întregului test se deschide după predare. Compunerea are idei de corectare, nu un model de copiat.
+        Părintele primește nota, durata și răspunsurile tale.
+      </p>
     </section>
   );
 };

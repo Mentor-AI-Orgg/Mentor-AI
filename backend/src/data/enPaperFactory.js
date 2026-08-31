@@ -1,21 +1,28 @@
 // Modele EN: 4 variante (A–D) ca la examen. Răspunsurile NU pleacă odată
-// cu testul. Baremul se cere item cu item, după un timp de lucru pe foaie.
-// Textele și numerele sunt originale. Redactarea are doar idei de barem,
-// nu o compunere gata.
+// cu testul. Cronometrul pornește la „Începe test”. Predare anticipată
+// după 60 minute (metodologia EN); lucrare 120 minute. Baremul și nota
+// apar abia după finalizare. Redactarea are idei de barem, nu un text gata.
 
 const { rng, seedFromHex, newSeed, int, pick, uniqueOptions } = require('./itemRng');
 
-const WORK_LOCK_MS = 8 * 60 * 1000;
-const REVEAL_GAP_MS = 40 * 1000;
-const FAST_WINDOW_MS = 2 * 60 * 1000;
-const FAST_LIMIT = 3;
-const FAST_COOLDOWN_MS = 2 * 60 * 1000;
+function envMs(name, fallback) {
+  const n = Number(process.env[name]);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
+function minStayMs() {
+  return envMs('EN_MIN_STAY_MS', 60 * 60 * 1000);
+}
+
+function examMs() {
+  return envMs('EN_EXAM_MS', 120 * 60 * 1000);
+}
 
 const MATH_NOTE =
-  'Lucrezi pe caiet. În aplicație vezi enunțul și cele 4 variante, ca pe foaia de examen. Fără câmpuri, fără finalizare. Baremul unui item se deschide separat, după ce ai scris pe foaie — nu există „arată toate răspunsurile”.';
+  'Apasă „Începe test Evaluare Națională”. Ca la examen, stai cu lucrarea deschisă cel puțin o oră (predare anticipată, metodologia EN). Abia apoi poți finaliza. Baremul și nota apar după predare. Alege A–D aici; calculele pot rămâne pe caiet.';
 
 const RO_NOTE =
-  'Două texte-suport, ca la examen: unul literar și unul nonliterar. Citești, apoi itemii. Compunerea se scrie pe foaie. Baremul dă 1–2 idei, nu un text gata.';
+  'Două texte-suport, ca la examen: unul literar și unul nonliterar. Începi testul, stai minim o oră, apoi finalizezi. Baremul (inclusiv ideile de redactare, nu un text gata) se deschide după predare.';
 
 function publicItem(n, points, prompt, extra = {}) {
   const row = { n, points, prompt, kind: extra.kind || (extra.choices ? 'mcq' : 'short') };
@@ -30,22 +37,25 @@ function block(label, points, intro, items) {
 }
 
 function paperShell(id, title, subject, hint, blocks, generated) {
+  const stay = minStayMs();
+  const exam = examMs();
   return {
     id,
     title,
     duration: '2 ore',
     oficiu: 10,
-    completable: false,
-    workOnPaper: true,
+    completable: true,
+    workOnPaper: false,
     generated: Boolean(generated),
     subject,
     hint,
+    minStayMinutes: Math.max(1, Math.round(stay / 60000)),
+    examMinutes: Math.max(1, Math.round(exam / 60000)),
     blocks,
     antiCheat: {
-      noShowAll: true,
-      workLockMinutes: Math.round(WORK_LOCK_MS / 60000),
-      revealGapSeconds: Math.round(REVEAL_GAP_MS / 1000),
-      perItemOnly: true
+      baremAfterFinish: true,
+      minStayMinutes: Math.max(1, Math.round(stay / 60000)),
+      examMinutes: Math.max(1, Math.round(exam / 60000))
     }
   };
 }
@@ -568,16 +578,119 @@ function getBaremItem(paperId, blockLabel, n) {
   };
 }
 
+function listBarem(paperId) {
+  const bundle = getBundle(paperId);
+  if (!bundle) return [];
+  const items = [];
+  (bundle.public.blocks || []).forEach(block => {
+    (block.items || []).forEach(item => {
+      if (!item.n || item.kind === 'passage' || item.passage) return;
+      const row = bundle.barem[itemKey(block.label, item.n)];
+      if (!row) return;
+      items.push({
+        paperId,
+        blockLabel: block.label,
+        n: item.n,
+        letter: row.letter || '',
+        explain: row.explain || '',
+        steps: row.steps || [],
+        ideas: row.ideas || []
+      });
+    });
+  });
+  return items;
+}
+
+function scoreAttempt(paperId, answers = []) {
+  const bundle = getBundle(paperId);
+  if (!bundle) return null;
+  const { gradeWriting } = require('../grading/writingRubric');
+  const paper = bundle.public;
+  const map = new Map();
+  (Array.isArray(answers) ? answers : []).forEach(row => {
+    const block = String(row.block || row.blockLabel || '');
+    const n = Number(row.n);
+    if (!block || !Number.isFinite(n)) return;
+    map.set(itemKey(block, n), {
+      letter: String(row.letter || '').trim().toUpperCase().slice(0, 1),
+      text: String(row.text || row.given || '')
+    });
+  });
+
+  let earned = Number(paper.oficiu) || 10;
+  const review = [];
+  (paper.blocks || []).forEach(block => {
+    (block.items || []).forEach(item => {
+      if (!item.n || item.kind === 'passage' || item.passage) return;
+      const key = itemKey(block.label, item.n);
+      const barem = bundle.barem[key] || {};
+      const given = map.get(key) || { letter: '', text: '' };
+      const maxPts = Number(item.points) || 0;
+      if (item.kind === 'write') {
+        const rubric = gradeWriting(given.text, {
+          long: true,
+          minWords: 80,
+          tokens: barem.ideas || []
+        });
+        const pts = Math.round((rubric.total / (rubric.max || 30)) * maxPts);
+        review.push({
+          block: block.label,
+          n: item.n,
+          kind: 'write',
+          prompt: item.prompt,
+          given: given.text,
+          text: given.text,
+          points: pts,
+          maxPoints: maxPts,
+          ok: rubric.ok,
+          explain: barem.explain,
+          ideas: barem.ideas || [],
+          steps: barem.steps || [],
+          rubric
+        });
+        earned += pts;
+        return;
+      }
+      const expected = String(barem.letter || '').toUpperCase();
+      const ok = Boolean(given.letter) && given.letter === expected;
+      const pts = ok ? maxPts : 0;
+      review.push({
+        block: block.label,
+        n: item.n,
+        kind: item.kind || 'mcq',
+        prompt: item.prompt,
+        letter: given.letter,
+        given: given.letter,
+        expected,
+        points: pts,
+        maxPoints: maxPts,
+        ok,
+        explain: barem.explain,
+        steps: barem.steps || []
+      });
+      earned += pts;
+    });
+  });
+
+  earned = Math.max(10, Math.min(100, earned));
+  return {
+    oficiu: Number(paper.oficiu) || 10,
+    points: earned,
+    max: 100,
+    grade: (earned / 10).toFixed(2),
+    items: review
+  };
+}
+
 module.exports = {
-  WORK_LOCK_MS,
-  REVEAL_GAP_MS,
-  FAST_WINDOW_MS,
-  FAST_LIMIT,
-  FAST_COOLDOWN_MS,
+  minStayMs,
+  examMs,
   recommendedList,
   generatePaper,
   publicPaperById,
   getBaremItem,
+  listBarem,
+  scoreAttempt,
   getBundle,
   stripSecrets,
   itemKey

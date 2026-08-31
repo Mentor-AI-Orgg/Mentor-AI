@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 
 const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onRewardClaim, onAskMentor }) => {
@@ -11,12 +11,14 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
   const [review, setReview] = useState(false);
   const [exclude, setExclude] = useState([]);
   const [report, setReport] = useState(null);
+  const startedAt = useRef(Date.now());
 
   const load = async (more = false) => {
     setLoading(true);
     setReport(null);
     setDrafts({});
     setIndex(0);
+    startedAt.current = Date.now();
     const skip = more ? exclude : [];
     const pack = await MentorAPI.generateFlashcards({
       chapter_id: unit.id,
@@ -65,7 +67,8 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
       subject,
       class_level: grade,
       title: unit.title,
-      answers
+      answers,
+      duration_ms: Date.now() - startedAt.current
     });
     if (result.success) {
       setReport(result.data);
@@ -148,6 +151,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
       {report && (
         <div className="quiz-done">
           <p className="display-font">Nota {report.grade} · {report.correct} din {report.total} corecte</p>
+          {report.durationMs ? <p className="quiz-explain">Timp: {Math.max(1, Math.round(report.durationMs / 60000))} min. Părintele primește nota, durata și răspunsurile.</p> : null}
           <p>{report.message}</p>
           {report.strengths?.length > 0 && <p className="quiz-explain">Puncte forte: {report.strengths.join(', ')}</p>}
           {report.weaknesses?.length > 0 && <p className="quiz-sample">De lucrat: {report.weaknesses.join(', ')}</p>}

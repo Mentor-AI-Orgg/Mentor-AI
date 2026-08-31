@@ -45,7 +45,7 @@ describe('EN papers and barem', () => {
     expect(item.ideas.join(' ')).not.toMatch(/Dragi colegi, astăzi/);
   });
 
-  it('refuses a barem reveal before the work lock', async () => {
+  it('does not start the exam on open and hides the barem until finish', async () => {
     const agent = request.agent(app);
     const register = await agent.post('/api/auth/register').send({
       email: `en.barem.lock.${Date.now()}@example.com`,
@@ -60,9 +60,64 @@ describe('EN papers and barem', () => {
     expect([200, 201]).toContain(register.status);
     const open = await agent.post('/api/curriculum/en/papers/open').send({ paper_id: 'en-mate-a' });
     expect(open.status).toBe(200);
-    expect(open.body.session.unlocked).toBe(false);
+    expect(open.body.session.started).toBe(false);
+    expect(open.body.session.finished).toBe(false);
     const reveal = await agent.post('/api/curriculum/en/barem').send({ paper_id: 'en-mate-a', block: 'Subiectul I', n: 1 });
-    expect(reveal.status).toBe(429);
-    expect(reveal.body.error).toMatch(/minute|foaie/i);
+    expect(reveal.status).toBe(403);
+    expect(reveal.body.error).toMatch(/finaliz/i);
+
+    const start = await agent.post('/api/curriculum/en/papers/start').send({ paper_id: 'en-mate-a' });
+    expect(start.status).toBe(200);
+    expect(start.body.session.started).toBe(true);
+    expect(start.body.session.canFinish).toBe(false);
+
+    const early = await agent.post('/api/curriculum/en/papers/finish').send({
+      paper_id: 'en-mate-a',
+      answers: [{ block: 'Subiectul I', n: 1, letter: 'B' }]
+    });
+    expect(early.status).toBe(429);
+    expect(early.body.error).toMatch(/minim|sală|oră|minute/i);
+  });
+
+  it('allows finish after the official min stay and then opens the full barem', async () => {
+    const agent = request.agent(app);
+    const stamp = Date.now();
+    const register = await agent.post('/api/auth/register').send({
+      email: `en.finish.${stamp}@example.com`,
+      password: 'Testpass1!',
+      name: 'Elev EN',
+      username: `enfinish${stamp}`,
+      class: '8',
+      parentEmail: `parinte.en.${stamp}@example.com`,
+      parental_consent: true,
+      privacy_accepted: true
+    });
+    expect([200, 201]).toContain(register.status);
+
+    const start = await agent.post('/api/curriculum/en/papers/start').send({ paper_id: 'en-mate-a' });
+    expect(start.status).toBe(200);
+    await new Promise(resolve => setTimeout(resolve, 120));
+
+    const finish = await agent.post('/api/curriculum/en/papers/finish').send({
+      paper_id: 'en-mate-a',
+      answers: [
+        { block: 'Subiectul I', n: 1, letter: 'B' },
+        { block: 'Subiectul I', n: 2, letter: 'C' }
+      ]
+    });
+    expect(finish.status).toBe(200);
+    expect(finish.body.result.grade).toMatch(/^\d+\.\d{2}$/);
+    expect(finish.body.result.points).toBeGreaterThanOrEqual(20);
+    expect(finish.body.session.finished).toBe(true);
+    expect(finish.body.parentNotified).toBe(true);
+    expect(finish.body.parentNotify.skipped).toBe(false);
+
+    const reveal = await agent.post('/api/curriculum/en/barem').send({ paper_id: 'en-mate-a', block: 'Subiectul I', n: 1 });
+    expect(reveal.status).toBe(200);
+    expect(reveal.body.letter).toBe('B');
+
+    const all = await agent.post('/api/curriculum/en/barem').send({ paper_id: 'en-mate-a' });
+    expect(all.status).toBe(200);
+    expect(all.body.items.length).toBeGreaterThan(10);
   });
 });
