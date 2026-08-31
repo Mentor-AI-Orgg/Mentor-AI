@@ -86,7 +86,8 @@ router.post("/check", (req, res) => {
     ok: result.ok,
     explain: result.explain,
     sample: result.ok || String(answer || "").trim() ? result.sample : "",
-    steps: Array.isArray(result.steps) ? result.steps : []
+    steps: Array.isArray(result.steps) ? result.steps : [],
+    rubric: result.rubric || null
   });
 });
 
