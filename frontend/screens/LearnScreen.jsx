@@ -207,7 +207,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
         <div className="learn-hero">
           <div className="eyebrow">LECȚII DE GIMNAZIU</div>
           <h1 className="display-font screen-title">Română și matematică, clasele 5–8.</h1>
-          <p className="screen-subtitle">Alege materia, apoi clasa. În test scrii doar răspunsul final; nota și pașii vin după finalizare. Flashcardurile și testele nu se termină: după banca de capitol apar variante noi, generate pe programă.</p>
+          <p className="screen-subtitle">Alege materia, apoi clasa. În fiecare capitol ai lecțiile pe tavă — cu exemple lucrate, nu copiate din manual. Testele și flashcardurile urcă de la foarte ușor la greu. La test scrii doar răspunsul final; nota și pașii vin după finalizare. După banca de capitol apar variante noi, generate pe programă.</p>
           <p className="learn-slogan">{dailySlogan()}</p>
         </div>
       </header>
@@ -274,7 +274,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                     <span className="module-icon"><i className={`fas ${subject === 'romana' ? 'fa-book-open' : 'fa-square-root-variable'}`} /></span>
                     <span>
                       <strong>{unit.title}</strong>
-                      <small>Capitol {index + 1} · {gradeLabel(grade)}</small>
+                      <small>Capitol {index + 1} · {(unit.lessons || []).length} lecții · {gradeLabel(grade)}</small>
                     </span>
                     {status ? <em className={`chapter-status ${status}`}>{status === 'done' ? 'Terminat' : 'Început'}</em> : null}
                     <i className={`fas ${open ? 'fa-chevron-up' : 'fa-chevron-down'}`} />
@@ -282,6 +282,19 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                   {open && (
                     <div className="chapter-card-body">
                       <p>{unit.inOwnWords}</p>
+                      {(unit.lessons || []).length > 0 && (
+                        <ol className="lesson-platter-list">
+                          {unit.lessons.map((entry, lessonIndex) => (
+                            <li key={entry.id} className="lesson-platter">
+                              <h4>Lecția {lessonIndex + 1}. {entry.title}</h4>
+                              {(entry.platter || '').split(/\n\n+/).map((para, paraIndex) => (
+                                <p key={`${entry.id}-${paraIndex}`}>{para}</p>
+                              ))}
+                            </li>
+                          ))}
+                        </ol>
+                      )}
+                      <p className="lesson-practice-hint">Testul și flashcardurile urcă de la foarte ușor la greu. Scrii răspunsul la test; la flashcarduri alegi A–D.</p>
                       <div className="learning-actions">
                         <button type="button" className="ghost-button result-action" onClick={() => askMentor(unit)}>
                           Întreabă mentorul <i className="fas fa-comments" />

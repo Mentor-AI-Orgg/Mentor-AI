@@ -11,6 +11,8 @@
 // înțeles că trebuie să știe un elev, pe ani, ca mentorul să
 // ghideze fără să predea dintr-un manual anume.
 
+const { lessonsFor } = require('./gimnaziuLessons');
+
 const SOURCE = {
   authority: "Ministerul Educației",
   ordinance: "OMEN 3393/28.02.2017",
@@ -339,7 +341,11 @@ function getGuide(subject, grade) {
     subject: sid,
     grade: g,
     source: SOURCE,
-    ...entry
+    ...entry,
+    units: (entry.units || []).map(unit => ({
+      ...unit,
+      lessons: lessonsFor(sid, g, unit.id)
+    }))
   };
 }
 

@@ -123,11 +123,11 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
       <div className="focus-timer-head">
         <div>
           <div className="eyebrow">Flashcarduri de teorie</div>
-          <h3 className="display-font">4 variante. Seturile nu se repetă.</h3>
+          <h3 className="display-font">4 variante. De la ușor la greu.</h3>
         </div>
         {reviewed > 0 && !report && <span className="learn-chip"><i className="fas fa-check" /> {hits}/{reviewed}</span>}
       </div>
-      <p className="flashcards-empty">Alege capitolul. După banca de lecție apar variante noi, generate pe programă — nu se termină. La finalizare vezi ce ai greșit, de ce, și nota.</p>
+      <p className="flashcards-empty">Alege capitolul. Cardurile urcă treaptă cu treaptă: întâi foarte ușoare, la final grele. După banca de lecție apar variante noi, generate pe programă — nu se termină.</p>
 
       {chapters.length > 0 && (
         <div className="flashcards-presets">
@@ -154,6 +154,7 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
       {!loading && card && !report && (
         <>
           <div className="flashcards-progress-track"><div style={{ width: `${((index + 1) / cards.length) * 100}%` }} /></div>
+          <p className="quiz-progress">Cardul {index + 1} din {cards.length}{card.level ? ` · treapta ${card.level}` : ''}</p>
           <p className="quiz-question">{card.question}</p>
           <div className="quiz-options">
             {card.options.map((option, optionIndex) => {

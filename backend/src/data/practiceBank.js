@@ -304,7 +304,11 @@ function chapterKey(subject, grade, chapterId) {
 
 function listChapterQuestions(subject, grade, chapterId) {
   const key = chapterKey(subject, grade, chapterId);
-  return BANK[key] ? BANK[key].slice() : [];
+  const list = BANK[key] ? BANK[key].slice() : [];
+  return list.map((item, index) => ({
+    ...item,
+    level: item.level || index + 1
+  }));
 }
 
 function listPoints(subject, grade, chapterId) {

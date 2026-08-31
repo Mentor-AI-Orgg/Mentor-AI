@@ -288,7 +288,7 @@ function normalizeAnswer(value) {
     .replace(/[∞]/g, 'inf')
     .replace(/²/g, '2')
     .replace(/³/g, '3')
-    .replace(/[^\p{L}\p{N}.\-/+() ]/gu, ' ')
+    .replace(/[^\p{L}\p{N}.\-/+()?! ]/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }

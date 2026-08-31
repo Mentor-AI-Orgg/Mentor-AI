@@ -616,6 +616,12 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .chapter-card-head small { color: rgba(255,255,255,.7); font-size: 12px; }
 .chapter-card-body { padding: 0 18px 18px; }
 .chapter-card-body p { margin: 0 0 14px; color: #e8eaf8; line-height: 1.65; }
+.lesson-platter-list { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 12px; }
+.lesson-platter { padding: 14px 16px; border-radius: 16px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); }
+.lesson-platter h4 { margin: 0 0 8px; font: 700 16px 'Space Grotesk', sans-serif; color: #f4f5ff; }
+.lesson-platter p { margin: 0 0 10px; color: #e8eaf8; line-height: 1.65; font-size: 14px; }
+.lesson-platter p:last-child { margin-bottom: 0; }
+.lesson-practice-hint { margin: 0 0 14px; color: #c9cbe0; font-size: 13px; }
 @media (max-width: 680px) {
   .subject-pick-grid { grid-template-columns: 1fr; }
 }

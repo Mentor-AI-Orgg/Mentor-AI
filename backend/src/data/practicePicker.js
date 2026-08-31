@@ -22,6 +22,7 @@ function publicCard(item, review = false) {
     options: mixed.map(entry => entry.text),
     correct: mixed.findIndex(entry => entry.index === item.correct),
     explain: item.explain,
+    level: item.level || 1,
     review
   };
 }
@@ -61,9 +62,7 @@ function pickPractice({
   const freshId = pool.filter(item => !excluded.has(item.id) && seen.has(item.point));
 
   const byLevel = list => list.slice().sort((a, b) => (a.level || 99) - (b.level || 99));
-  const ordered = isTest
-    ? byLevel([...freshPoint, ...freshId])
-    : [...shuffle(freshPoint), ...shuffle(freshId)];
+  const ordered = byLevel([...freshPoint, ...freshId]);
   const picked = [];
   const used = new Set();
   for (const item of ordered) {
@@ -79,19 +78,17 @@ function pickPractice({
       subject: sid,
       grade: g,
       chapterId: cid,
+      startLevel: picked.length + 1,
       excludeIds: [...excluded, ...used]
     }, want - picked.length);
-    const base = picked.length;
-    generated.forEach((item, index) => {
+    generated.forEach(item => {
       const card = isTest
-        ? publicExercise({ ...item, level: base + index + 1 }, false)
+        ? publicExercise({ ...item, level: item.level }, false)
         : publicCard(item, false);
       picked.push(card);
     });
   }
-  if (isTest) {
-    picked.sort((a, b) => (a.level || 99) - (b.level || 99));
-  }
+  picked.sort((a, b) => (a.level || 99) - (b.level || 99));
 
   const afterPoints = new Set([...seen, ...picked.map(card => card.point)]);
   return {

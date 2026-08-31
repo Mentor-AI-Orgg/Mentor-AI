@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { pickPractice } from '../backend/src/data/practicePicker.js';
-import { checkExercise, listChapterExercises } from '../backend/src/data/exerciseBank.js';
+import { checkExercise, findExercise, listChapterExercises } from '../backend/src/data/exerciseBank.js';
+import { findQuestion } from '../backend/src/data/practiceBank.js';
 import { fromGeneratedId, generateOne, generateMany } from '../backend/src/data/itemGenerator.js';
 import { GRADES, GUIDES, SUBJECT_IDS } from '../backend/src/data/gimnaziuGuide.js';
 
@@ -52,6 +53,33 @@ describe('infinite generated practice', () => {
     expect(new Set(many.map(item => item.id)).size).toBe(40);
   });
 
+  it('makes generated rungs actually harder: level 1 is not level 7', () => {
+    const easy = generateOne({ kind: 'test', subject: 'matematica', grade: 5, chapterId: 'naturale', level: 1 });
+    const hard = generateOne({ kind: 'test', subject: 'matematica', grade: 5, chapterId: 'naturale', level: 7 });
+    expect(easy.id).toMatch(/^g:t:matematica:5:naturale:1:[0-9a-f]+$/i);
+    expect(hard.id).toMatch(/^g:t:matematica:5:naturale:7:[0-9a-f]+$/i);
+    expect(easy.prompt).not.toBe(hard.prompt);
+    expect(easy.point).toBe('adunare');
+    expect(['paranteze', 'cmmmc']).toContain(hard.point);
+    const easyFlash = generateOne({ kind: 'flashcards', subject: 'matematica', grade: 5, chapterId: 'naturale', level: 1 });
+    const hardFlash = generateOne({ kind: 'flashcards', subject: 'matematica', grade: 5, chapterId: 'naturale', level: 8 });
+    expect(easyFlash.question).not.toBe(hardFlash.question);
+  });
+
+  it('orders flashcards from easy to hard like tests', () => {
+    const pack = pickPractice({
+      subject: 'matematica',
+      grade: 5,
+      chapterId: 'naturale',
+      kind: 'flashcards',
+      count: 8
+    });
+    expect(pack.cards).toHaveLength(8);
+    expect(pack.cards.map(card => card.level)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(pack.cards[0].options).toHaveLength(4);
+    expect(Number.isInteger(pack.cards[0].correct)).toBe(true);
+  });
+
   it('can generate original items for every 5–8 chapter', () => {
     SUBJECT_IDS.forEach(subject => {
       GRADES.forEach(grade => {
@@ -63,6 +91,35 @@ describe('infinite generated practice', () => {
           expect(flash.options).toHaveLength(4);
           expect(exam.prompt.length).toBeGreaterThan(12);
           expect(exam.answers.length).toBeGreaterThan(0);
+        });
+      });
+    });
+  });
+
+  it('grades the known answer on every chapter test and flashcard pack', () => {
+    SUBJECT_IDS.forEach(subject => {
+      GRADES.forEach(grade => {
+        (GUIDES[subject][grade].units || []).forEach(unit => {
+          const tests = pickPractice({ subject, grade, chapterId: unit.id, kind: 'test', count: 7 });
+          expect(tests.cards.map(card => card.level)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+          tests.cards.forEach((card, index) => {
+            const exercise = findExercise(card.id);
+            expect(exercise, `${subject}:${grade}:${unit.id} test ${index + 1}`).toBeTruthy();
+            const key = exercise.answers[0];
+            const result = checkExercise(card.id, key);
+            expect(result.ok, `${subject}:${grade}:${unit.id} #${index + 1} «${card.prompt}» vs «${key}»`).toBe(true);
+          });
+
+          const flashes = pickPractice({ subject, grade, chapterId: unit.id, kind: 'flashcards', count: 8 });
+          expect(flashes.cards).toHaveLength(8);
+          expect(flashes.cards[0].level).toBe(1);
+          expect(flashes.cards[flashes.cards.length - 1].level).toBeGreaterThanOrEqual(7);
+          flashes.cards.forEach((card, index) => {
+            const item = findQuestion(card.id);
+            expect(item, `${subject}:${grade}:${unit.id} flash ${index + 1}`).toBeTruthy();
+            expect(item.options).toHaveLength(4);
+            expect(item.options[item.correct]).toBeTruthy();
+          });
         });
       });
     });
