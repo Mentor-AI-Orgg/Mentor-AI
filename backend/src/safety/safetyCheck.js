@@ -23,7 +23,14 @@ const CHEATING_PATTERNS = [
   "benim için çöz", "ödevimi yap", "帮我做", "给我答案", "私のために解いて", "宿題をやって"
 ];
 
-const DIRECT_ANSWER_PATTERNS = [/^(care este|ce este|cum se|defin|explic|spune-mi|tell me|what is|how to|define|explain|dă-mi|give me|donne-moi|gib mir|dame|dammi|дай мне|add meg|ver bana|给我|教えて)/i];
+// Doar cereri de tip „dă-mi răspunsul”, nu întrebări de învățare
+// („ce este o fracție?”, „explică subiectul”). Altfel mentorul refuză
+// exact întrebările cu care începe un copil de gimnaziu.
+const DIRECT_ANSWER_PATTERNS = [
+  /^(dă-mi|da-mi|spune-mi|give me)\s+(răspuns|raspuns|soluț|solut|rezultat|tema|tema rezolv)/i,
+  /^(care este|care e)\s+(răspuns|raspuns|rezultat|soluț|solut)/i,
+  /^(what is|give me)\s+(the\s+)?(answer|solution|result)\b/i
+];
 
 const MODERATION_TIMEOUT_MS = 4000;
 
@@ -111,6 +118,7 @@ async function safetyCheck(message) {
 
 module.exports = {
   safetyCheck,
+  isDirectRequest,
   INAPPROPRIATE_KEYWORDS,
   CHEATING_PATTERNS,
   DIRECT_ANSWER_PATTERNS

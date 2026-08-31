@@ -231,6 +231,14 @@ function FloatingLines({
   mixBlendMode = 'screen'
 }) {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const skipHeavy = (() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return true;
+    const coarse = window.matchMedia('(pointer: coarse)').matches;
+    const narrow = window.matchMedia('(max-width: 720px)').matches;
+    const saveData = Boolean(navigator.connection && navigator.connection.saveData);
+    return coarse || narrow || saveData;
+  })();
+  const skipWebGL = prefersReducedMotion || skipHeavy;
   const containerRef = useRef(null);
   const targetMouseRef = useRef(new THREE.Vector2(-1000, -1000));
   const currentMouseRef = useRef(new THREE.Vector2(-1000, -1000));
@@ -263,7 +271,7 @@ function FloatingLines({
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || !THREE || prefersReducedMotion) return undefined;
+    if (!container || !THREE || skipWebGL) return undefined;
 
     let active = true;
     const { Scene, OrthographicCamera, PlaneGeometry, Mesh, ShaderMaterial, Vector2, Vector3, WebGLRenderer, Clock } = THREE;
@@ -450,14 +458,14 @@ function FloatingLines({
     mouseDamping,
     parallax,
     parallaxStrength,
-    prefersReducedMotion,
+    skipWebGL,
     topWavePosition
   ]);
 
   return (
     <div
       ref={containerRef}
-      className={`floating-lines-container${prefersReducedMotion ? ' is-static' : ''}`}
+      className={`floating-lines-container${skipWebGL ? ' is-static' : ''}`}
       style={{ mixBlendMode }}
       aria-hidden="true"
     />

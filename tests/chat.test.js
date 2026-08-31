@@ -36,6 +36,15 @@ describe('chat fallback chain', () => {
     expect(String(res.body.engine_used || '')).toMatch(/mock/i);
   });
 
+  it('answers a normal “ce este” question instead of the old scaffolding wall', async () => {
+    const res = await agent
+      .post('/api/chat')
+      .send({ message: 'Ce este o fracție oarecare?', language: 'ro' });
+    expect(res.status).toBe(200);
+    expect(res.body.engine_used).not.toBe('scaffolding_guard');
+    expect(String(res.body.response || '')).not.toMatch(/nu pot să-ți dau „pe tavă”/i);
+  });
+
   it('is also available under /api/v1', async () => {
     const res = await agent
       .post('/api/v1/chat')

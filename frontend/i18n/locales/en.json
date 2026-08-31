@@ -11,11 +11,11 @@
     "teacher": "Teacher"
   },
   "splash": {
-    "eyebrow": "A space for ideas",
-    "subtitle": "Middle-school mentor: Romanian and maths, grades 5–8.",
+    "eyebrow": "For middle-school students",
+    "subtitle": "Romanian and maths, grades 5–8. You work. The mentor helps when you get stuck.",
     "meta1": "Grades 5–8",
-    "meta2": "Offline fallback",
-    "meta3": "Adaptive pace"
+    "meta2": "Romanian + maths",
+    "meta3": "No subscription"
   },
   "auth": {
     "eyebrow": "Mentor AI / 03",
@@ -42,7 +42,8 @@
   "login": {
     "eyebrow": "Welcome back",
     "title": "Enter your space.",
-    "subtitle": "Pick up where you left off and keep your rhythm.",
+    "subtitle": "Your student email and password. Then lessons, tests and the mentor.",
+    "needEmail": "Fill in your email, then try again.",
     "email": "Email",
     "password": "Password",
     "passwordPlaceholder": "Your password",
@@ -175,6 +176,8 @@
     "welcome": "Welcome!",
     "loggedOut": "You have signed out.",
     "forgotPassword": "If this address has an account, you will receive instructions.",
+    "forgotNeedEmail": "Type your email above, then tap “Forgot your password?”.",
+    "forgotFailed": "We could not send a reset right now. Try again.",
     "registerFailed": "We could not create the account.",
     "onboardingDone": "Your profile is ready!",
     "planFailed": "We could not confirm access right now. Try again.",

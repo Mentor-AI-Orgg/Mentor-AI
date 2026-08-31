@@ -11,11 +11,11 @@
     "teacher": "Profesor"
   },
   "splash": {
-    "eyebrow": "Un spațiu pentru idei",
-    "subtitle": "Mentor de gimnaziu: română și matematică, clasele 5–8.",
+    "eyebrow": "Pentru elevi de gimnaziu",
+    "subtitle": "Română și matematică, clasele 5–8. Înveți tu. Mentorul te ajută când te blochezi.",
     "meta1": "Clasele 5–8",
-    "meta2": "Offline fallback",
-    "meta3": "Ritm adaptiv"
+    "meta2": "Română + mate",
+    "meta3": "Fără abonament"
   },
   "auth": {
     "eyebrow": "Mentor AI / 03",
@@ -42,7 +42,8 @@
   "login": {
     "eyebrow": "Bine ai revenit",
     "title": "Intră în spațiul tău.",
-    "subtitle": "Continuă de unde ai rămas și păstrează-ți ritmul.",
+    "subtitle": "Emailul și parola de elev. Apoi ajungi la lecții, teste și mentor.",
+    "needEmail": "Completează emailul, apoi apasă din nou.",
     "email": "Email",
     "password": "Parolă",
     "passwordPlaceholder": "Parola ta",
@@ -175,6 +176,8 @@
     "welcome": "Bun venit!",
     "loggedOut": "Te-ai deconectat.",
     "forgotPassword": "Dacă adresa are un cont, vei primi instrucțiuni.",
+    "forgotNeedEmail": "Scrie emailul deasupra, apoi apasă „Ai uitat parola?”.",
+    "forgotFailed": "Nu am putut trimite resetarea acum. Încearcă din nou.",
     "registerFailed": "Nu am putut crea contul.",
     "onboardingDone": "Profilul tău este gata!",
     "planFailed": "Nu am putut confirma accesul acum. Încearcă din nou.",

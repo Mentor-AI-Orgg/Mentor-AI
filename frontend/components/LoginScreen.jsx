@@ -61,7 +61,17 @@ const LoginScreen = ({ onBack, onLogin, onForgotPassword }) => {
         </button>
       </form>
 
-      <button className="forgot-link" type="button" onClick={() => onForgotPassword(email.trim())}>
+      <button
+        className="forgot-link"
+        type="button"
+        onClick={() => {
+          if (!email.trim()) {
+            setError(t('login.needEmail'));
+            return;
+          }
+          onForgotPassword(email.trim());
+        }}
+      >
         {t('login.forgot')}
       </button>
       <p className="auth-legal">

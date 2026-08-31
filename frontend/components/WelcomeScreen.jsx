@@ -1,10 +1,16 @@
 import { dailySlogan } from '../slogans.js';
 
+const STEPS = [
+  { n: '1', title: 'Citești o lecție', text: 'Pe înțelesul tău, cu exemplu lucrat. Nu e copie din manual.' },
+  { n: '2', title: 'Încerci singur', text: 'Test de 10 itemi sau flashcarduri A–D. Scrii tu. Nota vine la final.' },
+  { n: '3', title: 'Vezi unde ai greșit', text: 'Apoi întrebi mentorul: îți explică altfel, nu îți face tema.' }
+];
+
 const FEATURES = [
-  { icon: 'fa-book-open', title: 'Lecții pe capitole', text: 'Română și mate, 5–8, pe înțelesul tău.' },
-  { icon: 'fa-clipboard-check', title: 'Teste de rezolvat', text: '7 exerciții, de la ușor la greu. Scrii doar rezultatul, nota vine la final.' },
-  { icon: 'fa-layer-group', title: 'Flashcarduri cu 4 variante', text: 'Teorie. Alegi varianta corectă dacă ai înțeles.' },
-  { icon: 'fa-comments', title: 'Mentor la nevoie', text: 'Îți explică altfel, mai pe îndelete, cu alt exemplu.' }
+  { icon: 'fa-book-open', title: 'Română și matematică', text: 'Clasele 5–8. Capitole, lecții, recapitulare.' },
+  { icon: 'fa-clipboard-check', title: 'Teste și flashcarduri', text: 'De la ușor la greu. Itemii nu se repetă.' },
+  { icon: 'fa-flag-checkered', title: 'Evaluare Națională', text: 'Modele pe foaie, ca la examen. Aplicația nu completează în locul tău.' },
+  { icon: 'fa-comments', title: 'Mentor când te blochezi', text: 'Îți dă primul pas și un exemplu nou. Nu îți dă rezolvarea gata.' }
 ];
 
 const WelcomeScreen = ({ onConnect, onRegister }) => (
@@ -13,13 +19,31 @@ const WelcomeScreen = ({ onConnect, onRegister }) => (
     <p className="welcome-slogan">{dailySlogan()}</p>
     <h1 className="display-font welcome-title">Mentor AI</h1>
     <p className="welcome-lead">
-      Gimnaziu, română și matematică. Înveți, încerci, greșești,{' '}
+      Aplicația ta de gimnaziu la <strong>română</strong> și <strong>matematică</strong>.
+      Înveți, încerci, greșești,{' '}
       <span className="welcome-verb-swap" aria-label="mai încerci, reușești">
         <span className="welcome-verb welcome-verb-from" aria-hidden="true">mai încerci</span>
         <span className="welcome-verb welcome-verb-to" aria-hidden="true">reușești</span>
       </span>
-      . Fără abonament.
+      . Complet gratuit.
     </p>
+
+    <p className="welcome-pitch">
+      Nu e un chat care îți face tema. E un loc unde lucrezi tu, iar mentorul te ajută când te blochezi.
+    </p>
+
+    <ol className="welcome-steps" aria-label="Cum funcționează">
+      {STEPS.map(step => (
+        <li key={step.n}>
+          <span className="welcome-step-n" aria-hidden="true">{step.n}</span>
+          <span>
+            <strong>{step.title}</strong>
+            <small>{step.text}</small>
+          </span>
+        </li>
+      ))}
+    </ol>
+
     <ul className="welcome-features">
       {FEATURES.map(item => (
         <li key={item.title}>
@@ -31,11 +55,15 @@ const WelcomeScreen = ({ onConnect, onRegister }) => (
         </li>
       ))}
     </ul>
+
+    <p className="welcome-free">Fără abonament. Fără plăți. Magazinul folosește doar monede câștigate din învățare.</p>
+    <p className="welcome-parent">Pentru părinți: elevul își face cont. Voi primiți pe email un rezumat când învață — fără cont separat.</p>
+
     <button type="button" className="accent-button welcome-connect" onClick={onConnect}>
-      Conectare <i className="fas fa-arrow-right" />
+      Am deja cont <i className="fas fa-arrow-right" />
     </button>
     <button type="button" className="welcome-register" onClick={onRegister}>
-      N-ai cont? <strong>Creează-l aici</strong>
+      Prima dată aici? <strong>Creează contul</strong>
     </button>
   </main>
 );

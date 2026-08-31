@@ -948,13 +948,45 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   0%, 36% { opacity: 0; transform: translateY(0.45em); filter: blur(4px); }
   62%, 100% { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
-.welcome-features { margin: 28px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.welcome-lead strong { color: var(--ink); font-weight: 800; }
+.welcome-pitch {
+  margin: 14px 0 0;
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.welcome-steps {
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+.welcome-steps li {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.welcome-step-n {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--lime);
+  color: #171633;
+  font: 800 13px 'Space Grotesk', sans-serif;
+}
+.welcome-steps strong { display: block; font-size: 14px; }
+.welcome-steps small { color: var(--muted); font-size: 12px; line-height: 1.45; }
+.welcome-features { margin: 20px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
 .welcome-features li {
   display: grid;
   grid-template-columns: 36px 1fr;
   gap: 12px;
   align-items: start;
-  padding: 12px 14px;
+  padding: 11px 14px;
   border-radius: 16px;
   border: 1px solid var(--line);
   background: rgba(26, 26, 62, .72);
@@ -962,7 +994,14 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .welcome-features i { color: var(--lime); margin-top: 4px; }
 .welcome-features strong { display: block; font-size: 14px; }
 .welcome-features small { color: var(--muted); font-size: 12px; line-height: 1.45; }
-.welcome-connect { margin-top: 28px; width: 100%; min-height: 54px; }
+.welcome-free, .welcome-parent {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.welcome-free { color: var(--aqua); font-weight: 700; }
+.welcome-connect { margin-top: 22px; width: 100%; min-height: 54px; }
 .welcome-register {
   margin-top: 12px;
   border: 0;
@@ -971,6 +1010,13 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   font-size: 14px;
 }
 .welcome-register strong { color: var(--ink); }
+.screen-fallback {
+  min-height: 40vh;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 15px;
+}
 .home-slogan, .learn-slogan {
   margin: 8px 0 0;
   color: var(--aqua);

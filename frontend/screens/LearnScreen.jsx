@@ -85,6 +85,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [workSprint, setWorkSprint] = useState(false);
   const [guideError, setGuideError] = useState(false);
   const [guideLoading, setGuideLoading] = useState(false);
+  const [paperError, setPaperError] = useState('');
   const isEn = track === 'en';
   const activeGrade = isEn ? 8 : grade;
 
@@ -270,6 +271,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
               setSession(null);
               setQuizUnit(null);
               setOpenPaper(null);
+              onNavigate?.('learn', { subject: item.id, grade, track: null, chapter: null });
             }}
           >
             <i className={`fas ${item.icon}`} />
@@ -288,6 +290,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             setQuizUnit(null);
             setOpenPaper(null);
             if (!subject) setSubject('matematica');
+            onNavigate?.('learn', { track: 'en', grade: 8, subject: subject || 'matematica', chapter: null });
           }}
         >
           <i className="fas fa-clipboard-check" />
@@ -308,6 +311,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                 setOpenChapter(null);
                 setSession(null);
                 setOpenPaper(null);
+                onNavigate?.('learn', { track: 'en', grade: 8, subject: item.id, chapter: null });
               }}
             >
               {item.labelRo}
@@ -330,6 +334,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                     setOpenChapter(null);
                     setSession(null);
                     setQuizUnit(null);
+                    onNavigate?.('learn', { subject, grade: item, track: null, chapter: null });
                   }}
                 >
                   {gradeLabel(item)}
@@ -386,16 +391,20 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                 type="button"
                 className="accent-button result-action"
                 onClick={async () => {
+                  setPaperError('');
                   const result = await MentorAPI.generateEnPaper({ subject, exclude_ids: seenPapers });
                   if (result.success && result.data?.paper) {
                     setSeenPapers(prev => [...prev, result.data.paper.id]);
                     setOpenPaper(result.data.paper);
                     setPaperSession(result.data.session);
+                    return;
                   }
+                  setPaperError(result.error || 'Nu am putut genera un alt model acum. Încearcă din nou.');
                 }}
               >
                 Alt model, fără repetare <i className="fas fa-random" />
               </button>
+              {paperError && <p className="guide-error" role="alert">{paperError}</p>}
               {openPaper && <EnPaperView paper={openPaper} session={paperSession} onClose={() => { setOpenPaper(null); setPaperSession(null); }} />}
             </section>
           )}
@@ -605,18 +614,20 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
         </section>
       )}
 
-      <div className="learn-tools-grid">
-        <FocusTimer userData={userData} onRewardClaim={onRewardClaim} />
-        <FlashCards
-          subject={subject}
-          classLevel={activeGrade}
-          chapters={units}
-          track={isEn ? 'en' : ''}
-          mode={isEn ? 'training' : ''}
-          onRewardClaim={onRewardClaim}
-          onAskMentor={askMentor}
-        />
-      </div>
+      {subject && (
+        <div className="learn-tools-grid">
+          <FocusTimer userData={userData} onRewardClaim={onRewardClaim} />
+          <FlashCards
+            subject={subject}
+            classLevel={activeGrade}
+            chapters={units}
+            track={isEn ? 'en' : ''}
+            mode={isEn ? 'training' : ''}
+            onRewardClaim={onRewardClaim}
+            onAskMentor={askMentor}
+          />
+        </div>
+      )}
     </main>
   );
 };
