@@ -27,6 +27,9 @@ describe('writing rubric', () => {
     expect(developed.ok).toBe(true);
     expect(developed.note10).toBeGreaterThanOrEqual(5);
     expect(developed.criteria.find(row => row.id === 'continut').points).toBeGreaterThan(2);
+    expect(developed.reading.length).toBeGreaterThan(0);
+    expect(developed.reading.some(row => /Ghiozdanul/i.test(row.quote || ''))).toBe(true);
+    expect(developed.teacher).toMatch(/Ghiozdanul/);
   });
 
   it('keeps token answers working and attaches a rubric on long items', () => {

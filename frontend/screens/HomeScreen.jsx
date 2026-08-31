@@ -81,7 +81,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
         </div>
         <div className="progress-track"><div style={{ width: `${Math.min(userData.score || 0, 100)}%` }}></div></div>
         <LevelBar userData={userData} />
-        <div className="streak-week" aria-label="Streak ultimele 7 zile">
+        <div className="streak-week" aria-label="Zile la rând, ultimele 7">
           {boxes.map(box => (
             <span key={box.key} className={`streak-box ${box.on ? 'on' : ''}`} title={box.key} />
           ))}

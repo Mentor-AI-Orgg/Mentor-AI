@@ -479,10 +479,10 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
   }
   if (study.firstToday && !user.streakBonusDate) {
     user.streakBonusDate = todayKey;
-    grantAward(user, AWARDS.streak_day, 'reward', `Streak ${user.metrics.streak} zile`, { streak: user.metrics.streak });
+    grantAward(user, AWARDS.streak_day, 'reward', `Serie de ${user.metrics.streak} zile`, { streak: user.metrics.streak });
   } else if (study.firstToday && user.streakBonusDate !== todayKey) {
     user.streakBonusDate = todayKey;
-    grantAward(user, AWARDS.streak_day, 'reward', `Streak ${user.metrics.streak} zile`, { streak: user.metrics.streak });
+    grantAward(user, AWARDS.streak_day, 'reward', `Serie de ${user.metrics.streak} zile`, { streak: user.metrics.streak });
   }
 
   let awarded = null;
@@ -672,10 +672,10 @@ function buildDailyClaims(user) {
     },
     {
       id: 'streak-bonus',
-      title: 'Bonus streak',
+      title: 'Bonus de serie',
       subtitle: user.metrics.streak === 1
-        ? 'Ai 1 zi consecutivă. Bonus +5 pe lângă restul recompenselor.'
-        : `Ai ${user.metrics.streak || 0} zile consecutive. Bonus +5 pe lângă restul recompenselor.`,
+        ? 'Ai 1 zi la rând. Bonus +5 pe lângă restul recompenselor.'
+        : `Ai ${user.metrics.streak || 0} zile la rând. Bonus +5 pe lângă restul recompenselor.`,
       coins: 5,
       claimed: user.streakBonusDate === todayKey,
       action: 'streak_bonus'
@@ -698,8 +698,8 @@ function buildDailyClaims(user) {
     },
     {
       id: 'jackpot-monthly',
-      title: 'Jackpot lunar',
-      subtitle: `Zi random a lunii: ${jackpotDay}. Dacă intri atunci, primești 50 de monede.`,
+      title: 'Premiul lunii',
+      subtitle: `O zi din lună: ${jackpotDay}. Dacă intri atunci, primești 50 de monede de studiu.`,
       coins: 50,
       claimed: Boolean(user.jackpotRewardMonths[monthKey]),
       action: 'jackpot_monthly',
@@ -759,7 +759,7 @@ function claimReward({ userId = 'demo_user', type, payload = {} }) {
       return { ok: false, reason: 'not_jackpot_day', jackpotDay, balance: user.balance, summary: buildSummary(user) };
     }
     user.jackpotRewardMonths[monthKey] = true;
-    const bonus = awardCoins(user, 50, 'reward', 'Jackpot lunar', { jackpotDay, monthKey });
+    const bonus = awardCoins(user, 50, 'reward', 'Premiul lunii', { jackpotDay, monthKey });
     return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'jackpot_monthly', jackpotDay, summary: buildSummary(user) };
   }
 
@@ -779,7 +779,7 @@ function getCatalog() {
       freeDaily: [
         { id: 'login_bonus', title: `${AWARDS.login_bonus.coins} de monede la prima logare`, description: 'Se acordă o singură dată.' },
         { id: 'chapter_open', title: '8 monede + 20 XP la un capitol nou', description: 'Când deschizi și lucrezi un capitol.' },
-        { id: 'jackpot_monthly', title: 'Jackpot lunar de 50', description: 'Într-o zi random din lună.' }
+        { id: 'jackpot_monthly', title: 'Premiul lunii de 50', description: 'O zi din lună, aleasă de server.' }
       ]
     }
   };

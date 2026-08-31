@@ -1,3 +1,5 @@
+import GeoSolid from './GeoSolid.jsx';
+
 const FIGURES = {
   'points-line': {
     label: 'Punct, dreaptă, segment',
@@ -186,9 +188,14 @@ const FIGURES = {
   }
 };
 
+const SOLIDS = new Set(['box3d', 'pyramid', 'cylinder', 'cone', 'sphere', 'planes']);
+
 const GeoFigure = ({ kind, caption }) => {
   const figure = FIGURES[kind];
   if (!figure) return null;
+  if (SOLIDS.has(kind)) {
+    return <GeoSolid kind={kind} caption={caption || figure.label} fallback={figure.svg} />;
+  }
   return (
     <figure className="geo-figure">
       <div className="geo-figure-canvas">{figure.svg}</div>

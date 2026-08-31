@@ -169,7 +169,17 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
                 {item.explain && <p className="quiz-explain">{item.explain}</p>}
                 {item.rubric && (
                   <div className="writing-barem">
-                    <strong>Barem de profesor · {item.rubric.total}/{item.rubric.max} · nota {item.rubric.note10}</strong>
+                    <strong>Am citit foaia · {item.rubric.total}/{item.rubric.max} · nota {item.rubric.note10}</strong>
+                    {(item.rubric.reading || []).length > 0 && (
+                      <ol className="writing-reading">
+                        {item.rubric.reading.map((row, readIndex) => (
+                          <li key={`${item.id}-read-${readIndex}`}>
+                            {row.quote ? <q>{row.quote}</q> : null}
+                            <span>{row.comment}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    )}
                     <ul>
                       {item.rubric.criteria.map(row => (
                         <li key={row.id}><span>{row.label}</span> <em>{row.points}/{row.max}</em> — {row.note}</li>

@@ -90,7 +90,7 @@
     "progressTitle": "În creștere",
     "level": "Nivel",
     "nextStep": "următorul pas",
-    "streak": "Streak",
+    "streak": "Serie",
     "daysInARow": "zile la rând",
     "coins": "Monede de studiu",
     "toSpend": "din învățare",
@@ -110,7 +110,7 @@
     "enHint": "Clasa a 8-a · teste pe foaie",
     "planRhythm": "Planifică-ți ritmul",
     "seeCalendar": "Vezi calendarul",
-    "shopHint": "Daily free & items"
+    "shopHint": "Monede din învățare, nu lei"
   },
   "onboarding": {
     "setup": "CONFIGURARE",
