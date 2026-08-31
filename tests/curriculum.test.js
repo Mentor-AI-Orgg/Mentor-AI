@@ -9,6 +9,7 @@ import {
   GRADES,
   SUBJECT_IDS
 } from '../backend/src/data/gimnaziuGuide.js';
+import { getEnGuide, enCounts } from '../backend/src/data/en8Guide.js';
 
 describe('gimnaziu curriculum', () => {
   let app;
@@ -90,5 +91,51 @@ describe('gimnaziu curriculum', () => {
       expect(guide.units.length).toBeGreaterThan(2);
       expect(guide.howISeeIt.length).toBeGreaterThan(30);
     }
+  });
+
+  it('serves a separate Evaluare Națională track with original platter lessons', async () => {
+    const counts = enCounts();
+    expect(counts.matematica.chapters).toBe(7);
+    expect(counts.matematica.lessons).toBe(31);
+    expect(counts.matematica.papers).toBe(3);
+    expect(counts.romana.chapters).toBe(7);
+    expect(counts.romana.lessons).toBe(30);
+    expect(counts.romana.papers).toBe(3);
+
+    const math = getEnGuide('matematica');
+    expect(math.track).toBe('en');
+    expect(math.completablePractice).toBe(false);
+    expect(math.source.ordinance).toMatch(/4\.730/);
+    math.units.forEach(unit => {
+      expect(unit.lessons.length, unit.id).toBeGreaterThanOrEqual(4);
+      unit.lessons.forEach(entry => {
+        expect(entry.platter.length).toBeGreaterThan(80);
+        expect(entry.platter).toMatch(/Exemplu lucrat|Exemplu:/);
+        expect(entry.platter.toLowerCase()).not.toMatch(/manuale\.edu\.ro|subiecte\.edu/);
+      });
+    });
+    math.papers.forEach(paper => {
+      expect(paper.completable).toBe(false);
+      expect(paper.workOnPaper).toBe(true);
+      expect(paper.blocks.length).toBe(3);
+      expect(JSON.stringify(paper)).not.toMatch(/<input|<textarea/i);
+    });
+
+    const catalog = await request(app).get('/api/curriculum').query({ track: 'en' });
+    expect(catalog.status).toBe(200);
+    expect(catalog.body.track).toBe('en');
+    expect(catalog.body.guides).toHaveLength(2);
+
+    const one = await request(app).get('/api/curriculum').query({ track: 'en', subject: 'romana' });
+    expect(one.status).toBe(200);
+    expect(one.body.subject).toBe('romana');
+    expect(one.body.papers[0].hint).toMatch(/foaie|caiet/i);
+    expect(one.body.papers[0].completable).toBe(false);
+    expect(JSON.stringify(one.body.papers)).not.toMatch(/<input|<textarea/);
+
+    const countsApi = await request(app).get('/api/curriculum/en/counts');
+    expect(countsApi.status).toBe(200);
+    expect(countsApi.body.counts.matematica.lessons).toBe(31);
+    expect(countsApi.body.counts.romana.lessons).toBe(30);
   });
 });

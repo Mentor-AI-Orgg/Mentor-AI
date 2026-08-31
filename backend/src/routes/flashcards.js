@@ -21,8 +21,15 @@ router.post("/generate", (req, res) => {
     class_level: classLevel = 5,
     kind = "flashcards",
     exclude_ids: excludeIds = [],
-    count
+    count,
+    track = ""
   } = req.body || {};
+
+  if (String(track).toLowerCase() === "en" || String(classLevel).toLowerCase() === "en") {
+    return res.status(400).json({
+      error: "Modelele de Evaluare Națională se lucrează pe foaie. În aplicație vezi doar testul, fără completare."
+    });
+  }
 
   if (!topic && !chapterId) {
     return res.status(400).json({ error: "Trimite chapter_id sau topic." });

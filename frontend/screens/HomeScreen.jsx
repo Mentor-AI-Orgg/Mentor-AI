@@ -89,9 +89,10 @@ const HomeScreen = ({ userData, onNavigate }) => {
           </div>
         </div>
         <div className="quick-grid">
-          <button type="button" onClick={() => onNavigate('learn', { subject: 'romana', grade })} className="quick-card quick-aqua"><i className="fas fa-book" /><span>{t('onboarding.step3.romana')}</span><small>{t('home.learnHint')}</small></button>
-          <button type="button" onClick={() => onNavigate('learn', { subject: 'matematica', grade })} className="quick-card quick-gold"><i className="fas fa-square-root-alt" /><span>{t('onboarding.step3.matematica')}</span><small>{t('home.learnHint')}</small></button>
-          <button type="button" onClick={() => onNavigate('calendar')} className="quick-card quick-coral"><i className="fas fa-calendar-check" /><span>{t('home.planRhythm')}</span><small>{t('home.seeCalendar')}</small></button>
+          <button type="button" onClick={() => onNavigate('learn', { subject: 'romana', grade, track: null })} className="quick-card quick-aqua"><i className="fas fa-book" /><span>{t('onboarding.step3.romana')}</span><small>{t('home.learnHint')}</small></button>
+          <button type="button" onClick={() => onNavigate('learn', { subject: 'matematica', grade, track: null })} className="quick-card quick-gold"><i className="fas fa-square-root-alt" /><span>{t('onboarding.step3.matematica')}</span><small>{t('home.learnHint')}</small></button>
+          <button type="button" onClick={() => onNavigate('learn', { track: 'en', grade: 8 })} className="quick-card quick-coral"><i className="fas fa-clipboard-check" /><span>{t('home.enTitle')}</span><small>{t('home.enHint')}</small></button>
+          <button type="button" onClick={() => onNavigate('calendar')} className="quick-card quick-aqua"><i className="fas fa-calendar-check" /><span>{t('home.planRhythm')}</span><small>{t('home.seeCalendar')}</small></button>
         </div>
       </section>
     </main>

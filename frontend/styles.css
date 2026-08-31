@@ -595,6 +595,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .mentor-subject-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--ink); font-size: 13px; font-weight: 700; }
 .mentor-subject-chip.selected { border-color: rgba(185,167,255,.7); background: rgba(185,167,255,.18); }
 .subject-pick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 8px 0 18px; }
+.subject-pick-grid-three { grid-template-columns: 1fr 1fr; }
+.subject-pick-grid-three .subject-pick-en { grid-column: 1 / -1; min-height: 120px; }
 .subject-pick-card { display: grid; gap: 8px; min-height: 150px; padding: 20px; border-radius: 22px; border: 1px solid var(--line); color: var(--ink); text-align: left; }
 .subject-pick-card i { font-size: 22px; }
 .subject-pick-card strong { font: 700 20px 'Space Grotesk', sans-serif; }
@@ -602,6 +604,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .subject-pick-card.selected { border-color: rgba(255,255,255,.45); box-shadow: 0 14px 30px rgba(0,0,0,.16); transform: translateY(-2px); }
 .subject-pick-romana { background: linear-gradient(145deg, rgba(205,91,157,.38), rgba(91,46,115,.7)); }
 .subject-pick-mate { background: linear-gradient(145deg, rgba(49,169,211,.38), rgba(31,74,124,.7)); }
+.subject-pick-en { background: linear-gradient(145deg, rgba(232,176,74,.42), rgba(92,48,22,.72)); }
 .grade-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
 .grade-chip { min-height: 40px; padding: 0 14px; border-radius: 99px; border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--ink); font-size: 13px; font-weight: 700; }
 .grade-chip.selected { border-color: rgba(111,215,255,.55); background: rgba(111,215,255,.14); color: #d7f6ff; }
@@ -622,6 +625,29 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .lesson-platter p { margin: 0 0 10px; color: #e8eaf8; line-height: 1.65; font-size: 14px; }
 .lesson-platter p:last-child { margin-bottom: 0; }
 .lesson-practice-hint { margin: 0 0 14px; color: #c9cbe0; font-size: 13px; }
+.en-papers-section { margin: 22px 0 8px; display: grid; gap: 12px; }
+.en-paper-card-list { display: grid; gap: 10px; }
+.en-paper-pick { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--ink); }
+.en-paper-pick i { font-size: 18px; color: #f0c36a; }
+.en-paper-pick span { display: grid; gap: 4px; }
+.en-paper-pick small { color: rgba(255,255,255,.68); font-size: 12px; }
+.en-paper-pick.selected { border-color: rgba(240,195,106,.7); background: rgba(240,195,106,.12); }
+.en-paper-sheet { padding: 20px; border-radius: 22px; border: 1px dashed rgba(240,195,106,.45); }
+.en-paper-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 12px; }
+.en-paper-title { margin: 6px 0 8px; font-size: clamp(20px, 3.5vw, 28px); }
+.en-paper-meta { margin: 0; color: #c9cbe0; font-size: 13px; }
+.en-paper-lock { margin: 0 0 16px; padding: 12px 14px; border-radius: 12px; background: rgba(240,195,106,.12); color: #f6e4b8; line-height: 1.55; }
+.en-paper-block { margin-bottom: 18px; }
+.en-paper-block h4 { margin: 0 0 8px; font: 700 16px 'Space Grotesk', sans-serif; }
+.en-paper-intro { margin: 0 0 10px; color: #d7d9ea; font-size: 14px; }
+.en-paper-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.en-paper-item { display: grid; grid-template-columns: auto 1fr; gap: 8px; padding: 12px; border-radius: 12px; background: rgba(255,255,255,.04); }
+.en-paper-n { color: #f0c36a; }
+.en-paper-item p { margin: 0 0 6px; white-space: pre-wrap; line-height: 1.6; }
+.en-paper-item small { color: rgba(255,255,255,.62); }
+.en-paper-passage { padding: 14px 16px; border-radius: 14px; background: rgba(15,16,40,.55); border: 1px solid rgba(255,255,255,.08); }
+.en-paper-text { white-space: pre-wrap; line-height: 1.7; color: #e8eaf8; font-size: 14px; }
+.en-paper-foot { margin: 8px 0 0; color: #c9cbe0; font-size: 13px; }
 @media (max-width: 680px) {
   .subject-pick-grid { grid-template-columns: 1fr; }
 }

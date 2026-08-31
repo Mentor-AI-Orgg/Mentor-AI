@@ -3,6 +3,7 @@ import { MentorAPI } from '../apiClient.js';
 import FocusTimer from '../components/FocusTimer.jsx';
 import FlashCards from '../components/FlashCards.jsx';
 import ChapterQuiz from '../components/ChapterQuiz.jsx';
+import EnPaperView from '../components/EnPaperView.jsx';
 import { dailySlogan } from '../slogans.js';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
 
@@ -61,8 +62,9 @@ const chapterStatus = (chapters, subject, grade, chapterId) => {
 
 const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onProgress }) => {
   const defaultGrade = normalizeGrade(studyFocus.grade || userData.class);
+  const [track, setTrack] = useState(studyFocus.track === 'en' ? 'en' : null);
   const [subject, setSubject] = useState(studyFocus.subject ? normalizeSubject(studyFocus.subject) : null);
-  const [grade, setGrade] = useState(defaultGrade);
+  const [grade, setGrade] = useState(studyFocus.track === 'en' ? 8 : defaultGrade);
   const [guide, setGuide] = useState(null);
   const [openChapter, setOpenChapter] = useState(studyFocus.chapter || null);
   const [session, setSession] = useState(null);
@@ -71,14 +73,23 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [saved, setSaved] = useState(false);
   const [sessionDone, setSessionDone] = useState(false);
   const [quizUnit, setQuizUnit] = useState(null);
+  const [openPaper, setOpenPaper] = useState(null);
   const [guideError, setGuideError] = useState(false);
   const [guideLoading, setGuideLoading] = useState(false);
+  const isEn = track === 'en';
+  const activeGrade = isEn ? 8 : grade;
 
   useEffect(() => {
+    if (studyFocus.track === 'en') {
+      setTrack('en');
+      setGrade(8);
+    } else if (studyFocus.track === null) {
+      setTrack(null);
+    }
     if (studyFocus.subject) setSubject(normalizeSubject(studyFocus.subject));
-    if (studyFocus.grade) setGrade(normalizeGrade(studyFocus.grade));
+    if (studyFocus.grade && studyFocus.track !== 'en') setGrade(normalizeGrade(studyFocus.grade));
     if (studyFocus.chapter) setOpenChapter(studyFocus.chapter);
-  }, [studyFocus.subject, studyFocus.grade, studyFocus.chapter]);
+  }, [studyFocus.subject, studyFocus.grade, studyFocus.chapter, studyFocus.track]);
 
   useEffect(() => {
     if (!subject) {
@@ -90,7 +101,8 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     let cancelled = false;
     setGuideLoading(true);
     setGuideError(false);
-    MentorAPI.getCurriculum({ subject, class_level: grade }).then(result => {
+    const params = isEn ? { subject, track: 'en' } : { subject, class_level: grade };
+    MentorAPI.getCurriculum(params).then(result => {
       if (cancelled) return;
       setGuideLoading(false);
       if (result.success) {
@@ -102,7 +114,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
       }
     });
     return () => { cancelled = true; };
-  }, [subject, grade]);
+  }, [subject, grade, isEn]);
 
   const units = guide?.units || [];
   const savedSessions = userData.savedSessions || [];
@@ -128,7 +140,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     const result = await MentorAPI.recordProgress({
       type: 'chapter_open',
       note: unit.title,
-      meta: { subject, grade, chapterId: unit.id, title: unit.title }
+      meta: { subject, grade: activeGrade, chapterId: unit.id, title: unit.title, track: isEn ? 'en' : '' }
     });
     applyResult(result);
   };
@@ -136,7 +148,8 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const askMentor = unit => {
     onNavigate?.('professor', {
       subject,
-      grade,
+      grade: isEn ? 8 : grade,
+      track: isEn ? 'en' : null,
       chapter: unit ? { id: unit.id, title: unit.title, inOwnWords: unit.inOwnWords } : null
     });
   };
@@ -152,7 +165,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
       message: `Creează o sesiune de 5 minute despre: ${unit.title}. Cum o înțeleg eu: ${unit.inOwnWords}. Include obiectiv, încălzire, exercițiu, verificare și bonus. Nu da rezolvarea gata.`,
       conversationId: makeConversationId('learn'),
       subject,
-      classLevel: grade,
+      classLevel: activeGrade,
       language: userData.language || 'ro',
       planId: userData.planId || 'free',
       mockReply: `Obiectiv: înțelegi ${unit.title.toLowerCase()} în pași simpli. Încălzire: notează 2 lucruri pe care le știi deja. Exercițiu: rezolvă un exemplu scurt și încadrează răspunsul în 3 etape. Verificare: spune cu voce tare ce ai făcut. Bonus: repetă ideea principală într-o propoziție.`
@@ -161,7 +174,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     setSession({
       title: unit.title,
       chapterId: unit.id,
-      meta: `${gradeLabel(grade)} · ${subjectLabel(subject)}`,
+      meta: `${isEn ? 'Evaluare Națională' : gradeLabel(grade)} · ${subjectLabel(subject)}`,
       ...plan,
       mocked: !!reply.mocked,
       engine: reply.engine_used || ''
@@ -170,7 +183,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     const result = await MentorAPI.recordProgress({
       type: 'chapter_open',
       note: unit.title,
-      meta: { subject, grade, chapterId: unit.id, title: unit.title }
+      meta: { subject, grade: activeGrade, chapterId: unit.id, title: unit.title, track: isEn ? 'en' : '' }
     });
     applyResult(result);
   };
@@ -184,7 +197,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
       const result = await MentorAPI.recordProgress({
         type: 'session_complete',
         note: session.title,
-        meta: { subject, grade, chapterId: session.chapterId || openChapter, title: session.title }
+        meta: { subject, grade: activeGrade, chapterId: session.chapterId || openChapter, title: session.title, track: isEn ? 'en' : '' }
       });
       applyResult(result);
     }
@@ -195,7 +208,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     const result = await MentorAPI.recordProgress({
       type: 'save_session',
       note: session.title,
-      meta: { title: session.title, subject, grade, chapterId: session.chapterId || openChapter }
+      meta: { title: session.title, subject, grade: activeGrade, chapterId: session.chapterId || openChapter, track: isEn ? 'en' : '' }
     });
     setSaved(true);
     applyResult(result);
@@ -205,28 +218,34 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     <main className="screen-page learn-page animate-fadeIn">
       <header className="screen-header">
         <div className="learn-hero">
-          <div className="eyebrow">LECȚII DE GIMNAZIU</div>
-          <h1 className="display-font screen-title">Română și matematică, clasele 5–8.</h1>
-          <p className="screen-subtitle">Alege materia, apoi clasa. În fiecare capitol ai lecțiile pe tavă — cu exemple lucrate, nu copiate din manual. Testele și flashcardurile urcă de la foarte ușor la greu. La test scrii doar răspunsul final; nota și pașii vin după finalizare. După banca de capitol apar variante noi, generate pe programă.</p>
+          <div className="eyebrow">{isEn ? 'EVALUARE NAȚIONALĂ · CLASA A VIII-A' : 'LECȚII DE GIMNAZIU'}</div>
+          <h1 className="display-font screen-title">{isEn ? 'Pregătire pentru Evaluarea Națională.' : 'Română și matematică, clasele 5–8.'}</h1>
+          <p className="screen-subtitle">
+            {isEn
+              ? 'Secțiune separată față de capitolele pe clase. Lecțiile sunt rezumate originale, cu exemple lucrate, după programa de examen (OM 4.730/2022), nu copiate din manuale sau culegeri. Modelele de teste se văd aici și se lucrează pe foaie: fără câmpuri, fără finalizare, fără notare în aplicație.'
+              : 'Alege materia, apoi clasa. În fiecare capitol ai lecțiile pe tavă — cu exemple lucrate, nu copiate din manual. Testele și flashcardurile urcă de la foarte ușor la greu. La test scrii doar răspunsul final; nota și pașii vin după finalizare. După banca de capitol apar variante noi, generate pe programă.'}
+          </p>
           <p className="learn-slogan">{dailySlogan()}</p>
         </div>
       </header>
 
-      {userData.exam === 'evaluare' && (
-        <p className="mock-banner"><i className="fas fa-clipboard-check" /> Te pregătești pentru Evaluarea Națională. Exercițiile urmează programa de gimnaziu; la test scrii răspunsul final, pe foaie.</p>
+      {userData.exam === 'evaluare' && !isEn && (
+        <p className="mock-banner"><i className="fas fa-clipboard-check" /> Te pregătești pentru Evaluarea Națională. Deschide secțiunea de mai jos — e separată de lecțiile pe clase.</p>
       )}
 
-      <section className="subject-pick-grid" aria-label="Alege materia">
+      <section className="subject-pick-grid subject-pick-grid-three" aria-label="Alege materia sau Evaluarea Națională">
         {SUBJECTS.map(item => (
           <button
             key={item.id}
             type="button"
-            className={`subject-pick-card ${item.id === 'romana' ? 'subject-pick-romana' : 'subject-pick-mate'} ${subject === item.id ? 'selected' : ''}`}
+            className={`subject-pick-card ${item.id === 'romana' ? 'subject-pick-romana' : 'subject-pick-mate'} ${!isEn && subject === item.id ? 'selected' : ''}`}
             onClick={() => {
+              setTrack(null);
               setSubject(item.id);
               setOpenChapter(null);
               setSession(null);
               setQuizUnit(null);
+              setOpenPaper(null);
             }}
           >
             <i className={`fas ${item.icon}`} />
@@ -234,32 +253,71 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             <small>Capitole pe clasele 5–8</small>
           </button>
         ))}
+        <button
+          type="button"
+          className={`subject-pick-card subject-pick-en ${isEn ? 'selected' : ''}`}
+          onClick={() => {
+            setTrack('en');
+            setGrade(8);
+            setOpenChapter(null);
+            setSession(null);
+            setQuizUnit(null);
+            setOpenPaper(null);
+            if (!subject) setSubject('matematica');
+          }}
+        >
+          <i className="fas fa-clipboard-check" />
+          <strong>Evaluare Națională</strong>
+          <small>Clasa a 8-a · română și matematică</small>
+        </button>
       </section>
+
+      {isEn && (
+        <section className="grade-chip-row" aria-label="Alege materia la Evaluarea Națională">
+          {SUBJECTS.map(item => (
+            <button
+              key={`en-${item.id}`}
+              type="button"
+              className={`grade-chip ${subject === item.id ? 'selected' : ''}`}
+              onClick={() => {
+                setSubject(item.id);
+                setOpenChapter(null);
+                setSession(null);
+                setOpenPaper(null);
+              }}
+            >
+              {item.labelRo}
+            </button>
+          ))}
+        </section>
+      )}
 
       {subject && (
         <>
-          <section className="grade-chip-row" aria-label="Alege clasa">
-            {GRADES.map(item => (
-              <button
-                key={item}
-                type="button"
-                className={`grade-chip ${grade === item ? 'selected' : ''}`}
-                onClick={() => {
-                  setGrade(item);
-                  setOpenChapter(null);
-                  setSession(null);
-                  setQuizUnit(null);
-                }}
-              >
-                {gradeLabel(item)}
-              </button>
-            ))}
-          </section>
+          {!isEn && (
+            <section className="grade-chip-row" aria-label="Alege clasa">
+              {GRADES.map(item => (
+                <button
+                  key={item}
+                  type="button"
+                  className={`grade-chip ${grade === item ? 'selected' : ''}`}
+                  onClick={() => {
+                    setGrade(item);
+                    setOpenChapter(null);
+                    setSession(null);
+                    setQuizUnit(null);
+                  }}
+                >
+                  {gradeLabel(item)}
+                </button>
+              ))}
+            </section>
+          )}
 
           <section className="surface chapter-intro">
-            <div className="eyebrow">{guide?.title || `${subjectLabel(subject)} · ${gradeLabel(grade)}`}</div>
+            <div className="eyebrow">{guide?.title || `${subjectLabel(subject)} · ${isEn ? 'Evaluare Națională' : gradeLabel(grade)}`}</div>
             <h2 className="display-font">{guide?.title || 'Capitolele clasei'}</h2>
-            <p>{guideLoading ? 'Încărcăm ghidul clasei…' : (guide?.howISeeIt || 'Încărcăm ghidul clasei…')}</p>
+            <p>{guideLoading ? 'Încărcăm ghidul…' : (guide?.howISeeIt || 'Încărcăm ghidul…')}</p>
             {guideError && <p className="guide-error">Nu am putut încărca programa. Verifică conexiunea și alege din nou materia.</p>}
             {guide?.source?.disclaimer && <small className="chapter-disclaimer">{guide.source.disclaimer}</small>}
           </section>
@@ -267,14 +325,14 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           <section className="chapter-list" aria-label="Capitole">
             {units.map((unit, index) => {
               const open = openChapter === unit.id;
-              const status = chapterStatus(userData.chapters, subject, grade, unit.id);
+              const status = chapterStatus(userData.chapters, subject, activeGrade, unit.id);
               return (
                 <article key={unit.id} className={`chapter-card ${['module-violet', 'module-cyan', 'module-pink'][index % 3]} ${open ? 'open' : ''} ${status}`}>
                   <button type="button" className="chapter-card-head" onClick={() => openUnit(unit)}>
                     <span className="module-icon"><i className={`fas ${subject === 'romana' ? 'fa-book-open' : 'fa-square-root-variable'}`} /></span>
                     <span>
                       <strong>{unit.title}</strong>
-                      <small>Capitol {index + 1} · {(unit.lessons || []).length} lecții · {gradeLabel(grade)}</small>
+                      <small>Capitol {index + 1} · {(unit.lessons || []).length} lecții · {isEn ? 'EN clasa a 8-a' : gradeLabel(grade)}</small>
                     </span>
                     {status ? <em className={`chapter-status ${status}`}>{status === 'done' ? 'Terminat' : 'Început'}</em> : null}
                     <i className={`fas ${open ? 'fa-chevron-up' : 'fa-chevron-down'}`} />
@@ -294,14 +352,20 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                           ))}
                         </ol>
                       )}
-                      <p className="lesson-practice-hint">Testul și flashcardurile urcă de la foarte ușor la greu. Scrii răspunsul la test; la flashcarduri alegi A–D.</p>
+                      <p className="lesson-practice-hint">
+                        {isEn
+                          ? 'Aici citești lecția. Modelele de teste EN sunt mai jos, doar pe foaie — nu se completează în aplicație.'
+                          : 'Testul și flashcardurile urcă de la foarte ușor la greu. Scrii răspunsul la test; la flashcarduri alegi A–D.'}
+                      </p>
                       <div className="learning-actions">
                         <button type="button" className="ghost-button result-action" onClick={() => askMentor(unit)}>
                           Întreabă mentorul <i className="fas fa-comments" />
                         </button>
-                        <button type="button" className="ghost-button result-action" onClick={() => setQuizUnit(unit)}>
-                          Generează test <i className="fas fa-clipboard-check" />
-                        </button>
+                        {!isEn && (
+                          <button type="button" className="ghost-button result-action" onClick={() => setQuizUnit(unit)}>
+                            Generează test <i className="fas fa-clipboard-check" />
+                          </button>
+                        )}
                         <button type="button" className="accent-button result-action" onClick={() => startSession(unit)} disabled={loading}>
                           {loading && openChapter === unit.id ? 'Pregătesc sesiunea…' : 'Sesiune de 5 minute'}
                         </button>
@@ -312,6 +376,33 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
               );
             })}
           </section>
+
+          {isEn && (guide?.papers || []).length > 0 && (
+            <section className="en-papers-section" aria-label="Modele recomandate de teste">
+              <div className="surface chapter-intro">
+                <div className="eyebrow">Modele recomandate</div>
+                <h2 className="display-font">Teste de tip examen, doar pe foaie</h2>
+                <p>{guide.papersNote || 'Vezi testul aici. Rezolvi pe caiet. Aplicația nu are câmpuri de răspuns și nu notează.'}</p>
+              </div>
+              <div className="en-paper-card-list">
+                {guide.papers.map(paper => (
+                  <button
+                    key={paper.id}
+                    type="button"
+                    className={`en-paper-pick ${openPaper?.id === paper.id ? 'selected' : ''}`}
+                    onClick={() => setOpenPaper(openPaper?.id === paper.id ? null : paper)}
+                  >
+                    <i className="fas fa-file-alt" />
+                    <span>
+                      <strong>{paper.title}</strong>
+                      <small>{paper.duration} · {paper.oficiu} puncte din oficiu · nu se completează aici</small>
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {openPaper && <EnPaperView paper={openPaper} onClose={() => setOpenPaper(null)} />}
+            </section>
+          )}
         </>
       )}
 
@@ -337,15 +428,17 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             <button type="button" className="ghost-button result-action" onClick={saveForLater}>
               {saved ? 'Salvat în lista ta' : 'Salvează pentru mai târziu'} <i className="fas fa-bookmark" />
             </button>
-            <button type="button" className="ghost-button result-action" onClick={() => setQuizUnit({ id: session.chapterId || openChapter, title: session.title, inOwnWords: session.objective })}>
-              Generează test <i className="fas fa-clipboard-check" />
-            </button>
+            {!isEn && (
+              <button type="button" className="ghost-button result-action" onClick={() => setQuizUnit({ id: session.chapterId || openChapter, title: session.title, inOwnWords: session.objective })}>
+                Generează test <i className="fas fa-clipboard-check" />
+              </button>
+            )}
             <button type="button" className="accent-button result-action" onClick={() => askMentor({ id: openChapter, title: session.title, inOwnWords: session.objective })}>Continuă cu mentorul</button>
           </div>
         </section>
       )}
 
-      {quizUnit && (
+      {quizUnit && !isEn && (
         <ChapterQuiz
           unit={quizUnit}
           subject={subject}
@@ -369,13 +462,19 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                   type="button"
                   className="saved-session-btn"
                   onClick={() => {
+                    if (item.track === 'en') {
+                      setTrack('en');
+                      setGrade(8);
+                    } else {
+                      setTrack(null);
+                      if (item.grade) setGrade(normalizeGrade(item.grade));
+                    }
                     if (item.subject) setSubject(normalizeSubject(item.subject));
-                    if (item.grade) setGrade(normalizeGrade(item.grade));
                     if (item.chapterId) setOpenChapter(item.chapterId);
                   }}
                 >
                   <strong>{item.title}</strong>
-                  <small>{item.subject ? subjectLabel(item.subject) : ''} {item.grade ? `· ${gradeLabel(item.grade)}` : ''}</small>
+                  <small>{item.track === 'en' ? 'EN · ' : ''}{item.subject ? subjectLabel(item.subject) : ''} {item.grade ? `· ${gradeLabel(item.grade)}` : ''}</small>
                 </button>
               </li>
             ))}
@@ -385,14 +484,16 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
 
       <div className="learn-tools-grid">
         <FocusTimer userData={userData} onRewardClaim={onRewardClaim} />
-        <FlashCards
-          userData={userData}
-          subject={subject}
-          classLevel={grade}
-          chapters={units}
-          onRewardClaim={onRewardClaim}
-          onAskMentor={askMentor}
-        />
+        {!isEn && (
+          <FlashCards
+            userData={userData}
+            subject={subject}
+            classLevel={grade}
+            chapters={units}
+            onRewardClaim={onRewardClaim}
+            onAskMentor={askMentor}
+          />
+        )}
       </div>
     </main>
   );

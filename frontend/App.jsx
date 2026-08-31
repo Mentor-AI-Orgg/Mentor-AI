@@ -71,7 +71,7 @@ function AppShell({ userData, setUserData }) {
   const [toast, setToast] = useState(null);
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [onboardingData, setOnboardingData] = useState({});
-  const [studyFocus, setStudyFocus] = useState({ subject: null, grade: null, chapter: null });
+  const [studyFocus, setStudyFocus] = useState({ subject: null, grade: null, chapter: null, track: null });
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
@@ -361,9 +361,10 @@ function AppShell({ userData, setUserData }) {
 
   const handleNavigate = (target, extras = {}) => {
     setStudyFocus(prev => ({
-      subject: extras.subject || prev.subject,
+      subject: extras.subject !== undefined ? extras.subject : prev.subject,
       grade: extras.grade || prev.grade,
-      chapter: extras.chapter || null
+      chapter: extras.chapter || null,
+      track: extras.track !== undefined ? extras.track : prev.track
     }));
     setNavScreen(target);
     setScreen(target);
