@@ -317,6 +317,15 @@ function allChapterKeys() {
 
 function findQuestion(id) {
   const needle = String(id || '');
+  if (needle.startsWith('g:')) {
+    try {
+      const { fromGeneratedId } = require('./itemGenerator');
+      const generated = fromGeneratedId(needle);
+      if (generated && generated.options) return generated;
+    } catch {
+      return null;
+    }
+  }
   for (const list of Object.values(BANK)) {
     const found = list.find(item => item.id === needle);
     if (found) return found;

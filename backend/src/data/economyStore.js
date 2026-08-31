@@ -557,6 +557,7 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
       title: String(meta.title).slice(0, 120),
       subject: meta.subject || '',
       grade: String(meta.grade || ''),
+      chapterId: meta.chapterId || '',
       at: new Date().toISOString()
     });
     user.savedSessions = user.savedSessions.slice(0, 20);
@@ -894,6 +895,22 @@ function getInventory(userId = 'demo_user') {
   };
 }
 
+function lastStudyFrom(user) {
+  const chapters = user.chapters && typeof user.chapters === 'object' ? user.chapters : {};
+  const rows = Object.values(chapters).filter(item => item && item.chapterId);
+  rows.sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')));
+  const last = rows[0];
+  if (!last) return null;
+  return {
+    subject: last.subject || '',
+    grade: last.grade || '',
+    chapterId: last.chapterId || '',
+    title: last.title || '',
+    status: last.status || '',
+    at: last.at || ''
+  };
+}
+
 function buildSummary(user) {
   const grade = user.preferences.className || '5';
   const progress = levelFromXp(user.xp || 0);
@@ -917,6 +934,7 @@ function buildSummary(user) {
     chaptersDone: done,
     chaptersTotal: total,
     chapters: { ...user.chapters },
+    lastStudy: lastStudyFrom(user),
     savedSessions: Array.isArray(user.savedSessions) ? user.savedSessions.slice(0, 8) : [],
     preferences: { ...user.preferences },
     inventory: user.inventory.slice(),

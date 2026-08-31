@@ -69,6 +69,7 @@ function AppShell({ userData, setUserData }) {
   }, []);
 
   const handleEconomyUpdate = useCallback((balance, equipped = {}, role = null, extra = {}) => {
+    let leveledTo = null;
     setUserData(prev => {
       const next = {
         ...prev,
@@ -80,10 +81,12 @@ function AppShell({ userData, setUserData }) {
         role: role || prev.role,
         ...extra
       };
+      if (next.level > (prev.level || 1)) leveledTo = next.level;
       applyTheme(next.themeId);
       return next;
     });
-  }, []);
+    if (leveledTo) showToast(`Ai urcat la nivelul ${leveledTo}!`, 'success');
+  }, [showToast]);
 
   const syncEconomy = useCallback(async (patch = {}) => {
     const result = await MentorAPI.getEconomySummary({
@@ -92,13 +95,16 @@ function AppShell({ userData, setUserData }) {
     });
     const summary = result.success ? result.data?.summary : null;
     if (!summary) return null;
+    let leveledTo = null;
     setUserData(prev => {
       const next = applyProgress(summary, prev);
+      if (next.level > (prev.level || 1)) leveledTo = next.level;
       applyTheme(next.themeId);
       return next;
     });
+    if (leveledTo) showToast(`Ai urcat la nivelul ${leveledTo}!`, 'success');
     return summary;
-  }, [userData.class, userData.name]);
+  }, [userData.class, userData.name, showToast]);
 
   const handleAppearanceChange = useCallback((equipped = {}, inventory = [], extra = {}) => {
     setUserData(prev => {
@@ -139,7 +145,9 @@ function AppShell({ userData, setUserData }) {
 
     const completed = Boolean(session.user.hasCompletedOnboarding) || Boolean(merged?.hasCompletedOnboarding);
     if (!completed) {
-      setOnboardingStep(1);
+      const readyName = session.user.name || merged?.name || '';
+      setOnboardingData(prev => ({ ...prev, name: readyName || prev.name }));
+      setOnboardingStep(readyName ? 2 : 1);
       setScreen('onboarding');
       return;
     }
@@ -189,7 +197,8 @@ function AppShell({ userData, setUserData }) {
     setUserData(prev => applyAccount(user, prev));
 
     if (!user.hasCompletedOnboarding) {
-      setOnboardingStep(1);
+      setOnboardingData(prev => ({ ...prev, name: user.name || prev.name }));
+      setOnboardingStep(user.name ? 2 : 1);
       setScreen('onboarding');
       MentorAPI.claimReward({ type: 'login_bonus' }).then(() => syncEconomy());
       showToast(t('toast.welcome'), 'success');
@@ -252,7 +261,8 @@ function AppShell({ userData, setUserData }) {
       parentEmail: formData.parentEmail || '',
       isLoggedIn: true
     }));
-    setOnboardingStep(1);
+    setOnboardingData(prev => ({ ...prev, name: formData.name || prev.name, class: formData.class || prev.class }));
+    setOnboardingStep(formData.name ? 2 : 1);
     setScreen('onboarding');
     return { success: true };
   };

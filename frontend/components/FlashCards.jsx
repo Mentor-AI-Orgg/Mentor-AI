@@ -16,7 +16,7 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
   const [report, setReport] = useState(null);
 
   const generate = async (unit, more = false) => {
-    if (!unit || loading) return;
+    if (!unit || loading || !subject) return;
     setLoading(true);
     setPicked(null);
     setIndex(0);
@@ -30,11 +30,11 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
     const result = await MentorAPI.generateFlashcards({
       chapter_id: unit.id,
       topic: unit.title,
-      subject: subject || userData?.subject || 'matematica',
+      subject: subject || userData?.subject || '',
       class_level: classLevel || userData?.class || 5,
       kind: 'flashcards',
       exclude_ids: skip,
-      count: 6
+      count: 8
     });
     const next = result.success && result.data?.cards?.length ? result.data.cards : [];
     setCards(next);
@@ -123,11 +123,11 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
       <div className="focus-timer-head">
         <div>
           <div className="eyebrow">Flashcarduri de teorie</div>
-          <h3 className="display-font">4 variante. La final vezi nota.</h3>
+          <h3 className="display-font">4 variante. Seturile nu se repetă.</h3>
         </div>
         {reviewed > 0 && !report && <span className="learn-chip"><i className="fas fa-check" /> {hits}/{reviewed}</span>}
       </div>
-      <p className="flashcards-empty">Alege capitolul. La finalizare vezi ce ai greșit, de ce, și nota.</p>
+      <p className="flashcards-empty">Alege capitolul. După banca de lecție apar variante noi, generate pe programă — nu se termină. La finalizare vezi ce ai greșit, de ce, și nota.</p>
 
       {chapters.length > 0 && (
         <div className="flashcards-presets">
@@ -146,7 +146,7 @@ const FlashCards = ({ userData, chapters = [], onRewardClaim, subject, classLeve
       )}
 
       {coverage && (
-        <p className="quiz-coverage">Idei atinse: {coverage.seen}/{coverage.total}{coverage.complete ? ' · capitol acoperit, poți recapitula' : ''}</p>
+        <p className="quiz-coverage">Idei atinse: {coverage.seen}/{coverage.total}{coverage.complete ? ' · capitol acoperit; urmează variante noi, fără repetare' : ''}</p>
       )}
 
       {loading && <div className="flashcard-skeleton skeleton" aria-hidden="true" />}

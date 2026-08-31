@@ -27,6 +27,7 @@ function applyProgress(summary = {}, prev = {}) {
     titleId: summary.titleId || summary.equipped?.title || prev.titleId,
     titleName: summary.titleName || prev.titleName,
     chapters: summary.chapters || prev.chapters,
+    lastStudy: summary.lastStudy || prev.lastStudy,
     savedSessions: summary.savedSessions || prev.savedSessions
   };
 }

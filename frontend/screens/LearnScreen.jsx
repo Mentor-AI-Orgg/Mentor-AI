@@ -71,6 +71,8 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [saved, setSaved] = useState(false);
   const [sessionDone, setSessionDone] = useState(false);
   const [quizUnit, setQuizUnit] = useState(null);
+  const [guideError, setGuideError] = useState(false);
+  const [guideLoading, setGuideLoading] = useState(false);
 
   useEffect(() => {
     if (studyFocus.subject) setSubject(normalizeSubject(studyFocus.subject));
@@ -81,11 +83,23 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   useEffect(() => {
     if (!subject) {
       setGuide(null);
+      setGuideError(false);
+      setGuideLoading(false);
       return undefined;
     }
     let cancelled = false;
+    setGuideLoading(true);
+    setGuideError(false);
     MentorAPI.getCurriculum({ subject, class_level: grade }).then(result => {
-      if (!cancelled && result.success) setGuide(result.data);
+      if (cancelled) return;
+      setGuideLoading(false);
+      if (result.success) {
+        setGuide(result.data);
+        setGuideError(false);
+      } else {
+        setGuide(null);
+        setGuideError(true);
+      }
     });
     return () => { cancelled = true; };
   }, [subject, grade]);
@@ -181,7 +195,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     const result = await MentorAPI.recordProgress({
       type: 'save_session',
       note: session.title,
-      meta: { title: session.title, subject, grade }
+      meta: { title: session.title, subject, grade, chapterId: session.chapterId || openChapter }
     });
     setSaved(true);
     applyResult(result);
@@ -193,10 +207,14 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
         <div className="learn-hero">
           <div className="eyebrow">LECȚII DE GIMNAZIU</div>
           <h1 className="display-font screen-title">Română și matematică, clasele 5–8.</h1>
-          <p className="screen-subtitle">Alege materia, apoi clasa. În test scrii doar răspunsul final; nota și pașii vin după finalizare.</p>
+          <p className="screen-subtitle">Alege materia, apoi clasa. În test scrii doar răspunsul final; nota și pașii vin după finalizare. Flashcardurile și testele nu se termină: după banca de capitol apar variante noi, generate pe programă.</p>
           <p className="learn-slogan">{dailySlogan()}</p>
         </div>
       </header>
+
+      {userData.exam === 'evaluare' && (
+        <p className="mock-banner"><i className="fas fa-clipboard-check" /> Te pregătești pentru Evaluarea Națională. Exercițiile urmează programa de gimnaziu; la test scrii răspunsul final, pe foaie.</p>
+      )}
 
       <section className="subject-pick-grid" aria-label="Alege materia">
         {SUBJECTS.map(item => (
@@ -241,7 +259,8 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           <section className="surface chapter-intro">
             <div className="eyebrow">{guide?.title || `${subjectLabel(subject)} · ${gradeLabel(grade)}`}</div>
             <h2 className="display-font">{guide?.title || 'Capitolele clasei'}</h2>
-            <p>{guide?.howISeeIt || 'Încărcăm ghidul clasei…'}</p>
+            <p>{guideLoading ? 'Încărcăm ghidul clasei…' : (guide?.howISeeIt || 'Încărcăm ghidul clasei…')}</p>
+            {guideError && <p className="guide-error">Nu am putut încărca programa. Verifică conexiunea și alege din nou materia.</p>}
             {guide?.source?.disclaimer && <small className="chapter-disclaimer">{guide.source.disclaimer}</small>}
           </section>
 
@@ -333,8 +352,18 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           <ul className="saved-sessions-list">
             {savedSessions.map(item => (
               <li key={item.id}>
-                <strong>{item.title}</strong>
-                <small>{item.subject ? subjectLabel(item.subject) : ''} {item.grade ? `· ${gradeLabel(item.grade)}` : ''}</small>
+                <button
+                  type="button"
+                  className="saved-session-btn"
+                  onClick={() => {
+                    if (item.subject) setSubject(normalizeSubject(item.subject));
+                    if (item.grade) setGrade(normalizeGrade(item.grade));
+                    if (item.chapterId) setOpenChapter(item.chapterId);
+                  }}
+                >
+                  <strong>{item.title}</strong>
+                  <small>{item.subject ? subjectLabel(item.subject) : ''} {item.grade ? `· ${gradeLabel(item.grade)}` : ''}</small>
+                </button>
               </li>
             ))}
           </ul>
@@ -345,7 +374,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
         <FocusTimer userData={userData} onRewardClaim={onRewardClaim} />
         <FlashCards
           userData={userData}
-          subject={subject || 'matematica'}
+          subject={subject}
           classLevel={grade}
           chapters={units}
           onRewardClaim={onRewardClaim}

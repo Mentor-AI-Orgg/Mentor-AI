@@ -88,11 +88,11 @@ const ChapterQuiz = ({ unit, subject, grade, onClose, onRewardClaim, onAskMentor
         </div>
         <button type="button" className="ghost-button" onClick={onClose} aria-label="Închide testul"><i className="fas fa-xmark" /></button>
       </div>
-      <p className="quiz-coverage">Scrie doar răspunsul final. Lucrezi pe foaie sau pe ciornă. Pașii îi vezi după finalizare.</p>
+      <p className="quiz-coverage">Scrie doar răspunsul final. Lucrezi pe foaie sau pe ciornă. Pașii îi vezi după finalizare. Testele nu se termină: fiecare „Alt test” aduce alte numere și alte enunțuri.</p>
       {coverage && (
         <p className="quiz-coverage">
           Idei din capitol: {coverage.seen}/{coverage.total}
-          {coverage.complete ? ' · Ai trecut prin toată materia. Poți tot genera, ca recapitulare.' : ' · Mai generează până prinzi tot.'}
+          {coverage.complete ? ' · Ai trecut prin banca de capitol. Următoarele teste sunt variante noi, generate, fără repetare.' : ' · Mai generează până prinzi tot, apoi vin variante infinite.'}
         </p>
       )}
       {review && <p className="quiz-review-note">Tur de recapitulare — ideile astea le-ai mai întâlnit.</p>}

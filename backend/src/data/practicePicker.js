@@ -1,6 +1,7 @@
 const { listChapterQuestions, listPoints, chapterKey } = require('./practiceBank');
 const { listChapterExercises, listExercisePoints, publicExercise } = require('./exerciseBank');
 const { getGuide, normalizeGrade, normalizeSubject } = require('./gimnaziuGuide');
+const { generateMany } = require('./itemGenerator');
 
 function shuffle(list) {
   const copy = list.slice();
@@ -52,28 +53,41 @@ function pickPractice({
   const isTest = kind === 'test';
   const pool = isTest ? listChapterExercises(sid, g, cid) : listChapterQuestions(sid, g, cid);
   const points = isTest ? listExercisePoints(sid, g, cid) : listPoints(sid, g, cid);
-  const want = isTest
-    ? Math.min(pool.length, 7)
-    : Math.min(pool.length, Math.max(1, Number(count) || 6));
+  const want = isTest ? 7 : Math.max(1, Number(count) || 8);
   const excluded = new Set((excludeIds || []).map(String));
   const seen = new Set((seenPoints || []).map(String));
 
   const freshPoint = pool.filter(item => !seen.has(item.point) && !excluded.has(item.id));
   const freshId = pool.filter(item => !excluded.has(item.id) && seen.has(item.point));
-  const rest = pool.filter(item => excluded.has(item.id) || (seen.has(item.point) && !freshPoint.includes(item)));
 
   const byLevel = list => list.slice().sort((a, b) => (a.level || 99) - (b.level || 99));
   const ordered = isTest
-    ? byLevel([...freshPoint, ...freshId, ...(rest.length ? rest : pool)])
-    : [...shuffle(freshPoint), ...shuffle(freshId), ...shuffle(rest.length ? rest : pool)];
+    ? byLevel([...freshPoint, ...freshId])
+    : [...shuffle(freshPoint), ...shuffle(freshId)];
   const picked = [];
   const used = new Set();
   for (const item of ordered) {
-    if (used.has(item.id)) continue;
+    if (used.has(item.id) || excluded.has(item.id)) continue;
     used.add(item.id);
     const reviewCard = seen.has(item.point) && !freshPoint.some(entry => entry.id === item.id);
     picked.push(isTest ? publicExercise(item, reviewCard) : publicCard(item, reviewCard));
     if (picked.length >= want) break;
+  }
+  if (picked.length < want) {
+    const generated = generateMany({
+      kind: isTest ? 'test' : 'flashcards',
+      subject: sid,
+      grade: g,
+      chapterId: cid,
+      excludeIds: [...excluded, ...used]
+    }, want - picked.length);
+    const base = picked.length;
+    generated.forEach((item, index) => {
+      const card = isTest
+        ? publicExercise({ ...item, level: base + index + 1 }, false)
+        : publicCard(item, false);
+      picked.push(card);
+    });
   }
   if (isTest) {
     picked.sort((a, b) => (a.level || 99) - (b.level || 99));
@@ -92,6 +106,7 @@ function pickPractice({
       complete: points.length > 0 && points.every(point => afterPoints.has(point) || seen.has(point))
     },
     review: picked.every(card => card.review) && seen.size >= points.length,
+    infinite: true,
     key: chapterKey(sid, g, cid)
   };
 }

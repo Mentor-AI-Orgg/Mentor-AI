@@ -258,6 +258,15 @@ function allExerciseKeys() {
 
 function findExercise(id) {
   const needle = String(id || '');
+  if (needle.startsWith('g:')) {
+    try {
+      const { fromGeneratedId } = require('./itemGenerator');
+      const generated = fromGeneratedId(needle);
+      if (generated && generated.prompt) return generated;
+    } catch {
+      return null;
+    }
+  }
   for (const key of Object.keys(BANK)) {
     const found = listChapterExercises(...key.split(':')).find(item => item.id === needle);
     if (found) return found;

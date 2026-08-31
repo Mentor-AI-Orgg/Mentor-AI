@@ -6,6 +6,13 @@ const { checkExercise, checkMany, scoreToGrade, encouragementFor } = require("..
 const { findQuestion } = require("../data/practiceBank");
 const { ensureUser, getTodayKey, recordProgress, recordSkillReview, getSkillHistory } = require("../data/economyStore");
 
+function trimPracticeIds(ids) {
+  const list = (ids || []).map(String);
+  const staticIds = list.filter(id => !id.startsWith("g:"));
+  const generated = list.filter(id => id.startsWith("g:")).slice(-800);
+  return [...new Set([...staticIds, ...generated])];
+}
+
 router.post("/generate", (req, res) => {
   const {
     topic = "",
@@ -82,7 +89,7 @@ router.post("/seen", (req, res) => {
   if (point && !user.practiceSeen[key].points.includes(point)) user.practiceSeen[key].points.push(point);
   if (cardId && !user.practiceSeen[key].questionIds.includes(cardId)) {
     user.practiceSeen[key].questionIds.push(cardId);
-    user.practiceSeen[key].questionIds = user.practiceSeen[key].questionIds.slice(-80);
+    user.practiceSeen[key].questionIds = trimPracticeIds(user.practiceSeen[key].questionIds);
   }
   const total = pack.coverage.total;
   res.json({
@@ -165,7 +172,7 @@ router.post("/finish", (req, res) => {
       user.practiceSeen[pack.key].questionIds.push(item.id);
     }
   });
-  user.practiceSeen[pack.key].questionIds = user.practiceSeen[pack.key].questionIds.slice(-80);
+    user.practiceSeen[pack.key].questionIds = trimPracticeIds(user.practiceSeen[pack.key].questionIds);
 
   const review = recordSkillReview(req.auth.email, {
     kind: isTest ? "test" : "flashcards",
