@@ -1195,3 +1195,52 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 @media (max-width: 700px) {
   .app-background { opacity: 0.35; }
 }
+.geo-figure {
+  margin: 12px 0 16px;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(15, 16, 40, .55);
+}
+.geo-figure-canvas { color: #d7d9ea; }
+.geo-figure-canvas svg { width: 100%; height: auto; display: block; }
+.geo-figure figcaption { margin: 8px 0 0; color: var(--aqua); font-size: 12px; font-weight: 700; }
+.nudge-banner, .home-nudge {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(240, 195, 106, .12);
+  color: #f0e6c8;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.calendar-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.calendar-tabs button {
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+  border-radius: 14px;
+  min-height: 42px;
+}
+.calendar-tabs button.selected { background: rgba(185,167,255,.18); color: #fff; border-color: var(--lime); }
+.calendar-lead { color: var(--muted); font-size: 13px; line-height: 1.45; }
+.calendar-cell.is-important { box-shadow: inset 0 0 0 1px #f0c36a; }
+.calendar-dot.is-star { background: #f0c36a; }
+.calendar-star { border: 0; background: transparent; color: var(--muted); padding: 0; }
+.calendar-star.on { color: #f0c36a; }
+.calendar-important-check { display: flex; gap: 8px; align-items: center; margin-top: 10px; color: var(--muted); font-size: 13px; }
+.calendar-orar h2 { margin: 4px 0 8px; }
+.orar-grid { display: grid; gap: 10px; margin-top: 14px; }
+.orar-day { padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,.04); }
+.orar-day strong { display: block; margin-bottom: 6px; }
+.orar-slot { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; margin-top: 4px; }
+.orar-add { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 14px; }
+.orar-add input, .orar-add select { min-height: 42px; }
+.orar-add .accent-button, .orar-add input:last-of-type { grid-column: 1 / -1; }
+.writing-barem { margin: 8px 0; padding: 10px 12px; border-radius: 12px; background: rgba(185,167,255,.1); }
+.writing-barem ul { margin: 8px 0 0; padding-left: 16px; }
+.writing-barem li { color: var(--muted); font-size: 13px; }
+.quiz-write { min-height: 120px; resize: vertical; }
+@media (max-width: 640px) {
+  .orar-add { grid-template-columns: 1fr 1fr; }
+}

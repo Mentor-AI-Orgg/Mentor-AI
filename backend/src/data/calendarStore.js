@@ -25,13 +25,31 @@ function addEvent(userId, event) {
   if (!eventsByUser[userId]) eventsByUser[userId] = [];
   const record = {
     id: `evt_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-    date: event.date,
+    date: event.date || "",
     title: event.title,
     time: event.time || "",
+    endTime: event.endTime || "",
+    weekday: event.weekday === undefined || event.weekday === "" ? null : Number(event.weekday),
+    important: Boolean(event.important),
+    subject: event.subject || "",
     type: event.type || "custom",
     source: event.source || "manual"
   };
   eventsByUser[userId].push(record);
+  return record;
+}
+
+function updateEvent(userId, eventId, patch = {}) {
+  const list = eventsByUser[userId] || [];
+  const record = list.find(item => item.id === eventId);
+  if (!record) return null;
+  if (patch.title !== undefined) record.title = String(patch.title).slice(0, 200);
+  if (patch.important !== undefined) record.important = Boolean(patch.important);
+  if (patch.time !== undefined) record.time = patch.time || "";
+  if (patch.endTime !== undefined) record.endTime = patch.endTime || "";
+  if (patch.weekday !== undefined) record.weekday = patch.weekday === "" || patch.weekday === null ? null : Number(patch.weekday);
+  if (patch.subject !== undefined) record.subject = patch.subject || "";
+  if (patch.date !== undefined) record.date = patch.date || "";
   return record;
 }
 
@@ -119,6 +137,7 @@ persistence.register("calendar", {
 module.exports = {
   getEvents,
   addEvent,
+  updateEvent,
   deleteEvent,
   getConnections,
   connectProvider,

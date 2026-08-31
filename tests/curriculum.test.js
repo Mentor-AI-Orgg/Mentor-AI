@@ -64,6 +64,15 @@ describe('gimnaziu curriculum', () => {
     expect(counts.romana[8].chapters).toBe(5);
     expect(counts.matematica[5].lessons).toBeGreaterThanOrEqual(18);
     expect(counts.romana[5].lessons).toBeGreaterThanOrEqual(20);
+
+    const geo5 = getGuide('matematica', 5).units.find(unit => unit.id === 'geometrie');
+    const geo8 = getGuide('matematica', 8).units.find(unit => unit.id === 'spatiu');
+    expect(geo5.lessons.filter(entry => entry.figure).length).toBeGreaterThanOrEqual(3);
+    expect(geo8.lessons.filter(entry => entry.figure).length).toBeGreaterThanOrEqual(4);
+    [...geo5.lessons, ...geo8.lessons].filter(entry => entry.figure).forEach(entry => {
+      expect(entry.platter).toMatch(/Exemplu lucrat|Exemplu:/);
+      expect(entry.figure).toMatch(/points-line|angle|rectangle|box3d|triangle|planes|pyramid|cylinder|cone|sphere/);
+    });
   });
 
   it('builds mentor context for the requested grade', () => {
@@ -113,6 +122,12 @@ describe('gimnaziu curriculum', () => {
         expect(entry.platter).toMatch(/Exemplu lucrat|Exemplu:/);
         expect(entry.platter.toLowerCase()).not.toMatch(/manuale\.edu\.ro|subiecte\.edu/);
       });
+    });
+    const enGeo = math.units.filter(unit => unit.id === 'geo-plana' || unit.id === 'geo-spatiu');
+    const figured = enGeo.flatMap(unit => unit.lessons).filter(entry => entry.figure);
+    expect(figured.length).toBeGreaterThanOrEqual(4);
+    figured.forEach(entry => {
+      expect(entry.figure).toMatch(/parallels|triangle|planes|pyramid|cone|sphere|thales|circle/);
     });
     math.papers.forEach(paper => {
       expect(paper.completable).toBe(false);

@@ -110,13 +110,24 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
         <>
           <p className="quiz-progress">Exercițiul {index + 1} din {cards.length}{card.level ? ` · treapta ${card.level}` : ''}</p>
           <p className="quiz-question">{card.prompt}</p>
-          <input
-            className="field form-input quiz-work"
-            value={draft}
-            onChange={event => setDrafts(prev => ({ ...prev, [card.id]: event.target.value }))}
-            placeholder="Doar răspunsul final…"
-            aria-label="Răspunsul final"
-          />
+          {card.long ? (
+            <textarea
+              className="field form-input quiz-work quiz-write"
+              value={draft}
+              onChange={event => setDrafts(prev => ({ ...prev, [card.id]: event.target.value }))}
+              placeholder="Scrie ca la clasă. Baremul e de profesor: cerință, idei, fir, nu o listă de cuvinte."
+              aria-label="Redactare"
+              rows={5}
+            />
+          ) : (
+            <input
+              className="field form-input quiz-work"
+              value={draft}
+              onChange={event => setDrafts(prev => ({ ...prev, [card.id]: event.target.value }))}
+              placeholder="Doar răspunsul final…"
+              aria-label="Răspunsul final"
+            />
+          )}
           <div className="quiz-nav">
             <button type="button" className="ghost-button" disabled={index === 0} onClick={goPrev}>
               Exercițiul precedent
@@ -156,6 +167,16 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
                 <p>Tu: {item.given || '—'}</p>
                 <p>Răspuns bun: {item.sample}</p>
                 {item.explain && <p className="quiz-explain">{item.explain}</p>}
+                {item.rubric && (
+                  <div className="writing-barem">
+                    <strong>Barem de profesor · {item.rubric.total}/{item.rubric.max} · nota {item.rubric.note10}</strong>
+                    <ul>
+                      {item.rubric.criteria.map(row => (
+                        <li key={row.id}><span>{row.label}</span> <em>{row.points}/{row.max}</em> — {row.note}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 {item.steps?.length > 0 && (
                   <ol className="quiz-steps">
                     {item.steps.map((step, stepIndex) => (

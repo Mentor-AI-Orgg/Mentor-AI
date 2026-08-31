@@ -336,22 +336,28 @@ function publicExercise(item, review = false) {
     prompt: item.prompt,
     hint: item.hint || '',
     level: item.level || 0,
-    review
+    review,
+    long: Boolean(item.long || (item.minWords && item.minWords >= 5))
   };
 }
 
 function checkExercise(id, given) {
   const exercise = findExercise(id);
   if (!exercise) return { ok: false, found: false };
-  const correct = answersMatch(given, exercise);
+  const { gradeWriting, isWritingItem } = require('../grading/writingRubric');
+  const writing = isWritingItem(exercise);
+  const rubric = writing ? gradeWriting(given, exercise) : null;
+  const tokenOk = answersMatch(given, exercise);
+  const correct = writing ? Boolean((rubric && rubric.ok) || tokenOk) : tokenOk;
   return {
     ok: correct,
     found: true,
-    explain: exercise.explain,
-    sample: exercise.answers[0] || '',
+    explain: rubric ? rubric.teacher : exercise.explain,
+    sample: writing ? (rubric?.sampleHint || exercise.explain) : (exercise.answers[0] || ''),
     steps: exercise.steps || [],
     point: exercise.point || '',
-    prompt: exercise.prompt || ''
+    prompt: exercise.prompt || '',
+    rubric
   };
 }
 
@@ -370,7 +376,8 @@ function checkMany(pairs) {
       found: result.found,
       explain: result.explain || '',
       sample: result.sample || '',
-      steps: result.steps || []
+      steps: result.steps || [],
+      rubric: result.rubric || null
     };
   });
 }

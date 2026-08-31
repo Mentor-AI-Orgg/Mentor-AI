@@ -623,7 +623,7 @@ const MentorAPI = {
       const data = await safeFetchJson(`/api/calendar/events${qs ? `?${qs}` : ''}`);
       return { success: true, data, fallback: false };
     } catch (error) {
-      return { success: false, data: { events: [], connections: { google: { connected: false }, notion: { connected: false } } }, fallback: true };
+      return { success: false, data: { events: [], orar: [], connections: { google: { connected: false }, notion: { connected: false } } }, fallback: true };
     }
   },
 
@@ -631,6 +631,19 @@ const MentorAPI = {
     try {
       const data = await safeFetchJson('/api/calendar/events', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true };
+    }
+  },
+
+  async patchCalendarEvent(eventId, payload) {
+    try {
+      const data = await safeFetchJson(`/api/calendar/events/${eventId}`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });

@@ -33,7 +33,8 @@ function applyProgress(summary = {}, prev = {}) {
     missions: summary.missions || prev.missions,
     chapterMaps: summary.chapterMaps || prev.chapterMaps,
     mentorLeft: summary.mentorLeft ?? prev.mentorLeft,
-    collection: summary.collection || prev.collection
+    collection: summary.collection || prev.collection,
+    nudge: summary.nudge || prev.nudge || null
   };
 }
 

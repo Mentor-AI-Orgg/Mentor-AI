@@ -32,7 +32,15 @@ router.get('/summary', (req, res) => {
     className: req.query.class_name,
     profileName: req.query.profile_name
   };
-  res.json({ summary: getSummary(req.auth.email, patch) });
+  const summary = getSummary(req.auth.email, patch);
+  try {
+    const { issueStudentNudge } = require('../notify/studentReminders');
+    const issued = issueStudentNudge(req.auth.email, { summary });
+    if (issued?.nudge) summary.nudge = issued.nudge;
+  } catch {
+    /* reminder-ul nu trebuie să dărâme Acasă */
+  }
+  res.json({ summary });
 });
 
 router.get('/catalog', (req, res) => {

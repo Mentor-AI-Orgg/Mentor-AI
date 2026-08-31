@@ -5,6 +5,7 @@ import FlashCards from '../components/FlashCards.jsx';
 import ChapterQuiz from '../components/ChapterQuiz.jsx';
 import EnPaperView from '../components/EnPaperView.jsx';
 import QuoteCard from '../components/QuoteCard.jsx';
+import GeoFigure from '../components/GeoFigure.jsx';
 import { dailySlogan } from '../slogans.js';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
 
@@ -456,6 +457,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                           {unit.lessons.map((entry, lessonIndex) => (
                             <li key={entry.id} className="lesson-platter">
                               <h4>Lecția {lessonIndex + 1}. {entry.title}</h4>
+                              {entry.figure && <GeoFigure kind={entry.figure} />}
                               {entry.theory && <p><strong>Teorie. </strong>{entry.theory}</p>}
                               {entry.example && <p><strong>Exemplu. </strong>{entry.example}</p>}
                               {entry.tryThis && <p className="lesson-try"><strong>Încearcă tu. </strong>{entry.tryThis}</p>}

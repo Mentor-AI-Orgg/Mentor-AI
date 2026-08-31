@@ -120,11 +120,40 @@ const accessCodeVerifySchema = z.object({
     .regex(/^\d{6}$/, "Codul trebuie să aibă 6 cifre.")
 });
 
+const hhmm = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Ora trebuie să fie HH:MM.");
+
 const calendarEventSchema = z.object({
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data trebuie să fie în format YYYY-MM-DD."),
+  date: z.union([
+    z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data trebuie să fie în format YYYY-MM-DD."),
+    z.literal("")
+  ]).optional(),
   title: z.string().trim().min(1, "Titlul este obligatoriu.").max(200),
   type: z.string().max(40).optional(),
-  time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Ora trebuie să fie HH:MM.").optional()
+  time: hhmm.optional(),
+  endTime: hhmm.optional(),
+  weekday: z.coerce.number().int().min(0).max(6).optional(),
+  important: z.boolean().optional(),
+  subject: z.string().max(40).optional()
+}).superRefine((value, ctx) => {
+  if (value.type === "orar") {
+    if (value.weekday === undefined || value.weekday === null) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Orarul are nevoie de ziua săptămânii." });
+    }
+    return;
+  }
+  if (!value.date) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Data trebuie să fie în format YYYY-MM-DD." });
+  }
+});
+
+const calendarPatchSchema = z.object({
+  title: z.string().trim().min(1).max(200).optional(),
+  important: z.boolean().optional(),
+  time: hhmm.optional(),
+  endTime: hhmm.optional(),
+  weekday: z.coerce.number().int().min(0).max(6).optional(),
+  subject: z.string().max(40).optional(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()
 });
 
 const deleteAccountSchema = z.object({
@@ -183,6 +212,7 @@ module.exports = {
   accessCodeRequestSchema,
   accessCodeVerifySchema,
   calendarEventSchema,
+  calendarPatchSchema,
   deleteAccountSchema,
   profileSchema,
   passwordChangeSchema,

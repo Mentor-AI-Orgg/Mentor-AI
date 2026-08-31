@@ -40,7 +40,8 @@ describe('EN papers and barem', () => {
   it('writing barem has ideas, not a model essay', () => {
     const item = getBaremItem('en-ro-a', 'Subiectul III', 13);
     expect(item.ideas.length).toBeGreaterThanOrEqual(2);
-    expect(item.explain).toMatch(/nu există un text|nu un text/i);
+    expect(item.explain).toMatch(/nu există|fără text-model|compunere-model|nu un text/i);
+    expect(item.ideas.join(' ')).toMatch(/încadrare|conținut|organizare/i);
     expect(item.ideas.join(' ')).not.toMatch(/Dragi colegi, astăzi/);
   });
 

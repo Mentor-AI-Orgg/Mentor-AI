@@ -371,13 +371,15 @@ function roRecommended() {
       'Subiectul II:12': { letter: 'A', explain: 'Cine nu se împrumută? Cărțile.', steps: ['Cine? / Ce?'] },
       'Subiectul III:13': {
         letter: '',
-        explain: 'Nu există un text „corect”. Baremul caută cerința, nu o compunere-model.',
+        explain: 'Nu există o compunere-model de copiat. Ca profesor, punctez ce cere foaia, în spiritul OM 4.730/2022.',
         ideas: [
-          'A (narativ): persoană I, loc, o treaptă (se întâmplă ceva), capăt; obiectul e semn, nu copie a cireșului.',
-          'B (argumentativ): teză vizibilă, 2 argumente cu exemplu de elev, concluzie-oglindă; poți atinge sala de lectură fără să copiezi anunțul.',
-          'C (descriptiv): ordine în spațiu, 2 simțuri, închidere fără poveste lungă.'
+          'Încadrare (≈6p): varianta aleasă (A/B/C), persoana, limita de cuvinte. Dacă scrii narațiune când s-a cerut argumentare, conținutul bun nu salvează cerința.',
+          'Conținut (≈8p): A — un loc, o treaptă (se întâmplă ceva), un capăt; obiectul e semn, nu copie a cireșului. B — teză vizibilă, 2 argumente cu exemplu de elev, concluzie. C — ordine în spațiu, 2 simțuri, fără poveste lungă.',
+          'Organizare (≈6p): plan pe ciornă, paragrafe, fir (întâi / apoi / deci). Nu un bloc fără respirație.',
+          'Stil (≈5p): cuvinte potrivite vârstei, fără clișee goale („și am fost fericit” de 4 ori).',
+          'Corectitudine (≈5p): acord, ortografie, punctuație. O recitire de 3 minute merită mai mult decât încă 40 de cuvinte.'
         ],
-        steps: ['Plan pe ciornă', 'Respectă varianta aleasă', '150–180 de cuvinte']
+        steps: ['5 minute plan', 'Respectă varianta', '150–180 de cuvinte', 'Recitește acordul']
       }
     }
   };
@@ -421,13 +423,14 @@ function roRecommended() {
       'Subiectul II:12': { letter: 'A', explain: 'Ce face clasa? Ține.', steps: ['Predicat verbal'] },
       'Subiectul III:13': {
         letter: '',
-        explain: 'Baremul caută tipul de text, nu o pagină gata.',
+        explain: 'Ca profesor: punctez cerința, nu o pagină gata. Spirit OM 4.730/2022.',
         ideas: [
+          'Încadrare · conținut · organizare · stil · corectitudine. Fără text-model de copiat.',
           'A: persoană I sau III consecventă, așteptare + o treaptă mică, capăt.',
           'B: teză da/nu despre târgul fără bani, 2 argumente de elev, concluzie.',
           'C: spațiu vizibil, 2 simțuri, fără poveste lungă și fără a copia peronul.'
         ],
-        steps: ['Plan', 'Cerința aleasă', 'Lungime']
+        steps: ['Plan', 'Cerința aleasă', 'Lungime', 'Recitire']
       }
     }
   };
@@ -471,13 +474,14 @@ function roRecommended() {
       'Subiectul II:12': { letter: 'A', explain: 'Ce nu se gustă? Substanțe.', steps: ['Subiect'] },
       'Subiectul III:13': {
         letter: '',
-        explain: 'Fără text-model. Doar idei de cerință.',
+        explain: 'Fără text-model. Ca la clasă: cerința, apoi ideile, apoi firul.',
         ideas: [
+          'Încadrare · conținut · organizare · stil · corectitudine.',
           'A: trecere + dar mic + capăt; persoană consecventă.',
           'B: teză despre reguli de laborator, 2 argumente (siguranță / timp / respect), exemplu de elev.',
           'C: spațiu, 2 simțuri, fără a copia podul Irei.'
         ],
-        steps: ['Plan', 'Variantă', 'Lungime']
+        steps: ['Plan', 'Variantă', 'Lungime', 'Recitire']
       }
     }
   };

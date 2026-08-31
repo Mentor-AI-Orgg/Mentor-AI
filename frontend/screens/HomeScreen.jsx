@@ -42,6 +42,11 @@ const HomeScreen = ({ userData, onNavigate }) => {
           <p className="home-role-tag">{userData.titleName ? `${userData.titleName} · ` : ''}{t('home.roleStudent')} · {t('home.gradeOnly', { grade })}</p>
           <p className="home-slogan">{dailySlogan()}</p>
           <QuoteCard />
+          {userData.nudge?.body && (
+            <p className="nudge-banner home-nudge" role="status">
+              <i className="fas fa-bell" /> {userData.nudge.body}
+            </p>
+          )}
         </div>
         <button onClick={() => onNavigate('profile')} className="home-avatar" aria-label={t('home.openProfile')}>
           {itemEmoji(userData.avatarId) || (icon ? <i className={`fas ${icon}`} /> : (userData.name || 'E').charAt(0).toUpperCase())}

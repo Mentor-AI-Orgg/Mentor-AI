@@ -198,7 +198,8 @@ const LESSONS_EN = {
       'Drept: 90°. Ascuțit: sub 90°. Obtuz: între 90° și 180°. Opuse la vârf sunt congruente. Adiacente pe o linie: suma 180°. O secantă pe două paralele face unghiuri corespunzătoare congruente; interne de aceeași parte suplementare.',
       'La examen, figura e jumătate din punctaj. Notezi pe desen ce știi, nu ții totul în cap.',
       'Exemplu lucrat: două paralele, o secantă, un unghi intern de 110°. Vecinul de pe aceeași parte a secantei, intern: 70°. Corespondentul lui de 110° e tot 110°, chiar dacă e în alt colț al figurii.',
-      'Reține: „pare egal” nu e argument. Cauți: opus la vârf, corespondent, altern intern, suplementar.'
+      'Reține: „pare egal” nu e argument. Cauți: opus la vârf, corespondent, altern intern, suplementar.',
+      { figure: 'parallels' }
     ),
     lesson(
       'triunghi',
@@ -206,7 +207,8 @@ const LESSONS_EN = {
       'Suma unghiurilor e 180°. Exteriorul e egal cu suma celor două interioare nealăturate. Isoscel: două laturi egale, unghiuri de la bază egale. Echilateral: tot 60°. Congruența: LUL, ULU, LLL (și cazurile dreapta: CC, IC, CU, IU).',
       'Bisectoarele se întâlnesc în centrul cercului înscris. Mediatoarele — circumscris. Medianele — centrul de greutate (2/3 de la vârf). Înălțimile — ortocentru.',
       'Exemplu lucrat: triunghi cu unghiuri 50° și 60°. Al treilea: 70°. Exteriorul lângă 70°: 110°, sau 50+60. Dacă spuneai 70, ai luat interiorul în loc de exterior.',
-      'Reține: congruența e „aceeași formă și aceeași mărime”. Asemănarea e „aceeași formă, mărime poate alta”.'
+      'Reține: congruența e „aceeași formă și aceeași mărime”. Asemănarea e „aceeași formă, mărime poate alta”.',
+      { figure: 'triangle' }
     ),
     lesson(
       'metric',
@@ -240,7 +242,8 @@ const LESSONS_EN = {
       'O dreaptă e determinată de două puncte. Un plan, de trei puncte necoliniare. Drepte: paralele, concurente sau oarecare (nu se întâlnesc și nu sunt paralele). Dreaptă paralelă cu planul: nu-l înțeapă. Dreaptă perpendiculară pe plan: e perpendiculară pe două drepte concurente din plan.',
       'Teorema celor trei perpendiculare leagă o perpendiculară pe plan de o oblică și de proiecția ei.',
       'Exemplu lucrat: muchia verticală a unei camere e perpendiculară pe planul podelei. O diagonală pe podea și acea muchie formează un unghi drept. Dacă „pare înclinată” pe o fotografie, fotografia minte — folosești definiția, nu poza.',
-      'Reține: în spațiu, „nu se întâlnesc” nu înseamnă automat paralele. Pot fi oarecare.'
+      'Reține: în spațiu, „nu se întâlnesc” nu înseamnă automat paralele. Pot fi oarecare.',
+      { figure: 'planes' }
     ),
     lesson(
       'prisma-piramida',
@@ -248,7 +251,8 @@ const LESSONS_EN = {
       'Prisma dreaptă: baze poligoane congruente, muchii laterale perpendiculare pe baze. Cubul e prisma cu toate fețele pătrate. Volum prismă: Aria_bazei × înălțime. Piramida: vârf + bază; volum (1/3)×A_bazei×h. Tetraedrul regulat are patru fețe triunghiuri echilaterale.',
       'Aria laterală: suma fețelor laterale (sau perimetrul bazei × apotema, la piramida regulată). Aria totală = laterală + baze.',
       'Exemplu lucrat: cub cu muchia 4. Volum 64. Aria totală 6×16=96. Diagonală pe o față: √(16+16)=√32=4√2. Diagonală în spațiu: √(16+16+16)=√48=4√3.',
-      'Reține: volumul cubului e a³, nu 6a² (asta e aria). Factorul 1/3 la piramidă nu se uită.'
+      'Reține: volumul cubului e a³, nu 6a² (asta e aria). Factorul 1/3 la piramidă nu se uită.',
+      { figure: 'pyramid' }
     ),
     lesson(
       'rotatie',
@@ -256,7 +260,8 @@ const LESSONS_EN = {
       'Cilindrul circular drept: două discuri și o „bandă”. Volum πR²h. Aria laterală 2πRh (desfășurarea e dreptunghi). Conul: volum (1/3)πR²h. Generatoarea l intră în aria laterală πRl. Trunchiul: tai cu un plan paralel cu baza; rămân două baze și o „centură”.',
       'Desfășurarea te scapă de formule tocite: vezi ce fețe lipsești.',
       'Exemplu lucrat: cilindru R=3, h=10. Volum 90π. Laterală 60π. Totală 60π+2×9π=78π. Dacă luai (1/3)πR²h, ai calculat un con.',
-      'Reține: conul și piramida au 1/3. Cilindrul și prisma nu.'
+      'Reține: conul și piramida au 1/3. Cilindrul și prisma nu.',
+      { figure: 'cone' }
     ),
     lesson(
       'sfera-masuri',
@@ -264,7 +269,8 @@ const LESSONS_EN = {
       'Sfera: toate punctele la distanță R de centru. Arie 4πR², volum (4/3)πR³. Nu are „bază” și „înălțime” ca prisma. La EN, itemul spune clar: arie sau volum, uneori o combinație (o cameră = prismă + un acoperiș prismă/piramidă).',
       'Unități: 1 m = 10 dm = 100 cm; 1 m² = 10 000 cm²; 1 m³ = 1 000 000 cm³. Transformi înainte de formulă.',
       'Exemplu lucrat: sferă R=3. Arie 36π. Volum 36π (stai: (4/3)π×27=36π — coincidență pentru R=3, nu o regulă). Pentru R=2, arie 16π, volum 32π/3. Nu sunt egale.',
-      'Reține: R=3 e o capcană drăguță unde 4πR² și (4/3)πR³ arată similar numeric cu π. Verifică formula, nu coincidența.'
+      'Reține: R=3 e o capcană drăguță unde 4πR² și (4/3)πR³ arată similar numeric cu π. Verifică formula, nu coincidența.',
+      { figure: 'sphere' }
     )
   ],
   'romana:proba-ro': [
