@@ -690,7 +690,7 @@ function buildDailyClaims(user) {
     },
     {
       id: 'study-1h',
-      title: 'Focus 25+ minute',
+      title: 'Concentrare 25+ minute',
       subtitle: 'Se acordă singur când termini un timer de 25 sau 50 de minute.',
       coins: AWARDS.focus_25.coins,
       claimed: Boolean(user.focusAwards?.[todayKey]),
