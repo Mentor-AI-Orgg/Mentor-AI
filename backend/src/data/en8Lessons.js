@@ -280,10 +280,10 @@ const LESSONS_EN = {
     lesson(
       'harta-ro',
       'Cele trei subiecte la română',
-      'Proba de limba română e scrisă. Schema care se tot întoarce: un text necunoscut (literar sau nonliterar) cu itemi de înțelegere și de vocabular; apoi itemi de limbă (morfologie, sintaxă, acord, punctuație); apoi o redactare de 150–250 de cuvinte — narațiune, descriere sau argumentare, după ce cere foaia. Se dau și puncte din oficiu.',
+      'Proba de limba română e scrisă, două ore, 90 de puncte plus 10 din oficiu. Schema EN 2026: Subiectul I (70p) pornește de la două texte lungi — unul literar, unul nonliterar, pe aceeași temă. Partea A e înțelegere: grile din ambele texte, apoi răspunsuri scrise (transcriere, motivare) și o asociere cu o operă citită de tine. Partea B e doar gramatică, grile (fonetică, vocabular, morfologie, sintaxă). Subiectul II (20p) e compunerea: o scrii în caiet, minimum 150 de cuvinte, nu o tastezi în aplicație.',
       'Nu ți se cere un comentariu tocit dintr-o carte de critică. Ți se cere să arăți că ai citit textul de azi și că poți scrie tu, organizat.',
       'Exemplu lucrat: vezi un item „numește două trăsături ale personajului, cu citate”. Nu scrii „e bun și curajos” din memorie. Cauți în text două fapte sau vorbe și le pui între ghilimele scurte, cu rândul dacă e dat.',
-      'Reține: textul de pe foaie e legea. Părerea ta vine abia la itemii care o cer sau la Subiectul III.'
+      'Reține: textul de pe foaie e legea. Părerea ta vine la itemii de motivare, la asocierea cu o carte citită și la Subiectul II (compunerea pe caiet).'
     ),
     lesson(
       'punctaj-ro',

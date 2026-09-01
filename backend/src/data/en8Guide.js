@@ -82,7 +82,7 @@ const EN_GUIDES = {
         id: "proba-ro",
         title: "Cum arată proba de română",
         inOwnWords:
-          "Text la prima vedere, itemi de înțelegere și de limbă, apoi o redactare (narativ, descriptiv sau argumentativ). Se punctează conținutul, organizarea, vocabularul și corectitudinea. Lucrarea ține două ore; predarea anticipată e după o oră."
+          "Două ore, 90 de puncte plus 10 din oficiu. Subiectul I (70p): două texte lungi, A înțelegere (grile + scriere + asociere cu o carte citită), B gramatică grile. Subiectul II (20p): compunere pe caiet, min. 150 de cuvinte. În aplicație nu tastezi redactarea lungă; după predare o poți fotografia (3 poze pe zi)."
       },
       {
         id: "receptare",
@@ -118,7 +118,7 @@ const EN_GUIDES = {
         id: "strategie",
         title: "Timp, plan și greșeli de evitat",
         inOwnWords:
-          "Citești tot subiectul, subliniezi cerința, schițezi 5 rânduri, apoi scrii. La final, o recitire pentru acord și punctuație. Nu copiază enunțul. Nu lăsa redactarea pe ultimele zece minute."
+          "Citești cele două texte, subliniezi cerința, răspunzi la I A și la gramatica din I B, apoi scrii compunerea pe caiet. La final, o recitire pentru acord. Nu lăsa redactarea pe ultimele zece minute. În aplicație, la II nu tastezi: poți fotografia pagina după predare (3 poze pe zi)."
       }
     ]
   }

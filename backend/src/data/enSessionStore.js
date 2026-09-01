@@ -88,6 +88,42 @@ function finishPaper(userId, paperId, score, answers) {
   return sessionView(state, paperId);
 }
 
+function applyPhotoReview(userId, paperId, patch) {
+  const user = ensureUser(userId);
+  const state = paperState(user, paperId);
+  if (!state.photoReviews) state.photoReviews = [];
+  state.photoReviews.push({
+    at: Date.now(),
+    kind: patch.kind,
+    block: patch.block,
+    n: patch.n,
+    feedback: patch.feedback,
+    mocked: Boolean(patch.mocked)
+  });
+  if (state.score && Array.isArray(state.score.items) && patch.block && Number.isFinite(Number(patch.n))) {
+    const item = state.score.items.find(row => row.block === patch.block && Number(row.n) === Number(patch.n));
+    if (item) {
+      item.photoFeedback = patch.feedback;
+      item.photoTips = patch.tips || [];
+      item.photoPending = false;
+      if (patch.extracted) {
+        item.given = patch.extracted;
+        item.text = patch.extracted;
+      }
+      if (item.kind === 'write' && Number.isFinite(Number(patch.points))) {
+        const maxPts = Number(item.maxPoints) || 20;
+        const pts = Math.max(0, Math.min(maxPts, Math.round(Number(patch.points))));
+        const delta = pts - (Number(item.points) || 0);
+        item.points = pts;
+        item.ok = pts >= Math.round(maxPts * 0.5);
+        state.score.points = Math.max(10, Math.min(100, (Number(state.score.points) || 10) + delta));
+        state.score.grade = (state.score.points / 10).toFixed(2);
+      }
+    }
+  }
+  return sessionView(state, paperId);
+}
+
 function isFinished(userId, paperId) {
   const user = ensureUser(userId);
   return Boolean(paperState(user, paperId).finishedAt);
@@ -103,6 +139,7 @@ module.exports = {
   canFinish,
   finishPaper,
   isFinished,
+  applyPhotoReview,
   paperState,
   sessionView
 };

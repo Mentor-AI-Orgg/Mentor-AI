@@ -80,6 +80,7 @@ function createDefaultUser(userId) {
     practiceSeen: {},
     practiceTests: {},
     enPapers: {},
+    enPhotoDay: { date: "", used: 0 },
     streakDays: [],
     lastAnalogy: {},
     skillLog: [],
@@ -107,6 +108,7 @@ function ensureUser(userId, patch = {}) {
   if (!current.practiceSeen) current.practiceSeen = {};
   if (!current.practiceTests) current.practiceTests = {};
   if (!current.enPapers) current.enPapers = {};
+  if (!current.enPhotoDay || typeof current.enPhotoDay !== 'object') current.enPhotoDay = { date: '', used: 0 };
   if (!Array.isArray(current.streakDays)) current.streakDays = [];
   if (!current.lastAnalogy) current.lastAnalogy = {};
   if (!Array.isArray(current.skillLog)) current.skillLog = [];

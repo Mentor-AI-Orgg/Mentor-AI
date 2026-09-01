@@ -197,6 +197,12 @@ const friendRespondSchema = z.object({
   action: z.enum(["accept", "decline"])
 });
 
+const enPhotoSchema = z.object({
+  paper_id: z.string().trim().min(1).max(120),
+  target: z.string().trim().min(1).max(80),
+  image_base64: z.string().min(32).max(7_000_000)
+});
+
 module.exports = {
   registerSchema,
   loginSchema,
@@ -218,5 +224,6 @@ module.exports = {
   passwordChangeSchema,
   friendSettingsSchema,
   friendRequestSchema,
-  friendRespondSchema
+  friendRespondSchema,
+  enPhotoSchema
 };

@@ -8,6 +8,7 @@
 // Enunțurile, numerele și textele sunt originale. Nu copiem culegeri.
 
 const { rng, seedFromHex, newSeed, int, pick, shuffle, uniqueOptions } = require('./itemRng');
+const roBank = require('./enRomanaBank');
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -37,10 +38,10 @@ function examMs() {
 }
 
 const MATH_NOTE =
-  'Apasă „Începe test Evaluare Națională”. Ca la examen, stai cu lucrarea deschisă cel puțin o oră. Subiectele I și II: 4 variante. Subiectul III: două probleme de geometrie, fiecare cu a) și b) — scrii doar rezultatul; rezolvarea completă apare după predare.';
+  'Apasă „Începe test Evaluare Națională”. Ca la examen, stai cu lucrarea deschisă cel puțin o oră. Subiectele I și II: 4 variante. Subiectul III: două probleme de geometrie, fiecare cu a) și b) — aici scrii doar rezultatul; rezolvarea o faci pe caiet. După predare poți fotografia pagina (maximum 3 poze pe zi) ca mentorul să-ți dea feedback pe barem.';
 
 const RO_NOTE =
-  'Două texte-suport, ca la examen: unul literar și unul nonliterar. Începi testul, stai minim o oră, apoi finalizezi. Baremul (inclusiv ideile de redactare, nu un text gata) se deschide după predare.';
+  'Ca la EN 2026: două texte lungi (literar + nonliterar). Subiectul I A — înțelegere (grile + răspunsuri scrise + asociere cu o carte citită). Subiectul I B — doar gramatică, grile. Subiectul II — compunerea se scrie în caiet, nu se tastează; după predare o poți fotografia (3 poze/zi). Baremul se deschide după predare.';
 
 function publicItem(n, points, prompt, extra = {}) {
   const row = { n, points, prompt, kind: extra.kind || (extra.choices ? 'mcq' : extra.parts ? 'en-parts' : 'short') };
@@ -48,6 +49,8 @@ function publicItem(n, points, prompt, extra = {}) {
   if (extra.lines) row.lines = extra.lines;
   if (extra.passage) row.passage = true;
   if (extra.figure) row.figure = extra.figure;
+  if (extra.photoOnly) row.photoOnly = true;
+  if (extra.minWords) row.minWords = extra.minWords;
   if (extra.parts) {
     row.parts = extra.parts.map(part => ({
       id: part.id,
@@ -119,6 +122,8 @@ function stripSecrets(paper) {
         lines: item.lines,
         passage: item.passage,
         figure: item.figure,
+        photoOnly: item.photoOnly || undefined,
+        minWords: item.minWords || undefined,
         parts: item.parts
           ? item.parts.map(part => ({ id: part.id, points: part.points, prompt: part.prompt }))
           : undefined
@@ -658,242 +663,18 @@ function generateMathPaper(rand, seed) {
   return { public: publicPaper, barem };
 }
 
-// ——— Română: două texte-suport + MCQ + redactare cu idei de barem ———
+// ——— Română: structura EN 2026 (I A + I B + II) ———
 
-const LIT_A = `Text-suport 1 (literar)\n\nCireșul din spatele școlii nu mai avea flori, dar ținea încă trei cireșe tari, ca niște nasturi uitați. Mara a pus o pungă de pânză la rădăcină, cu două pietre de râu deasupra, ca să nu o ia vântul.\n\n„Nu e al nostru”, a zis un băiat de la a șaptea. „E al curții.”\n\nMara n-a răspuns. A săpat un șanț subțire, ca un cerc, și a tăcut. A doua zi, punga era tot acolo. În ea, un bilet fără nume: „Udați-l joi.” Scrisul era grăbit, dar literele stăteau drepte.\n\nJoi a plouat. Mara a zâmbit în hol, cu ghiozdanul ud, ca și cum ploaia ar fi fost un acord secret. Cireșul nu a spus nimic. Pământul de la rădăcină e încă viu.`;
-
-const NONLIT_A = `Text-suport 2 (nonliterar)\n\nBiblioteca „Scara 3” — anunț pentru elevi\n\nDe luni, 12 mai, sala de lectură se deschide la 8:00 și se închide la 16:00. Miercuri și joi, în sesiunea de teste, ultima oră de acces e 14:30.\n\nReguli: ghiozdanele stau în cuier; apa e permisă în sticlă închisă; șoaptă, nu grup. Cărțile din sală nu se împrumută. De la ghișeu: maximum 3 volume, 14 zile.\n\nTabel. Zi / locuri / gardă\n• luni — 24 — VII A\n• marți — 24 — VIII C\n• miercuri — 16 — VI B\n• joi — 16 — VIII A\n• vineri — 24 — VII D\n\nNu se ține locul cu un caiet. Întrebări: biblioteca@scara3.școala.ro — zile lucrătoare.`;
-
-const LIT_B = `Text-suport 1 (literar)\n\nPeronul 2 e o bandă de beton frecată de valize. Dimineața, aerul miroase a cafea de automat și a oțel ud. Un ceas rotund, cu sticla fisurată, arată un minut în urma anunțurilor, ca un bătrân care aude, dar nu se grăbește.\n\nPe bancă stau trei oameni care nu se privesc: o femeie cu un plic galben, un elev cu un caiet pe genunchi, un bărbat care numără monede. Deasupra, un afiș jumătate dezlipit promite un festival de luna trecută.\n\nȘinele, fără tren, par două linii de caiet foarte lungi. Nimeni nu rămâne pe peron ca să-l descrie. Peronul rămâne totuși.`;
-
-const NONLIT_B = `Text-suport 2 (nonliterar)\n\nAviz — Consiliul elevilor, 3 martie\n\nSâmbătă, 8 martie, între 10:00 și 13:00, holul de la parter se transformă în „Târgul caietelor uitate”. Aduci un obiect școlar în stare bună, primești un bon. Cu două bonuri iei un obiect de pe masă.\n\nNu se vând lucruri pe bani. Profesorul de serviciu stă la ușa dinspre curte. Clasa a VIII-a B ține lista. Dacă plouă, târgul se mută în sala 12, nu se amână.\n\nÎnscrieri: până vineri, 7 martie, ora 14:00, la avizierul de lângă cancelarie.`;
-
-const LIT_C = `Text-suport 1 (literar)\n\nPodul de lemn trece pârâul ca o propoziție neterminată: scândurile au goluri prin care vezi apa, nu destul de late cât să-ți cadă piciorul, destul cât să-ți cadă privirea.\n\nIra ține o sacoșă cu pâine. Nu se uită în jos. Se uită la malul celălalt, unde câinele vecinilor așteaptă de parcă podul ar fi o regulă, nu o scândură.\n\nCând ajunge, câinele nu latră. Ira îi rupe o coajă. Podul rămâne în spate, cu golurile lui, gata să țină pe altcineva care nu se uită în jos.`;
-
-const NONLIT_C = `Text-suport 2 (nonliterar)\n\nRegulament — laboratorul de științe\n\nIntrarea se face doar cu halat și păr prins. Nu se gustă substanțe. Chiuveta din stânga e doar pentru sticlărie clătită, nu pentru resturi de experiment.\n\nProgram: luni–joi 12:10–14:00; vineri închis pentru inventar. Grupele de câte 4. Dacă lipsește un coleg, nu se lucrează în doi fără profesor.\n\nAccident mic (tăietură, strop): speli, anunți, completezi fișa de pe ușa dulapului roșu. Nu „rezolvi tu” și pleci.`;
-
-const LIT_D = `Text-suport 1 (literar)\n\nFereastra de la etajul doi dă spre curtea interioară, nu spre stradă. Teo numără ghivecele de pe pervazul de vizavi: trei vara, unul iarna. Azi sunt două, plus o sârmă pe care atârnă un prosop albastru, încă ud.\n\nJos, cineva bate un covor. Praful se ridică drept, ca un stâlp, apoi se rupe. Teo închide geamul. În cameră rămâne mirosul de praf și de săpun de rufe.\n\nPe masă, un caiet deschis la o pagină goală. Teo scrie un singur rând: „Am închis geamul.” Apoi ascultă. Bătăile au încetat. Prosopul se mișcă, deși vântul nu se simte aici.`;
-
-const NONLIT_D = `Text-suport 2 (nonliterar)\n\nAnunț — Consiliul elevilor, 14 aprilie\n\nSăptămâna „Curtea curată” începe luni, 21 aprilie. Fiecare clasă are o zi de colectare: hârtie (luni), plastic (miercuri), capace (vineri). Punctele de strângere: holul de la parter, lângă scara B.\n\nProgram: 8:10–8:25 și 13:40–14:00. Nu se aduc saci de acasă după ora 14:00. Clasa a VIII-a C ține tabelul. Dacă plouă, colectarea se mută în sala 4, nu se anulează.\n\nPremiul: o oră de lectură în curte, vineri, 25 aprilie, doar dacă s-au strâns cel puțin 12 saci. Înscrieri: până joi, 17 aprilie, la avizier.`;
+function roHelpers() {
+  return { paperShell, publicItem, block, note: RO_NOTE };
+}
 
 function roRecommended() {
-  const a = {
-    public: paperShell('en-ro-a', 'Model recomandat A — limba română', 'romana', RO_NOTE, [
-      block('Subiectul I', 40, 'Citește cele două texte. Itemii 1–6 pe textul 1, 7–8 pe textul 2.', [
-        publicItem(0, 0, LIT_A, { passage: true, kind: 'passage' }),
-        publicItem(1, 5, 'Locul principal al întâmplărilor din textul 1 este…', { choices: ['spatele școlii, lângă cireș', 'biblioteca', 'holul de la primărie', 'un peron'] }),
-        publicItem(2, 5, 'Ce pune Mara la rădăcina cireșului?', { choices: ['o pungă de pânză cu două pietre', 'un caiet', 'o sticlă cu apă', 'un afiș'] }),
-        publicItem(3, 5, 'Biletul din pungă cere…', { choices: ['să ude copacul joi', 'să taie cireșul', 'să-l mute în clasă', 'să-l vândă'] }),
-        publicItem(4, 5, '„Scrisul era grăbit, dar literele stăteau drepte” arată mai degrabă…', { choices: ['grabă și grijă totodată', 'că nimeni nu știe să scrie', 'o glumă', 'un anunț oficial'] }),
-        publicItem(5, 5, 'Un epitet potrivit extras din text este…', { choices: ['cireșe tari', 'joi', 'Mara', 'hol'] }),
-        publicItem(6, 5, 'Ideea ultimului paragraf e mai aproape de…', { choices: ['copacul e încă viu, iar grija continuă', 'Mara a câștigat un concurs', 'băiatul are dreptate mereu', 'ploaia strică tot'] }),
-        publicItem(0, 0, NONLIT_A, { passage: true, kind: 'passage' }),
-        publicItem(7, 5, 'Textul 2 are ca scop principal să…', { choices: ['informeze și să dea reguli', 'povestească o întâmplare cu eroi', 'descrie un peisaj de munte', 'argumenteze o teză lungă'] }),
-        publicItem(8, 5, 'În ce zile se închide sala mai devreme?', { choices: ['miercuri și joi, la 14:30', 'luni și vineri, la 8:00', 'doar sâmbăta', 'niciodată'] })
-      ]),
-      block('Subiectul II', 20, 'Limbă aplicată, pe textele de mai sus.', [
-        publicItem(9, 5, 'În „A săpat un șanț subțire, ca un cerc, și a tăcut.” predicatul verbal este…', { choices: ['a săpat / a tăcut', 'șanț', 'Mara', 'cerc'] }),
-        publicItem(10, 5, '„încă” din „pământul de la rădăcină e încă viu” e…', { choices: ['adverb', 'substantiv', 'verb', 'prepoziție'] }),
-        publicItem(11, 5, 'Un sinonim potrivit, în context, pentru „grăbit” este…', { choices: ['iute / precipitat', 'leneș', 'ud', 'verde'] }),
-        publicItem(12, 5, 'Subiectul din „Cărțile din sala de lectură nu se împrumută acasă” este…', { choices: ['Cărțile', 'sala', 'acasă', 'lectură'] })
-      ]),
-      block('Subiectul III', 30, 'Alege O variantă. 150–180 de cuvinte. Plan pe ciornă. Nu copia textele.', [
-        publicItem(13, 30, 'A. Narațiune la persoana I: un obiect mic (bilet, cheie, frunză) schimbă o zi. Loc vizibil, o treaptă, un capăt.\n\nB. Text argumentativ: are sau nu școala nevoie de o sală de lectură cu reguli? Teză, două argumente cu exemple de elev, concluzie.\n\nC. Descriere a unui loc de așteptare pe care îl cunoști. Două simțuri, ordine spațială, fără întâmplare lungă.', { kind: 'write', lines: 'plan + 150–180 de cuvinte' })
-      ])
-    ]),
-    barem: {
-      'Subiectul I:1': { letter: 'A', explain: 'Primul paragraf ancorează cireșul din spatele școlii.', steps: ['Cauți locul, nu tema'] },
-      'Subiectul I:2': { letter: 'A', explain: 'Punga de pânză, două pietre de râu.', steps: ['Detaliu din paragraful 1'] },
-      'Subiectul I:3': { letter: 'A', explain: '„Udați-l joi.”', steps: ['Transcrii cerința biletului'] },
-      'Subiectul I:4': { letter: 'A', explain: 'Graba (ritm) + litere drepte (grijă).', steps: ['Nu e glumă, nu e anunț'] },
-      'Subiectul I:5': { letter: 'A', explain: '„tari” determină „cireșe” — epitet.', steps: ['Epitet = adjectiv care pictează'] },
-      'Subiectul I:6': { letter: 'A', explain: '„pământul … e încă viu” închide grija, nu un concurs.', steps: ['Ultimul paragraf'] },
-      'Subiectul I:7': { letter: 'A', explain: 'Titlu de anunț, tabel, reguli = a informa / a reglementa.', steps: ['Genul textului 2'] },
-      'Subiectul I:8': { letter: 'A', explain: 'Miercuri și joi, 14:30.', steps: ['Programul din anunț'] },
-      'Subiectul II:9': { letter: 'A', explain: 'Două predicate verbale coordonate: a săpat, a tăcut.', steps: ['Ce se face?'] },
-      'Subiectul II:10': { letter: 'A', explain: '„încă” modifică „viu” — adverb.', steps: ['Nu e nume, nu e acțiune'] },
-      'Subiectul II:11': { letter: 'A', explain: 'În context: iute, precipitat — nu leneș.', steps: ['Sinonime de context'] },
-      'Subiectul II:12': { letter: 'A', explain: 'Cine nu se împrumută? Cărțile.', steps: ['Cine? / Ce?'] },
-      'Subiectul III:13': {
-        letter: '',
-        explain: 'Nu există o compunere-model de copiat. Ca profesor, punctez ce cere foaia, în spiritul OM 4.730/2022.',
-        ideas: [
-          'Încadrare (≈6p): varianta aleasă (A/B/C), persoana, limita de cuvinte. Dacă scrii narațiune când s-a cerut argumentare, conținutul bun nu salvează cerința.',
-          'Conținut (≈8p): A — un loc, o treaptă (se întâmplă ceva), un capăt; obiectul e semn, nu copie a cireșului. B — teză vizibilă, 2 argumente cu exemplu de elev, concluzie. C — ordine în spațiu, 2 simțuri, fără poveste lungă.',
-          'Organizare (≈6p): plan pe ciornă, paragrafe, fir (întâi / apoi / deci). Nu un bloc fără respirație.',
-          'Stil (≈5p): cuvinte potrivite vârstei, fără clișee goale („și am fost fericit” de 4 ori).',
-          'Corectitudine (≈5p): acord, ortografie, punctuație. O recitire de 3 minute merită mai mult decât încă 40 de cuvinte.'
-        ],
-        steps: ['5 minute plan', 'Respectă varianta', '150–180 de cuvinte', 'Recitește acordul']
-      }
-    }
-  };
-
-  const b = {
-    public: paperShell('en-ro-b', 'Model recomandat B — limba română', 'romana', RO_NOTE, [
-      block('Subiectul I', 40, 'Text literar + anunț. Citești amândouă înainte de itemi.', [
-        publicItem(0, 0, LIT_B, { passage: true, kind: 'passage' }),
-        publicItem(1, 5, 'Locul descris în textul 1 este…', { choices: ['un peron de gară', 'o sală de clasă', 'un pod de lemn', 'o bibliotecă'] }),
-        publicItem(2, 5, 'Ceasul e comparat cu…', { choices: ['un bătrân care aude, dar nu se grăbește', 'o săgeată', 'un tren', 'o floare'] }),
-        publicItem(3, 5, 'Câte persoane stau pe bancă, fără să se privească?', { choices: ['trei', 'una', 'cinci', 'nimeni'] }),
-        publicItem(4, 5, 'Șinele, fără tren, sunt văzute ca…', { choices: ['două linii de caiet foarte lungi', 'un râu', 'o scară', 'un zid'] }),
-        publicItem(5, 5, 'Un simț activat în primul paragraf, în afară de văz, este…', { choices: ['mirosul (cafea, oțel ud)', 'gustul de pâine', 'doar auzul de clopoțel', 'pipăitul zăpezii'] }),
-        publicItem(6, 5, 'Tema posibilă a textului 1 e mai aproape de…', { choices: ['așteptarea într-un loc care rămâne, chiar dacă oamenii pleacă', 'o victorie la olimpiadă', 'un regulament de laborator', 'o rețetă'] }),
-        publicItem(0, 0, NONLIT_B, { passage: true, kind: 'passage' }),
-        publicItem(7, 5, 'Târgul se ține…', { choices: ['sâmbătă 8 martie, 10:00–13:00', 'vineri 7 martie, toată ziua', 'doar seara', 'în cancelarie, luni'] }),
-        publicItem(8, 5, 'Dacă plouă, târgul…', { choices: ['se mută în sala 12, nu se amână', 'se anulează', 'se mută în curte', 'se ține online'] })
-      ]),
-      block('Subiectul II', 20, 'Limbă.', [
-        publicItem(9, 5, '„foarte” din „linii de caiet foarte lungi” este…', { choices: ['adverb de mod', 'substantiv', 'verb', 'articol'] }),
-        publicItem(10, 5, 'Un atribut din „Un ceas rotund, cu o sticlă fisurată” este…', { choices: ['rotund / fisurată', 'ceas', 'un', 'anunțurilor'] }),
-        publicItem(11, 5, 'Antonim de context pentru „se amână” (din anunț, ideea de a nu amâna) e…', { choices: ['se ține / se face la timp', 'se uită', 'se vinde', 'se pictează'] }),
-        publicItem(12, 5, 'Predicatul din „Clasa a VIII-a B ține lista” este…', { choices: ['ține', 'Clasa', 'lista', 'VIII-a'] })
-      ]),
-      block('Subiectul III', 30, 'Alege A, B sau C. 150–180 de cuvinte.', [
-        publicItem(13, 30, 'A. Narațiune: o așteptare (gară, hol, cabinet) în care se întâmplă ceva mic.\n\nB. Argumentativ: merită sau nu un târg fără bani, doar cu bonuri, în școală?\n\nC. Descriere a unui loc de trecere (peron, hol, scară) — fără să copiezi textul 1.', { kind: 'write', lines: 'plan + 150–180 de cuvinte' })
-      ])
-    ]),
-    barem: {
-      'Subiectul I:1': { letter: 'A', explain: 'Peronul 2 e locul.', steps: ['Primul cuvânt al textului'] },
-      'Subiectul I:2': { letter: 'A', explain: 'Comparația e în primul paragraf.', steps: ['„ca un bătrân…”'] },
-      'Subiectul I:3': { letter: 'A', explain: 'Trei oameni pe bancă.', steps: ['Numără'] },
-      'Subiectul I:4': { letter: 'A', explain: 'Comparația cu liniile de caiet.', steps: ['Paragraful despre șine'] },
-      'Subiectul I:5': { letter: 'A', explain: 'Miroase a cafea și a oțel.', steps: ['Simțuri'] },
-      'Subiectul I:6': { letter: 'A', explain: 'Locul rămâne; oamenii sunt trecători.', steps: ['Ultimul paragraf'] },
-      'Subiectul I:7': { letter: 'A', explain: 'Data și orele din anunț.', steps: ['Cine, când, unde'] },
-      'Subiectul I:8': { letter: 'A', explain: 'Sala 12, nu amânare.', steps: ['Condiția de ploaie'] },
-      'Subiectul II:9': { letter: 'A', explain: 'Modifică adjectivul „lungi”.', steps: ['Adverb'] },
-      'Subiectul II:10': { letter: 'A', explain: 'rotund → ceas; fisurată → sticlă.', steps: ['Atributul determină un substantiv'] },
-      'Subiectul II:11': { letter: 'A', explain: 'Anunțul zice că NU se amână = se ține.', steps: ['Antonim de context'] },
-      'Subiectul II:12': { letter: 'A', explain: 'Ce face clasa? Ține.', steps: ['Predicat verbal'] },
-      'Subiectul III:13': {
-        letter: '',
-        explain: 'Ca profesor: punctez cerința, nu o pagină gata. Spirit OM 4.730/2022.',
-        ideas: [
-          'Încadrare · conținut · organizare · stil · corectitudine. Fără text-model de copiat.',
-          'A: persoană I sau III consecventă, așteptare + o treaptă mică, capăt.',
-          'B: teză da/nu despre târgul fără bani, 2 argumente de elev, concluzie.',
-          'C: spațiu vizibil, 2 simțuri, fără poveste lungă și fără a copia peronul.'
-        ],
-        steps: ['Plan', 'Cerința aleasă', 'Lungime', 'Recitire']
-      }
-    }
-  };
-
-  const c = {
-    public: paperShell('en-ro-c', 'Model recomandat C — limba română', 'romana', RO_NOTE, [
-      block('Subiectul I', 40, 'Podul (literar) și laboratorul (nonliterar).', [
-        publicItem(0, 0, LIT_C, { passage: true, kind: 'passage' }),
-        publicItem(1, 5, 'Ira trece…', { choices: ['un pod de lemn peste un pârâu', 'o șosea de pe peron', 'o sală de lectură', 'un târg'] }),
-        publicItem(2, 5, 'Sacoșa Irei conține…', { choices: ['pâine', 'cireșe', 'cărți', 'monede'] }),
-        publicItem(3, 5, 'Ira nu se uită în jos ca să…', { choices: ['nu-i cadă privirea în golurile dintre scânduri / să treacă', 'numere trenurile', 'citească un anunț', 'caute un bilet'] }),
-        publicItem(4, 5, 'Câinele de pe mal…', { choices: ['așteaptă, apoi primește o coajă', 'latră mereu', 'fuge de pe pod', 'e de pluș'] }),
-        publicItem(5, 5, 'Comparația podului cu „o propoziție neterminată” sugerează…', { choices: ['că trecerea e deschisă, neterminată, cu goluri', 'că podul e o teoremă', 'că Ira scrie o dictare', 'că pârâul e o bibliotecă'] }),
-        publicItem(6, 5, 'Textul 1 e mai degrabă…', { choices: ['narativ-descriptiv, cu o treaptă mică', 'un regulament', 'un tabel', 'o problemă de geometrie'] }),
-        publicItem(0, 0, NONLIT_C, { passage: true, kind: 'passage' }),
-        publicItem(7, 5, 'Ca să intri în laborator trebuie…', { choices: ['halat și păr prins', 'doar ghiozdanul', 'bilet de tren', '3 volume'] }),
-        publicItem(8, 5, 'Vineri laboratorul este…', { choices: ['închis pentru inventar', 'deschis 12:10–14:00', 'mutat pe peron', 'fără reguli'] })
-      ]),
-      block('Subiectul II', 20, 'Limbă.', [
-        publicItem(9, 5, '„Nu se uită în jos.” predicatul este…', { choices: ['nu se uită', 'jos', 'Ira', 'podul'] }),
-        publicItem(10, 5, '„de lemn” din „Podul de lemn” e…', { choices: ['atribut', 'predicat', 'subiect', 'complement direct'] }),
-        publicItem(11, 5, 'Un antonim potrivit pentru „închis” (vineri, laboratorul) este…', { choices: ['deschis', 'ud', 'lung', 'galben'] }),
-        publicItem(12, 5, 'În „Nu se gustă substanțe.” subiectul este…', { choices: ['substanțe', 'Nu', 'laboratorul', 'halat'] })
-      ]),
-      block('Subiectul III', 30, 'Alege A, B sau C.', [
-        publicItem(13, 30, 'A. Narațiune: o trecere (pod, hol, curte) în care dai ceva mic mai departe.\n\nB. Argumentativ: de ce merită (sau nu) reguli stricte într-un laborator școlar?\n\nC. Descriere a unui pod, unei scări sau unui mal — ordine spațială, fără să copiezi textul 1.', { kind: 'write', lines: 'plan + 150–180 de cuvinte' })
-      ])
-    ]),
-    barem: {
-      'Subiectul I:1': { letter: 'A', explain: 'Pod de lemn, pârâu.', steps: ['Loc'] },
-      'Subiectul I:2': { letter: 'A', explain: 'Sacoșă cu pâine.', steps: ['Obiect'] },
-      'Subiectul I:3': { letter: 'A', explain: 'Golurile dintre scânduri; se uită la mal.', steps: ['Motivație din text'] },
-      'Subiectul I:4': { letter: 'A', explain: 'Așteaptă; Ira îi dă o coajă; nu latră.', steps: ['Fapte'] },
-      'Subiectul I:5': { letter: 'A', explain: 'Imagine: neterminat, cu goluri.', steps: ['Comparație'] },
-      'Subiectul I:6': { letter: 'A', explain: 'Are descriere și o treaptă (ajunge, dă pâine).', steps: ['Tip de text'] },
-      'Subiectul I:7': { letter: 'A', explain: 'Prima regulă din anunț.', steps: ['Condiție de acces'] },
-      'Subiectul I:8': { letter: 'A', explain: 'Vineri închis pentru inventar.', steps: ['Program'] },
-      'Subiectul II:9': { letter: 'A', explain: 'Acțiunea: nu se uită.', steps: ['Predicat'] },
-      'Subiectul II:10': { letter: 'A', explain: 'De lemn determină podul.', steps: ['Atribut'] },
-      'Subiectul II:11': { letter: 'A', explain: 'închis ↔ deschis.', steps: ['Antonim'] },
-      'Subiectul II:12': { letter: 'A', explain: 'Ce nu se gustă? Substanțe.', steps: ['Subiect'] },
-      'Subiectul III:13': {
-        letter: '',
-        explain: 'Fără text-model. Ca la clasă: cerința, apoi ideile, apoi firul.',
-        ideas: [
-          'Încadrare · conținut · organizare · stil · corectitudine.',
-          'A: trecere + dar mic + capăt; persoană consecventă.',
-          'B: teză despre reguli de laborator, 2 argumente (siguranță / timp / respect), exemplu de elev.',
-          'C: spațiu, 2 simțuri, fără a copia podul Irei.'
-        ],
-        steps: ['Plan', 'Variantă', 'Lungime', 'Recitire']
-      }
-    }
-  };
-
-  const d = {
-    public: paperShell('en-ro-d', 'Model recomandat D — limba română', 'romana', RO_NOTE, [
-      block('Subiectul I', 40, 'Citește cele două texte. Itemii 1–6 pe textul 1, 7–8 pe textul 2.', [
-        publicItem(0, 0, LIT_D, { passage: true, kind: 'passage' }),
-        publicItem(1, 5, 'Fereastra lui Teo dă spre…', { choices: ['curtea interioară', 'strada principală', 'un peron', 'biblioteca'] }),
-        publicItem(2, 5, 'Ce atârnă pe sârmă, vizavi?', { choices: ['un prosop albastru, încă ud', 'un caiet', 'un covor', 'un ghiveci'] }),
-        publicItem(3, 5, 'Teo închide geamul pentru că…', { choices: ['se ridică praful de la covor', 'plouă', 'e noapte', 'i s-a cerut'] }),
-        publicItem(4, 5, '„Praful se ridică drept, ca un stâlp” este…', { choices: ['comparație', 'epitet', 'persoană', 'dialog'] }),
-        publicItem(5, 5, 'Ce scrie Teo în caiet?', { choices: ['„Am închis geamul.”', 'un anunț', 'o teza lungă', 'un tabel'] }),
-        publicItem(6, 5, 'Ultimul paragraf sugerează mai degrabă…', { choices: ['că ceva continuă afară, deși el s-a retras', 'că Teo a câștigat un premiu', 'că e vară mereu', 'că fereastra s-a spart'] }),
-        publicItem(0, 0, NONLIT_D, { passage: true, kind: 'passage' }),
-        publicItem(7, 5, 'Textul 2 este, ca scop, un…', { choices: ['anunț cu program și reguli', 'basm', 'portret', 'jurnal'] }),
-        publicItem(8, 5, 'Dacă plouă, colectarea…', { choices: ['se mută în sala 4, nu se anulează', 'se amână o săptămână', 'se face doar vineri', 'se anulează'] })
-      ]),
-      block('Subiectul II', 20, 'Limbă aplicată, pe textele de mai sus.', [
-        publicItem(9, 5, 'În „Teo numără ghivecele” predicatul este…', { choices: ['numără', 'Teo', 'ghivecele', 'fereastra'] }),
-        publicItem(10, 5, '„încă” din „încă ud” e…', { choices: ['adverb', 'substantiv', 'verb', 'prepoziție'] }),
-        publicItem(11, 5, 'Un antonim potrivit pentru „închide” este…', { choices: ['deschide', 'numără', 'scrie', 'ascultă'] }),
-        publicItem(12, 5, 'Subiectul din „Clasa a VIII-a C ține tabelul” este…', { choices: ['Clasa a VIII-a C', 'tabelul', 'ține', 'aprilie'] })
-      ]),
-      block('Subiectul III', 30, 'Alege O variantă. 150–180 de cuvinte. Plan pe ciornă. Nu copia textele.', [
-        publicItem(13, 30, 'A. Narațiune: închizi sau deschizi o fereastră și se schimbă ceva mic în zi.\n\nB. Argumentativ: merită sau nu o săptămână „Curtea curată” în școală?\n\nC. Descriere a unei curți interioare pe care o cunoști — două simțuri, fără poveste lungă.', { kind: 'write', lines: 'plan + 150–180 de cuvinte' })
-      ])
-    ]),
-    barem: {
-      'Subiectul I:1': { letter: 'A', explain: 'Primul rând: curtea interioară, nu strada.', steps: ['Locul'] },
-      'Subiectul I:2': { letter: 'A', explain: 'Prosop albastru, încă ud.', steps: ['Detaliu vizibil'] },
-      'Subiectul I:3': { letter: 'A', explain: 'Praful de la covor; închide geamul.', steps: ['Cauză'] },
-      'Subiectul I:4': { letter: 'A', explain: '„ca un stâlp” = comparație.', steps: ['ca + imagine'] },
-      'Subiectul I:5': { letter: 'A', explain: 'Un singur rând: „Am închis geamul.”', steps: ['Citat'] },
-      'Subiectul I:6': { letter: 'A', explain: 'Prosopul se mișcă; el doar ascultă.', steps: ['Închidere'] },
-      'Subiectul I:7': { letter: 'A', explain: 'Anunț, program, reguli, premiu.', steps: ['Genul textului 2'] },
-      'Subiectul I:8': { letter: 'A', explain: 'Sala 4, nu se anulează.', steps: ['Program de rezervă'] },
-      'Subiectul II:9': { letter: 'A', explain: 'Ce face Teo? Numără.', steps: ['Predicat'] },
-      'Subiectul II:10': { letter: 'A', explain: '„încă” modifică „ud”.', steps: ['Adverb'] },
-      'Subiectul II:11': { letter: 'A', explain: 'închide ↔ deschide.', steps: ['Antonim'] },
-      'Subiectul II:12': { letter: 'A', explain: 'Cine ține tabelul? Clasa a VIII-a C.', steps: ['Subiect'] },
-      'Subiectul III:13': {
-        letter: '',
-        explain: 'Nu există o compunere-model de copiat. Punctez cerința, în spiritul OM 4.730/2022.',
-        ideas: [
-          'Încadrare (≈6p): varianta A/B/C, persoană, lungime.',
-          'Conținut (≈8p): A — fereastră + schimbare mică + capăt; B — teză, 2 argumente de elev, concluzie; C — curte, 2 simțuri, fără poveste.',
-          'Organizare (≈6p): plan, paragrafe, fir.',
-          'Stil și corectitudine (≈10p): cuvinte potrivite, punctuație, fără copierea textului 1.'
-        ],
-        steps: ['Plan', 'Variantă', 'Lungime', 'Recitire']
-      }
-    }
-  };
-
-  return { a, b, c, d };
+  return roBank.packs(roHelpers());
 }
 
 function generateRoPaper(rand, seed) {
-  const rec = roRecommended();
-  const packs = [rec.a, rec.b, rec.c, rec.d];
-  const base = pick(rand, packs);
-  const clone = JSON.parse(JSON.stringify(base.public));
-  clone.id = `en:g:romana:${seed}`;
-  clone.title = `Model generat — limba română · ${seed.slice(0, 4)}`;
-  clone.generated = true;
-  return { public: clone, barem: { ...base.barem } };
+  return roBank.generateRoPaper(roHelpers(), rand, seed, pick);
 }
 
 const STATIC = {
@@ -909,9 +690,9 @@ function recommendedList(subject) {
 
 function getStaticBundle(paperId) {
   for (const sid of ['matematica', 'romana']) {
-    for (const key of ['a', 'b', 'c']) {
+    for (const key of ['a', 'b', 'c', 'd', 'e', 'f']) {
       const row = STATIC[sid][key];
-      if (row.public.id === paperId) return row;
+      if (row && row.public.id === paperId) return row;
     }
   }
   return null;
@@ -1070,13 +851,74 @@ function scoreAttempt(paperId, answers = []) {
         earned += partPoints;
         return;
       }
-      if (item.kind === 'write') {
-        const rubric = gradeWriting(given.text, {
-          long: true,
-          minWords: 60,
-          tokens: ['narațiune', 'naratiune', 'argumentativ', 'descriere', 'teză', 'teza', 'pentru că', 'pentru ca', 'apoi', 'deci', 'într-o zi', 'intr-o zi']
+      if (item.kind === 'short' || item.kind === 'associate') {
+        const minWords = Number(item.minWords || (item.kind === 'associate' ? 50 : 0));
+        const longish = item.kind === 'associate' || minWords >= 20;
+        if (longish) {
+          const rubric = gradeWriting(given.text, {
+            minWords: Math.max(20, minWords),
+            tokens: barem.tokens || [],
+            answers: barem.answers || []
+          });
+          const pts = given.text.trim()
+            ? Math.round((rubric.total / (rubric.max || 30)) * maxPts)
+            : 0;
+          review.push({
+            block: block.label,
+            n: item.n,
+            kind: item.kind,
+            prompt: item.prompt,
+            given: given.text,
+            text: given.text,
+            points: pts,
+            maxPoints: maxPts,
+            ok: rubric.ok,
+            explain: barem.explain,
+            teacher: rubric.teacher,
+            ideas: barem.ideas || [],
+            steps: barem.steps || [],
+            rubric
+          });
+          earned += pts;
+          return;
+        }
+        const judge = judgeAnswer({
+          given: given.text || given.letter,
+          answers: barem.answers || [],
+          tokens: barem.tokens || [],
+          explain: barem.explain || ''
         });
-        const pts = Math.round((rubric.total / (rubric.max || 30)) * maxPts);
+        const pts = judge.ok ? maxPts : Math.round((Number(judge.credit) || 0) * maxPts);
+        review.push({
+          block: block.label,
+          n: item.n,
+          kind: 'short',
+          prompt: item.prompt,
+          given: given.text || given.letter,
+          text: given.text,
+          expected: (barem.answers || [])[0] || '',
+          sample: (barem.answers || [])[0] || '',
+          points: pts,
+          maxPoints: maxPts,
+          ok: judge.ok,
+          teacher: judge.teacher,
+          explain: judge.teacher,
+          barem: barem.explain || '',
+          steps: barem.steps || []
+        });
+        earned += pts;
+        return;
+      }
+      if (item.kind === 'write') {
+        const empty = !String(given.text || '').trim();
+        const rubric = empty
+          ? null
+          : gradeWriting(given.text, {
+            long: true,
+            minWords: Number(item.minWords) || 60,
+            tokens: ['narațiune', 'naratiune', 'argumentativ', 'descriere', 'teză', 'teza', 'pentru că', 'pentru ca', 'apoi', 'deci', 'într-o zi', 'intr-o zi', 'personaj', 'trăsătur', 'trasatur']
+          });
+        const pts = empty || !rubric ? 0 : Math.round((rubric.total / (rubric.max || 30)) * maxPts);
         review.push({
           block: block.label,
           n: item.n,
@@ -1084,13 +926,15 @@ function scoreAttempt(paperId, answers = []) {
           prompt: item.prompt,
           given: given.text,
           text: given.text,
+          photoOnly: Boolean(item.photoOnly),
+          photoPending: Boolean(item.photoOnly && empty),
           points: pts,
           maxPoints: maxPts,
-          ok: rubric.ok,
+          ok: rubric ? rubric.ok : false,
           explain: barem.explain,
           ideas: barem.ideas || [],
           steps: barem.steps || [],
-          rubric
+          rubric: rubric || undefined
         });
         earned += pts;
         return;
