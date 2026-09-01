@@ -26,7 +26,7 @@ export default defineConfig({
       allow: [repoRoot]
     },
     proxy: {
-      '/api': {
+      '/api/': {
         target: 'http://localhost:3001',
         changeOrigin: true
       }
