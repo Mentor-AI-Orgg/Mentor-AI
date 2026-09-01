@@ -17,7 +17,7 @@
     { "id": "avatar-wizard", "name": "Vrăjitor", "price": 150, "rarity": "Epic", "icon": "fa-hat-wizard", "emoji": "🧙", "description": "Transformă un exercițiu greu în pași." },
     { "id": "avatar-alien", "name": "Extraterestru", "price": 150, "rarity": "Epic", "icon": "fa-reddit-alien", "emoji": "👽", "description": "Vine cu o idee din altă lume." },
     { "id": "avatar-superhero", "name": "Supererou", "price": 160, "rarity": "Epic", "icon": "fa-bolt", "emoji": "🦸", "description": "Sare la temă fără să se plângă." },
-    { "id": "avatar-dragon", "name": "Dragon", "price": 170, "rarity": "Epic", "icon": "fa-fire", "emoji": "🐉", "description": "Streak-ul arde, nu se stinge." },
+    { "id": "avatar-dragon", "name": "Dragon", "price": 170, "rarity": "Epic", "icon": "fa-fire", "emoji": "🐉", "description": "Seria arde, nu se stinge." },
     { "id": "avatar-phoenix", "name": "Phoenix", "price": 170, "rarity": "Epic", "icon": "fa-fire-flame-curved", "emoji": "🔥", "description": "Te ridici după un test slab." },
     { "id": "avatar-angel", "name": "Înger", "price": 210, "rarity": "Legendary", "icon": "fa-hand-holding-heart", "emoji": "😇", "description": "Ajută un coleg, apoi își face tema." },
     { "id": "avatar-mentor-legend", "name": "Legendă", "price": 220, "rarity": "Legendary", "icon": "fa-crown", "emoji": "👑", "description": "Pentru cine stă pe treabă săptămâni." },

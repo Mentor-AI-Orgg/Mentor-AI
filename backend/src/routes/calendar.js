@@ -4,7 +4,7 @@ const store = require("../data/calendarStore");
 const oauth = require("../calendar/oauth");
 const { publicBaseUrl } = require("../publicUrl");
 const { validateBody } = require("../middleware/validate");
-const { calendarEventSchema } = require("../validation/schemas");
+const { calendarEventSchema, calendarPatchSchema } = require("../validation/schemas");
 const { notifyParent } = require("../notify/parentActivity");
 
 // Montat în spatele `authRequired`, deci `req.auth` există mereu. Înainte,
@@ -15,28 +15,37 @@ const resolveUserId = req => req.auth.email;
 // GET /api/calendar/events?month=7&year=2026
 router.get("/events", (req, res) => {
   const userId = resolveUserId(req);
-  let events = store.getEvents(userId);
+  const all = store.getEvents(userId);
+  const orar = all.filter(e => e.type === "orar");
+  let events = all.filter(e => e.type !== "orar");
 
   const { month, year } = req.query;
   if (month && year) {
     const m = String(Number(month)).padStart(2, "0");
-    events = events.filter(e => e.date.startsWith(`${year}-${m}`));
+    events = events.filter(e => e.date && e.date.startsWith(`${year}-${m}`));
   }
 
-  res.json({ events, connections: store.getConnections(userId) });
+  res.json({ events, orar, connections: store.getConnections(userId) });
 });
 
 // POST /api/calendar/events  { date: 'YYYY-MM-DD', title, type }
 router.post("/events", validateBody(calendarEventSchema), async (req, res) => {
   const userId = resolveUserId(req);
-  const { date, title, type, time } = req.body || {};
-  const event = store.addEvent(userId, { date, title, type, time });
+  const { date, title, type, time, endTime, weekday, important, subject } = req.body || {};
+  const event = store.addEvent(userId, { date, title, type, time, endTime, weekday, important, subject });
   await notifyParent({
     studentEmail: userId,
     type: "calendar_event",
     note: title || "Eveniment nou",
     meta: { date, eventType: type }
   });
+  res.json({ success: true, event });
+});
+
+router.patch("/events/:eventId", validateBody(calendarPatchSchema), (req, res) => {
+  const userId = resolveUserId(req);
+  const event = store.updateEvent(userId, req.params.eventId, req.body || {});
+  if (!event) return res.status(404).json({ error: "Evenimentul nu există." });
   res.json({ success: true, event });
 });
 

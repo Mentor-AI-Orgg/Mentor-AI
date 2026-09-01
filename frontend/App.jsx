@@ -1,25 +1,43 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Component, lazy, Suspense, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { MentorAPI } from './apiClient.js';
 import { STORAGE_KEY, defaultUserData } from './userData.js';
 import { applyProgress, applyTheme } from './appearance.js';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
+import { hashForRoute, parseAppHash } from './appRoutes.js';
 import AdaptiveContainer from './components/AdaptiveContainer.jsx';
 import FloatingLines from './components/FloatingLines.jsx';
 import BottomNav from './components/BottomNav.jsx';
 import Toast from './components/Toast.jsx';
 import SplashScreen from './components/SplashScreen.jsx';
 import WelcomeScreen from './components/WelcomeScreen.jsx';
-import AuthScreen from './components/AuthScreen.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
 import RegisterScreen from './components/RegisterScreen.jsx';
 import OnboardingScreen from './components/OnboardingScreen.jsx';
 import { ProfessorScreen } from './components/StudyScreens.jsx';
-import LearnScreen from './screens/LearnScreen.jsx';
-import ShopScreen from './components/ShopScreen.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
-import SubscriptionsScreen from './screens/SubscriptionsScreen.jsx';
-import ProfileScreen from './screens/ProfileScreen.jsx';
-import CalendarScreen from './screens/CalendarScreen.jsx';
+
+const LearnScreen = lazy(() => import('./screens/LearnScreen.jsx'));
+const ShopScreen = lazy(() => import('./components/ShopScreen.jsx'));
+const SubscriptionsScreen = lazy(() => import('./screens/SubscriptionsScreen.jsx'));
+const ProfileScreen = lazy(() => import('./screens/ProfileScreen.jsx'));
+const CalendarScreen = lazy(() => import('./screens/CalendarScreen.jsx'));
+
+class BackgroundSafe extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { ok: true };
+  }
+
+  static getDerivedStateFromError() {
+    return { ok: false };
+  }
+
+  componentDidCatch() {}
+
+  render() {
+    return this.state.ok ? this.props.children : null;
+  }
+}
 
 function applyAccount(user, prev = {}) {
   if (!user) return prev;
@@ -54,7 +72,17 @@ function AppShell({ userData, setUserData }) {
   const [toast, setToast] = useState(null);
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [onboardingData, setOnboardingData] = useState({});
-  const [studyFocus, setStudyFocus] = useState({ subject: null, grade: null, chapter: null });
+  const [studyFocus, setStudyFocus] = useState({ subject: null, grade: null, chapter: null, track: null });
+  const historySilent = useRef(false);
+  const loggedInRef = useRef(Boolean(userData.isLoggedIn));
+  loggedInRef.current = Boolean(userData.isLoggedIn);
+
+  const writeHash = useCallback((target, extras = {}, mode = 'push') => {
+    const hash = hashForRoute(target, extras);
+    if (!hash || window.location.hash === hash) return;
+    if (mode === 'replace') window.history.replaceState({ screen: target }, '', hash);
+    else window.history.pushState({ screen: target }, '', hash);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
@@ -69,6 +97,7 @@ function AppShell({ userData, setUserData }) {
   }, []);
 
   const handleEconomyUpdate = useCallback((balance, equipped = {}, role = null, extra = {}) => {
+    let leveledTo = null;
     setUserData(prev => {
       const next = {
         ...prev,
@@ -80,10 +109,12 @@ function AppShell({ userData, setUserData }) {
         role: role || prev.role,
         ...extra
       };
+      if (next.level > (prev.level || 1)) leveledTo = next.level;
       applyTheme(next.themeId);
       return next;
     });
-  }, []);
+    if (leveledTo) showToast(`Ai urcat la nivelul ${leveledTo}!`, 'success');
+  }, [showToast]);
 
   const syncEconomy = useCallback(async (patch = {}) => {
     const result = await MentorAPI.getEconomySummary({
@@ -92,13 +123,16 @@ function AppShell({ userData, setUserData }) {
     });
     const summary = result.success ? result.data?.summary : null;
     if (!summary) return null;
+    let leveledTo = null;
     setUserData(prev => {
       const next = applyProgress(summary, prev);
+      if (next.level > (prev.level || 1)) leveledTo = next.level;
       applyTheme(next.themeId);
       return next;
     });
+    if (leveledTo) showToast(`Ai urcat la nivelul ${leveledTo}!`, 'success');
     return summary;
-  }, [userData.class, userData.name]);
+  }, [userData.class, userData.name, showToast]);
 
   const handleAppearanceChange = useCallback((equipped = {}, inventory = [], extra = {}) => {
     setUserData(prev => {
@@ -120,6 +154,7 @@ function AppShell({ userData, setUserData }) {
     if (!session.success) {
       setUserData(prev => ({ ...prev, isLoggedIn: false }));
       setScreen('welcome');
+      writeHash('welcome', {}, 'replace');
       return;
     }
 
@@ -139,8 +174,11 @@ function AppShell({ userData, setUserData }) {
 
     const completed = Boolean(session.user.hasCompletedOnboarding) || Boolean(merged?.hasCompletedOnboarding);
     if (!completed) {
-      setOnboardingStep(1);
+      const readyName = session.user.name || merged?.name || '';
+      setOnboardingData(prev => ({ ...prev, name: readyName || prev.name }));
+      setOnboardingStep(readyName ? 2 : 1);
       setScreen('onboarding');
+      writeHash('onboarding', {}, 'replace');
       return;
     }
 
@@ -175,8 +213,23 @@ function AppShell({ userData, setUserData }) {
     }
 
     await syncEconomy();
+    const route = parseAppHash(window.location.hash);
+    if (route.kind === 'app') {
+      if (route.extras) {
+        setStudyFocus(prev => ({
+          subject: route.extras.subject !== undefined ? route.extras.subject : prev.subject,
+          grade: route.extras.grade || prev.grade,
+          chapter: route.extras.chapter || null,
+          track: route.extras.track !== undefined ? route.extras.track : prev.track
+        }));
+      }
+      setNavScreen(route.navScreen || route.screen);
+      setScreen(route.screen);
+      return;
+    }
     setScreen('home');
     setNavScreen('home');
+    writeHash('home', {}, 'replace');
   };
 
   const handleLogin = async credentials => {
@@ -189,8 +242,10 @@ function AppShell({ userData, setUserData }) {
     setUserData(prev => applyAccount(user, prev));
 
     if (!user.hasCompletedOnboarding) {
-      setOnboardingStep(1);
+      setOnboardingData(prev => ({ ...prev, name: user.name || prev.name }));
+      setOnboardingStep(user.name ? 2 : 1);
       setScreen('onboarding');
+      writeHash('onboarding', {}, 'replace');
       MentorAPI.claimReward({ type: 'login_bonus' }).then(() => syncEconomy());
       showToast(t('toast.welcome'), 'success');
       return { success: true };
@@ -198,8 +253,9 @@ function AppShell({ userData, setUserData }) {
 
     setScreen('home');
     setNavScreen('home');
+    writeHash('home', {}, 'replace');
 
-    await MentorAPI.claimReward({ type: 'login_bonus' });
+    await MentorAPI.claimReward({ type: 'login_bonus' }).catch(() => null);
     await syncEconomy();
     showToast(t('toast.welcome'), 'success');
     return { success: true };
@@ -210,11 +266,20 @@ function AppShell({ userData, setUserData }) {
     setUserData(prev => ({ ...prev, isLoggedIn: false, email: '', planId: 'free', coins: 0 }));
     setScreen('welcome');
     setNavScreen('home');
+    writeHash('welcome', {}, 'replace');
     showToast(t('toast.loggedOut'), 'success');
   };
 
   const handleForgotPassword = async email => {
-    const result = await MentorAPI.forgotPassword({ email });
+    if (!String(email || '').trim()) {
+      showToast(t('toast.forgotNeedEmail'), 'warning');
+      return;
+    }
+    const result = await MentorAPI.forgotPassword({ email: String(email).trim() });
+    if (!result.success) {
+      showToast(result.error || t('toast.forgotFailed'), 'warning');
+      return;
+    }
     showToast(result.data?.message || t('toast.forgotPassword'), 'success');
   };
 
@@ -252,8 +317,10 @@ function AppShell({ userData, setUserData }) {
       parentEmail: formData.parentEmail || '',
       isLoggedIn: true
     }));
-    setOnboardingStep(1);
+    setOnboardingData(prev => ({ ...prev, name: formData.name || prev.name, class: formData.class || prev.class }));
+    setOnboardingStep(formData.name ? 2 : 1);
     setScreen('onboarding');
+    writeHash('onboarding', {}, 'replace');
     return { success: true };
   };
 
@@ -318,6 +385,7 @@ function AppShell({ userData, setUserData }) {
       await syncEconomy({ class: payload.class, name: payload.name });
       setScreen('home');
       setNavScreen('home');
+      writeHash('home', {}, 'replace');
       showToast(t('toast.onboardingDone'), 'success');
       return;
     }
@@ -334,13 +402,44 @@ function AppShell({ userData, setUserData }) {
 
   const handleNavigate = (target, extras = {}) => {
     setStudyFocus(prev => ({
-      subject: extras.subject || prev.subject,
+      subject: extras.subject !== undefined ? extras.subject : prev.subject,
       grade: extras.grade || prev.grade,
-      chapter: extras.chapter || null
+      chapter: extras.chapter || null,
+      track: extras.track !== undefined ? extras.track : prev.track
     }));
-    setNavScreen(target);
+    setNavScreen(target === 'calendar' ? 'calendar' : target);
     setScreen(target);
+    if (!historySilent.current) writeHash(target, extras, 'push');
+    if (target === 'home' || target === 'shop' || target === 'profile') {
+      syncEconomy();
+    }
   };
+  const handleNavigateRef = useRef(handleNavigate);
+  handleNavigateRef.current = handleNavigate;
+
+  useEffect(() => {
+    const onPop = () => {
+      const route = parseAppHash(window.location.hash);
+      historySilent.current = true;
+      if (loggedInRef.current) {
+        if (route.kind === 'app') {
+          handleNavigateRef.current(route.screen, route.extras || {});
+        } else {
+          setScreen('home');
+          setNavScreen('home');
+        }
+      } else if (route.kind === 'guest') {
+        setScreen(route.screen);
+        setNavScreen('home');
+      } else {
+        setScreen('welcome');
+        setNavScreen('home');
+      }
+      historySilent.current = false;
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   const handleOnboardingSelect = value => {
     setOnboardingData(prev => ({ ...prev, [currentOnboarding.inputKey]: value }));
@@ -351,13 +450,28 @@ function AppShell({ userData, setUserData }) {
       case 'splash':
         return <SplashScreen onFinish={handleSplashFinish} delay={userData.isLoggedIn ? 200 : 2500} />;
       case 'welcome':
-        return <WelcomeScreen onConnect={() => setScreen('login')} onRegister={() => setScreen('register')} />;
-      case 'auth':
-        return <AuthScreen onLogin={() => setScreen('login')} onRegister={() => setScreen('register')} />;
+        return (
+          <WelcomeScreen
+            onConnect={() => { setScreen('login'); writeHash('login'); }}
+            onRegister={() => { setScreen('register'); writeHash('register'); }}
+          />
+        );
       case 'login':
-        return <LoginScreen onBack={() => setScreen('welcome')} onLogin={handleLogin} onForgotPassword={handleForgotPassword} />;
+        return (
+          <LoginScreen
+            onBack={() => { setScreen('welcome'); writeHash('welcome'); }}
+            onLogin={handleLogin}
+            onForgotPassword={handleForgotPassword}
+          />
+        );
       case 'register':
-        return <RegisterScreen onBack={() => setScreen('welcome')} onContinue={handleRegister} onValidationError={message => showToast(message, 'warning')} />;
+        return (
+          <RegisterScreen
+            onBack={() => { setScreen('welcome'); writeHash('welcome'); }}
+            onContinue={handleRegister}
+            onValidationError={message => showToast(message, 'warning')}
+          />
+        );
       case 'onboarding':
         return currentOnboarding.step === 1 ? (
           <main className="onboarding-page animate-fadeIn">
@@ -433,33 +547,46 @@ function AppShell({ userData, setUserData }) {
           />
         );
       default:
-        return <HomeScreen userData={userData} onNavigate={handleNavigate} />;
+        return (
+          <main className="screen-page animate-fadeIn">
+            <header className="screen-header">
+              <div className="eyebrow">Pagină lipsă</div>
+              <h1 className="display-font screen-title">Nu am găsit ecranul.</h1>
+              <p>Sesiunea e în regulă. Întoarce-te acasă sau la lecții.</p>
+              <button type="button" className="accent-button" onClick={() => handleNavigate('home')}>Acasă</button>
+            </header>
+          </main>
+        );
     }
   };
 
-  const showNav = ['home', 'professor', 'learn', 'shop', 'profile'].includes(screen);
+  const showNav = ['home', 'professor', 'learn', 'shop', 'profile', 'calendar'].includes(screen);
 
   return (
     <div className="app-shell">
       <AdaptiveContainer />
       <div className="app-background">
-        <FloatingLines
-          linesGradient={['#b9a7ff', '#6fd7ff', '#5a4fcf', '#5353b8']}
-          enabledWaves={['top', 'middle', 'bottom']}
-          lineCount={[6, 8, 10]}
-          lineDistance={[5, 4, 3]}
-          topWavePosition={{ x: 0.8, y: 0.25, rotate: -0.4 }}
-          middleWavePosition={{ x: 1.0, y: -0.05, rotate: 0.2 }}
-          bottomWavePosition={{ x: 2.0, y: -0.65, rotate: 0.4 }}
-          animationSpeed={0.8}
-          interactive={false}
-          bendRadius={10}
-          bendStrength={0.4}
-          parallax={true}
-          parallaxStrength={0.12}
-        />
+        <BackgroundSafe>
+          <FloatingLines
+            linesGradient={['#b9a7ff', '#6fd7ff', '#5a4fcf', '#5353b8']}
+            enabledWaves={['top', 'middle', 'bottom']}
+            lineCount={[6, 8, 10]}
+            lineDistance={[5, 4, 3]}
+            topWavePosition={{ x: 0.8, y: 0.25, rotate: -0.4 }}
+            middleWavePosition={{ x: 1.0, y: -0.05, rotate: 0.2 }}
+            bottomWavePosition={{ x: 2.0, y: -0.65, rotate: 0.4 }}
+            animationSpeed={0.8}
+            interactive={false}
+            bendRadius={10}
+            bendStrength={0.4}
+            parallax={true}
+            parallaxStrength={0.12}
+          />
+        </BackgroundSafe>
       </div>
-      {renderScreen()}
+      <Suspense fallback={<main className="screen-fallback">Se încarcă pagina…</main>}>
+        {renderScreen()}
+      </Suspense>
       {showNav && <BottomNav active={navScreen} onNavigate={handleNavigate} />}
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>

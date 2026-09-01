@@ -11,6 +11,11 @@
 // înțeles că trebuie să știe un elev, pe ani, ca mentorul să
 // ghideze fără să predea dintr-un manual anume.
 
+const { lessonsFor } = require('./gimnaziuLessons');
+const { shapeUnit } = require('./lessonShape');
+const { glossaryFor } = require('./chapterGlossary');
+const { dailyQuote, formatQuote } = require('./quotes');
+
 const SOURCE = {
   authority: "Ministerul Educației",
   ordinance: "OMEN 3393/28.02.2017",
@@ -339,7 +344,13 @@ function getGuide(subject, grade) {
     subject: sid,
     grade: g,
     source: SOURCE,
-    ...entry
+    ...entry,
+    quote: formatQuote(dailyQuote()),
+    units: (entry.units || []).map(unit => shapeUnit({
+      ...unit,
+      lessons: lessonsFor(sid, g, unit.id),
+      glossary: glossaryFor(sid, g, unit.id)
+    }))
   };
 }
 

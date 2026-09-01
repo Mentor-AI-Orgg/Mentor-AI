@@ -22,9 +22,11 @@ const LevelBar = ({ userData, compact = false }) => {
       >
         <div style={{ width: `${bar.pct}%` }} />
       </div>
-      <p className="home-xp-line">
-        {t('home.totalXp', { count: bar.xp })} · {t('home.nextXp', { count: bar.toNext, next: bar.nextLevel })}
-      </p>
+      {!compact && (
+        <p className="home-xp-line">
+          {t('home.totalXp', { count: bar.xp })} · {t('home.nextXp', { count: bar.toNext, next: bar.nextLevel })}
+        </p>
+      )}
     </div>
   );
 };

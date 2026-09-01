@@ -17,6 +17,11 @@ const formatTime = totalSeconds => {
 
 const focusStorageKey = email => `mentor_focus_timer_${email || 'anon'}`;
 
+const localDay = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
 const loadFocusState = email => {
   try {
     const raw = localStorage.getItem(focusStorageKey(email));
@@ -26,7 +31,8 @@ const loadFocusState = email => {
     let remaining = Number(saved.remaining);
     if (!Number.isFinite(remaining)) remaining = found.seconds;
     let running = Boolean(saved.running);
-    let sessionsDone = Number(saved.sessionsDone) || 0;
+    const today = localDay();
+    let sessionsDone = saved.day && saved.day !== today ? 0 : (Number(saved.sessionsDone) || 0);
     if (running && saved.savedAt) {
       const elapsed = Math.floor((Date.now() - Number(saved.savedAt)) / 1000);
       remaining -= elapsed;
@@ -97,7 +103,8 @@ const FocusTimer = ({ userData, onRewardClaim }) => {
       remaining,
       running,
       savedAt: Date.now(),
-      sessionsDone
+      sessionsDone,
+      day: localDay()
     }));
   }, [email, preset.id, remaining, running, sessionsDone]);
 

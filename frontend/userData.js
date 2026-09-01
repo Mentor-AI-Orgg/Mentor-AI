@@ -38,7 +38,8 @@ const defaultUserData = {
   firstLoginRewardClaimed: false,
   isLoggedIn: false,
   username: '',
-  hasCompletedOnboarding: false
+  hasCompletedOnboarding: false,
+  lastStudy: null
 };
 
 const DEFAULT_PARENT_NOTIFICATION_PREFERENCES = {

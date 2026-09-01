@@ -304,7 +304,11 @@ function chapterKey(subject, grade, chapterId) {
 
 function listChapterQuestions(subject, grade, chapterId) {
   const key = chapterKey(subject, grade, chapterId);
-  return BANK[key] ? BANK[key].slice() : [];
+  const list = BANK[key] ? BANK[key].slice() : [];
+  return list.map((item, index) => ({
+    ...item,
+    level: item.level || index + 1
+  }));
 }
 
 function listPoints(subject, grade, chapterId) {
@@ -317,6 +321,15 @@ function allChapterKeys() {
 
 function findQuestion(id) {
   const needle = String(id || '');
+  if (needle.startsWith('g:')) {
+    try {
+      const { fromGeneratedId } = require('./itemGenerator');
+      const generated = fromGeneratedId(needle);
+      if (generated && generated.options) return generated;
+    } catch {
+      return null;
+    }
+  }
   for (const list of Object.values(BANK)) {
     const found = list.find(item => item.id === needle);
     if (found) return found;

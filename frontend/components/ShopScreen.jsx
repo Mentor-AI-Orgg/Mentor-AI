@@ -3,10 +3,25 @@ import { MentorAPI } from '../apiClient.js';
 import LevelBar from './LevelBar.jsx';
 
 const CATEGORY_META = {
-  daily: { label: 'Zilnic', icon: 'fa-gift' },
   avatar: { label: 'Avatar', icon: 'fa-user-astronaut' },
   background: { label: 'Fundal', icon: 'fa-panorama' },
   titles: { label: 'Titluri', icon: 'fa-award' }
+};
+
+const RARITY_RO = {
+  Common: 'Obișnuit',
+  Rare: 'Rar',
+  Epic: 'Epic',
+  Legendary: 'Legendar',
+  Mythic: 'Mitic'
+};
+
+const REWARD_LABEL = {
+  login_bonus: 'Prima logare',
+  streak_bonus: 'Serie',
+  flashcards_5: 'Flashcarduri',
+  study_1h: 'Concentrare',
+  jackpot_monthly: 'Premiul lunii'
 };
 
 const AUTO_ACTIONS = new Set(['flashcards_5', 'study_1h', 'streak_bonus']);
@@ -29,7 +44,7 @@ const ShopRewardCard = ({ reward, loading, onClaim, claimState }) => {
         <p className="shop-auto-note">{claimState.claimed ? 'Primit astăzi, din învățare.' : 'Se acordă singur când înveți — nu se poate revendica de aici.'}</p>
       ) : reward.action === 'jackpot_monthly' ? (
         <button type="button" className="accent-button" disabled={loading || claimState.claimed || !reward.eligible} onClick={() => onClaim('jackpot_monthly')}>
-          {claimState.claimed ? 'Primit' : reward.eligible ? 'Ia jackpotul' : 'Nu e ziua jackpotului'}
+          {claimState.claimed ? 'Primit' : reward.eligible ? 'Ia premiul' : 'Nu e ziua premiului'}
         </button>
       ) : (
         <button type="button" className="accent-button" disabled={loading || claimState.claimed} onClick={() => onClaim(reward.action)}>
@@ -48,7 +63,7 @@ const ShopItemCard = ({ item, owned, equipped, onBuy, onEquip, buying, equipping
   return (
     <div className={`shop-item-card surface ${owned ? 'owned' : ''} ${isEquipped ? 'equipped' : ''} ${locked ? 'is-locked' : ''}`}>
       <div className="shop-item-head">
-        <div className="shop-item-badge">{locked ? `Nivel ${needsLevel}` : item.rarity}</div>
+        <div className="shop-item-badge">{locked ? `Nivel ${needsLevel}` : (RARITY_RO[item.rarity] || item.rarity)}</div>
         <div className="shop-item-price"><i className="fas fa-coins" /> {formatCoins(item.price)}</div>
       </div>
       <div className="shop-item-visual" style={item.accent ? { color: item.accent } : undefined}>
@@ -56,7 +71,7 @@ const ShopItemCard = ({ item, owned, equipped, onBuy, onEquip, buying, equipping
       </div>
       <h4>{item.name}</h4>
       <p>{item.description}</p>
-      {locked && <small className="shop-voice-note">Mythic: ai nevoie de nivelul {needsLevel}. Continuă să înveți, nu se cumpără cu lei.</small>}
+      {locked && <small className="shop-voice-note">Mitic de la nivelul {needsLevel}. Continuă să înveți — nu se cumpără cu lei.</small>}
       <div className="shop-item-footer">
         <span>{CATEGORY_META[item.category]?.label || item.category}</span>
         {owned ? (
@@ -88,7 +103,7 @@ const TitleCard = ({ item, equipped, onEquip, equipping }) => (
           {equipped ? 'Pe profil' : 'Poartă'}
         </button>
       ) : (
-        <span>Se deblochează din faptă, nu cu monede.</span>
+        <span>Din faptă, nu cu monede.</span>
       )}
     </div>
   </div>
@@ -99,7 +114,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
   const [refreshing, setRefreshing] = useState(false);
   const [summary, setSummary] = useState(null);
   const [catalog, setCatalog] = useState(null);
-  const [category, setCategory] = useState('daily');
+  const [category, setCategory] = useState('avatar');
   const [claiming, setClaiming] = useState(false);
   const [buyingId, setBuyingId] = useState('');
   const [equippingId, setEquippingId] = useState('');
@@ -161,12 +176,10 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
   const ownedItems = new Set(summary?.inventory || []);
   const claimedRewards = summary?.dailyClaims || [];
   const rewardsById = useMemo(() => Object.fromEntries((claimedRewards || []).map(reward => [reward.id, reward])), [claimedRewards]);
-  const selectedCategory = category === 'daily' ? 'daily-rewards' : category;
   const items = useMemo(() => {
     if (!catalog) return [];
-    if (selectedCategory === 'daily-rewards') return [];
-    return (catalog.items || []).filter(item => item.category === selectedCategory);
-  }, [catalog, selectedCategory]);
+    return (catalog.items || []).filter(item => item.category === category);
+  }, [catalog, category]);
 
   const handleClaim = async type => {
     setClaiming(true);
@@ -175,7 +188,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
     if (result.success) {
       if (result.data.summary) pushSummary(result.data.summary);
       else await load();
-      if (onRewardToast) onRewardToast(`Ai primit ${result.data.earned} monede.`);
+      if (onRewardToast) onRewardToast(`Ai primit ${result.data.earned} monede de studiu.`);
       onProgress?.();
       return;
     }
@@ -204,7 +217,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
       return;
     }
     if (result.data?.reason === 'level_required') {
-      if (onRewardToast) onRewardToast(`Mythic de la nivelul ${result.data.minLevel}. Acum ești nivelul ${result.data.level}.`, 'warning');
+      if (onRewardToast) onRewardToast(`Mitic de la nivelul ${result.data.minLevel}. Acum ești nivelul ${result.data.level}.`, 'warning');
       return;
     }
     if (onRewardToast) onRewardToast('Nu ai destule monede de studiu pentru obiectul ales.', 'warning');
@@ -261,8 +274,8 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
     });
     setParentSending(false);
     if (result.success) {
-      setDeliveryNote(result.data?.mocked === false && result.data?.delivered ? 'email trimis' : 'email mock');
-      if (onRewardToast) onRewardToast(result.data?.mocked === false && result.data?.delivered ? 'Mesajul a fost trimis pe email.' : 'Mesajul a fost salvat în inbox (email mock).');
+      setDeliveryNote(result.data?.mocked === false && result.data?.delivered ? 'trimis' : 'salvat în inbox');
+      if (onRewardToast) onRewardToast(result.data?.mocked === false && result.data?.delivered ? 'Mesajul a fost trimis părinților.' : 'Mesajul e în inbox. Emailul real pornește când există chei pe server.');
       return;
     }
     if (onRewardToast) onRewardToast('Nu am putut trimite mesajul către părinte.', 'warning');
@@ -281,12 +294,11 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         <div>
           <div className="eyebrow">Magazinul tău</div>
           <h1 className="display-font shop-title">Câștigă din învățare și personalizează aplicația.</h1>
-          <p className="shop-subtitle">Plătești cu monede de studiu — nu cu lei. Le iei din capitole, teste, flashcarduri, focus și mentor. Mythic cere nivelul 5.</p>
+          <p className="shop-subtitle">Plătești cu monede de studiu — nu cu lei. Le iei din capitole, teste, flashcarduri, concentrare și mentor. Mitic cere nivelul 5.</p>
         </div>
         <div className="shop-balance-card">
           <span>Monede de studiu</span>
           <strong>{formatCoins(summary?.balance ?? userData.coins ?? 0)}</strong>
-          <small>{summary?.xp || userData.xp || 0} XP · nivel {summary?.level || userData.level || 1}</small>
           <LevelBar userData={summary || userData} compact />
         </div>
       </section>
@@ -295,9 +307,9 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         <div className="shop-section-head">
           <div>
             <div className="eyebrow">Zilnic</div>
-            <h2 className="display-font">Recompense verificate de server.</h2>
+            <h2 className="display-font">Le iei din învățare, nu din buzunar.</h2>
           </div>
-          <span className="shop-chip"><i className="fas fa-gift" /> Jackpot lunar: {jackpotReward?.subtitle || 'verifică ziua random'}</span>
+          <span className="shop-chip"><i className="fas fa-gift" /> Premiul lunii: {jackpotReward?.subtitle || 'o zi din lună'}</span>
         </div>
         <div className="shop-rewards-grid">
           {(summary?.dailyClaims || []).map(reward => (
@@ -307,8 +319,8 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
               loading={claiming}
               claimState={{
                 claimed: reward.claimed,
-                label: reward.action === 'login_bonus' ? 'Prima logare' : reward.action === 'streak_bonus' ? 'Streak' : reward.action === 'flashcards_5' ? 'Flashcarduri' : reward.action === 'study_1h' ? 'Focus' : 'Jackpot',
-                message: reward.eligible === false && reward.action === 'jackpot_monthly' ? 'Nu e ziua jackpotului luna asta.' : ''
+                label: REWARD_LABEL[reward.action] || 'Recompensă',
+                message: reward.eligible === false && reward.action === 'jackpot_monthly' ? 'Nu e ziua premiului luna asta.' : ''
               }}
               onClaim={handleClaim}
             />
@@ -325,7 +337,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
           <button type="button" className="ghost-button" onClick={load} disabled={refreshing}>{refreshing ? 'Se actualizează...' : 'Actualizează'}</button>
         </div>
         <div className="shop-tabs">
-          {['daily', 'avatar', 'background', 'titles'].map(key => (
+          {['avatar', 'background', 'titles'].map(key => (
             <button key={key} type="button" className={`shop-tab ${category === key ? 'active' : ''}`} onClick={() => setCategory(key)}>
               {CATEGORY_META[key].label}
             </button>
@@ -334,6 +346,9 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
 
         {category === 'titles' ? (
           <div className="shop-grid">
+            {(summary?.titles?.catalog || catalog?.titles || []).length === 0 && (
+              <p className="shop-empty">Titlurile apar după o faptă: prima lecție, un test, o serie de zile.</p>
+            )}
             {(summary?.titles?.catalog || catalog?.titles || []).map(item => (
               <TitleCard
                 key={item.id}
@@ -346,6 +361,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
           </div>
         ) : (
           <div className="shop-grid">
+            {items.length === 0 && <p className="shop-empty">Catalogul e gol acum. Reîncearcă sau schimbă tab-ul.</p>}
             {items.map(item => (
               <ShopItemCard
                 key={item.id}
@@ -369,7 +385,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
             <div className="eyebrow">Părinte</div>
             <h2 className="display-font">Spune-i că mentorul e gratuit.</h2>
           </div>
-          <span className="shop-chip"><i className="fas fa-envelope" /> {deliveryNote || 'email'}</span>
+          <span className="shop-chip"><i className="fas fa-envelope" /> {deliveryNote || 'un mesaj'}</span>
         </div>
         <p className="shop-subtitle">Părintele primește un singur rezumat pe zi când înveți. De aici îi poți trimite un mesaj scurt: nu există abonament de plătit.</p>
         <div className="shop-parent-form">
@@ -381,8 +397,8 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         </div>
         <div className="shop-notes">
           <div><strong>Monede de studiu</strong><span>Nu sunt lei. Se cheltuie doar pe avatar și fundal.</span></div>
-          <div><strong>Cum le iei</strong><span>Logare 30, capitol 8, sesiune 15, flashcarduri 10, test 10, focus 12–20, mentor 4, streak 5. Jackpot lunar 50.</span></div>
-          <div><strong>Mythic</strong><span>Ultima raritate se cumpără de la nivelul 5 în sus.</span></div>
+          <div><strong>Cum le iei</strong><span>Logare 30, capitol 8, sesiune 15, flashcarduri 10, test 10, concentrare 12–20, mentor 4, serie 5. Premiul lunii 50.</span></div>
+          <div><strong>Mitic</strong><span>Ultima raritate se cumpără de la nivelul 5 în sus.</span></div>
         </div>
       </section>
 

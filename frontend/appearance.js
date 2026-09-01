@@ -27,7 +27,14 @@ function applyProgress(summary = {}, prev = {}) {
     titleId: summary.titleId || summary.equipped?.title || prev.titleId,
     titleName: summary.titleName || prev.titleName,
     chapters: summary.chapters || prev.chapters,
-    savedSessions: summary.savedSessions || prev.savedSessions
+    lastStudy: summary.lastStudy || prev.lastStudy,
+    savedSessions: summary.savedSessions || prev.savedSessions,
+    streakDays: summary.streakDays || prev.streakDays,
+    missions: summary.missions || prev.missions,
+    chapterMaps: summary.chapterMaps || prev.chapterMaps,
+    mentorLeft: summary.mentorLeft ?? prev.mentorLeft,
+    collection: summary.collection || prev.collection,
+    nudge: summary.nudge || prev.nudge || null
   };
 }
 

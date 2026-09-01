@@ -33,6 +33,8 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
   const fileInput = useRef(null);
   const recognitionRef = useRef(null);
   const [diagMode, setDiagMode] = useState(false);
+  const [micNote, setMicNote] = useState('');
+  const [scanMode, setScanMode] = useState(false);
   const [subject, setSubject] = useState(normalizeSubject(studyFocus.subject || userData.subject || userData.profile || 'matematica'));
   const [grade, setGrade] = useState(normalizeGrade(studyFocus.grade || userData.class));
   const conversationId = useRef(makeConversationId('mentor'));
@@ -96,7 +98,11 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
 
   const toggleMic = () => {
     const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!Speech) return;
+    if (!Speech) {
+      setMicNote('Microfonul nu e suportat în acest browser. Scrie întrebarea sau fă o poză.');
+      return;
+    }
+    setMicNote('');
     if (listening && recognitionRef.current) {
       recognitionRef.current.stop();
       setListening(false);
@@ -120,9 +126,11 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
   const send = async text => {
     const message = text.trim();
     if ((!message && !attachment) || loading) return;
-    const outgoing = attachment?.kind === 'file'
-      ? `${message || 'Am atașat un fișier.'} [${attachment.name}]`
-      : (message || 'Am pus o poză la exercițiu.');
+    const outgoing = scanMode
+      ? `Scan temă (doar indicii, primul pas, fără rezolvare gata): ${message || 'Am pus o poză. Arată-mi primul pas, nu rezultatul.'}`
+      : (attachment?.kind === 'file'
+        ? `${message || 'Am atașat un fișier.'} [${attachment.name}]`
+        : (message || 'Am pus o poză la exercițiu. Arată-mi primul pas.'));
     const imageBase64 = attachment?.kind === 'image' ? attachment.base64 : '';
     const preview = attachment?.kind === 'image' ? attachment.dataUrl : '';
     setDraft('');
@@ -149,7 +157,8 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
 
   return <main className="screen-page mentor-page animate-fadeIn">
     <header className="screen-header"><div><div className="eyebrow">MENTOR DE GIMNAZIU</div><h1 className="display-font screen-title">Alege materia, apoi întreabă.</h1>
-      <p className="screen-subtitle">Sunt aici pentru întrebări în plus, o explicație mai pe îndelete sau aceeași idee spusă altfel decât la lecție.</p>
+      <p className="screen-subtitle">Sunt aici pentru întrebări în plus, o explicație mai pe îndelete sau aceeași idee spusă altfel decât la lecție. Nu lipi tema întreagă: cere primul pas.</p>
+      <p className="mentor-limit">Întrebări cu XP azi: mai ai {userData.mentorLeft ?? 5} din 5 (apoi poți întreba în continuare, fără monede extra).</p>
       <div className="mentor-subject-picks" role="group" aria-label="Materia">
         {SUBJECTS.map(item => (
           <button
@@ -185,17 +194,18 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
       </div>
     </header>
     {diagMode && <div className="diag-banner"><i className="fas fa-circle-info" /> Mod diagnosticare activ: orice mesaj trimis va verifica memoria și fiecare API (Claude, GPT-4o, Gemini, Wolfram, Mathpix) în loc de un răspuns normal.</div>}
-    <section className="mentor-thread surface">{messages.some(m => m.mocked) && <div className="mock-banner"><i className="fas fa-flask" /> Răspunsurile marcate „demo” nu vin de la un model real: cheia API lipsește sau apelul a eșuat.</div>}{messages.length === 0 && <div className="mentor-empty"><div className="professor-icon"><i className="fas fa-sparkles" /></div><h2 className="display-font">{studyFocus.chapter?.title ? `Hai la „${studyFocus.chapter.title}”.` : 'Cu ce începem?'}</h2><p>{studyFocus.chapter?.title ? 'Lecția ți-a dat scheletul. Cere-mi altfel, mai detaliat sau un exemplu nou.' : `Întrebări din ${subjectLabel(subject)} pentru ${gradeLabel(grade)}. Ghidez, nu dau tema gata.`}</p><div className="suggestion-row"><button onClick={() => send(studyFocus.chapter?.title ? `Explică-mi altfel capitolul „${studyFocus.chapter.title}”. ${studyFocus.chapter.inOwnWords || ''}` : (subject === 'romana' ? 'Nu înțeleg ideea principală dintr-un text. Cum o caut?' : 'Nu știu de unde să încep o problemă de matematică.'))} type="button">Explică altfel</button><button onClick={() => send(studyFocus.chapter?.title ? `Mai pe îndelete, pas cu pas: „${studyFocus.chapter.title}”.` : (subject === 'romana' ? 'Ajută-mă să-mi fac un plan pentru un text scurt.' : 'Explică-mi un concept de clasa mea, fără formulă gata.'))} type="button">Mai detaliat</button><button onClick={() => send(studyFocus.chapter?.title ? `Un exemplu din viața de zi cu zi pentru „${studyFocus.chapter.title}”, apoi o întrebare scurtă.` : 'Dă-mi un exemplu cotidian, apoi o întrebare scurtă.')} type="button">Un exemplu</button></div></div>}{messages.map((message, index) => <MessageBubble key={`${message.role}-${index}`} role={message.role}>{message.image && <img className="mentor-attach-preview" src={message.image} alt="" />}{message.diagnostic ? <pre className={`diag-report ${message.allOk ? 'all-ok' : 'has-issues'}`}>{message.content}</pre> : message.content}{message.mocked && <small className="mock-label">Răspuns demo{message.engine ? ` · ${message.engine}` : ''} — nu este generat de un model real</small>}</MessageBubble>)}{loading && <LoadingMessage />}</section>
+    <section className="mentor-thread surface">{messages.some(m => m.mocked) && <div className="mock-banner"><i className="fas fa-flask" /> Răspunsurile marcate „demo” nu vin de la un model real: cheia API lipsește sau apelul a eșuat.</div>}{messages.length === 0 && <div className="mentor-empty"><div className="professor-icon"><i className="fas fa-sparkles" /></div><h2 className="display-font">{studyFocus.chapter?.title ? `Hai la „${studyFocus.chapter.title}”.` : 'Cu ce începem?'}</h2><p>{studyFocus.chapter?.title ? 'Lecția ți-a dat scheletul. Cere-mi altfel, mai detaliat sau un exemplu nou.' : `Întrebări din ${subjectLabel(subject)} pentru ${gradeLabel(grade)}. Ghidez, nu dau tema gata.`}</p><div className="suggestion-row"><button onClick={() => send(studyFocus.chapter?.title ? `Explică-mi altfel capitolul „${studyFocus.chapter.title}”. Nu relua analogia de data trecută dacă ți-am mai cerut. ${studyFocus.chapter.inOwnWords || ''}` : (subject === 'romana' ? 'Nu înțeleg ideea principală dintr-un text. Cum o caut?' : 'Nu știu de unde să încep o problemă de matematică.'))} type="button">Explică altfel</button><button onClick={() => send('Arată-mi doar primul pas. Nu da rezolvarea.')} type="button">Arată-mi primul pas</button><button onClick={() => send(studyFocus.chapter?.title ? `Un exemplu din viața de zi cu zi pentru „${studyFocus.chapter.title}”, apoi o întrebare scurtă.` : 'Dă-mi un exemplu cotidian, apoi o întrebare scurtă.')} type="button">Un exemplu</button></div></div>}{messages.map((message, index) => <MessageBubble key={`${message.role}-${index}`} role={message.role}>{message.image && <img className="mentor-attach-preview" src={message.image} alt="Poză atașată la întrebare" />}{message.diagnostic ? <pre className={`diag-report ${message.allOk ? 'all-ok' : 'has-issues'}`}>{message.content}</pre> : message.content}{message.mocked && <small className="mock-label">Răspuns demo{message.engine ? ` · ${message.engine}` : ''} — nu este generat de un model real</small>}</MessageBubble>)}{loading && <LoadingMessage />}</section>
     <form className="mentor-composer" onSubmit={event => { event.preventDefault(); send(draft); }}>
       <input ref={cameraInput} type="file" accept="image/*" capture="environment" hidden onChange={takeAttachment} />
       <input ref={fileInput} type="file" accept="image/*,application/pdf,.pdf" hidden onChange={takeAttachment} />
       <button type="button" className="ghost-button composer-tool" onClick={() => fileInput.current?.click()} aria-label="Adaugă fișier sau poză din galerie"><i className="fas fa-plus" /></button>
-      <button type="button" className="ghost-button composer-tool" onClick={() => cameraInput.current?.click()} aria-label="Fă o poză la exercițiu"><i className="fas fa-camera" /></button>
+      <button type="button" className={`ghost-button composer-tool ${scanMode ? 'is-live' : ''}`} onClick={() => { setScanMode(v => !v); cameraInput.current?.click(); }} aria-label="Scan temă: poză, doar indicii">{scanMode ? 'Scan temă ON' : ''}<i className="fas fa-camera" /></button>
       <button type="button" className={`ghost-button composer-tool ${listening ? 'is-live' : ''}`} onClick={toggleMic} aria-label={listening ? 'Oprește microfonul' : 'Vorbește, apoi apasă Enter'}><i className={`fas ${listening ? 'fa-stop' : 'fa-microphone'}`} /></button>
       <div className="composer-field">
+        {micNote && <span className="composer-chip">{micNote}</span>}
         {attachment && (
           <span className="composer-chip">
-            {attachment.kind === 'image' ? 'Poză' : attachment.name}
+            {attachment.kind === 'image' ? <img src={attachment.dataUrl} alt={attachment.name || 'Poză atașată'} className="composer-thumb" /> : attachment.name}
             <button type="button" onClick={() => setAttachment(null)} aria-label="Scoate atașamentul"><i className="fas fa-xmark" /></button>
           </span>
         )}

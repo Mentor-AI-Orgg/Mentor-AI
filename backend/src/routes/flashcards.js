@@ -4,7 +4,15 @@ const router = express.Router();
 const { pickPractice } = require("../data/practicePicker");
 const { checkExercise, checkMany, scoreToGrade, encouragementFor } = require("../data/exerciseBank");
 const { findQuestion } = require("../data/practiceBank");
+const { judgeAnswer } = require("../grading/answerJudge");
 const { ensureUser, getTodayKey, recordProgress, recordSkillReview, getSkillHistory } = require("../data/economyStore");
+
+function trimPracticeIds(ids) {
+  const list = (ids || []).map(String);
+  const staticIds = list.filter(id => !id.startsWith("g:"));
+  const generated = list.filter(id => id.startsWith("g:")).slice(-800);
+  return [...new Set([...staticIds, ...generated])];
+}
 
 router.post("/generate", (req, res) => {
   const {
@@ -14,8 +22,17 @@ router.post("/generate", (req, res) => {
     class_level: classLevel = 5,
     kind = "flashcards",
     exclude_ids: excludeIds = [],
-    count
+    count,
+    track = ""
   } = req.body || {};
+
+  const isEn = String(track).toLowerCase() === "en" || String(classLevel).toLowerCase() === "en";
+  const training = String(req.body?.mode || "").toLowerCase() === "training";
+  if (isEn && !training) {
+    return res.status(400).json({
+      error: "Modelele oficiale EN se deschid din lista de teste (Începe test Evaluare Națională). Pentru exerciții scurte deschide Antrenament EN."
+    });
+  }
 
   if (!topic && !chapterId) {
     return res.status(400).json({ error: "Trimite chapter_id sau topic." });
@@ -44,14 +61,16 @@ router.post("/generate", (req, res) => {
     kind: kind === "test" ? "test" : "flashcards",
     excludeIds: [...new Set([...(Array.isArray(excludeIds) ? excludeIds : []), ...(stored.questionIds || [])])],
     seenPoints: stored.points || [],
-    count
+    count: Number(count) || (kind === "test" ? 10 : 8)
   });
 
   res.json({
     ...pack,
-    engine_used: "chapter_bank",
+    engine_used: isEn ? "en_training" : "chapter_bank",
     mocked: false,
-    topic: topic || pack.chapterId
+    track: isEn ? "en" : "",
+    topic: topic || pack.chapterId,
+    infinite: true
   });
 });
 
@@ -66,9 +85,12 @@ router.post("/check", (req, res) => {
   }
   res.json({
     ok: result.ok,
+    credit: Number(result.credit) || 0,
+    verdict: result.verdict || (result.ok ? "exact" : "wrong"),
     explain: result.explain,
     sample: result.ok || String(answer || "").trim() ? result.sample : "",
-    steps: Array.isArray(result.steps) ? result.steps : []
+    steps: Array.isArray(result.steps) ? result.steps : [],
+    rubric: result.rubric || null
   });
 });
 
@@ -82,7 +104,7 @@ router.post("/seen", (req, res) => {
   if (point && !user.practiceSeen[key].points.includes(point)) user.practiceSeen[key].points.push(point);
   if (cardId && !user.practiceSeen[key].questionIds.includes(cardId)) {
     user.practiceSeen[key].questionIds.push(cardId);
-    user.practiceSeen[key].questionIds = user.practiceSeen[key].questionIds.slice(-80);
+    user.practiceSeen[key].questionIds = trimPracticeIds(user.practiceSeen[key].questionIds);
   }
   const total = pack.coverage.total;
   res.json({
@@ -99,7 +121,7 @@ router.get("/history", (req, res) => {
   res.json(getSkillHistory(req.auth.email));
 });
 
-router.post("/finish", (req, res) => {
+router.post("/finish", async (req, res) => {
   const {
     kind = "test",
     chapter_id: chapterId = "",
@@ -107,7 +129,8 @@ router.post("/finish", (req, res) => {
     class_level: classLevel = 5,
     title = "",
     answers = [],
-    picks = []
+    picks = [],
+    duration_ms: durationMs = 0
   } = req.body || {};
 
   const isTest = kind !== "flashcards";
@@ -123,16 +146,25 @@ router.post("/finish", (req, res) => {
       }
       const chosen = String(pick.chosen || "").trim();
       const sample = question.options[question.correct] || "";
-      const ok = chosen && chosen === sample;
+      const letter = "ABCD"[question.correct] || "";
+      const judge = judgeAnswer({
+        given: chosen,
+        answers: [sample, letter].filter(Boolean),
+        choices: question.options || [],
+        letter,
+        explain: question.explain || ""
+      });
       return {
         id: question.id,
         point: question.point,
         prompt: question.question,
         given: chosen,
         skipped: !chosen,
-        ok,
+        ok: judge.ok,
+        credit: Number(judge.credit) || 0,
+        verdict: judge.kind,
         found: true,
-        explain: question.explain,
+        explain: judge.teacher || question.explain,
         sample,
         steps: []
       };
@@ -140,8 +172,12 @@ router.post("/finish", (req, res) => {
   }
 
   const correct = items.filter(item => item.ok).length;
+  const credit = items.reduce((sum, item) => {
+    const value = Number(item.credit);
+    return sum + (Number.isFinite(value) ? value : (item.ok ? 1 : 0));
+  }, 0);
   const total = items.length;
-  const gradeNote = scoreToGrade(correct, total);
+  const gradeNote = scoreToGrade(credit, total);
   const message = encouragementFor(gradeNote);
   const strengths = [...new Set(items.filter(item => item.ok).map(item => item.point).filter(Boolean))];
   const weaknesses = [...new Set(items.filter(item => !item.ok).map(item => item.point).filter(Boolean))];
@@ -165,7 +201,7 @@ router.post("/finish", (req, res) => {
       user.practiceSeen[pack.key].questionIds.push(item.id);
     }
   });
-  user.practiceSeen[pack.key].questionIds = user.practiceSeen[pack.key].questionIds.slice(-80);
+    user.practiceSeen[pack.key].questionIds = trimPracticeIds(user.practiceSeen[pack.key].questionIds);
 
   const review = recordSkillReview(req.auth.email, {
     kind: isTest ? "test" : "flashcards",
@@ -183,26 +219,73 @@ router.post("/finish", (req, res) => {
   });
 
   let award = null;
+  const duration = Math.max(0, Number(durationMs) || 0);
+
   if (isTest) {
     award = recordProgress({
       userId: req.auth.email,
       type: "chapter_test",
       note: title || "Test de capitol",
-      meta: { subject, grade: classLevel, chapterId, title, score: correct, total, gradeNote }
+      meta: { subject, grade: classLevel, chapterId, title, score: correct, total, gradeNote, durationMs: duration }
+    });
+  } else if (correct >= 5) {
+    award = recordProgress({
+      userId: req.auth.email,
+      type: "flashcard_known",
+      note: title || "Flashcarduri",
+      meta: { subject, grade: classLevel, chapterId, title, topic: title || chapterId, correct }
+    });
+  }
+
+  const homework = weaknesses.slice(0, 3).map(point => ({
+    point,
+    task: isTest
+      ? `Temă scurtă: ia ideea „${point}” și rezolvă un exemplu nou, cu alte numere, pe caiet. Apoi spune mentorului primul pas, nu tot.`
+      : `Repetă mâine ideea „${point}”: o întrebare, apoi explică de ce varianta ta e bună.`
+  }));
+
+  let parentNotify = { skipped: true, reason: "not_a_test" };
+  if (isTest) {
+    const { notifyParent } = require("../notify/parentActivity");
+    parentNotify = await notifyParent({
+      studentEmail: req.auth.email,
+      type: "chapter_test",
+      note: title || "Test de capitol",
+      meta: {
+        title: title || "Test de capitol",
+        subject,
+        gradeNote,
+        durationMs: duration,
+        answers: items.map(item => ({
+          prompt: item.prompt,
+          given: item.given,
+          ok: item.ok,
+          verdict: item.verdict || "",
+          explain: item.explain || ""
+        }))
+      }
     });
   }
 
   res.json({
     items,
     correct,
+    credit,
     total,
     grade: gradeNote,
+    durationMs: duration,
     message,
     strengths,
     weaknesses,
+    homework,
     history: review.snapshot,
     awarded: award?.awarded || null,
-    summary: award?.summary || null
+    summary: award?.summary || null,
+    parentNotified: !parentNotify.skipped,
+    parentNotify: {
+      skipped: parentNotify.skipped,
+      reason: parentNotify.reason || null
+    }
   });
 });
 

@@ -1,0 +1,79 @@
+const GLOSSARY = {
+  'matematica:5:naturale': [
+    { term: 'putere', meaning: 'Baza înmulțită cu ea însăși de atâtea ori cât spune exponentul.' },
+    { term: 'prim', meaning: 'Număr cu exact doi divizori: 1 și el însuși.' }
+  ],
+  'matematica:5:fractii': [
+    { term: 'numitor', meaning: 'În câte părți egale tai întregul.' },
+    { term: 'procent', meaning: 'Părți din o sută. 25% = 25/100.' }
+  ],
+  'matematica:5:geometrie': [
+    { term: 'perimetru', meaning: 'Gardul: suma laturilor.' },
+    { term: 'arie', meaning: 'Câte pătrățele încap înăuntru.' }
+  ],
+  'matematica:6:multimi': [
+    { term: 'reuniune', meaning: 'Tot din cel puțin o mulțime, fără dubluri.' },
+    { term: 'c.m.m.d.c.', meaning: 'Cel mai mare număr care împarte pe amândoi.' }
+  ],
+  'matematica:6:proportii': [
+    { term: 'raport', meaning: 'Compari două mărimi printr-o împărțire.' },
+    { term: 'invers proporțional', meaning: 'Una crește, cealaltă scade; produsul rămâne.' }
+  ],
+  'matematica:7:ecuati': [
+    { term: 'ecuație', meaning: 'O cântar: ce e stânga trebuie să fie egal cu dreapta.' },
+    { term: 'sistem', meaning: 'Două relații, două necunoscute.' }
+  ],
+  'matematica:7:date': [
+    { term: 'medie', meaning: 'Suma împărțită la câți termeni ai.' },
+    { term: 'mediană', meaning: 'Valoarea din mijloc, după ce ai așezat șirul.' }
+  ],
+  'matematica:8:algebric': [
+    { term: 'termeni asemenea', meaning: 'Aceeași literă, același exponent — îi poți aduna.' },
+    { term: 'identitate', meaning: 'E adevărată pentru orice valoare a literei.' }
+  ],
+  'matematica:8:functii': [
+    { term: 'funcție', meaning: 'Unește un x de un singur f(x).' },
+    { term: 'pantă', meaning: 'Cât urcă sau coboară dreapta când x crește cu 1.' }
+  ],
+  'matematica:8:spatiu': [
+    { term: 'prismă', meaning: 'Două baze paralele, muchii laterale perpendiculare pe baze dacă e dreaptă.' },
+    { term: 'volum', meaning: 'Cât umple corpul, nu doar coaja.' }
+  ],
+  'romana:5:lectura': [
+    { term: 'idee principală', meaning: 'Ce se întâmplă cu adevărat, pe scurt. Restul e decor.' },
+    { term: 'personaj', meaning: 'Cine vrea ceva și se mișcă în text.' }
+  ],
+  'romana:5:redactare': [
+    { term: 'plan', meaning: 'Început, cuprins, sfârșit — înainte să scrii.' },
+    { term: 'destinatar', meaning: 'Cine citește și ce trebuie să afle.' }
+  ],
+  'romana:8:lectura8': [
+    { term: 'dovadă', meaning: 'O secvență din text, nu o părere goală.' },
+    { term: 'temă', meaning: 'Despre ce e vorba, nu rezumatul faptelor.' }
+  ],
+  'en:matematica:numere': [
+    { term: 'rațional', meaning: 'Se scrie ca fracție de întregi. √2 nu e.' },
+    { term: 'interval', meaning: 'O bucată de axă, cu capete închise sau deschise.' }
+  ],
+  'en:matematica:algebra-en': [
+    { term: 'ecuație', meaning: 'Cauți x-ul care face egalitatea adevărată.' },
+    { term: 'inecuație', meaning: 'Cauți un interval, nu un singur număr.' }
+  ],
+  'en:romana:receptare': [
+    { term: 'text la prima vedere', meaning: 'Nu l-ai învățat acasă. Citești, apoi dovedești.' },
+    { term: 'secvență', meaning: 'O bucată transcrisă, nu rezumatul tău.' }
+  ],
+  'en:romana:argumentativ': [
+    { term: 'teză', meaning: 'Ce susții, spus din prima.' },
+    { term: 'argument', meaning: 'De ce + un exemplu credibil, nu o vorbă mare.' }
+  ]
+};
+
+function glossaryFor(subject, grade, chapterId, track) {
+  const sid = String(subject || '').toLowerCase().includes('rom') ? 'romana' : 'matematica';
+  const prefix = track === 'en' ? `en:${sid}` : `${sid}:${grade}`;
+  const key = `${prefix}:${chapterId}`;
+  return GLOSSARY[key] || GLOSSARY[`${sid}:${grade}:${chapterId}`] || [];
+}
+
+module.exports = { GLOSSARY, glossaryFor };

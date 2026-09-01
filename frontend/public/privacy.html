@@ -26,51 +26,50 @@
     <a class="back" href="/">← Înapoi la Mentor AI</a>
     <p class="eyebrow">Document legal</p>
     <h1>Politica de confidențialitate</h1>
-    <p class="note">Mentor AI este un prototip educațional. Textul de mai jos descrie ce face aplicația <strong>astăzi</strong>, nu un produs comercial final. Ultima actualizare: 26 august 2026.</p>
+    <p class="note">Mentor AI este o aplicație gratuită pentru elevi de gimnaziu (clasele 5–8), la română și matematică. Textul descrie ce face aplicația astăzi. Ultima actualizare: 31 august 2026.</p>
 
     <h2>1. Cine suntem</h2>
-    <p>Mentor AI este o aplicație de mentorat școlar pentru clasele 5–8, la română și matematică. Operatorul datelor, în această fază de prototip, este echipa care găzduiește instanța (contul de hosting pe care rulează aplicația). Nu vindem date și nu le folosim pentru publicitate.</p>
+    <p>Mentor AI ajută elevul să învețe: lecții, teste, flashcarduri și un mentor care explică. Operatorul datelor este echipa care găzduiește instanța. Nu vindem date și nu le folosim pentru publicitate.</p>
 
     <h2>2. Ce date colectăm</h2>
     <ul>
-      <li><strong>Cont:</strong> email, hash-ul parolei (nu parola în clar), rol (elev / părinte / profesor), nume, telefon, școală, clasă.</li>
-      <li><strong>Pentru elevi:</strong> emailul părintelui și data la care a fost bifat consimțământul parental.</li>
+      <li><strong>Cont de elev:</strong> email, hash-ul parolei (nu parola în clar), nume, username, telefon, școală, clasă.</li>
+      <li><strong>Părinte:</strong> adresa de email dată la înregistrare, ca să primească un rezumat de studiu. Părintele nu are cont în aplicație.</li>
       <li><strong>Sesiune:</strong> un cookie httpOnly <code>mentor_session</code>, valabil 7 zile.</li>
-      <li><strong>Utilizare:</strong> mesaje către mentorul AI, evenimente de calendar, monede, inventar, invitații între conturi, abonamentul ales.</li>
-      <li><strong>Tehnic:</strong> adresa IP (pentru limitarea de rată) și jurnalele serverului de hosting.</li>
+      <li><strong>Utilizare:</strong> mesaje către mentor, progres, monede de studiu, inventar, prieteni, evenimente de calendar.</li>
+      <li><strong>Tehnic:</strong> adresa IP (pentru limitarea de rată) și jurnalele serverului.</li>
     </ul>
-    <p>Nu colectăm date de plată reale: abonamentele sunt încă simulate. Detectorul de text AI este un instrument demonstrativ, nu un serviciu de analiză biometrică sau de profilare.</p>
+    <p>Nu colectăm date de plată. Aplicația este gratuită. Magazinul folosește doar monede câștigate din învățare.</p>
 
     <h2>3. De ce le folosim</h2>
     <ul>
-      <li>ca să îți putem crea și recunoaște contul;</li>
-      <li>ca mentorul AI să răspundă în contextul tău (materie, clasă, istoric recent);</li>
-      <li>ca un părinte sau un profesor să vadă analitica <em>doar după</em> ce tu accepți invitația;</li>
-      <li>ca să limităm abuzul (mesaje periculoase, brute-force pe parole sau pe codurile de acces).</li>
+      <li>ca să îți recunoaștem contul;</li>
+      <li>ca mentorul să răspundă pe materia și clasa ta;</li>
+      <li>ca părintele să primească un rezumat pe email când înveți;</li>
+      <li>ca să oprim abuzul (mesaje periculoase, încercări repetate de parolă).</li>
     </ul>
-    <p>Temeiul: executarea contractului (contul pe care îl creezi) și, pentru elevii minori, consimțământul parental. Interesul legitim acoperă securitatea (rate limiting, moderare).</p>
+    <p>Temeiul: executarea contului pe care îl creezi și, pentru elevii minori, consimțământul parental. Interesul legitim acoperă securitatea.</p>
 
     <h2>4. Unde stau datele</h2>
-    <p>Datele sunt salvate pe serverul de hosting, într-un fișier protejat, nu într-o bază de date externă. Mesajele trimise către motoarele de AI (OpenAI, Anthropic, Google, Wolfram, Mathpix) pleacă la acei furnizori doar când sunt configurate chei reale și doar ca să genereze răspunsul. Moderarea de conținut, dacă este activă, trimite textul mesajului către API-ul de moderare OpenAI.</p>
+    <p>Datele sunt salvate pe serverul de hosting, într-un fișier protejat. Mesajele către motoarele de AI pleacă la acei furnizori doar când sunt configurate chei reale. Dacă nu sunt chei, mentorul răspunde cu texte de demonstrație, fără a trimite mesajul în afara serverului.</p>
 
-    <h2>5. Copii și consimțământ parental</h2>
-    <p>Un cont de elev nu se poate crea fără adresa de email a unui părinte sau tutore și fără bifarea consimțământului. Părintele <strong>nu</strong> primește automat acces la analitica elevului: primește o invitație pe care elevul (sau părintele, după ce își face cont) trebuie să o accepte. Oricare parte poate desface legătura ulterior.</p>
+    <h2>5. Copii și consimțământ</h2>
+    <p>Un cont de elev cere emailul unui părinte sau tutore și bifarea consimțământului. Părintele nu primește un panou de login. Primește email. Îți poți schimba adresa din Profil.</p>
 
     <h2>6. Drepturile tale</h2>
     <ul>
-      <li><strong>Acces / portabilitate:</strong> din Profil poți descărca un export JSON cu datele contului.</li>
-      <li><strong>Ștergere:</strong> din Profil poți șterge contul. Ștergerea este ireversibilă: dispar sesiunile, conversațiile, monedele, calendarul, invitațiile și abonamentul.</li>
-      <li><strong>Retragerea consimțământului:</strong> desfaci legătura cu părintele sau profesorul din panoul de invitații, sau ștergi contul.</li>
+      <li><strong>Acces / portabilitate:</strong> din Profil poți descărca un export JSON.</li>
+      <li><strong>Ștergere:</strong> din Profil poți șterge contul. Ștergerea este ireversibilă.</li>
     </ul>
 
     <h2>7. Păstrare</h2>
-    <p>Păstrăm datele cât timp contul există. După ștergere, ele sunt eliminate din stocarea aplicației. Copiile de rezervă ale serverului de hosting pot reține un instantaneu pentru o perioadă scurtă, specifică furnizorului.</p>
+    <p>Păstrăm datele cât timp contul există. După ștergere, ele dispar din stocarea aplicației. Copiile de rezervă ale hostingului pot ține un instantaneu scurt.</p>
 
     <h2>8. Cookie-uri</h2>
     <p>Folosim un singur cookie esențial, <code>mentor_session</code>: httpOnly, SameSite=Lax, Secure în producție. Nu folosim cookie-uri de tracking sau publicitate.</p>
 
     <h2>9. Contact</h2>
-    <p>Pentru întrebări despre datele tale, scrie-ne pe adresa de administrare a instanței pe care o folosești. Poți oricând să îți exporți sau să îți ștergi datele din aplicație, din ecranul de Profil.</p>
+    <p>Pentru întrebări despre date, scrie-ne pe adresa de administrare a instanței. Poți oricând să îți exporți sau să îți ștergi datele din Profil.</p>
 
     <p><a href="/terms.html">Citește și termenii de utilizare</a>.</p>
   </main>

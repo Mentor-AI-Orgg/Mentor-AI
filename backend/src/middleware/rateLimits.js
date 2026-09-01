@@ -38,7 +38,15 @@ const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
   ...common,
-  handler: romanianHandler("Prea multe încercări de autentificare. Așteaptă câteva minute.")
+  handler: (req, res) => {
+    const reset = req.rateLimit && req.rateLimit.resetTime ? new Date(req.rateLimit.resetTime).getTime() : 0;
+    const seconds = reset ? Math.max(1, Math.ceil((reset - Date.now()) / 1000)) : 60;
+    res.status(429).json({
+      error: `Prea multe încercări de conectare. Mai încearcă în ${seconds} secunde.`,
+      retryAfter: seconds,
+      code: "rate_limited"
+    });
+  }
 });
 
 const chatLimiter = rateLimit({

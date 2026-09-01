@@ -7,6 +7,13 @@ import LevelBar from '../components/LevelBar.jsx';
 
 const CLASSES = ['5', '6', '7', '8'];
 
+const PASSWORD_RULES = [
+  { key: 'length', label: 'Minim 8 caractere', test: v => v.length >= 8 },
+  { key: 'upper', label: 'O literă mare', test: v => /[A-ZĂÂÎȘȚ]/.test(v) },
+  { key: 'digit', label: 'O cifră', test: v => /[0-9]/.test(v) },
+  { key: 'special', label: 'Un caracter special', test: v => /[^A-Za-z0-9ĂÂÎȘȚăâîșț]/.test(v) }
+];
+
 const FriendCard = ({ person, rank, actionLabel, onAction, disabled }) => (
   <article className={`friend-card ${rank != null ? 'has-rank' : ''}`}>
     {rank != null && <div className={`friend-rank ${rank <= 3 ? 'is-top' : ''}`}>{rank}</div>}
@@ -121,6 +128,10 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
 
   const savePassword = async () => {
     if (!passwords.currentPassword || !passwords.newPassword) return;
+    if (!PASSWORD_RULES.every(rule => rule.test(passwords.newPassword))) {
+      onToast?.('Parola nouă: minim 8 caractere, o literă mare, o cifră și un caracter special.', 'warning');
+      return;
+    }
     const result = await MentorAPI.changePassword(passwords);
     if (!result.success) {
       onToast?.(result.error || 'Nu am putut schimba parola.', 'warning');
@@ -243,12 +254,19 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
             <div className="text-lg font-semibold">{t('profile.days', { count: userData.streak || 0 })}</div>
           </div>
           <div className="surface-soft rounded-3xl p-4 text-sm">
-            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">XP</div>
+            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">Puncte XP</div>
             <div className="text-lg font-semibold">{userData.xp || 0}</div>
           </div>
           <div className="surface-soft rounded-3xl p-4 text-sm">
             <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">{t('home.chapters')}</div>
             <div className="text-lg font-semibold">{userData.chaptersDone || 0}/{userData.chaptersTotal || 0}</div>
+          </div>
+          <div className="surface-soft rounded-3xl p-4 text-sm col-span-2">
+            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">Colecție magazin</div>
+            <div className="text-lg font-semibold">
+              {(wardrobe.inventory || []).length}/{wardrobe.items.length || 0} obiecte
+              {userData.collection?.avatarsTotal ? ` · ${userData.collection.avatarsOwned || wardrobe.items.filter(item => item.category === 'avatar' && wardrobe.inventory.includes(item.id)).length}/${userData.collection.avatarsTotal} avataruri` : ''}
+            </div>
           </div>
         </div>
         <LevelBar userData={userData} />
@@ -296,6 +314,13 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
             <input className="field form-input" type="password" value={passwords.newPassword} onChange={e => setPasswords(prev => ({ ...prev, newPassword: e.target.value }))} />
           </label>
         </div>
+        <ul className="password-checklist">
+          {PASSWORD_RULES.map(rule => (
+            <li key={rule.key} className={rule.test(passwords.newPassword) ? 'rule-ok' : 'rule-pending'}>
+              <i className={`fas ${rule.test(passwords.newPassword) ? 'fa-circle-check' : 'fa-circle'}`} /> {rule.label}
+            </li>
+          ))}
+        </ul>
         <button type="button" className="ghost-button profile-tool-action" onClick={savePassword}>Schimbă parola</button>
       </section>
 
@@ -504,7 +529,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
       </div>
 
       <div className="mx-5 mt-5">
-        <Leaderboard userData={userData} />
+        <Leaderboard />
       </div>
       <div className="mx-5 mt-5 grid gap-3">
         <button type="button" onClick={exportAccount} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition" disabled={exporting}>
