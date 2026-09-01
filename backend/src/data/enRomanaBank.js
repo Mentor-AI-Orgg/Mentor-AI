@@ -3,6 +3,10 @@
 // Subiectul II (20p) = compunere min. 150 de cuvinte, pe caiet.
 // Textele sunt originale. Nu copiem fragmente din manuale sau subiecte publicate.
 
+const { rng, seedFromHex, shuffle } = require('./itemRng');
+
+const LETTERS = ['A', 'B', 'C', 'D'];
+
 const NOVEL_HINT =
   'Poți porni de la o carte citită la gimnaziu (Amintiri din copilărie, Povestea lui Harap-Alb, Dumbrava minunată, Toate pânzele sus! sau alta). Nu copia rezumatul din culegere: o valoare comună + un fapt din opera ta + un fapt din fragment.';
 
@@ -14,6 +18,26 @@ const ASSOCIATE_TOKENS = [
 
 function wordCount(text) {
   return String(text || '').trim().split(/\s+/).filter(Boolean).length;
+}
+
+function shuffleMcqBundle(bundle, rand) {
+  if (!bundle?.public || !bundle.barem) return bundle;
+  (bundle.public.blocks || []).forEach(block => {
+    (block.items || []).forEach(item => {
+      if (!item.n || !Array.isArray(item.choices) || item.choices.length < 2) return;
+      const key = `${block.label}:${item.n}`;
+      const row = bundle.barem[key];
+      if (!row || !row.letter) return;
+      const idx = LETTERS.indexOf(String(row.letter).toUpperCase());
+      if (idx < 0 || idx >= item.choices.length) return;
+      const correct = item.choices[idx];
+      const next = shuffle(rand, item.choices.slice());
+      item.choices = next;
+      const newIdx = next.indexOf(correct);
+      row.letter = LETTERS[Math.max(0, newIdx)];
+    });
+  });
+  return bundle;
 }
 
 const TEXTS = {
@@ -54,7 +78,9 @@ Tabel. Zi / locuri în sală / clasă de gardă
 • joi — 16 — VIII A
 • vineri — 24 — VII D
 
-Nu se ține locul cu un caiet sau cu o geacă. Dacă sala e plină, te înscrii pe lista de pe ușa bibliotecarei și aștepți pe holul de la etajul 1, nu pe scara de incendiu.
+Nu se ține locul cu un caiet sau cu o geacă. Dacă sala e plină, te înscrii pe lista de pe ușa bibliotecarei și aștepți pe holul de la etajul 1, nu pe scara de incendiu. Lista se șterge la 16:00; cine n-a intrat revine a doua zi, fără prioritate.
+
+În sesiunea de teste, raftul albastru rămâne în sală. Nu se fac fotografii la pagini. Dacă ai nevoie de un citat pentru portofoliu, ceri o copie la ghișeu, nu rupi fila.
 
 Întrebări: biblioteca@scara3.scoala.ro, zile lucrătoare, 8:30–15:00. Telefon intern: 21.
 
@@ -82,7 +108,11 @@ Nu se vând lucruri pe bani. Nu se aduc telefoane, căști sau haine. Profesorul
 
 Dacă plouă, târgul se mută în sala 12, nu se amână. Dacă sâmbătă e o festivitate în hol, se afișează un anunț vineri până la ora 12:00.
 
-Înscrieri: până vineri, 7 martie, ora 14:00, la avizierul de lângă cancelarie. Fiecare elev poate aduce cel mult cinci obiecte.
+Înscrieri: până vineri, 7 martie, ora 14:00, la avizierul de lângă cancelarie. Fiecare elev poate aduce cel mult cinci obiecte. Lista de obiecte se afișează pe ușa sălii 12, nu pe holul de la etaj. Dacă un obiect are numele tău pe copertă, îl ștergi înainte; altfel rămâne la cutia „uitate cu nume” și nu intră în schimb.
+
+Cine vine după ora 13:00 nu mai lasă obiecte, dar poate lua, dacă mai sunt. Nu se rezervă un obiect cu un bilețel. Profesorul de serviciu poate opri târgul zece minute dacă holul se aglomerează: nu se strigă, nu se aleargă între mese.
+
+Întrebări: consiliul@scara.ro, până vineri, ora 12:00.
 
 Responsabil: Andrei Popescu, clasa a VIII-a B, cu sprijinul doamnei diriginte.`
   },
@@ -111,7 +141,9 @@ Accident mic (tăietură, strop pe piele sau pe bancă): speli imediat, anunți,
 
 La începutul orei, profesorul citește lista grupei. Cine e în întârziere peste cinci minute nu mai intră. La sfârșit, fiecare grupă șterge banca, verifică robinetul și semnează caietul de predare. Dacă lipsește o eprubetă, se anunță înainte de a pleca, nu a doua zi.
 
-Telefonul rămâne în geantă. Fotografiile se fac doar dacă profesorul cere un rezultat pentru portofoliu.
+Telefonul rămâne în geantă. Fotografiile se fac doar dacă profesorul cere un rezultat pentru portofoliu. Halatele atârnă pe cuierele din dreapta ușii; nu se pun pe spătarul scaunului. Dacă un halat e ud, îl schimbi cu cel de rezervă din dulapul gri, nu lucrezi fără.
+
+La începutul anului, fiecare clasă semnează fișa de instruire. Cine lipsește atunci o semnează înainte de prima oră de laborator, nu „în pauză, pe hol”.
 
 Responsabil laborator: prof. Radu Ionescu`
   },
@@ -126,7 +158,7 @@ Teo închide geamul. În cameră rămâne mirosul de praf și de săpun de rufe.
 
 Teo scrie un singur rând: „Am închis geamul.” Apoi ascultă. Bătăile au încetat. Prosopul se mișcă, deși vântul nu se simte aici. Cineva, dincolo, a deschis o fereastră pe care el n-o vede. Aude un radio mic, o voce care dă știri și o oală pusă pe aragaz.
 
-Se așază pe scaun și mai scrie: „Afară continuă fără mine.” Nu e o plângere. E o constatare, ca atunci când numeri ghivecele și vezi că s-a schimbat cifra. Caietul rămâne deschis. Teo nu trage storul. Lasă lumina să intre prin geamul închis, ca un acord: el stă înăuntru, curtea își vede de treaba ei, și totuși se aud. Mai târziu, cineva de vizavi strânge prosopul. Sârma rămâne goală. Teo numără din nou ghivecele: tot două. Cifra n-a schimbat lumea. A schimbat doar pagina din caiet, care nu mai e goală.`,
+Se așază pe scaun și mai scrie: „Afară continuă fără mine.” Nu e o plângere. E o constatare, ca atunci când numeri ghivecele și vezi că s-a schimbat cifra. Caietul rămâne deschis. Teo nu trage storul. Lasă lumina să intre prin geamul închis, ca un acord: el stă înăuntru, curtea își vede de treaba ei, și totuși se aud. Mai târziu, cineva de vizavi strânge prosopul. Sârma rămâne goală. Teo numără din nou ghivecele: tot două. Cifra n-a schimbat lumea. A schimbat doar pagina din caiet, care nu mai e goală. Aude iarăși o ușă. Nu coboară să vadă. Scrie, sub rândul cu geamul: „Am auzit, și e destul.” Asta îi ajunge pentru temă. Nu e o descriere frumoasă. E adevărată.`,
     non: `Textul 2 (nonliterar)
 
 Anunț — Consiliul elevilor, 14 aprilie
@@ -137,7 +169,9 @@ Program: 8:10–8:25 (înainte de prima oră) și 13:40–14:00 (după ultima or
 
 Dacă plouă, colectarea se mută în sala 4, nu se anulează. Dacă un sac e rupt, se schimbă la punctul de strângere; nu se golește pe hol.
 
-Premiul: o oră de lectură în curte, vineri, 25 aprilie, doar dacă s-au strâns cel puțin 12 saci. Înscrieri (clasele care vor să ajute la cântărire): până joi, 17 aprilie, la avizier.
+Premiul: o oră de lectură în curte, vineri, 25 aprilie, doar dacă s-au strâns cel puțin 12 saci. Înscrieri (clasele care vor să ajute la cântărire): până joi, 17 aprilie, la avizier. Cântărirea se face cu cântarul de la sala de sport, nu „din ochi”. Fiecare sac e etichetat cu clasa și ziua.
+
+Nu se aduc sticle sparte, baterii sau resturi de mâncare. Acestea au alt circuit, afișat lângă cancelarie. Dacă un elev aduce un sac după ora 14:00, se notează pentru săptămâna următoare, nu se lasă pe hol peste noapte.
 
 Coordonator: dirigintele clasei a VIII-a C`
   },
@@ -166,7 +200,9 @@ Grupurile de câte 8, fiecare cu un profesor. Nu se iese din potecă. La popasul
 
 Dacă plouă moderat, traseul se păstrează. Dacă e furtună sau drum închis, se amână pentru 26 octombrie și se anunță sâmbătă până la 18:00 pe grupul claselor.
 
-Înscrieri: până joi, 16 octombrie, ora 13:00, la sala de sport. Locuri: 32.
+Înscrieri: până joi, 16 octombrie, ora 13:00, la sala de sport. Locuri: 32. Cine se înscrie și nu vine, fără anunț, pierde locul la următoarea ieșire. Acordul scris rămâne la profesorul de grupă, nu în ghiozdanul elevului.
+
+La popas se mănâncă stând, nu pe stânci ude. Gunoiul se ia înapoi până la autobuz. Dacă un elev are nevoie de pauză, spune profesorului de grupă, nu iese singur din șir. Autobuzul așteaptă la parcarea de la baza traseului; nu se aleargă pe șosea.
 
 Prof. Mara Stoica, coordonator`
   },
@@ -193,7 +229,9 @@ Ce primim: reportaje de maxim 250 de cuvinte, recenzii de carte, interviuri cu u
 
 Fiecare text e citit de doi redactori. Dacă se cere o rescriere, ai 5 zile. Semnătura e obligatorie (prenume + inițiala numelui sau numele întreg, la alegere). Textele fără autor nu se publică.
 
-Ședința de redacție: miercuri, 14:10–15:00, sala 8. Clasa a VIII-a A ține arhiva. Tirajul se afișează la avizier: 80 de exemplare pe holuri, 20 la bibliotecă.
+Ședința de redacție: miercuri, 14:10–15:00, sala 8. Clasa a VIII-a A ține arhiva. Tirajul se afișează la avizier: 80 de exemplare pe holuri, 20 la bibliotecă. Exemplarele rămase se pun, vineri, în cutia de la bibliotecă, nu se aruncă.
+
+Corectura se face cu creionul pe print, nu pe telefon. Dacă un articol e respins, primești o notă scurtă (de ce, ce poți reface), nu un „nu”. Interviurile se înregistrează doar cu acordul celui întrebat; telefonul stă pe masă, vizibil.
 
 Redactor-șef: Ioana Pavel, clasa a VIII-a A, sub îndrumarea prof. de română.`
   }
@@ -562,18 +600,26 @@ function packs(helpers) {
     }
   });
 
-  return { a, b, c, d, e, f };
+  return {
+    a: shuffleMcqBundle(a, rng(seedFromHex('enroa01'))),
+    b: shuffleMcqBundle(b, rng(seedFromHex('enrob02'))),
+    c: shuffleMcqBundle(c, rng(seedFromHex('enroc03'))),
+    d: shuffleMcqBundle(d, rng(seedFromHex('enrod04'))),
+    e: shuffleMcqBundle(e, rng(seedFromHex('enroe05'))),
+    f: shuffleMcqBundle(f, rng(seedFromHex('enrof06')))
+  };
 }
 
 function generateRoPaper(helpers, rand, seed, pick) {
   const all = packs(helpers);
   const list = [all.a, all.b, all.c, all.d, all.e, all.f];
   const base = pick(rand, list);
-  const clone = JSON.parse(JSON.stringify(base.public));
-  clone.id = `en:g:romana:${seed}`;
-  clone.title = `Model generat — limba română · ${seed.slice(0, 4)}`;
-  clone.generated = true;
-  return { public: clone, barem: { ...base.barem } };
+  const clone = JSON.parse(JSON.stringify({ public: base.public, barem: base.barem }));
+  shuffleMcqBundle(clone, rand);
+  clone.public.id = `en:g:romana:${seed}`;
+  clone.public.title = `Model generat — limba română · ${seed.slice(0, 4)}`;
+  clone.public.generated = true;
+  return clone;
 }
 
-module.exports = { packs, generateRoPaper, wordCount, TEXTS, NOVEL_HINT };
+module.exports = { packs, generateRoPaper, wordCount, TEXTS, NOVEL_HINT, shuffleMcqBundle };

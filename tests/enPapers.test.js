@@ -38,7 +38,7 @@ describe('EN papers and barem', () => {
       const passages = paper.blocks.flatMap(block => block.items).filter(item => item.kind === 'passage' || item.n === 0);
       expect(passages.length).toBeGreaterThanOrEqual(2);
       passages.forEach(item => {
-        expect(item.prompt.split(/\s+/).length).toBeGreaterThan(120);
+        expect(item.prompt.split(/\s+/).length).toBeGreaterThan(180);
       });
       const a = paper.blocks.find(block => block.label === 'Subiectul I A');
       const b = paper.blocks.find(block => block.label === 'Subiectul I B');
@@ -58,6 +58,52 @@ describe('EN papers and barem', () => {
       expect(writing.photoOnly).toBe(true);
       expect(writing.minWords).toBe(150);
     });
+    const letters = new Set();
+    papers.forEach(paper => {
+      const bundle = getBundle(paper.id);
+      Object.values(bundle.barem).forEach(row => {
+        if (row.letter) letters.add(row.letter);
+      });
+    });
+    expect(letters.size).toBeGreaterThan(1);
+  });
+
+  it('generated Romanian papers stay on the 2026 sheet and shuffle the correct letter', () => {
+    const letters = new Set();
+    const ids = new Set();
+    for (let i = 0; i < 6; i += 1) {
+      const paper = generatePaper('romana', [...ids]);
+      ids.add(paper.id);
+      expect(paper.generated).toBe(true);
+      const a = paper.blocks.find(block => block.label === 'Subiectul I A');
+      const b = paper.blocks.find(block => block.label === 'Subiectul I B');
+      const two = paper.blocks.find(block => block.label === 'Subiectul II');
+      expect(a.points).toBe(50);
+      expect(b.points).toBe(20);
+      expect(two.points).toBe(20);
+      expect(a.items.filter(item => item.kind === 'passage' || item.n === 0).length).toBeGreaterThanOrEqual(2);
+      expect(b.items.filter(item => item.n > 0).every(item => item.choices?.length === 4)).toBe(true);
+      expect(two.items.find(item => item.kind === 'write').photoOnly).toBe(true);
+      const bundle = getBundle(paper.id);
+      const answers = [];
+      paper.blocks.forEach(block => {
+        block.items.filter(item => item.n > 0).forEach(item => {
+          const row = bundle.barem[`${block.label}:${item.n}`];
+          if (item.choices?.length) {
+            letters.add(row.letter);
+            answers.push({ block: block.label, n: item.n, letter: row.letter });
+            return;
+          }
+          if (item.kind === 'short' && (item.minWords || 0) < 20) {
+            answers.push({ block: block.label, n: item.n, text: (row.answers || [])[0] || '' });
+          }
+        });
+      });
+      const score = scoreAttempt(paper.id, answers);
+      expect(score.points).toBeGreaterThanOrEqual(50);
+    }
+    expect(ids.size).toBe(6);
+    expect(letters.size).toBeGreaterThan(1);
   });
 
   it('generated math papers shuffle the correct letter and stay solvable', () => {

@@ -74,18 +74,24 @@ function EnPhotoBox({ paperId, target, label, remaining, onDone }) {
     }
     setBusy(true);
     setNote('');
-    const dataUrl = await readFile(file);
-    const response = await MentorAPI.reviewEnPhoto({
-      paper_id: paperId,
-      target,
-      image_base64: dataUrl
-    });
-    setBusy(false);
-    if (!response.success) {
-      setNote(response.error || 'Nu am putut citi poza. Mai ai voie doar 3 pe zi.');
-      return;
+    try {
+      const dataUrl = await readFile(file);
+      const response = await MentorAPI.reviewEnPhoto({
+        paper_id: paperId,
+        target,
+        image_base64: dataUrl
+      });
+      if (!response.success) {
+        setNote(response.error || 'Nu am putut citi poza. Mai ai voie doar 3 pe zi.');
+        if (response.photoQuota) onDone({ photoQuota: response.photoQuota });
+        return;
+      }
+      onDone(response.data);
+    } catch (error) {
+      setNote(error.message || 'Nu am putut citi poza.');
+    } finally {
+      setBusy(false);
     }
-    onDone(response.data);
   };
 
   const blocked = remaining <= 0;
@@ -337,7 +343,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                                 onDone={data => {
                                   if (data.photoQuota) setPhotoQuota(data.photoQuota);
                                   if (data.session?.result) setResult(data.session.result);
-                                  setSession(data.session || session);
+                                  if (data.session) setSession(data.session);
                                 }}
                               />
                             ) : null}
@@ -421,7 +427,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                             onDone={data => {
                               if (data.photoQuota) setPhotoQuota(data.photoQuota);
                               if (data.session?.result) setResult(data.session.result);
-                              setSession(data.session || session);
+                              if (data.session) setSession(data.session);
                             }}
                           />
                         )}

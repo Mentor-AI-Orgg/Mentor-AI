@@ -145,7 +145,7 @@ function getEnGuide(subject) {
     trainingAvailable: true,
     quote: formatQuote(dailyQuote()),
     papersNote:
-      "Modelele A–C sunt originale. „Alt model” amestecă aceleași tipuri de item cu variante noi (numere și texte schimbate), inspirate de structura publică CNPEE, nu copiate din culegeri. Dificultatea e de examen: dacă știi programa, poți lua 10. Antrenamentul EN (mai jos) e separat: exerciții scurte, fără cronometrul probei.",
+      "Modelele A–C sunt originale, pe structura publică CNPEE. La română: două texte lungi, I A (grile + scriere + asociere cu o carte citită), I B doar gramatică grile, II compunere pe caiet (o poți fotografia după predare). La mate: I–II grile, III rezultat aici și rezolvare pe caiet. „Alt model” dă o variantă nouă, fără capăt. Maximum 3 poze pe zi, ca să rămână aplicația gratuită. Antrenamentul de mai jos e separat, fără cronometrul probei.",
     units: (entry.units || []).map(unit => shapeUnit({
       ...unit,
       lessons: lessonsForEn(sid, unit.id),
