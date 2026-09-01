@@ -368,8 +368,6 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             {guide?.source?.disclaimer && <small className="chapter-disclaimer">{guide.source.disclaimer}</small>}
           </section>
 
-          {guide?.atlas && <GeometryAtlas atlas={guide.atlas} />}
-
           {isEn && (guide?.papers || []).length > 0 && (
             <section className="en-papers-section" aria-label="Modele recomandate de teste">
               <div className="surface chapter-intro">
@@ -440,6 +438,8 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
               {openPaper && <EnPaperView paper={openPaper} session={paperSession} onClose={() => { setOpenPaper(null); setPaperSession(null); }} />}
             </section>
           )}
+
+          {guide?.atlas && <GeometryAtlas atlas={guide.atlas} />}
 
           <section className="chapter-list" aria-label="Capitole">
             {units.map((unit, index) => {
