@@ -253,7 +253,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           <h1 className="display-font screen-title">{isEn ? 'Pregătire pentru Evaluarea Națională.' : 'Română și matematică, clasele 5–8.'}</h1>
           <p className="screen-subtitle">
             {isEn
-              ? 'Secțiune separată față de capitolele pe clase. Lecțiile sunt rezumate originale, cu exemple lucrate, după programa de examen (OM 4.730/2022). Modelele de teste se lucrează ca la examen: începi, stai minim o oră (predare anticipată), apoi finalizezi. Baremul și nota apar după predare; părintele le primește împreună cu durata.'
+              ? 'Secțiune separată față de capitolele pe clase. Lecțiile sunt rezumate originale, cu exemple lucrate, după programa de examen (OM 4.730/2022). Simularea EN se lucrează ca la examen: începi, stai minim o oră, apoi finalizezi. Antrenamentul scurt n-are ora de sală — predai când termini. Baremul și nota apar după predare; părintele le primește împreună cu durata.'
               : 'Alege materia, apoi clasa. În fiecare capitol ai lecțiile pe tavă — cu exemple lucrate, nu copiate din manual. Testele și flashcardurile urcă de la foarte ușor la greu. La test scrii doar răspunsul final; nota și pașii vin după finalizare. După banca de capitol apar variante noi, generate pe programă.'}
           </p>
           <p className="learn-slogan">{dailySlogan()}</p>
@@ -375,7 +375,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
               <div className="surface chapter-intro">
                 <div className="eyebrow">Modele recomandate</div>
                 <h2 className="display-font">Teste de tip examen, ca la Evaluarea Națională</h2>
-                <p>{guide.papersNote || 'Începi testul, stai minim o oră, apoi finalizezi. Baremul apare după predare.'}</p>
+                <p>{guide.papersNote || 'Simularea EN: începi, stai minim o oră, apoi finalizezi. Antrenamentul scurt: predai când termini, fără ora de sală. Baremul apare după predare.'}</p>
               </div>
               <div className="en-paper-card-list">
                 {guide.papers.map(paper => (
@@ -391,28 +391,51 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                     <i className="fas fa-file-alt" />
                     <span>
                       <strong>{paper.title}</strong>
-                      <small>{paper.duration} · {paper.oficiu} puncte din oficiu · start, apoi predare după o oră</small>
+                      <small>{paper.duration} · {paper.oficiu} puncte din oficiu · simulare EN, predare după o oră</small>
                     </span>
                   </button>
                 ))}
               </div>
-              <button
-                type="button"
-                className="accent-button result-action"
-                onClick={async () => {
-                  setPaperError('');
-                  const result = await MentorAPI.generateEnPaper({ subject, exclude_ids: seenPapers });
-                  if (result.success && result.data?.paper) {
-                    setSeenPapers(prev => [...prev, result.data.paper.id]);
-                    setOpenPaper(result.data.paper);
-                    setPaperSession(result.data.session);
-                    return;
-                  }
-                  setPaperError(result.error || 'Nu am putut genera un alt model acum. Încearcă din nou.');
-                }}
-              >
-                Alt model, fără repetare <i className="fas fa-random" />
-              </button>
+              <div className="en-paper-actions">
+                <button
+                  type="button"
+                  className="accent-button result-action"
+                  onClick={async () => {
+                    setPaperError('');
+                    const result = await MentorAPI.generateEnPaper({ subject, exclude_ids: seenPapers });
+                    if (result.success && result.data?.paper) {
+                      setSeenPapers(prev => [...prev, result.data.paper.id]);
+                      setOpenPaper(result.data.paper);
+                      setPaperSession(result.data.session);
+                      return;
+                    }
+                    setPaperError(result.error || 'Nu am putut genera un alt model acum. Încearcă din nou.');
+                  }}
+                >
+                  Alt model (simulare, 60 min) <i className="fas fa-random" />
+                </button>
+                <button
+                  type="button"
+                  className="ghost-button result-action"
+                  onClick={async () => {
+                    setPaperError('');
+                    const result = await MentorAPI.generateEnPaper({
+                      subject,
+                      exclude_ids: seenPapers,
+                      mode: 'drill'
+                    });
+                    if (result.success && result.data?.paper) {
+                      setSeenPapers(prev => [...prev, result.data.paper.id]);
+                      setOpenPaper(result.data.paper);
+                      setPaperSession(result.data.session);
+                      return;
+                    }
+                    setPaperError(result.error || 'Nu am putut deschide antrenamentul scurt. Încearcă din nou.');
+                  }}
+                >
+                  Antrenament scurt (fără ora de sală) <i className="fas fa-bolt" />
+                </button>
+              </div>
               {paperError && <p className="guide-error" role="alert">{paperError}</p>}
               {openPaper && <EnPaperView paper={openPaper} session={paperSession} onClose={() => { setOpenPaper(null); setPaperSession(null); }} />}
             </section>
@@ -476,7 +499,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                       )}
                       <p className="lesson-practice-hint">
                         {isEn
-                          ? 'Lecția e aici. Modelele EN (cu 4 variante) sunt deasupra: începi, stai timpul de sală, apoi vezi baremul. Antrenamentul EN e exercițiu scurt, separat de proba cronometrată.'
+                          ? 'Lecția e aici. Deasupra: simularea EN (minim 60 de minute în sală) și antrenamentul scurt (fără ora de sală, predai când termini). Antrenamentul de capitol e separat, 10 exerciții.'
                           : 'Înainte de test sau flashcarduri spui ce notă ți-ai dori. Itemii se potrivesc. Scrii răspunsul la test; la flashcarduri alegi A–D. Nu se repetă.'}
                       </p>
                       <small className="chapter-disclaimer">Ghid intern Mentor AI, nu manual. „Cum o văd eu”, după programă.</small>

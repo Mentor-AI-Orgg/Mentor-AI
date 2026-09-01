@@ -1,5 +1,9 @@
 const { ensureUser } = require('./economyStore');
-const { minStayMs, examMs } = require('./enPaperFactory');
+const { timingForPaper, publicPaperById } = require('./enPaperFactory');
+
+function clocks(paperId) {
+  return timingForPaper(publicPaperById(paperId));
+}
 
 function paperState(user, paperId) {
   if (!user.enPapers || typeof user.enPapers !== 'object') user.enPapers = {};
@@ -21,8 +25,9 @@ function sessionView(state, paperId) {
   const started = Boolean(state.startedAt);
   const finished = Boolean(state.finishedAt);
   const elapsed = started ? Math.max(0, (state.finishedAt || now) - state.startedAt) : 0;
-  const stayLeft = started && !finished ? Math.max(0, minStayMs() - (now - state.startedAt)) : 0;
-  const examLeft = started && !finished ? Math.max(0, examMs() - (now - state.startedAt)) : 0;
+  const { stayMs, examMs: limitMs, mode } = clocks(paperId);
+  const stayLeft = started && !finished ? Math.max(0, stayMs - (now - state.startedAt)) : 0;
+  const examLeft = started && !finished ? Math.max(0, limitMs - (now - state.startedAt)) : 0;
   return {
     paperId,
     started,
@@ -30,8 +35,9 @@ function sessionView(state, paperId) {
     startedAt: state.startedAt || 0,
     finishedAt: state.finishedAt || 0,
     durationMs: finished ? state.durationMs : elapsed,
-    minStayMs: minStayMs(),
-    examMs: examMs(),
+    minStayMs: stayMs,
+    examMs: limitMs,
+    mode: mode || 'exam',
     canFinish: started && !finished && stayLeft === 0,
     waitMs: stayLeft,
     examLeftMs: examLeft,
@@ -61,13 +67,14 @@ function canFinish(userId, paperId) {
     return { ok: true, already: true };
   }
   if (!state.startedAt) {
-    return { ok: false, reason: 'Apasă mai întâi „Începe test Evaluare Națională”.' };
+    return { ok: false, reason: 'Pornește testul înainte să predai lucrarea.' };
   }
-  const wait = minStayMs() - (Date.now() - state.startedAt);
+  const { stayMs } = clocks(paperId);
+  const wait = stayMs - (Date.now() - state.startedAt);
   if (wait > 0) {
     return {
       ok: false,
-      reason: `Ca la examen, poți preda lucrarea abia după timpul minim de sală (${Math.ceil(minStayMs() / 60000)} minute). Mai așteaptă ${Math.ceil(wait / 60000)} minute.`,
+      reason: `Ca la examen, poți preda lucrarea abia după timpul minim de sală (${Math.ceil(stayMs / 60000)} minute). Mai așteaptă ${Math.ceil(wait / 60000)} minute. La antrenamentul scurt nu există această regulă.`,
       waitMs: wait
     };
   }
@@ -116,8 +123,12 @@ function applyPhotoReview(userId, paperId, patch) {
         const delta = pts - (Number(item.points) || 0);
         item.points = pts;
         item.ok = pts >= Math.round(maxPts * 0.5);
-        state.score.points = Math.max(10, Math.min(100, (Number(state.score.points) || 10) + delta));
-        state.score.grade = (state.score.points / 10).toFixed(2);
+        state.score.points = Math.max(
+          Number(state.score.oficiu) || 10,
+          Math.min(Number(state.score.max) || 100, (Number(state.score.points) || 10) + delta)
+        );
+        const ceiling = Number(state.score.max) || 100;
+        state.score.grade = ((state.score.points / ceiling) * 10).toFixed(2);
       }
     }
   }

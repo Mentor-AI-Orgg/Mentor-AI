@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
-import { recommendedList, generatePaper, getBaremItem, getBundle, scoreAttempt } from '../backend/src/data/enPaperFactory.js';
+import { recommendedList, generatePaper, getBaremItem, getBundle, scoreAttempt, timingForPaper } from '../backend/src/data/enPaperFactory.js';
 
 describe('EN papers and barem', () => {
   let app;
@@ -290,5 +290,121 @@ describe('EN papers and barem', () => {
     });
     expect(fourth.status).toBe(429);
     expect(fourth.body.error).toMatch(/3 poze/i);
+  });
+
+  it('keeps extra original Romanian packs in the infinite pool, with longer texts', () => {
+    const ids = ['en-ro-a', 'en-ro-b', 'en-ro-c', 'en-ro-d', 'en-ro-e', 'en-ro-f', 'en-ro-g', 'en-ro-h', 'en-ro-i', 'en-ro-j', 'en-ro-k', 'en-ro-l'];
+    ids.forEach(id => {
+      const bundle = getBundle(id);
+      expect(bundle, id).toBeTruthy();
+      const passages = bundle.public.blocks.flatMap(block => block.items).filter(item => item.kind === 'passage' || item.n === 0);
+      expect(passages.length).toBeGreaterThanOrEqual(2);
+      const lit = passages[0].prompt.split(/\s+/).filter(Boolean).length;
+      const non = passages[1].prompt.split(/\s+/).filter(Boolean).length;
+      expect(lit, `${id} literary`).toBeGreaterThan(280);
+      expect(non, `${id} nonliterary`).toBeGreaterThan(180);
+    });
+    const seenTitles = new Set();
+    for (let i = 0; i < 16; i += 1) {
+      const paper = generatePaper('romana');
+      const first = paper.blocks[0].items.find(item => item.kind === 'passage' || item.n === 0);
+      seenTitles.add(String(first.prompt || '').slice(0, 80));
+    }
+    expect(seenTitles.size).toBeGreaterThan(1);
+  });
+
+  it('drill papers skip the 60-minute sala rule and still score to 10 on a perfect attempt', () => {
+    const drillRo = generatePaper('romana', [], { mode: 'drill' });
+    expect(drillRo.mode).toBe('drill');
+    expect(drillRo.minStayMinutes).toBe(0);
+    expect(drillRo.antiCheat.minStayMinutes).toBe(0);
+    expect(drillRo.title).toMatch(/Antrenament scurt/i);
+    expect(drillRo.title).not.toMatch(/dril$/i);
+    expect(drillRo.blocks.find(block => block.label === 'Subiectul II')).toBeUndefined();
+    const a = drillRo.blocks.find(block => block.label === 'Subiectul I A');
+    const b = drillRo.blocks.find(block => block.label === 'Subiectul I B');
+    expect(a.items.filter(item => item.n > 0).every(item => item.n <= 7)).toBe(true);
+    expect(b.items.filter(item => item.n > 0)).toHaveLength(4);
+    expect(timingForPaper(drillRo).stayMs).toBe(0);
+    expect(timingForPaper(drillRo).mode).toBe('drill');
+
+    const exam = generatePaper('romana');
+    expect(exam.mode).toBe('exam');
+    expect(exam.minStayMinutes).toBeGreaterThanOrEqual(1);
+    expect(timingForPaper(exam).stayMs).toBeGreaterThan(0);
+
+    const fillPerfect = paper => {
+      const bundle = getBundle(paper.id);
+      const answers = [];
+      paper.blocks.forEach(block => {
+        block.items.filter(item => item.n > 0).forEach(item => {
+          const row = bundle.barem[`${block.label}:${item.n}`] || {};
+          if (item.kind === 'en-parts' || item.parts) {
+            const parts = {};
+            Object.entries(row.parts || {}).forEach(([id, part]) => {
+              parts[id] = part.answer;
+            });
+            answers.push({ block: block.label, n: item.n, parts });
+            return;
+          }
+          if (item.choices?.length) {
+            answers.push({ block: block.label, n: item.n, letter: row.letter });
+            return;
+          }
+          answers.push({ block: block.label, n: item.n, text: (row.answers || [])[0] || (row.tokens || [])[0] || '' });
+        });
+      });
+      return scoreAttempt(paper.id, answers);
+    };
+
+    const roScore = fillPerfect(drillRo);
+    expect(roScore.grade).toBe('10.00');
+    expect(roScore.points).toBe(roScore.max);
+
+    const drillMath = generatePaper('matematica', [], { mode: 'drill' });
+    expect(drillMath.minStayMinutes).toBe(0);
+    expect(drillMath.blocks.find(block => block.label === 'Subiectul II')).toBeUndefined();
+    const third = drillMath.blocks.find(block => block.label === 'Subiectul III');
+    expect(third.items.filter(item => item.n > 0)).toHaveLength(1);
+    const mathScore = fillPerfect(drillMath);
+    expect(mathScore.grade).toBe('10.00');
+  });
+
+  it('lets a student finish a drill immediately while a full EN paper still waits', async () => {
+    const agent = request.agent(app);
+    const stamp = Date.now();
+    const register = await agent.post('/api/auth/register').send({
+      email: `en.drill.${stamp}@example.com`,
+      password: 'Testpass1!',
+      name: 'Drill EN',
+      username: `endrill${stamp}`,
+      class: '8',
+      parentEmail: `parinte.drill.${stamp}@example.com`,
+      parental_consent: true,
+      privacy_accepted: true
+    });
+    expect([200, 201]).toContain(register.status);
+
+    const gen = await agent.post('/api/curriculum/en/papers/generate').send({
+      subject: 'romana',
+      mode: 'drill'
+    });
+    expect(gen.status).toBe(200);
+    expect(gen.body.paper.mode).toBe('drill');
+    expect(gen.body.paper.minStayMinutes).toBe(0);
+    expect(gen.body.session.minStayMs).toBe(0);
+
+    const start = await agent.post('/api/curriculum/en/papers/start').send({ paper_id: gen.body.paper.id });
+    expect(start.status).toBe(200);
+    expect(start.body.session.canFinish).toBe(true);
+    expect(start.body.session.minStayMs).toBe(0);
+
+    const finish = await agent.post('/api/curriculum/en/papers/finish').send({
+      paper_id: gen.body.paper.id,
+      answers: [{ block: 'Subiectul I A', n: 1, letter: 'A' }]
+    });
+    expect(finish.status).toBe(200);
+    expect(finish.body.session.finished).toBe(true);
+    expect(finish.body.result.grade).toMatch(/^\d+\.\d{2}$/);
   });
 });

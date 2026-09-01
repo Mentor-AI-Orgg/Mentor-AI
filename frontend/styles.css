@@ -635,6 +635,9 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .lesson-practice-hint { margin: 0 0 14px; color: #c9cbe0; font-size: 13px; }
 .en-papers-section { margin: 22px 0 8px; display: grid; gap: 12px; }
 .en-paper-card-list { display: grid; gap: 10px; }
+.en-paper-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.en-paper-actions .accent-button,
+.en-paper-actions .ghost-button { flex: 1; min-width: 220px; }
 .en-paper-pick { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--ink); }
 .en-paper-pick i { font-size: 18px; color: #f0c36a; }
 .en-paper-pick span { display: grid; gap: 4px; }

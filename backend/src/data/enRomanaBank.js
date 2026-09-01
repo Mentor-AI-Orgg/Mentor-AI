@@ -56,7 +56,11 @@ Miercuri, la recreația mare, trei fete de la a cincea au râs când au văzut-o
 
 În clasă, la română, au citit o pagină despre un băiat care nu voia să-și lase calul. Colegul de bancă a șoptit: „Tu ești cu cireșul.” Mara a dat din umeri. Nu voia un titlu. Voia ca pământul de la rădăcină să nu se usuce până vin florile, dacă mai vin.
 
-Vineri, băiatul de la a șaptea s-a oprit lângă pungă. N-a luat-o. A îndreptat o piatră care alunecase. Apoi a plecat spre teren, fluierând fals. Mara a văzut totul de la geamul de la etaj. Nu a coborât. Cireșul nu a spus nimic. Pământul de la rădăcină e încă viu, și trei cireșe tari stau acolo ca o dovadă că cineva a trecut și a avut grijă, chiar dacă nimeni nu a pus o placă cu nume.`,
+Vineri, băiatul de la a șaptea s-a oprit lângă pungă. N-a luat-o. A îndreptat o piatră care alunecase. Apoi a plecat spre teren, fluierând fals. Mara a văzut totul de la geamul de la etaj. Nu a coborât. Cireșul nu a spus nimic. Pământul de la rădăcină e încă viu, și trei cireșe tari stau acolo ca o dovadă că cineva a trecut și a avut grijă, chiar dacă nimeni nu a pus o placă cu nume.
+
+Duminică a trecut pe la copac fără sticlă. Pământul era reavăn de la ploaia de joi, și Mara a doar îndreptat pietrele, ca pe o treabă care nu cere martori. În hol, doamna de română a întrebat dacă cineva vrea să scrie despre un loc al școlii. Mara n-a ridicat mâna. A scris totuși, acasă, un paragraf scurt, fără să-l predea: „Cineva udă. Cineva îndreaptă o piatră. Copacul nu mulțumește. Asta e destul.” Lunea, punga era tot acolo. Nimeni n-o mutase. În pauza mare, un elev de la a șasea a turnat apă fără să se uite în jur, ca și cum ar fi fost o obișnuință veche. Mara l-a văzut de la geam. N-a coborât. Cireșul ținea încă cele trei cireșe, mai tari, mai uitate. Seara, când a închis geamul camerei, i s-a părut că holul școlii continuă fără ea, dar rădăcina rămâne. Asta o liniștea mai mult decât un anunț la avizier.
+
+Uneori, pe drumul spre casă, trece pe lângă un alt copac, mai mare, de pe strada principală. Nu-l udă. Nu e al ei. Cireșul din spatele școlii e altceva: un loc pe care l-a ales fără să ceară voie, și pe care îl ține cu o lingură, o piatră și o tăcere. Dacă va fi tăiat toamna, va rămâne totuși săptămâna în care cineva a avut grijă. Mara nu se gândește la toamnă. Se gândește la joi.`,
     non: `Textul 2 (nonliterar)
 
 Biblioteca școlii „Scara 3” — anunț pentru elevi
@@ -84,6 +88,10 @@ Nu se ține locul cu un caiet sau cu o geacă. Dacă sala e plină, te înscrii 
 
 Întrebări: biblioteca@scara3.scoala.ro, zile lucrătoare, 8:30–15:00. Telefon intern: 21.
 
+Cine pierde un volum plătește taxa de pe listă, afișată lângă catalogul electronic; nu se negociază la ghișeu. Cărțile rezervate se ridică în maximum 48 de ore, altfel revin pe raft. Clubul de lectură se înscrie până în ultima vineri a lunii, pe formularul de la secretariat. În perioada simulărilor, sala se închide cu o oră mai târziu doar pentru clasa a VIII-a, pe baza carnetului. Părinții pot citi regulamentul pe site-ul școlii; nu au acces în sală în timpul orelor. Reclamațiile se depun în scris, nu verbal la bibliotecar. Copiile din fondul de referință (maximum zece pagini pe elev pe lună) se fac doar cu acordul bibliotecarei.
+
+În prima lună după renovare, fiecare clasă are o oră rezervată pe săptămână, ca sala să nu se aglomereze. Lista de noutăți stă lângă catalog. Clasa a V-a are prioritate la dicționarele ilustrate; clasa a VIII-a, la ghidurile de lectură pentru examen. Conducerea reamintește că biblioteca este un spațiu de lucru, nu de recreere zgomotoasă. Telefoanele se lasă la intrare, în cutia marcată, inclusiv în „Ora de citit în liniște”.
+
 Director adjunct, prof. Elena Munteanu`
   },
   b: {
@@ -97,7 +105,11 @@ Pe bancă stau trei oameni care nu se privesc: o femeie cu un plic galben ținut
 
 Șinele, fără tren, par două linii de caiet foarte lungi. Un porumbel umblă printre mucuri și o sticlă de plastic. Elevul închide caietul când se anunță întârzierea de douăsprezece minute. Femeia nu clipește. Bărbatul termină de numărat și începe din nou, ca și cum suma s-ar putea schimba dacă o iei de la capăt.
 
-Când trenul tot nu vine, cineva râde scurt, undeva la capătul peronului. Nu e o glumă bună; e doar aer scos din piept. Elevul își pune caietul în ghiozdan. Femeia deschide plicul, se uită înăuntru, îl închide. Nu scoate nimic. Un copil trece ținând o valiză cu rotițe care scârțâie pe beton; mama lui spune „nu alerga”, dar copilul aleargă până la linia galbenă și se oprește exact acolo, ca la o regulă învățată pe de rost. Peronul rămâne. Nimeni nu rămâne pe peron ca să-l descrie, dar el stă acolo și după ce oamenii pleacă, cu ceasul lui care minte cu un minut și cu șinele care așteaptă altceva decât descrierea noastră. Dacă ai sta până seara, ai vedea aceleași trei tipuri de oameni, doar cu alte fețe: cineva cu un plic, cineva cu un caiet, cineva care numără. Locul nu se plictisește. Noi da.`,
+Când trenul tot nu vine, cineva râde scurt, undeva la capătul peronului. Nu e o glumă bună; e doar aer scos din piept. Elevul își pune caietul în ghiozdan. Femeia deschide plicul, se uită înăuntru, îl închide. Nu scoate nimic. Un copil trece ținând o valiză cu rotițe care scârțâie pe beton; mama lui spune „nu alerga”, dar copilul aleargă până la linia galbenă și se oprește exact acolo, ca la o regulă învățată pe de rost. Peronul rămâne. Nimeni nu rămâne pe peron ca să-l descrie, dar el stă acolo și după ce oamenii pleacă, cu ceasul lui care minte cu un minut și cu șinele care așteaptă altceva decât descrierea noastră. Dacă ai sta până seara, ai vedea aceleași trei tipuri de oameni, doar cu alte fețe: cineva cu un plic, cineva cu un caiet, cineva care numără. Locul nu se plictisește. Noi da.
+
+Un vânzător de ziare trece cu o plasă de sfoară. Nu strigă. Așază un teanc pe o ladă și așteaptă, ca și ceilalți. Elevul cumpără un ziar pe care nu-l citește: îl pune sub caiet, ca să nu se ude de la banca rece. Femeia cu plicul galben își schimbă locul cu un pas, suficient cât să nu-i atingă nimeni plicul. Bărbatul cu monedele a terminat de numărat a treia oară. Suma e aceeași. El o știe. Numără totuși, pentru că mâinile au nevoie de o treabă până vine trenul.
+
+Când în sfârșit se aude anunțul corect, peronul se ridică deodată, ca o clasă la sfârșitul orei. Nimeni nu mulțumește ceasului. Nimeni nu se uită înapoi la bancă. Rămân mucurile, sticla de plastic, afișul dezlipit și cele două linii de caiet foarte lungi. Un porumbel revine. Peronul 2 își reia tăcerea, pregătit pentru alt minut mincinos și pentru alți trei oameni care nu se privesc.`,
     non: `Textul 2 (nonliterar)
 
 Aviz — Consiliul elevilor, 3 martie
@@ -114,6 +126,10 @@ Cine vine după ora 13:00 nu mai lasă obiecte, dar poate lua, dacă mai sunt. N
 
 Întrebări: consiliul@scara.ro, până vineri, ora 12:00.
 
+Obiectele rămase după ora 13:00 se pun în cutia „pentru săptămâna următoare”, nu se aruncă. Cine vrea un obiect după închidere lasă un bilet cu numele și clasa la profesorul de serviciu; nu se trimit mesaje pe grup. Lista de bonuri se arhivează în sala 12 până luni, ora 8:00, apoi se șterge. Nu se fac fotografii la masa de schimb, ca să nu apară nume pe copertă în imagini.
+
+Dacă un elev aduce mai mult de cinci obiecte, primele cinci stau pe masă, restul se întorc acasă. Dacă un obiect e nou, în ambalaj, tot se schimbă pe bonuri, nu pe bani. Profesorul de serviciu poate cere să se lase o alee liberă de un metru între mese. Târgul se închide la 13:00, chiar dacă mai sunt obiecte: punctualitatea e parte din regulament, nu un detaliu.
+
 Responsabil: Andrei Popescu, clasa a VIII-a B, cu sprijinul doamnei diriginte.`
   },
   c: {
@@ -127,7 +143,11 @@ A mai trecut de o sută de ori. De fiecare dată numără în gând până la ze
 
 La mijloc, o scândură e mai subțire. Ira o știe. Pune piciorul lângă cuie, nu pe mijloc. Sacoșa se lovește de genunchi. Câinele nu latră. Mișcă din coadă o dată, apoi stă. Când Ira ajunge, îi rupe o coajă. Câinele o ia fără grabă, ca un om care a așteptat și nu mai are de ce să se grăbească.
 
-În sacoșă mai rămâne pâinea pentru masă. Mama a zis: „Du-te drept, nu te opri la povești.” Ira se oprește totuși, pentru că un câine care așteaptă pe mal nu e o poveste, e o treabă. Se întoarce pe același pod. De data asta se uită o clipă în jos. Apa duce o frunză. Frunza trece pe sub scânduri și iese dincolo, întreagă. Un bătrân vine din față, cu o plasă de cumpărături. Ira se lipește de balustradă ca să-i facă loc. Bătrânul zice „să trăiești” și trece fără să se uite în goluri. Podul rămâne în spate, cu golurile lui, gata să țină pe altcineva care nu se uită în jos — sau care, o dată, se uită. Ira ajunge acasă cu pâinea încă caldă pe fundul sacoșei și cu mirosul de pârâu pe palme. Mama nu întreabă de câine. Ira nu spune. Unele treceri țin dacă le faci și taci.`,
+În sacoșă mai rămâne pâinea pentru masă. Mama a zis: „Du-te drept, nu te opri la povești.” Ira se oprește totuși, pentru că un câine care așteaptă pe mal nu e o poveste, e o treabă. Se întoarce pe același pod. De data asta se uită o clipă în jos. Apa duce o frunză. Frunza trece pe sub scânduri și iese dincolo, întreagă. Un bătrân vine din față, cu o plasă de cumpărături. Ira se lipește de balustradă ca să-i facă loc. Bătrânul zice „să trăiești” și trece fără să se uite în goluri. Podul rămâne în spate, cu golurile lui, gata să țină pe altcineva care nu se uită în jos — sau care, o dată, se uită. Ira ajunge acasă cu pâinea încă caldă pe fundul sacoșei și cu mirosul de pârâu pe palme. Mama nu întreabă de câine. Ira nu spune. Unele treceri țin dacă le faci și taci.
+
+A doua zi, podul e ud. Ira numără iar până la zece. Câinele e tot acolo, mai la stânga, ca și cum ar fi învățat ora. De data asta, Ira rupe o coajă mai mică: pâinea e pentru masă, nu pentru povești, dar o treabă mică tot trebuie făcută. Un copil de la clasa a cincea aleargă pe scânduri și se oprește la mijloc, deasupra golului. Ira zice, fără să ridice vocea: „Lângă cuie.” Copilul mută piciorul. Apoi râde și trece. Podul nu se clatină. Se clatină doar privirea.
+
+Seara, Ira desenează în caiet un pod cu goluri, nu unul întreg. Nu e tema. E o amintire care nu cere notă. Mama trece pe lângă masă și nu întreabă. Ira închide caietul. Pârâul, undeva, duce altă frunză. Podul așteaptă. Câinele, probabil, de asemenea.`,
     non: `Textul 2 (nonliterar)
 
 Regulament — laboratorul de științe
@@ -145,6 +165,10 @@ Telefonul rămâne în geantă. Fotografiile se fac doar dacă profesorul cere u
 
 La începutul anului, fiecare clasă semnează fișa de instruire. Cine lipsește atunci o semnează înainte de prima oră de laborator, nu „în pauză, pe hol”.
 
+Substanțele din dulapul roșu se scot doar cu semnătură în caietul de evidență. Nu se mută etichetele. Nu se amestecă resturi „ca să ocupăm mai puțin loc”. Apa de la chiuveta din dreapta e doar pentru spălat mâinile; sticlăria se clătește la chiuveta din stânga. Dacă un robinet picură, se anunță înainte de a pleca. Ușa laboratorului se încuie de profesor, nu de ultimul elev „că știm noi cheia”.
+
+În săptămâna simulărilor, laboratorul rămâne deschis după programul obișnuit, dar numai cu profesor. Nu se țin experimente de unul singur pentru portofoliu. Fotografiile de rezultat, când sunt cerute, se fac pe fundal alb, fără chipuri. Halatele murdare se lasă în sacul de la ușa din dreapta, nu în bancă.
+
 Responsabil laborator: prof. Radu Ionescu`
   },
   d: {
@@ -158,7 +182,11 @@ Teo închide geamul. În cameră rămâne mirosul de praf și de săpun de rufe.
 
 Teo scrie un singur rând: „Am închis geamul.” Apoi ascultă. Bătăile au încetat. Prosopul se mișcă, deși vântul nu se simte aici. Cineva, dincolo, a deschis o fereastră pe care el n-o vede. Aude un radio mic, o voce care dă știri și o oală pusă pe aragaz.
 
-Se așază pe scaun și mai scrie: „Afară continuă fără mine.” Nu e o plângere. E o constatare, ca atunci când numeri ghivecele și vezi că s-a schimbat cifra. Caietul rămâne deschis. Teo nu trage storul. Lasă lumina să intre prin geamul închis, ca un acord: el stă înăuntru, curtea își vede de treaba ei, și totuși se aud. Mai târziu, cineva de vizavi strânge prosopul. Sârma rămâne goală. Teo numără din nou ghivecele: tot două. Cifra n-a schimbat lumea. A schimbat doar pagina din caiet, care nu mai e goală. Aude iarăși o ușă. Nu coboară să vadă. Scrie, sub rândul cu geamul: „Am auzit, și e destul.” Asta îi ajunge pentru temă. Nu e o descriere frumoasă. E adevărată.`,
+Se așază pe scaun și mai scrie: „Afară continuă fără mine.” Nu e o plângere. E o constatare, ca atunci când numeri ghivecele și vezi că s-a schimbat cifra. Caietul rămâne deschis. Teo nu trage storul. Lasă lumina să intre prin geamul închis, ca un acord: el stă înăuntru, curtea își vede de treaba ei, și totuși se aud. Mai târziu, cineva de vizavi strânge prosopul. Sârma rămâne goală. Teo numără din nou ghivecele: tot două. Cifra n-a schimbat lumea. A schimbat doar pagina din caiet, care nu mai e goală. Aude iarăși o ușă. Nu coboară să vadă. Scrie, sub rândul cu geamul: „Am auzit, și e destul.” Asta îi ajunge pentru temă. Nu e o descriere frumoasă. E adevărată.
+
+După-amiază, covorul nu se mai bate. Curtea e tăcută, dar nu goală: un pisoi trece pe alee, un radio rămâne deschis după o fereastră, cineva udă un ghiveci pe care Teo nu-l văzuse dimineață. El notează: „Trei ghivece? Nu. Doi, plus unul pe care nu-l numărasem.” Se corectează. Asta e treaba descrierii: să nu minți cifra ca să iasă frumos.
+
+Seara, mama întreabă dacă a scris tema. Teo arată pagina. Mama citește și dă din cap. Nu zice „e scurt”. Zice „e al tău”. Teo închide caietul, dar lasă geamul închis, nu tras cu storul. Curtea continuă. El a auzit destul ca să știe că lumea de jos nu cere să coboare, ci să fie privită drept.`,
     non: `Textul 2 (nonliterar)
 
 Anunț — Consiliul elevilor, 14 aprilie
@@ -173,6 +201,10 @@ Premiul: o oră de lectură în curte, vineri, 25 aprilie, doar dacă s-au strâ
 
 Nu se aduc sticle sparte, baterii sau resturi de mâncare. Acestea au alt circuit, afișat lângă cancelarie. Dacă un elev aduce un sac după ora 14:00, se notează pentru săptămâna următoare, nu se lasă pe hol peste noapte.
 
+Tabelul cu saci se afișează joi la avizier, nu „din memorie”. Cine ajută la cântărire poartă mănuși de la sala de sport. Sacii de hârtie stau separat de cei de plastic, ca să nu se amestece la predare. Dacă plouă torențial și sala 4 e ocupată, colectarea se mută în holul de la etajul 1, lângă scara A, nu se anulează.
+
+Ora de lectură în curte (premiul) se ține vineri, 25 aprilie, 13:40–14:20, doar dacă s-au strâns cel puțin 12 saci. Dacă nu, ora rămâne oră de clasă. Nu se aduc pături de acasă. Se stă pe băncile din curte. Profesorul de serviciu închide punctul de strângere la 14:00 și predă cheia dirigintelui.
+
 Coordonator: dirigintele clasei a VIII-a C`
   },
   e: {
@@ -186,7 +218,11 @@ Râul e îngust aici și se aude pe pietre. O rață trece cu puii, ținând mij
 
 Când vârful undiței se apleacă, bunicul nu saltă. Trage încet, ca pe o ușă care nu trebuie trântită. Pe mal iese un pește mic, argintiu, care se zbate scurt. Bunicul îl desprinde și îl pune înapoi. „E pentru altă dată.” Luca vrea să întrebe de ce au venit atunci, dacă dau peștele înapoi. Nu întreabă. Bunicul îi pune undița în mână. Firul e umed și miroase a mâl.
 
-Luca așteaptă. Nu mușcă nimeni. O frunză se lipește de fir. Bunicul o ia cu două degete. „Asta nu e pește.” Luca râde, apoi tace. Soarele coboară în spatele sălciilor. Un ciclist trece pe podul de mai sus și sună din clopoțel, deși n-are cine să-i iasă în față. Bunicul strânge undița. Firul face un opt în aer și se așază cuminte. Se întorc pe potecă cu găleata goală și cu mâinile mirosind a râu. Luca înțelege, pe drum, că golul găleții nu e un eșec: au stat împreună până a venit seara, și râul a rămas acolo, pentru altă dată. Acasă, pune cutia de râme pe treaptă și se spală până îi miroase a săpun, nu a mâl. Bunicul bea apă din cană și nu întreabă dacă i-a plăcut. Nu trebuie.`,
+Luca așteaptă. Nu mușcă nimeni. O frunză se lipește de fir. Bunicul o ia cu două degete. „Asta nu e pește.” Luca râde, apoi tace. Soarele coboară în spatele sălciilor. Un ciclist trece pe podul de mai sus și sună din clopoțel, deși n-are cine să-i iasă în față. Bunicul strânge undița. Firul face un opt în aer și se așază cuminte. Se întorc pe potecă cu găleata goală și cu mâinile mirosind a râu. Luca înțelege, pe drum, că golul găleții nu e un eșec: au stat împreună până a venit seara, și râul a rămas acolo, pentru altă dată. Acasă, pune cutia de râme pe treaptă și se spală până îi miroase a săpun, nu a mâl. Bunicul bea apă din cană și nu întreabă dacă i-a plăcut. Nu trebuie.
+
+A doua duminică, Luca duce el undița. Bunicul merge în urmă, cu găleata. Pe piatră, locurile sunt aceleași. Râul e un pic mai mare. Luca nu aruncă cu pietre. Nu întreabă „a mușcat?”. Ține firul și privește locul unde intra în apă ca pe o ușă. Când vârful se apleacă, trage prea tare. Peștele scapă. Bunicul nu ceartă. Zice: „Încet, ca ușa.” Luca dă din cap. Încearcă din nou. Nu iese nimic. Găleata rămâne goală. Pe drum, Luca zice totuși: „A fost bine.” Bunicul zâmbește fără dinți, doar cu ochii. Asta e destul.
+
+În caietul de română, luni, Luca scrie o descriere scurtă: piatra lată, firul, frunza care nu e pește. Nu pune titlu. Nu spune că au dat peștele înapoi. Lasă golul găleții să se înțeleagă singur, dacă cineva vrea să înțeleagă.`,
     non: `Textul 2 (nonliterar)
 
 Anunț — Clubul de drumeție al școlii
@@ -204,6 +240,10 @@ Dacă plouă moderat, traseul se păstrează. Dacă e furtună sau drum închis,
 
 La popas se mănâncă stând, nu pe stânci ude. Gunoiul se ia înapoi până la autobuz. Dacă un elev are nevoie de pauză, spune profesorului de grupă, nu iese singur din șir. Autobuzul așteaptă la parcarea de la baza traseului; nu se aleargă pe șosea.
 
+Traseul albastru e marcat cu puncte pe stâncă și cu săgeți la intersecții. Nu se scurtează prin pădure. La km 1 există un izvor; apa de acolo se poate bea doar dacă profesorul confirmă, altfel folosești sticla adusă. Bocancii se verifică sâmbătă seara: șireturi, talpă. Cine vine în șlapi rămâne la autobuz, nu pe traseu.
+
+Lista de prezență se face de două ori: la poarta școlii și la întoarcere. Părinții primesc un mesaj scurt la sosire, nu fotografii din grup. Dacă un elev se simte rău, grupa se oprește; nu se „merge un pic înainte”. Întoarcerea se face pe același traseu, nu pe scurtătura de pe versantul sudic.
+
 Prof. Mara Stoica, coordonator`
   },
   f: {
@@ -217,7 +257,11 @@ La radio, o voce vorbește despre vreme. Afara e noiembrie: geamul are un abur p
 
 „Tu pui sarea. Cât un vârf.” Ana pune. Bunica gustă aluatul crud, încuviințează. Cuptorul pocnește. Pisica stă pe pervaz și privește curtea, unde un vecin taie lemne. Ana vrea să povestească despre un test greu. Bunică ascultă, frământând. Nu spune „o să fie bine” din automat. Spune: „Ai citit de două ori cerința?” Ana dă din cap. Apoi tace, pentru că în bucătăria asta întrebarea e destul.
 
-Când plăcinta iese, e prea fierbinte. Așteaptă. Aburul miroase a scorțișoară. Ana taie o felie strâmbă. Bunică râde și taie una dreaptă, pentru ea. Pe masă rămâne cartea închisă. Nu le trebuie. Au făcut treaba cu mâinile și cu o vorbă pusă la timp. Ana duce felia la geam, ca să se răcească. Pe pervaz, pisica se mută fără să ceară. Afară, vecinul a terminat lemnele. Rămâne mirosul de cuptor și liniștea în care o întrebare scurtă ține loc de predică. Ana își amintește cerința testului și, de data asta, o citește în gând de două ori, înainte să se întoarcă la teme.`,
+Când plăcinta iese, e prea fierbinte. Așteaptă. Aburul miroase a scorțișoară. Ana taie o felie strâmbă. Bunică râde și taie una dreaptă, pentru ea. Pe masă rămâne cartea închisă. Nu le trebuie. Au făcut treaba cu mâinile și cu o vorbă pusă la timp. Ana duce felia la geam, ca să se răcească. Pe pervaz, pisica se mută fără să ceară. Afară, vecinul a terminat lemnele. Rămâne mirosul de cuptor și liniștea în care o întrebare scurtă ține loc de predică. Ana își amintește cerința testului și, de data asta, o citește în gând de două ori, înainte să se întoarcă la teme.
+
+A doua zi, la școală, Ana nu povestește plăcinta. Povestește, dacă e întrebată, doar sfatul: citește cerința de două ori. Colega de bancă râde. Ana nu se supără. Unele sfaturi țin dacă le ții pentru tine până le folosești. Seara, bunica pune un alt măr pe masă. Ana curăță iar coaja, încercând panglica întreagă. Nu iese întreagă. Bunica zice: „Anul tot poate fi bun.” Ana crede, de data asta, nu în farmece, ci în faptul că ai voie să o iei de la capăt.
+
+Pe caietul de română, scrie o descriere a bucătăriei: miros, radio, pisică, o întrebare scurtă. Nu pune titlu. Nu copiază din cartea de bucate. Lasă aluatul să se înțeleagă din palme, cum a văzut.`,
     non: `Textul 2 (nonliterar)
 
 Regulament de redacție — revista școlii „Glasul curții”
@@ -232,6 +276,10 @@ Fiecare text e citit de doi redactori. Dacă se cere o rescriere, ai 5 zile. Sem
 Ședința de redacție: miercuri, 14:10–15:00, sala 8. Clasa a VIII-a A ține arhiva. Tirajul se afișează la avizier: 80 de exemplare pe holuri, 20 la bibliotecă. Exemplarele rămase se pun, vineri, în cutia de la bibliotecă, nu se aruncă.
 
 Corectura se face cu creionul pe print, nu pe telefon. Dacă un articol e respins, primești o notă scurtă (de ce, ce poți reface), nu un „nu”. Interviurile se înregistrează doar cu acordul celui întrebat; telefonul stă pe masă, vizibil.
+
+Textele se trimit într-un singur fișier, nu în trei mesaje. Titlul e scurt (maximum opt cuvinte). Nu se folosesc majuscule pe tot rândul. Dacă un articol trece de 250 de cuvinte, redacția cere tăiere, nu „îl publicăm așa, că e frumos”. Desenele se predau pe hârtie A4 sau scanate lizibil; nu se fotografiază din caiet, în umbră.
+
+Arhiva se ține în sala 8, în mapa albastră. Exemplarele de la bibliotecă nu se împrumută acasă. Cine vrea un număr vechi citește acolo. Ședința de miercuri începe la timp: cine întârzie peste șapte minute nu mai votează rubrica, dar poate lăsa un articol în cutie.
 
 Redactor-șef: Ioana Pavel, clasa a VIII-a A, sub îndrumarea prof. de română.`
   }
@@ -600,7 +648,7 @@ function packs(helpers) {
     }
   });
 
-  return {
+  const merged = {
     a: shuffleMcqBundle(a, rng(seedFromHex('enroa01'))),
     b: shuffleMcqBundle(b, rng(seedFromHex('enrob02'))),
     c: shuffleMcqBundle(c, rng(seedFromHex('enroc03'))),
@@ -608,11 +656,16 @@ function packs(helpers) {
     e: shuffleMcqBundle(e, rng(seedFromHex('enroe05'))),
     f: shuffleMcqBundle(f, rng(seedFromHex('enrof06')))
   };
+  const extra = require('./enRomanaExtra').packs(helpers);
+  Object.entries(extra).forEach(([key, bundle], index) => {
+    merged[key] = shuffleMcqBundle(bundle, rng(seedFromHex(`enro${key}${String(index + 7).padStart(2, '0')}`)));
+  });
+  return merged;
 }
 
 function generateRoPaper(helpers, rand, seed, pick) {
   const all = packs(helpers);
-  const list = [all.a, all.b, all.c, all.d, all.e, all.f];
+  const list = Object.values(all);
   const base = pick(rand, list);
   const clone = JSON.parse(JSON.stringify({ public: base.public, barem: base.barem }));
   shuffleMcqBundle(clone, rand);

@@ -18,6 +18,7 @@ function clock(ms) {
 }
 
 function stayLabel(ms) {
+  if (!ms || ms < 1000) return 'fără timp minim';
   if (ms >= 50 * 60 * 1000) {
     const hours = Math.round(ms / 3600000);
     return hours <= 1 ? 'o oră' : `${hours} ore`;
@@ -138,8 +139,15 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
     return () => clearInterval(timer);
   }, [session?.started, session?.finished]);
 
-  const stayMs = session?.minStayMs || (paper?.minStayMinutes || 60) * 60000;
-  const examLimit = session?.examMs || (paper?.examMinutes || 120) * 60000;
+  const isDrill = paper?.mode === 'drill' || session?.mode === 'drill' || Number(paper?.minStayMinutes) === 0;
+  const stayMs = isDrill
+    ? 0
+    : (Number.isFinite(Number(session?.minStayMs))
+      ? Number(session.minStayMs)
+      : (Number(paper?.minStayMinutes) || 60) * 60000);
+  const examLimit = Number.isFinite(Number(session?.examMs))
+    ? Number(session.examMs)
+    : (Number(paper?.examMinutes) || (isDrill ? 25 : 120)) * 60000;
   const startedAt = session?.startedAt || 0;
   const elapsed = session?.finished
     ? (session.durationMs || 0)
@@ -220,13 +228,19 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
       <header className="en-paper-head">
         <div>
           <div className="eyebrow">
-            {paper.subject === 'romana'
-              ? 'Model EN · I A texte + scriere · I B gramatică grile · II compunere pe caiet'
-              : 'Model EN · I–II cu 4 variante · III cu a) și b) · rezultat aici, rezolvare pe caiet'}
+            {isDrill
+              ? (paper.subject === 'romana'
+                ? 'Antrenament scurt · texte + grile, fără compunere și fără ora de sală'
+                : 'Antrenament scurt · grile + o problemă, fără ora de sală')
+              : (paper.subject === 'romana'
+                ? 'Simulare EN · I A texte + scriere · I B gramatică grile · II compunere pe caiet'
+                : 'Simulare EN · I–II cu 4 variante · III cu a) și b) · rezultat aici, rezolvare pe caiet')}
           </div>
           <h3 className="display-font en-paper-title">{paper.title}</h3>
           <p className="en-paper-meta">
-            Timp de lucru: {paper.duration} · minim {stayLabel(stayMs)} în sală · {paper.oficiu} puncte din oficiu
+            Timp de lucru: {paper.duration}
+            {isDrill ? ' · predai când termini, fără timp minim de sală' : ` · minim ${stayLabel(stayMs)} în sală`}
+            {' · '}{paper.oficiu} puncte din oficiu
           </p>
         </div>
         <button type="button" className="ghost-button result-action" onClick={onClose}>
@@ -237,12 +251,24 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
       {!session?.started && !finished && (
         <>
           <p className="en-paper-lock">
-            <i className="fas fa-hourglass-start" /> Citește enunțurile. Cronometrul pornește abia când apeși
-            „Începe test Evaluare Națională”. Apoi trebuie să ții lucrarea deschisă cel puțin {stayLabel(stayMs)}
-            — ca predarea anticipată la examen. Baremul apare după finalizare.
+            {isDrill ? (
+              <>
+                <i className="fas fa-bolt" /> Citește enunțurile. Cronometrul pornește când apeși
+                „Începe antrenamentul”. Nu există ora de sală: predai când termini. Baremul apare după predare.
+                Regula de minim 60 de minute e doar la simularea completă de Evaluare Națională.
+              </>
+            ) : (
+              <>
+                <i className="fas fa-hourglass-start" /> Citește enunțurile. Cronometrul pornește abia când apeși
+                „Începe test Evaluare Națională”. Apoi trebuie să ții lucrarea deschisă cel puțin {stayLabel(stayMs)}
+                — ca predarea anticipată la examen. Baremul apare după finalizare.
+              </>
+            )}
           </p>
           <button type="button" className="accent-button en-start-btn" disabled={starting} onClick={startExam}>
-            {starting ? 'Se deschide sala…' : 'Începe test Evaluare Națională'}
+            {starting
+              ? (isDrill ? 'Se deschide antrenamentul…' : 'Se deschide sala…')
+              : (isDrill ? 'Începe antrenamentul' : 'Începe test Evaluare Națională')}
           </button>
         </>
       )}
@@ -251,10 +277,15 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
         <div className="en-timer" role="status">
           <p>
             <strong>Timp scurs:</strong> {clock(elapsed)}
+            {isDrill ? null : (
+              <>
+                {' · '}
+                <strong>Până poți preda:</strong> {stayLeft > 0 ? clock(stayLeft) : 'acum'}
+              </>
+            )}
             {' · '}
-            <strong>Până poți preda:</strong> {stayLeft > 0 ? clock(stayLeft) : 'acum'}
-            {' · '}
-            <strong>Rămas din cele 2 ore:</strong> {examLeft > 0 ? clock(examLeft) : 'predă lucrarea'}
+            <strong>{isDrill ? 'Rămas din cele 25 de minute:' : 'Rămas din cele 2 ore:'}</strong>{' '}
+            {examLeft > 0 ? clock(examLeft) : 'predă lucrarea'}
           </p>
           <button
             type="button"
@@ -262,7 +293,11 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
             disabled={!canFinish || finishing}
             onClick={finishExam}
           >
-            {finishing ? 'Predau…' : canFinish ? 'Finalizare test' : `Finalizare după ${clock(stayLeft)}`}
+            {finishing
+              ? 'Predau…'
+              : canFinish
+                ? (isDrill ? 'Predă antrenamentul' : 'Finalizare test')
+                : `Finalizare după ${clock(stayLeft)}`}
           </button>
         </div>
       )}
@@ -509,15 +544,20 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
             disabled={!canFinish || finishing}
             onClick={finishExam}
           >
-            {finishing ? 'Predau…' : canFinish ? 'Finalizare test' : `Finalizare după ${clock(stayLeft)}`}
+            {finishing
+              ? 'Predau…'
+              : canFinish
+                ? (isDrill ? 'Predă antrenamentul' : 'Finalizare test')
+                : `Finalizare după ${clock(stayLeft)}`}
           </button>
         </div>
       )}
 
       {error ? <p className="guide-error">{error}</p> : null}
       <p className="en-paper-foot">
-        Baremul întregului test se deschide după predare. La română, itemii 6–9 se scriu aici; compunerea rămâne pe caiet. La mate, la Subiectul III scrii doar rezultatul. Pozele de corectare: 3 pe zi, ca să rămână aplicația gratuită.
-        Părintele primește nota, durata și răspunsurile tale.
+        {isDrill
+          ? 'Antrenament scurt: predai când termini, fără ora de sală. Baremul se deschide după predare. Simularea completă (minim 60 de minute) e butonul „Alt model” de deasupra.'
+          : 'Baremul întregului test se deschide după predare. La română, itemii 6–9 se scriu aici; compunerea rămâne pe caiet. La mate, la Subiectul III scrii doar rezultatul. Pozele de corectare: 3 pe zi, ca să rămână aplicația gratuită. Părintele primește nota, durata și răspunsurile tale.'}
       </p>
     </section>
   );

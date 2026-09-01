@@ -40,16 +40,17 @@ router.get("/en/papers", (req, res) => {
     subject,
     papers: recommendedList(subject),
     infinite: true,
-    note: "Modelele A–C sunt recomandate. „Alt model” aduce o variantă nouă, fără repetare. Baremul apare după finalizare."
+    note: "Modelele A–C sunt recomandate. „Alt model” e simularea completă (minim 60 de minute). „Antrenament scurt” n-are ora de sală. Baremul apare după finalizare."
   });
 });
 
 router.post("/en/papers/generate", authRequired, studentRequired, (req, res) => {
   const subject = req.body?.subject || req.query.subject || "matematica";
   const excludeIds = Array.isArray(req.body?.exclude_ids) ? req.body.exclude_ids : [];
-  const paper = generatePaper(subject, excludeIds);
+  const mode = String(req.body?.mode || "").toLowerCase() === "drill" ? "drill" : "exam";
+  const paper = generatePaper(subject, excludeIds, { mode });
   const session = previewPaper(req.auth.email, paper.id);
-  res.json({ paper, session, infinite: true });
+  res.json({ paper, session, infinite: true, mode: paper.mode || mode });
 });
 
 router.post("/en/papers/open", authRequired, studentRequired, (req, res) => {

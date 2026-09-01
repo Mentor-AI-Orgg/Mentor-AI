@@ -1,7 +1,8 @@
 // Modele EN: 4 variante (A–D) ca la examen. Răspunsurile NU pleacă odată
 // cu testul. Cronometrul pornește la „Începe test”. Predare anticipată
-// după 60 minute (metodologia EN); lucrare 120 minute. Baremul și nota
-// apar abia după finalizare. Redactarea are idei de barem, nu un text gata.
+// după 60 minute DOAR la simularea completă; antrenamentul scurt (mode=drill)
+// nu are timp minim de sală. Lucrare 120 minute la examen, 25 la drill.
+// Baremul și nota apar abia după finalizare. Redactarea are idei de barem, nu un text gata.
 //
 // Tipurile de item (procent, interval, medie, funcție, Pitagora, prismă…)
 // urmează structura publică CNPEE (modele + bareme pe subiecte.edu.ro).
@@ -95,6 +96,7 @@ function paperShell(id, title, subject, hint, blocks, generated) {
     completable: true,
     workOnPaper: false,
     generated: Boolean(generated),
+    mode: 'exam',
     subject,
     hint,
     minStayMinutes: Math.max(1, Math.round(stay / 60000)),
@@ -106,6 +108,93 @@ function paperShell(id, title, subject, hint, blocks, generated) {
       examMinutes: Math.max(1, Math.round(exam / 60000))
     }
   };
+}
+
+function timingForPaper(paper) {
+  if (paper && (paper.mode === 'drill' || Number(paper.minStayMinutes) === 0)) {
+    const examMinutes = Number(paper.examMinutes) > 0 ? Number(paper.examMinutes) : 25;
+    return { stayMs: 0, examMs: examMinutes * 60 * 1000, mode: 'drill' };
+  }
+  return { stayMs: minStayMs(), examMs: examMs(), mode: 'exam' };
+}
+
+function asDrill(bundle, subject) {
+  const clone = JSON.parse(JSON.stringify(bundle));
+  const pub = clone.public;
+  const sid = String(subject || pub.subject || '').toLowerCase().includes('rom') ? 'romana' : 'matematica';
+  const seedBit = String(pub.id || '')
+    .split(':')
+    .filter(part => part && part !== 'drill')
+    .pop() || '';
+  pub.id = String(pub.id || '').endsWith(':drill') ? pub.id : `${pub.id}:drill`;
+  pub.generated = true;
+  pub.mode = 'drill';
+  pub.duration = '25 de minute';
+  pub.minStayMinutes = 0;
+  pub.examMinutes = 25;
+  pub.oficiu = 10;
+  pub.antiCheat = {
+    ...(pub.antiCheat || {}),
+    minStayMinutes: 0,
+    examMinutes: 25,
+    baremAfterFinish: true
+  };
+  if (sid === 'romana') {
+    pub.title = `Antrenament scurt — limba română · ${seedBit.slice(0, 4)}`;
+    pub.hint =
+      'Antrenament scurt: două texte, grile + două răspunsuri scrise, apoi 4 grile de gramatică. Fără compunere și fără ora de sală. Predai când termini. Baremul apare după predare.';
+    pub.blocks = (pub.blocks || []).map(block => {
+      if (block.label === 'Subiectul II') return null;
+      if (block.label === 'Subiectul I A') {
+        const items = (block.items || []).filter(item => item.n === 0 || item.kind === 'passage' || item.passage || item.n <= 7);
+        return {
+          ...block,
+          points: items.filter(item => item.n > 0).reduce((sum, item) => sum + (Number(item.points) || 0), 0),
+          intro: 'Citești cele două texte. Itemii 1–5 sunt grile. 6–7 se scriu scurt. Fără asociere și fără compunere.',
+          items
+        };
+      }
+      if (block.label === 'Subiectul I B') {
+        const items = (block.items || []).filter(item => item.n > 0).slice(0, 4);
+        return {
+          ...block,
+          points: items.reduce((sum, item) => sum + (Number(item.points) || 0), 0),
+          intro: 'Gramatică — 4 grile, pe fragmente din texte.',
+          items
+        };
+      }
+      return block;
+    }).filter(Boolean);
+  } else {
+    pub.title = `Antrenament scurt — matematică · ${seedBit.slice(0, 4)}`;
+    pub.hint =
+      'Antrenament scurt: 6 grile + o problemă de geometrie cu a) și b). Fără ora de sală. La geometrie scrii doar rezultatul. Predai când termini.';
+    pub.blocks = (pub.blocks || []).map(block => {
+      if (block.label === 'Subiectul II') return null;
+      if (block.label === 'Subiectul III') {
+        const items = (block.items || []).filter(item => item.n > 0).slice(0, 1);
+        return {
+          ...block,
+          points: items.reduce((sum, item) => sum + (Number(item.points) || 0), 0),
+          intro: 'O problemă de geometrie, ca la examen: a) și b). Aici scrii doar rezultatul.',
+          items
+        };
+      }
+      return block;
+    }).filter(Boolean);
+  }
+  const keep = new Set();
+  (pub.blocks || []).forEach(block => {
+    (block.items || []).forEach(item => {
+      if (item.n > 0) keep.add(`${block.label}:${item.n}`);
+    });
+  });
+  const nextBarem = {};
+  Object.entries(clone.barem || {}).forEach(([key, row]) => {
+    if (keep.has(key)) nextBarem[key] = row;
+  });
+  clone.barem = nextBarem;
+  return clone;
 }
 
 function stripSecrets(paper) {
@@ -690,8 +779,9 @@ function recommendedList(subject) {
 
 function getStaticBundle(paperId) {
   for (const sid of ['matematica', 'romana']) {
-    for (const key of ['a', 'b', 'c', 'd', 'e', 'f']) {
-      const row = STATIC[sid][key];
+    const pack = STATIC[sid] || {};
+    for (const key of Object.keys(pack)) {
+      const row = pack[key];
       if (row && row.public.id === paperId) return row;
     }
   }
@@ -700,21 +790,24 @@ function getStaticBundle(paperId) {
 
 const GENERATED = new Map();
 
-function generatePaper(subject, excludeIds = []) {
+function generatePaper(subject, excludeIds = [], options = {}) {
   const sid = String(subject || '').toLowerCase().includes('rom') ? 'romana' : 'matematica';
+  const mode = options.mode === 'drill' ? 'drill' : 'exam';
   const excluded = new Set((excludeIds || []).map(String));
   for (let i = 0; i < 24; i += 1) {
     const seed = newSeed();
-    const id = `en:g:${sid}:${seed}`;
-    if (excluded.has(id)) continue;
+    const id = mode === 'drill' ? `en:g:${sid}:${seed}:drill` : `en:g:${sid}:${seed}`;
+    if (excluded.has(id) || excluded.has(`en:g:${sid}:${seed}`)) continue;
     const rand = rng(seedFromHex(seed));
-    const bundle = sid === 'romana' ? generateRoPaper(rand, seed) : generateMathPaper(rand, seed);
+    let bundle = sid === 'romana' ? generateRoPaper(rand, seed) : generateMathPaper(rand, seed);
+    if (mode === 'drill') bundle = asDrill(bundle, sid);
     GENERATED.set(bundle.public.id, bundle);
     return stripSecrets(bundle.public);
   }
   const seed = newSeed();
   const rand = rng(seedFromHex(seed));
-  const bundle = sid === 'romana' ? generateRoPaper(rand, seed) : generateMathPaper(rand, seed);
+  let bundle = sid === 'romana' ? generateRoPaper(rand, seed) : generateMathPaper(rand, seed);
+  if (mode === 'drill') bundle = asDrill(bundle, sid);
   GENERATED.set(bundle.public.id, bundle);
   return stripSecrets(bundle.public);
 }
@@ -792,10 +885,12 @@ function scoreAttempt(paperId, answers = []) {
   });
 
   let earned = Number(paper.oficiu) || 10;
+  let itemMax = 0;
   const review = [];
   (paper.blocks || []).forEach(block => {
     (block.items || []).forEach(item => {
       if (!item.n || item.kind === 'passage' || item.passage) return;
+      itemMax += Number(item.points) || 0;
       const key = itemKey(block.label, item.n);
       const barem = bundle.barem[key] || {};
       const given = map.get(key) || { letter: '', text: '' };
@@ -975,12 +1070,13 @@ function scoreAttempt(paperId, answers = []) {
     });
   });
 
-  earned = Math.max(10, Math.min(100, earned));
+  const ceiling = Math.max(Number(paper.oficiu) || 10, (Number(paper.oficiu) || 10) + itemMax);
+  earned = Math.max(Number(paper.oficiu) || 10, Math.min(ceiling, earned));
   return {
     oficiu: Number(paper.oficiu) || 10,
     points: earned,
-    max: 100,
-    grade: (earned / 10).toFixed(2),
+    max: ceiling,
+    grade: ((earned / ceiling) * 10).toFixed(2),
     items: review
   };
 }
@@ -988,6 +1084,8 @@ function scoreAttempt(paperId, answers = []) {
 module.exports = {
   minStayMs,
   examMs,
+  timingForPaper,
+  asDrill,
   recommendedList,
   generatePaper,
   publicPaperById,
