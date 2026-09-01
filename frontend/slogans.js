@@ -1,7 +1,7 @@
 const SLOGANS = [
   'Un pas mic. Creierul tău e deja în încălzire.',
   'Greșeala e antrenament, nu semnal de alarmă.',
-  'Mate nu mușcă. Nici virgula de la română.',
+  'Pe programă, cu barem. Nu e un chat care îți face tema.',
   'Poți da testul de zece ori. Capitolul nu fuge.',
   'Întreabă mentorul de trei ori. A patra oară o să-ți sune cunoscut.',
   'Nu trebuie să știi tot. Trebuie să încerci următorul lucru.',

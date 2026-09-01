@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import { verdictLabel } from '../verdictCopy.js';
+import QuoteCard from './QuoteCard.jsx';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -197,11 +198,12 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
       {finished && result && (
         <div className="en-result-banner">
           <p className="display-font">Nota {result.grade} · {result.points}/{result.max} puncte</p>
+          <QuoteCard grade={result.grade} seed={result.grade} className="quote-inline" />
           <p>Timp de lucru: {clock(session?.durationMs || elapsed)}. Baremul e mai jos, după predare. Părintele primește nota, durata și ce ai răspuns.</p>
         </div>
       )}
 
-      <p className="quote-card quote-inline">„Nu lăsa pe mâine ce poți face azi.” — proverb</p>
+      {!session?.started && !finished && <QuoteCard className="quote-inline" />}
 
       {(paper.blocks || []).map(block => (
         <article key={block.label} className="en-paper-block">

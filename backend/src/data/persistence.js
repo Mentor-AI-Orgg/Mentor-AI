@@ -51,6 +51,44 @@ function fingerprint(data) {
   return JSON.stringify({ version: data.version, collections: data.collections });
 }
 
+function backupPath(n) {
+  return `${DATA_FILE}.bak${n}`;
+}
+
+function rotateBackups() {
+  try {
+    if (fs.existsSync(backupPath(2))) fs.renameSync(backupPath(2), backupPath(3));
+    if (fs.existsSync(backupPath(1))) fs.renameSync(backupPath(1), backupPath(2));
+    fs.copyFileSync(DATA_FILE, backupPath(1));
+  } catch (error) {
+    console.error(`[persistence] backup eșuat: ${error.message}`);
+  }
+}
+
+function tryLoadBackup() {
+  for (const n of [1, 2, 3]) {
+    const file = backupPath(n);
+    if (!fs.existsSync(file)) continue;
+    try {
+      const parsed = JSON.parse(fs.readFileSync(file, "utf8"));
+      if (parsed?.version !== FORMAT_VERSION) continue;
+      const restored = [];
+      for (const [name, handlers] of collections.entries()) {
+        const slice = parsed.collections?.[name];
+        if (slice === undefined) continue;
+        handlers.restore(slice);
+        restored.push(name);
+      }
+      lastSerialized = fingerprint(serialize());
+      console.warn(`[persistence] am restaurat din ${path.basename(file)}`);
+      return { loaded: true, restored, savedAt: parsed.savedAt, reason: "backup" };
+    } catch {
+      // următorul backup
+    }
+  }
+  return null;
+}
+
 function load() {
   loaded = true;
   if (!fs.existsSync(DATA_FILE)) {
@@ -61,17 +99,27 @@ function load() {
   try {
     parsed = JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
   } catch (error) {
-    // Un fișier corupt nu trebuie să împiedice pornirea aplicației. Îl punem
-    // deoparte, ca să poată fi inspectat, și pornim pe curat.
     const backup = `${DATA_FILE}.corupt-${Date.now()}`;
     try { fs.renameSync(DATA_FILE, backup); } catch (renameError) { /* nimic de făcut */ }
     console.error(`[persistence] fișier ilizibil, mutat în ${path.basename(backup)}: ${error.message}`);
+    const recovered = tryLoadBackup();
+    if (recovered) return recovered;
     return { loaded: false, reason: "corrupt" };
   }
 
   if (parsed?.version !== FORMAT_VERSION) {
     console.warn(`[persistence] versiune de format necunoscută (${parsed?.version}), pornesc pe curat.`);
     return { loaded: false, reason: "version_mismatch" };
+  }
+
+  const collectionKeys = parsed.collections && typeof parsed.collections === "object"
+    ? Object.keys(parsed.collections)
+    : [];
+  if (collectionKeys.length === 0) {
+    console.error("[persistence] fișier fără colecții, încerc backup.");
+    const recovered = tryLoadBackup();
+    if (recovered) return recovered;
+    return { loaded: false, reason: "empty" };
   }
 
   const restored = [];
@@ -102,6 +150,9 @@ function saveNow() {
 
   try {
     fs.mkdirSync(DATA_DIR, { recursive: true });
+    // Backup-ul e copia de DINAINTE de scriere. Dacă noul fișier e ilizibil,
+    // bak1 rămâne ultima versiune bună, nu un duplicat al fișierului stricat.
+    if (fs.existsSync(DATA_FILE)) rotateBackups();
     fs.writeFileSync(TEMP_FILE, JSON.stringify(data), "utf8");
     fs.renameSync(TEMP_FILE, DATA_FILE);
     lastSerialized = current;

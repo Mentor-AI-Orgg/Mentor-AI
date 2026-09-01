@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import QuoteCard from './QuoteCard.jsx';
 
 const LoginScreen = ({ onBack, onLogin, onForgotPassword }) => {
   const { t } = useI18n();
@@ -29,6 +30,7 @@ const LoginScreen = ({ onBack, onLogin, onForgotPassword }) => {
       <div className="eyebrow">{t('login.eyebrow')}</div>
       <h1 className="display-font form-title">{t('login.title')}</h1>
       <p className="form-subtitle">{t('login.subtitle')}</p>
+      <QuoteCard />
 
       <form className="form-fields" onSubmit={submit}>
         <label className="field-label">{t('login.email')}

@@ -126,10 +126,11 @@ async function authenticate({ email, password }) {
 // Datele publice ale contului. Nu include niciodată salt sau hash.
 function publicAccount(account) {
   if (!account) return null;
+  const { parentViewToken: _parentViewToken, ...safeProfile } = account.profile || {};
   return {
     email: account.email,
     role: account.role,
-    ...account.profile,
+    ...safeProfile,
     parentalConsentAt: account.parentalConsentAt || null,
     privacyAcceptedAt: account.privacyAcceptedAt || null,
     createdAt: account.createdAt

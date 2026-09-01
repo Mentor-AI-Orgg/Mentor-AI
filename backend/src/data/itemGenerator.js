@@ -39,13 +39,28 @@ function materialize(meta) {
   const built = meta.subject === 'romana'
     ? generateRomana(meta.chapterId, meta.kind, rand, meta.level)
     : generateMath(meta.chapterId, meta.kind, rand, meta.level);
-  if (!built) return null;
+  if (!built || !itemLooksSound(built, meta.kind)) return null;
   return {
     ...built,
     id: makeId(meta, meta.seed),
     generated: true,
     level: Number(meta.level) || built.level || 1
   };
+}
+
+function itemLooksSound(item, kind) {
+  if (!item) return false;
+  if (kind === 'flashcards' || item.options) {
+    const options = item.options || [];
+    if (options.length !== 4) return false;
+    if (new Set(options.map(value => String(value).trim())).size !== 4) return false;
+    const idx = Number(item.correct);
+    return Number.isInteger(idx) && idx >= 0 && idx < 4 && Boolean(String(options[idx]).trim());
+  }
+  const answers = item.answers || [];
+  if (!String(item.prompt || '').trim() || !answers.length) return false;
+  if (item.numeric && !Number.isFinite(Number(item.numeric.value))) return false;
+  return true;
 }
 
 function fromGeneratedId(id) {
@@ -86,4 +101,4 @@ function generateMany(opts, count) {
   return out;
 }
 
-module.exports = { isGenId, parseGenId, fromGeneratedId, generateOne, generateMany, materialize };
+module.exports = { isGenId, parseGenId, fromGeneratedId, generateOne, generateMany, materialize, itemLooksSound };
