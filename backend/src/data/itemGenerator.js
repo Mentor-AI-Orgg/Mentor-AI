@@ -91,8 +91,11 @@ function generateMany(opts, count) {
   const out = [];
   const want = Math.max(0, Number(count) || 0);
   const start = Math.max(1, Number(opts.startLevel) || 1);
+  const plan = Array.isArray(opts.levels) && opts.levels.length
+    ? opts.levels
+    : Array.from({ length: want }, (_, i) => start + i);
   for (let i = 0; i < want; i += 1) {
-    const level = start + i;
+    const level = Number(plan[i] || plan[plan.length - 1] || start) || 1;
     const item = generateOne({ ...opts, excludeIds: exclude, level });
     if (!item) break;
     exclude.push(item.id);

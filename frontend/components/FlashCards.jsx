@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import { formatScore, verdictClass, verdictLabel } from '../verdictCopy.js';
 import QuoteCard from './QuoteCard.jsx';
+import GradeGoalPicker from './GradeGoalPicker.jsx';
 
 const letters = ['A', 'B', 'C', 'D'];
 
@@ -16,8 +17,10 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
   const [coverage, setCoverage] = useState(null);
   const [exclude, setExclude] = useState([]);
   const [report, setReport] = useState(null);
+  const [pendingUnit, setPendingUnit] = useState(null);
+  const [targetNote, setTargetNote] = useState(null);
 
-  const generate = async (unit, more = false) => {
+  const generate = async (unit, more = false, note = targetNote) => {
     if (!unit || loading || !subject) return;
     setLoading(true);
     setPicked(null);
@@ -38,7 +41,8 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
       exclude_ids: skip,
       count: 8,
       track,
-      mode
+      mode,
+      target_note: note
     });
     const next = result.success && result.data?.cards?.length ? result.data.cards : [];
     setCards(next);
@@ -127,11 +131,11 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
       <div className="focus-timer-head">
         <div>
           <div className="eyebrow">Flashcarduri de teorie</div>
-          <h3 className="display-font">4 variante. De la ușor la greu.</h3>
+          <h3 className="display-font">4 variante. Pe nota pe care o vrei.</h3>
         </div>
         {reviewed > 0 && !report && <span className="learn-chip"><i className="fas fa-check" /> {hits}/{reviewed}</span>}
       </div>
-      <p className="flashcards-empty">{subject ? 'Alege capitolul. Cardurile urcă de la ușor la greu și nu se repetă. Revino în 3 zile, apoi în 7, la ideile greșite.' : 'Alege mai întâi materia (română sau matematică), apoi un capitol. Nu cad implicit pe mate.'}</p>
+      <p className="flashcards-empty">{subject ? 'Alege capitolul, apoi nota pe care ți-ai dori-o. Cardurile se potrivesc și nu se repetă.' : 'Alege mai întâi materia (română sau matematică), apoi un capitol. Nu cad implicit pe mate.'}</p>
 
       {chapters.length > 0 && (
         <div className="flashcards-presets">
@@ -139,8 +143,8 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
             <button
               key={unit.id}
               type="button"
-              className={`focus-preset-btn ${source?.id === unit.id ? 'selected' : ''}`}
-              onClick={() => generate(unit, false)}
+              className={`focus-preset-btn ${source?.id === unit.id || pendingUnit?.id === unit.id ? 'selected' : ''}`}
+              onClick={() => { setPendingUnit(unit); setReport(null); setCards([]); }}
               disabled={loading}
             >
               {unit.title}
@@ -149,6 +153,19 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
         </div>
       )}
 
+      {pendingUnit && !cards.length && !loading && !report && (
+        <GradeGoalPicker
+          kind="flashcards"
+          onPick={note => {
+            setTargetNote(note);
+            generate(pendingUnit, false, note);
+          }}
+          onCancel={() => setPendingUnit(null)}
+        />
+      )}
+      {targetNote && cards.length > 0 && (
+        <p className="quiz-coverage">Vrei nota {targetNote}. Cardurile stau pe treptele care duc acolo.</p>
+      )}
       {coverage && (
         <p className="quiz-coverage">Idei atinse: {coverage.seen}/{coverage.total}{coverage.complete ? ' · capitol acoperit; urmează variante noi, fără repetare' : ''}</p>
       )}
@@ -235,6 +252,7 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
                 Întreabă mentorul
               </button>
             )}
+            <button type="button" className="ghost-button" onClick={() => { setCards([]); setReport(null); setPendingUnit(source); }}>Altă notă</button>
             <button type="button" className="accent-button" onClick={() => generate(source, true)}>Alt set</button>
           </div>
         </div>

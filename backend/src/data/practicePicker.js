@@ -2,6 +2,7 @@ const { listChapterQuestions, listPoints, chapterKey } = require('./practiceBank
 const { listChapterExercises, listExercisePoints, publicExercise } = require('./exerciseBank');
 const { getGuide, normalizeGrade, normalizeSubject } = require('./gimnaziuGuide');
 const { generateMany } = require('./itemGenerator');
+const { normalizeTargetNote, maxLevelForNote, levelPlan } = require('./targetGrade');
 
 function shuffle(list) {
   const copy = list.slice();
@@ -46,13 +47,19 @@ function pickPractice({
   kind = 'flashcards',
   excludeIds = [],
   seenPoints = [],
-  count
+  count,
+  targetNote
 }) {
   const sid = normalizeSubject(subject);
   const g = normalizeGrade(grade);
   const cid = resolveChapterId(sid, g, chapterId, topic);
   const isTest = kind === 'test';
-  const pool = isTest ? listChapterExercises(sid, g, cid) : listChapterQuestions(sid, g, cid);
+  const target = normalizeTargetNote(targetNote);
+  const maxLevel = maxLevelForNote(target);
+  const rawPool = isTest ? listChapterExercises(sid, g, cid) : listChapterQuestions(sid, g, cid);
+  const pool = maxLevel
+    ? rawPool.filter(item => (Number(item.level) || 1) <= maxLevel)
+    : rawPool;
   const points = isTest ? listExercisePoints(sid, g, cid) : listPoints(sid, g, cid);
   const want = isTest ? Math.max(1, Number(count) || 10) : Math.max(1, Number(count) || 8);
   const excluded = new Set((excludeIds || []).map(String));
@@ -79,6 +86,7 @@ function pickPractice({
       grade: g,
       chapterId: cid,
       startLevel: picked.length + 1,
+      levels: maxLevel ? levelPlan(want, maxLevel).slice(picked.length) : undefined,
       excludeIds: [...excluded, ...used]
     }, want - picked.length);
     generated.forEach(item => {
@@ -96,6 +104,8 @@ function pickPractice({
     grade: g,
     chapterId: cid,
     kind,
+    targetNote: target,
+    maxLevel,
     cards: picked,
     coverage: {
       seen: Math.min(points.length, afterPoints.size),

@@ -472,7 +472,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                       <p className="lesson-practice-hint">
                         {isEn
                           ? 'Lecția e aici. Modelele EN (cu 4 variante) sunt deasupra: începi, stai timpul de sală, apoi vezi baremul. Antrenamentul EN e exercițiu scurt, separat de proba cronometrată.'
-                          : 'Testul și flashcardurile urcă de la foarte ușor la greu. Scrii răspunsul la test; la flashcarduri alegi A–D. Nu se repetă: fiecare rundă aduce itemi noi.'}
+                          : 'Înainte de test sau flashcarduri spui ce notă ți-ai dori. Itemii se potrivesc. Scrii răspunsul la test; la flashcarduri alegi A–D. Nu se repetă.'}
                       </p>
                       <small className="chapter-disclaimer">Ghid intern Mentor AI, nu manual. „Cum o văd eu”, după programă.</small>
                       <div className="learning-actions">
