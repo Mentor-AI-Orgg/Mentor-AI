@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import QuoteCard from './QuoteCard.jsx';
 
 // Cuvinte care nu au voie într-un nume de utilizator public (afișat pe
 // leaderboard etc.). Listă minimă de pornire -- de extins pe măsură ce
@@ -112,6 +113,7 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
       <div className="eyebrow">Cont de elev</div>
       <h1 className="display-font form-title">Hai să te cunoaștem.</h1>
       <p className="form-subtitle">Mentor AI este doar pentru elevi. Părintele primește pe email tot ce faci aici, fără să-și facă cont.</p>
+      <QuoteCard />
 
       <div className="form-fields">
         {studentFields.map(field => (

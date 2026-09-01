@@ -26,7 +26,6 @@ const { generalApiLimiter, chatLimiter, detectLimiter } = require("./middleware/
 const persistence = require("./data/persistence");
 const calendarOauthRoute = require("./routes/calendarOauth");
 const curriculumRoute = require("./routes/curriculum");
-const parentRoute = require("./routes/parent");
 const { handleStripeWebhook } = require("./payments/stripe");
 
 function createApp(options = {}) {
@@ -77,7 +76,6 @@ function createApp(options = {}) {
     app.use(`${prefix}/health`, healthRoute);
     app.use(`${prefix}/leaderboard`, leaderboardRoute);
     app.use(`${prefix}/curriculum`, curriculumRoute);
-    app.use(`${prefix}/parent`, parentRoute);
 
     const studentOnly = [authRequired, studentRequired];
 

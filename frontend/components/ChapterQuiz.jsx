@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import { formatScore, verdictClass, verdictLabel } from '../verdictCopy.js';
+import QuoteCard from './QuoteCard.jsx';
 
 const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onRewardClaim, onAskMentor }) => {
   const [cards, setCards] = useState([]);
@@ -152,6 +153,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
       {report && (
         <div className="quiz-done">
           <p className="display-font">Nota {report.grade} · {formatScore(report.credit ?? report.correct)} din {report.total}</p>
+          <QuoteCard grade={report.grade} seed={report.grade} />
           {report.durationMs ? <p className="quiz-explain">Timp: {Math.max(1, Math.round(report.durationMs / 60000))} min. Părintele primește nota, durata și răspunsurile.</p> : null}
           <p>{report.message}</p>
           {report.strengths?.length > 0 && <p className="quiz-explain">Puncte forte: {report.strengths.join(', ')}</p>}

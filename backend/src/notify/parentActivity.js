@@ -91,7 +91,6 @@ function testEmailLines({ name, studentEmail, type, note, meta }) {
     answerLines.length ? answerLines.join("\n") : "(fără răspunsuri salvate)",
     "",
     "Nu ai nevoie de un cont în aplicație. Primești aceste mesaje pe emailul dat la înregistrarea copilului.",
-    meta.parentLink ? `Progresul copilului, oricând: ${meta.parentLink}` : "",
     smtpConfigured() ? "" : "Notă: serverul nu are SMTP configurat, deci mesajul rămâne în jurnalul de livrare (mock)."
   ].filter(line => line !== "");
 }
@@ -133,11 +132,6 @@ async function notifyParent({ studentEmail, type, note = "", meta = {} }) {
     economy.parentNotify.studyDate = today;
   }
 
-  const { ensureParentViewToken } = require("../data/authStore");
-  const { parentReportUrl } = require("../data/parentReport");
-  const config = require("../config");
-  const token = ensureParentViewToken(studentEmail);
-  const parentLink = token ? parentReportUrl(token, config.APP_BASE_URL) : "";
   const name = (account.profile && (account.profile.name || account.profile.username)) || studentEmail;
   const action = isTest
     ? (LABELS[type] || "a finalizat un test")
@@ -149,7 +143,7 @@ async function notifyParent({ studentEmail, type, note = "", meta = {} }) {
     ? `Mentor AI: ${name} — nota ${meta.gradeNote != null ? meta.gradeNote : meta.grade || "—"} la ${meta.title || note || "test"}`
     : `Mentor AI: ${name} ${action}`;
   const body = isTest
-    ? testEmailLines({ name, studentEmail, type, note, meta: { ...meta, parentLink } }).join("\n")
+    ? testEmailLines({ name, studentEmail, type, note, meta }).join("\n")
     : [
       "Salut,",
       "",
@@ -158,7 +152,6 @@ async function notifyParent({ studentEmail, type, note = "", meta = {} }) {
       meta && meta.subject ? `Materie: ${meta.subject}` : "",
       "",
       "Nu ai nevoie de un cont în aplicație. Primești aceste mesaje pe emailul dat la înregistrarea copilului.",
-      parentLink ? `Progresul copilului, oricând: ${parentLink}` : "",
       smtpConfigured() ? "" : "Notă: serverul nu are SMTP configurat, deci mesajul rămâne în jurnalul de livrare (mock)."
     ].filter(line => line !== "").join("\n");
 

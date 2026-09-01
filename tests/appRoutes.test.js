@@ -14,8 +14,7 @@ describe('app hash routes', () => {
       ['calendar', {}, '#/calendar'],
       ['learn', {}, '#/lectii'],
       ['learn', { subject: 'romana', grade: '6', chapter: 'fractii' }, '#/lectii/romana/6/fractii'],
-      ['learn', { track: 'en', subject: 'matematica' }, '#/en/matematica'],
-      ['parent', { token: 'abc123' }, '#/parinte/abc123']
+      ['learn', { track: 'en', subject: 'matematica' }, '#/en/matematica']
     ];
 
     for (const [screen, extras, hash] of cases) {

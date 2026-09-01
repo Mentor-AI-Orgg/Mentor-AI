@@ -21,9 +21,48 @@ const QUOTES = [
   { text: 'Fii curajos, chiar și atunci când ți-e un pic teamă.', by: 'proverb de lucru' }
 ];
 
+const GRADE_QUOTES = {
+  high: [
+    { text: "Ai făcut treaba. Ține ritmul, nu doar nota.", by: "Mentor AI" },
+    { text: "Succesul e suma eforturilor mici, repetate zi de zi.", by: "Robert Collier" },
+    { text: "Cunoașterea e putere. Ai arătat că o folosești.", by: "Francis Bacon" }
+  ],
+  good: [
+    { text: "Ești pe drum. Încă un pas și se vede.", by: "Mentor AI" },
+    { text: "Nu contează cât de încet mergi, atâta timp cât nu te oprești.", by: "Confucius" },
+    { text: "Practica face măiestria.", by: "proverb" }
+  ],
+  ok: [
+    { text: "Nota e un semnal, nu o sentință. Mai încearcă același capitol.", by: "Mentor AI" },
+    { text: "Greșelile sunt dovada că încerci.", by: "proverb de lucru" },
+    { text: "Cel care mută un munte începe prin a căra pietre mici.", by: "Confucius" }
+  ],
+  low: [
+    { text: "Nu ești învins până nu renunți.", by: "proverb" },
+    { text: "Nu am eșuat. Am găsit mii de feluri care nu funcționează.", by: "Thomas Edison" },
+    { text: "Nu renunța. Greșeala de azi e antrenamentul de mâine.", by: "Mentor AI" }
+  ]
+};
+
+function gradeBand(grade) {
+  const n = Number(grade);
+  if (!Number.isFinite(n)) return "ok";
+  if (n >= 9) return "high";
+  if (n >= 7) return "good";
+  if (n >= 5) return "ok";
+  return "low";
+}
+
 function quoteFor(seed = Date.now()) {
   const index = Math.abs(Number(seed) || 0) % QUOTES.length;
   return QUOTES[index];
+}
+
+function quoteForGrade(grade, seed) {
+  const band = GRADE_QUOTES[gradeBand(grade)];
+  const raw = seed != null ? Number(seed) : Math.round(Number(grade) * 10);
+  const index = Math.abs(Number(raw) || 0) % band.length;
+  return band[index];
 }
 
 function dailyQuote() {
@@ -38,4 +77,4 @@ function formatQuote(entry) {
   return `„${entry.text}” — ${entry.by}`;
 }
 
-module.exports = { QUOTES, quoteFor, dailyQuote, formatQuote };
+module.exports = { QUOTES, GRADE_QUOTES, gradeBand, quoteFor, quoteForGrade, dailyQuote, formatQuote };

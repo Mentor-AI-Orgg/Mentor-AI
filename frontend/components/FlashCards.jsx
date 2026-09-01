@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import { formatScore, verdictClass, verdictLabel } from '../verdictCopy.js';
+import QuoteCard from './QuoteCard.jsx';
 
 const letters = ['A', 'B', 'C', 'D'];
 
@@ -210,6 +211,7 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
       {report && (
         <div className="quiz-done">
           <p className="display-font">Nota {report.grade} · {formatScore(report.credit ?? report.correct)} din {report.total}</p>
+          <QuoteCard grade={report.grade} seed={report.grade} />
           <p>{report.message}</p>
           {report.strengths?.length > 0 && <p className="quiz-explain">Puncte forte: {report.strengths.join(', ')}</p>}
           {report.weaknesses?.length > 0 && <p className="quiz-sample">De lucrat: {report.weaknesses.join(', ')}</p>}

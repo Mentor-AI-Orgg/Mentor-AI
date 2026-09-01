@@ -185,8 +185,6 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .password-checklist li.rule-pending i { color: #63716e; }
 .form-submit { margin-top: 26px; }
 .forgot-link { margin: 18px auto; font-size: 12px; }
-.parent-report { max-width: 560px; }
-.parent-report-h { margin: 18px 0 8px; font-size: 15px; }
 .splash-page { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 42px 28px; background: linear-gradient(145deg, #211d4d, #0f1028 62%); }
 .splash-mark { width: 82px; height: 82px; border-radius: 24px; display: grid; place-items: center; font: 700 44px 'Space Grotesk', sans-serif; margin-bottom: 34px; }
 .splash-title { margin-top: 12px; font-size: clamp(64px, 19vw, 92px); line-height: .82; letter-spacing: -3px; }
@@ -417,19 +415,9 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   .animate-slideUp,
   .animate-pulse-slow,
   .animate-splash,
-  .typing-dot,
-  .welcome-verb-from,
-  .welcome-verb-to {
+  .typing-dot {
     animation: none !important;
   }
-  .welcome-verb-swap { display: inline; }
-  .welcome-verb-swap > * {
-    display: inline;
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-  }
-  .welcome-verb-to::before { content: ', '; }
 }
 
 .floating-lines-container.is-static {
@@ -941,31 +929,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 }
 .welcome-title { margin: 0; font-size: clamp(40px, 12vw, 52px); line-height: .95; }
 .welcome-lead { margin: 12px 0 0; color: var(--muted); font-size: 16px; line-height: 1.5; }
-.welcome-verb-swap {
-  display: inline-grid;
-  vertical-align: baseline;
-  justify-items: start;
-}
-.welcome-verb-swap > * { grid-area: 1 / 1; white-space: nowrap; }
-.welcome-verb-from {
-  animation: welcomeVerbOut 2.6s ease forwards;
-}
-.welcome-verb-to {
-  color: var(--aqua);
-  font-weight: 800;
-  opacity: 0;
-  transform: translateY(0.45em);
-  animation: welcomeVerbIn 2.6s ease forwards;
-}
-@keyframes welcomeVerbOut {
-  0%, 36% { opacity: 1; transform: translateY(0); filter: blur(0); }
-  62%, 100% { opacity: 0; transform: translateY(-0.45em); filter: blur(4px); }
-}
-@keyframes welcomeVerbIn {
-  0%, 36% { opacity: 0; transform: translateY(0.45em); filter: blur(4px); }
-  62%, 100% { opacity: 1; transform: translateY(0); filter: blur(0); }
-}
 .welcome-lead strong { color: var(--ink); font-weight: 800; }
+.welcome-succeed { color: var(--aqua) !important; }
 .welcome-pitch {
   margin: 14px 0 0;
   color: var(--ink);

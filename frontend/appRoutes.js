@@ -15,9 +15,6 @@ export function parseAppHash(hash) {
   const [head, a, b, c] = parts;
 
   if (!head || head === 'start') return { kind: 'guest', screen: 'welcome' };
-  if (head === 'parinte' || head === 'parent') {
-    return { kind: 'guest', screen: 'parent', extras: { token: a || '' } };
-  }
   if (head === 'conectare' || head === 'login') return { kind: 'guest', screen: 'login' };
   if (head === 'cont' || head === 'register') return { kind: 'guest', screen: 'register' };
   if (head === 'onboarding') return { kind: 'guest', screen: 'onboarding' };
@@ -55,8 +52,6 @@ export function hashForRoute(screen, extras = {}) {
     case 'welcome':
     case 'splash':
       return '#/start';
-    case 'parent':
-      return extras.token ? `#/parinte/${extras.token}` : '#/parinte';
     case 'login':
       return '#/conectare';
     case 'register':
