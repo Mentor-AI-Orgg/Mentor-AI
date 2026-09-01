@@ -669,7 +669,14 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .en-paper-item p { margin: 0 0 6px; white-space: pre-wrap; line-height: 1.6; }
 .en-paper-item small { color: rgba(255,255,255,.62); }
 .en-paper-passage { padding: 14px 16px; border-radius: 14px; background: rgba(15,16,40,.55); border: 1px solid rgba(255,255,255,.08); }
-.en-short { margin-top: 10px; width: 100%; min-height: 72px; }
+.en-short { margin-top: 10px; width: 100%; min-height: 96px; }
+.en-word-meter { display: block; margin-top: 6px; color: rgba(255,255,255,.62); }
+.en-word-meter.is-ok { color: #9ee4b5; }
+.en-word-meter.is-short { color: #f0c36a; }
+.en-tf { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.en-tf > li { padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.05); }
+.en-tf-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.en-paper-text.is-verse { font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Times New Roman', serif; line-height: 1.85; max-width: 52ch; }
 .en-notebook-note {
   margin-top: 10px;
   padding: 12px 14px;

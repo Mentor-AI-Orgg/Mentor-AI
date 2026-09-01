@@ -1,46 +1,14 @@
 // Perechi extra de texte EN (originale). Se lipesc de banca principală
 // ca să rămână „Alt model” fără capăt. Nu copiem subiecte publicate.
 
+const { assembleOfficial, legacyToSpec } = require('./enRomanaOfficial');
+
 function packs(helpers) {
-  const { paperShell, publicItem, block, note } = helpers;
   const NOVEL =
     'Poți porni de la o carte citită la gimnaziu. O valoare comună + un fapt din opera ta + un fapt din fragment.';
 
   function assemble(key, meta, lit, non) {
-    return {
-      public: paperShell(meta.id, meta.title, 'romana', note, [
-        block(
-          'Subiectul I A',
-          50,
-          'Citește fiecare dintre cele două texte-suport (literar + nonliterar). Itemii 1–5 sunt grile. Itemii 6–8 se scriu scurt. Itemul 9 asociază fragmentul literar cu o operă citită de tine.',
-          [
-            publicItem(0, 0, lit, { passage: true, kind: 'passage' }),
-            publicItem(0, 0, non, { passage: true, kind: 'passage' }),
-            ...meta.aItems.map(item => publicItem(item.n, item.points, item.prompt, item.extra || {}))
-          ]
-        ),
-        block(
-          'Subiectul I B',
-          20,
-          'Gramatică, vocabular, fonetică și sintaxă — doar grile.',
-          meta.bItems.map(item => publicItem(item.n, item.points, item.prompt, { choices: item.choices }))
-        ),
-        block(
-          'Subiectul II',
-          20,
-          'Compunere pe caiet, minimum 150 de cuvinte. Aici NU o tastezi.',
-          [
-            publicItem(1, 20, meta.composition, {
-              kind: 'write',
-              photoOnly: true,
-              minWords: 150,
-              lines: 'scrie în caiet, min. 150 de cuvinte'
-            })
-          ]
-        )
-      ]),
-      barem: meta.barem
-    };
+    return assembleOfficial(helpers, legacyToSpec(meta, lit, non));
   }
 
   const g = assemble('g', {

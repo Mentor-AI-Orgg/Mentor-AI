@@ -280,7 +280,7 @@ const LESSONS_EN = {
     lesson(
       'harta-ro',
       'Cele trei subiecte la română',
-      'Proba de limba română e scrisă, două ore, 90 de puncte plus 10 din oficiu. Schema EN 2026: Subiectul I (70p) pornește de la două texte lungi — unul literar, unul nonliterar, pe aceeași temă. Partea A e înțelegere: grile din ambele texte, apoi răspunsuri scrise (transcriere, motivare) și o asociere cu o operă citită de tine. Partea B e doar gramatică, grile (fonetică, vocabular, morfologie, sintaxă). Subiectul II (20p) e compunerea: o scrii în caiet, minimum 150 de cuvinte, nu o tastezi în aplicație.',
+      'Proba de limba română e scrisă, două ore, 90 de puncte plus 10 din oficiu. Schema EN 2026: Subiectul I (70p) pornește de la două texte — textul 1 poate fi versuri sau narațiune, textul 2 e nonliterar. Partea A (38p) e înțelegere: notare, trei grile, adevărat/fals pe 6 enunțuri, apoi itemii 6–9 se scriu (măsură și rimă sau trăsătură de tipar; element comun min. 30 de cuvinte; justificare 50–100; asociere 50–100). Partea B (32p) e gramatică: 4 grile (hiat, derivare, sens, paronime) și 4 răspunsuri scrise. Subiectul II (20p) e compunerea: o scrii în caiet, minimum 150 de cuvinte, nu o tastezi în aplicație.',
       'Nu ți se cere un comentariu tocit dintr-o carte de critică. Ți se cere să arăți că ai citit textul de azi și că poți scrie tu, organizat.',
       'Exemplu lucrat: vezi un item „numește două trăsături ale personajului, cu citate”. Nu scrii „e bun și curajos” din memorie. Cauți în text două fapte sau vorbe și le pui între ghilimele scurte, cu rândul dacă e dat.',
       'Reține: textul de pe foaie e legea. Părerea ta vine la itemii de motivare, la asocierea cu o carte citită și la Subiectul II (compunerea pe caiet).'

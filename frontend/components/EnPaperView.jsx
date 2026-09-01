@@ -6,6 +6,32 @@ import GeoFigure from './GeoFigure.jsx';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
+function countWords(text) {
+  return String(text || '').trim().split(/\s+/).filter(Boolean).length;
+}
+
+function WordMeter({ text, minWords, maxWords }) {
+  const n = countWords(text);
+  const hasMin = Number(minWords) > 0;
+  const hasMax = Number(maxWords) > 0;
+  if (!hasMin && !hasMax) {
+    return n > 0 ? <small className="en-word-meter">{n} {n === 1 ? 'cuvânt' : 'cuvinte'}</small> : null;
+  }
+  const enough = !hasMin || n >= Number(minWords);
+  const notOver = !hasMax || n <= Number(maxWords);
+  const inRange = enough && notOver && n > 0;
+  const range = hasMin && hasMax
+    ? `${minWords}–${maxWords}`
+    : hasMin
+      ? `minimum ${minWords}`
+      : `maximum ${maxWords}`;
+  return (
+    <small className={`en-word-meter ${inRange ? 'is-ok' : (n > 0 ? 'is-short' : '')}`}>
+      {n} {n === 1 ? 'cuvânt' : 'cuvinte'} · cerință {range}
+    </small>
+  );
+}
+
 function clock(ms) {
   const total = Math.max(0, Math.ceil(Number(ms) || 0) / 1000);
   const hours = Math.floor(total / 3600);
@@ -203,7 +229,8 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
           n: item.n,
           letter: draft.letter || '',
           text: draft.text || '',
-          parts: draft.parts || {}
+          parts: draft.parts || {},
+          tf: Array.isArray(draft.tf) ? draft.tf : undefined
         });
       });
     });
@@ -230,10 +257,10 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
           <div className="eyebrow">
             {isDrill
               ? (paper.subject === 'romana'
-                ? 'Antrenament scurt · texte + grile, fără compunere și fără ora de sală'
+                ? 'Antrenament scurt · texte + grile + scriere 6–7, fără compunere și fără ora de sală'
                 : 'Antrenament scurt · grile + o problemă, fără ora de sală')
               : (paper.subject === 'romana'
-                ? 'Simulare EN · I A texte + scriere · I B gramatică grile · II compunere pe caiet'
+                ? 'Simulare EN · I A 38p (texte, grile, A/F, scriere 6–9) · I B 32p · II pe caiet'
                 : 'Simulare EN · I–II cu 4 variante · III cu a) și b) · rezultat aici, rezolvare pe caiet')}
           </div>
           <h3 className="display-font en-paper-title">{paper.title}</h3>
@@ -325,7 +352,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
               return (
                 <li key={`${block.label}-${entry.n}-${idx}`} className={isPassage ? 'en-paper-passage' : 'en-paper-item'}>
                   {isPassage ? (
-                    <div className="en-paper-text">{entry.prompt}</div>
+                    <div className={`en-paper-text ${entry.verse ? 'is-verse' : ''}`}>{entry.prompt}</div>
                   ) : (
                     <>
                       <strong className="en-paper-n">{entry.n}.</strong>
@@ -414,19 +441,76 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                             })}
                           </ol>
                         )}
+                        {entry.kind === 'true-false' && entry.statements?.length > 0 && (
+                          <ol className="en-tf">
+                            {entry.statements.map((statement, statementIndex) => {
+                              const picked = Array.isArray(draft.tf) ? draft.tf[statementIndex] : undefined;
+                              const scoredRow = (scoredItem?.statements || [])[statementIndex];
+                              return (
+                                <li key={`${key}-tf-${statementIndex}`}>
+                                  <p>{statement.n}. {statement.text}</p>
+                                  {session?.started && !finished ? (
+                                    <div className="en-tf-actions">
+                                      <label className={`en-choice-btn ${picked === true ? 'selected' : ''}`}>
+                                        <input
+                                          type="radio"
+                                          name={`${key}-tf-${statementIndex}`}
+                                          checked={picked === true}
+                                          onChange={() => {
+                                            const next = Array.isArray(draft.tf) ? draft.tf.slice() : [];
+                                            next[statementIndex] = true;
+                                            setAnswer(block.label, entry.n, { tf: next });
+                                          }}
+                                        />
+                                        Adevărat
+                                      </label>
+                                      <label className={`en-choice-btn ${picked === false ? 'selected' : ''}`}>
+                                        <input
+                                          type="radio"
+                                          name={`${key}-tf-${statementIndex}`}
+                                          checked={picked === false}
+                                          onChange={() => {
+                                            const next = Array.isArray(draft.tf) ? draft.tf.slice() : [];
+                                            next[statementIndex] = false;
+                                            setAnswer(block.label, entry.n, { tf: next });
+                                          }}
+                                        />
+                                        Fals
+                                      </label>
+                                    </div>
+                                  ) : !session?.started && !finished ? (
+                                    <small>Marchezi adevărat sau fals după ce începi testul.</small>
+                                  ) : null}
+                                  {finished && scoredRow ? (
+                                    <small>
+                                      Tu: {scoredRow.given === true ? 'Adevărat' : scoredRow.given === false ? 'Fals' : '—'}
+                                      {' · '}
+                                      Baremul: {scoredRow.expected ? 'Adevărat' : 'Fals'}
+                                    </small>
+                                  ) : null}
+                                </li>
+                              );
+                            })}
+                          </ol>
+                        )}
                         {(entry.kind === 'short' || entry.kind === 'associate') && session?.started && !finished && (
-                          <textarea
-                            className="field form-input quiz-work en-short"
-                            value={draft.text || ''}
-                            onChange={event => setAnswer(block.label, entry.n, { text: event.target.value })}
-                            placeholder={entry.kind === 'associate'
-                              ? 'Scrie aici asocierea (50–80 de cuvinte): opera citită, valoarea comună, un fapt din fragment și unul din carte.'
-                              : (entry.minWords >= 20
-                                ? 'Scrie răspunsul aici, în cuvinte. Nu e compunerea lungă — aceea e pe caiet, la Subiectul II.'
-                                : 'Scrie răspunsul scurt (transcriere, cifră, enunț).')}
-                            aria-label={`Răspuns itemul ${entry.n}`}
-                            rows={entry.kind === 'associate' || (entry.minWords || 0) >= 20 ? 5 : 2}
-                          />
+                          <>
+                            <textarea
+                              className="field form-input quiz-work en-short"
+                              value={draft.text || ''}
+                              onChange={event => setAnswer(block.label, entry.n, { text: event.target.value })}
+                              placeholder={entry.kind === 'associate'
+                                ? 'Scrie aici asocierea (50–100 de cuvinte): opera citită, valoarea sau tema comună, un fapt din fragment și unul din carte.'
+                                : ((entry.minWords || 0) >= 50
+                                  ? 'Scrie răspunsul aici (50–100 de cuvinte). Numărul de cuvinte apare sub câmp. Compunerea lungă rămâne pe caiet, la Subiectul II.'
+                                  : ((entry.minWords || 0) >= 20
+                                    ? 'Scrie răspunsul aici. Numărul de cuvinte apare sub câmp.'
+                                    : 'Scrie răspunsul aici (transcriere, măsură și rimă, trăsătură + secvență).'))}
+                              aria-label={`Răspuns itemul ${entry.n}`}
+                              rows={entry.kind === 'associate' || (entry.minWords || 0) >= 20 ? 7 : ((entry.minWords || 0) >= 8 ? 4 : 3)}
+                            />
+                            <WordMeter text={draft.text || ''} minWords={entry.minWords} maxWords={entry.maxWords} />
+                          </>
                         )}
                         {(entry.kind === 'short' || entry.kind === 'associate') && !session?.started && !finished && (
                           <small>Câmpul de răspuns se deschide după ce începi testul.</small>
@@ -557,7 +641,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
       <p className="en-paper-foot">
         {isDrill
           ? 'Antrenament scurt: predai când termini, fără ora de sală. Baremul se deschide după predare. Simularea completă (minim 60 de minute) e butonul „Alt model” de deasupra.'
-          : 'Baremul întregului test se deschide după predare. La română, itemii 6–9 se scriu aici; compunerea rămâne pe caiet. La mate, la Subiectul III scrii doar rezultatul. Pozele de corectare: 3 pe zi, ca să rămână aplicația gratuită. Părintele primește nota, durata și răspunsurile tale.'}
+          : 'Baremul întregului test se deschide după predare. La română, itemii 6–9 de la I A se scriu aici (cu număr de cuvinte); compunerea rămâne pe caiet. La mate, la Subiectul III scrii doar rezultatul. Pozele de corectare: 3 pe zi, ca să rămână aplicația gratuită. Părintele primește nota, durata și răspunsurile tale.'}
       </p>
     </section>
   );

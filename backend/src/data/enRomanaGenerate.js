@@ -3,15 +3,7 @@
 // Combinările (kit × loc × nume × obiect × citat × orar × paragrafe) nu se epuizează.
 
 const { pick, shuffle, int } = require('./itemRng');
-
-const NOVEL =
-  'Poți porni de la o carte citită la gimnaziu (Amintiri din copilărie, Povestea lui Harap-Alb, Dumbrava minunată, Toate pânzele sus! sau alta). O valoare comună + un fapt din opera ta + un fapt din fragment.';
-
-const ASSOCIATE_TOKENS = [
-  'amintiri', 'creanga', 'creangă', 'harap', 'dumbrava', 'sadoveanu', 'tudoran', 'pânze', 'panze',
-  'prieten', 'familie', 'curaj', 'grij', 'natur', 'copil', 'bunici', 'bunic', 'onest', 'adevăr', 'adevar',
-  'responsabil', 'învățătur', 'invatatur', 'lectur', 'carte', 'roman', 'poveste', 'oper'
-];
+const { assembleOfficial, ASSOCIATE_TOKENS, NOVEL_HINT, typoMessage } = require('./enRomanaOfficial');
 
 const NAMES = [
   'Mara', 'Nica', 'Luca', 'Ira', 'Teo', 'Ana', 'Daria', 'Irina', 'Sofia', 'Matei',
@@ -316,123 +308,202 @@ Fotografiile se fac doar dacă un profesor cere un rezultat pentru portofoliu, p
 Coordonator: dirigintele clasei ${f.classDuty}, cu sprijinul Consiliului elevilor.`;
 }
 
-function grammarItems(f) {
-  const name = f.name;
-  return [
-    { n: 1, points: 2, prompt: `Predicatul din „${name} ${f.kit.verb}” este…`, choices: [f.kit.verb, name, f.place.loc.split(' ')[0], 'școala'] },
-    { n: 2, points: 2, prompt: `„${f.kit.adj}” din „${f.kit.adjNoun}” e…`, choices: ['adjectiv / atribut', 'verb', 'prepoziție', 'subiect'] },
-    { n: 3, points: 2, prompt: `Un sinonim potrivit, în context, pentru „se întoarce” (la loc) este…`, choices: ['revine', 'pleacă de tot', 'uită', 'strigă'] },
-    { n: 4, points: 3, prompt: `Subiectul din „${f.kit.rule.replace(/\.$/, '')}” lipsește (propoziție neechivocă). Predicatul este…`, choices: [f.kit.predRule, 'locul', 'profesor', 'Nu'] },
-    { n: 5, points: 3, prompt: `„${f.kit.compare}” este…`, choices: ['comparație', 'un predicat', 'un articol', 'o interjecție'] },
-    { n: 6, points: 3, prompt: `Cuvântul „${f.kit.splitWord}” se desparte în silabe…`, choices: [f.kit.split, f.kit.splitWord.slice(0, 3) + '-' + f.kit.splitWord.slice(3), f.kit.split.replace(/-/g, ''), f.kit.splitWord] },
-    { n: 7, points: 2, prompt: `În „${f.object.obj}”, cuvântul care precizează obiectul (atribut) ține de…`, choices: ['determinarea substantivului', 'un predicat verbal', 'un subiect subînțeles', 'o prepoziție izolată'] },
-    { n: 8, points: 3, prompt: `„obligatoriu” / regula din textul 2 e, morfologic, mai aproape de…`, choices: ['adjectiv (nume predicativ sau atribut)', 'verb la infinitiv', 'prepoziție', 'interjecție'] }
-  ];
+function grammarOfficial(f, rand) {
+  const hiatWord = pick(rand, ['idee', 'alee', 'poet', 'aerul']);
+  const hiatMap = {
+    idee: { correct: 'hiat (i-de-e)', distractors: ['diftong', 'triftong', 'o consoană dublă'] },
+    alee: { correct: 'hiat (a-le-e)', distractors: ['diftong', 'triftong', 'o consoană dublă'] },
+    poet: { correct: 'hiat (po-et)', distractors: ['diftong', 'triftong', 'o consoană dublă'] },
+    aerul: { correct: 'hiat (a-e-rul)', distractors: ['diftong', 'triftong', 'o consoană dublă'] }
+  };
+  const derived = pick(rand, ['învățătură', 'cititor', 'închidere', 'răbdare']);
+  const paronym = pick(rand, [
+    { prompt: 'Perechea de paronime potrivită contextului este…', choices: ['familial / familiar', 'temporal / temporar', 'original / originar', 'liber / librar'], correct: 'familial / familiar' },
+    { prompt: 'Perechea de paronime potrivită contextului este…', choices: ['temporal / temporar', 'familial / familiar', 'oral / orar', 'clasă / clasic'], correct: 'temporal / temporar' },
+    { prompt: 'Perechea de paronime potrivită contextului este…', choices: ['orar / oral', 'familial / familiar', 'liber / librar', 'eminent / iminent'], correct: 'orar / oral' }
+  ]);
+  return {
+    bMcq: [
+      { prompt: `În cuvântul „${hiatWord}” există…`, choices: [hiatMap[hiatWord].correct, ...hiatMap[hiatWord].distractors], letter: 'A', explain: `${hiatWord}: hiat (vocale în hiat, nu diftong).`, steps: ['Vocale în silabe alăturate'] },
+      { prompt: `Cuvântul „${derived}” este format prin…`, choices: ['derivare cu sufix', 'compunere', 'conversiune', 'schimbarea accentului'], letter: 'A', explain: `${derived} = radical + sufix.`, steps: ['Derivare'] },
+      { prompt: 'Un sinonim potrivit, în context, pentru „se întoarce” (la loc) este…', choices: ['revine', 'pleacă de tot', 'uită', 'strigă'], letter: 'A', explain: 'În context: revine.', steps: ['Sens în text'] },
+      { prompt: paronym.prompt, choices: paronym.choices, letter: 'A', explain: `Paronime: ${paronym.correct}.`, steps: ['Sensuri învecinate, forme diferite'] }
+    ],
+    morphWord: f.kit.adj
+  };
 }
 
-function localShuffle(list, salt) {
-  const copy = list.slice();
-  let a = salt;
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    a = (a * 1664525 + 1013904223) >>> 0;
-    const j = a % (i + 1);
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
+function poetic(f) {
+  const n = f.name;
+  const loc = f.place.loc;
+  const obj = f.object.obj;
+  const weather = f.weather.replace(/\.$/, '');
+  const stanzas = [
+    `${loc.charAt(0).toUpperCase()}${loc.slice(1)} stă treaz,\n${weather.toLowerCase()}, fără grabă.\n${n} vine ${f.when},\ncând ${f.sense}.`,
+    `Ține ${obj}\nca pe o treabă, nu ca pe-un spectacol.\n${f.place.prep.charAt(0).toUpperCase()}${f.place.prep.slice(1)} nimeni nu pune\no placă cu nume, un titlu, un ocol.`,
+    `„${f.quote}”, aude,\nvorbă scurtă, litere drepte.\n${n} n-a uitat. ${f.kit.verb[0].toUpperCase()}${f.kit.verb.slice(1)} încet,\nverifică, tace, nu așteaptă recompense.`,
+    `${f.helper} se oprește o clipă.\nN-a luat nimic. A îndreptat un detaliu\n— o piatră, un colț, o sfoară —\napoi a plecat, fără discurs, fără milă.`,
+    `În clasă, un coleg șoptește:\n„Tu ești cu locul ăla.” ${n} dă din umeri.\nNu voia un titlu. Voia ca locul\nsă rămână viu până ${f.weekday}, dacă mai rămâne.`,
+    `${f.kit.adjNoun.charAt(0).toUpperCase()}${f.kit.adjNoun.slice(1)} e o dovadă mică.\n${n} ${f.kit.verb} ${f.kit.compare}.\n${f.kit.rule} Asta nu e pedeapsă.\nE grijă: te ține întreg, și ține locul.`,
+    `${obj.charAt(0).toUpperCase()}${obj.slice(1)} stă la vedere,\nnu în buzunarul de uitare.\n${n} ține minte și cuvântul „${f.kit.splitWord}”,\nca pe o unealtă, nu ca pe o podoabă rară.`,
+    `La capăt, ${n} se uită o dată înapoi.\n${loc.charAt(0).toUpperCase()}${loc.slice(1)} nu spune nimic.\nRămâne ${f.kit.theme}.\nA doua oară, aceeași treabă, altă lumină, tot merită un pic.`
+  ];
+  return `Textul 1 (literar — versuri)\n\n${n} la ${loc}\n\n${stanzas.join('\n\n')}`;
 }
 
 function generate(helpers, rand, seed) {
-  const { paperShell, publicItem, block, note } = helpers;
   const f = pickFacts(rand);
-  const lit = literary(f);
+  const poetry = rand() < 0.5;
+  const lit = poetry ? poetic(f) : literary(f);
   const non = nonliterary(f);
-  const salt = parseInt(String(seed).slice(0, 6), 16) || 1;
-  const placeChoices = [f.place.loc, ...localShuffle(DISTRACTOR_PLACES, salt).slice(0, 3)];
-  const objChoices = [f.object.obj, ...localShuffle(DISTRACTOR_OBJECTS, salt + 7).slice(0, 3)];
-  const hourChoices = [f.closeH, '8:00', '20:00', 'miezul nopții'];
-  const themeChoices = [f.kit.themeChoice, 'o rețetă de plăcintă', 'un concurs de pescuit', 'o călătorie cu vaporul'];
-
-  const aItems = [
-    { n: 1, points: 5, prompt: 'Locul principal al întâmplărilor din textul 1 este…', extra: { choices: placeChoices } },
-    { n: 2, points: 5, prompt: `Ce ține / ce folosește ${f.name} în textul 1?`, extra: { choices: objChoices } },
-    { n: 3, points: 5, prompt: 'Textul 2 are ca scop principal să…', extra: { choices: ['informeze și să dea reguli de folosire a unui loc', 'narare o glumă lungă', 'descrie un peisaj de munte fără oameni', 'argumenteze că școala trebuie închisă'] } },
-    { n: 4, points: 5, prompt: 'Programul din textul 2 se închide, în zilele obișnuite, la…', extra: { choices: hourChoices } },
-    { n: 5, points: 5, prompt: 'Un element comun celor două texte este ideea de…', extra: { choices: themeChoices } },
-    { n: 6, points: 5, prompt: 'Transcrie, din textul 1, vorba / enunțul pus între ghilimele (citatul ținut minte).', extra: { kind: 'short', minWords: 2, lines: 'un enunț din text' } },
-    { n: 7, points: 5, prompt: `Precizează, din textul 2, cifra pentru „${f.kit.numberLabel}” și ora de închidere.`, extra: { kind: 'short', minWords: 2, lines: 'cifră + oră' } },
-    { n: 8, points: 5, prompt: `În 40–80 de cuvinte, motivează ideea că o grijă mică (un loc, o regulă, o întoarcere) poate schimba o zi. Folosește o secvență din cel puțin unul dintre texte.`, extra: { kind: 'short', minWords: 40, lines: '40–80 de cuvinte' } },
-    { n: 9, points: 10, prompt: `Asociază fragmentul literar (textul 1) cu o operă literară studiată sau citită, evidențiind o valoare comună (${f.kit.value}). 50–80 de cuvinte. ${NOVEL}`, extra: { kind: 'associate', minWords: 50, lines: '50–80 de cuvinte' } }
-  ];
-
-  const bItems = grammarItems(f);
-  const composition =
-    `Scrie o compunere de minimum 150 de cuvinte în care să o/îl caracterizezi pe ${f.name}, personajul din textul 1. Ai în vedere: două date de identificare; două trăsături, fiecare cu o secvență din text; o valoare (${f.kit.value}). Fără titlu sau motto. Punctajul de redactare se acordă dacă ai minimum 150 de cuvinte și dezvolți subiectul.`;
-
+  const placeChoices = [f.place.loc, ...shuffle(rand, DISTRACTOR_PLACES.slice()).slice(0, 3)];
+  const objChoices = [f.object.obj, ...shuffle(rand, DISTRACTOR_OBJECTS.slice()).slice(0, 3)];
   const quoteKey = f.quote.split(/\s+/).slice(0, 3).join(' ').toLowerCase();
-  const bundle = {
-    public: paperShell(`en:g:romana:${seed}`, `Model generat — limba română · ${String(seed).slice(0, 4)}`, 'romana', note, [
-      block(
-        'Subiectul I A',
-        50,
-        'Citește fiecare dintre cele două texte-suport (literar + nonliterar). Itemii 1–5 sunt grile. Itemii 6–8 se scriu scurt. Itemul 9 asociază fragmentul literar cu o operă citită de tine.',
-        [
-          publicItem(0, 0, lit, { passage: true, kind: 'passage' }),
-          publicItem(0, 0, non, { passage: true, kind: 'passage' }),
-          ...aItems.map(item => publicItem(item.n, item.points, item.prompt, item.extra || {}))
+  const grammar = grammarOfficial(f, rand);
+  const rewrite = typoMessage(non);
+
+  const spec = {
+    id: `en:g:romana:${seed}`,
+    title: `Model generat — limba română · ${String(seed).slice(0, 4)}`,
+    generated: true,
+    literaryKind: poetry ? 'poetry' : 'prose',
+    lit,
+    non,
+    transcribe: {
+      prompt: 'Notează, din textul 1, vorba / enunțul pus între ghilimele (citatul ținut minte).',
+      minWords: 2,
+      lines: 'un enunț din text',
+      answers: [f.quote, `„${f.quote}”`],
+      tokens: quoteKey.split(/\s+/).filter(w => w.length > 2),
+      explain: 'Citatul dintre ghilimele din textul 1.',
+      steps: ['Transcrii exact']
+    },
+    mcq: [
+      { prompt: 'Locul principal al întâmplărilor din textul 1 este…', choices: placeChoices, letter: 'A', explain: `Locul e ${f.place.loc}.`, steps: ['Cauți locul, nu tema'] },
+      { prompt: `Ce ține / ce folosește ${f.name} în textul 1?`, choices: objChoices, letter: 'A', explain: `${f.name} ține ${f.object.obj}.`, steps: ['Detaliu din textul 1'] },
+      { prompt: 'Textul 2 are ca scop principal să…', choices: ['informeze și să dea reguli de folosire a unui loc', 'narare o glumă lungă', 'descrie un peisaj de munte fără oameni', 'argumenteze că școala trebuie închisă'], letter: 'A', explain: 'Anunț / regulament, program, reguli = a informa / a reglementa.', steps: ['Genul textului 2'] }
+    ],
+    statements: [
+      { text: `În textul 1, locul principal este ${f.place.loc}.`, answer: true },
+      { text: `În textul 1, ${f.name} ține un telefon uitat de director.`, answer: false },
+      { text: `În textul 1, ${f.name} aude vorba: „${f.quote}”.`, answer: true },
+      { text: `Textul 2 dă un program și reguli (inclusiv ora de închidere ${f.closeH}).`, answer: true },
+      { text: 'Textul 2 e o povestire cu dialog lung, fără reguli.', answer: false },
+      { text: `Cele două texte se leagă prin ideea de ${f.kit.themeChoice}.`, answer: true }
+    ],
+    item6: poetry
+      ? {
+        prompt: 'Precizează măsura versurilor din textul 1 (numărul de silabe) și tipul rimei (împerecheată / încrucișată / îmbrățișată). Motivează pe scurt, cu un exemplu de versuri alăturate.',
+        minWords: 12,
+        maxWords: 40,
+        lines: '12–40 de cuvinte',
+        answers: ['încrucișată', 'ABAB', 'rimă încrucișată'],
+        tokens: ['silab', 'incrucis', 'încruciș', 'abab', 'imperech', 'împerech', 'masura', 'măsur', 'vers'],
+        explain: 'Măsura = numărul de silabe al versului; rima încrucișată e ABAB. Ilustrezi cu două versuri alăturate.',
+        steps: ['Numărul de silabe', 'Numele rimei', 'Exemplu']
+      }
+      : {
+        prompt: 'Menționează o trăsătură a tiparului textual din textul 1 (narativ / descriptiv / dialogat) și ilustreaz-o cu o secvență. Minimum două enunțuri.',
+        minWords: 12,
+        maxWords: 40,
+        lines: '12–40 de cuvinte',
+        answers: ['narativ', 'narațiune', 'dialog'],
+        tokens: ['narativ', 'narati', 'narați', 'descript', 'dialog', 'secvent', 'secvenț', 'personaj', 'actiun', 'acțiun'],
+        explain: 'Trăsătură a tiparului + o secvență din textul 1.',
+        steps: ['Tiparul', 'Secvența']
+      },
+    item7: {
+      prompt: 'Precizează un element comun celor două texte, valorificând câte o secvență din fiecare text. Minimum 30 de cuvinte.',
+      minWords: 30,
+      lines: 'minimum 30 de cuvinte',
+      answers: [f.kit.themeChoice, f.kit.value],
+      tokens: ['grij', 'regul', 'loc', 'intoar', 'întoar', f.object.token, 'textul', 'secvent', 'secvenț'],
+      explain: 'Element comun + o secvență din textul 1 + o secvență din textul 2. Minimum 30 de cuvinte.',
+      steps: ['Elementul', 'Secvență 1', 'Secvență 2', '30+']
+    },
+    item8: {
+      prompt: `Justifică răspunsul la întrebarea: de ce o grijă mică (un loc, o regulă, o întoarcere) poate schimba o zi? Valorifică textul 1 sau textul 2. 50–100 de cuvinte.`,
+      minWords: 50,
+      maxWords: 100,
+      lines: '50–100 de cuvinte',
+      answers: [f.kit.value, f.place.loc],
+      tokens: ['grij', 'regul', 'loc', 'intoar', 'întoar', f.object.token],
+      explain: 'Justificare cu secvență, 50–100 de cuvinte.',
+      steps: ['Întrebarea', 'Secvență', '50–100']
+    },
+    item9: {
+      prompt: `Asociază fragmentul literar (textul 1) cu o operă literară studiată sau citită, evidențiind o valoare / o temă comună (${f.kit.value}). 50–100 de cuvinte. ${NOVEL_HINT}`,
+      minWords: 50,
+      maxWords: 100,
+      lines: '50–100 de cuvinte',
+      answers: [f.kit.novel, 'Amintiri din copilărie'],
+      tokens: ASSOCIATE_TOKENS,
+      explain: 'Asociere: o operă citită + o valoare/temă comună + un fapt din fragment și unul din carte.',
+      steps: ['Titlul operei', 'Valoarea', 'Două fapte']
+    },
+    bMcq: grammar.bMcq,
+    bWrite: [
+      {
+        prompt: `Precizează valoarea morfologică a cuvântului „${grammar.morphWord}” din „${f.kit.adjNoun}”. Motivează pe scurt.`,
+        minWords: 8,
+        lines: 'valoare morfologică',
+        answers: ['adjectiv', 'atribut', grammar.morphWord],
+        tokens: ['adjectiv', 'atribut', String(grammar.morphWord).slice(0, 5).toLowerCase()],
+        explain: `„${grammar.morphWord}” determină substantivul — adjectiv / atribut.`,
+        steps: ['Parte de vorbire', 'Funcție']
+      },
+      {
+        prompt: `Alcătuiește două propoziții în care cuvântul „${grammar.morphWord}” să aibă valori morfologice sau sensuri diferite.`,
+        minWords: 12,
+        lines: 'două propoziții',
+        answers: [grammar.morphWord],
+        tokens: [String(grammar.morphWord).slice(0, 5).toLowerCase(), 'propozitie', 'propoziț'],
+        explain: 'Două propoziții corecte, cu valori sau sensuri diferite.',
+        steps: ['Două enunțuri']
+      },
+      {
+        prompt: `Alcătuiește o frază în care să existe o propoziție subordonată (atributivă, completivă sau circumstanțială), pornind de la ideea că ${f.name} ${f.kit.verb} ${f.place.prep}. Marchează subordonata.`,
+        minWords: 12,
+        lines: 'o frază cu subordonată',
+        answers: ['care', 'că', 'să', 'când'],
+        tokens: ['care', 'că', 'să', 'când', 'unde', 'subordon'],
+        explain: 'O frază cu subordonată marcată.',
+        steps: ['Regent + subordonată']
+      },
+      {
+        prompt: `Rescrie corectând greșelile de scriere, de diacritice și de acord din mesajul: „${rewrite}”.`,
+        minWords: 10,
+        lines: 'mesaj corectat',
+        answers: [rewrite],
+        tokens: ['și', 'în', 'sunt', 'stau', 'respectă'],
+        explain: 'Rescrii tot mesajul, corectând ortografia și acordul.',
+        steps: ['Citești greșelile', 'Rescrii']
+      }
+    ],
+    composition: poetry
+      ? `Redactează un eseu de minimum 150 de cuvinte în care să prezinți mesajul textului 1 (versurile despre ${f.name} și ${f.place.loc}). Valorifică peisajul, două figuri de stil și emoția transmisă. O valoare: ${f.kit.value}. Fără titlu sau motto. Pe caiet.`
+      : `Scrie o compunere de minimum 150 de cuvinte în care să o/îl caracterizezi pe ${f.name}, personajul din textul 1. Ai în vedere: două date de identificare; două trăsături, fiecare cu o secvență din text; o valoare (${f.kit.value}). Fără titlu sau motto. Pe caiet.`,
+    compositionBarem: {
+      letter: '',
+      explain: poetry
+        ? 'Eseu pe mesajul poeziei, minimum 150 de cuvinte, pe caiet. Nu există text-model de copiat.'
+        : 'Compunere de caracterizare, minimum 150 de cuvinte, pe caiet. Nu există text-model de copiat.',
+      ideas: poetry
+        ? [
+          'încadrare: mesajul / semnificația textului 1, min. 150 de cuvinte, fără titlu/motto',
+          'conținut: peisaj, două figuri de stil, emoția',
+          'organizare: început – cuprins – încheiere'
         ]
-      ),
-      block(
-        'Subiectul I B',
-        20,
-        'Gramatică, vocabular, fonetică și sintaxă — doar grile, pe fragmente din textele de mai sus. Încercuiești litera.',
-        bItems.map(item => publicItem(item.n, item.points, item.prompt, { choices: item.choices }))
-      ),
-      block(
-        'Subiectul II',
-        20,
-        'Compunere, ca la examen: o scrii în caiet, de mână, minimum 150 de cuvinte. Aici NU o tastezi. După predare poți fotografia pagina (maximum 3 poze pe zi) ca mentorul să-ți dea feedback pe barem.',
-        [
-          publicItem(1, 20, composition, {
-            kind: 'write',
-            photoOnly: true,
-            minWords: 150,
-            lines: 'scrie în caiet, min. 150 de cuvinte'
-          })
-        ]
-      )
-    ], true),
-    barem: {
-      'Subiectul I A:1': { letter: 'A', explain: `Locul e ${f.place.loc}.`, steps: ['Cauți locul, nu tema'] },
-      'Subiectul I A:2': { letter: 'A', explain: `${f.name} ține ${f.object.obj}.`, steps: ['Detaliu din textul 1'] },
-      'Subiectul I A:3': { letter: 'A', explain: 'Anunț / regulament, program, reguli = a informa / a reglementa.', steps: ['Genul textului 2'] },
-      'Subiectul I A:4': { letter: 'A', explain: `Se închide la ${f.closeH}.`, steps: ['Programul din anunț'] },
-      'Subiectul I A:5': { letter: 'A', explain: f.kit.theme, steps: ['Temă comună'] },
-      'Subiectul I A:6': { answers: [f.quote, `„${f.quote}”`], tokens: quoteKey.split(/\s+/).filter(w => w.length > 2), explain: 'Citatul dintre ghilimele din textul 1.', steps: ['Transcrii exact'] },
-      'Subiectul I A:7': { answers: [`${f.number}, ${f.closeH}`, `${f.number} / ${f.closeH}`, String(f.number)], tokens: [String(f.number), f.closeH.split(':')[0]], explain: `${f.kit.numberLabel}: ${f.number}; închidere ${f.closeH}.`, steps: ['Cifra + ora'] },
-      'Subiectul I A:8': { answers: [f.kit.value, f.place.loc], tokens: ['grij', 'regul', 'loc', 'intoar', 'întoar', f.object.token], explain: 'Cerința vrea motivare cu secvență, 40–80 de cuvinte.', steps: ['Idee + citat scurt'] },
-      'Subiectul I A:9': { answers: [f.kit.novel, 'Amintiri din copilărie'], tokens: ASSOCIATE_TOKENS, explain: 'Asociere: o operă citită + o valoare comună + un fapt din fragment și unul din carte. Fără rezumat tocit.', steps: ['Titlul operei', 'Valoarea', 'Două fapte'] },
-      'Subiectul I B:1': { letter: 'A', explain: `Predicatul este „${f.kit.verb}”.`, steps: ['Ce se întâmplă?'] },
-      'Subiectul I B:2': { letter: 'A', explain: `„${f.kit.adj}” determină substantivul — adjectiv / atribut.`, steps: ['Ce parte de vorbire pictează?'] },
-      'Subiectul I B:3': { letter: 'A', explain: 'În context: revine.', steps: ['Sinonime de context'] },
-      'Subiectul I B:4': { letter: 'A', explain: `Predicatul regulii: ${f.kit.predRule}.`, steps: ['Regula din texte'] },
-      'Subiectul I B:5': { letter: 'A', explain: 'Construcție cu „ca” — comparație.', steps: ['ca +'] },
-      'Subiectul I B:6': { letter: 'A', explain: `${f.kit.splitWord} → ${f.kit.split}.`, steps: ['Despartire'] },
-      'Subiectul I B:7': { letter: 'A', explain: 'Atributul precizează obiectul.', steps: ['Ce lămurește substantivul?'] },
-      'Subiectul I B:8': { letter: 'A', explain: 'Adjectiv (NP sau atribut), nu verb.', steps: ['Morfologie'] },
-      'Subiectul II:1': {
-        letter: '',
-        explain: 'Compunere de caracterizare, minimum 150 de cuvinte, pe caiet. Nu există text-model de copiat.',
-        ideas: [
+        : [
           'încadrare: cine e personajul, unde, ce rol are',
           'conținut: două trăsături, fiecare cu secvență din text',
           'organizare: început – cuprins – încheiere, fără titlu sau motto'
         ],
-        steps: ['Plan', '150+', 'Recitire']
-      }
+      steps: ['Plan', '150+', 'Recitire']
     }
   };
-  bundle.public.generated = true;
-  return bundle;
+
+  return assembleOfficial(helpers, spec);
 }
 
 module.exports = { generate, wordCount: text => String(text || '').trim().split(/\s+/).filter(Boolean).length };

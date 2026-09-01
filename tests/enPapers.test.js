@@ -39,32 +39,53 @@ describe('EN papers and barem', () => {
     });
   });
 
-  it('recommended Romanian papers follow the 2026 EN sheet: two long texts, I A + I B grammar, II on paper', () => {
+  it('recommended Romanian papers follow the 2026 EN sheet: two texts, I A 38 + I B 32, II on paper', () => {
     const papers = recommendedList('romana');
     papers.forEach(paper => {
       const passages = paper.blocks.flatMap(block => block.items).filter(item => item.kind === 'passage' || item.n === 0);
       expect(passages.length).toBeGreaterThanOrEqual(2);
-      passages.forEach(item => {
-        expect(item.prompt.split(/\s+/).length).toBeGreaterThan(180);
-      });
+      const lit = passages[0];
+      const non = passages[1];
+      const litWords = lit.prompt.split(/\s+/).filter(Boolean).length;
+      const nonWords = non.prompt.split(/\s+/).filter(Boolean).length;
+      if (lit.verse || /versuri/i.test(lit.prompt)) {
+        expect(litWords).toBeGreaterThan(80);
+      } else {
+        expect(litWords).toBeGreaterThan(180);
+      }
+      expect(nonWords).toBeGreaterThan(180);
       const a = paper.blocks.find(block => block.label === 'Subiectul I A');
       const b = paper.blocks.find(block => block.label === 'Subiectul I B');
       const two = paper.blocks.find(block => block.label === 'Subiectul II');
-      expect(a.points).toBe(50);
-      expect(b.points).toBe(20);
+      expect(a.points).toBe(38);
+      expect(b.points).toBe(32);
       expect(two.points).toBe(20);
       const scoredA = a.items.filter(item => item.n > 0);
       expect(scoredA).toHaveLength(9);
-      expect(scoredA.filter(item => item.choices).map(item => item.n)).toEqual([1, 2, 3, 4, 5]);
+      expect(scoredA.find(item => item.n === 1).kind).toBe('short');
+      expect(scoredA.filter(item => item.choices).map(item => item.n)).toEqual([2, 3, 4]);
+      expect(scoredA.find(item => item.n === 5).kind).toBe('true-false');
+      expect(scoredA.find(item => item.n === 5).statements).toHaveLength(6);
       expect(scoredA.find(item => item.n === 6).kind).toBe('short');
+      expect(scoredA.find(item => item.n === 6).minWords).toBeGreaterThanOrEqual(8);
+      expect(scoredA.find(item => item.n === 7).minWords).toBe(30);
+      expect(scoredA.find(item => item.n === 8).minWords).toBe(50);
+      expect(scoredA.find(item => item.n === 8).maxWords).toBe(100);
       expect(scoredA.find(item => item.n === 9).kind).toBe('associate');
+      expect(scoredA.find(item => item.n === 9).minWords).toBe(50);
+      expect(scoredA.find(item => item.n === 9).maxWords).toBe(100);
       const grammar = b.items.filter(item => item.n > 0);
       expect(grammar).toHaveLength(8);
-      expect(grammar.every(item => item.choices?.length === 4)).toBe(true);
+      expect(grammar.filter(item => item.choices?.length === 4).map(item => item.n)).toEqual([1, 2, 3, 4]);
+      expect(grammar.filter(item => item.kind === 'short').map(item => item.n)).toEqual([5, 6, 7, 8]);
       const writing = two.items.find(item => item.kind === 'write');
       expect(writing.photoOnly).toBe(true);
       expect(writing.minWords).toBe(150);
     });
+    expect(papers.some(paper => {
+      const lit = paper.blocks.flatMap(block => block.items).find(item => item.kind === 'passage' || item.n === 0);
+      return Boolean(lit?.verse || /versuri/i.test(lit?.prompt || ''));
+    })).toBe(true);
     const letters = new Set();
     papers.forEach(paper => {
       const bundle = getBundle(paper.id);
@@ -78,24 +99,36 @@ describe('EN papers and barem', () => {
   it('generated Romanian papers stay on the 2026 sheet and shuffle the correct letter', () => {
     const letters = new Set();
     const ids = new Set();
-    for (let i = 0; i < 6; i += 1) {
+    let sawPoetry = false;
+    let sawProse = false;
+    for (let i = 0; i < 8; i += 1) {
       const paper = generatePaper('romana', [...ids]);
       ids.add(paper.id);
       expect(paper.generated).toBe(true);
       const a = paper.blocks.find(block => block.label === 'Subiectul I A');
       const b = paper.blocks.find(block => block.label === 'Subiectul I B');
       const two = paper.blocks.find(block => block.label === 'Subiectul II');
-      expect(a.points).toBe(50);
-      expect(b.points).toBe(20);
+      expect(a.points).toBe(38);
+      expect(b.points).toBe(32);
       expect(two.points).toBe(20);
+      const lit = a.items.find(item => item.kind === 'passage' || item.n === 0);
+      if (lit?.verse || /versuri/i.test(lit?.prompt || '')) sawPoetry = true;
+      else sawProse = true;
       expect(a.items.filter(item => item.kind === 'passage' || item.n === 0).length).toBeGreaterThanOrEqual(2);
-      expect(b.items.filter(item => item.n > 0).every(item => item.choices?.length === 4)).toBe(true);
+      expect(a.items.find(item => item.n === 5).kind).toBe('true-false');
+      expect(a.items.find(item => item.n === 8).maxWords).toBe(100);
+      expect(a.items.find(item => item.n === 9).maxWords).toBe(100);
+      expect(b.items.filter(item => item.n > 0 && item.choices).every(item => item.choices?.length === 4)).toBe(true);
       expect(two.items.find(item => item.kind === 'write').photoOnly).toBe(true);
       const bundle = getBundle(paper.id);
       const answers = [];
       paper.blocks.forEach(block => {
         block.items.filter(item => item.n > 0).forEach(item => {
-          const row = bundle.barem[`${block.label}:${item.n}`];
+          const row = bundle.barem[`${block.label}:${item.n}`] || {};
+          if (item.kind === 'true-false') {
+            answers.push({ block: block.label, n: item.n, tf: row.keys || [] });
+            return;
+          }
           if (item.choices?.length) {
             letters.add(row.letter);
             answers.push({ block: block.label, n: item.n, letter: row.letter });
@@ -107,10 +140,12 @@ describe('EN papers and barem', () => {
         });
       });
       const score = scoreAttempt(paper.id, answers);
-      expect(score.points).toBeGreaterThanOrEqual(50);
+      expect(score.points).toBeGreaterThanOrEqual(40);
     }
-    expect(ids.size).toBe(6);
+    expect(ids.size).toBe(8);
     expect(letters.size).toBeGreaterThan(1);
+    expect(sawPoetry).toBe(true);
+    expect(sawProse).toBe(true);
   });
 
   it('generated math papers shuffle the correct letter and stay solvable', () => {
@@ -167,8 +202,10 @@ describe('EN papers and barem', () => {
       'Mai adaug un paragraf ca să trec de o sută cincizeci de cuvinte: holul, ghiozdanul ud, ploaia de joi,',
       'băiatul care îndreaptă piatra, sala de lectură cu reguli, și faptul că un loc al școlii rămâne viu dacă cineva are grijă.'
     ].join(' ');
+    const bundle = getBundle('en-ro-a');
+    const letter = bundle.barem['Subiectul I A:2']?.letter || 'A';
     const score = scoreAttempt('en-ro-a', [
-      { block: 'Subiectul I A', n: 1, letter: 'A' },
+      { block: 'Subiectul I A', n: 2, letter },
       { block: 'Subiectul I A', n: 9, text },
       { block: 'Subiectul II', n: 1, text }
     ]);
@@ -316,7 +353,9 @@ describe('EN papers and barem', () => {
       expect(passages.length).toBeGreaterThanOrEqual(2);
       const lit = passages[0].prompt.split(/\s+/).filter(Boolean).length;
       const non = passages[1].prompt.split(/\s+/).filter(Boolean).length;
-      expect(lit, `${id} literary`).toBeGreaterThan(280);
+      const verse = Boolean(passages[0].verse || /versuri/i.test(passages[0].prompt));
+      if (verse) expect(lit, `${id} literary verse`).toBeGreaterThan(80);
+      else expect(lit, `${id} literary`).toBeGreaterThan(280);
       expect(non, `${id} nonliterary`).toBeGreaterThan(180);
     });
     const seenTitles = new Set();
@@ -324,9 +363,12 @@ describe('EN papers and barem', () => {
       const paper = generatePaper('romana');
       const first = paper.blocks[0].items.find(item => item.kind === 'passage' || item.n === 0);
       const passages = paper.blocks.flatMap(block => block.items).filter(item => item.kind === 'passage' || item.n === 0);
-      expect(passages[0].prompt.split(/\s+/).filter(Boolean).length).toBeGreaterThan(280);
+      const litWords = passages[0].prompt.split(/\s+/).filter(Boolean).length;
+      const verse = Boolean(passages[0].verse || /versuri/i.test(passages[0].prompt));
+      if (verse) expect(litWords).toBeGreaterThan(80);
+      else expect(litWords).toBeGreaterThan(180);
       expect(passages[1].prompt.split(/\s+/).filter(Boolean).length).toBeGreaterThan(180);
-      seenTitles.add(String(first.prompt || '').slice(0, 120));
+      seenTitles.add(`${String(first.prompt || '').slice(0, 80)}|${String(passages[1]?.prompt || '').slice(40, 100)}`);
     }
     expect(seenTitles.size).toBe(24);
   });
@@ -365,11 +407,26 @@ describe('EN papers and barem', () => {
             answers.push({ block: block.label, n: item.n, parts });
             return;
           }
+          if (item.kind === 'true-false') {
+            answers.push({ block: block.label, n: item.n, tf: row.keys || [] });
+            return;
+          }
           if (item.choices?.length) {
             answers.push({ block: block.label, n: item.n, letter: row.letter });
             return;
           }
-          answers.push({ block: block.label, n: item.n, text: (row.answers || [])[0] || (row.tokens || [])[0] || '' });
+          const min = Number(item.minWords) || 0;
+          let text = (row.answers || [])[0] || (row.tokens || [])[0] || '';
+          if (min >= 20) {
+            const bits = [...(row.tokens || []), ...(row.answers || [])].filter(Boolean).slice(0, 8).join(', ');
+            text = [
+              `Întâi răspund la cerință folosind textele: ${bits || 'grijă, loc, regulă'}.`,
+              'Apoi aleg o secvență din textul 1 și una din textul 2, pentru că elementul comun trebuie ilustrat, nu doar numit.',
+              'Deci o valoare vizibilă (responsabilitate, răbdare, respect) leagă fragmentul de o operă citită la gimnaziu, de exemplu Amintiri din copilărie, fără să copiez rezumatul.',
+              'Mai dezvolt ideea cu un fapt din carte și un fapt din fragment, ca să respect numărul de cuvinte cerut de barem.'
+            ].join(' ');
+          }
+          answers.push({ block: block.label, n: item.n, text });
         });
       });
       return scoreAttempt(paper.id, answers);

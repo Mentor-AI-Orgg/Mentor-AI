@@ -31,7 +31,7 @@ const MATH_NOTE =
   'Apasă „Începe test Evaluare Națională”. Ca la examen, stai cu lucrarea deschisă cel puțin o oră. Structura e cea clasică de EN (modele 2022): Subiectul I — 6 grile de numere (câte 5p); Subiectul II — 6 grile de geometrie, numerotate tot 1–6 (câte 5p); Subiectul III — 6 exerciții, fiecare cu a) 2p și b) 3p. La III scrii aici doar rezultatul; rezolvarea o faci pe caiet. După predare poți fotografia pagina (maximum 3 poze pe zi) ca mentorul să-ți dea feedback pe barem.';
 
 const RO_NOTE =
-  'Ca la EN 2026: două texte lungi (literar + nonliterar). Subiectul I A — înțelegere (grile + răspunsuri scrise + asociere cu o carte citită). Subiectul I B — doar gramatică, grile. Subiectul II — compunerea se scrie în caiet, nu se tastează; după predare o poți fotografia (3 poze/zi). Baremul se deschide după predare.';
+  'Ca la EN 2026: două texte-suport (textul 1 poate fi versuri sau narațiune; textul 2 e nonliterar). Subiectul I A — 38p: notare, 3 grile, adevărat/fals (6 enunțuri), apoi itemii 6–9 se scriu aici (cu număr de cuvinte: 6 scurt, 7 min. 30, 8–9 câte 50–100). Subiectul I B — 32p: 4 grile + 4 răspunsuri scrise de gramatică. Subiectul II — 20p, compunerea pe caiet (min. 150 de cuvinte); după predare o poți fotografia (3 poze/zi). Baremul se deschide după predare.';
 
 function publicItem(n, points, prompt, extra = {}) {
   const row = { n, points, prompt, kind: extra.kind || (extra.choices ? 'mcq' : extra.parts ? 'en-parts' : 'short') };
@@ -41,6 +41,14 @@ function publicItem(n, points, prompt, extra = {}) {
   if (extra.figure) row.figure = extra.figure;
   if (extra.photoOnly) row.photoOnly = true;
   if (extra.minWords) row.minWords = extra.minWords;
+  if (extra.maxWords) row.maxWords = extra.maxWords;
+  if (extra.verse) row.verse = true;
+  if (extra.statements) {
+    row.statements = extra.statements.map((row, idx) => ({
+      n: row.n || idx + 1,
+      text: row.text
+    }));
+  }
   if (extra.parts) {
     row.parts = extra.parts.map(part => ({
       id: part.id,
@@ -131,7 +139,7 @@ function asDrill(bundle, subject) {
   if (sid === 'romana') {
     pub.title = `Antrenament scurt — limba română · ${seedBit.slice(0, 4)}`;
     pub.hint =
-      'Antrenament scurt: două texte, grile + două răspunsuri scrise, apoi 4 grile de gramatică. Fără compunere și fără ora de sală. Predai când termini. Baremul apare după predare.';
+      'Antrenament scurt: două texte, notare + grile + adevărat/fals + două răspunsuri scrise, apoi 4 grile de gramatică. Fără asociere, fără itemul 8 lung și fără compunere. Predai când termini. Baremul apare după predare.';
     pub.blocks = (pub.blocks || []).map(block => {
       if (block.label === 'Subiectul II') return null;
       if (block.label === 'Subiectul I A') {
@@ -139,7 +147,7 @@ function asDrill(bundle, subject) {
         return {
           ...block,
           points: items.filter(item => item.n > 0).reduce((sum, item) => sum + (Number(item.points) || 0), 0),
-          intro: 'Citești cele două texte. Itemii 1–5 sunt grile. 6–7 se scriu scurt. Fără asociere și fără compunere.',
+          intro: 'Citești cele două texte. Itemul 1 se notează. 2–4 sunt grile. 5 e adevărat/fals. 6–7 se scriu aici, cu număr de cuvinte. Fără 8–9 și fără compunere.',
           items
         };
       }
@@ -202,6 +210,11 @@ function stripSecrets(paper) {
         figure: item.figure,
         photoOnly: item.photoOnly || undefined,
         minWords: item.minWords || undefined,
+        maxWords: item.maxWords || undefined,
+        verse: item.verse || undefined,
+        statements: item.statements
+          ? item.statements.map(row => ({ n: row.n, text: row.text }))
+          : undefined,
         parts: item.parts
           ? item.parts.map(part => ({ id: part.id, points: part.points, prompt: part.prompt }))
           : undefined
@@ -883,7 +896,8 @@ function scoreAttempt(paperId, answers = []) {
     map.set(itemKey(block, n), {
       letter: String(row.letter || '').trim().toUpperCase().slice(0, 1),
       text: String(row.text || row.given || ''),
-      parts: row.parts && typeof row.parts === 'object' ? row.parts : {}
+      parts: row.parts && typeof row.parts === 'object' ? row.parts : {},
+      tf: Array.isArray(row.tf) ? row.tf : undefined
     });
   });
 
@@ -947,6 +961,46 @@ function scoreAttempt(paperId, answers = []) {
           solution: barem.solution || ''
         });
         earned += partPoints;
+        return;
+      }
+      if (item.kind === 'true-false') {
+        const keys = Array.isArray(barem.keys) ? barem.keys : [];
+        const givenTf = Array.isArray(given.tf)
+          ? given.tf
+          : String(given.text || '')
+            .split(/[,\s]+/)
+            .map(token => {
+              const folded = token.trim().toLowerCase();
+              if (folded === 'true' || folded === 'a' || folded === 'adevărat' || folded === 'adevarat') return true;
+              if (folded === 'false' || folded === 'f' || folded === 'fals') return false;
+              return null;
+            });
+        let partPoints = 0;
+        const per = keys.length ? maxPts / keys.length : 0;
+        const details = keys.map((expected, idx) => {
+          const got = givenTf[idx];
+          const ok = got === Boolean(expected);
+          if (ok) partPoints += per;
+          return { n: idx + 1, expected: Boolean(expected), given: got, ok };
+        });
+        const pts = Math.round(partPoints);
+        review.push({
+          block: block.label,
+          n: item.n,
+          kind: 'true-false',
+          prompt: item.prompt,
+          given: details.map(row => (row.given === true ? 'A' : row.given === false ? 'F' : '—')).join(' '),
+          expected: details.map(row => (row.expected ? 'A' : 'F')).join(' '),
+          sample: details.map(row => (row.expected ? 'Adevărat' : 'Fals')).join(', '),
+          points: pts,
+          maxPoints: maxPts,
+          ok: pts === maxPts,
+          teacher: pts === maxPts ? 'Toate cele 6 enunțuri sunt judecate corect.' : 'Verifică fiecare enunț pe text: adevărat sau fals, câte 1 punct.',
+          explain: barem.explain || '',
+          steps: barem.steps || [],
+          statements: details
+        });
+        earned += pts;
         return;
       }
       if (item.kind === 'short' || item.kind === 'associate') {

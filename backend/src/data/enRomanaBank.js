@@ -4,6 +4,7 @@
 // Textele sunt originale. Nu copiem fragmente din manuale sau subiecte publicate.
 
 const { rng, seedFromHex, shuffle } = require('./itemRng');
+const { assembleOfficial, legacyToSpec } = require('./enRomanaOfficial');
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -44,23 +45,53 @@ const TEXTS = {
   a: {
     litTitle: 'Textul 1 (literar)',
     nonTitle: 'Textul 2 (nonliterar)',
-    lit: `Textul 1 (literar)
+    lit: `Textul 1 (literar — versuri)
 
-Cireșul din spatele școlii nu mai avea flori, dar ținea încă trei cireșe tari, ca niște nasturi uitați pe-o haină prea mare. Mara a venit înainte de prima oră, când holul mirosea a cretă udă și a ghiozdane deschise în grabă. A pus o pungă de pânză la rădăcină, cu două pietre de râu deasupra, ca să nu o ia vântul dinspre terenul de sport.
+Cireșul din spatele școlii
+nu mai are flori, dar ține
+trei cireșe tari, ca nasturi
+uitați pe-o haină prea mare.
 
-„Nu e al nostru”, a zis un băiat de la a șaptea, sprijinit de țeava de la scurgerea jgheabului. „E al curții. Directorul zice că se taie toamna, că umbrește sala de sport.”
+Mara vine înainte de oră.
+Holul miroase a cretă udă.
+Pune o pungă de pânză la rădăcină,
+cu două pietre de râu deasupra,
+ca să nu o ia vântul dinspre teren.
 
-Mara n-a răspuns. A săpat un șanț subțire, ca un cerc, cu o lingură veche din geantă, și a tăcut. Pământul era rece și se lipea de unghii. A doua zi, punga era tot acolo. În ea, un bilet fără nume: „Udați-l joi.” Scrisul era grăbit, dar literele stăteau drepte, ca de om care se teme să greșească, nu să fie prins.
+„Nu e al nostru”, zice un băiat
+de la a șaptea, lângă jgheab.
+„E al curții. Directorul taie
+toamna, că umbrește sala.”
 
-Miercuri, la recreația mare, trei fete de la a cincea au râs când au văzut-o cu sticla de apă. „Crezi că e câinele tău?” a întrebat una. Mara a turnat încet, ca să nu se facă noroi pe alee. Un profesor a trecut și a dat din cap, fără să oprească. Joi a plouat de dimineață. Mara a zâmbit în hol, cu ghiozdanul ud, ca și cum ploaia ar fi fost un acord secret între ea și cineva pe care nu-l cunoștea.
+Mara nu răspunde. Săpă
+un șanț subțire, cu lingura.
+Pământul e rece și se lipește
+de unghii. A doua zi, punga e acolo.
 
-În clasă, la română, au citit o pagină despre un băiat care nu voia să-și lase calul. Colegul de bancă a șoptit: „Tu ești cu cireșul.” Mara a dat din umeri. Nu voia un titlu. Voia ca pământul de la rădăcină să nu se usuce până vin florile, dacă mai vin.
+În ea, un bilet fără nume:
+„Udați-l joi.” Scrisul e grăbit,
+dar literele stau drepte, ca de om
+care se teme să greșească, nu să fie prins.
 
-Vineri, băiatul de la a șaptea s-a oprit lângă pungă. N-a luat-o. A îndreptat o piatră care alunecase. Apoi a plecat spre teren, fluierând fals. Mara a văzut totul de la geamul de la etaj. Nu a coborât. Cireșul nu a spus nimic. Pământul de la rădăcină e încă viu, și trei cireșe tari stau acolo ca o dovadă că cineva a trecut și a avut grijă, chiar dacă nimeni nu a pus o placă cu nume.
+Miercuri, trei fete râd
+când o văd cu sticla de apă.
+Mara toarnă încet, să nu se facă noroi.
+Un profesor trece și dă din cap.
 
-Duminică a trecut pe la copac fără sticlă. Pământul era reavăn de la ploaia de joi, și Mara a doar îndreptat pietrele, ca pe o treabă care nu cere martori. În hol, doamna de română a întrebat dacă cineva vrea să scrie despre un loc al școlii. Mara n-a ridicat mâna. A scris totuși, acasă, un paragraf scurt, fără să-l predea: „Cineva udă. Cineva îndreaptă o piatră. Copacul nu mulțumește. Asta e destul.” Lunea, punga era tot acolo. Nimeni n-o mutase. În pauza mare, un elev de la a șasea a turnat apă fără să se uite în jur, ca și cum ar fi fost o obișnuință veche. Mara l-a văzut de la geam. N-a coborât. Cireșul ținea încă cele trei cireșe, mai tari, mai uitate. Seara, când a închis geamul camerei, i s-a părut că holul școlii continuă fără ea, dar rădăcina rămâne. Asta o liniștea mai mult decât un anunț la avizier.
+Joi a plouat de dimineață.
+Mara zâmbește în hol, cu ghiozdanul ud,
+ca și cum ploaia ar fi un acord
+secret între ea și cineva necunoscut.
 
-Uneori, pe drumul spre casă, trece pe lângă un alt copac, mai mare, de pe strada principală. Nu-l udă. Nu e al ei. Cireșul din spatele școlii e altceva: un loc pe care l-a ales fără să ceară voie, și pe care îl ține cu o lingură, o piatră și o tăcere. Dacă va fi tăiat toamna, va rămâne totuși săptămâna în care cineva a avut grijă. Mara nu se gândește la toamnă. Se gândește la joi.`,
+Vineri, băiatul îndreaptă o piatră.
+Nu ia punga. Pleacă fluierând.
+Mara vede totul de la etaj.
+Cireșul nu spune nimic. Pământul e încă viu.
+
+Duminică trece fără sticlă.
+Îndreaptă pietrele, ca pe o treabă
+care nu cere martori. Scrie acasă
+un rând, fără să-l predea: „Cineva udă.”`,
     non: `Textul 2 (nonliterar)
 
 Biblioteca școlii „Scara 3” — anunț pentru elevi
@@ -286,50 +317,15 @@ Redactor-șef: Ioana Pavel, clasa a VIII-a A, sub îndrumarea prof. de română.
 };
 
 function assemble(helpers, key, meta) {
-  const { paperShell, publicItem, block, note } = helpers;
   const t = TEXTS[key];
-  const lit = t.lit;
-  const non = t.non;
-  return {
-    public: paperShell(meta.id, meta.title, 'romana', note, [
-      block(
-        'Subiectul I A',
-        50,
-        'Citește fiecare dintre cele două texte-suport (literar + nonliterar). Itemii 1–5 sunt grile. Itemii 6–8 se scriu scurt. Itemul 9 asociază fragmentul literar cu o operă citită de tine.',
-        [
-          publicItem(0, 0, lit, { passage: true, kind: 'passage' }),
-          publicItem(0, 0, non, { passage: true, kind: 'passage' }),
-          ...meta.aItems.map(item => publicItem(item.n, item.points, item.prompt, item.extra || {}))
-        ]
-      ),
-      block(
-        'Subiectul I B',
-        20,
-        'Gramatică, vocabular, fonetică și sintaxă — doar grile, pe fragmente din textele de mai sus. Încercuiești litera.',
-        meta.bItems.map(item => publicItem(item.n, item.points, item.prompt, { choices: item.choices }))
-      ),
-      block(
-        'Subiectul II',
-        20,
-        'Compunere, ca la examen: o scrii în caiet, de mână, minimum 150 de cuvinte. Aici NU o tastezi. După predare poți fotografia pagina (maximum 3 poze pe zi) ca mentorul să-ți dea feedback pe barem.',
-        [
-          publicItem(1, 20, meta.composition, {
-            kind: 'write',
-            photoOnly: true,
-            minWords: 150,
-            lines: 'scrie în caiet, min. 150 de cuvinte'
-          })
-        ]
-      )
-    ]),
-    barem: meta.barem
-  };
+  return assembleOfficial(helpers, legacyToSpec({ ...meta, literaryKind: meta.literaryKind }, t.lit, t.non));
 }
 
 function packs(helpers) {
   const a = assemble(helpers, 'a', {
     id: 'en-ro-a',
     title: 'Model recomandat A — limba română',
+    literaryKind: 'poetry',
     aItems: [
       { n: 1, points: 5, prompt: 'Locul principal al întâmplărilor din textul 1 este…', extra: { choices: ['spatele școlii, lângă cireș', 'sala de sport a directorului', 'biblioteca de la Scara 3', 'un peron de gară'] } },
       { n: 2, points: 5, prompt: 'Ce pune Mara la rădăcina cireșului?', extra: { choices: ['o pungă de pânză cu două pietre de râu', 'un caiet de română', 'o sticlă goală', 'un afiș al directorului'] } },
@@ -351,7 +347,7 @@ function packs(helpers) {
       { n: 7, points: 2, prompt: '„de pânză” din „o pungă de pânză” are funcția de…', choices: ['atribut', 'predicat', 'subiect', 'complement de loc'] },
       { n: 8, points: 3, prompt: 'În „Nu se ține locul cu un caiet.” subiectul este…', choices: ['locul', 'Nu', 'caiet', 'sala'] }
     ],
-    composition: 'Scrie o compunere de minimum 150 de cuvinte în care să o caracterizezi pe Mara, personajul din textul 1. Ai în vedere: două date de identificare (vârstă/rol de elevă, locul grijii ei); două trăsături, fiecare cu o secvență comentată din text; o valoare (grijă, discreție, statornicie). Fără titlu sau motto. Punctajul de redactare se acordă dacă ai minimum 150 de cuvinte și dezvolți subiectul.',
+    composition: 'Redactează un eseu de minimum 150 de cuvinte în care să prezinți mesajul textului 1 (versurile despre cireș și Mara). Valorifică peisajul, două figuri de stil și emoția transmisă. O valoare: grija, discreția, statornicia. Fără titlu sau motto. Pe caiet.',
     barem: {
       'Subiectul I A:1': { letter: 'A', explain: 'Primul paragraf ancorează cireșul din spatele școlii.', steps: ['Cauți locul, nu tema'] },
       'Subiectul I A:2': { letter: 'A', explain: 'Punga de pânză, două pietre de râu.', steps: ['Detaliu din paragraful 1'] },
@@ -372,10 +368,10 @@ function packs(helpers) {
       'Subiectul I B:8': { letter: 'A', explain: 'Ce nu se ține? Locul.', steps: ['Subiect'] },
       'Subiectul II:1': {
         letter: '',
-        explain: 'Nu există o compunere-model de copiat. Ca profesor, punctez ce cere foaia, în spiritul OM 4.730/2022. Scrie pe caiet; poza e pentru feedback, nu un text gata.',
+        explain: 'Nu există o compunere-model de copiat. Ca profesor, punctez ce cere foaia. Scrie pe caiet; poza e pentru feedback, nu un text gata.',
         ideas: [
-          'Încadrare: caracterizare de personaj, min. 150 de cuvinte, fără titlu/motto.',
-          'Conținut: două date de identificare; două trăsături cu secvențe din text (discreție, grijă, încăpățânare blândă); o valoare.',
+          'Încadrare: mesajul / semnificația versurilor, min. 150 de cuvinte, fără titlu/motto.',
+          'Conținut: peisaj, două figuri de stil, emoția; o valoare (grijă, discreție).',
           'Organizare: plan, paragrafe, fir (întâi / apoi / așadar).',
           'Stil și corectitudine: acord, punctuație, fără copierea textului 1 cuvânt cu cuvânt.'
         ],
