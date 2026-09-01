@@ -5,6 +5,7 @@ const PLACES = ['curtea școlii', 'parcul din sat', 'biblioteca', 'sala de clas�
 const THINGS = ['atlasul', 'caietul', 'dicționarul', 'romanul', 'afișul'];
 
 function flash(point, question, options, explain, level) {
+  if (!Array.isArray(options) || options.length !== 4) return null;
   return { point, question, options, correct: 0, explain, level };
 }
 
