@@ -17,6 +17,19 @@ describe('EN papers and barem', () => {
     expect(first.choices).toHaveLength(4);
     expect(first.letter).toBeUndefined();
     expect(JSON.stringify(papers)).not.toMatch(/Varianta din barem/);
+    expect(JSON.stringify(papers)).not.toMatch(/Rezolvare completă|BC² = AB²/);
+    papers.forEach(paper => {
+      const third = paper.blocks.find(block => block.label === 'Subiectul III');
+      const problems = (third.items || []).filter(item => item.n > 0);
+      expect(problems).toHaveLength(2);
+      problems.forEach(item => {
+        expect(item.kind).toBe('en-parts');
+        expect(item.parts).toHaveLength(2);
+        expect(item.parts.map(part => part.id)).toEqual(['a', 'b']);
+        expect(item.parts[0].prompt).toBeTruthy();
+        expect(JSON.stringify(item)).not.toMatch(/"answer"|solution/);
+      });
+    });
   });
 
   it('recommended Romanian papers include two support texts', () => {
@@ -38,7 +51,16 @@ describe('EN papers and barem', () => {
       paper.blocks.forEach(block => {
         block.items.filter(item => item.n > 0).forEach(item => {
           const key = `${block.label}:${item.n}`;
-          const letter = bundle.barem[key].letter;
+          const row = bundle.barem[key];
+          if (item.kind === 'en-parts' || item.parts) {
+            const parts = {};
+            Object.entries(row.parts || {}).forEach(([id, part]) => {
+              parts[id] = part.answer;
+            });
+            answers.push({ block: block.label, n: item.n, parts });
+            return;
+          }
+          const letter = row.letter;
           letters.add(letter);
           const idx = 'ABCD'.indexOf(letter);
           expect(item.choices[idx]).toBeTruthy();
@@ -48,6 +70,9 @@ describe('EN papers and barem', () => {
       const score = scoreAttempt(paper.id, answers);
       expect(score.points).toBe(100);
       expect(score.grade).toBe('10.00');
+      const third = score.items.filter(item => item.kind === 'en-parts');
+      expect(third).toHaveLength(2);
+      expect(third.every(item => item.solution && item.parts.length === 2)).toBe(true);
     }
     expect(letters.size).toBeGreaterThan(1);
   });

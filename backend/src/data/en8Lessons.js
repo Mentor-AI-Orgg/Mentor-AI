@@ -9,10 +9,10 @@ const LESSONS_EN = {
     lesson(
       'harta',
       'Cele trei subiecte și punctajul',
-      'Proba scrisă de matematică durează, de obicei, două ore. Ai 90 de puncte din itemi și 10 puncte din oficiu, deci nota 10 înseamnă 100. Structura care se repetă de ani de zile e simplă de ținut minte: Subiectul I — itemi scurți din toată materia; Subiectul II — algebră (calcule cu litere, ecuații, uneori o funcție); Subiectul III — geometrie (plan sau spațiu). Fiecare subiect valorează cam 30 de puncte.',
-      'Nu e un test de capitol. Un item de 5 puncte de la I poate cere un procent, următorul un interval, al treilea o arie. De aceea antrenamentul EN e de sinteză: recunoști tipul, apoi aplici o metodă scurtă.',
+      'Proba scrisă de matematică durează, de obicei, două ore. Ai 90 de puncte din itemi și 10 puncte din oficiu, deci nota 10 înseamnă 100. Structura care se repetă de ani de zile e simplă de ținut minte: Subiectul I — itemi scurți din toată materia, cu 4 variante; Subiectul II — algebră (calcule cu litere, ecuații, uneori o funcție); Subiectul III — geometrie, ca la examen: două probleme, fiecare cu subpunctele a) și b) — una în plan, una în spațiu. Fiecare subiect valorează cam 30 de puncte.',
+      'Nu e un test de capitol. Un item de 5 puncte de la I poate cere un procent, următorul un interval. La III, pe platformă scrii doar rezultatul (15 cm, 60°); calculele le faci pe caiet. Rezolvarea completă, pas cu pas, apare după ce predai lucrarea.',
       'Exemplu lucrat: vezi pe foaie „Calculează 2³ × 5 − 12 : 4”. Întâi puterea: 8. Apoi înmulțirea și împărțirea, de la stânga: 8 × 5 = 40, 12 : 4 = 3. Apoi 40 − 3 = 37. Dacă aduni 2+3 întâi, ai greșit ordinea, nu „matematica grea”.',
-      'Reține: oficiul nu se cere. Punctele din itemi se cer. Un răspuns fără calcule pe foaie poate pierde puncte chiar dacă cifra finală e bună — la examen se vede ce ai scris.'
+      'Reține: oficiul nu se cere. La I și II încercuiești o literă. La III scrii rezultatul de la a) și de la b). Rezolvarea lungă o vezi după predare.'
     ),
     lesson(
       'foaie',
@@ -199,7 +199,7 @@ const LESSONS_EN = {
       'La examen, figura e jumătate din punctaj. Notezi pe desen ce știi, nu ții totul în cap.',
       'Exemplu lucrat: două paralele, o secantă, un unghi intern de 110°. Vecinul de pe aceeași parte a secantei, intern: 70°. Corespondentul lui de 110° e tot 110°, chiar dacă e în alt colț al figurii.',
       'Reține: „pare egal” nu e argument. Cauți: opus la vârf, corespondent, altern intern, suplementar.',
-      { figure: 'parallels' }
+      { figure: 'parallels', formulas: ['corespunzătoare = egale', 'interne de aceeași parte: 180°'] }
     ),
     lesson(
       'triunghi',
@@ -208,7 +208,7 @@ const LESSONS_EN = {
       'Bisectoarele se întâlnesc în centrul cercului înscris. Mediatoarele — circumscris. Medianele — centrul de greutate (2/3 de la vârf). Înălțimile — ortocentru.',
       'Exemplu lucrat: triunghi cu unghiuri 50° și 60°. Al treilea: 70°. Exteriorul lângă 70°: 110°, sau 50+60. Dacă spuneai 70, ai luat interiorul în loc de exterior.',
       'Reține: congruența e „aceeași formă și aceeași mărime”. Asemănarea e „aceeași formă, mărime poate alta”.',
-      { figure: 'triangle' }
+      { figure: 'triangle', formulas: ['A+B+C=180°', 'exterior = suma celorlalte două interioare'] }
     ),
     lesson(
       'metric',
@@ -216,7 +216,8 @@ const LESSONS_EN = {
       'Thales: o paralelă la o latură taie pe celelalte două segmente proporționale. Asemănarea: unghiuri egale, laturi proporționale. Raportul ariilor e pătratul raportului de asemănare. Pitagora: în dreptunghic, catetă²+catetă²=ipotenuză². Teorema catetei și a înălțimii leagă proiecțiile pe ipotenuză.',
       'Sin, cos, tg într-un ascuțit al dreptunghicului: laturi / ipotenuză sau opus / alăturat. Nu le amesteci.',
       'Exemplu lucrat: catete 6 și 8. Ipotenuză √(36+64)=10. Dacă înălțimea pe ipotenuză e h, h= (6×8)/10=4,8 (arie dublă: 6×8=h×10).',
-      'Reține: Pitagora e doar în dreptunghic. Asemănarea cere justificarea unghiurilor, nu „arată similar”.'
+      'Reține: Pitagora e doar în dreptunghic. Asemănarea cere justificarea unghiurilor, nu „arată similar”.',
+      { figure: 'thales', formulas: ['Thales: a/a′ = b/b′', 'Pitagora: a²+b²=c²', 'arii: k²'] }
     ),
     lesson(
       'patrulatere',
@@ -224,7 +225,8 @@ const LESSONS_EN = {
       'Paralelogram: laturi opuse paralele și egale, unghiuri opuse egale, diagonalele se taie în jumătăți. Dreptunghi: unghiuri drepte, diagonale egale. Romb: laturi egale, diagonale perpendiculare. Pătrat: le are pe toate. Trapez: o singură pereche de paralele; linia mijlocie e media bazelor.',
       'Aria paralelogramului: bază × înălțime, nu baza × latura oblică. Aria trapezului: (B+b)/2 × h.',
       'Exemplu lucrat: trapez cu baze 8 și 12, înălțime 5. Aria (8+12)/2 × 5 = 10×5=50. Dacă înmulțeai 8×12, ai făcut un dreptunghi inexistent.',
-      'Reține: înălțimea e perpendiculara dintre baze, nu latura neparalelă, decât dacă e trapez dreptunghic pe acea latură.'
+      'Reține: înălțimea e perpendiculara dintre baze, nu latura neparalelă, decât dacă e trapez dreptunghic pe acea latură.',
+      { figure: 'parallelogram', formulas: ['A_paral = bază × h', 'A_romb = (d₁d₂)/2', 'A_trapez = (B+b)h/2'] }
     ),
     lesson(
       'cerc',
@@ -232,7 +234,8 @@ const LESSONS_EN = {
       'Rază R, diametru 2R, coardă (între două puncte pe cerc), tangentă (atinge într-un punct, perpendiculară pe rază). Lungimea cercului 2πR, aria discului πR². Unghiul la centru are măsura arcului. Unghiul înscris are jumătate din arcul cuprins.',
       'Tangentele dintr-un punct exterior sunt egale. Diametrul perpendicular pe o coardă o împarte în jumătate.',
       'Exemplu lucrat: R=7, lungimea ≈ 2×3,14×7=43,96. Aria ≈ 3,14×49=153,86. Dacă luai 2πR², ai amestecat lungimea cu aria. La EN, deseori se lasă răspunsul cu π: 14π și 49π.',
-      'Reține: lungimea e „gardul”, aria e „iarba dinăuntru”. π stă la amândouă, dar puterea lui R diferă.'
+      'Reține: lungimea e „gardul”, aria e „iarba dinăuntru”. π stă la amândouă, dar puterea lui R diferă.',
+      { figure: 'circle-tangent', formulas: ['L = 2πR', 'A = πR²', 'înscris = arc / 2'] }
     )
   ],
   'matematica:geo-spatiu': [
@@ -243,7 +246,7 @@ const LESSONS_EN = {
       'Teorema celor trei perpendiculare leagă o perpendiculară pe plan de o oblică și de proiecția ei.',
       'Exemplu lucrat: muchia verticală a unei camere e perpendiculară pe planul podelei. O diagonală pe podea și acea muchie formează un unghi drept. Dacă „pare înclinată” pe o fotografie, fotografia minte — folosești definiția, nu poza.',
       'Reține: în spațiu, „nu se întâlnesc” nu înseamnă automat paralele. Pot fi oarecare.',
-      { figure: 'planes' }
+      { figure: 'planes', formulas: ['plan: 3 puncte necoliniare', '⊥ pe plan: ⊥ pe două drepte din plan'] }
     ),
     lesson(
       'prisma-piramida',
@@ -252,7 +255,7 @@ const LESSONS_EN = {
       'Aria laterală: suma fețelor laterale (sau perimetrul bazei × apotema, la piramida regulată). Aria totală = laterală + baze.',
       'Exemplu lucrat: cub cu muchia 4. Volum 64. Aria totală 6×16=96. Diagonală pe o față: √(16+16)=√32=4√2. Diagonală în spațiu: √(16+16+16)=√48=4√3.',
       'Reține: volumul cubului e a³, nu 6a² (asta e aria). Factorul 1/3 la piramidă nu se uită.',
-      { figure: 'pyramid' }
+      { figure: 'pyramid', formulas: ['V_prismă = Ab × h', 'V_piramidă = Ab × h / 3', 'V_cub = a³'] }
     ),
     lesson(
       'rotatie',
@@ -261,7 +264,7 @@ const LESSONS_EN = {
       'Desfășurarea te scapă de formule tocite: vezi ce fețe lipsești.',
       'Exemplu lucrat: cilindru R=3, h=10. Volum 90π. Laterală 60π. Totală 60π+2×9π=78π. Dacă luai (1/3)πR²h, ai calculat un con.',
       'Reține: conul și piramida au 1/3. Cilindrul și prisma nu.',
-      { figure: 'cone' }
+      { figure: 'frustum', formulas: ['V_cilindru = πR²h', 'V_con = πR²h/3', 'trunchi: două baze'] }
     ),
     lesson(
       'sfera-masuri',
@@ -270,7 +273,7 @@ const LESSONS_EN = {
       'Unități: 1 m = 10 dm = 100 cm; 1 m² = 10 000 cm²; 1 m³ = 1 000 000 cm³. Transformi înainte de formulă.',
       'Exemplu lucrat: sferă R=3. Arie 36π. Volum 36π (stai: (4/3)π×27=36π — coincidență pentru R=3, nu o regulă). Pentru R=2, arie 16π, volum 32π/3. Nu sunt egale.',
       'Reține: R=3 e o capcană drăguță unde 4πR² și (4/3)πR³ arată similar numeric cu π. Verifică formula, nu coincidența.',
-      { figure: 'sphere' }
+      { figure: 'sphere', formulas: ['A = 4πR²', 'V = (4/3)πR³'] }
     )
   ],
   'romana:proba-ro': [

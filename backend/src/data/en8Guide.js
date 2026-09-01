@@ -9,6 +9,7 @@ const { recommendedList } = require('./enPaperFactory');
 const { shapeUnit } = require('./lessonShape');
 const { glossaryFor } = require('./chapterGlossary');
 const { dailyQuote, formatQuote } = require('./quotes');
+const { listGeometryAtlas } = require('./geometryAtlas');
 
 const EN_SOURCE = {
   authority: "Ministerul Educației",
@@ -150,7 +151,8 @@ function getEnGuide(subject) {
       lessons: lessonsForEn(sid, unit.id),
       glossary: glossaryFor(sid, 8, unit.id, 'en')
     })),
-    papers: recommendedList(sid)
+    papers: recommendedList(sid),
+    atlas: sid === 'matematica' ? listGeometryAtlas(8) : null
   };
 }
 

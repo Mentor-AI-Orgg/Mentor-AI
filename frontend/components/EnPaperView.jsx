@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import { verdictLabel } from '../verdictCopy.js';
 import QuoteCard from './QuoteCard.jsx';
+import GeoFigure from './GeoFigure.jsx';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -128,7 +129,8 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
           block: block.label,
           n: item.n,
           letter: draft.letter || '',
-          text: draft.text || ''
+          text: draft.text || '',
+          parts: draft.parts || {}
         });
       });
     });
@@ -151,7 +153,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
     <section className="en-paper-sheet surface" aria-label={paper.title}>
       <header className="en-paper-head">
         <div>
-          <div className="eyebrow">Model EN · 4 variante · ca la examen</div>
+          <div className="eyebrow">Model EN · I–II cu 4 variante · III cu a) și b) · ca la examen</div>
           <h3 className="display-font en-paper-title">{paper.title}</h3>
           <p className="en-paper-meta">
             Timp de lucru: {paper.duration} · minim {stayLabel(stayMs)} în sală · {paper.oficiu} puncte din oficiu
@@ -224,7 +226,46 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                       <strong className="en-paper-n">{entry.n}.</strong>
                       <div>
                         <p>{entry.prompt}</p>
+                        {entry.figure ? <GeoFigure kind={entry.figure} /> : null}
                         {entry.points ? <small>{entry.points} puncte{entry.lines ? ` · ${entry.lines}` : ''}</small> : null}
+                        {entry.kind === 'en-parts' || entry.parts?.length ? (
+                          <div className="en-parts">
+                            {(entry.parts || []).map(part => {
+                              const partDraft = (draft.parts || {})[part.id] || '';
+                              const scoredPart = (scoredItem?.parts || []).find(row => row.id === part.id);
+                              return (
+                                <div key={`${key}-${part.id}`} className="en-part">
+                                  <p>
+                                    <strong>{part.id})</strong> {part.prompt}
+                                    {part.points ? <small> · {part.points} puncte</small> : null}
+                                  </p>
+                                  {session?.started && !finished ? (
+                                    <input
+                                      className="field form-input en-part-input"
+                                      value={partDraft}
+                                      onChange={event => setAnswer(block.label, entry.n, {
+                                        parts: { ...(draft.parts || {}), [part.id]: event.target.value }
+                                      })}
+                                      placeholder="Scrie doar rezultatul (ex: 15 cm, 60°). Rezolvarea completă apare după predare."
+                                      aria-label={`Rezultat subpunctul ${part.id}`}
+                                    />
+                                  ) : !session?.started && !finished ? (
+                                    <small>Câmpul pentru rezultat se deschide după ce începi testul. Nu scrii rezolvarea aici.</small>
+                                  ) : null}
+                                  {finished && scoredPart ? (
+                                    <div className="en-part-barem">
+                                      <p><strong>Tu, {part.id}):</strong> {scoredPart.given || '—'}</p>
+                                      <p><strong>Rezultat din barem:</strong> {scoredPart.expected}</p>
+                                      {scoredPart.maxPoints ? (
+                                        <small>{scoredPart.points}/{scoredPart.maxPoints} puncte</small>
+                                      ) : null}
+                                    </div>
+                                  ) : null}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : null}
                         {entry.choices?.length > 0 && (
                           <ol className="en-choices">
                             {entry.choices.map((choice, choiceIndex) => {
@@ -286,6 +327,14 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                             ) : null}
                             {scoredItem.barem && scoredItem.barem !== scoredItem.teacher && scoredItem.barem !== scoredItem.explain ? (
                               <p>{scoredItem.barem}</p>
+                            ) : null}
+                            {scoredItem.solution ? (
+                              <div className="en-full-solution">
+                                <strong>Rezolvare completă</strong>
+                                {String(scoredItem.solution).split(/\n\n+/).map((para, paraIndex) => (
+                                  <p key={`${key}-sol-${paraIndex}`}>{para}</p>
+                                ))}
+                              </div>
                             ) : null}
                             {scoredItem.steps?.length > 0 && (
                               <ol className="quiz-steps">

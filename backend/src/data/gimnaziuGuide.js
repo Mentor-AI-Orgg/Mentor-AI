@@ -15,6 +15,7 @@ const { lessonsFor } = require('./gimnaziuLessons');
 const { shapeUnit } = require('./lessonShape');
 const { glossaryFor } = require('./chapterGlossary');
 const { dailyQuote, formatQuote } = require('./quotes');
+const { listGeometryAtlas } = require('./geometryAtlas');
 
 const SOURCE = {
   authority: "Ministerul Educației",
@@ -350,7 +351,8 @@ function getGuide(subject, grade) {
       ...unit,
       lessons: lessonsFor(sid, g, unit.id),
       glossary: glossaryFor(sid, g, unit.id)
-    }))
+    })),
+    atlas: sid === 'matematica' ? listGeometryAtlas(g) : null
   };
 }
 

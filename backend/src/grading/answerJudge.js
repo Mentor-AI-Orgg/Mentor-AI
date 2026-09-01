@@ -29,7 +29,7 @@ function compact(text) {
 function stripUnits(text) {
   return fold(text)
     .replace(/\bx\s*=\s*/g, '')
-    .replace(/\b(lei|cm2|cm|mm|km|ml|ore|ora|secunde|s|grade|puncte|elevi|numere|saci)\b/g, ' ')
+    .replace(/\b(lei|cm3|cm2|m3|m2|cm|mm|km|dm|ml|ore|ora|secunde|s|grade|puncte|elevi|numere|saci)\b/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
