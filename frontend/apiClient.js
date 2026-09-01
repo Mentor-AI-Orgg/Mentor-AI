@@ -753,6 +753,19 @@ const MentorAPI = {
     }
   },
 
+  async reviewEnPhoto(payload) {
+    try {
+      const data = await safeFetchJson('/api/curriculum/en/photo-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true, error: error.message, photoQuota: error.payload?.photoQuota };
+    }
+  },
+
   async generateFlashcards(payload) {
     try {
       const data = await safeFetchJson('/api/flashcards/generate', {

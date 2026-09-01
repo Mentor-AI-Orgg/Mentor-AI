@@ -2,13 +2,13 @@
 // Nu copiem manuale. Fiecare lecție: idee + exemplu lucrat + ce să reții.
 
 function lesson(id, title, ...paragraphs) {
-  let figure = '';
+  let extra = {};
   const last = paragraphs[paragraphs.length - 1];
-  if (last && typeof last === 'object' && last.figure) {
-    figure = last.figure;
+  if (last && typeof last === 'object' && !Array.isArray(last)) {
+    extra = last;
     paragraphs = paragraphs.slice(0, -1);
   }
-  return { id, title, platter: paragraphs.join('\n\n'), ...(figure ? { figure } : {}) };
+  return { id, title, platter: paragraphs.join('\n\n'), ...extra };
 }
 
 const LESSONS = {
@@ -120,7 +120,7 @@ const LESSONS = {
       'Două puncte determină o dreaptă. Trei puncte pot fi pe o dreaptă (coliniare) sau formează un triunghi.',
       'Exemplu lucrat: de la A la B ai un segment de 7 cm. Dacă prelungești dincolo de B fără capăt, ai o semidreaptă cu originea în A, care trece prin B.',
       'Reține: punctul e „unde”, segmentul e „cât de lung”.',
-      { figure: 'points-line' }
+      { figure: 'points-line', formulas: ['Două puncte determină o dreaptă', 'Segmentul are lungime'] }
     ),
     lesson(
       'unghi',
@@ -129,7 +129,7 @@ const LESSONS = {
       'Două unghiuri alăturate pe o linie fac 180°. Dacă unul e 47°, celălalt e 133°.',
       'Exemplu lucrat: un ascuțit de 47° și un obtuz alăturat formează un alungit. 180 − 47 = 133°. 133° e obtuz, deci se potrivește.',
       'Reține: nu ghicești „pare ascuțit”. Compari cu 90°.',
-      { figure: 'angle' }
+      { figure: 'angle', formulas: ['drept = 90°', 'ascuțit < 90°', 'obtuz: 90°–180°'] }
     ),
     lesson(
       'perimetru',
@@ -138,7 +138,16 @@ const LESSONS = {
       'Nu confunda perimetrul cu aria. Perimetrul e linie, aria e interior.',
       'Exemplu lucrat: dreptunghi 12 cm × 5 cm. P = 2×(12+5)=34 cm. Un pătrat cu același perimetru: 34:4=8,5 cm latura.',
       'Reține: același perimetru nu înseamnă aceeași arie.',
-      { figure: 'rectangle' }
+      { figure: 'rectangle', formulas: ['Pătrat: P = 4a', 'Dreptunghi: P = 2(L + l)'] }
+    ),
+    lesson(
+      'patrat',
+      'Pătratul',
+      'Pătratul are patru laturi egale și patru unghiuri drepte. E un dreptunghi special și un romb special. Diagonalele sunt egale, perpendiculare și se taie în jumătăți. Diagonala măsoară a√2.',
+      'Nu e „altceva” decât dreptunghiul: e dreptul cu L = l.',
+      'Exemplu lucrat: latură 6 cm. P = 24 cm. A = 36 cm². Diagonala: 6√2 cm. Un dreptunghi 9×4 are tot perimetrul 26, nu 24 — nu e pătrat.',
+      'Reține: patru laturi egale nu ajung (poate fi romb strâmb). Mai trebuie și 90°.',
+      { figure: 'square', formulas: ['P = 4a', 'A = a²', 'diagonală = a√2'] }
     ),
     lesson(
       'arie',
@@ -146,7 +155,8 @@ const LESSONS = {
       'Aria e câte pătrățele de 1 cm² încap înăuntru. Pătrat: latură × latură. Dreptunghi: lungime × lățime.',
       'Dacă tai o bucată, scazi aria tăieturii din aria foii.',
       'Exemplu lucrat: foaie 20×14 cm, tai un pătrat de latură 6 cm. 20×14=280, 6×6=36, rămân 244 cm².',
-      'Reține: unitatea ariei e cm², nu cm. Cm e pentru lungimi.'
+      'Reține: unitatea ariei e cm², nu cm. Cm e pentru lungimi.',
+      { figure: 'square', formulas: ['A_pătrat = a²', 'A_dreptunghi = L × l'] }
     ),
     lesson(
       'volum',
@@ -155,7 +165,7 @@ const LESSONS = {
       'Nu înmulți doar două dimensiuni: aia e o față, nu cutia.',
       'Exemplu lucrat: cub de 5 cm. Volum 125 cm³. Tai din colț un cubuleț de 2 cm: 8 cm³. Rămân 117 cm³.',
       'Reține: volum = cm³. Aria unei fețe = cm².',
-      { figure: 'box3d' }
+      { figure: 'cube', formulas: ['V_cub = a³', 'V_cutie = L × l × h', 'A_totală cub = 6a²'] }
     ),
     lesson(
       'unitati',
@@ -313,7 +323,7 @@ const LESSONS = {
       'Două drepte se taie: unghiurile față în față (opuse la vârf) sunt egale. Alăturatele fac 180°. Paralele tăiate de o secantă: unghiurile corespunzătoare sunt egale.',
       'Exemplu lucrat: un unghi 62°. Opusul e 62°. Alăturatul e 118°. Suma opus + alăturat = 180°.',
       'Reține: „față în față” = egale; „pe aceeași linie” = 180°.',
-      { figure: 'parallels' }
+      { figure: 'parallels', formulas: ['corespunzătoare = egale', 'interne de aceeași parte: 180°'] }
     ),
     lesson(
       'cerc',
@@ -321,7 +331,7 @@ const LESSONS = {
       'Raza e de la centru la cerc. Diametrul e 2 raze în linie, trece prin centru. Coarda unește două puncte de pe cerc, nu neapărat prin centru. Lungimea cercului: L=πd=2πr.',
       'Exemplu lucrat: diametru 14 cm, π=22/7. L=(22/7)×14=44.',
       'Reține: diametrul e o coardă specială, cea mai lungă.',
-      { figure: 'circle' }
+      { figure: 'circle', formulas: ['d = 2r', 'L = 2πr = πd'] }
     ),
     lesson(
       'clasif',
@@ -329,7 +339,7 @@ const LESSONS = {
       'După unghiuri: ascuțitunghic, dreptunghic (un 90°), obtuzunghic. După laturi: oarecare, isoscel (două laturi egale), echilateral (toate egale). Dreptunghicul are ipotenuza vizavi de 90°.',
       'Exemplu lucrat: isoscel, vârful 40°. Baza: (180−40):2=70° fiecare.',
       'Reține: un triunghi nu poate avea două unghiuri drepte — suma ar trece de 180°.',
-      { figure: 'triangle' }
+      { figure: 'triangle-iso', formulas: ['isoscel: două laturi egale', 'echilateral: 60° + 60° + 60°'] }
     ),
     lesson(
       'suma180',
@@ -337,7 +347,16 @@ const LESSONS = {
       'Oricâte forme ar avea, cele trei colțuri fac un unghi alungit. Dacă știi două, al treilea e 180 minus ele.',
       'Exemplu lucrat: 50° și 60°. Al treilea: 70°. La isoscel, unghiurile de la baza egală sunt egale.',
       'Reține: 180° e lege, nu medie. Nu e 90°, nu e 360°.',
-      { figure: 'triangle' }
+      { figure: 'triangle', formulas: ['A + B + C = 180°', 'A = (bază × h) / 2'] }
+    ),
+    lesson(
+      'linii-tri',
+      'Înălțime, mediană, bisectoare, mediatoare',
+      'Înălțimea e perpendiculara din vârf pe latura opusă — o folosești la arie. Mediana unește vârful cu mijlocul laturii opuse; cele trei se taie la 2/3 de la vârf. Bisectoarea taie unghiul în două; se întâlnesc în centrul cercului înscris. Mediatoarea e perpendiculara prin mijlocul laturii; se întâlnesc în centrul cercului circumscris.',
+      'Nu le amesteca: „linia din mijloc” nu e destul. Întrebi: taie latura, taie unghiul, sau e perpendiculară?',
+      'Exemplu lucrat: isoscel cu baza 8 cm, vârful deasupra mijlocului. Înălțimea pe bază e și mediană, și bisectoare. Dacă baza e 8, medianele pe bază cad la 4 cm de fiecare capăt.',
+      'Reține: patru nume, patru trebi. Aria cere înălțime, nu mediană.',
+      { figure: 'triangle-lines', formulas: ['înălțime → arie', 'mediană → mijlocul laturii', 'bisectoare → cerc înscris'] }
     ),
     lesson(
       'congr',
@@ -352,7 +371,7 @@ const LESSONS = {
       'În triunghiul dreptunghic, a² + b² = c², unde c e ipotenuza (față de 90°). Triplete: 3-4-5, 5-12-13, și multiplii lor (6-8-10).',
       'Exemplu lucrat: catete 9 și 12. 81+144=225=15². Perimetrul: 9+12+15=36.',
       'Reține: Pitagora e doar în dreptul. Nu o pui pe un ascuțitunghic oarecare.',
-      { figure: 'triangle-right' }
+      { figure: 'triangle-right', formulas: ['a² + b² = c²', 'A = (a × b) / 2'] }
     )
   ],
   'matematica:7:reale': [
@@ -473,15 +492,24 @@ const LESSONS = {
       'Paralelogram: laturi opuse paralele și egale, unghiuri opuse egale, aria = bază × înălțime. Dreptunghi: unghiuri 90°. Romb: toate laturile egale, diagonale perpendiculare. Pătrat: și romb, și dreptunghi.',
       'Exemplu lucrat: paralelogram 9 cm și 6 cm, un unghi 90° — e dreptunghi, aria 54.',
       'Reține: pătratul e un caz special, nu o figură „de altceva”.',
-      { figure: 'rectangle' }
+      { figure: 'parallelogram', formulas: ['A = bază × h', 'P = 2(a + b)', 'diagonalele se taie în jumătăți'] }
+    ),
+    lesson(
+      'romb',
+      'Rombul',
+      'Rombul are toate laturile egale. Diagonalele sunt perpendiculare și se taie în jumătăți. Aria e (d₁ × d₂) / 2, sau bază × înălțime. Dacă mai are și unghiuri de 90°, e pătrat.',
+      'Nu e „pătrat strâmb” ca insultă: e o figură cu reguli ale ei. Unghiurile opuse sunt egale.',
+      'Exemplu lucrat: diagonale 6 cm și 8 cm. A = 48/2 = 24 cm². Latura: jumătățile 3 și 4, deci 5 (Pitagora). P = 20 cm.',
+      'Reține: patru laturi egale. Diagonalele ⊥. 90° doar dacă e și pătrat.',
+      { figure: 'rhombus', formulas: ['P = 4a', 'A = (d₁ × d₂) / 2'] }
     ),
     lesson(
       'trapez',
       'Trapezul și ariile',
-      'Trapez: exact o pereche de laturi paralele (bazele). Aria: (B+b)×h / 2.',
+      'Trapez: exact o pereche de laturi paralele (bazele). Aria: (B+b)×h / 2. Isoscel: laturile neparalele egale, diagonale egale. Dreptunghic: o latură neparalelă e și înălțime.',
       'Exemplu lucrat: baze 10 și 6, înălțime 4. (10+6)×4 / 2 = 32.',
       'Reține: înălțimea e perpendiculara dintre baze, nu o latură piezișă.',
-      { figure: 'trapezoid' }
+      { figure: 'trapezoid', formulas: ['A = (B + b) × h / 2', 'linie mijlocie = (B + b) / 2'] }
     ),
     lesson(
       'cerc7',
@@ -489,7 +517,16 @@ const LESSONS = {
       'L=2πr=πd. Aria discului πr². Lungimea e gardul, aria e umplutura.',
       'Exemplu lucrat: rază 7, π=22/7. L=2×(22/7)×7=44. Aria=(22/7)×49=154.',
       'Reține: πr² nu e lungimea. 2πr nu e aria.',
-      { figure: 'circle' }
+      { figure: 'circle', formulas: ['L = 2πr', 'A = πr²'] }
+    ),
+    lesson(
+      'hexagon',
+      'Hexagonul regulat',
+      'Șase laturi egale, șase unghiuri egale. Se taie în 6 triunghiuri echilaterale cu latura a. Raza cercului circumscris e tot a. Perimetrul 6a. Aria: (3a²√3)/2.',
+      'Dacă știi echilateralul, știi hexagonul: e o floare de 6 triunghiuri.',
+      'Exemplu lucrat: latură 4 cm. P = 24 cm. Un triunghi din cele 6 are aria (16√3)/4 = 4√3, deci tot hexagonul 24√3 cm².',
+      'Reține: R = a la hexagonul regulat. Nu e valabil la pentagon.',
+      { figure: 'hexagon', formulas: ['P = 6a', 'A = (3a²√3) / 2', 'R = a'] }
     ),
     lesson(
       'thales',
@@ -497,14 +534,15 @@ const LESSONS = {
       'O paralelă taie laturile unui unghi (sau ale triunghiului) în segmente proporționale. 4/6 = x/(x+3).',
       'Exemplu lucrat: 4/6 = x/(x+3). 4(x+3)=6x, 4x+12=6x, x=6.',
       'Reține: aceeași ordine: mic/mare pe o secantă ca mic/mare pe cealaltă.',
-      { figure: 'thales' }
+      { figure: 'thales', formulas: ['a / a′ = b / b′'] }
     ),
     lesson(
       'asemanare',
       'Asemănarea',
       'Aceeași formă, altă scară. Raportul laturilor e k; raportul ariilor e k²; al perimetrelor e k.',
       'Exemplu lucrat: raport laturi 3/2, aria mare 54. Aria mică: 54 × 4/9 = 24.',
-      'Reține: ariile cresc cu pătratul scării, nu cu scara.'
+      'Reține: ariile cresc cu pătratul scării, nu cu scara.',
+      { figure: 'similar', formulas: ['raport laturi = k', 'raport arii = k²'] }
     ),
     lesson(
       'trig',
@@ -512,7 +550,7 @@ const LESSONS = {
       'În triunghiul dreptunghic, pe un unghi ascuțit: sin = opusă/ipotenuză, cos = alăturată/ipotenuză, tg = opusă/alăturată. Ipotenuza e cea mai lungă.',
       'Exemplu lucrat: catete 8 și 15, ipotenuză 17. cos unghiului opus lui 8: alăturata e 15, deci 15/17.',
       'Reține: „opusă” e vizavi de unghiul despre care vorbești, nu de 90°.',
-      { figure: 'triangle-right' }
+      { figure: 'triangle-right', formulas: ['sin = opusă / ipotenuză', 'cos = alăturată / ipotenuză', 'tg = opusă / alăturată'] }
     )
   ],
   'matematica:8:intervale': [
@@ -633,7 +671,7 @@ const LESSONS = {
       'În spațiu, o dreaptă paralelă cu un plan nu-l înțeapă. Perpendiculara face 90° cu dreptele din plan care trec prin picior. Vizualizează creionul și masa.',
       'Exemplu lucrat: un creion ținut deasupra mesei, la distanță constantă, e paralel cu planul mesei dacă nu o atinge și nu se apleacă.',
       'Reține: paralel în spațiu nu e „arată la fel pe caiet”. E o relație 3D.',
-      { figure: 'planes' }
+      { figure: 'planes', formulas: ['3 puncte necoliniare → un plan', 'drepte: paralele, concurente sau oarecare'] }
     ),
     lesson(
       'prisma',
@@ -641,7 +679,16 @@ const LESSONS = {
       'Volumul prismei: aria bazei × înălțimea. Cub: a³. Aria laterală a prismei drepte: perimetrul bazei × h. Cub: aria totală 6a².',
       'Exemplu lucrat: prismă bază 6×4, h=5. Aria laterală: perimetru 20 × 5 = 100. Cub latură 5, tai cubuleț 2: volum 125−8=117.',
       'Reține: laterală = fără baze. Totală = cu baze.',
-      { figure: 'box3d' }
+      { figure: 'cube', formulas: ['V_prismă = A_bază × h', 'V_cub = a³', 'A_totală cub = 6a²'] }
+    ),
+    lesson(
+      'prisma-tri',
+      'Prisma triunghiulară',
+      'Baza e un triunghi. Volumul rămâne A_bază × h. Dacă baza e dreptunghică, A_bază = (catetă × catetă) / 2. Fețele laterale sunt dreptunghiuri (la prisma dreaptă).',
+      'Nu înmulți cele trei laturi ale triunghiului — aia nu e aria bazei.',
+      'Exemplu lucrat: bază 6-8-10 (dreptunghic), h=5. A_bază = 24. V = 120. A_lat = (6+8+10)×5 = 120.',
+      'Reține: întâi aria triunghiului, apoi ori înălțimea prismei.',
+      { figure: 'prism-tri', formulas: ['V = A_triunghi × h', 'A_lat = P_bază × h'] }
     ),
     lesson(
       'piramida',
@@ -649,7 +696,16 @@ const LESSONS = {
       'Volum: (aria bazei × înălțimea) / 3. Aria laterală: suma ariilor triunghiurilor laterale. La piramidă regulată cu bază pătrat, 4 triunghiuri egale.',
       'Exemplu lucrat: bază 6×6, apotema feței 5. O față (6×5)/2=15, 4 fețe=60.',
       'Reține: /3 la volum, nu la arie. Înălțimea e din vârf perpendicular pe planul bazei, nu apotema.',
-      { figure: 'pyramid' }
+      { figure: 'pyramid', formulas: ['V = (A_bază × h) / 3'] }
+    ),
+    lesson(
+      'tetraedru',
+      'Tetraedrul regulat',
+      'Patru fețe, toate triunghiuri echilaterale. 4 vârfuri, 6 muchii egale. E o piramidă triunghiulară „egală pe toate părțile”. Volum (a³√2)/12, arie totală a²√3.',
+      'La EN recunoști figura și, de obicei, cer aria unei fețe sau o înălțime dată, nu neapărat formula lungă tocită.',
+      'Exemplu lucrat: muchie 6. O față: (36√3)/4 = 9√3. Patru fețe: 36√3. Dacă ți se dă înălțimea 4 și baza echilaterală de latură 6, V = (9√3 × 4) / 3 = 12√3.',
+      'Reține: 4 fețe, nu 6. Cubul are 6.',
+      { figure: 'tetrahedron', formulas: ['4 fețe echilaterale', 'V = (a³√2) / 12', 'A = a²√3'] }
     ),
     lesson(
       'cilindru',
@@ -657,7 +713,7 @@ const LESSONS = {
       'Volum πr²h (disc × înălțime). Aria laterală 2πrh (dreptunghiul din desfășurare).',
       'Exemplu lucrat: r=3, h=4, π=3. Volum ≈ 3×9×4=108.',
       'Reține: πr² e baza, nu volumul. Mai trebuie ×h.',
-      { figure: 'cylinder' }
+      { figure: 'cylinder', formulas: ['V = πr²h', 'A_lat = 2πrh'] }
     ),
     lesson(
       'con',
@@ -665,7 +721,16 @@ const LESSONS = {
       'Volum (πr²h)/3 — o treime din cilindru cu aceeași bază și înălțime. Nu confunda cu aria laterală πrG (G generatoare).',
       'Exemplu lucrat: r=3, h=3, π=3. V=(3×9×3)/3=27.',
       'Reține: /3 e la volum. Cilindrul nu se împarte la 3.',
-      { figure: 'cone' }
+      { figure: 'cone', formulas: ['V = πr²h / 3', 'A_lat = πrG', 'G² = r² + h²'] }
+    ),
+    lesson(
+      'trunchiuri',
+      'Trunchiul de piramidă și de con',
+      'Tai cu un plan paralel cu baza. La con rămân două cercuri (R și r) și o centură. La piramidă, două poligoane asemenea. Volumul trunchiului de con: (πh/3)(R² + Rr + r²). Trunchiul de piramidă: (h/3)(A + A′ + √(A·A′)).',
+      'Nu e „cilindru strâmb”. Are două baze, nu una.',
+      'Exemplu lucrat: trunchi de con, R=6, r=3, h=4, π=3. V = (3·4/3)(36+18+9) = 4×63 = 252.',
+      'Reține: apar ambele raze (sau ambele arii). Dacă uiți una, ai calculat un con sau un cilindru.',
+      { figure: 'frustum', formulas: ['V_con-trunchi = (πh/3)(R² + Rr + r²)', 'V_piramidă-trunchi = (h/3)(A + A′ + √(AA′))'] }
     ),
     lesson(
       'sfera',
@@ -673,7 +738,7 @@ const LESSONS = {
       'Volum (4/3)πr³ — umplutura. Aria 4πr² — coaja. Nu le schimba.',
       'Exemplu lucrat: r=3, π=3. V≈(4/3)×3×27=108.',
       'Reține: r³ la volum, r² la arie. Puterea spune dimensiunea.',
-      { figure: 'sphere' }
+      { figure: 'sphere', formulas: ['A = 4πR²', 'V = (4/3)πR³'] }
     )
   ],
 

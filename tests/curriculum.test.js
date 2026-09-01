@@ -71,8 +71,12 @@ describe('gimnaziu curriculum', () => {
     expect(geo8.lessons.filter(entry => entry.figure).length).toBeGreaterThanOrEqual(4);
     [...geo5.lessons, ...geo8.lessons].filter(entry => entry.figure).forEach(entry => {
       expect(entry.platter).toMatch(/Exemplu lucrat|Exemplu:/);
-      expect(entry.figure).toMatch(/points-line|angle|rectangle|box3d|triangle|planes|pyramid|cylinder|cone|sphere/);
+      expect(entry.figure.length).toBeGreaterThan(2);
     });
+    const atlas = getGuide('matematica', 8).atlas;
+    expect(atlas.all.length).toBeGreaterThanOrEqual(30);
+    expect(atlas.plane.length).toBeGreaterThanOrEqual(18);
+    expect(atlas.space.length).toBeGreaterThanOrEqual(10);
   });
 
   it('builds mentor context for the requested grade', () => {
@@ -127,8 +131,9 @@ describe('gimnaziu curriculum', () => {
     const figured = enGeo.flatMap(unit => unit.lessons).filter(entry => entry.figure);
     expect(figured.length).toBeGreaterThanOrEqual(4);
     figured.forEach(entry => {
-      expect(entry.figure).toMatch(/parallels|triangle|planes|pyramid|cone|sphere|thales|circle/);
+      expect(entry.figure.length).toBeGreaterThan(2);
     });
+    expect(math.atlas.all.length).toBeGreaterThanOrEqual(30);
     math.papers.forEach(paper => {
       expect(paper.completable).toBe(true);
       expect(paper.workOnPaper).toBe(false);

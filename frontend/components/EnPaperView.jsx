@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import { verdictLabel } from '../verdictCopy.js';
 import QuoteCard from './QuoteCard.jsx';
+import GeoFigure from './GeoFigure.jsx';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -48,6 +49,68 @@ function saveDraft(paperId, answers) {
   }
 }
 
+function EnPhotoBox({ paperId, target, label, remaining, onDone }) {
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState('');
+
+  const readFile = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(new Error('Nu am putut citi poza.'));
+    reader.readAsDataURL(file);
+  });
+
+  const send = async event => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    if (file.size > 4_500_000) {
+      setNote('Poza e prea mare (max 4,5 MB). Taie pagina sau coboară calitatea.');
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      setNote('Trimite o fotografie a paginii din caiet.');
+      return;
+    }
+    setBusy(true);
+    setNote('');
+    try {
+      const dataUrl = await readFile(file);
+      const response = await MentorAPI.reviewEnPhoto({
+        paper_id: paperId,
+        target,
+        image_base64: dataUrl
+      });
+      if (!response.success) {
+        setNote(response.error || 'Nu am putut citi poza. Mai ai voie doar 3 pe zi.');
+        if (response.photoQuota) onDone({ photoQuota: response.photoQuota });
+        return;
+      }
+      onDone(response.data);
+    } catch (error) {
+      setNote(error.message || 'Nu am putut citi poza.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const blocked = remaining <= 0;
+  return (
+    <div className="en-photo-box">
+      <p>
+        {label}
+        {' '}
+        <small>{remaining} poze rămase azi (din 3).</small>
+      </p>
+      <label className={`ghost-button en-photo-btn ${blocked || busy ? 'is-disabled' : ''}`}>
+        <input type="file" accept="image/*" capture="environment" hidden disabled={blocked || busy} onChange={send} />
+        {busy ? 'Mentorul citește pagina…' : blocked ? 'Ai folosit cele 3 poze de azi' : 'Fotografiază pagina din caiet'}
+      </label>
+      {note ? <small className="guide-error">{note}</small> : null}
+    </div>
+  );
+}
+
 const EnPaperView = ({ paper, onClose, session: initialSession }) => {
   const [session, setSession] = useState(initialSession || null);
   const [answers, setAnswers] = useState(() => loadDraft(paper?.id));
@@ -56,6 +119,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
   const [error, setError] = useState('');
   const [now, setNow] = useState(Date.now());
   const [result, setResult] = useState(initialSession?.result || null);
+  const [photoQuota, setPhotoQuota] = useState({ remaining: 3, used: 0, limit: 3 });
 
   useEffect(() => {
     if (!paper?.id) return undefined;
@@ -63,6 +127,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
       if (!response.success) return;
       setSession(response.data.session);
       if (response.data.session?.result) setResult(response.data.session.result);
+      if (response.data.photoQuota) setPhotoQuota(response.data.photoQuota);
     });
     return undefined;
   }, [paper?.id]);
@@ -112,6 +177,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
       return;
     }
     setSession(response.data.session);
+    if (response.data.photoQuota) setPhotoQuota(response.data.photoQuota);
     setNow(Date.now());
   };
 
@@ -128,7 +194,8 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
           block: block.label,
           n: item.n,
           letter: draft.letter || '',
-          text: draft.text || ''
+          text: draft.text || '',
+          parts: draft.parts || {}
         });
       });
     });
@@ -143,6 +210,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
     }
     setSession(response.data.session);
     setResult(response.data.result || response.data.session?.result || null);
+    if (response.data.photoQuota) setPhotoQuota(response.data.photoQuota);
   };
 
   if (!paper) return null;
@@ -151,7 +219,11 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
     <section className="en-paper-sheet surface" aria-label={paper.title}>
       <header className="en-paper-head">
         <div>
-          <div className="eyebrow">Model EN · 4 variante · ca la examen</div>
+          <div className="eyebrow">
+            {paper.subject === 'romana'
+              ? 'Model EN · I A texte + scriere · I B gramatică grile · II compunere pe caiet'
+              : 'Model EN · I–II cu 4 variante · III cu a) și b) · rezultat aici, rezolvare pe caiet'}
+          </div>
           <h3 className="display-font en-paper-title">{paper.title}</h3>
           <p className="en-paper-meta">
             Timp de lucru: {paper.duration} · minim {stayLabel(stayMs)} în sală · {paper.oficiu} puncte din oficiu
@@ -224,7 +296,59 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                       <strong className="en-paper-n">{entry.n}.</strong>
                       <div>
                         <p>{entry.prompt}</p>
+                        {entry.figure ? <GeoFigure kind={entry.figure} /> : null}
                         {entry.points ? <small>{entry.points} puncte{entry.lines ? ` · ${entry.lines}` : ''}</small> : null}
+                        {entry.kind === 'en-parts' || entry.parts?.length ? (
+                          <div className="en-parts">
+                            {(entry.parts || []).map(part => {
+                              const partDraft = (draft.parts || {})[part.id] || '';
+                              const scoredPart = (scoredItem?.parts || []).find(row => row.id === part.id);
+                              return (
+                                <div key={`${key}-${part.id}`} className="en-part">
+                                  <p>
+                                    <strong>{part.id})</strong> {part.prompt}
+                                    {part.points ? <small> · {part.points} puncte</small> : null}
+                                  </p>
+                                  {session?.started && !finished ? (
+                                    <input
+                                      className="field form-input en-part-input"
+                                      value={partDraft}
+                                      onChange={event => setAnswer(block.label, entry.n, {
+                                        parts: { ...(draft.parts || {}), [part.id]: event.target.value }
+                                      })}
+                                      placeholder="Scrie doar rezultatul (ex: 15 cm, 60°). Rezolvarea completă e pe caiet; o poți fotografia după predare."
+                                      aria-label={`Rezultat subpunctul ${part.id}`}
+                                    />
+                                  ) : !session?.started && !finished ? (
+                                    <small>Câmpul pentru rezultat se deschide după ce începi testul. Nu scrii rezolvarea aici.</small>
+                                  ) : null}
+                                  {finished && scoredPart ? (
+                                    <div className="en-part-barem">
+                                      <p><strong>Tu, {part.id}):</strong> {scoredPart.given || '—'}</p>
+                                      <p><strong>Rezultat din barem:</strong> {scoredPart.expected}</p>
+                                      {scoredPart.maxPoints ? (
+                                        <small>{scoredPart.points}/{scoredPart.maxPoints} puncte</small>
+                                      ) : null}
+                                    </div>
+                                  ) : null}
+                                </div>
+                              );
+                            })}
+                            {finished ? (
+                              <EnPhotoBox
+                                paperId={paper.id}
+                                target={`${block.label}:${entry.n}`}
+                                remaining={photoQuota.remaining}
+                                label="Vrei feedback pe rezolvarea de pe caiet? Trimite o poză (Subiectul III)."
+                                onDone={data => {
+                                  if (data.photoQuota) setPhotoQuota(data.photoQuota);
+                                  if (data.session?.result) setResult(data.session.result);
+                                  if (data.session) setSession(data.session);
+                                }}
+                              />
+                            ) : null}
+                          </div>
+                        ) : null}
                         {entry.choices?.length > 0 && (
                           <ol className="en-choices">
                             {entry.choices.map((choice, choiceIndex) => {
@@ -255,7 +379,33 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                             })}
                           </ol>
                         )}
-                        {entry.kind === 'write' && session?.started && !finished && (
+                        {(entry.kind === 'short' || entry.kind === 'associate') && session?.started && !finished && (
+                          <textarea
+                            className="field form-input quiz-work en-short"
+                            value={draft.text || ''}
+                            onChange={event => setAnswer(block.label, entry.n, { text: event.target.value })}
+                            placeholder={entry.kind === 'associate'
+                              ? 'Scrie aici asocierea (50–80 de cuvinte): opera citită, valoarea comună, un fapt din fragment și unul din carte.'
+                              : (entry.minWords >= 20
+                                ? 'Scrie răspunsul aici, în cuvinte. Nu e compunerea lungă — aceea e pe caiet, la Subiectul II.'
+                                : 'Scrie răspunsul scurt (transcriere, cifră, enunț).')}
+                            aria-label={`Răspuns itemul ${entry.n}`}
+                            rows={entry.kind === 'associate' || (entry.minWords || 0) >= 20 ? 5 : 2}
+                          />
+                        )}
+                        {(entry.kind === 'short' || entry.kind === 'associate') && !session?.started && !finished && (
+                          <small>Câmpul de răspuns se deschide după ce începi testul.</small>
+                        )}
+                        {entry.kind === 'write' && entry.photoOnly && !finished && (
+                          <div className="en-notebook-note">
+                            <p>
+                              Compunerea <strong>nu se tastează</strong> aici, ca la examen. O scrii în caiet
+                              {entry.minWords ? ` (minimum ${entry.minWords} de cuvinte)` : ''}. După predare fotografiază pagina —
+                              mentorul o corectează pe barem. Ai {photoQuota.remaining} poze rămase azi din 3.
+                            </p>
+                          </div>
+                        )}
+                        {entry.kind === 'write' && !entry.photoOnly && session?.started && !finished && (
                           <textarea
                             className="field form-input quiz-work quiz-write en-write"
                             value={draft.text || ''}
@@ -265,8 +415,21 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                             rows={8}
                           />
                         )}
-                        {entry.kind === 'write' && !session?.started && !finished && (
+                        {entry.kind === 'write' && !entry.photoOnly && !session?.started && !finished && (
                           <small>Câmpul de redactare se deschide după ce începi testul.</small>
+                        )}
+                        {entry.kind === 'write' && entry.photoOnly && finished && (
+                          <EnPhotoBox
+                            paperId={paper.id}
+                            target="composition"
+                            remaining={photoQuota.remaining}
+                            label="Fotografiază compunerea din caiet. Mentorul o citește pe barem și îți dă sfaturi — nu un text de copiat."
+                            onDone={data => {
+                              if (data.photoQuota) setPhotoQuota(data.photoQuota);
+                              if (data.session?.result) setResult(data.session.result);
+                              if (data.session) setSession(data.session);
+                            }}
+                          />
                         )}
                         {finished && scoredItem && (
                           <div className="en-barem-card">
@@ -287,6 +450,14 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                             {scoredItem.barem && scoredItem.barem !== scoredItem.teacher && scoredItem.barem !== scoredItem.explain ? (
                               <p>{scoredItem.barem}</p>
                             ) : null}
+                            {scoredItem.solution ? (
+                              <div className="en-full-solution">
+                                <strong>Rezolvare completă</strong>
+                                {String(scoredItem.solution).split(/\n\n+/).map((para, paraIndex) => (
+                                  <p key={`${key}-sol-${paraIndex}`}>{para}</p>
+                                ))}
+                              </div>
+                            ) : null}
                             {scoredItem.steps?.length > 0 && (
                               <ol className="quiz-steps">
                                 {scoredItem.steps.map((step, stepIndex) => <li key={`${key}-s-${stepIndex}`}>{step}</li>)}
@@ -302,6 +473,19 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                                 Redactare: {scoredItem.rubric.total}/{scoredItem.rubric.max} · {scoredItem.points}/{scoredItem.maxPoints} puncte
                               </p>
                             )}
+                            {scoredItem.photoFeedback ? (
+                              <div className="en-photo-feedback">
+                                <strong>Mentorul, după poză</strong>
+                                <p>{scoredItem.photoFeedback}</p>
+                                {scoredItem.photoTips?.length ? (
+                                  <ul>
+                                    {scoredItem.photoTips.map((tip, tipIndex) => (
+                                      <li key={`${key}-tip-${tipIndex}`}>{tip}</li>
+                                    ))}
+                                  </ul>
+                                ) : null}
+                              </div>
+                            ) : null}
                             {scoredItem.maxPoints ? (
                               <small>{scoredItem.points}/{scoredItem.maxPoints} puncte · {verdictLabel(scoredItem)}</small>
                             ) : null}
@@ -332,7 +516,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
 
       {error ? <p className="guide-error">{error}</p> : null}
       <p className="en-paper-foot">
-        Baremul întregului test se deschide după predare. Dacă varianta ta nu e identică, tot o citim: altă formulare sau aceeași valoare merită punct, iar dacă nu — îți spunem de ce. Compunerea are idei de corectare, nu un model de copiat.
+        Baremul întregului test se deschide după predare. La română, itemii 6–9 se scriu aici; compunerea rămâne pe caiet. La mate, la Subiectul III scrii doar rezultatul. Pozele de corectare: 3 pe zi, ca să rămână aplicația gratuită.
         Părintele primește nota, durata și răspunsurile tale.
       </p>
     </section>

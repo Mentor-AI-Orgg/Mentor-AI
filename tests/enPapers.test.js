@@ -17,16 +17,93 @@ describe('EN papers and barem', () => {
     expect(first.choices).toHaveLength(4);
     expect(first.letter).toBeUndefined();
     expect(JSON.stringify(papers)).not.toMatch(/Varianta din barem/);
+    expect(JSON.stringify(papers)).not.toMatch(/Rezolvare completă|BC² = AB²/);
+    papers.forEach(paper => {
+      const third = paper.blocks.find(block => block.label === 'Subiectul III');
+      const problems = (third.items || []).filter(item => item.n > 0);
+      expect(problems).toHaveLength(2);
+      problems.forEach(item => {
+        expect(item.kind).toBe('en-parts');
+        expect(item.parts).toHaveLength(2);
+        expect(item.parts.map(part => part.id)).toEqual(['a', 'b']);
+        expect(item.parts[0].prompt).toBeTruthy();
+        expect(JSON.stringify(item)).not.toMatch(/"answer"|solution/);
+      });
+    });
   });
 
-  it('recommended Romanian papers include two support texts', () => {
+  it('recommended Romanian papers follow the 2026 EN sheet: two long texts, I A + I B grammar, II on paper', () => {
     const papers = recommendedList('romana');
     papers.forEach(paper => {
       const passages = paper.blocks.flatMap(block => block.items).filter(item => item.kind === 'passage' || item.n === 0);
       expect(passages.length).toBeGreaterThanOrEqual(2);
-      expect(passages.some(item => /Text-suport 1|literar/i.test(item.prompt))).toBe(true);
-      expect(passages.some(item => /Text-suport 2|nonliterar|anunț|Aviz|Regulament/i.test(item.prompt))).toBe(true);
+      passages.forEach(item => {
+        expect(item.prompt.split(/\s+/).length).toBeGreaterThan(180);
+      });
+      const a = paper.blocks.find(block => block.label === 'Subiectul I A');
+      const b = paper.blocks.find(block => block.label === 'Subiectul I B');
+      const two = paper.blocks.find(block => block.label === 'Subiectul II');
+      expect(a.points).toBe(50);
+      expect(b.points).toBe(20);
+      expect(two.points).toBe(20);
+      const scoredA = a.items.filter(item => item.n > 0);
+      expect(scoredA).toHaveLength(9);
+      expect(scoredA.filter(item => item.choices).map(item => item.n)).toEqual([1, 2, 3, 4, 5]);
+      expect(scoredA.find(item => item.n === 6).kind).toBe('short');
+      expect(scoredA.find(item => item.n === 9).kind).toBe('associate');
+      const grammar = b.items.filter(item => item.n > 0);
+      expect(grammar).toHaveLength(8);
+      expect(grammar.every(item => item.choices?.length === 4)).toBe(true);
+      const writing = two.items.find(item => item.kind === 'write');
+      expect(writing.photoOnly).toBe(true);
+      expect(writing.minWords).toBe(150);
     });
+    const letters = new Set();
+    papers.forEach(paper => {
+      const bundle = getBundle(paper.id);
+      Object.values(bundle.barem).forEach(row => {
+        if (row.letter) letters.add(row.letter);
+      });
+    });
+    expect(letters.size).toBeGreaterThan(1);
+  });
+
+  it('generated Romanian papers stay on the 2026 sheet and shuffle the correct letter', () => {
+    const letters = new Set();
+    const ids = new Set();
+    for (let i = 0; i < 6; i += 1) {
+      const paper = generatePaper('romana', [...ids]);
+      ids.add(paper.id);
+      expect(paper.generated).toBe(true);
+      const a = paper.blocks.find(block => block.label === 'Subiectul I A');
+      const b = paper.blocks.find(block => block.label === 'Subiectul I B');
+      const two = paper.blocks.find(block => block.label === 'Subiectul II');
+      expect(a.points).toBe(50);
+      expect(b.points).toBe(20);
+      expect(two.points).toBe(20);
+      expect(a.items.filter(item => item.kind === 'passage' || item.n === 0).length).toBeGreaterThanOrEqual(2);
+      expect(b.items.filter(item => item.n > 0).every(item => item.choices?.length === 4)).toBe(true);
+      expect(two.items.find(item => item.kind === 'write').photoOnly).toBe(true);
+      const bundle = getBundle(paper.id);
+      const answers = [];
+      paper.blocks.forEach(block => {
+        block.items.filter(item => item.n > 0).forEach(item => {
+          const row = bundle.barem[`${block.label}:${item.n}`];
+          if (item.choices?.length) {
+            letters.add(row.letter);
+            answers.push({ block: block.label, n: item.n, letter: row.letter });
+            return;
+          }
+          if (item.kind === 'short' && (item.minWords || 0) < 20) {
+            answers.push({ block: block.label, n: item.n, text: (row.answers || [])[0] || '' });
+          }
+        });
+      });
+      const score = scoreAttempt(paper.id, answers);
+      expect(score.points).toBeGreaterThanOrEqual(50);
+    }
+    expect(ids.size).toBe(6);
+    expect(letters.size).toBeGreaterThan(1);
   });
 
   it('generated math papers shuffle the correct letter and stay solvable', () => {
@@ -38,7 +115,16 @@ describe('EN papers and barem', () => {
       paper.blocks.forEach(block => {
         block.items.filter(item => item.n > 0).forEach(item => {
           const key = `${block.label}:${item.n}`;
-          const letter = bundle.barem[key].letter;
+          const row = bundle.barem[key];
+          if (item.kind === 'en-parts' || item.parts) {
+            const parts = {};
+            Object.entries(row.parts || {}).forEach(([id, part]) => {
+              parts[id] = part.answer;
+            });
+            answers.push({ block: block.label, n: item.n, parts });
+            return;
+          }
+          const letter = row.letter;
           letters.add(letter);
           const idx = 'ABCD'.indexOf(letter);
           expect(item.choices[idx]).toBeTruthy();
@@ -48,6 +134,9 @@ describe('EN papers and barem', () => {
       const score = scoreAttempt(paper.id, answers);
       expect(score.points).toBe(100);
       expect(score.grade).toBe('10.00');
+      const third = score.items.filter(item => item.kind === 'en-parts');
+      expect(third).toHaveLength(2);
+      expect(third.every(item => item.solution && item.parts.length === 2)).toBe(true);
     }
     expect(letters.size).toBeGreaterThan(1);
   });
@@ -56,14 +145,22 @@ describe('EN papers and barem', () => {
     const text = [
       'Aleg narațiunea. Într-o zi am deschis fereastra și praful a intrat în cameră.',
       'Apoi am închis-o, pentru că nu mai puteam scrie. Deci ziua s-a schimbat doar cu un geam.',
-      'Am pus caietul deoparte și am ascultat curtea. Nu e o poveste lungă, e un capăt mic.'
+      'Am pus caietul deoparte și am ascultat curtea. Nu e o poveste lungă, e un capăt mic.',
+      'Personajul din text, Mara, are grijă de un cireș și tace când e luată în râs. Asta e o trăsătură: discreția.',
+      'A doua trăsătură e statornicia: se întoarce, udă, nu cere o placă cu nume. O valoare comună e grija.',
+      'Am citit Amintiri din copilărie și acolo tot o grijă mică ține un loc. Închei aici, după ce am scris destul.',
+      'Mai adaug un paragraf ca să trec de o sută cincizeci de cuvinte: holul, ghiozdanul ud, ploaia de joi,',
+      'băiatul care îndreaptă piatra, sala de lectură cu reguli, și faptul că un loc al școlii rămâne viu dacă cineva are grijă.'
     ].join(' ');
     const score = scoreAttempt('en-ro-a', [
-      { block: 'Subiectul I', n: 1, letter: 'A' },
-      { block: 'Subiectul III', n: 13, text }
+      { block: 'Subiectul I A', n: 1, letter: 'A' },
+      { block: 'Subiectul I A', n: 9, text },
+      { block: 'Subiectul II', n: 1, text }
     ]);
     const writing = score.items.find(item => item.kind === 'write');
-    expect(writing.points).toBeGreaterThanOrEqual(16);
+    expect(writing.points).toBeGreaterThanOrEqual(8);
+    const associate = score.items.find(item => item.kind === 'associate');
+    expect(associate.points).toBeGreaterThan(0);
   });
 
   it('generates infinite unique math papers', () => {
@@ -75,7 +172,7 @@ describe('EN papers and barem', () => {
   });
 
   it('writing barem has ideas, not a model essay', () => {
-    const item = getBaremItem('en-ro-a', 'Subiectul III', 13);
+    const item = getBaremItem('en-ro-a', 'Subiectul II', 1);
     expect(item.ideas.length).toBeGreaterThanOrEqual(2);
     expect(item.explain).toMatch(/nu există|fără text-model|compunere-model|nu un text/i);
     expect(item.ideas.join(' ')).toMatch(/încadrare|conținut|organizare/i);
@@ -156,5 +253,42 @@ describe('EN papers and barem', () => {
     const all = await agent.post('/api/curriculum/en/barem').send({ paper_id: 'en-mate-a' });
     expect(all.status).toBe(200);
     expect(all.body.items.length).toBeGreaterThan(10);
+  });
+
+  it('caps EN photo reviews at three per day and grades a notebook page after start', async () => {
+    const agent = request.agent(app);
+    const stamp = Date.now();
+    const register = await agent.post('/api/auth/register').send({
+      email: `en.photo.${stamp}@example.com`,
+      password: 'Testpass1!',
+      name: 'Foto EN',
+      username: `enphoto${stamp}`,
+      class: '8',
+      parentEmail: `parinte.photo.${stamp}@example.com`,
+      parental_consent: true,
+      privacy_accepted: true
+    });
+    expect([200, 201]).toContain(register.status);
+    const start = await agent.post('/api/curriculum/en/papers/start').send({ paper_id: 'en-ro-a' });
+    expect(start.status).toBe(200);
+    expect(start.body.photoQuota.remaining).toBe(3);
+    const blob = `data:image/jpeg;base64,${'A'.repeat(80)}`;
+    const first = await agent.post('/api/curriculum/en/photo-review').send({
+      paper_id: 'en-ro-a',
+      target: 'composition',
+      image_base64: blob
+    });
+    expect(first.status).toBe(200);
+    expect(first.body.review.feedback.length).toBeGreaterThan(20);
+    expect(first.body.photoQuota.remaining).toBe(2);
+    await agent.post('/api/curriculum/en/photo-review').send({ paper_id: 'en-ro-a', target: 'composition', image_base64: blob });
+    await agent.post('/api/curriculum/en/photo-review').send({ paper_id: 'en-ro-a', target: 'composition', image_base64: blob });
+    const fourth = await agent.post('/api/curriculum/en/photo-review').send({
+      paper_id: 'en-ro-a',
+      target: 'composition',
+      image_base64: blob
+    });
+    expect(fourth.status).toBe(429);
+    expect(fourth.body.error).toMatch(/3 poze/i);
   });
 });

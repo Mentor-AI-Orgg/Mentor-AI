@@ -26,6 +26,8 @@ describe('infinite generated practice', () => {
     expect(itemLooksSound({ prompt: '', answers: ['4'] }, 'test')).toBe(false);
     expect(itemLooksSound({ prompt: 'Cât e 2+2?', answers: ['4'], numeric: { value: Number.NaN } }, 'test')).toBe(false);
     expect(itemLooksSound({ prompt: 'Volum', answers: ['84.857142857'], numeric: { value: 84.857142857 } }, 'test')).toBe(false);
+    expect(itemLooksSound({ prompt: 'Reducere', answers: ['37.5'], numeric: { value: 37.5 } }, 'test')).toBe(false);
+    expect(itemLooksSound({ prompt: 'Cât e 1/2 din 15?', answers: ['7.5'], numeric: { value: 7.5 } }, 'test')).toBe(false);
     expect(itemLooksSound({ options: ['2', '3', '4', '5'], correct: 2 }, 'flashcards')).toBe(true);
     expect(itemLooksSound({ options: ['2', '3', '4', '4'], correct: 0 }, 'flashcards')).toBe(false);
     expect(itemLooksSound({ options: ['2', '3', '4'], correct: 0 }, 'flashcards')).toBe(false);

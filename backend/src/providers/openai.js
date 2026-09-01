@@ -4,8 +4,10 @@ const config = require("../config");
 const { pickGpt4oMockReply } = require("../data/mockGpt4o");
 const { fetchWithTimeout } = require("./fetchWithTimeout");
 
-async function callGPT4o(messages, lang) {
+async function callGPT4o(messages, lang, options = {}) {
   const start = Date.now();
+  const imageBase64 = String(options.imageBase64 || '').trim();
+  const timeoutMs = Number(options.timeoutMs) || config.PROVIDER_TIMEOUT_MS;
 
   if (!config.OPENAI_KEY) {
     await new Promise(r => setTimeout(r, 300 + Math.random() * 300));
@@ -19,6 +21,16 @@ async function callGPT4o(messages, lang) {
   }
 
   try {
+    const payload = messages.map(message => ({ ...message }));
+    if (imageBase64) {
+      const last = payload[payload.length - 1];
+      const text = typeof last.content === "string" ? last.content : "";
+      const url = imageBase64.startsWith("data:") ? imageBase64 : `data:image/jpeg;base64,${imageBase64}`;
+      last.content = [
+        { type: "text", text },
+        { type: "image_url", image_url: { url } }
+      ];
+    }
     const res = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -27,10 +39,10 @@ async function callGPT4o(messages, lang) {
       },
       body: JSON.stringify({
         model: config.OPENAI_MODEL,
-        messages,
+        messages: payload,
         max_tokens: config.MAX_TOKENS
       })
-    }, config.PROVIDER_TIMEOUT_MS);
+    }, timeoutMs);
 
     if (!res.ok) throw new Error(`OpenAI API responded ${res.status}`);
     const data = await res.json();

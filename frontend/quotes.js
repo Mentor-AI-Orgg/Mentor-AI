@@ -53,16 +53,20 @@ function gradeBand(grade) {
   return 'low';
 }
 
+function indexFromSeed(seed, length) {
+  const n = Number(seed);
+  const i = Number.isFinite(n) ? Math.abs(Math.floor(n)) : 0;
+  return i % Math.max(1, length);
+}
+
 function quoteFor(seed = Date.now()) {
-  const index = Math.abs(Number(seed) || 0) % QUOTES.length;
-  return QUOTES[index];
+  return QUOTES[indexFromSeed(seed, QUOTES.length)];
 }
 
 function quoteForGrade(grade, seed) {
-  const band = GRADE_QUOTES[gradeBand(grade)];
+  const band = GRADE_QUOTES[gradeBand(grade)] || GRADE_QUOTES.ok;
   const raw = seed != null ? Number(seed) : Math.round(Number(grade) * 10);
-  const index = Math.abs(Number(raw) || 0) % band.length;
-  return band[index];
+  return band[indexFromSeed(raw, band.length)] || band[0];
 }
 
 function dailyQuote() {

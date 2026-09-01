@@ -2,10 +2,18 @@ import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 const SOLIDS = {
-  box3d: { label: 'Cub / cutie — învârte-l', hint: 'Trage. Vezi cele 6 fețe, apoi L × l × h.' },
+  cube: { label: 'Cub — învârte-l', hint: 'Trage. Șase fețe pătrate, a × a × a.' },
+  box3d: { label: 'Paralelipiped — învârte-l', hint: 'Trage. Vezi cele 6 fețe, apoi L × l × h.' },
+  prism: { label: 'Prismă dreaptă — învârte-o', hint: 'Trage. Două baze identice, muchii drepte.' },
+  'prism-tri': { label: 'Prismă triunghiulară — învârte-o', hint: 'Trage. Baza e un triunghi.' },
+  'prism-hex': { label: 'Prismă hexagonală — învârte-o', hint: 'Trage. Baza e un hexagon.' },
   pyramid: { label: 'Piramidă — învârte-o', hint: 'Trage. Baza e jos; vârful stă deasupra.' },
+  'pyramid-tri': { label: 'Piramidă triunghiulară — învârte-o', hint: 'Trage. Baza e un triunghi.' },
+  tetrahedron: { label: 'Tetraedru — învârte-l', hint: 'Trage. Patru fețe triunghiuri.' },
   cylinder: { label: 'Cilindru — învârte-l', hint: 'Trage. Două cercuri, o înălțime.' },
   cone: { label: 'Con — învârte-l', hint: 'Trage. Un cerc jos, un vârf sus.' },
+  frustum: { label: 'Trunchi de con — învârte-l', hint: 'Trage. Două cercuri, de raze diferite.' },
+  'frustum-pyramid': { label: 'Trunchi de piramidă — învârte-l', hint: 'Trage. Două baze asemenea.' },
   sphere: { label: 'Sferă — învârte-o', hint: 'Trage. Toate punctele sunt la aceeași distanță de centru.' },
   planes: { label: 'Plan și dreaptă — învârte', hint: 'Trage. Masa e planul; creionul e dreapta.' }
 };
@@ -19,14 +27,22 @@ function makeMesh(kind) {
   const edgePaint = new THREE.LineBasicMaterial({ color: 0xb9a7ff });
   let geometry;
   if (kind === 'pyramid') geometry = new THREE.ConeGeometry(1.05, 1.55, 4);
+  else if (kind === 'pyramid-tri') geometry = new THREE.ConeGeometry(1.05, 1.55, 3);
+  else if (kind === 'tetrahedron') geometry = new THREE.TetrahedronGeometry(1.15);
   else if (kind === 'cylinder') geometry = new THREE.CylinderGeometry(0.72, 0.72, 1.55, 28);
   else if (kind === 'cone') geometry = new THREE.ConeGeometry(0.88, 1.65, 28);
+  else if (kind === 'frustum') geometry = new THREE.CylinderGeometry(0.42, 0.88, 1.45, 28);
+  else if (kind === 'frustum-pyramid') geometry = new THREE.CylinderGeometry(0.45, 0.95, 1.4, 4);
   else if (kind === 'sphere') geometry = new THREE.SphereGeometry(0.95, 32, 22);
   else if (kind === 'planes') geometry = new THREE.BoxGeometry(2.1, 0.06, 1.4);
+  else if (kind === 'prism-tri') geometry = new THREE.CylinderGeometry(0.95, 0.95, 1.45, 3);
+  else if (kind === 'prism-hex') geometry = new THREE.CylinderGeometry(0.88, 0.88, 1.4, 6);
+  else if (kind === 'box3d' || kind === 'prism') geometry = new THREE.BoxGeometry(1.7, 1.05, 1.2);
   else geometry = new THREE.BoxGeometry(1.35, 1.35, 1.35);
 
   const mesh = new THREE.Mesh(geometry, paint);
-  if (kind === 'pyramid') mesh.rotation.y = Math.PI / 4;
+  if (kind === 'pyramid' || kind === 'frustum-pyramid') mesh.rotation.y = Math.PI / 4;
+  if (kind === 'pyramid-tri' || kind === 'prism-tri') mesh.rotation.y = Math.PI / 6;
   const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), edgePaint);
   mesh.add(edges);
   return mesh;

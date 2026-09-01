@@ -6,6 +6,7 @@ import ChapterQuiz from '../components/ChapterQuiz.jsx';
 import EnPaperView from '../components/EnPaperView.jsx';
 import QuoteCard from '../components/QuoteCard.jsx';
 import GeoFigure from '../components/GeoFigure.jsx';
+import GeometryAtlas from '../components/GeometryAtlas.jsx';
 import { dailySlogan } from '../slogans.js';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
 
@@ -367,6 +368,8 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             {guide?.source?.disclaimer && <small className="chapter-disclaimer">{guide.source.disclaimer}</small>}
           </section>
 
+          {guide?.atlas && <GeometryAtlas atlas={guide.atlas} />}
+
           {isEn && (guide?.papers || []).length > 0 && (
             <section className="en-papers-section" aria-label="Modele recomandate de teste">
               <div className="surface chapter-intro">
@@ -457,7 +460,9 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                           {unit.lessons.map((entry, lessonIndex) => (
                             <li key={entry.id} className="lesson-platter">
                               <h4>Lecția {lessonIndex + 1}. {entry.title}</h4>
-                              {entry.figure && <GeoFigure kind={entry.figure} />}
+                              {entry.figure && (
+                                <GeoFigure kind={entry.figure} formulas={entry.formulas} />
+                              )}
                               {entry.theory && <p><strong>Teorie. </strong>{entry.theory}</p>}
                               {entry.example && <p><strong>Exemplu. </strong>{entry.example}</p>}
                               {entry.tryThis && <p className="lesson-try"><strong>Încearcă tu. </strong>{entry.tryThis}</p>}
