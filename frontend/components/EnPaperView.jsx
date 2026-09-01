@@ -14,8 +14,8 @@ function WordMeter({ text, minWords, maxWords }) {
   const n = countWords(text);
   const hasMin = Number(minWords) > 0;
   const hasMax = Number(maxWords) > 0;
-  if (!hasMin && !hasMax) {
-    return n > 0 ? <small className="en-word-meter">{n} {n === 1 ? 'cuvânt' : 'cuvinte'}</small> : null;
+  if ((!hasMin || Number(minWords) < 8) && !hasMax) {
+    return null;
   }
   const enough = !hasMin || n >= Number(minWords);
   const notOver = !hasMax || n <= Number(maxWords);
