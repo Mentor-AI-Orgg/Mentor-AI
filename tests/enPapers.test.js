@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
-import { recommendedList, generatePaper, getBaremItem } from '../backend/src/data/enPaperFactory.js';
+import { recommendedList, generatePaper, getBaremItem, getBundle, scoreAttempt } from '../backend/src/data/enPaperFactory.js';
 
 describe('EN papers and barem', () => {
   let app;
@@ -27,6 +27,43 @@ describe('EN papers and barem', () => {
       expect(passages.some(item => /Text-suport 1|literar/i.test(item.prompt))).toBe(true);
       expect(passages.some(item => /Text-suport 2|nonliterar|anunț|Aviz|Regulament/i.test(item.prompt))).toBe(true);
     });
+  });
+
+  it('generated math papers shuffle the correct letter and stay solvable', () => {
+    const letters = new Set();
+    for (let i = 0; i < 6; i += 1) {
+      const paper = generatePaper('matematica');
+      const bundle = getBundle(paper.id);
+      const answers = [];
+      paper.blocks.forEach(block => {
+        block.items.filter(item => item.n > 0).forEach(item => {
+          const key = `${block.label}:${item.n}`;
+          const letter = bundle.barem[key].letter;
+          letters.add(letter);
+          const idx = 'ABCD'.indexOf(letter);
+          expect(item.choices[idx]).toBeTruthy();
+          answers.push({ block: block.label, n: item.n, letter });
+        });
+      });
+      const score = scoreAttempt(paper.id, answers);
+      expect(score.points).toBe(100);
+      expect(score.grade).toBe('10.00');
+    }
+    expect(letters.size).toBeGreaterThan(1);
+  });
+
+  it('scores a real writing attempt without demanding the barem sentences', () => {
+    const text = [
+      'Aleg narațiunea. Într-o zi am deschis fereastra și praful a intrat în cameră.',
+      'Apoi am închis-o, pentru că nu mai puteam scrie. Deci ziua s-a schimbat doar cu un geam.',
+      'Am pus caietul deoparte și am ascultat curtea. Nu e o poveste lungă, e un capăt mic.'
+    ].join(' ');
+    const score = scoreAttempt('en-ro-a', [
+      { block: 'Subiectul I', n: 1, letter: 'A' },
+      { block: 'Subiectul III', n: 13, text }
+    ]);
+    const writing = score.items.find(item => item.kind === 'write');
+    expect(writing.points).toBeGreaterThanOrEqual(16);
   });
 
   it('generates infinite unique math papers', () => {

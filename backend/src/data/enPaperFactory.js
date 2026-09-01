@@ -2,8 +2,26 @@
 // cu testul. Cronometrul pornește la „Începe test”. Predare anticipată
 // după 60 minute (metodologia EN); lucrare 120 minute. Baremul și nota
 // apar abia după finalizare. Redactarea are idei de barem, nu un text gata.
+//
+// Tipurile de item (procent, interval, medie, funcție, Pitagora, prismă…)
+// urmează structura publică CNPEE (modele + bareme pe subiecte.edu.ro).
+// Enunțurile, numerele și textele sunt originale. Nu copiem culegeri.
 
-const { rng, seedFromHex, newSeed, int, pick, uniqueOptions } = require('./itemRng');
+const { rng, seedFromHex, newSeed, int, pick, shuffle, uniqueOptions } = require('./itemRng');
+
+const LETTERS = ['A', 'B', 'C', 'D'];
+
+function mcqRow(rand, prompt, correct, wrongs, explain, steps) {
+  const choices = shuffle(rand, uniqueOptions(rand, correct, wrongs));
+  const idx = Math.max(0, choices.findIndex(choice => String(choice) === String(correct)));
+  return {
+    prompt,
+    choices,
+    letter: LETTERS[idx],
+    explain,
+    steps
+  };
+}
 
 function envMs(name, fallback) {
   const n = Number(process.env[name]);
@@ -252,12 +270,16 @@ function mathRecommendedC() {
   };
 }
 
+function takeSix(rand, pool) {
+  return shuffle(rand, pool).slice(0, 6);
+}
+
 function generateMathPaper(rand, seed) {
+  const { gcd } = require('./itemRng');
   const a = int(rand, 2, 8);
   const b = int(rand, 2, 6);
   const c = int(rand, 1, 9);
   const val1 = a * a * b - c;
-  const opts1 = uniqueOptions(rand, val1, [val1 + 2, val1 - 3, a * b + c]);
   const L = int(rand, 8, 16);
   const l = int(rand, 3, 7);
   const p = 2 * (L + l);
@@ -268,7 +290,7 @@ function generateMathPaper(rand, seed) {
   const g = int(rand, 2, 5);
   const n1 = g * int(rand, 3, 8);
   const n2 = g * int(rand, 3, 8);
-  const d = require('./itemRng').gcd(n1, n2);
+  const d = gcd(n1, n2);
   const cat1 = pick(rand, [5, 6, 9]);
   const cat2 = cat1 === 5 ? 12 : cat1 === 6 ? 8 : 12;
   const ip = cat1 === 5 ? 13 : cat1 === 6 ? 10 : 15;
@@ -277,33 +299,59 @@ function generateMathPaper(rand, seed) {
   const fb = int(rand, 1, 6);
   const x0 = int(rand, 2, 6);
   const fx0 = fx * x0 + fb;
+  const notes = pick(rand, [[6, 8, 10], [7, 7, 10], [5, 9, 10]]);
+  const mean = notes.reduce((sum, n) => sum + n, 0) / notes.length;
+  const left = pick(rand, [-2, 0, 1, 2]);
+  const right = left + pick(rand, [3, 4, 5]);
+  const inside = left + 1;
+  const day1 = pick(rand, [20, 25, 30]);
+  const day2 = pick(rand, [40, 45, 50]);
+  const track = 80;
+  const built = (track * day1) / 100 + (track * day2) / 100;
+  const leftB = pick(rand, [6, 8, 10]);
+  const rightB = leftB + 6;
+  const height = pick(rand, [4, 6]);
+  const trap = ((leftB + rightB) * height) / 2;
+  const base = pick(rand, [3, 6]);
+  const pyrH = pick(rand, [3, 6, 9]);
+  const pyrV = (base * base * pyrH) / 3;
 
-  const itemsI = [
-    { prompt: `Calculează ${a}² × ${b} − ${c}.`, choices: opts1, letter: 'A', explain: `${a}²=${a * a}, ori ${b} = ${a * a * b}, minus ${c} = ${val1}.`, steps: [`${a}² = ${a * a}`, `${a * a} × ${b} = ${a * a * b}`, `${a * a * b} − ${c} = ${val1}`] },
-    { prompt: `Un obiect costă ${pret} lei. Reducere ${proc}%. Cât plătești?`, choices: uniqueOptions(rand, platit, [pret, pret - proc, platit + 10]), letter: 'A', explain: `${proc}% din ${pret} = ${(pret * proc) / 100}, rămân ${platit}.`, steps: [`${proc}% × ${pret} = ${(pret * proc) / 100}`, `${pret} − ${(pret * proc) / 100} = ${platit}`] },
-    { prompt: `c.m.m.d.c.(${n1}, ${n2}) este…`, choices: uniqueOptions(rand, d, [g, n1, n2]), letter: 'A', explain: `Cel mai mare divizor comun e ${d}.`, steps: [`Descompui`, `c.m.m.d.c. = ${d}`] },
-    { prompt: `Dreptunghi ${L} cm × ${l} cm. Perimetrul este…`, choices: uniqueOptions(rand, p, [area, L + l, 2 * L]), letter: 'A', explain: `2×(${L}+${l})=${p}.`, steps: [`${L}+${l}=${L + l}`, `×2 = ${p}`] },
-    { prompt: `Aria aceluiași dreptunghi este…`, choices: uniqueOptions(rand, area, [p, L + l, L * 2]), letter: 'A', explain: `${L}×${l}=${area}.`, steps: [`lungime × lățime`] },
-    { prompt: `√${(a * a)} este…`, choices: uniqueOptions(rand, a, [a * a, 2 * a, a + 1]), letter: 'A', explain: `Radicalul „desface” pătratul.`, steps: [`√${a * a} = ${a}`] }
+  const poolI = [
+    mcqRow(rand, `Calculează ${a}² × ${b} − ${c}.`, val1, [val1 + 2, val1 - 3, a * b + c], `${a}²=${a * a}, ori ${b} = ${a * a * b}, minus ${c} = ${val1}.`, [`${a}² = ${a * a}`, `${a * a} × ${b} = ${a * a * b}`, `${a * a * b} − ${c} = ${val1}`]),
+    mcqRow(rand, `Un obiect costă ${pret} lei. Reducere ${proc}%. Cât plătești?`, platit, [pret, pret - proc, platit + 10], `${proc}% din ${pret} = ${(pret * proc) / 100}, rămân ${platit}.`, [`${proc}% × ${pret} = ${(pret * proc) / 100}`, `${pret} − ${(pret * proc) / 100} = ${platit}`]),
+    mcqRow(rand, `c.m.m.d.c.(${n1}, ${n2}) este…`, d, [g, n1, n2], `Cel mai mare divizor comun e ${d}.`, ['Descompui', `c.m.m.d.c. = ${d}`]),
+    mcqRow(rand, `Dreptunghi ${L} cm × ${l} cm. Perimetrul este…`, p, [area, L + l, 2 * L], `2×(${L}+${l})=${p}.`, [`${L}+${l}=${L + l}`, `×2 = ${p}`]),
+    mcqRow(rand, `Aria aceluiași dreptunghi este…`, area, [p, L + l, L * 2], `${L}×${l}=${area}.`, ['lungime × lățime']),
+    mcqRow(rand, `√${a * a} este…`, a, [a * a, 2 * a, a + 1], 'Radicalul „desface” pătratul.', [`√${a * a} = ${a}`]),
+    mcqRow(rand, `Media aritmetică a notelor ${notes.join(', ')} este…`, mean, [notes[0], notes[2], mean + 1], `(${notes.join('+')}):${notes.length}=${mean}.`, ['Aduni', 'Împarți la câți sunt']),
+    mcqRow(rand, `Numărul ${inside} aparține intervalului (${left}, ${right}] ?`, 'da, e înăuntru', ['nu, e în afară', 'doar dacă e întreg', 'doar capătul stâng'], `Deschis la ${left}, închis la ${right}. ${inside} e între ele.`, ['Capătul stâng afară', `${inside} e în interval`]),
+    mcqRow(rand, `O alee are ${track} m. Într-o zi se asfaltează ${day1}%, a doua zi ${day2}%. Câți metri s-au asfaltat în total?`, built, [track, (track * day1) / 100, day1 + day2], `${day1}%+${day2}%=${day1 + day2}% din ${track} = ${built} m.`, [`${day1 + day2}% × ${track} = ${built}`])
   ];
 
-  const itemsII = [
-    { prompt: `${g}(x − ${b}) + ${a} se desface la…`, choices: uniqueOptions(rand, `${g}x + ${a - g * b}`, [`${g}x + ${a + b}`, `${g}x − ${b}`, `${g + a}x`]), letter: 'A', explain: `${g}x − ${g * b} + ${a} = ${g}x + ${a - g * b}.`, steps: [`${g}·x`, `${g}·(−${b}) = −${g * b}`, `+ ${a}`] },
-    { prompt: `Rezolvă ${fx}x + ${fb} = ${fx0}. x este…`, choices: uniqueOptions(rand, x0, [x0 + 1, fb, fx]), letter: 'A', explain: `${fx}x = ${fx0 - fb}, x=${x0}.`, steps: [`Scazi ${fb}`, `Împarți la ${fx}`] },
-    { prompt: `f(x)=${fx}x+${fb}. f(${x0}) este…`, choices: uniqueOptions(rand, fx0, [fx + fb, x0, fx0 + 1]), letter: 'A', explain: `${fx}·${x0}+${fb}=${fx0}.`, steps: [`Înlocuiești x`] },
-    { prompt: `{ x + y = ${x0 + 3} ; x − y = ${Math.abs(x0 - 3) || 1} }. O soluție posibilă pentru x este jumătatea sumei.`, choices: uniqueOptions(rand, Math.round((x0 + 3 + Math.abs(x0 - 3 || 1)) / 2), [x0, 3, 0]), letter: 'A', explain: 'Aduni cele două ecuații: 2x = sumă, x = jumătate.', steps: ['Aduni', 'Împarți la 2'] },
-    { prompt: `(x + ${a})(x − ${a}) este…`, choices: [`x² − ${a * a}`, `x² + ${a * a}`, `x² − ${2 * a}x + ${a * a}`, `2x`], letter: 'A', explain: 'Diferență de pătrate.', steps: [`x² − ${a}²`] },
-    { prompt: `${fx}x − ${fx * 2} ≥ 0. Soluțiile sunt…`, choices: [`[${2}, +∞)`, `(${2}, +∞)`, `(−∞, ${2}]`, `[0, ${2}]`], letter: 'A', explain: `x ≥ 2.`, steps: [`${fx}x ≥ ${fx * 2}`, 'x ≥ 2'] }
+  const poolII = [
+    mcqRow(rand, `${g}(x − ${b}) + ${a} se desface la…`, `${g}x + ${a - g * b}`, [`${g}x + ${a + b}`, `${g}x − ${b}`, `${g + a}x`], `${g}x − ${g * b} + ${a} = ${g}x + ${a - g * b}.`, [`${g}·x`, `${g}·(−${b}) = −${g * b}`, `+ ${a}`]),
+    mcqRow(rand, `Rezolvă ${fx}x + ${fb} = ${fx0}. x este…`, x0, [x0 + 1, fb, fx], `${fx}x = ${fx0 - fb}, x=${x0}.`, [`Scazi ${fb}`, `Împarți la ${fx}`]),
+    mcqRow(rand, `f(x)=${fx}x+${fb}. f(${x0}) este…`, fx0, [fx + fb, x0, fx0 + 1], `${fx}·${x0}+${fb}=${fx0}.`, ['Înlocuiești x']),
+    mcqRow(rand, `{ x + y = ${x0 + 3} ; x − y = ${Math.abs(x0 - 3) || 1} }. x este jumătatea sumei.`, Math.round((x0 + 3 + Math.abs(x0 - 3 || 1)) / 2), [x0, 3, 0], 'Aduni: 2x = sumă, x = jumătate.', ['Aduni', 'Împarți la 2']),
+    mcqRow(rand, `(x + ${a})(x − ${a}) este…`, `x² − ${a * a}`, [`x² + ${a * a}`, `x² − ${2 * a}x + ${a * a}`, '2x'], 'Diferență de pătrate.', [`x² − ${a}²`]),
+    mcqRow(rand, `${fx}x − ${fx * 2} ≥ 0. Soluțiile sunt…`, `[${2}, +∞)`, [`(${2}, +∞)`, `(−∞, ${2}]`, `[0, ${2}]`], 'x ≥ 2. Interval închis la 2.', [`${fx}x ≥ ${fx * 2}`, 'x ≥ 2']),
+    mcqRow(rand, `f(x)=${fx}x−${fx * x0}. Punctul în care graficul taie Ox este…`, `(${x0}, 0)`, [`(0, ${x0})`, `(${-x0}, 0)`, `(0, ${-fx * x0})`], `f(x)=0 → ${fx}x=${fx * x0} → x=${x0}.`, ['Pui f(x)=0', `x=${x0}`])
   ];
 
-  const itemsIII = [
-    { prompt: `Triunghi, unghiuri ${40 + a}° și ${50 + b}°. Al treilea unghi este…`, choices: uniqueOptions(rand, 180 - (40 + a) - (50 + b), [90, 60, 45]), letter: 'A', explain: 'Suma e 180°.', steps: [`180 − ${40 + a} − ${50 + b}`] },
-    { prompt: `Catete ${cat1} cm și ${cat2} cm. Ipotenuza este…`, choices: uniqueOptions(rand, ip, [cat1 + cat2, cat1 * cat2, ip + 1]), letter: 'A', explain: `${cat1}²+${cat2}², apoi radical.`, steps: ['Pitagora'] },
-    { prompt: `Cub de muchie ${edge} cm. Volumul este…`, choices: uniqueOptions(rand, edge ** 3, [6 * edge * edge, 4 * edge, edge * edge]), letter: 'A', explain: `a³ = ${edge ** 3}.`, steps: [`${edge}³`] },
-    { prompt: `Cub de muchie ${edge} cm. Aria unei fețe este…`, choices: uniqueOptions(rand, edge * edge, [edge ** 3, 6 * edge, 4 * edge]), letter: 'A', explain: `Fața e pătrat.`, steps: [`${edge}²`] },
-    { prompt: `Cerc de rază ${a} cm. Lungimea (cu π) este…`, choices: [`${2 * a}π cm`, `${a}π cm`, `${a * a}π cm`, `${3 * a}π cm`], letter: 'A', explain: 'L=2πr.', steps: [`2×${a}×π`] },
-    { prompt: `Prismă, bază pătrat ${l}×${l}, h=${a}. Volumul este…`, choices: uniqueOptions(rand, l * l * a, [2 * l * a, l * a, l * l]), letter: 'A', explain: 'Ab × h.', steps: [`${l}² × ${a}`] }
+  const poolIII = [
+    mcqRow(rand, `Triunghi, unghiuri ${40 + a}° și ${50 + b}°. Al treilea unghi este…`, 180 - (40 + a) - (50 + b), [90, 60, 45], 'Suma e 180°.', [`180 − ${40 + a} − ${50 + b}`]),
+    mcqRow(rand, `Catete ${cat1} cm și ${cat2} cm. Ipotenuza este…`, ip, [cat1 + cat2, cat1 * cat2, ip + 1], `${cat1}²+${cat2}², apoi radical.`, ['Pitagora']),
+    mcqRow(rand, `Cub de muchie ${edge} cm. Volumul este…`, edge ** 3, [6 * edge * edge, 4 * edge, edge * edge], `a³ = ${edge ** 3}.`, [`${edge}³`]),
+    mcqRow(rand, `Cub de muchie ${edge} cm. Aria unei fețe este…`, edge * edge, [edge ** 3, 6 * edge, 4 * edge], 'Fața e pătrat.', [`${edge}²`]),
+    mcqRow(rand, `Cerc de rază ${a} cm. Lungimea (cu π) este…`, `${2 * a}π cm`, [`${a}π cm`, `${a * a}π cm`, `${3 * a}π cm`], 'L=2πr.', [`2×${a}×π`]),
+    mcqRow(rand, `Prismă, bază pătrat ${l}×${l}, h=${a}. Volumul este…`, l * l * a, [2 * l * a, l * a, l * l], 'Ab × h.', [`${l}² × ${a}`]),
+    mcqRow(rand, `Trapez, baze ${leftB} cm și ${rightB} cm, înălțime ${height} cm. Aria este…`, trap, [leftB * height, (leftB + rightB) * height, leftB + rightB], 'A=(B+b)h/2.', [`(${leftB}+${rightB})×${height}/2 = ${trap}`]),
+    mcqRow(rand, `Piramidă, bază pătrat ${base}×${base}, h=${pyrH}. Volumul este…`, pyrV, [base * base * pyrH, (base * base * pyrH) / 2, base * pyrH], 'V = Ab·h/3.', [`${base * base}×${pyrH}/3 = ${pyrV}`])
   ];
+
+  const itemsI = takeSix(rand, poolI);
+  const itemsII = takeSix(rand, poolII);
+  const itemsIII = takeSix(rand, poolIII);
 
   const barem = {};
   const toBlock = (label, list, startN) => list.map((row, idx) => {
@@ -340,6 +388,10 @@ const NONLIT_B = `Text-suport 2 (nonliterar)\n\nAviz — Consiliul elevilor, 3 m
 const LIT_C = `Text-suport 1 (literar)\n\nPodul de lemn trece pârâul ca o propoziție neterminată: scândurile au goluri prin care vezi apa, nu destul de late cât să-ți cadă piciorul, destul cât să-ți cadă privirea.\n\nIra ține o sacoșă cu pâine. Nu se uită în jos. Se uită la malul celălalt, unde câinele vecinilor așteaptă de parcă podul ar fi o regulă, nu o scândură.\n\nCând ajunge, câinele nu latră. Ira îi rupe o coajă. Podul rămâne în spate, cu golurile lui, gata să țină pe altcineva care nu se uită în jos.`;
 
 const NONLIT_C = `Text-suport 2 (nonliterar)\n\nRegulament — laboratorul de științe\n\nIntrarea se face doar cu halat și păr prins. Nu se gustă substanțe. Chiuveta din stânga e doar pentru sticlărie clătită, nu pentru resturi de experiment.\n\nProgram: luni–joi 12:10–14:00; vineri închis pentru inventar. Grupele de câte 4. Dacă lipsește un coleg, nu se lucrează în doi fără profesor.\n\nAccident mic (tăietură, strop): speli, anunți, completezi fișa de pe ușa dulapului roșu. Nu „rezolvi tu” și pleci.`;
+
+const LIT_D = `Text-suport 1 (literar)\n\nFereastra de la etajul doi dă spre curtea interioară, nu spre stradă. Teo numără ghivecele de pe pervazul de vizavi: trei vara, unul iarna. Azi sunt două, plus o sârmă pe care atârnă un prosop albastru, încă ud.\n\nJos, cineva bate un covor. Praful se ridică drept, ca un stâlp, apoi se rupe. Teo închide geamul. În cameră rămâne mirosul de praf și de săpun de rufe.\n\nPe masă, un caiet deschis la o pagină goală. Teo scrie un singur rând: „Am închis geamul.” Apoi ascultă. Bătăile au încetat. Prosopul se mișcă, deși vântul nu se simte aici.`;
+
+const NONLIT_D = `Text-suport 2 (nonliterar)\n\nAnunț — Consiliul elevilor, 14 aprilie\n\nSăptămâna „Curtea curată” începe luni, 21 aprilie. Fiecare clasă are o zi de colectare: hârtie (luni), plastic (miercuri), capace (vineri). Punctele de strângere: holul de la parter, lângă scara B.\n\nProgram: 8:10–8:25 și 13:40–14:00. Nu se aduc saci de acasă după ora 14:00. Clasa a VIII-a C ține tabelul. Dacă plouă, colectarea se mută în sala 4, nu se anulează.\n\nPremiul: o oră de lectură în curte, vineri, 25 aprilie, doar dacă s-au strâns cel puțin 12 saci. Înscrieri: până joi, 17 aprilie, la avizier.`;
 
 function roRecommended() {
   const a = {
@@ -496,11 +548,63 @@ function roRecommended() {
     }
   };
 
-  return { a, b, c };
+  const d = {
+    public: paperShell('en-ro-d', 'Model recomandat D — limba română', 'romana', RO_NOTE, [
+      block('Subiectul I', 40, 'Citește cele două texte. Itemii 1–6 pe textul 1, 7–8 pe textul 2.', [
+        publicItem(0, 0, LIT_D, { passage: true, kind: 'passage' }),
+        publicItem(1, 5, 'Fereastra lui Teo dă spre…', { choices: ['curtea interioară', 'strada principală', 'un peron', 'biblioteca'] }),
+        publicItem(2, 5, 'Ce atârnă pe sârmă, vizavi?', { choices: ['un prosop albastru, încă ud', 'un caiet', 'un covor', 'un ghiveci'] }),
+        publicItem(3, 5, 'Teo închide geamul pentru că…', { choices: ['se ridică praful de la covor', 'plouă', 'e noapte', 'i s-a cerut'] }),
+        publicItem(4, 5, '„Praful se ridică drept, ca un stâlp” este…', { choices: ['comparație', 'epitet', 'persoană', 'dialog'] }),
+        publicItem(5, 5, 'Ce scrie Teo în caiet?', { choices: ['„Am închis geamul.”', 'un anunț', 'o teza lungă', 'un tabel'] }),
+        publicItem(6, 5, 'Ultimul paragraf sugerează mai degrabă…', { choices: ['că ceva continuă afară, deși el s-a retras', 'că Teo a câștigat un premiu', 'că e vară mereu', 'că fereastra s-a spart'] }),
+        publicItem(0, 0, NONLIT_D, { passage: true, kind: 'passage' }),
+        publicItem(7, 5, 'Textul 2 este, ca scop, un…', { choices: ['anunț cu program și reguli', 'basm', 'portret', 'jurnal'] }),
+        publicItem(8, 5, 'Dacă plouă, colectarea…', { choices: ['se mută în sala 4, nu se anulează', 'se amână o săptămână', 'se face doar vineri', 'se anulează'] })
+      ]),
+      block('Subiectul II', 20, 'Limbă aplicată, pe textele de mai sus.', [
+        publicItem(9, 5, 'În „Teo numără ghivecele” predicatul este…', { choices: ['numără', 'Teo', 'ghivecele', 'fereastra'] }),
+        publicItem(10, 5, '„încă” din „încă ud” e…', { choices: ['adverb', 'substantiv', 'verb', 'prepoziție'] }),
+        publicItem(11, 5, 'Un antonim potrivit pentru „închide” este…', { choices: ['deschide', 'numără', 'scrie', 'ascultă'] }),
+        publicItem(12, 5, 'Subiectul din „Clasa a VIII-a C ține tabelul” este…', { choices: ['Clasa a VIII-a C', 'tabelul', 'ține', 'aprilie'] })
+      ]),
+      block('Subiectul III', 30, 'Alege O variantă. 150–180 de cuvinte. Plan pe ciornă. Nu copia textele.', [
+        publicItem(13, 30, 'A. Narațiune: închizi sau deschizi o fereastră și se schimbă ceva mic în zi.\n\nB. Argumentativ: merită sau nu o săptămână „Curtea curată” în școală?\n\nC. Descriere a unei curți interioare pe care o cunoști — două simțuri, fără poveste lungă.', { kind: 'write', lines: 'plan + 150–180 de cuvinte' })
+      ])
+    ]),
+    barem: {
+      'Subiectul I:1': { letter: 'A', explain: 'Primul rând: curtea interioară, nu strada.', steps: ['Locul'] },
+      'Subiectul I:2': { letter: 'A', explain: 'Prosop albastru, încă ud.', steps: ['Detaliu vizibil'] },
+      'Subiectul I:3': { letter: 'A', explain: 'Praful de la covor; închide geamul.', steps: ['Cauză'] },
+      'Subiectul I:4': { letter: 'A', explain: '„ca un stâlp” = comparație.', steps: ['ca + imagine'] },
+      'Subiectul I:5': { letter: 'A', explain: 'Un singur rând: „Am închis geamul.”', steps: ['Citat'] },
+      'Subiectul I:6': { letter: 'A', explain: 'Prosopul se mișcă; el doar ascultă.', steps: ['Închidere'] },
+      'Subiectul I:7': { letter: 'A', explain: 'Anunț, program, reguli, premiu.', steps: ['Genul textului 2'] },
+      'Subiectul I:8': { letter: 'A', explain: 'Sala 4, nu se anulează.', steps: ['Program de rezervă'] },
+      'Subiectul II:9': { letter: 'A', explain: 'Ce face Teo? Numără.', steps: ['Predicat'] },
+      'Subiectul II:10': { letter: 'A', explain: '„încă” modifică „ud”.', steps: ['Adverb'] },
+      'Subiectul II:11': { letter: 'A', explain: 'închide ↔ deschide.', steps: ['Antonim'] },
+      'Subiectul II:12': { letter: 'A', explain: 'Cine ține tabelul? Clasa a VIII-a C.', steps: ['Subiect'] },
+      'Subiectul III:13': {
+        letter: '',
+        explain: 'Nu există o compunere-model de copiat. Punctez cerința, în spiritul OM 4.730/2022.',
+        ideas: [
+          'Încadrare (≈6p): varianta A/B/C, persoană, lungime.',
+          'Conținut (≈8p): A — fereastră + schimbare mică + capăt; B — teză, 2 argumente de elev, concluzie; C — curte, 2 simțuri, fără poveste.',
+          'Organizare (≈6p): plan, paragrafe, fir.',
+          'Stil și corectitudine (≈10p): cuvinte potrivite, punctuație, fără copierea textului 1.'
+        ],
+        steps: ['Plan', 'Variantă', 'Lungime', 'Recitire']
+      }
+    }
+  };
+
+  return { a, b, c, d };
 }
 
 function generateRoPaper(rand, seed) {
-  const packs = [roRecommended().a, roRecommended().b, roRecommended().c];
+  const rec = roRecommended();
+  const packs = [rec.a, rec.b, rec.c, rec.d];
   const base = pick(rand, packs);
   const clone = JSON.parse(JSON.stringify(base.public));
   clone.id = `en:g:romana:${seed}`;
@@ -629,8 +733,8 @@ function scoreAttempt(paperId, answers = []) {
       if (item.kind === 'write') {
         const rubric = gradeWriting(given.text, {
           long: true,
-          minWords: 80,
-          tokens: barem.ideas || []
+          minWords: 60,
+          tokens: ['narațiune', 'naratiune', 'argumentativ', 'descriere', 'teză', 'teza', 'pentru că', 'pentru ca', 'apoi', 'deci', 'într-o zi', 'intr-o zi']
         });
         const pts = Math.round((rubric.total / (rubric.max || 30)) * maxPts);
         review.push({

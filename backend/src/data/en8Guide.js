@@ -144,7 +144,7 @@ function getEnGuide(subject) {
     trainingAvailable: true,
     quote: formatQuote(dailyQuote()),
     papersNote:
-      "Modelele au 4 variante, ca la examen, și două texte la română. Apasă „Începe test Evaluare Națională”, stai cu lucrarea deschisă cel puțin o oră (predare anticipată, metodologia EN), apoi finalizezi. Baremul și nota apar după predare. Antrenamentul EN (mai jos, la capitole) e separat: exerciții scurte, fără cronometrul probei.",
+      "Modelele A–C sunt originale. „Alt model” amestecă aceleași tipuri de item cu variante noi (numere și texte schimbate), inspirate de structura publică CNPEE, nu copiate din culegeri. Dificultatea e de examen: dacă știi programa, poți lua 10. Antrenamentul EN (mai jos) e separat: exerciții scurte, fără cronometrul probei.",
     units: (entry.units || []).map(unit => shapeUnit({
       ...unit,
       lessons: lessonsForEn(sid, unit.id),
