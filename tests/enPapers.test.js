@@ -305,12 +305,15 @@ describe('EN papers and barem', () => {
       expect(non, `${id} nonliterary`).toBeGreaterThan(180);
     });
     const seenTitles = new Set();
-    for (let i = 0; i < 16; i += 1) {
+    for (let i = 0; i < 24; i += 1) {
       const paper = generatePaper('romana');
       const first = paper.blocks[0].items.find(item => item.kind === 'passage' || item.n === 0);
-      seenTitles.add(String(first.prompt || '').slice(0, 80));
+      const passages = paper.blocks.flatMap(block => block.items).filter(item => item.kind === 'passage' || item.n === 0);
+      expect(passages[0].prompt.split(/\s+/).filter(Boolean).length).toBeGreaterThan(280);
+      expect(passages[1].prompt.split(/\s+/).filter(Boolean).length).toBeGreaterThan(180);
+      seenTitles.add(String(first.prompt || '').slice(0, 120));
     }
-    expect(seenTitles.size).toBeGreaterThan(1);
+    expect(seenTitles.size).toBe(24);
   });
 
   it('drill papers skip the 60-minute sala rule and still score to 10 on a perfect attempt', () => {

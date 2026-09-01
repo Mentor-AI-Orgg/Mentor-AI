@@ -145,7 +145,7 @@ function getEnGuide(subject) {
     trainingAvailable: true,
     quote: formatQuote(dailyQuote()),
     papersNote:
-      "Modelele A–C sunt originale, pe structura publică CNPEE. La română: două texte lungi, I A (grile + scriere + asociere cu o carte citită), I B doar gramatică grile, II compunere pe caiet (o poți fotografia după predare). La mate: I–II grile, III rezultat aici și rezolvare pe caiet. „Alt model” dă o simulare nouă, fără capăt: minim 60 de minute în sală. „Antrenament scurt” e același tip de itemi, tăiat (fără compunere / fără tot Subiectul II), fără ora de sală — predai când termini. Maximum 3 poze pe zi, ca să rămână aplicația gratuită. Antrenamentul de capitol (10 exerciții) e separat.",
+      "Modelele A–C sunt originale, pe structura publică CNPEE. La română: două texte lungi generate la fiecare variantă (literar + nonliterar), I A (grile + scriere + asociere cu o carte citită), I B doar gramatică grile, II compunere pe caiet (o poți fotografia după predare). La mate: I–II grile, III rezultat aici și rezolvare pe caiet. „Alt model” dă o simulare nouă, fără capăt: texte și itemi noi, minim 60 de minute în sală. „Antrenament scurt” e același tip de itemi, tăiat (fără compunere / fără tot Subiectul II), fără ora de sală — predai când termini. Maximum 3 poze pe zi, ca să rămână aplicația gratuită. Antrenamentul de capitol (10 exerciții) e separat.",
     units: (entry.units || []).map(unit => shapeUnit({
       ...unit,
       lessons: lessonsForEn(sid, unit.id),

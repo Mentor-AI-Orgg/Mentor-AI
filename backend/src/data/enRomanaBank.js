@@ -663,16 +663,9 @@ function packs(helpers) {
   return merged;
 }
 
-function generateRoPaper(helpers, rand, seed, pick) {
-  const all = packs(helpers);
-  const list = Object.values(all);
-  const base = pick(rand, list);
-  const clone = JSON.parse(JSON.stringify({ public: base.public, barem: base.barem }));
-  shuffleMcqBundle(clone, rand);
-  clone.public.id = `en:g:romana:${seed}`;
-  clone.public.title = `Model generat — limba română · ${seed.slice(0, 4)}`;
-  clone.public.generated = true;
-  return clone;
+function generateRoPaper(helpers, rand, seed) {
+  const generated = require('./enRomanaGenerate').generate(helpers, rand, seed);
+  return shuffleMcqBundle(generated, rand);
 }
 
 module.exports = { packs, generateRoPaper, wordCount, TEXTS, NOVEL_HINT, shuffleMcqBundle };

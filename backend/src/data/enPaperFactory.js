@@ -763,7 +763,7 @@ function roRecommended() {
 }
 
 function generateRoPaper(rand, seed) {
-  return roBank.generateRoPaper(roHelpers(), rand, seed, pick);
+  return roBank.generateRoPaper(roHelpers(), rand, seed);
 }
 
 const STATIC = {
