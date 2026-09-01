@@ -6,11 +6,26 @@ import { fromGeneratedId, generateOne, generateMany, itemLooksSound } from '../b
 import { GRADES, GUIDES, SUBJECT_IDS } from '../backend/src/data/gimnaziuGuide.js';
 
 describe('infinite generated practice', () => {
+  it('rebuilds the same item from its id and keeps whole-number answers', () => {
+    for (let i = 0; i < 24; i += 1) {
+      const item = generateOne({ kind: 'test', subject: 'matematica', grade: 5, chapterId: 'fractii', level: (i % 7) + 1 });
+      expect(item, `fractii #${i}`).toBeTruthy();
+      const again = fromGeneratedId(item.id);
+      expect(again.prompt).toBe(item.prompt);
+      expect(again.answers).toEqual(item.answers);
+      if (item.numeric) {
+        expect(Number.isInteger(item.numeric.value) || Math.abs(item.numeric.value - Math.round(item.numeric.value)) < 1e-9).toBe(true);
+      }
+      expect(checkExercise(item.id, item.answers[0]).ok).toBe(true);
+    }
+  });
+
   it('rejects generated items that cannot be graded fairly', () => {
     expect(itemLooksSound({ prompt: 'Cât e 2+2?', answers: ['4'], numeric: { value: 4 } }, 'test')).toBe(true);
     expect(itemLooksSound({ prompt: 'Cât e 2+2?', answers: [] }, 'test')).toBe(false);
     expect(itemLooksSound({ prompt: '', answers: ['4'] }, 'test')).toBe(false);
     expect(itemLooksSound({ prompt: 'Cât e 2+2?', answers: ['4'], numeric: { value: Number.NaN } }, 'test')).toBe(false);
+    expect(itemLooksSound({ prompt: 'Volum', answers: ['84.857142857'], numeric: { value: 84.857142857 } }, 'test')).toBe(false);
     expect(itemLooksSound({ options: ['2', '3', '4', '5'], correct: 2 }, 'flashcards')).toBe(true);
     expect(itemLooksSound({ options: ['2', '3', '4', '4'], correct: 0 }, 'flashcards')).toBe(false);
     expect(itemLooksSound({ options: ['2', '3', '4'], correct: 0 }, 'flashcards')).toBe(false);

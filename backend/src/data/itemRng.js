@@ -60,16 +60,19 @@ function uniqueOptions(rand, correct, wrongs) {
       pool.push(text);
     }
   }
-  while (pool.length < 3) {
+  let guard = 0;
+  while (pool.length < 3 && guard < 40) {
+    guard += 1;
     const n = Number(correct);
     const extra = Number.isFinite(n)
-      ? String(n + int(rand, 1, 12) * (rand() > 0.5 ? 1 : -1))
-      : `${String(correct)}?`.slice(0, 24) + String(pool.length + 1);
-    if (!seen.has(extra) && extra !== String(correct)) {
+      ? String(n + (guard + int(rand, 1, 9)) * (guard % 2 ? 1 : -1))
+      : `${String(correct).slice(0, 18)} · ${pool.length + 2}`;
+    if (extra && !seen.has(extra) && extra !== String(correct)) {
       seen.add(extra);
       pool.push(extra);
     }
   }
+  if (pool.length < 3) return null;
   return [String(correct), ...pool.slice(0, 3)];
 }
 

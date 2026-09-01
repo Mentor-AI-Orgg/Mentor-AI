@@ -48,6 +48,14 @@ function materialize(meta) {
   };
 }
 
+function uglyNumber(value) {
+  if (!Number.isFinite(value)) return true;
+  if (Number.isInteger(value)) return false;
+  if (Math.abs(value - Math.round(value)) < 1e-9) return false;
+  const decimals = String(value).split('.')[1] || '';
+  return String(value).includes('e') || decimals.length > 2;
+}
+
 function itemLooksSound(item, kind) {
   if (!item) return false;
   if (kind === 'flashcards' || item.options) {
@@ -57,10 +65,21 @@ function itemLooksSound(item, kind) {
     const idx = Number(item.correct);
     return Number.isInteger(idx) && idx >= 0 && idx < 4 && Boolean(String(options[idx]).trim());
   }
-  const answers = item.answers || [];
+  const answers = (item.answers || []).map(value => String(value).trim()).filter(Boolean);
   if (!String(item.prompt || '').trim() || !answers.length) return false;
-  if (item.numeric && !Number.isFinite(Number(item.numeric.value))) return false;
+  if (item.numeric) {
+    const value = Number(item.numeric.value);
+    if (!Number.isFinite(value) || uglyNumber(value)) return false;
+  }
   return true;
+}
+
+function sameItem(a, b) {
+  if (!a || !b) return false;
+  if (a.prompt && a.prompt !== b.prompt) return false;
+  if (a.question && a.question !== b.question) return false;
+  if (a.options) return JSON.stringify(a.options) === JSON.stringify(b.options) && a.correct === b.correct;
+  return JSON.stringify(a.answers || []) === JSON.stringify(b.answers || []);
 }
 
 function fromGeneratedId(id) {
@@ -81,9 +100,15 @@ function generateOne({ kind, subject, grade, chapterId, excludeIds = [], level }
   for (let i = 0; i < 48; i += 1) {
     const seed = newSeed();
     const item = materialize({ ...meta, seed });
-    if (item && !excluded.has(item.id)) return item;
+    if (!item || excluded.has(item.id)) continue;
+    const again = materialize({ ...meta, seed });
+    if (!sameItem(item, again)) continue;
+    return item;
   }
-  return materialize({ ...meta, seed: newSeed() });
+  const seed = newSeed();
+  const last = materialize({ ...meta, seed });
+  if (!last || !sameItem(last, materialize({ ...meta, seed }))) return null;
+  return last;
 }
 
 function generateMany(opts, count) {
