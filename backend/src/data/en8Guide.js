@@ -33,7 +33,7 @@ const EN_GUIDES = {
         id: "proba",
         title: "Cum arată proba de matematică",
         inOwnWords:
-          "Două ore, trei subiecte de câte 30 de puncte, plus 10 din oficiu. Subiectul I e scurt și variat, II e algebră, III e geometrie. Predarea anticipată e permisă după o oră. Baremul acceptă orice metodă corectă. Începi testul, stai timpul de sală, apoi predai."
+          "Două ore, trei subiecte de câte 30 de puncte, plus 10 din oficiu. Subiectul I: 6 grile de numere. Subiectul II: 6 grile de geometrie, numerotate tot de la 1. Subiectul III: 6 exerciții, fiecare cu a) 2 puncte și b) 3 puncte. Predarea anticipată e permisă după o oră. Baremul acceptă orice metodă corectă. Începi testul, stai timpul de sală, apoi predai."
       },
       {
         id: "numere",
@@ -145,7 +145,7 @@ function getEnGuide(subject) {
     trainingAvailable: true,
     quote: formatQuote(dailyQuote()),
     papersNote:
-      "Modelele A–C sunt originale, pe structura publică CNPEE. La română: două texte lungi generate la fiecare variantă (literar + nonliterar), I A (grile + scriere + asociere cu o carte citită), I B doar gramatică grile, II compunere pe caiet (o poți fotografia după predare). La mate: I–II grile, III rezultat aici și rezolvare pe caiet. „Alt model” dă o simulare nouă, fără capăt: texte și itemi noi, minim 60 de minute în sală. „Antrenament scurt” e același tip de itemi, tăiat (fără compunere / fără tot Subiectul II), fără ora de sală — predai când termini. Maximum 3 poze pe zi, ca să rămână aplicația gratuită. Antrenamentul de capitol (10 exerciții) e separat.",
+      "Modelele A–C sunt originale, pe structura clasică de EN (ca în 2022): I 6 grile de numere, II 6 grile de geometrie, III 6 exerciții cu a) 2p și b) 3p. La română: două texte lungi generate la fiecare variantă (literar + nonliterar), I A (grile + scriere + asociere cu o carte citită), I B doar gramatică grile, II compunere pe caiet (o poți fotografia după predare). La mate, la III scrii rezultatul aici și rezolvarea pe caiet. „Alt model” dă o simulare nouă, fără capăt: itemi noi, minim 60 de minute în sală. „Antrenament scurt” e tăiat (fără grilele de geometrie / fără tot Subiectul II la română), fără ora de sală — predai când termini. Maximum 3 poze pe zi, ca să rămână aplicația gratuită. Antrenamentul de capitol (10 exerciții) e separat.",
     units: (entry.units || []).map(unit => shapeUnit({
       ...unit,
       lessons: lessonsForEn(sid, unit.id),

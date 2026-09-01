@@ -31,22 +31,22 @@ describe('geometry atlas and EN subject III', () => {
 
   it('scores Subject III by result only and then exposes the full solution', () => {
     const ok = scoreAttempt('en-mate-a', [
-      { block: 'Subiectul III', n: 1, parts: { a: '10 cm', b: '24' } },
-      { block: 'Subiectul III', n: 2, parts: { a: '236 cm²', b: '240 cm³' } }
+      { block: 'Subiectul III', n: 5, parts: { a: '10 cm', b: '24' } },
+      { block: 'Subiectul III', n: 6, parts: { a: '236 cm²', b: '240 cm³' } }
     ]);
-    const items = ok.items.filter(item => item.kind === 'en-parts');
+    const items = ok.items.filter(item => item.kind === 'en-parts' && (item.n === 5 || item.n === 6));
     expect(items).toHaveLength(2);
     expect(items.every(item => item.ok)).toBe(true);
-    expect(items[0].points).toBe(15);
+    expect(items[0].points).toBe(5);
     expect(items[0].solution).toMatch(/Pitagora|catet/i);
     expect(items[1].solution).toMatch(/volum|236|240/i);
 
     const miss = scoreAttempt('en-mate-a', [
-      { block: 'Subiectul III', n: 1, parts: { a: '14', b: '24' } }
+      { block: 'Subiectul III', n: 5, parts: { a: '14', b: '24' } }
     ]);
-    const first = miss.items.find(item => item.n === 1 && item.kind === 'en-parts');
+    const first = miss.items.find(item => item.n === 5 && item.kind === 'en-parts');
     expect(first.ok).toBe(false);
-    expect(first.points).toBe(9);
+    expect(first.points).toBe(3);
     expect(first.parts[0].ok).toBe(false);
     expect(first.parts[1].ok).toBe(true);
 

@@ -55,14 +55,14 @@ describe('intelligent barem', () => {
     expect(row.points).toBe(item.points);
     expect(row.explain).toMatch(/punctat/i);
 
-    const money = paper.blocks[0].items.find(entry => entry.n === 3);
-    const moneyLetter = bundle.barem['Subiectul I:3'].letter;
+    const money = paper.blocks[0].items.find(entry => entry.n === 2);
+    const moneyLetter = bundle.barem['Subiectul I:2'].letter;
     const moneyChoice = money.choices['ABCD'.indexOf(moneyLetter)];
     const onlyNumber = String(moneyChoice).replace(/[^\d.,-]/g, '');
     const moneyScore = scoreAttempt(paper.id, [
-      { block: 'Subiectul I', n: 3, text: onlyNumber }
+      { block: 'Subiectul I', n: 2, text: onlyNumber }
     ]);
-    const moneyRow = moneyScore.items.find(entry => entry.n === 3);
+    const moneyRow = moneyScore.items.find(entry => entry.n === 2);
     expect(moneyRow.ok).toBe(true);
     expect(moneyRow.verdict).toBe('equivalent');
   });

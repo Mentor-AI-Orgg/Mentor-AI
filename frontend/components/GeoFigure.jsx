@@ -535,10 +535,11 @@ const SOLIDS = new Set([
 ]);
 
 const GeoFigure = ({ kind, caption, formulas, info, flat }) => {
-  const figure = FIGURES[kind];
+  const id = typeof kind === 'string' ? kind : kind && kind.kind;
+  const figure = FIGURES[id];
   if (!figure) return null;
   const title = caption || figure.label;
-  const body = !flat && SOLIDS.has(kind)
+  const body = !flat && SOLIDS.has(id)
     ? <GeoSolid kind={kind} caption={title} fallback={figure.svg} />
     : (
       <figure className="geo-figure">

@@ -19,13 +19,20 @@ describe('EN papers and barem', () => {
     expect(JSON.stringify(papers)).not.toMatch(/Varianta din barem/);
     expect(JSON.stringify(papers)).not.toMatch(/Rezolvare completă|BC² = AB²/);
     papers.forEach(paper => {
+      const first = paper.blocks.find(block => block.label === 'Subiectul I');
+      const second = paper.blocks.find(block => block.label === 'Subiectul II');
       const third = paper.blocks.find(block => block.label === 'Subiectul III');
+      expect(first.items.filter(item => item.n > 0).map(item => item.n)).toEqual([1, 2, 3, 4, 5, 6]);
+      expect(second.items.filter(item => item.n > 0).map(item => item.n)).toEqual([1, 2, 3, 4, 5, 6]);
       const problems = (third.items || []).filter(item => item.n > 0);
-      expect(problems).toHaveLength(2);
+      expect(problems).toHaveLength(6);
       problems.forEach(item => {
         expect(item.kind).toBe('en-parts');
+        expect(item.points).toBe(5);
         expect(item.parts).toHaveLength(2);
         expect(item.parts.map(part => part.id)).toEqual(['a', 'b']);
+        expect(item.parts[0].points).toBe(2);
+        expect(item.parts[1].points).toBe(3);
         expect(item.parts[0].prompt).toBeTruthy();
         expect(JSON.stringify(item)).not.toMatch(/"answer"|solution/);
       });
@@ -110,6 +117,13 @@ describe('EN papers and barem', () => {
     const letters = new Set();
     for (let i = 0; i < 6; i += 1) {
       const paper = generatePaper('matematica');
+      const first = paper.blocks.find(block => block.label === 'Subiectul I');
+      const second = paper.blocks.find(block => block.label === 'Subiectul II');
+      const thirdBlock = paper.blocks.find(block => block.label === 'Subiectul III');
+      expect(first.items.filter(item => item.n > 0).map(item => item.n)).toEqual([1, 2, 3, 4, 5, 6]);
+      expect(second.items.filter(item => item.n > 0).map(item => item.n)).toEqual([1, 2, 3, 4, 5, 6]);
+      expect(thirdBlock.items.filter(item => item.n > 0)).toHaveLength(6);
+      expect(thirdBlock.items.filter(item => item.n > 0).every(item => item.parts?.[0]?.points === 2 && item.parts?.[1]?.points === 3)).toBe(true);
       const bundle = getBundle(paper.id);
       const answers = [];
       paper.blocks.forEach(block => {
@@ -135,8 +149,9 @@ describe('EN papers and barem', () => {
       expect(score.points).toBe(100);
       expect(score.grade).toBe('10.00');
       const third = score.items.filter(item => item.kind === 'en-parts');
-      expect(third).toHaveLength(2);
+      expect(third).toHaveLength(6);
       expect(third.every(item => item.solution && item.parts.length === 2)).toBe(true);
+      expect(third.every(item => item.maxPoints === 5)).toBe(true);
     }
     expect(letters.size).toBeGreaterThan(1);
   });
@@ -368,7 +383,7 @@ describe('EN papers and barem', () => {
     expect(drillMath.minStayMinutes).toBe(0);
     expect(drillMath.blocks.find(block => block.label === 'Subiectul II')).toBeUndefined();
     const third = drillMath.blocks.find(block => block.label === 'Subiectul III');
-    expect(third.items.filter(item => item.n > 0)).toHaveLength(1);
+    expect(third.items.filter(item => item.n > 0)).toHaveLength(3);
     const mathScore = fillPerfect(drillMath);
     expect(mathScore.grade).toBe('10.00');
   });
