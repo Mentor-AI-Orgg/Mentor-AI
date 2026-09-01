@@ -92,6 +92,7 @@ async function createAccount({ email, password, role = "student", profile = {} }
       class: profile.class || "",
       subject: profile.subject || "",
       parentEmail: profile.parentEmail || "",
+      parentViewToken: "",
       teacherEmail: profile.teacherEmail || "",
       profile: profile.profile || "",
       exam: profile.exam || "",
@@ -126,10 +127,11 @@ async function authenticate({ email, password }) {
 // Datele publice ale contului. Nu include niciodată salt sau hash.
 function publicAccount(account) {
   if (!account) return null;
+  const { parentViewToken: _parentViewToken, ...safeProfile } = account.profile || {};
   return {
     email: account.email,
     role: account.role,
-    ...account.profile,
+    ...safeProfile,
     parentalConsentAt: account.parentalConsentAt || null,
     privacyAcceptedAt: account.privacyAcceptedAt || null,
     createdAt: account.createdAt
@@ -201,7 +203,30 @@ function updateProfile(email, patch = {}) {
   if (patch.hasCompletedOnboarding !== undefined) {
     account.profile.hasCompletedOnboarding = Boolean(patch.hasCompletedOnboarding);
   }
+  if (patch.parentEmail !== undefined) {
+    account.profile.parentViewToken = "";
+  }
   return account;
+}
+
+function ensureParentViewToken(email) {
+  const account = findAccount(email);
+  if (!account || account.role !== "student") return "";
+  if (account.profile.parentViewToken && account.profile.parentViewToken.length >= 24) {
+    return account.profile.parentViewToken;
+  }
+  const token = crypto.randomBytes(24).toString("hex");
+  account.profile.parentViewToken = token;
+  return token;
+}
+
+function findAccountByParentToken(token) {
+  const raw = String(token || "").trim();
+  if (raw.length < 24) return null;
+  for (const account of ACCOUNTS.values()) {
+    if (account.profile && account.profile.parentViewToken === raw) return account;
+  }
+  return null;
 }
 
 // Sesiunile expirate s-ar acumula la infinit dacă nimeni nu le mai atinge.
@@ -239,6 +264,8 @@ module.exports = {
   normalizeEmail,
   createAccount,
   findAccount,
+  findAccountByParentToken,
+  ensureParentViewToken,
   authenticate,
   publicAccount,
   updateProfile,

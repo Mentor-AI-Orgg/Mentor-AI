@@ -2,10 +2,21 @@ import { describe, it, expect } from 'vitest';
 import { pickPractice } from '../backend/src/data/practicePicker.js';
 import { checkExercise, findExercise, listChapterExercises } from '../backend/src/data/exerciseBank.js';
 import { findQuestion } from '../backend/src/data/practiceBank.js';
-import { fromGeneratedId, generateOne, generateMany } from '../backend/src/data/itemGenerator.js';
+import { fromGeneratedId, generateOne, generateMany, itemLooksSound } from '../backend/src/data/itemGenerator.js';
 import { GRADES, GUIDES, SUBJECT_IDS } from '../backend/src/data/gimnaziuGuide.js';
 
 describe('infinite generated practice', () => {
+  it('rejects generated items that cannot be graded fairly', () => {
+    expect(itemLooksSound({ prompt: 'Cât e 2+2?', answers: ['4'], numeric: { value: 4 } }, 'test')).toBe(true);
+    expect(itemLooksSound({ prompt: 'Cât e 2+2?', answers: [] }, 'test')).toBe(false);
+    expect(itemLooksSound({ prompt: '', answers: ['4'] }, 'test')).toBe(false);
+    expect(itemLooksSound({ prompt: 'Cât e 2+2?', answers: ['4'], numeric: { value: Number.NaN } }, 'test')).toBe(false);
+    expect(itemLooksSound({ options: ['2', '3', '4', '5'], correct: 2 }, 'flashcards')).toBe(true);
+    expect(itemLooksSound({ options: ['2', '3', '4', '4'], correct: 0 }, 'flashcards')).toBe(false);
+    expect(itemLooksSound({ options: ['2', '3', '4'], correct: 0 }, 'flashcards')).toBe(false);
+    expect(itemLooksSound({ options: ['2', '3', '4', '5'], correct: 4 }, 'flashcards')).toBe(false);
+  });
+
   it('rebuilds a generated test from its id and grades the known answer', () => {
     const item = generateOne({ kind: 'test', subject: 'matematica', grade: 5, chapterId: 'naturale' });
     expect(item).toBeTruthy();
@@ -26,6 +37,7 @@ describe('infinite generated practice', () => {
     expect(again.question).toBe(item.question);
     expect(again.options).toEqual(item.options);
     expect(again.correct).toBe(0);
+    expect(new Set(item.options.map(String)).size).toBe(4);
   });
 
   it('fills a second test pack with generated cards after all static ids are excluded', () => {

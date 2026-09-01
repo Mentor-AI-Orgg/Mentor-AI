@@ -823,6 +823,15 @@ const MentorAPI = {
     }
   },
 
+  async parentReport(token) {
+    try {
+      const data = await safeFetchJson(`/api/parent/report?token=${encodeURIComponent(token || '')}`);
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true, error: error.message || error.payload?.error };
+    }
+  },
+
   async health() {
     try {
       const data = await safeFetchJson('/api/health');

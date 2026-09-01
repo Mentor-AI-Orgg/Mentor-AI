@@ -9,10 +9,21 @@
 const config = require("../config");
 
 const INAPPROPRIATE_KEYWORDS = [
-  "bomba", "armă", "arma", "ucide", "sinucidere", "suicid", "droguri",
+  "bomba", "arma", "ucide", "sinucidere", "suicid", "sinucid", "droguri",
   "sex explicit", "pornografie", "hack", "fura banca", "virus", "terorism",
-  "criminal", "viol", "abuz", "kill myself", "make a bomb"
+  "criminal", "viol", "abuz", "omor", "explod", "kill myself", "make a bomb",
+  "want to die", "end my life"
 ];
+
+function foldSafety(text) {
+  return String(text || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 const CHEATING_PATTERNS = [
   "rezolvă-mi", "fă-mi tema", "scrie-mi compunerea", "dă-mi răspunsul", "copiază", "plagiază", "fă tot exercițiul", "fă-mi tot", "răspunde la tot",
@@ -34,14 +45,29 @@ const DIRECT_ANSWER_PATTERNS = [
 
 const MODERATION_TIMEOUT_MS = 4000;
 
+function hasNeedle(folded, needle) {
+  if (!needle) return false;
+  if (needle.length >= 6) {
+    if (folded.includes(needle)) return true;
+    if (folded.replace(/\s+/g, "").includes(needle.replace(/\s+/g, ""))) return true;
+  }
+  if (new RegExp(`(?:^|\\s)${escapeReg(needle)}(?:\\s|$)`).test(folded)) return true;
+  const spaced = needle.split("").map(escapeReg).join("\\s+");
+  return new RegExp(`(?:^|\\s)${spaced}(?:\\s|$)`).test(folded);
+}
+
+function escapeReg(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function keywordFlags(message) {
-  const msgLower = String(message || "").toLowerCase();
+  const folded = foldSafety(message);
   const flags = [];
   for (const kw of INAPPROPRIATE_KEYWORDS) {
-    if (msgLower.includes(kw)) flags.push("inappropriate_content");
+    if (hasNeedle(folded, foldSafety(kw))) flags.push("inappropriate_content");
   }
   for (const pattern of CHEATING_PATTERNS) {
-    if (msgLower.includes(pattern.toLowerCase())) flags.push("cheating_attempt");
+    if (hasNeedle(folded, foldSafety(pattern))) flags.push("cheating_attempt");
   }
   return [...new Set(flags)];
 }

@@ -15,6 +15,7 @@ import RegisterScreen from './components/RegisterScreen.jsx';
 import OnboardingScreen from './components/OnboardingScreen.jsx';
 import { ProfessorScreen } from './components/StudyScreens.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
+import ParentReportScreen from './screens/ParentReportScreen.jsx';
 
 const LearnScreen = lazy(() => import('./screens/LearnScreen.jsx'));
 const ShopScreen = lazy(() => import('./components/ShopScreen.jsx'));
@@ -73,6 +74,7 @@ function AppShell({ userData, setUserData }) {
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [onboardingData, setOnboardingData] = useState({});
   const [studyFocus, setStudyFocus] = useState({ subject: null, grade: null, chapter: null, track: null });
+  const [parentToken, setParentToken] = useState(() => parseAppHash(typeof window !== 'undefined' ? window.location.hash : '').extras?.token || '');
   const historySilent = useRef(false);
   const loggedInRef = useRef(Boolean(userData.isLoggedIn));
   loggedInRef.current = Boolean(userData.isLoggedIn);
@@ -150,6 +152,12 @@ function AppShell({ userData, setUserData }) {
   }, []);
 
   const handleSplashFinish = async () => {
+    const opened = parseAppHash(window.location.hash);
+    if (opened.kind === 'guest' && opened.screen === 'parent') {
+      setParentToken(opened.extras?.token || '');
+      setScreen('parent');
+      return;
+    }
     const session = await MentorAPI.me();
     if (!session.success) {
       setUserData(prev => ({ ...prev, isLoggedIn: false }));
@@ -421,7 +429,11 @@ function AppShell({ userData, setUserData }) {
     const onPop = () => {
       const route = parseAppHash(window.location.hash);
       historySilent.current = true;
-      if (loggedInRef.current) {
+      if (route.kind === 'guest' && route.screen === 'parent') {
+        setParentToken(route.extras?.token || '');
+        setScreen('parent');
+        setNavScreen('home');
+      } else if (loggedInRef.current) {
         if (route.kind === 'app') {
           handleNavigateRef.current(route.screen, route.extras || {});
         } else {
@@ -449,6 +461,8 @@ function AppShell({ userData, setUserData }) {
     switch (screen) {
       case 'splash':
         return <SplashScreen onFinish={handleSplashFinish} delay={userData.isLoggedIn ? 200 : 2500} />;
+      case 'parent':
+        return <ParentReportScreen token={parentToken} />;
       case 'welcome':
         return (
           <WelcomeScreen
