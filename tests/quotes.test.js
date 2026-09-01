@@ -21,6 +21,9 @@ describe('motivational quotes', () => {
     expect(quoteForGrade(10, 0).text).toMatch(/ritmul|Succesul|Cunoașterea/);
     expect(quoteForGrade(3, 0).text).toMatch(/învins|eșuat|renunța/i);
     expect(quoteForGrade(10, 0).text).not.toBe(quoteForGrade(3, 0).text);
+    expect(quoteForGrade('5.50', '5.50').text.length).toBeGreaterThan(8);
+    expect(quoteForGrade('7.50', '7.50').text.length).toBeGreaterThan(8);
+    expect(quoteFor('6.40').text.length).toBeGreaterThan(8);
   });
 
   it('does not joke that math does not bite on the public site', () => {
