@@ -51,9 +51,7 @@ function materialize(meta) {
 function uglyNumber(value) {
   if (!Number.isFinite(value)) return true;
   if (Number.isInteger(value)) return false;
-  if (Math.abs(value - Math.round(value)) < 1e-9) return false;
-  const decimals = String(value).split('.')[1] || '';
-  return String(value).includes('e') || decimals.length > 2;
+  return Math.abs(value - Math.round(value)) >= 1e-9;
 }
 
 function itemLooksSound(item, kind) {
