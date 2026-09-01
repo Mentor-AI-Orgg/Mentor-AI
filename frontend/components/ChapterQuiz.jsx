@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import { formatScore, verdictClass, verdictLabel } from '../verdictCopy.js';
 import QuoteCard from './QuoteCard.jsx';
+import GradeGoalPicker from './GradeGoalPicker.jsx';
 
 const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onRewardClaim, onAskMentor }) => {
   const [cards, setCards] = useState([]);
@@ -13,9 +14,10 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
   const [review, setReview] = useState(false);
   const [exclude, setExclude] = useState([]);
   const [report, setReport] = useState(null);
+  const [targetNote, setTargetNote] = useState(null);
   const startedAt = useRef(Date.now());
 
-  const load = async (more = false) => {
+  const load = async (more = false, note = targetNote) => {
     setLoading(true);
     setReport(null);
     setDrafts({});
@@ -31,7 +33,8 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
       exclude_ids: skip,
       count: 10,
       track,
-      mode
+      mode,
+      target_note: note
     });
     const next = pack.success ? (pack.data.cards || []) : [];
     setCards(next);
@@ -42,8 +45,9 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
   };
 
   useEffect(() => {
-    load(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- first draw when the chapter test opens
+    setTargetNote(null);
+    setCards([]);
+    setReport(null);
   }, [unit.id]);
 
   const card = cards[index];
@@ -95,7 +99,21 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
         </div>
         <button type="button" className="ghost-button" onClick={onClose} aria-label="Închide testul"><i className="fas fa-xmark" /></button>
       </div>
-      <p className="quiz-coverage">Scrie doar răspunsul final. Lucrezi pe foaie sau pe ciornă. Pașii îi vezi după finalizare. Dacă nu e identic cu baremul, tot îl citim: unități, virgulă, x = …, altă formulare. Îți spunem de ce punctăm sau nu. Testele nu se termină: fiecare „Alt test” aduce alte numere și alte enunțuri.</p>
+      {!targetNote && (
+        <GradeGoalPicker
+          kind="test"
+          onPick={note => {
+            setTargetNote(note);
+            load(false, note);
+          }}
+          onCancel={onClose}
+        />
+      )}
+      {targetNote && (
+      <p className="quiz-coverage">
+        Vrei nota {targetNote}. Itemii se opresc la treapta potrivită. Scrie doar răspunsul final. Pașii îi vezi după finalizare.
+      </p>
+      )}
       {coverage && (
         <p className="quiz-coverage">
           Idei din capitol: {coverage.seen}/{coverage.total}
@@ -104,7 +122,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
       )}
       {review && <p className="quiz-review-note">Tur de recapitulare — ideile astea le-ai mai întâlnit.</p>}
 
-      {cards.length === 0 && !loading && (
+      {targetNote && cards.length === 0 && !loading && (
         <button type="button" className="accent-button" onClick={() => load(false)}>
           Generează testul <i className="fas fa-bolt" />
         </button>
@@ -206,6 +224,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
           </ol>
           <div className="learning-actions">
             <button type="button" className="ghost-button" onClick={() => onAskMentor?.(unit)}>Întreabă mentorul</button>
+            <button type="button" className="ghost-button" onClick={() => { setTargetNote(null); setReport(null); setCards([]); }}>Altă notă</button>
             <button type="button" className="accent-button" onClick={() => load(true)}>Alt test</button>
           </div>
         </div>

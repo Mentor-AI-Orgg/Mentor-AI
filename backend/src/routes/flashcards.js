@@ -23,7 +23,8 @@ router.post("/generate", (req, res) => {
     kind = "flashcards",
     exclude_ids: excludeIds = [],
     count,
-    track = ""
+    track = "",
+    target_note: targetNote
   } = req.body || {};
 
   const isEn = String(track).toLowerCase() === "en" || String(classLevel).toLowerCase() === "en";
@@ -49,7 +50,8 @@ router.post("/generate", (req, res) => {
     kind: kind === "test" ? "test" : "flashcards",
     excludeIds: Array.isArray(excludeIds) ? excludeIds : [],
     seenPoints: [],
-    count
+    count,
+    targetNote
   });
 
   const stored = user.practiceSeen[preview.key] || { points: [], questionIds: [], day: null };
@@ -61,7 +63,8 @@ router.post("/generate", (req, res) => {
     kind: kind === "test" ? "test" : "flashcards",
     excludeIds: [...new Set([...(Array.isArray(excludeIds) ? excludeIds : []), ...(stored.questionIds || [])])],
     seenPoints: stored.points || [],
-    count: Number(count) || (kind === "test" ? 10 : 8)
+    count: Number(count) || (kind === "test" ? 10 : 8),
+    targetNote
   });
 
   res.json({

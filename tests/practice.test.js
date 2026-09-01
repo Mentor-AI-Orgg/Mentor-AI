@@ -152,6 +152,18 @@ describe('practice API', () => {
     expect(generated.body.cards[0].answers).toBeUndefined();
     expect(generated.body.engine_used).toBe('chapter_bank');
 
+    const modest = await agent.post('/api/flashcards/generate').send({
+      chapter_id: 'fractii',
+      subject: 'matematica',
+      class_level: 5,
+      kind: 'test',
+      count: 10,
+      target_note: 5
+    });
+    expect(modest.status).toBe(200);
+    expect(modest.body.targetNote).toBe(5);
+    expect(modest.body.cards.every(card => (card.level || 1) <= 2)).toBe(true);
+
     const checked = await agent.post('/api/flashcards/check').send({
       card_id: generated.body.cards[0].id,
       answer: '10'
