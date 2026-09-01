@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
+import { formatScore, verdictClass, verdictLabel } from '../verdictCopy.js';
 
 const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onRewardClaim, onAskMentor }) => {
   const [cards, setCards] = useState([]);
@@ -93,7 +94,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
         </div>
         <button type="button" className="ghost-button" onClick={onClose} aria-label="Închide testul"><i className="fas fa-xmark" /></button>
       </div>
-      <p className="quiz-coverage">Scrie doar răspunsul final. Lucrezi pe foaie sau pe ciornă. Pașii îi vezi după finalizare. Testele nu se termină: fiecare „Alt test” aduce alte numere și alte enunțuri.</p>
+      <p className="quiz-coverage">Scrie doar răspunsul final. Lucrezi pe foaie sau pe ciornă. Pașii îi vezi după finalizare. Dacă nu e identic cu baremul, tot îl citim: unități, virgulă, x = …, altă formulare. Îți spunem de ce punctăm sau nu. Testele nu se termină: fiecare „Alt test” aduce alte numere și alte enunțuri.</p>
       {coverage && (
         <p className="quiz-coverage">
           Idei din capitol: {coverage.seen}/{coverage.total}
@@ -150,7 +151,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
 
       {report && (
         <div className="quiz-done">
-          <p className="display-font">Nota {report.grade} · {report.correct} din {report.total} corecte</p>
+          <p className="display-font">Nota {report.grade} · {formatScore(report.credit ?? report.correct)} din {report.total}</p>
           {report.durationMs ? <p className="quiz-explain">Timp: {Math.max(1, Math.round(report.durationMs / 60000))} min. Părintele primește nota, durata și răspunsurile.</p> : null}
           <p>{report.message}</p>
           {report.strengths?.length > 0 && <p className="quiz-explain">Puncte forte: {report.strengths.join(', ')}</p>}
@@ -165,11 +166,11 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
           )}
           <ol className="quiz-review-list">
             {(report.items || []).map((item, itemIndex) => (
-              <li key={item.id || itemIndex} className={item.ok ? 'ok' : 'bad'}>
-                <strong>Exercițiul {itemIndex + 1} · {item.ok ? 'corect' : (item.skipped ? 'fără răspuns' : 'greșit')}</strong>
+              <li key={item.id || itemIndex} className={verdictClass(item)}>
+                <strong>Exercițiul {itemIndex + 1} · {verdictLabel(item)}</strong>
                 <p>{item.prompt}</p>
                 <p>Tu: {item.given || '—'}</p>
-                <p>Răspuns bun: {item.sample}</p>
+                <p>În barem: {item.sample}</p>
                 {item.explain && <p className="quiz-explain">{item.explain}</p>}
                 {item.rubric && (
                   <div className="writing-barem">

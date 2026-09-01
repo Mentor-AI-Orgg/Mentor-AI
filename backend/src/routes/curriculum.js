@@ -112,7 +112,9 @@ router.post("/en/papers/finish", authRequired, studentRequired, async (req, res)
         given: item.given,
         letter: item.letter || "",
         text: item.text || "",
-        ok: item.ok
+        ok: item.ok,
+        verdict: item.verdict || "",
+        explain: item.teacher || item.explain || ""
       }))
     }
   });

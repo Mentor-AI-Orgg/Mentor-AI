@@ -4,6 +4,7 @@ const router = express.Router();
 const { pickPractice } = require("../data/practicePicker");
 const { checkExercise, checkMany, scoreToGrade, encouragementFor } = require("../data/exerciseBank");
 const { findQuestion } = require("../data/practiceBank");
+const { judgeAnswer } = require("../grading/answerJudge");
 const { ensureUser, getTodayKey, recordProgress, recordSkillReview, getSkillHistory } = require("../data/economyStore");
 
 function trimPracticeIds(ids) {
@@ -84,6 +85,8 @@ router.post("/check", (req, res) => {
   }
   res.json({
     ok: result.ok,
+    credit: Number(result.credit) || 0,
+    verdict: result.verdict || (result.ok ? "exact" : "wrong"),
     explain: result.explain,
     sample: result.ok || String(answer || "").trim() ? result.sample : "",
     steps: Array.isArray(result.steps) ? result.steps : [],
@@ -143,16 +146,25 @@ router.post("/finish", async (req, res) => {
       }
       const chosen = String(pick.chosen || "").trim();
       const sample = question.options[question.correct] || "";
-      const ok = chosen && chosen === sample;
+      const letter = "ABCD"[question.correct] || "";
+      const judge = judgeAnswer({
+        given: chosen,
+        answers: [sample, letter].filter(Boolean),
+        choices: question.options || [],
+        letter,
+        explain: question.explain || ""
+      });
       return {
         id: question.id,
         point: question.point,
         prompt: question.question,
         given: chosen,
         skipped: !chosen,
-        ok,
+        ok: judge.ok,
+        credit: Number(judge.credit) || 0,
+        verdict: judge.kind,
         found: true,
-        explain: question.explain,
+        explain: judge.teacher || question.explain,
         sample,
         steps: []
       };
@@ -160,8 +172,12 @@ router.post("/finish", async (req, res) => {
   }
 
   const correct = items.filter(item => item.ok).length;
+  const credit = items.reduce((sum, item) => {
+    const value = Number(item.credit);
+    return sum + (Number.isFinite(value) ? value : (item.ok ? 1 : 0));
+  }, 0);
   const total = items.length;
-  const gradeNote = scoreToGrade(correct, total);
+  const gradeNote = scoreToGrade(credit, total);
   const message = encouragementFor(gradeNote);
   const strengths = [...new Set(items.filter(item => item.ok).map(item => item.point).filter(Boolean))];
   const weaknesses = [...new Set(items.filter(item => !item.ok).map(item => item.point).filter(Boolean))];
@@ -243,7 +259,9 @@ router.post("/finish", async (req, res) => {
         answers: items.map(item => ({
           prompt: item.prompt,
           given: item.given,
-          ok: item.ok
+          ok: item.ok,
+          verdict: item.verdict || "",
+          explain: item.explain || ""
         }))
       }
     });
@@ -252,6 +270,7 @@ router.post("/finish", async (req, res) => {
   res.json({
     items,
     correct,
+    credit,
     total,
     grade: gradeNote,
     durationMs: duration,

@@ -709,6 +709,7 @@ function scoreAttempt(paperId, answers = []) {
   const bundle = getBundle(paperId);
   if (!bundle) return null;
   const { gradeWriting } = require('../grading/writingRubric');
+  const { judgeAnswer } = require('../grading/answerJudge');
   const paper = bundle.public;
   const map = new Map();
   (Array.isArray(answers) ? answers : []).forEach(row => {
@@ -756,20 +757,35 @@ function scoreAttempt(paperId, answers = []) {
         return;
       }
       const expected = String(barem.letter || '').toUpperCase();
-      const ok = Boolean(given.letter) && given.letter === expected;
-      const pts = ok ? maxPts : 0;
+      const sampleChoice = expected && Array.isArray(item.choices)
+        ? String(item.choices['ABCD'.indexOf(expected)] || '')
+        : '';
+      const givenRaw = String(given.letter || given.text || '').trim();
+      const judge = judgeAnswer({
+        given: givenRaw,
+        answers: [sampleChoice, expected].filter(Boolean),
+        choices: item.choices || [],
+        letter: expected,
+        explain: barem.explain || ''
+      });
+      const pts = judge.ok ? maxPts : Math.round((Number(judge.credit) || 0) * maxPts);
       review.push({
         block: block.label,
         n: item.n,
         kind: item.kind || 'mcq',
         prompt: item.prompt,
-        letter: given.letter,
-        given: given.letter,
+        letter: given.letter || (judge.ok ? expected : ''),
+        given: givenRaw,
         expected,
+        sample: sampleChoice || expected,
         points: pts,
         maxPoints: maxPts,
-        ok,
-        explain: barem.explain,
+        ok: judge.ok,
+        credit: Number(judge.credit) || 0,
+        verdict: judge.kind,
+        teacher: judge.teacher,
+        explain: judge.teacher,
+        barem: barem.explain || '',
         steps: barem.steps || []
       });
       earned += pts;

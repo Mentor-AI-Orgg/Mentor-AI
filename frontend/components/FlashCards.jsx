@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
+import { formatScore, verdictClass, verdictLabel } from '../verdictCopy.js';
 
 const letters = ['A', 'B', 'C', 'D'];
 
@@ -208,7 +209,7 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
 
       {report && (
         <div className="quiz-done">
-          <p className="display-font">Nota {report.grade} · {report.correct} din {report.total} corecte</p>
+          <p className="display-font">Nota {report.grade} · {formatScore(report.credit ?? report.correct)} din {report.total}</p>
           <p>{report.message}</p>
           {report.strengths?.length > 0 && <p className="quiz-explain">Puncte forte: {report.strengths.join(', ')}</p>}
           {report.weaknesses?.length > 0 && <p className="quiz-sample">De lucrat: {report.weaknesses.join(', ')}</p>}
@@ -217,12 +218,12 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
           )}
           <ol className="quiz-review-list">
             {(report.items || []).map((item, itemIndex) => (
-              <li key={item.id || itemIndex} className={item.ok ? 'ok' : 'bad'}>
-                <strong>{item.ok ? 'Corect' : 'Greșit'}</strong>
+              <li key={item.id || itemIndex} className={verdictClass(item)}>
+                <strong>{verdictLabel(item)}</strong>
                 <p>{item.prompt}</p>
                 <p>Tu: {item.given || '—'}</p>
-                <p>Răspuns bun: {item.sample}</p>
-                {item.explain && <p className="quiz-explain">{item.ok ? item.explain : `De ce: ${item.explain}`}</p>}
+                <p>În barem: {item.sample}</p>
+                {item.explain && <p className="quiz-explain">{item.explain}</p>}
               </li>
             ))}
           </ol>

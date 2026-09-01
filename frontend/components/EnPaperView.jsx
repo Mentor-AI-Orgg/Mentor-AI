@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
+import { verdictLabel } from '../verdictCopy.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -272,8 +273,18 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                             ) : (
                               <p><strong>Tu:</strong> fără răspuns</p>
                             )}
-                            {scoredItem.expected ? <p><strong>Varianta din barem: {scoredItem.expected}</strong></p> : null}
-                            {scoredItem.explain ? <p>{scoredItem.explain}</p> : null}
+                            {scoredItem.expected ? (
+                              <p>
+                                <strong>Varianta din barem: {scoredItem.expected}</strong>
+                                {scoredItem.sample && scoredItem.sample !== scoredItem.expected ? ` (${scoredItem.sample})` : ''}
+                              </p>
+                            ) : null}
+                            {scoredItem.teacher || scoredItem.explain ? (
+                              <p className="quiz-explain">{scoredItem.teacher || scoredItem.explain}</p>
+                            ) : null}
+                            {scoredItem.barem && scoredItem.barem !== scoredItem.teacher && scoredItem.barem !== scoredItem.explain ? (
+                              <p>{scoredItem.barem}</p>
+                            ) : null}
                             {scoredItem.steps?.length > 0 && (
                               <ol className="quiz-steps">
                                 {scoredItem.steps.map((step, stepIndex) => <li key={`${key}-s-${stepIndex}`}>{step}</li>)}
@@ -290,7 +301,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                               </p>
                             )}
                             {scoredItem.maxPoints ? (
-                              <small>{scoredItem.points}/{scoredItem.maxPoints} puncte{scoredItem.ok ? ' · corect' : ''}</small>
+                              <small>{scoredItem.points}/{scoredItem.maxPoints} puncte · {verdictLabel(scoredItem)}</small>
                             ) : null}
                           </div>
                         )}
@@ -319,7 +330,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
 
       {error ? <p className="guide-error">{error}</p> : null}
       <p className="en-paper-foot">
-        Baremul întregului test se deschide după predare. Compunerea are idei de corectare, nu un model de copiat.
+        Baremul întregului test se deschide după predare. Dacă varianta ta nu e identică, tot o citim: altă formulare sau aceeași valoare merită punct, iar dacă nu — îți spunem de ce. Compunerea are idei de corectare, nu un model de copiat.
         Părintele primește nota, durata și răspunsurile tale.
       </p>
     </section>

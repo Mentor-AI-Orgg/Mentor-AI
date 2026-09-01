@@ -3,6 +3,7 @@
 // clientul primește enunțul; rezolvarea apare abia la finalizarea testului.
 
 const { EXTRAS } = require('./exerciseExtras');
+const { judgeAnswer } = require('../grading/answerJudge');
 
 function ex(id, point, prompt, answers, explain, extra = {}) {
   return {
@@ -293,40 +294,18 @@ function normalizeAnswer(value) {
     .trim();
 }
 
-function stripWrap(value) {
-  return normalizeAnswer(value).replace(/[{}]/g, '').replace(/\s/g, '');
+function judgeExercise(given, exercise) {
+  return judgeAnswer({
+    given,
+    answers: exercise.answers || [],
+    numeric: exercise.numeric,
+    tokens: exercise.tokens || [],
+    explain: exercise.explain || ''
+  });
 }
 
 function answersMatch(given, exercise) {
-  const raw = String(given || '').trim();
-  if (!raw) return false;
-  const g = normalizeAnswer(raw);
-  const compact = stripWrap(g);
-
-  if ((exercise.answers || []).some(answer => {
-    const a = normalizeAnswer(answer);
-    return a && (g === a || compact === stripWrap(a) || (a.length >= 4 && g.includes(a)));
-  })) {
-    return true;
-  }
-
-  const tokens = (exercise.tokens || []).map(normalizeAnswer).filter(Boolean);
-  if (tokens.length && tokens.every(token => g.includes(token))) return true;
-
-  if (exercise.minWords && raw.split(/\s+/).filter(Boolean).length >= exercise.minWords && (exercise.answers || []).some(answer => {
-    const a = normalizeAnswer(answer);
-    return !a || a.length < 3 || g.includes(a);
-  })) {
-    return true;
-  }
-
-  if (exercise.numeric && Number.isFinite(Number(exercise.numeric.value))) {
-    const parsed = Number(String(g).replace(/[^\d.-]/g, ''));
-    if (Number.isFinite(parsed) && Math.abs(parsed - Number(exercise.numeric.value)) <= (Number(exercise.numeric.tolerance) || 0)) {
-      return true;
-    }
-  }
-  return false;
+  return judgeExercise(given, exercise).ok;
 }
 
 function publicExercise(item, review = false) {
@@ -343,17 +322,26 @@ function publicExercise(item, review = false) {
 
 function checkExercise(id, given) {
   const exercise = findExercise(id);
-  if (!exercise) return { ok: false, found: false };
+  if (!exercise) return { ok: false, found: false, credit: 0, verdict: 'wrong' };
   const { gradeWriting, isWritingItem } = require('../grading/writingRubric');
   const writing = isWritingItem(exercise);
   const rubric = writing ? gradeWriting(given, exercise) : null;
-  const tokenOk = answersMatch(given, exercise);
-  const correct = writing ? Boolean((rubric && rubric.ok) || tokenOk) : tokenOk;
+  const judge = judgeExercise(given, exercise);
+  const correct = writing ? Boolean((rubric && rubric.ok) || judge.ok) : judge.ok;
+  const empty = !String(given || '').trim();
+  const verdict = writing
+    ? (correct ? (judge.kind === 'equivalent' ? 'equivalent' : 'exact') : (empty ? 'empty' : 'wrong'))
+    : judge.kind;
+  const teacher = writing
+    ? (rubric ? rubric.teacher : exercise.explain)
+    : judge.teacher;
   return {
     ok: correct,
+    credit: writing ? (correct ? 1 : 0) : Number(judge.credit) || 0,
+    verdict,
     found: true,
-    explain: rubric ? rubric.teacher : exercise.explain,
-    sample: writing ? (rubric?.sampleHint || exercise.explain) : (exercise.answers[0] || ''),
+    explain: teacher,
+    sample: writing ? (rubric?.sampleHint || exercise.explain) : (judge.sample || exercise.answers[0] || ''),
     steps: exercise.steps || [],
     point: exercise.point || '',
     prompt: exercise.prompt || '',
@@ -373,6 +361,8 @@ function checkMany(pairs) {
       given: String(given || ''),
       skipped: !String(given || '').trim(),
       ok: result.ok,
+      credit: Number(result.credit) || 0,
+      verdict: result.verdict || (result.ok ? 'exact' : 'wrong'),
       found: result.found,
       explain: result.explain || '',
       sample: result.sample || '',

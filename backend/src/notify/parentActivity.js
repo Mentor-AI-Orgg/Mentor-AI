@@ -67,8 +67,16 @@ function testEmailLines({ name, studentEmail, type, note, meta }) {
   const answers = Array.isArray(meta.answers) ? meta.answers : [];
   const answerLines = answers.slice(0, 40).map((row, index) => {
     const given = row.letter || row.text || row.given || "—";
-    const mark = row.ok === true ? " (corect)" : row.ok === false ? " (greșit)" : "";
-    return `${index + 1}. ${clip(row.prompt, 90)}\n   Răspunsul copilului: ${clip(given, 220)}${mark}`;
+    const verdict = String(row.verdict || "");
+    let mark = "";
+    if (verdict === "equivalent") mark = " (corect, altfel spus)";
+    else if (verdict === "partial") mark = " (jumătate)";
+    else if (verdict === "near") mark = " (aproape, nepunctat)";
+    else if (verdict === "empty") mark = " (fără răspuns)";
+    else if (row.ok === true) mark = " (corect)";
+    else if (row.ok === false) mark = " (nepunctat)";
+    const why = row.teacher || row.explain ? `\n   De ce: ${clip(row.teacher || row.explain, 180)}` : "";
+    return `${index + 1}. ${clip(row.prompt, 90)}\n   Răspunsul copilului: ${clip(given, 220)}${mark}${why}`;
   });
   return [
     "Salut,",
