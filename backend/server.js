@@ -6,7 +6,9 @@ const { app, restored } = createApp();
 
 const server = app.listen(config.PORT, () => {
   console.log(`${config.APP_NAME} backend listening on http://localhost:${config.PORT}`);
-  console.log(`Staging auth: ${(config.STAGING_AUTH_USER && config.STAGING_AUTH_PASSWORD) ? "activă (site protejat prin parolă)" : "INACTIVĂ (site public)"}`);
+  const { isSiteClosed } = require("./src/middleware/comingSoon");
+  console.log(`Site public: ${isSiteClosed() ? "ÎNCHIS (în curând)" : "deschis"}`);
+  console.log(`Staging auth: ${(config.STAGING_AUTH_USER && config.STAGING_AUTH_PASSWORD) ? "activă (site protejat prin parolă)" : "INACTIVĂ"}`);
   console.log(`Claude:  ${config.CLAUDE_KEY ? "real key detected" : "no CLAUDE_KEY set -> using mock replies"}`);
   console.log(`OpenAI:  ${config.OPENAI_KEY ? "real key detected" : "no OPENAI_KEY set -> using mock replies"}`);
   console.log(`Gemini:  ${config.GEMINI_KEY ? "real key detected" : "no GEMINI_KEY set -> using mock replies"}`);

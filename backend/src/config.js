@@ -13,6 +13,12 @@ const processOauthSecret = crypto.randomBytes(32).toString("hex");
 module.exports = {
   PORT: process.env.PORT || 3001,
 
+  // În producție site-ul e închis (pagina „În curând”), până pui SITE_PUBLIC=1.
+  // Local și în teste rămâne deschis, dacă nu pui SITE_CLOSED=1.
+  SITE_PUBLIC: process.env.SITE_PUBLIC || "",
+  SITE_CLOSED: process.env.SITE_CLOSED || "",
+  PREVIEW_PASSWORD: process.env.PREVIEW_PASSWORD || "",
+
   // Parolă HTTP Basic pe tot site-ul. Oprimă implicit, chiar dacă pe host
   // au rămas STAGING_AUTH_USER / STAGING_AUTH_PASSWORD din prototip.
   // Se reactivează doar cu ENABLE_STAGING_AUTH=1 plus ambele valori.

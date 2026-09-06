@@ -20,6 +20,7 @@ const accountRoute = require("./routes/account");
 const friendsRoute = require("./routes/friends");
 const { spec: openapiSpec } = require("./openapi");
 const { basicAuth } = require("./middleware/basicAuth");
+const { comingSoon } = require("./middleware/comingSoon");
 const { attachUser, authRequired, studentRequired } = require("./middleware/auth");
 const { corsAllowlist } = require("./middleware/corsAllowlist");
 const { generalApiLimiter, chatLimiter, detectLimiter } = require("./middleware/rateLimits");
@@ -37,6 +38,8 @@ function createApp(options = {}) {
 
   const app = express();
   app.set("trust proxy", 1);
+
+  app.use(comingSoon());
 
   app.use(basicAuth({
     user: config.STAGING_AUTH_USER,
