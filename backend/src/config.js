@@ -17,6 +17,7 @@ module.exports = {
   // Local și în teste rămâne deschis, dacă nu pui SITE_CLOSED=1.
   SITE_PUBLIC: process.env.SITE_PUBLIC || "",
   SITE_CLOSED: process.env.SITE_CLOSED || "",
+  // Dacă lipsește, pagina „În curând” acceptă parola implicită suntde10-creator.
   PREVIEW_PASSWORD: process.env.PREVIEW_PASSWORD || "",
 
   // Parolă HTTP Basic pe tot site-ul. Oprimă implicit, chiar dacă pe host

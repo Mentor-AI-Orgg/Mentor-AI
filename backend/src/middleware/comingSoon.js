@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const { comingSoonPage, robotsTxt } = require("../comingSoonPage");
 
 const PREVIEW_COOKIE = "mentor_preview";
+const DEFAULT_CREATOR_PASSWORD = "suntde10-creator";
 
 const SKIP_PATHS = new Set([
   "/api/health",
@@ -31,14 +32,39 @@ function isSiteClosed() {
   return process.env.NODE_ENV === "production";
 }
 
-function previewPassword() {
+function configuredPreviewPassword() {
   return String(process.env.PREVIEW_PASSWORD || "").trim();
 }
 
+function previewSecret() {
+  return configuredPreviewPassword() || DEFAULT_CREATOR_PASSWORD;
+}
+
+function acceptedPasswords() {
+  const passwords = [DEFAULT_CREATOR_PASSWORD];
+  const configured = configuredPreviewPassword();
+  if (configured) passwords.push(configured);
+  const staging = String(process.env.STAGING_AUTH_PASSWORD || "").trim();
+  if (staging) passwords.push(staging);
+  return [...new Set(passwords)];
+}
+
+function passwordMatches(submitted) {
+  if (!submitted) return false;
+  return acceptedPasswords().some((candidate) => safeEqual(submitted, candidate));
+}
+
 function previewToken() {
-  const secret = previewPassword();
-  if (!secret) return "";
-  return crypto.createHmac("sha256", secret).update("suntde10-preview").digest("hex");
+  return crypto.createHmac("sha256", previewSecret()).update("suntde10-preview").digest("hex");
+}
+
+function cookieOptions() {
+  return {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/"
+  };
 }
 
 function readCookie(req, name) {
@@ -60,7 +86,6 @@ function readCookie(req, name) {
 
 function hasPreviewAccess(req) {
   const expected = previewToken();
-  if (!expected) return false;
   const cookie = readCookie(req, PREVIEW_COOKIE);
   return Boolean(cookie) && safeEqual(cookie, expected);
 }
@@ -69,46 +94,62 @@ function submittedPassword(req) {
   return String(req.query?.acces || req.query?.preview || req.body?.password || "").trim();
 }
 
-function grantPreview(res) {
-  const token = previewToken();
-  if (!token) return false;
-  res.cookie(PREVIEW_COOKIE, token, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-    path: "/"
+function grantPreview(res, nextPath = "/") {
+  res.cookie(PREVIEW_COOKIE, previewToken(), {
+    ...cookieOptions(),
+    maxAge: 30 * 24 * 60 * 60 * 1000
   });
+  res.redirect(303, nextPath);
+}
+
+function clearPreview(res) {
+  res.clearCookie(PREVIEW_COOKIE, cookieOptions());
   res.redirect(303, "/");
-  return true;
+}
+
+function normalizePath(req) {
+  const raw = String(req.path || "/");
+  if (raw.length > 1 && raw.endsWith("/")) return raw.slice(0, -1);
+  return raw;
 }
 
 function comingSoon() {
   return (req, res, next) => {
     if (!isSiteClosed()) return next();
-    if (SKIP_PATHS.has(req.path)) return next();
 
-    if (req.path === "/robots.txt") {
+    const path = normalizePath(req);
+    if (SKIP_PATHS.has(path)) return next();
+
+    if (path === "/robots.txt") {
       res.set("X-Robots-Tag", "noindex, nofollow");
       return res.type("text/plain").send(robotsTxt());
     }
 
-    const password = previewPassword();
+    if (path === "/creator/iesire") {
+      return clearPreview(res);
+    }
+
     const submitted = submittedPassword(req);
-    if (password && submitted) {
-      if (safeEqual(submitted, password)) {
-        return grantPreview(res);
+    if (submitted) {
+      if (passwordMatches(submitted)) {
+        return grantPreview(res, "/");
       }
       res.set("X-Robots-Tag", "noindex, nofollow");
       return res.status(401).type("html").send(comingSoonPage({
-        previewEnabled: true,
-        previewError: "Parola de lucru nu e corectă."
+        creatorPage: path === "/creator",
+        previewError: "Parola de creator nu e corectă."
       }));
     }
 
-    if (hasPreviewAccess(req)) return next();
+    if (hasPreviewAccess(req)) {
+      req.previewAccess = true;
+      if (path === "/creator") {
+        return res.redirect(303, "/");
+      }
+      return next();
+    }
 
-    if (req.path.startsWith("/api")) {
+    if (path.startsWith("/api")) {
       return res.status(503).json({
         error: "Site-ul e în lucru.",
         comingSoon: true
@@ -117,7 +158,7 @@ function comingSoon() {
 
     res.set("X-Robots-Tag", "noindex, nofollow");
     return res.status(200).type("html").send(comingSoonPage({
-      previewEnabled: Boolean(password)
+      creatorPage: path === "/creator"
     }));
   };
 }
@@ -126,5 +167,7 @@ module.exports = {
   comingSoon,
   isSiteClosed,
   PREVIEW_COOKIE,
-  previewToken
+  DEFAULT_CREATOR_PASSWORD,
+  previewToken,
+  hasPreviewAccess
 };

@@ -1,13 +1,20 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
-import { PREVIEW_COOKIE, previewToken } from '../backend/src/middleware/comingSoon.js';
+import {
+  DEFAULT_CREATOR_PASSWORD,
+  PREVIEW_COOKIE,
+  previewToken
+} from '../backend/src/middleware/comingSoon.js';
 
 describe('coming soon gate', () => {
   afterEach(() => {
     delete process.env.SITE_CLOSED;
     delete process.env.SITE_PUBLIC;
     delete process.env.PREVIEW_PASSWORD;
+    delete process.env.STAGING_AUTH_PASSWORD;
+    delete process.env.ENABLE_STAGING_AUTH;
+    delete process.env.STAGING_AUTH_USER;
   });
 
   it('keeps the app open in tests by default', async () => {
@@ -27,6 +34,7 @@ describe('coming soon gate', () => {
     expect(page.text).toContain('Sunt de 10');
     expect(page.text).toContain('În curând');
     expect(page.text).toContain('@suntde10');
+    expect(page.text).toContain('Intrare creator');
     expect(page.text).not.toContain('Mentor AI');
     expect(page.headers['x-robots-tag']).toMatch(/noindex/);
 
@@ -48,13 +56,30 @@ describe('coming soon gate', () => {
     expect(robots.text).toContain('Disallow: /');
   });
 
+  it('lets the creator in with the default password when PREVIEW_PASSWORD is unset', async () => {
+    process.env.SITE_CLOSED = '1';
+    const { app } = createApp({ autosave: false });
+
+    const unlock = await request(app).get('/?acces=gresit');
+    expect(unlock.status).toBe(401);
+    expect(unlock.text).toContain('nu e corectă');
+
+    const agent = request.agent(app);
+    const ok = await agent.get(`/?acces=${DEFAULT_CREATOR_PASSWORD}`);
+    expect(ok.status).toBe(303);
+    expect(ok.headers.location).toBe('/');
+
+    const opened = await agent.get('/');
+    expect(opened.text).not.toMatch(/În curând/);
+  });
+
   it('lets the team in with PREVIEW_PASSWORD and then serves the app', async () => {
     process.env.SITE_CLOSED = '1';
     process.env.PREVIEW_PASSWORD = 'lucru-secret';
     const { app } = createApp({ autosave: false });
 
     const locked = await request(app).get('/');
-    expect(locked.text).toContain('Echipă');
+    expect(locked.text).toContain('Intrare creator');
 
     const unlock = await request(app).get('/?acces=gresit');
     expect(unlock.status).toBe(401);
@@ -70,6 +95,28 @@ describe('coming soon gate', () => {
 
     const health = await agent.get('/api/health');
     expect(health.status).toBe(200);
+  });
+
+  it('opens the app from /creator and can return to the public page', async () => {
+    process.env.SITE_CLOSED = '1';
+    const { app } = createApp({ autosave: false });
+
+    const login = await request(app).get('/creator');
+    expect(login.status).toBe(200);
+    expect(login.text).toContain('Intrare creator');
+
+    const agent = request.agent(app);
+    const ok = await agent.get(`/creator?acces=${DEFAULT_CREATOR_PASSWORD}`);
+    expect(ok.status).toBe(303);
+
+    const opened = await agent.get('/');
+    expect(opened.text).not.toMatch(/În curând/);
+
+    const leave = await agent.get('/creator/iesire');
+    expect(leave.status).toBe(303);
+
+    const locked = await agent.get('/');
+    expect(locked.text).toContain('În curând');
   });
 
   it('SITE_PUBLIC=1 wins over SITE_CLOSED', async () => {

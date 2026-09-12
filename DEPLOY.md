@@ -125,6 +125,11 @@ staging: elevul intră cu emailul și parola contului. Dacă vrei din nou
 poarta HTTP Basic, pune `ENABLE_STAGING_AUTH=1` plus `STAGING_AUTH_USER`
 și `STAGING_AUTH_PASSWORD`.
 
+Cât site-ul e închis, publicul vede „În curând”. Tu deschizi aplicația
+cu **Intrare creator** (parola implicită `suntde10-creator`, sau
+`PREVIEW_PASSWORD` dacă o setezi în DirectAdmin). Ca să vezi iar pagina
+publică: `https://suntde10.ro/creator/iesire`.
+
 Fără chei de AI aplicația funcționează, dar toate răspunsurile sunt mock.
 La fel pentru plăți (Stripe), email (SMTP), SMS (Twilio) și calendar
 (Google/Notion): fără chei, fluxurile rămân mock și răspunsul include
