@@ -607,27 +607,79 @@ const UNITS = [
       'Recapitulare și evaluare'
     ],
     glossary: [
-      { term: 'text narativ', meaning: 'Spune ce se întâmplă, în ordine, cu personaje.' },
-      { term: 'personificare', meaning: 'Un lucru sau un animal primește o faptă sau o trăire de om.' },
+      { term: 'text narativ', meaning: 'Spune întâmplări imaginare, cu personaje, în timp și spațiu.' },
+      { term: 'personificare', meaning: 'Un lucru, un animal sau un fenomen primește o faptă de om.' },
+      { term: 'mod', meaning: 'Felul în care vorbitorul privește acțiunea: fapt, posibil, condiție sau cerere.' },
+      { term: 'imperativ', meaning: 'Modul cu care ceri, îndemni, rogi, sfătuiești sau interzici, la persoana a II-a.' },
       { term: 'secvență narativă', meaning: 'O bucată de acțiune cu început și rezultat, nu tot romanul.' }
     ],
     lessons: [
-      lesson(
-        'narativ',
-        'Textul narativ: acțiune, personaje, timp, spațiu, personificare',
-        'Textul narativ literar povestește. Are acțiune (ce se schimbă), personaje (cine o face), timp (când) și spațiu (unde). Fără acțiune ai o descriere. Fără personaje ai o listă de locuri.',
-        'Personificarea dă unei ființe sau unui lucru ne-om o faptă, o vorbă sau un sentiment de om. O recunoști pentru că „cineva” care nu e om se poartă ca un om. În cuprins, textul de lucru este Prințul fericit, de Oscar Wilde. Îl citești în manual; aici nu îl repovestim.',
-        'Exemplu lucrat: „Statuia privește orașul și se întristează.” Statuia nu poate privi și nu poate fi tristă în sens propriu. E personificare. „Statuia e înaltă ca un turn” e comparație, nu personificare: ai „ca”.',
-        'Reține: narativ = se întâmplă ceva. Personificare = un ne-om face ceva omenesc. Comparația are un „ca”.'
-      ),
-      lesson(
-        'imperativ',
-        'Verbul, imperativul, nonverbalul, punctuația',
-        'Verbul poartă acțiunea. Modul spune cum privești acțiunea: o constați, o ceri, o presupui. La clasa a V-a, cuprinsul oprește întâi la imperativ: verbul cu care ceri sau îndemni („Deschide!”, „Nu alerga!”).',
-        'Comunicarea nonverbală e ce se vede fără cuvinte: gest, privire, postură. Într-o povestire o notezi ca să înțelegi personajul. Punctuația o marchează în scris: semnul exclamării la ordin, linia de dialog la replică.',
-        'Exemplu lucrat: „Stai!” e imperativ, persoana a II-a, un singur lucru de făcut. „Stăteau.” nu e ordin, e o constatare la un timp trecut. Semnul și forma verbului spun diferența.',
-        'Reține: imperativul cere. Nu povestește ce s-a întâmplat deja.'
-      ),
+      lesson('deschidere-poveste', 'Poveștile care se transmit', {
+        theory: 'Oamenii își trec poveștile din casă în casă, pe vorbă sau în scris. O povestire te poate amuza, întrista sau ține în suspans. Aici reiei personajul și verbul, apoi descoperi narativul literar, personificarea, imperativul și indicativul. Competențele sunt 1.1, 2.3, 3.1, 4.4 și 5.2.',
+        example: 'Pe o hartă, o săgeată leagă două case și scrie „poveste spusă seara”. Așa se vede drumul unei întâmplări.',
+        tryThis: '1. Câte competențe specifice deschid unitatea? Scrie numărul. 2. Banda desenată se face acum sau mai-tarziu? Un cuvânt, cu cratimă.',
+        recap: 'Poveștile se transmit. Aici prinzi narativul, personificarea și două moduri. Greșeală: sari la timpurile verbului înainte să știi cine face acțiunea.'
+      }),
+      lesson('narativ', 'Textul narativ: acțiune, personaje, timp, spațiu, personificare', {
+        theory: 'Un text cu întâmplări imaginare și personaje este narativ literar. Acțiunea e ce se schimbă. Personajele sunt participanți imaginari, creați de autor. Timpul spune când. Spațiul spune unde. Fără întâmplări, textul e descriere.',
+        example: '„O fată pierde cheia și o caută până la poartă.” E narativ: se schimbă ceva. „Parcul are bănci verzi.” e descriere: nu se întâmplă nimic.',
+        tryThis: '1. „Lacul e liniștit și albastru.” este narativ sau descriere? Un cuvânt. 2. Participanții imaginari se numesc personaje sau autori? Un cuvânt.',
+        recap: 'Narativ literar înseamnă întâmplări imaginare și personaje. Timpul și spațiul le așază. Greșeală: numești povestire un tablou în care nu se schimbă nimic.'
+      }),
+      lesson('asteptari-titlu', 'Așteptarea din titlu', {
+        theory: 'Titlul trezește o așteptare. După lectură, ea se confirmă sau se contrazice. O spui în două mișcări: citind titlul, apoi am aflat. Un titlu nou pentru un fragment dă un indiciu, nu repetă tot episodul.',
+        example: '„Câinele viteaz” te face să aștepți curaj. Dacă textul arată un câine speriat, așteptarea se schimbă: „Citind titlul, m-am gândit că e curajos, apoi am aflat că îi era frică.”',
+        tryThis: '1. Dacă titlul promite veselie, iar textul e trist, așteptarea e confirmata sau contrazisa? Un cuvânt. 2. Titlul unui fragment trebuie să dea un indiciu sau o gluma? Un cuvânt.',
+        recap: 'Titlul deschide o așteptare. Lectura o ține sau o schimbă. Greșeală: spui doar „mi-a plăcut”, fără ce ai crezut și ce ai aflat.'
+      }),
+      lesson('indicii-timp', 'Indiciile de timp și de spațiu', {
+        theory: 'Întâmplările stau într-un spațiu și într-un timp. Aduni mai multe indicii, nu un singur cuvânt. Dacă cineva pomenește Egiptul, acțiunea nu e automat acolo. Dacă păsările au plecat de săptămâni, e târziu în an. Descrierea arată locul și momentul.',
+        example: '„Afară ningea, iar rândunica stătea la fereastră.” Timpul e iarna. Spațiul e lângă fereastră. „Africa”, spusă într-o amintire, nu mută scena.',
+        tryThis: '1. Un personaj spune „piramide”. Asta înseamnă că toată acțiunea e în Egipt? Scrie da sau nu. 2. „Unde” se numește timp sau spatiu? Un cuvânt.',
+        recap: 'Spațiul și timpul ies din mai multe indicii. Greșeală: muți povestea într-o țară doar pentru că un cuvânt o numește.'
+      }),
+      lesson('personificare', 'Personificarea', {
+        theory: 'Personificarea dă unui lucru, unui fenomen sau unui animal o acțiune de om. Comparația are „ca” și nu transformă lucrul în om. O statuie care privește, vorbește sau plânge este personificare.',
+        example: '„Statuia privește orașul și plânge.” face fapte de om: e personificare. „Statuia e rece ca gheața.” e comparație, pentru că apare „ca”.',
+        tryThis: '1. „Vântul șoptește la geam.” este personificare sau comparatie? Un cuvânt. 2. „Pisica doarme ca un om.” are „ca”. E personificare? Scrie da sau nu.',
+        recap: 'Personificarea pune o faptă de om pe un lucru, un animal sau un fenomen. Comparația păstrează „ca”. Greșeală: numești personificare orice propoziție cu un animal.'
+      }),
+      lesson('parere-schimbata', 'Părerea care se schimbă', {
+        theory: 'Părerea despre cineva se poate schimba când apar fapte noi. O spui în trei pași: la început, apoi, în final. Nu toți țin aceeași atitudine tot textul. Când povestești schimbarea, arăți motivul, nu doar rezultatul.',
+        example: 'La început, colegii cred că Mara e rea pentru că stă retrasă. Apoi văd că își împarte micul dejun. În final, spun că e timidă, nu rea.',
+        tryThis: '1. Ultimul moment al schimbării se leagă cu început, apoi sau final? Un cuvânt. 2. O părere nouă apare fără nicio faptă nouă? Scrie da sau nu.',
+        recap: 'Părerea se mișcă: la început, apoi, în final. Motivul e o faptă nouă. Greșeală: scrii doar finalul și lași cititorul fără drum.'
+      }),
+      lesson('compunere-narativa', 'Compunerea narativă', {
+        theory: 'Compunerea narativă are cel puțin patru paragrafe: început, motiv, fapta în două sau trei episoade, tensiune și închidere. Timpii verbului arată ordinea. Poți adăuga o imagine. Iei ideea, nu copiezi textul citit.',
+        example: 'Un băiat găsește o mănușă. Vrea să o ducă la proprietar. Întreabă la poartă, apoi la magazin. Magazinul se închide. O lasă la portar.',
+        tryThis: '1. Câte paragrafe cere minimum compunerea? Scrie numărul. 2. Momentul cel mai strâns se numește inceput sau tensiune? Un cuvânt.',
+        recap: 'Minimum patru paragrafe: început, motiv, fapte, tensiune, închidere. Timpii țin ordinea. Greșeală: un singur paragraf, fără motiv și fără tensiune.'
+      }),
+      lesson('verbul', 'Verbul: acțiune, timp, persoană', {
+        theory: 'Verbul arată o acțiune, un eveniment sau o stare care se schimbă. Doar el își schimbă forma și pentru timp, și pentru persoană, față de momentul vorbirii. Timpul e prezent, trecut sau viitor. Mai ai persoană și număr. În dicționar cauți infinitivul: alint devine a alinta.',
+        example: '„Acum plec.” e prezent, persoana I. „Ieri am plecat.” e trecut. „Mâine voi pleca.” e viitor. Aceeași faptă, trei forme.',
+        tryThis: '1. „Voi citi diseară.” este trecut, prezent sau viitor? Un cuvânt. 2. Forma de dicționar pentru alint este alinta sau alintul? Un cuvânt.',
+        recap: 'Verbul se schimbă după timp, persoană și număr. Dicționarul îl ține la infinitiv. Greșeală: cauți în DEX forma din propoziție, nu pe a alinta.'
+      }),
+      lesson('moduri', 'Modurile verbului', {
+        theory: 'Modul arată cum privește vorbitorul acțiunea: sigură, dorită, condiționată, posibilă sau cerută. Indicativul o ia ca fapt: citesc. „Să citesc” o ia ca posibilă. „Aș citi dacă aș avea timp” o leagă de o condiție. „Citește!” o cere.',
+        example: '„Sigur citesc povestea.” e indicativ. „E posibil să citesc.” arată o faptă posibilă. „Aș citi dacă aș avea timp.” e condiție. „Citește!” e cerere.',
+        tryThis: '1. „Citește tot textul!” este indicativ sau imperativ? Un cuvânt. 2. „Aș citi dacă aș avea timp.” arată o cerere sau o conditie? Un cuvânt.',
+        recap: 'Același verb, patru priviri: fapt, posibil, condiție, cerere. Greșeală: crezi că „Citește!” spune doar ce se întâmplă, nu ce se cere.'
+      }),
+      lesson('imperativ', 'Verbul, imperativul, nonverbalul, punctuația', {
+        theory: 'La imperativ, verbul cere: ordin, îndemn, rugăminte, sfat sau interdicție. Are formă doar la persoana a II-a, singular și plural. Fața, gestul și tonul arată dacă e rugăminte sau ordin. În scris pui semnul exclamării. „A plecat.” este trecut, nu imperativ.',
+        example: '„Stai!” e imperativ, persoana a II-a: ți se cere să te oprești. „A stat.” povestește o faptă gata. Palma ridicată ține aceeași cerere, fără un cuvânt nou.',
+        tryThis: '1. Imperativul are forme la persoana I sau la persoana II? Scrie cifra romană. 2. „A plecat.” este ordin sau trecut? Un cuvânt.',
+        recap: 'Imperativul cere, îndeamnă, roagă, sfătuiește sau interzice, la persoana a II-a. Tonul și semnul exclamării ajută. Greșeală: iei un verb la trecut drept ordin.'
+      }),
+      lesson('imperativ-scriere', 'Cum se scrie imperativul', {
+        theory: 'Imperativul are capcane la scris. „Ești atent” devine „Fii atent!”, cu doi de i. „Fi atent” e greșit. Afirmativ spui „Fă!”. Negativ spui „Nu face!”, nu „Nu fă!”. „Du-te!” devine „Nu te duce!”, nu „Nu te du!”. De la persoana I treci la a II-a: „mă gândesc” devine „gândește-te”.',
+        example: '„Ești calm.” devine „Fii calm!”. „Fă liniște.” la interdicție devine „Nu face gălăgie!”. „Du-te acasă.” devine „Nu te duce acum!”.',
+        tryThis: '1. Forma corectă este fii sau fi? Un cuvânt. 2. Interdicția corectă este nu-fă sau nu-face? Un cuvânt, cu cratimă.',
+        recap: 'Fii are doi de i. Negativul lui fă este nu face. Negativul lui du-te este nu te duce. Greșeală: pui doar „nu” în fața formei afirmative.'
+      }),
       lesson(
         'indicativ-1',
         'Indicativul: prezent și imperfect',
