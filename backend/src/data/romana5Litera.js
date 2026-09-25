@@ -611,7 +611,12 @@ const UNITS = [
       { term: 'personificare', meaning: 'Un lucru, un animal sau un fenomen primește o faptă de om.' },
       { term: 'mod', meaning: 'Felul în care vorbitorul privește acțiunea: fapt, posibil, condiție sau cerere.' },
       { term: 'imperativ', meaning: 'Modul cu care ceri, îndemni, rogi, sfătuiești sau interzici, la persoana a II-a.' },
-      { term: 'secvență narativă', meaning: 'O bucată de acțiune cu început și rezultat, nu tot romanul.' }
+      { term: 'secvență narativă', meaning: 'O bucată cu o situație, o schimbare și un rezultat, nu toată cartea.' },
+      { term: 'indicativ', meaning: 'Modul care prezintă acțiunea ca pe un fapt, în prezent, trecut sau viitor.' },
+      { term: 'imperfect', meaning: 'Timp trecut pentru o acțiune care durează sau se repetă.' },
+      { term: 'perfect compus', meaning: 'Timp trecut compus din a avea și participiu, pentru o acțiune încheiată.' },
+      { term: 'perfect simplu', meaning: 'Timp trecut simplu, pentru o acțiune încheiată, vie în povestire.' },
+      { term: 'mai-mult-ca-perfect', meaning: 'Acțiune trecută, terminată înaintea altei acțiuni trecute.' }
     ],
     lessons: [
       lesson('deschidere-poveste', 'Poveștile care se transmit', {
@@ -680,39 +685,72 @@ const UNITS = [
         tryThis: '1. Forma corectă este fii sau fi? Un cuvânt. 2. Interdicția corectă este nu-fă sau nu-face? Un cuvânt, cu cratimă.',
         recap: 'Fii are doi de i. Negativul lui fă este nu face. Negativul lui du-te este nu te duce. Greșeală: pui doar „nu” în fața formei afirmative.'
       }),
-      lesson(
-        'indicativ-1',
-        'Indicativul: prezent și imperfect',
-        'Indicativul prezintă acțiunea ca un fapt. Prezentul spune că se întâmplă acum sau că e un adevăr obișnuit: „citește”, „plouă”, „apa fierbe la 100 °C”.',
-        'Imperfectul e timpul fundalului și al obișnuinței în trecut: „citea în fiecare seară”, „afară ploua”. Nu e fapta scurtă care rupe povestea, e decorul în care se mișcă fapta.',
-        'Exemplu lucrat: „Ana citea când a sunat telefonul.” „Citea” = imperfect, acțiunea era în curs. Sunatul e alt timp, o întâmplare scurtă. Nu le pui pe amândouă la imperfect dacă vrei să se vadă întreruperea.',
-        'Reține: prezent = acum sau mereu. Imperfect = era în curs sau se repeta, în trecut.'
-      ),
-      lesson(
-        'perfect-compus',
-        'Perfectul compus',
-        'Perfectul compus spune o faptă încheiată, legată de prezent (o vezi ca pe ceva gata). Se formează cu auxiliarul a avea la prezent + participiul: am citit, ai venit, a plecat, am mers.',
-        'Auxiliarul se schimbă după persoană. Participiul, la forma asta, rămâne (citit, venit, plecat). Nu mai pui încă un „am” din obișnuință.',
-        'Exemplu lucrat: „Ieri am terminat tema.” E perfect compus: fapta e gata. „Terminam tema în fiecare joi” e imperfect: obișnuință. Aceeași temă, alt timp, alt sens.',
-        'Reține: am / ai / a / am / ați / au + participiu. Faptă încheiată.'
-      ),
-      lesson(
-        'perfecte',
-        'Perfectul simplu, mai-mult-ca-perfectul, secvența',
-        'Perfectul simplu e fapta scurtă, dinamică, des în povestire: „deschise ușa”, „strigă”, „plecă”. Îl recunoști ca pe o bătaie în ritmul poveștii, nu ca pe o descriere lungă.',
-        'Mai-mult-ca-perfectul e fapta și mai dinainte: se terminase înaintea altei fapte din trecut. „Plecase când am ajuns eu” = el era deja dus.',
-        'Secvența narativă e o bucată cu un mic arc: o situație, o schimbare, un rezultat. Nu rezumi tot textul într-o secvență. Alegi una.',
-        'Exemplu lucrat: „Când am intrat, el scrisese deja titlul.” „Scrisese” = mai-mult-ca-perfect, înainte de intrarea mea. Intrarea mea e perfect compus.',
-        'Reține: perfect simplu = faptă scurtă în poveste. Mai-mult-ca-perfect = înaintea altei fapte din trecut.'
-      ),
-      lesson(
-        'viitor-banda',
-        'Viitorul și banda desenată',
-        'Viitorul indicativului spune o acțiune pe care o iei ca sigură, mai târziu: voi citi, vei veni, va ploua. Se face cu auxiliarul a vrea (voi, vei, va, vom, veți, vor) + infinitivul. Nu e o bănuială slabă; e planul sau predicția pe care o prezinți ca fapt viitor.',
-        'Banda desenată e tot narațiune, dar în imagini și cuvinte: casete în ordine, personaje, baloane de vorbire, uneori onomatopee. Comunicarea nonverbală e în desen (față, gest), nu doar în text.',
-        'Exemplu lucrat: trei casete — 1. băiatul privește geanta; 2. geanta cade; 3. o ridică. Asta e o secvență. Viitorul ar fi replica „O să o ridic.”, spusă înainte de fapta din caseta 3.',
-        'Reține: voi / vei / va + verb. În bandă desenată, ordinea casetelor e ordinea acțiunii.'
-      ),
+      lesson('indicativ-1', 'Indicativul: prezent și imperfect', {
+        theory: 'La indicativ, acțiunea e un fapt. În povestire, faptele stau într-o ordine. Dacă o schimbi, se schimbă înțelesul. Prezentul spune ce se întâmplă când vorbești, sau un adevăr care ține mereu. Imperfectul spune o acțiune trecută care durează sau se repetă.',
+        example: '„Acum citesc.” e prezent. „În fiecare seară citeam.” e imperfect: se repeta. „Citeam când a sunat.” Fundalul e imperfect. Sunatul e fapta scurtă, la alt timp.',
+        tryThis: '1. „Acum citesc.” este prezent sau imperfect? Un cuvânt. 2. O faptă trecută care se repetă este prezent sau imperfect? Un cuvânt.',
+        recap: 'Indicativul prezintă fapte. Prezentul e acum sau mereu. Imperfectul durează sau se repetă. Greșeală: pui fundalul și întreruperea la același timp.'
+      }),
+      lesson('prezent-scriere', 'Conjugarea la prezent', {
+        theory: 'Conjugarea schimbă forma după mod, timp, persoană și număr. La a fi, forma de azi este sunt. sînt e veche. îs și îi apar doar în unele contexte. Ei miros, nu miroase. Noi creăm, nu creem. Eu legăn, nu leagăn. La a crea urmezi a lucra: scoți ultima vocală și pui -ez, deci creez. Eu văd, nu văz. Eu prind, nu prinz.',
+        example: '„Văz două păsări care zbor.” devine „Văd două păsări care zboară.” „Noi creem.” devine „Noi creăm.”',
+        tryThis: '1. Forma standard de azi, la „noi”, pentru a fi este sunt sau sint? Un cuvânt. 2. Persoana I de la a crea este creez sau crez? Un cuvânt.',
+        recap: 'Azi spui sunt, creăm, legăn, creez, văd. Greșeală: lași văz, zbor sau creem pentru că așa se aude în grabă.'
+      }),
+      lesson('imperfect-forme', 'Formele de imperfect', {
+        theory: 'Imperfectul e o formă simplă. Terminațiile sunt -am, -ai, -a la singular și -am, -ați, -au la plural. La a merge: mergeam, mergeai, mergea, mergeam, mergeați, mergeau. Scrii eram, nu ieram. luam, nu luoam. ploua, nu ploa. dădeam, nu dam. stăteam, nu stam. La a vrea spui voiam sau vream. vroiam este greșit.',
+        example: '„Eu ieram și vroiam să stau.” are două forme greșite. Corect: „Eu eram și voiam să stau.” „Afară ploua.” rămâne ploua, nu ploa.',
+        tryThis: '1. Forma corectă este eram sau ieram? Un cuvânt. 2. Forma de evitat la a vrea este voiam sau vroiam? Un cuvânt.',
+        recap: 'Imperfectul se termină în -am, -ai, -a, -am, -ați, -au. Fără i în plus și fără vroiam. Greșeală: scrii stam sau dam, fără ă și fără silaba care lipsește.'
+      }),
+      lesson('perfect-compus', 'Perfectul compus', {
+        theory: 'Perfectul compus este un timp trecut pentru o acțiune încheiată. Se face din auxiliarul a avea și participiul în -t sau -s: am citit, ai scris, a venit. Auxiliarul se schimbă: am, ai, a, am, ați, au. Participiul rămâne. Imperfectul ține obișnuința. Perfectul compus aduce fapta care se termină.',
+        example: '„În fiecare joi citeam.” e imperfect. „Joi am citit ultima pagină.” e perfect compus. Fără am, rămâne „citit” și nu se mai vede cine.',
+        tryThis: '1. În „am citit”, auxiliarul este am sau citit? Un cuvânt. 2. Participiul lui a scrie este scris sau scriind? Un cuvânt.',
+        recap: 'am, ai, a, am, ați, au plus participiu în -t sau -s. Fapta e încheiată. Greșeală: pui imperfectul pe fapta scurtă care întrerupe povestea.'
+      }),
+      lesson('ia-sau-la', 'ia, i-a, la, l-a', {
+        theory: 'ia, fără cratimă, este prezentul lui a lua: ia cartea. i-a este perfect compus: i-a spus. la este prepoziție: la școală. l-a este pronume plus auxiliar: l-a văzut. a avea e verb de sine în „ei au o carte” și auxiliar în „ei au zis”. Dacă urmează un participiu, este auxiliar.',
+        example: '„El ia sfaturile în serios.” e prezent. „El i-a spus un sfat.” e perfect. „Merge la școală.” are prepoziție. „L-a ascultat.” are auxiliar.',
+        tryThis: '1. „El ia cartea.” este prezent sau perfect? Un cuvânt. 2. „Merg la școală.” se scrie la sau l-a? Un cuvânt.',
+        recap: 'Cratima marchează auxiliarul: i-a, l-a. Fără cratimă, ia înseamnă a lua, iar la este prepoziție. Greșeală: pui cratimă la „la școală”.'
+      }),
+      lesson('perfecte', 'Perfectul simplu, mai-mult-ca-perfectul, secvența', {
+        theory: 'Perfectul simplu este o acțiune trecută și încheiată. În povestire o face vie. În vorbire apare mai ales în Oltenia, pentru o faptă gata de foarte puțin timp. Mai-mult-ca-perfectul e fapta terminată înaintea altei fapte trecute. O secvență are o situație, o schimbare și un rezultat.',
+        example: '„Când am intrat, el scrisese titlul.” „Scrisese” e mai-mult-ca-perfect. „Am intrat” vine după. Asta e o secvență, nu toată cartea.',
+        tryThis: '1. Fapta scurtă și vie din povestire este perfect-simplu sau prezent? Un cuvânt, cu cratimă. 2. Fapta mai veche este plecase sau ajuns? Un cuvânt.',
+        recap: 'Perfectul simplu învie fapta încheiată. Mai-mult-ca-perfectul stă înainte. Greșeală: îl iei drept prezent pentru că nu are auxiliar.'
+      }),
+      lesson('perfect-simplu-forme', 'Cum se scrie perfectul simplu', {
+        theory: 'La plural, perfectul simplu primește grupul -ră: mâncarăm, mâncarăți, mâncară. La verbele în -i, eu are doi de i: venii. El este veni. „Cântă și dansează în fiecare zi” e prezent. „Cântă, apoi plecă” e perfect simplu. Verbul se acordă: Andrei zise, nu ziseră.',
+        example: '„Îmi ziseră Andrei.” e greșit, pentru că Andrei e unul. Corect: „Îmi zise Andrei.” „Ei mâncară.” are -ră, pentru că sunt mai mulți.',
+        tryThis: '1. La plural, perfectul simplu primește grupul ra sau se? Un cuvânt. 2. „Andrei zise.” Subiectul este singular sau plural? Un cuvânt.',
+        recap: 'Pluralul are -ră. Eu venii, el veni. Contextul desparte prezentul de perfectul simplu. Greșeală: pui pluralul când subiectul e unul singur.'
+      }),
+      lesson('mmp-forme', 'Formele de mai-mult-ca-perfect', {
+        theory: 'Mai-mult-ca-perfectul se formează din perfectul simplu, cu grupul se. gândi plus se dă gândise. Terminațiile sunt -sem, -seși, -se, -serăm, -serăți, -seră. La plural, -ră este normă azi: plecaseră, nu plecase, când sunt mai mulți. Eu încercasem. Ei încercaseră. Trei prieteni ajutaseră, nu ajutase.',
+        example: '„Când a ajuns mama, invitații plecaseră.” Plecarea e mai veche decât sosirea. „Eu încercasem o dată.” rămâne la singular, pentru că subiectul e eu.',
+        tryThis: '1. La persoana a III-a, terminația este se sau sem? Un cuvânt. 2. Pentru ei, forma corectă este plecasera sau plecase? Un cuvânt.',
+        recap: 'Mai-mult-ca-perfectul are se în terminație. Pluralul cere -ră. Greșeală: lași plecase când subiectul e la plural.'
+      }),
+      lesson('viitor-banda', 'Viitorul și banda desenată', {
+        theory: 'Viitorul spune o acțiune de după momentul vorbirii, luată ca sigură. Forma standard se face cu a vrea și infinitivul: voi veni, vei apărea, va fugi, vom dormi, veți dori, vor îndrăgi. Scrii va apărea, nu va apare. va fi, nu va fii. voi ieși, nu voi ieșii. În bandă desenată, casetele stau în ordinea acțiunii.',
+        example: '„Mâine voi citi.” e viitor standard. „Voi citii” are un i în plus. Trei casete: privește, cade, ridică. Înainte de ultima poate spune „O voi ridica.”',
+        tryThis: '1. Auxiliarul standard este voi sau sunt? Un cuvânt. 2. Forma corectă este va-fi sau va-fii? Un cuvânt, cu cratimă.',
+        recap: 'voi, vei, va, vom, veți, vor plus infinitiv. Fără i în plus la ieși, citi, fi. Greșeală: scrii va fii sau va apare.'
+      }),
+      lesson('viitor-variante', 'Viitorul din vorbire și viitorul anterior', {
+        theory: 'În vorbire, viitorul mai apare cu a avea și să: am să merg, ai să visezi, o să rămână. O să rămână e corect. o să rămâie nu e. Mai există viitorul anterior: voi fi plus participiu, voi fi venit, voi fi vorbit. Înseamnă că fapta va fi gata înaintea altui moment din viitor.',
+        example: '„Am să fiu gata.” e forma din vorbire. „Până atunci voi fi citit capitolul.” e viitor anterior: cititul va fi gata înainte de momentul acela.',
+        tryThis: '1. „Am să merg.” ține de vorbire sau de participiu? Un cuvânt. 2. În „voi fi citit”, participiul este citit sau citi? Un cuvânt.',
+        recap: 'am să și o să țin de vorbire. voi fi plus participiu este viitor anterior. Greșeală: scrii o să rămâie sau iei viitorul anterior drept prezent.'
+      }),
+      lesson('ascultare-activa', 'Ascultarea activă', {
+        theory: 'Ascultarea activă înseamnă că urmărești interlocutorul și nu îl întrerupi. Ca să arăți că ai înțeles, pui o întrebare scurtă sau reformulezi. Când repeți un plan la viitor, treci persoana I la a II-a: „voi citi” devine „vei citi”, „o să plec” devine „o să pleci”.',
+        example: 'Colegul spune: „Mai întâi voi zbura, apoi o să scriu o carte.” Tu spui: „Înțeleg că vei zbura, apoi o să scrii o carte. Unde vei zbura?”',
+        tryThis: '1. Reformularea „Înțeleg că vei…” trece la persoana I sau II? Scrie cifra romană. 2. Îl întrerupi ca să arăți că asculți? Scrie da sau nu.',
+        recap: 'Asculți până la capăt, apoi reformulezi. Persoana I devine a II-a. Greșeală: îl întrerupi sau lași „voi” când vorbești despre planul lui.'
+      }),
       lesson(
         'recap-poveste',
         'Recapitulare și evaluare',
