@@ -1059,7 +1059,7 @@ const UNITS = [
     id: 'trepte',
     title: 'Trepte în viață',
     inOwnWords:
-      'Unitatea 6 urcă pe trepte de vârstă și de școală: emoții și atitudini, semne paraverbale, identitate, numeral, apoi școala de acum și școala de altădată. Textele din cuprins: Hamurabi, de Mircea Sântimbreanu, și un fragment din Amintiri din copilărie, de Ion Creangă.',
+      'Unitatea 6 urcă pe trepte: emoții, voce și gest, satul românesc, numeralul cardinal și ordinal. Mesajul se discută pe Hamurabi, de Mircea Sântimbreanu, o oră de istorie. Școala de altădată, cu Creangă, vine în paginile următoare.',
     toc: [
       'Emoții. Sentimente. Atitudini',
       'Elemente paraverbale și nonverbale',
@@ -1075,34 +1075,84 @@ const UNITS = [
     ],
     glossary: [
       { term: 'numeral cardinal', meaning: 'Spune cât: unu, doi, douăzeci.' },
-      { term: 'numeral ordinal', meaning: 'Spune al câtelea: primul, al doilea.' },
-      { term: 'paraverbal', meaning: 'Cum spui: ton, ritm, pauză, tărie. Nu e cuvântul, nu e gestul.' }
+      { term: 'numeral ordinal', meaning: 'Spune al câtelea: primul, al doilea, a doua.' },
+      { term: 'paraverbal', meaning: 'Cum spui: ton, ritm, pauză, tărie. Nu e cuvântul, nu e gestul.' },
+      { term: 'nonverbal', meaning: 'Ce se vede: gest, față, poziția corpului.' },
+      { term: 'patrimoniu', meaning: 'Obiceiuri, locuri și obiecte păstrate de la o generație la alta.' }
     ],
     lessons: [
-      lesson(
-        'atitudine',
-        'Emoții, sentimente, atitudini, paraverbal',
-        'Emoția e scurtă și se vede (frică, bucurie, ciudă). Sentimentul ține mai mult (prietenie, respect). Atitudinea e felul în care te porți față de ceva: ești curios, închis, batjocoritor. Le deosebești ca să nu scrii „a fost supărat” pentru orice.',
-        'Paraverbalul e vocea: tare, șoptit, repede, cu pauze. Nonverbalul e corpul: umeri, privire, deget. Același „bine” poate fi acord sau ironie, după voce.',
-        'Exemplu lucrat: un coleg spune „bravo” zâmbind și încet, după ce ai reușit. Atitudine de încurajare. Același cuvânt, râs scurt și sprâncene ridicate, poate fi batjocură. Cuvântul nu ajunge.',
-        'Reține: ce cuvânt, ce voce, ce gest. Trei straturi, nu unul.'
-      ),
-      lesson(
-        'numeral',
-        'Identitate și numeral',
-        'Identitatea națională revine aici legată de trepte: ce sărbătorești, ce limbă înveți, ce povești ți se spun acasă. O spui concret, ca în unitatea despre prietenie.',
-        'Numeralul cardinal numără: trei manuale, douăzeci de elevi. Numeralul ordinal ordonează: clasa a cincea, prima treaptă, al doilea semestru. „Cinci” nu e „a cincea”. Unul spune câți, altul spune pe ce loc.',
-        'Exemplu lucrat: „Am trei trepte de parcurs. Sunt la a doua.” Cardinal: trei. Ordinal: a doua.',
-        'Reține: cardinal = cât. Ordinal = al câtelea. La clase, „a V-a” e ordinal.'
-      ),
-      lesson(
-        'scoala',
-        'Școala, mesajul, deschiderile',
-        'Școala e o treaptă, nu doar o clădire. Atitudinea față de ea (curiozitate, frică, plictiseală) se discută cu exemple, nu cu etichete pe colegi.',
-        'Cuprinsul pune discutarea mesajului pe textul Hamurabi, de Mircea Sântimbreanu. În manual urmărești ce vrea textul să-ți spună despre dreptate și despre reguli, cu o dovadă, nu cu „autorul a vrut”. Deschiderile interdisciplinare și interculturale înseamnă că aceeași idee (o regulă, o școală, o pedeapsă) poate fi privită și din istorie sau din altă cultură, fără să amesteci materiile într-o salată.',
-        'Exemplu lucrat: mesaj posibil — „regula fără măsură nu e dreptate”. Ca să țină, arăți o faptă din text. Dacă nu ai textul în față, nu inventa fapta: spune că dovada stă în manual.',
-        'Reține: mesajul se discută cu o dovadă. Școala e temă de atitudine, nu doar de orar.'
-      ),
+      lesson('deschidere-trepte', 'Ce vei descoperi în unitate', {
+        theory: 'Unitatea are cinci competențe: 1.2, 2.5, 3.2, 4.4 și 5.2. Reiei substantivul, școala și descrierea. Descoperi numeralul, cardinal și ordinal, și comunicarea nonverbală. Variația cuvintelor după timp și loc vine mai târziu. Cu numeralul spui o informație clar. La o problemă propui o soluție.',
+        example: 'Înainte de text notezi: cinci competențe, un numeral, un gest. Abia apoi citești fragmentele. Proverbele de deschidere rămân în manual.',
+        tryThis: '1. Câte competențe specifice deschid unitatea? Scrie numărul. 2. Numeralul se descoperă acum sau mai-tarziu? Un cuvânt, cu cratimă.',
+        recap: 'Cinci competențe. Aici sunt emoția, numeralul și gestul. Greșeală: sari la școala de altădată înainte să numeri.'
+      }),
+      lesson('atitudine', 'Emoții, sentimente, atitudini, paraverbal', {
+        theory: 'Emoția e scurtă și se vede: frică, bucurie. Sentimentul ține mai mult: respect. Atitudinea e felul în care te porți. Numești patru emoții și le legi de o culoare. Jurnalul dublu are două coloane: fragmentul și impresia ta. Pentru casa copilăriei scrii trei îndemnuri la imperativ.',
+        example: '„Păstrează casa în care ai crescut!” e imperativ. În jurnal: stânga, ideea de casă; dreapta, „m-a întristat”. Cerința e de trei îndemnuri.',
+        tryThis: '1. Jurnalul dublu are 2 sau 4 coloane? Scrie numărul. 2. Câte enunțuri la imperativ se cer pentru casa copilăriei? Scrie numărul.',
+        recap: 'Emoția e scurtă, atitudinea e un fel de a te purta. Două coloane, trei imperativ. Greșeală: scrii „a fost frumos” fără o emoție numită.'
+      }),
+      lesson('recitare', 'Recitarea și semnele din voce', {
+        theory: 'Ideile merg mai ales prin cuvinte. Emoțiile merg prin nonverbal: gest, față, poziția corpului. Și prin paraverbal: intensitate, intonație, tempo, accent. La recitare rostești corect și ții pauzele din punctuație. Notezi ce a ieșit bine și ce a ieșit slab. De la bunici afli cum arăta casa lor și scrii un paragraf.',
+        example: '„Bravo”, încet și cu zâmbet, încurajează. Același cuvânt, cu râs scurt și sprâncene ridicate, bate joc. Pauza de la virgulă se aude.',
+        tryThis: '1. Tempo-ul vorbirii este paraverbal sau nonverbal? Un cuvânt. 2. O sprânceană ridicată este nonverbal sau cuvant? Un cuvânt.',
+        recap: 'Cuvântul duce ideea. Vocea și corpul duc emoția. Pauzele vin din punctuație. Greșeală: reciți repede și sari peste virgule.'
+      }),
+      lesson('vieru-casa', 'Vieru, tema și detaliile', {
+        theory: 'Grigore Vieru s-a născut în 1935, în fostul județ Hotin, în Republica Moldova. În 1988 a primit Diploma de Onoare Hans Christian. În 1993 a fost ales membru corespondent al Academiei Române. A murit în 2009, la Chișinău. Tema stă separat de detalii. Dacă ideea e în toate fragmentele, scrii D. Dacă nu e în niciunul, scrii E.',
+        example: 'Tema poate fi casa. Detaliu: o fereastră. O stradă reală, cu multe date, nu e în fragmente: marchezi E.',
+        tryThis: '1. În ce an a murit Grigore Vieru? Scrie numărul. 2. Ideea din toate fragmentele se marchează cu D sau cu E? O literă.',
+        recap: '1935, Hotin, 2009, Chișinău. D înseamnă toate, E înseamnă niciunul. Greșeală: copiezi versul în loc să notezi tema.'
+      }),
+      lesson('identitate-sat', 'Satul și identitatea națională', {
+        theory: 'Viața de la sat ține de identitatea națională. Muzeul Național al Satului „Dimitrie Gusti” stă lângă lacul Herăstrău, în București, cu case din mai multe regiuni. Pentru cetățenie, cine n-o are din naștere cunoaște limba standard, simbolurile, ziua națională și istoria. Părerea ta stă într-un enunț asertiv, cu un detaliu.',
+        example: '„Mă reprezintă limba română și casa cu prispă.” e asertiv și are un detaliu. „Satul e frumos” nu spune ce anume te reprezintă.',
+        tryThis: '1. Muzeul Satului este lângă Herastrau sau lângă mare? Un cuvânt. 2. Pentru cetățenie, candidatul învață limba sau un zvon? Un cuvânt.',
+        recap: 'Herăstrău, Gusti, case din regiuni. Cetățenia cere limba, simbolurile și istoria. Greșeală: o părere fără un detaliu.'
+      }),
+      lesson('numeral', 'Identitate și numeral', {
+        theory: 'Numeralul exprimă o cantitate, un număr sau o ordine. Cardinalul spune cât: trei case, doisprezece ouă. un și o sunt numeral când răspund la cât: cel puțin o fereastră. În „într-un coș”, un este articol. un e masculin, o e feminin. În lista doi, al doilea, doime, de două ori, elementul de bază este doi.',
+        example: '„Orașul avea doi pereți.” doi e cardinal și stă în locul lui singur. „Într-un coș intră ouă.” un prezintă coșul, nu îl numără.',
+        tryThis: '1. Elementul de bază din doi, al doilea, doime este doi sau trei? Un cuvânt. 2. În „într-un coș”, un este articol sau ordinal? Un cuvânt.',
+        recap: 'Cardinalul spune cât. un și o numerotează doar când răspund la cât. Baza listei este doi. Greșeală: iei orice un drept număr.'
+      }),
+      lesson('numeral-scriere', 'Cum se scriu numeralele cardinale', {
+        theory: 'Cardinalul compus se scrie într-un cuvânt. 11 este unsprezece, nu unșpe. 16 este șaisprezece, nu șasesprezece. 17 este șăptesprezece, cu ă. 18 este optsprezece, nu optisprezece. 21 este douăzeci și unu. Dacă prima zi are 12 ouă și în fiecare zi următoare scazi un ou, a șaptea zi are 6.',
+        example: 'unșpce și optisprezece se întorc la dicționar. unsprezece și optsprezece rămân. De la 12, ziua a șaptea ajunge la 6.',
+        tryThis: '1. 11 se scrie unsprezece sau unspe? Un cuvânt. 2. Dacă prima zi are 12 și scazi câte 1, a șaptea zi are 6 sau 12? Scrie numărul.',
+        recap: 'unsprezece, șaisprezece, șăptesprezece, optsprezece. 21 se scrie în trei cuvinte. Greșeală: scrii unșpe sau uiți ă din șăptesprezece.'
+      }),
+      lesson('ordinal', 'Numeralul ordinal', {
+        theory: 'Numeralul ordinal spune locul în grup. Masculin: al doilea, al treilea. Feminin: a doua, a treia. În structură stau al, cardinalul și articolul: le la masculin, a la feminin. trei spune câți. al treilea spune locul. Dacă inversezi versurile și păstrezi câte un obiect, se schimbă ordinea, nu cantitatea.',
+        example: '„A treia fereastră e a mea.” dă locul. „Am trei ferestre.” dă cantitatea. Lista întoarsă schimbă locul, nu numărul.',
+        tryThis: '1. Locul 3, feminin, este a-treia sau trei? Un cuvânt, cu cratimă. 2. Inversarea versurilor schimbă ordinea sau cantitatea? Un cuvânt.',
+        recap: 'al doilea, a doua. Ordinalul dă locul și se acordă. X este 10, M este 1000, la regi și capitole. Greșeală: scrii trei când ți se cere al treilea.'
+      }),
+      lesson('masuri-vechi', 'Unități de măsură, de azi și de demult', {
+        theory: 'În 1960 s-a adoptat Sistemul Internațional. 1 kilometru are 1000 de metri. 1 oră are 60 de minute. Mila marină are 1852 de metri. Piciorul anglo-saxon are 0,304 metri. Piciorul și palma erau părți din stânjen: 2,23 metri în Moldova și 1,97 metri în Muntenia. ultima e ordinal doar când spui a câta, de pildă a cincea.',
+        example: '„Ultima păpușă” nu e încă numeral. Dacă e a cincea de la dreapta la stânga, scrii a cincea. 1852 rămâne mila marină.',
+        tryThis: '1. Mila marină are 1852 sau 304 metri? Scrie numărul. 2. Stânjenul în Moldova are 2,23 sau 1,97 metri? Scrie numărul cu virgulă.',
+        recap: '1852 metri la mila marină. Stânjen: 2,23 în Moldova, 1,97 în Muntenia. Greșeală: numești ultima ordinal fără să spui a câta.'
+      }),
+      lesson('patrimoniu', 'Patrimoniul și obiectivele', {
+        theory: 'Patrimoniul cultural trece mai departe obiceiuri, tradiții, artă. UNESCO are și situri naturale. Pe listă: Delta Dunării, Horezu, Călușarii, biserici din Moldova și din Transilvania, biserica de lemn din Maramureș. Zidurile duc la Horezu. Pelicanii duc la Deltă. În prezentare pui un cardinal sau un ordinal.',
+        example: '„Horezu este al doilea obiectiv de pe fișa mea.” e ordinal. „În Deltă am numărat doi pelicani.” Cardinalul se scrie și cu litere, dacă așa cere sarcina.',
+        tryThis: '1. Fragmentul cu pelicani duce la Delta sau la Horezu? Un cuvânt. 2. Dansul din listă este Calusarilor sau Horezu? Un cuvânt.',
+        recap: 'Delta și Horezu stau pe liste diferite. Pui un cardinal sau un ordinal. Greșeală: amesteci mănăstirea cu păsările.'
+      }),
+      lesson('scoala', 'Școala, mesajul, deschiderile', {
+        theory: 'Cuvintele se împart în trei coloane: stări pozitive, emoții negative, cuvinte neutre. Diagrama e a unei singure clase: 18 elevi, 14 fete și 4 băieți, la Școala Constantin Brâncoveanu. Varianta despre toate școlile din România sare din date. Chestionarul cere doar da sau nu, plus un paragraf cu o soluție.',
+        example: '„Toți elevii din România sunt triști” nu iese din 18 răspunsuri. „Simți stres.” se răspunde cu da sau nu.',
+        tryThis: '1. Câți elevi are clasa din diagramă? Scrie numărul. 2. Varianta despre toate școlile din România este a sau d? O literă.',
+        recap: 'Trei coloane. 18 elevi, o singură școală. Chestionarul primește da sau nu. Greșeală: întinzi o clasă la toată țara.'
+      }),
+      lesson('hamurabi', 'Mesajul din Hamurabi', {
+        theory: 'Textul este Hamurabi, de Mircea Sântimbreanu. Eugenița e dintr-a cincea: numeralul e ordinal. Ora e de istorie, despre babilonieni și despre Hamurabi. Mesajul se discută cu o dovadă: nu știe lecția și amână întrebarea. Emoția stă lângă un substantiv, ca atribut, și se subliniază. Alegi două stări pozitive și una negativă, fiecare pe un moment.',
+        example: '„Privirea speriată”: atributul e speriată. Ușurarea, când crede că a scăpat, e pozitivă. Teama de întrebare e negativă.',
+        tryThis: '1. Disciplina orei este istorie sau muzica? Un cuvânt. 2. „dintr-a cincea” este ordinal sau cardinal? Un cuvânt.',
+        recap: 'Istorie, clasa a cincea, ordinal. Două stări pozitive și una negativă. Greșeală: spui „autorul a vrut” fără o faptă din oră.'
+      }),
       lesson(
         'variatie',
         'Cum se schimbă cuvintele. Școala de altădată',
