@@ -405,7 +405,9 @@ const UNITS = [
       { term: 'diacritice', meaning: 'Semne pe literă: căciulița (ă), virgula (ș, ț), circumflexul (â, î).' },
       { term: 'silabă', meaning: 'Ce spui dintr-o singură deschidere a gurii. În ea stă o singură vocală.' },
       { term: 'semivocală', meaning: 'e, i, o sau u care nu ține singură silaba, ci stă lângă o vocală.' },
-      { term: 'accent', meaning: 'Silaba spusă mai puternic. Poate schimba sensul cuvântului.' }
+      { term: 'accent', meaning: 'Silaba spusă mai puternic. Poate schimba sensul cuvântului.' },
+      { term: 'sinonim', meaning: 'Altă formă, același înțeles. Contextul alege care se potrivește.' },
+      { term: 'antonim', meaning: 'Alt cuvânt, cu sensul din partea opusă: bucurie / tristețe.' }
     ],
     lessons: [
       lesson('deschidere-carte', 'Harta unității despre carte', {
@@ -504,31 +506,90 @@ const UNITS = [
         tryThis: '1. După ne-, forma corectă păstrează i sau a? Scrie i sau a. 2. Înainte de b sau p scrii m sau n? Un cuvânt.',
         recap: 'î la capete, â în interior, î după prefix, m înainte de b sau p. Greșeală: pui â peste tot în mijloc, chiar și după ne- sau re-.'
       }),
-      lesson(
-        'sinonime',
-        'Sinonime și antonime',
-        'Sinonimele au formă diferită și sens apropiat. Nu sunt clone: „a merge” și „a păși” nu intră în orice frază la fel. Le alegi după context, nu după prima pereche din listă.',
-        'Antonimele au sens opus: mare / mic, a deschide / a închide. Poți face opoziție și cu negația („vine” / „nu vine”), dar antonimul adevărat e alt cuvânt, nu doar „nu” lipit.',
-        'Exemplu lucrat: în „Camera e luminoasă” antonimul potrivit e „întunecoasă”, nu „urâtă”. Urât schimbă altceva decât lumina.',
-        'Reține: sinonim = aproape același sens. Antonim = sensul din partea cealaltă, tot în context.'
-      ),
-      lesson(
-        'paragraf',
-        'Paragraful și etapele scrierii',
-        'Un text se prezintă ca să poată fi citit: scris lizibil, titlu, paragrafe. Un paragraf ține o idee. Când treci la alta, începi paragraf nou. Asta e și regulă de mână, și regulă de cap.',
-        'Etapele scrierii din cuprins, unite aici: 1) generezi idei (ce ai putea spune), 2) planifici (ce rămâne și în ce ordine), 3) scrii. Nu începi cu fraza „frumoasă” înainte de plan.',
-        'Exemplu lucrat: tema „o carte care m-a ținut”. Idei: titlul, o scenă, de ce am continuat. Plan: ce carte / ce scenă / ce am înțeles. Abia apoi paragraful.',
-        'Reține: idei, apoi plan, apoi text. Paragraful = o idee.'
-      ),
-      lesson(
-        'empatie',
-        'Temă, detaliu, dialog, empatie',
-        'Tema e despre ce scrii, spus scurt. Detaliul o face de crezut: un gest, un obiect, o replică, nu „a fost frumos”. În dialog, fiecare replică are un rost. Nu pui două personaje să spună același lucru ca să umpli pagina.',
-        'Empatia, aici, e să ții cont de celălalt când vorbești sau scrii: ce știe deja, ce l-ar răni fără rost, ce are nevoie să afle. Nu e să fii de acord cu tot.',
-        'Exemplu lucrat: tema „prima zi de școală”. Detaliu bun: „ghiozdanul îmi bătea în genunchi”. Detaliu gol: „eram emoționat”. Dialogul cu un coleg începe cu o întrebare, nu cu un discurs.',
-        'Recapitulare: cuvânt, alfabet, silabă, accent, sinonim, antonim, paragraf, trei pași ai scrierii. Evaluarea unității cere să le folosești, nu să le enumeri.',
-        'Reține: tema spune despre ce e. Detaliul arată. Empatia schimbă felul în care spui.'
-      )
+      lesson('sinonime', 'Sinonime și antonime', {
+        theory: 'Sinonimele au formă diferită și același înțeles. Le alegi după frază, nu după primul cuvânt din listă. „Au ridicat un zid” înseamnă au construit. „I-au ridicat pedeapsa” înseamnă au anulat-o. Dacă repeți de patru ori „frumos”, textul slăbește.',
+        example: '„Pisica e frumoasă. Are mustăți frumoase și ochi frumoși.” Devine: „Pisica e blândă. Are mustăți lungi și ochi limpezi.” Sensul rămâne. Vorbele nu se mai calcă una pe alta.',
+        tryThis: '1. În „au ridicat un zid”, sinonimul este construi sau anula? Un cuvânt. 2. Același adjectiv de patru ori este bine sau slab? Un cuvânt.',
+        recap: 'Aceeași idee, altă formă. Contextul alege sinonimul. Greșeală: lipești primul cuvânt din listă sau repeți același adjectiv.'
+      }),
+      lesson('antonime', 'Antonimele', {
+        theory: 'Antonimele au formă diferită și sens opus: mare și mic, bucurie și tristețe, furie și calm, speranță și disperare. „Nu merg” se opune lui „merg”, dar nu este antonim. Este aceeași vorbă cu „nu”. Antonimul este alt cuvânt. Îl verifici în frază.',
+        example: '„Camera e luminoasă.” Opusul potrivit este „întunecoasă”, nu „urâtă”. Urât schimbă frumusețea, nu lumina. La emoții, bucuria stă în fața tristeții, nu în fața furiei.',
+        tryThis: '1. Antonimul lui bucurie este tristete sau furie? Un cuvânt. 2. „Nu merg” este antonim sau negatie? Un cuvânt.',
+        recap: 'Antonimul este alt cuvânt, cu sensul din partea cealaltă. Greșeală: lipești „nu” și crezi că ai găsit antonimul.'
+      }),
+      lesson('notite', 'Cum îți iei notițe', {
+        theory: 'Notițele trebuie citite și peste o săptămână. Lași loc între titlu și text. Data stă sus, în dreapta. Subliniezi cuvintele-cheie. Poți folosi culori și scheme. Unele texte sunt doar paragrafe. Altele amestecă vorbe cu desene sau hărți.',
+        example: 'Titlu: Cauza și efectul. Data, în dreapta. Paragraf: un copil cere mereu dulciuri. Efect: cei din casă obosesc. Săgeata dintre cele două este schema. Nu scrii totul într-un bloc, fără aer.',
+        tryThis: '1. Data se scrie sus, în dreapta sau în stanga? Un cuvânt. 2. Un paragraf ține una sau multe idei principale? Scrie una sau multe.',
+        recap: 'Dată, spațiu, o idee pe paragraf, cuvinte-cheie subliniate. Greșeală: un caiet plin, fără titlu și fără loc între rânduri.'
+      }),
+      lesson('paragraf', 'Paragraful și etapele scrierii', {
+        theory: 'Paragraful este o bucată unitară, cu o idee, despărțită printr-un alineat nou. Când treci la altă idee, începi rând nou. Cauza spune de ce se întâmplă. Efectul spune ce urmează. Le poți pune în două paragrafe sau într-o schemă.',
+        example: 'Cauză: a repetat același cuvânt toată ziua. Efect: cei din jur nu l-au mai auzit. Două idei, două paragrafe. Dacă le lipești fără alineat, cititorul nu vede unde se schimbă firul.',
+        tryThis: '1. Paragraful nou începe cu alineat sau in acelasi rand? Scrie alineat sau rand. 2. Ce urmează dintr-o cauză se numește efect sau titlu? Un cuvânt.',
+        recap: 'Un alineat, o idee. Cauza explică. Efectul arată urmarea. Greșeală: tot textul într-un singur bloc.'
+      }),
+      lesson('proiect', 'Etapele unui proiect', {
+        theory: 'Alegi o temă care te interesează. Scrii cel puțin două întrebări. Apoi o îngustezi: o expresie, o credință, un desen. Află termenul de predare. Abia apoi faci planul și alegi tipul: compunere, prezentare sau poster. Sursele pot fi manuale, enciclopedii sau cărți.',
+        example: 'Tema mare este animalele. Întrebările: de ce se sperie unii de pisica neagră și cum o văd alte culturi. Produsul este un poster, pentru că termenul este scurt.',
+        tryThis: '1. Câte întrebări de documentare scrii, minimum? Scrie numărul. 2. Planul se face înainte să știi termenul sau dupa? Un cuvânt.',
+        recap: 'Întrebări, apoi detalii, apoi plan, după ce știi termenul. Greșeală: începi să scrii înainte să știi ce formă trebuie să aibă lucrarea.'
+      }),
+      lesson('autoevaluare-proiect', 'Cum îți notezi proiectul', {
+        theory: 'Te notezi până la 100 de puncte. Structura unitară: 10. Tema nuanțată: 20. Scrierea: 20 sub patru greșeli, 10 peste patru, 5 peste opt. Pagina: 10. Surse credibile: 10. Anexa cu sursele: 20. Felul tău de a uni textul cu imaginea: 10.',
+        example: 'Ai un poster clar, dar fără lista de surse. Pierzi anexa, adică 20 de puncte, chiar dacă desenul este frumos. La cinci greșeli de scriere nu mai iei 20, ci 10.',
+        tryThis: '1. Câte puncte valorează anexa cu sursele? Scrie numărul. 2. Sub patru greșeli de scriere iei 20 sau 5? Scrie numărul.',
+        recap: '100 de puncte pe șapte criterii. Sursele și tema cântăresc cel mai mult. Greșeală: un colaj frumos, fără să se vadă de unde ai luat informația.'
+      }),
+      lesson('empatie', 'Temă, detaliu, dialog, empatie', {
+        theory: 'Tema este ideea centrală, în linii mari. O numești scurt: călătoria, copilăria, școala. Detaliul o face de crezut: un gest, un obiect, un loc. Empatia înseamnă să înțelegi gândurile și dorințele celuilalt. Te pui în pielea lui. Nu înseamnă să fii de acord cu tot.',
+        example: 'Tema este copilăria. Detaliul bun: „ghiozdanul îmi bătea în genunchi”. Detaliul gol: „eram emoționat”. Empatie: înțelegi că vrea să scrie, nu doar să asculte.',
+        tryThis: '1. Tema se numește cu un substantiv sau cu o pagina? Scrie substantiv sau pagina. 2. Empatia înseamnă să fii mereu de acord? Scrie da sau nu.',
+        recap: 'Tema spune despre ce este. Detaliul arată. Empatia înseamnă să înțelegi dorința celuilalt. Greșeală: „a fost frumos”, fără o faptă.'
+      }),
+      lesson('dialog-atent', 'Vorbitor și ascultător, cu grijă', {
+        theory: 'Ești pe rând vorbitor și ascultător. Vorbitorul spune clar, pe temă, cu voce cât să fie auzit, nu cât să deranjeze, și îl invită pe celălalt. Ascultătorul se uită la el, nu îl întrerupe și nu vorbește odată cu el. Dacă nu a înțeles, cere o clarificare.',
+        example: 'Ioana spune de ce i-a plăcut un personaj, apoi tace. Andrei se uită la ea și întreabă ce i s-a părut grijuliu. „Ba nu!”, spus peste ea, nu este ascultare.',
+        tryThis: '1. Ascultătorul poate întrerupe? Scrie da sau nu. 2. Vorbitorul îl invită pe celălalt sau vorbește doar el? Scrie invita sau doar-el.',
+        recap: 'Clar, pe temă, cu voce potrivită. Celălalt se uită și întreabă după. Greșeală: doi oameni vorbesc deodată și numesc asta dialog.'
+      }),
+      lesson('tiparita-digitala', 'Carte tipărită sau digitală', {
+        theory: 'Cartea tipărită și cea digitală duc același text. Tipărită: nu are baterie, o poți dărui și nu o ștergi dintr-un clic. Digitală: iei multe volume fără greutate, dar bateria se poate termina. Alegi după drum, nu după modă.',
+        example: 'În tren, zece povești încap într-un e-reader. Asta este forma digitală. Pe noptieră, pagina care foșnește și pe care o poți împrumuta este tipărită. Ambele sunt cărți. Se schimbă suportul.',
+        tryThis: '1. Cartea fără baterie este tiparita sau digitala? Un cuvânt. 2. Zece cărți fără greutate țin de tiparita sau de digitala? Un cuvânt.',
+        recap: 'Aceeași lectură, alt suport. Fiecare are un câștig și o limită. Greșeală: spui că una dintre ele nu este carte.'
+      }),
+      lesson('intrebare-deschisa', 'Întrebarea deschisă', {
+        theory: 'Întrebarea deschisă nu se rezolvă cu da sau nu. Începe cu ce, care, cum sau de ce. Așa afli un răspuns, nu un semn din cap. Pentru un cadou, întrebi ce i-a plăcut, nu doar dacă îi place să citească.',
+        example: '„Îți place cartea?” este închisă. „Ce carte ai reciti?” este deschisă. A doua îți dă un titlu, nu un da. De aceea o folosești când cauți un cadou.',
+        tryThis: '1. „Îți place să citești?” este deschisa sau inchisa? Un cuvânt. 2. „Ce gen preferi?” este deschisa sau inchisa? Un cuvânt.',
+        recap: 'Deschis înseamnă un răspuns pe larg. Închis înseamnă da sau nu. Greșeală: pui patru întrebări cu da și nu și crezi că l-ai cunoscut pe coleg.'
+      }),
+      lesson('de-ce-citim', 'De ce să citești', {
+        theory: 'Poți trăi fără cărți, dar pierzi o convorbire cu alte vremuri. Cititul fără înțelegere este gol. Tiparul în limba română începe în secolul al XVI-lea. O carte din 1544 nu s-a păstrat. Cea mai veche tipăritură din care au rămas exemplare este din 1551–1553.',
+        example: 'Cineva a citit zece pagini și nu poate spune despre ce erau. Un coleg care poate povesti o scenă a citit cu folos.',
+        tryThis: '1. Cititul fără înțelegere este util sau gol? Un cuvânt. 2. Cea mai veche tipăritură românească păstrată este din secolul 16 sau 20? Scrie numărul.',
+        recap: 'Citești ca să înțelegi, nu ca să numeri pagini. Tiparul românesc păstrat începe în secolul al XVI-lea. Greșeală: crezi că ai citit doar pentru că ai trecut cu ochii.'
+      }),
+      lesson('nu-adauga-i', 'Nu adăuga un i în plus', {
+        theory: 'Nu pune un i în plus doar pentru că așa îți sună în grabă. era nu se scrie iera. epocă nu se scrie iepocă. Rămâne și regula de dinainte: înainte de b sau p, prefixul în- se scrie îm. înpădurire este greșit. împădurire este corect.',
+        example: '„Acolo iera altă iepocă” are două i-uri în plus. Corect: „Acolo era altă epocă.” înpădurirea primește m, pentru că urmează p: împădurirea. Le corectezi pe toate, nu doar pe prima.',
+        tryThis: '1. Forma corectă este era sau iera? Un cuvânt. 2. Înainte de p scrii im sau in? Un cuvânt.',
+        recap: 'Nu adăuga i unde nu este. Înainte de p sau b, scrii îm. Greșeală: copiezi mesajul grăbit și îl lași cu iera și cu înpădurire.'
+      }),
+      lesson('evaluare-carte', 'Evaluarea unității despre carte', {
+        theory: 'Ai 10 puncte din oficiu. Nota iese din totalul împărțit la 10. Compunerea cere minimum 80 de cuvinte și subiectul dat. Pui detalii despre personaje, spațiu și timp. Introducerea, cuprinsul și încheierea stau în paragrafe separate.',
+        example: 'O întâmplare cu o ființă, un spațiu și un moment, în trei paragrafe, ține cerința. Două rânduri, fără loc și fără timp, nu iau punctele de detaliu.',
+        tryThis: '1. Câte puncte sunt din oficiu? Scrie numărul. 2. Minimul de cuvinte la compunere este 80 sau 8? Scrie numărul.',
+        recap: 'Din oficiu sunt 10 puncte. Compunerea are 80 de cuvinte, detalii de personaj, spațiu și timp, trei paragrafe. Greșeală: o poveste scurtă, fără loc și fără alineate.'
+      }),
+      lesson('placere-indatorire', 'Îndatorire și plăcere', {
+        theory: 'Pe fișă separi ce este îndatorire de ce îți face plăcere. Scrii trei și trei. Apoi spui unde stă cititul: la datorie, la plăcere sau la amândouă. Dai un titlu temei. Mai adaugi două enunțuri afirmative și două propoziții negative, cu detalii, nu cu „e ok”.',
+        example: 'Îndatorire: îmi fac tema de mate. Plăcere: citesc seara o poveste. Titlul: Cititul meu stă la plăcere. Afirmativ: „Citesc după cină.” Negativ: „Nu citesc în pauza de zece minute.”',
+        tryThis: '1. Câte lucruri scrii la îndatoriri? Scrie numărul. 2. Câte propoziții negative se cer? Scrie numărul.',
+        recap: 'Trei îndatoriri, trei plăceri, un titlu, două afirmații și două negații. Greșeală: o listă amestecată, fără să spui unde stă cititul.'
+      })
     ]
   },
   {
