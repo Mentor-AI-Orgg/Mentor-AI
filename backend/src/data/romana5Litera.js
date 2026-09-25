@@ -1005,7 +1005,7 @@ const UNITS = [
     id: 'natura',
     title: 'Omul, parte din natură',
     inOwnWords:
-      'Unitatea 5 leagă emoția față de natură de adjectiv (acord și grade de comparație) și de textul descriptiv, literar și nonliterar. Comparația e lucrată pe poezia Cioara, de George Topîrceanu.',
+      'Unitatea 5 leagă emoția față de natură de adjectiv, cu acord și grade, și de textul descriptiv, literar sau nonliterar. Comparația e lucrată pe Cioara, de George Topîrceanu. Recapitularea prezice pe fragmente, în Cioc! Cioc! Cioc!, de Emil Gârleanu. Evaluarea pune biologia într-o poveste.',
     toc: [
       'Exprimarea emoțiilor. Omul în armonie cu natura',
       'Adjectivul. Acordul cu substantivul',
@@ -1017,42 +1017,90 @@ const UNITS = [
     glossary: [
       { term: 'adjectiv', meaning: 'Spune însușirea unui substantiv și se acordă cu el.' },
       { term: 'comparativ', meaning: 'Pune două lucruri față în față: mai înalt decât, la fel de înalt ca.' },
-      { term: 'text descriptiv', meaning: 'Arată cum este ceva, nu ce se întâmplă mai departe.' }
+      { term: 'text descriptiv', meaning: 'Arată cum este ceva, nu ce se întâmplă mai departe.' },
+      { term: 'câmp lexical', meaning: 'Cuvinte care țin de aceeași temă: pădure, anotimp, pasăre.' },
+      { term: 'comparație', meaning: 'Doi termeni cu o trăsătură comună, legați prin ca, precum sau decât.' },
+      { term: 'inferență', meaning: 'Ce deduci dintr-un indiciu, fără o faptă pe care textul n-o dă.' }
     ],
     lessons: [
-      lesson(
-        'emotie-adjectiv',
-        'Emoția, adjectivul, acordul',
-        'Unitatea pleacă de la emoția potrivită când vorbești despre natură: nu orice strigăt e grijă, nu orice „frumos” e atenție. Omul e parte din natură, nu un spectator care o consumă. O spui prin ce observi, nu prin lozincă.',
-        'Adjectivul dă însușirea: verde, înalt, liniștit. Se acordă în gen și număr cu substantivul: „pom înalt”, „pomi înalți”, „frunză verde”, „frunze verzi”. Dacă nu se acordă, fraza scârțâie și cititorul se poticnește.',
-        'Exemplu lucrat: „Pădurea era liniștită și copacii era înalt.” Corect: „copacii erau înalți.” Adjectivul ia pluralul masculin al substantivului.',
-        'Reține: adjectivul se uită la substantiv și se schimbă odată cu el.'
-      ),
-      lesson(
-        'grade',
-        'Gradele de comparație',
-        'Pozitivul spune însușirea simplu: „râul e lat”. Comparativul de superioritate: „mai lat decât”. De egalitate: „la fel de lat ca”. De inferioritate: „mai puțin lat decât”. Superlativul relativ urcă sau coboară față de un grup: „cel mai lat dintre”. Superlativul absolut împinge însușirea tare, fără grup: „foarte lat”.',
-        'Nu le amesteci în aceeași măsură fără rost („cel mai foarte lat”). Alegi un grad și un termen de comparație clar.',
-        'Exemplu lucrat: „Stejarul e mai bătrân decât mesteacănul.” Comparativ de superioritate. Termenii sunt doi, nu tot pădurea.',
-        'Reține: compari cu „mai… decât”, „la fel de… ca”, „cel mai…”. Pozitivul nu compară.'
-      ),
-      lesson(
-        'descriptiv',
-        'Text descriptiv, inferențe, comparația',
-        'Textul descriptiv literar vrea să simți locul sau ființa. Cel nonliterar vrea să informeze exact (o fișă despre un animal, un panou din parc). Ambele arată cum este. Nu au obligația unei întâmplări.',
-        'Inferența la descriere: din „frunzele sunt galbene și vântul e rece” poți spune că pare toamnă. Nu poți spune luna, dacă textul n-o dă.',
-        'Comparația apropie două lucruri ca să înțelegi pe primul: „neagră ca pana”. Are de obicei „ca”, „cât”, „precum”. În cuprins, poezia de lucru este Cioara, de George Topîrceanu. O citești în manual; nu o copiem aici. Cauți comparațiile și spui ce înțelegi mai clar datorită lor.',
-        'Exemplu lucrat: „Cioara e neagră.” e pozitiv, descriere seacă. „Cioara e neagră ca un cărbune ud” e comparație: vezi și luciul, nu doar culoarea. Personificarea ar fi „cioara râde”. Nu e același procedeu.',
-        'Reține: descrierea arată. Comparația explică printr-un „ca”. Inferența nu sare peste text.'
-      ),
-      lesson(
-        'recap-natura',
-        'Recapitulare și evaluare',
-        'La finalul unității știi să acordi un adjectiv, să alegi un grad de comparație și să deosebești o descriere literară de o fișă. Emoția față de natură stă într-un detaliu (un sunet, o culoare, un gest), nu în „iubesc natura” pus la început și uitat.',
-        'Exemplu lucrat: fișă nonliterară — „Stejarul poate trăi sute de ani. Frunza e lobată.” Descriere literară — „Stejarul ține umbra ca o casă.” A doua are comparație. Prima are date.',
-        'Evaluarea cere să le folosești pe un fragment, nu să repeți definiția.',
-        'Reține: acord, grad, tip de descriere, comparație marcată cu „ca”.'
-      )
+      lesson('emotie-adjectiv', 'Emoția, adjectivul, acordul', {
+        theory: 'După o descriere notezi ce ai văzut, auzit și simțit. Adjectivul se acordă în gen și număr. frunze verzui, ghiocei argintii, nori cenușii, străzi pustii, nori întunecați. După niște stă pluralul fără articol: niște codri. La strigare spui dragele mele. De la pasăre, cu -esc, faci păsăresc.',
+        example: '„Mici frunze verzui.” verzuie e doar feminin singular. „Dragele mele păsări, vă văd.” Antonimul tot se acordă: frunze albe.',
+        tryThis: '1. După niște scrii codri sau codrii? Un cuvânt. 2. De la pasăre, cu -esc, scrii pasaresc sau pasare? Un cuvânt.',
+        recap: 'Notezi ce vezi, auzi, simți. Adjectivul ia genul și numărul. Greșeală: lași verzuie lângă frunze sau scrii niște codrii.'
+      }),
+      lesson('grade', 'Gradele de comparație', {
+        theory: 'Pozitivul nu compară: râul e lat. Superioritate: mai lat decât. Egalitate: la fel de lat ca. Inferioritate: mai puțin lat decât. Superlativ relativ: cel mai lat dintre. Superlativ absolut, fără grup: foarte lat. În reclamă îl pui potrivit, nu în fiecare rând.',
+        example: '„Mai bătrân decât mesteacănul” e comparativ de superioritate. „Cel mai bătrân dintre copaci” e relativ. „Foarte bătrân” e absolut. „Cel mai foarte bătrân” amestecă două grade.',
+        tryThis: '1. „La fel de lat ca” este egalitate sau superioritate? Un cuvânt. 2. „Foarte lat”, fără grup, este absolut sau relativ? Un cuvânt.',
+        recap: 'mai…decât urcă, la fel de…ca ține egal, cel mai… alege din grup, foarte stă singur. Greșeală: scrii cel mai foarte înalt.'
+      }),
+      lesson('descriptiv', 'Text descriptiv, inferențe, comparația', {
+        theory: 'Descrierea literară te pune să vezi, să auzi și să simți. Lumea imaginară doar seamănă cu una reală. Descrierea nonliterară informează, cu termeni exacți. Scopul e să emoționeze sau să informeze. Inferența se oprește la indiciu. Albul e suma culorilor. Comparația, cu ca, urmează.',
+        example: '„Frunze galbene și vânt rece” susțin toamna, nu o lună. „Pădurea ține liniștea în brațe” emoționează. „Frunza stejarului e lobată” poate sta pe un panou.',
+        tryThis: '1. O fișă cu termeni exacți vrea să informeze sau să emotioneze? Un cuvânt. 2. Din „frunze galbene” deduci toamna sau luna? Un cuvânt.',
+        recap: 'Literarul seamănă cu realitatea și emoționează. Nonliterarul măsoară. Greșeală: inventezi luna sau cauți pe hartă fiecare detaliu.'
+      }),
+      lesson('camp-lexical', 'Câmpul lexical și tema', {
+        theory: 'În descriere, cuvintele din același câmp lexical țin imaginea și arată tema: animal, peisaj, fenomen. La o ghicitoare alegi tema și aduci un cuvânt-cheie. ninsoare și ploaie duc la anotimpuri. Pentru timp cauți durata. Transcrii două cuvinte și spui dacă sunt substantive, adjective sau verbe.',
+        example: 'frunză, scoarță și umbră sunt substantive din câmpul pădurii. „Vântul geme” are verb și poate susține furtuna. O farfurie în același rând încurcă tema.',
+        tryThis: '1. ninsoare ține de anotimpuri sau de sport? Un cuvânt. 2. Dovada pentru temă este un cuvant-cheie sau o poveste? Un cuvânt, cu cratimă.',
+        recap: 'Câmpul lexical arată tema. Aduci un cuvânt-cheie și partea de vorbire. Greșeală: alegi tema din poză, nu din text.'
+      }),
+      lesson('descriere-stiintifica', 'Descrierea care informează', {
+        theory: 'Termenii exacți fac descrierea nonliterară. Lângă cioară, manualul dă o notă de studiu și un loc: Câmpia Bărăganului și împrejurimile Bucureștiului. La portofoliu alegi o pasăre sau un animal din zona ta și scrii un paragraf științific, bun de logo. Adjectivele din notă pot sta la grade diferite. Le numești.',
+        example: '„În Bărăgan trăiesc multe ciori” informează, dacă ai sursa. O metaforă nu ajunge pe logo. „Mai isteață decât” e comparativ de superioritate.',
+        tryThis: '1. Locul cu densitate mare este Baragan sau litoral? Un cuvânt. 2. Paragraful pentru logo este documentat sau inventat? Un cuvânt.',
+        recap: 'Nonliterarul se verifică: loc, trăsătură, sursă. Greșeală: pui pe logo o metaforă în locul studiului.'
+      }),
+      lesson('comparatie', 'Comparația', {
+        theory: 'Comparația alătură doi termeni cu o trăsătură comună. Îi leagă ca, precum, asemănător cu, întocmai ca, decât. Tabelul are cinci locuri: primul termen, legătura, al doilea termen, punctul comun, starea. Punctul comun poate fi culoarea. Poezia este Cioara, de George Topîrceanu. Personificarea dă o faptă de om.',
+        example: '„Mierla e neagră ca un cărbune ud.” mierla, ca, cărbunele, culoarea. „Mierla râde” e personificare: nu are ca și nu are al doilea termen.',
+        tryThis: '1. În „neagră ca un cărbune”, legătura este ca sau si? Un cuvânt. 2. „Mierla râde” este personificare sau comparatie? Un cuvânt.',
+        recap: 'Doi termeni, o trăsătură, un cuvânt de legătură. Tabelul are cinci locuri. Greșeală: numești personificare orice ca.'
+      }),
+      lesson('portret-fiinta', 'Portretul unei ființe', {
+        theory: 'Portretul are ansamblul și detaliile: cap, ochi, cioc sau bot, aripi, mediu, o abilitate, legătura cu omul. Prin ochii unei frunze sau ai unei case scrii minimum trei paragrafe. La o plantă, primul paragraf e real, cu minimum două grupuri substantiv plus adjectiv. Al doilea e de basm.',
+        example: '„Ciocul subțire caută în scoarța aspră.” Două grupuri. „Ciocul ca un ac de aur deschide ușa” începe basmul. Apoi: locul, detaliul, legătura cu tine.',
+        tryThis: '1. Compunerea are minimum 3 sau 1 paragraf? Scrie numărul. 2. Câte grupuri substantiv plus adjectiv pui minimum în cel realist? Scrie numărul.',
+        recap: 'Ansamblu, detaliu, mediu, abilitate. Trei paragrafe, două grupuri în cel realist. Greșeală: epitete, fără loc.'
+      }),
+      lesson('carti-pasari', 'Două texte despre ciori', {
+        theory: 'Două texte stau lângă nota despre ciori. Cioara și ulciorul este de Esop. Corbul și vulpea este de Jean de La Fontaine. Spui dacă fiecare confirmă sau infirmă o informație: textul confirmă sau infirmă, deoarece… Un motiv ajunge. Nu repovestești fabula.',
+        example: '„Textul lui Esop confirmă o pasăre care găsește o soluție, deoarece își iese din încurcătură.” Nu descrii ulciorul. La Fontaine se spune la fel de scurt.',
+        tryThis: '1. Cioara și ulciorul este de Esop sau de Topirceanu? Un cuvânt. 2. Corbul și vulpea este de La-Fontaine sau de Esop? Un cuvânt.',
+        recap: 'Titlu, autor, apoi confirmă sau infirmă, cu deoarece. Greșeală: copiezi fabula și uiți ce verificai.'
+      }),
+      lesson('afis-tombola', 'Afișul pentru tombolă', {
+        theory: 'Tombola de Crăciun vinde obiecte donate, pentru copii cu note bune. Afișul are substantiv și atribut, informație adevărată, o povestire scurtă, grade fără exces, o comparație și o personificare, plus o întrebare și o poruncă. A strânge ideile. B fixează planul și locul. C scrie pagina.',
+        example: '„Stiloul albastru scrie fin.” albastru e atribut. „Vrei un scris ca o linie liniștită?” întreabă și compară. „Cumpără-l azi!” e imperativ.',
+        tryThis: '1. Informația de pe afiș este adevărată sau umflată? Un cuvânt. 2. Paragrafele se scriu la etapa A, B sau C? O literă mare.',
+        recap: 'Descriere adevărată, povestire, grade cu măsură, comparație, personificare, trei enunțuri. Greșeală: umfli o însușire ca să crească prețul.'
+      }),
+      lesson('recap-natura', 'Recapitulare și evaluare', {
+        theory: 'Citești pe fragmente, acoperi bucata următoare și prezici înainte. Tabelul are trei coloane: ce crezi că se va întâmpla, dovezile, ce s-a întâmplat. Textul este Cioc! Cioc! Cioc!, de Emil Gârleanu. Alt titlu acoperă tot textul, nu o zicală. De la pasăre faci păsăresc. Personificarea și comparația se numără separat.',
+        example: 'Scrii întâi: „Cred că pasărea caută ceva, pentru că se aude un ciocănit.” Apoi notezi ce s-a întâmplat. O zicală nu ține loc de indiciu.',
+        tryThis: '1. Câte coloane are tabelul de predicții? Scrie numărul. 2. Adjectivul de la pasăre, cu -esc, este pasaresc sau zburator? Un cuvânt.',
+        recap: 'Prezici din fragment, apoi verifici. Titlul acoperă tot textul. Greșeală: citești tot și abia apoi scrii predicția.'
+      }),
+      lesson('evaluare-natura', 'Evaluarea unității despre natură', {
+        theory: 'Povestea ajută o elevă de clasa a V-a să țină minte biologia și să repete metoda. perișor și stomată țin de biologie: perișorii iau apa, stomata schimbă gazele. Personificarea dă plantei o faptă de om. O piesă stricată nu e personificare. Fabricile și betonul duc la un oraș cu climă temperată.',
+        example: '„Frunza salută răsăritul” e personificare. „Țeava s-a spart” e o pană. „Turnul înalt. Podul îngust.” sunt două grupuri pentru spațiu.',
+        tryThis: '1. perișor și stomată țin de biologie sau de muzica? Un cuvânt. 2. Clima potrivită, în oraș, este temperata sau polara? Un cuvânt.',
+        recap: 'Scopul e ajutorul la biologie. Personificarea e faptă de om. Greșeală: alegi polul pentru că povestea se întunecă.'
+      }),
+      lesson('barem-natura', 'Baremul evaluării', {
+        theory: 'Ai 10 puncte din oficiu și 100 în total. Nota iese împărțind la 10. Subiectele 1–11 au câte 6 puncte. La 11, fiecare formă corectă valorează 2, iar trei forme fac 6. Subiectul 12 are 24 dacă scoți ce nu ține de Antichitate și adaugi un element al epocii. O parte scoasă, plus un element: 12. Copiat neschimbat: 6.',
+        example: 'O formă bună la 11 înseamnă 2 puncte. Dacă lași fabrica și împrumutul, fără tăietură, iei 6. 66 plus 24 fac 90. Cu oficiul, 100.',
+        tryThis: '1. Varianta completă a subiectului 12 valorează 24 sau 6 puncte? Scrie numărul. 2. Punctele din oficiu sunt 10 sau 0? Scrie numărul.',
+        recap: '1–11 au câte 6. La 11 sunt 2 puncte pe formă. 12 urcă la 24 dacă epoca e refăcută. Greșeală: crezi că copia întreagă ia 24.'
+      }),
+      lesson('reflectie-natura', 'Fișa de reflecție', {
+        theory: 'La sfârșit faci tabelul de observare a comportamentului și fișa de reflecție, la persoana I. Spui ce ai aflat, ce folosești la altă disciplină, ce ai descoperit despre tine și ce vrei să afli. Fișele intră în portofoliu, lângă cele din unitățile dinainte.',
+        example: '„Am aflat că fișa informează, iar comparația arată. La biologie descriu o frunză cu doi termeni exacți. Data viitoare aleg un singur grad.”',
+        tryThis: '1. Reflecția se scrie la persoana I sau a II-a? Scrie cifra romană. 2. Fișa nouă se pune în portofoliu sau se arunca? Un cuvânt.',
+        recap: 'Patru lucruri, la persoana I, cu o faptă din unitate. O păstrezi. Greșeală: scrii „a fost frumos”, fără exemplu.'
+      })
     ]
   },
   {
