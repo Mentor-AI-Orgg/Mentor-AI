@@ -135,7 +135,9 @@ const UNITS = [
       { term: 'enunț', meaning: 'O rostire încheiată, între două pauze, cu un scop: spui, întrebi, exclami sau ceri.' },
       { term: 'predicat verbal', meaning: 'Verbul care arată persoana și timpul și spune destul despre ce face subiectul.' },
       { term: 'răspuns afectiv', meaning: 'Ce ai simțit după lectură, legat de o bucată anume din text.' },
-      { term: 'atribut', meaning: 'Spune ceva în plus despre un substantiv: nou, al Anei, de lemn.' }
+      { term: 'atribut', meaning: 'Stă lângă un substantiv și îl precizează: nou, al Anei, de lemn.' },
+      { term: 'subiect', meaning: 'Cine face acțiunea sau despre cine se spune ceva, împreună cu predicatul.' },
+      { term: 'idee principală', meaning: 'Informația esențială dintr-o secvență. Înșirate în ordine, ideile principale fac planul simplu.' }
     ],
     lessons: [
       lesson('deschidere', 'Harta unității', {
@@ -169,7 +171,7 @@ const UNITS = [
         recap: 'Canalul schimbă lungimea, nu bunătatea vorbei. Mesajul tău este scris de tine. Greșeală: lipești un text găsit și îl semnezi ca și cum l-ai gândit tu.'
       }),
       lesson('lectura-continua', 'Citești până la capăt', {
-        theory: 'La prima lectură nu te oprești la fiecare cuvânt greu. Treci mai departe: cine vorbește, ce vrea, ce se strică. Cuvântul necunoscut îl cauți după ce ai firul.',
+        theory: 'La prima lectură citești cerința, apoi firul: cine vorbește, ce vrea, ce se strică. Nu te oprești la fiecare cuvânt greu. Îl cauți după ce ai înțeles întâmplarea.',
         example: 'Mihai nu știe un cuvânt la început. Nu închide cartea. Citește scena până la punct. Apoi caută doar cuvântul care încă îi blochează sensul. Firul era: un om flămând și un preț nedrept.',
         tryThis: '1. La prima lectură te opresti la cuvântul greu sau continui? Un cuvânt: opresti sau continui. 2. Dicționarul vine inainte sau dupa fir? Un cuvânt.',
         recap: 'Întâi firul, apoi cuvântul greu. Te pui lângă personaje. Greșeală: te oprești la primul cuvânt necunoscut și nu mai afli ce se întâmplă.'
@@ -289,37 +291,95 @@ const UNITS = [
         recap: 'Verbul actului este predicatul. Persoana trebuie să aibă rolul potrivit. Greșeală: legi replica de cine îți vine în minte, nu de verbul ei.'
       }),
       lesson('imagine-text', 'Legi imaginea de text', {
-        theory: 'O imagine nu este decor. O privești și o pui lângă text: aceeași emoție, același gest sau o contrazicere. Apoi spui colegului ce vezi în amândouă. Dacă descrii doar desenul, ai sărit textul. Dacă povestești doar textul, ai sărit desenul.',
+        theory: 'O imagine nu este decor. O pui lângă text și numești secvența care te-a făcut curios. Poate fi aceeași emoție sau o contrazicere. Dacă descrii doar desenul, ai sărit textul.',
         example: 'Desenul arată un băiat cu sprâncenele ridicate. Textul spune că a auzit un preț uriaș. Legătura: „Fața mirată potrivește vestea din text. Nu este un zâmbet de bucurie.” Asta unește imaginea cu fraza.',
         tryThis: '1. Ajunge să descrii doar desenul? Scrie da sau nu. 2. Legătura dintre imagine și text se spune sau se sare? Scrie se spune sau se sare.',
         recap: 'Imaginea și textul se citesc împreună. Spui ce au în comun. Greșeală: un desen frumos, fără nicio vorbă despre text.'
       }),
-      lesson(
-        'subiect',
-        'Subiectul, propoziția simplă și dezvoltată, acordul',
-        'Subiectul răspunde la cine? sau ce? face acțiunea. Simplu: un singur nucleu („Ana citește.”). Multiplu: mai multe nuclee care fac aceeași faptă („Ana și Radu citesc.”).',
-        'Propoziția simplă are doar subiect și predicat („Plouă.” poate să nu aibă subiect spus; „Ana citește.” e tiparul de bază). Propoziția dezvoltată mai are însoțitori: unde, ce, cum („Ana citește o carte în bibliotecă.”).',
-        'Acordul: predicatul se potrivește cu subiectul. Unul singur cere singular („băiatul citește”). Doi sau mai mulți cer plural („băiatul și fata citesc”).',
-        'Exemplu lucrat: „Caietul și pixul stă pe bancă” e greșit. Subiect multiplu → „stau”.',
-        'Reține: întrebi cine face. Dacă sunt doi, verbul trece la plural.'
-      ),
-      lesson(
-        'atribut',
-        'Atributul',
-        'Atributul nu e o întâmplare lângă verb. Stă pe lângă un nume și îl precizează: care, ce fel, al cui. „Cartea nouă”, „caietul de matematică”, „geaca Anei”.',
-        'Fără atribut, numele e gol: „carte” poate fi orice. Cu atribut, știi despre care e vorba. Nu confunzi atributul cu locul: „pe masă” spune unde e cartea, nu ce fel de carte e.',
-        'Exemplu lucrat: în „Prietenul cel nou a adus atlasul vechi.”, „cel nou” ține de prieten, „vechi” ține de atlas. Două atribute, două substantive.',
-        'Reține: atributul răspunde la care? / ce fel de? / al cui? despre un substantiv.'
-      ),
-      lesson(
-        'plan-idei',
-        'Ideea principală și planul de idei',
-        'Ideea principală e propoziția fără de care textul nu mai are fir. Ideile secundare o sprijină: un exemplu, un loc, o vorbă. Planul simplu de idei e o listă scurtă de titluri (ce se întâmplă, în ordine). Planul dezvoltat adaugă, sub fiecare titlu, un detaliu care chiar ajută.',
-        'Îl faci înainte să povestești sau să scrii, ca să nu sari de la început la final.',
-        'Exemplu lucrat: plan simplu — 1. Păcală e chemat. 2. Răspunde pe dos. 3. Ceilalți rămân fără cuvinte. Plan dezvoltat la punctul 2: spune un lucru pe care îl întoarce, nu tot textul.',
-        'Recapitulare: enunțul are semn, propoziția are predicat, subiectul se acordă, atributul ține de nume, planul ține ideile în ordine. La evaluarea unității arăți asta pe un text scurt, nu recitând definițiile.',
-        'Reține: plan simplu = titluri. Plan dezvoltat = titlu plus un sprijin, nu pagina copiată.'
-      )
+      lesson('subiect', 'Subiectul, propoziția simplă și dezvoltată, acordul', {
+        theory: 'Subiectul arată cine face acțiunea sau despre cine se spune ceva, împreună cu predicatul. Un singur termen îl face simplu: „Radu desenează.” Mai mulți termeni îl fac multiplu: „Radu și Ana desenează.” La multiplu, predicatul stă la plural.',
+        example: 'În „Pisica doarme”, subiectul simplu este pisica. „Pisica și câinele doarme” este greșit. Sunt doi termeni, deci predicatul este „dorm”.',
+        tryThis: '1. În „Caietul stă pe bancă”, subiectul este simplu sau multiplu? Un cuvânt. 2. „Ana și Ioana cântă.” Câți termeni are subiectul? Scrie numărul.',
+        recap: 'Întrebi cine face. Un termen înseamnă simplu. Mai mulți înseamnă multiplu și verb la plural. Greșeală: lași verbul la singular când subiectul are doi termeni.'
+      }),
+      lesson('propozitie-simpla', 'Propoziția simplă și cea dezvoltată', {
+        theory: 'Propoziția simplă are doar subiect și predicat: „Omul a plecat.” Cea dezvoltată mai are cuvinte legate de subiect sau de predicat: „Omul obosit a plecat de acasă.” Scoți amănuntele și rămâne simplă. Le pui la loc și devine dezvoltată. Poți lua exemple de la științe.',
+        example: '„Elevii notează” este simplă. „Elevii de la biologie notează celula în caiet” este dezvoltată. Predicatul este „notează”. Disciplina este biologia.',
+        tryThis: '1. „Pasărea cântă.” este simpla sau dezvoltata? Un cuvânt. 2. Dacă adaugi „în parc”, devine simpla sau dezvoltata? Un cuvânt.',
+        recap: 'Simplă înseamnă subiect și predicat. Dezvoltată înseamnă și amănunte. Greșeală: orice propoziție scurtă ți se pare simplă, deși are un loc sau o caracteristică.'
+      }),
+      lesson('acord', 'Acordul predicatului cu subiectul', {
+        theory: 'Predicatul se acordă cu subiectul la număr și la persoană. Eu citesc. Tu citești. El citește. Ei citesc. La plural se schimbă și adjectivul din grup: „băiat înalt” devine „băieți înalți”. Dacă după „apoi” numești două lucruri, predicatul lor stă la plural.',
+        example: '„A înflorit un trandafir, apoi a înflorit o lalea și un iris” greșește la final. Laleaua și irisul sunt două. Corect este „au înflorit o lalea și un iris”.',
+        tryThis: '1. Pentru „eu”, prezentul verbului „a citi” este citesc sau citeste? Un cuvânt. 2. „O pisică și un câine” cer doarme sau dorm? Un cuvânt.',
+        recap: 'Acordul ține de număr și de persoană. Se schimbă și adjectivul. Greșeală: al doilea predicat rămâne la singular, deși are doi termeni.'
+      }),
+      lesson('atribut', 'Atributul', {
+        theory: 'Atributul stă lângă un substantiv și face grup cu el. Îl precizează sau îi dă o caracteristică: „om glumeț”, „caietul nou”, „geaca Anei”. Nu spune unde se petrece fapta. „Pe masă” ține de predicat, nu de carte.',
+        example: 'În „Prietenul cel nou a adus atlasul vechi”, „cel nou” ține de prieten, iar „vechi” ține de atlas. Sunt două atribute, pentru două substantive.',
+        tryThis: '1. În „mingea roșie”, atributul este rosie sau mingea? Un cuvânt. 2. „în curte” este atribut sau loc? Un cuvânt.',
+        recap: 'Atributul ține de nume. Răspunde la care, ce fel, al cui. Greșeală: subliniezi locul și îl numeri la atribute.'
+      }),
+      lesson('detaliu-atribut', 'Câte atribute are textul', {
+        theory: 'Ca să vezi cât detaliu are un text, numeri atributele, nu rândurile. Mai multe atribute lângă substantive înseamnă o descriere mai bogată. Le cauți și într-un text de științe, apoi spui disciplina.',
+        example: '„Celula vegetală are perete.” Atributul este „vegetală”, iar disciplina este biologia. „Cățelul năzdrăvan visa pisici negre” are mai multe atribute decât „Pisica a intrat”.',
+        tryThis: '1. Câte atribute are „caietul nou albastru”? Scrie numărul. 2. Un text despre celulă ține de biologie sau de muzica? Un cuvânt.',
+        recap: 'Numeri atributele ca să compari detaliul și spui materia. Greșeală: câștigă textul mai lung, chiar dacă nu descrie nimic.'
+      }),
+      lesson('plan-idei', 'Ideea principală și planul de idei', {
+        theory: 'Ideea principală este informația esențială dintr-o secvență. Ideea secundară o detaliază: un exemplu, un nume, un loc. Planul simplu înșiră ideile principale, în ordinea din text. Planul dezvoltat pune sub fiecare și secundarele ei.',
+        example: 'Albinele lucrează împreună. Regina depune ouă. Plan simplu: 1. Albinele lucrează împreună. Dezvoltat: a. Regina depune ouă. b. Lucrătoarele aduc polen.',
+        tryThis: '1. Exemplul cu polenul este principala sau secundara? Un cuvânt. 2. Planul doar cu titluri, fără detalii, este simplu sau dezvoltat? Un cuvânt.',
+        recap: 'Principală înseamnă esențialul. Secundară înseamnă detaliul. Simplu are doar principalele. Dezvoltat are și secundarele. Greșeală: copiezi paragraful și îl numești idee.'
+      }),
+      lesson('pasi-idee', 'Cum ajungi la ideea principală', {
+        theory: 'Unui paragraf îi revine o idee principală. Cauți cuvintele necunoscute și delimitezi secvențele. Vezi dacă există un enunț gata făcut. La științe te uiți și la titlu. Întrebi cine și ce face, apoi ce, de ce, cum, unde și când.',
+        example: '„În grădină, albinele aduc polen ca să hrănească stupul.” Esențialul este că albinele aduc polen. „În grădină” răspunde la unde. „Ca să hrănească” răspunde la de ce. Domeniul este natura.',
+        tryThis: '1. Întrebarea „unde?” cere esential sau detaliu? Un cuvânt. 2. La un text de științe, titlul se uita sau se sare? Un cuvânt: uita sau sare.',
+        recap: 'Un paragraf, o idee principală. Cine și ce face dau esențialul. Unde, când, cum și de ce dau detaliul. Greșeală: sari titlul și inventezi altă temă.'
+      }),
+      lesson('forme-plan', 'Formele planului și ordinea', {
+        theory: 'Planul dezvoltat se scrie în două feluri. Cu I și II: întâi ideea principală, apoi secundarele. Sau cu 1, iar dedesubt a și b. Când îl povestești, legi ideile cu mai întâi, apoi, după ce, în final. Ordinea este cea din text.',
+        example: 'Mai întâi albinele ies din stup. Apoi aduc polen. După ce hrănesc larvele, în final închid ziua. Dacă pui „în final” la ieșirea din stup, planul este întors.',
+        tryThis: '1. Conectorul ultimei idei este apoi sau final? Un cuvânt. 2. Detaliile de sub ideea 1 se notează cu ab sau cu titlu? Un cuvânt.',
+        recap: 'Două forme, aceeași ordine din text. Conectorii arată timpul faptelor. Greșeală: începi cu finalul pentru că ți se pare mai interesant.'
+      }),
+      lesson('capcana-nimeni', 'Când „nimeni” nu neagă', {
+        theory: 'Propoziția este negativă doar când „nu” stă lângă predicat. „Nimeni” poate fi un nume. Atunci este subiect. „Nimeni a intrat” înseamnă că persoana chemată așa a intrat și propoziția este afirmativă. „Nu a intrat nimeni” este negativă.',
+        example: 'Eroul spune că îl cheamă Nimeni. Când altul strigă „Nimeni m-a lovit”, verbul nu este negat. Propoziția rămâne afirmativă. Capcana este numele, nu regula de la „nu”.',
+        tryThis: '1. „Nimeni a sunat”, dacă Nimeni este un nume, este afirmativa sau negativa? Un cuvânt. 2. „Nu a sunat nimeni” este afirmativa sau negativa? Un cuvânt.',
+        recap: 'Negativ înseamnă „nu” la predicat. Numele Nimeni nu neagă verbul. Greșeală: vezi cuvântul nimeni și marchezi propoziția negativă fără să cauți „nu”.'
+      }),
+      lesson('pe-dos', 'Întrebarea care spune pe dos', {
+        theory: 'Unele întrebări nu cer un răspuns. Spun pe dos. „Cum să nu-mi placă?” poate însemna că persoana se preface, ca să convingă pe altul. Ca să prinzi sensul, te uiți la ce face personajul înainte, nu doar la semnul întrebării.',
+        example: 'Andrei oftează când vede tema. Apoi spune: „Cum să nu-mi placă tema asta?” Oftatul arată că nu îi place. Întrebarea este prefăcută. Sensul adevărat este „nu îmi place”.',
+        tryThis: '1. Dacă oftatul arată plictiseală, întrebarea este sincera sau prefacuta? Un cuvânt. 2. Te uiți doar la semn sau și la fapta? Scrie semn sau fapta.',
+        recap: 'Întrebarea poate spune pe dos. Fapta dinainte alege sensul. Greșeală: orice propoziție cu „îmi place” ți se pare o bucurie sinceră.'
+      }),
+      lesson('valori', 'Alegi o valoare și o motivezi', {
+        theory: 'O valoare este ceva bun, dorit și important, cum sunt adevărul, binele, curajul sau loialitatea. Alegi una sau două din lista dată, nu toată lista. Le legi de o faptă din text, în cel mult 50 de cuvinte.',
+        example: 'Din lista curaj, răbdare, generozitate, Ana alege curajul. Scrie: „A rămas lângă coleg când ceilalți au râs.” Are o faptă și puține cuvinte. „Este un model” fără motiv nu ajunge.',
+        tryThis: '1. Alegi toata lista sau una-două? Scrie una sau toata. 2. Limita de cuvinte este 50 sau 500? Scrie numărul.',
+        recap: 'Alegi una sau două valori și le legi de o faptă, în cel mult 50 de cuvinte. Greșeală: copiezi lista întreagă și nu spui de ce.'
+      }),
+      lesson('evaluare-unitate', 'Cum se notează evaluarea', {
+        theory: 'La evaluarea unității primești 10 puncte din oficiu. Restul se adună din itemi, până la 100. Nota este totalul împărțit la 10. Mulți itemi valorează 6 puncte. Compunerea valorează mai mult: separat conținutul și redactarea. Citești baremul, nu rotunjești din memorie.',
+        example: 'Ai 10 din oficiu și încă 80 din itemi. Totalul este 90. Nota este 9, pentru că 90 împărțit la 10 face 9. Un item sărit de 6 puncte se scade, nu se trece cu vederea.',
+        tryThis: '1. Câte puncte sunt din oficiu? Scrie numărul. 2. 70 de puncte înseamnă nota 7 sau nota 70? Scrie numărul notei.',
+        recap: 'Din oficiu sunt 10 puncte. Totalul se împarte la 10 ca să iasă nota. Greșeală: crezi că 100 de puncte înseamnă nota 100.'
+      }),
+      lesson('compunere-unitate', 'Compunerea de la finalul unității', {
+        theory: 'Compunerea respectă tema. Are cel puțin două personaje, cu atribute. În dialog stau două propoziții negative. Mai pui afirmație, nedumerire, admirație și îndemn. Minimum 80 de cuvinte și trei părți: introducere, cuprins, încheiere. La final pui citatul cerut.',
+        example: 'Introducerea spune cine și ce i s-a cerut. În cuprins, sora refuză de două ori, cu „nu”. Încheierea spune cum s-a terminat. Două atribute: „sora cea răbdătoare” și „fratele grăbit”.',
+        tryThis: '1. Câte propoziții negative de refuz se cer? Scrie numărul. 2. Minimul de cuvinte este 80 sau 8? Scrie numărul.',
+        recap: 'Temă, două personaje cu atribute, două refuzuri cu „nu”, patru enunțuri, 80 de cuvinte, trei părți. Greșeală: dialog fără „nu” sau text prea scurt.'
+      }),
+      lesson('portofoliu', 'Portofoliul de semestru', {
+        theory: 'Portofoliul este dosarul semestrului, nu o singură temă. Are copertă, pagină de titlu și cuprins. Înăuntru stau fișele, lucrările, temele de echipă în copie și foi alese de tine. Mai notezi greșelile frecvente, punctele tari, punctele slabe și o reflecție: ce s-a schimbat în unitate.',
+        example: 'Ioana scrie: „La acord greșeam pluralul. Acum număr termenii subiectului.” Asta este progres. O copertă fără fișe nu este portofoliu.',
+        tryThis: '1. Portofoliul ține o tema sau semestrul? Un cuvânt. 2. Reflecția spune ce s-a schimbat? Scrie da sau nu.',
+        recap: 'Dosar cu copertă, cuprins, fișe și reflecție. Notezi greșelile și progresul. Greșeală: aduni foi și nu spui ce ai învățat.'
+      })
     ]
   },
   {
