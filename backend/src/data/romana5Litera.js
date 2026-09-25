@@ -850,7 +850,9 @@ const UNITS = [
       { term: 'articol', meaning: 'Hotărăște dacă vorbitorul știe despre care substantiv e vorba (hotărât) sau nu (nehotărât).' },
       { term: 'inferență', meaning: 'Ce poți deduce din indicii, fără să inventezi o altă poveste.' },
       { term: 'identitate', meaning: 'Nume, rol, limbă, etnie și respectul pentru tine, spuse prin fapte.' },
-      { term: 'determinare', meaning: 'Cât de cunoscut este obiectul numit de substantiv, prin articol.' }
+      { term: 'determinare', meaning: 'Cât de cunoscut este obiectul numit de substantiv, prin articol.' },
+      { term: 'atribut', meaning: 'Cuvântul care lămurește un substantiv: bun, de ieri, lui.' },
+      { term: 'prepoziție', meaning: 'Cuvânt neflexibil care leagă un substantiv sau un pronume de alt termen.' }
     ],
     lessons: [
       lesson('deschidere-prietenie', 'Respectul și ce vei descoperi', {
@@ -925,14 +927,78 @@ const UNITS = [
         tryThis: '1. După niște scrii copii sau copiii? Un cuvânt. 2. Genitivul corect este Florinei sau lui-Florina? Un cuvânt.',
         recap: 'niște și doi nu primesc articolul din coadă. Toți copiii îl are. Greșeală: scrii niște copiii sau lui Florina.'
       }),
-      lesson(
-        'prejudecati',
-        'Lectură, prejudecăți, recapitulare',
-        'Interesul pentru lectură, în unitatea asta, nu e o notă la purtare. E obiceiul de a citi ca să înțelegi pe cineva diferit de tine. Prejudecata e o părere gata făcută, înainte de text și înainte de om. Prietenia din lecție o strică cu o faptă, nu cu un slogan.',
-        'La recapitulare arăți: o inferență prudentă, un substantiv propriu scris corect, un articol ales conștient, o prepoziție care chiar leagă două idei, o explicație în trei pași.',
-        'Exemplu lucrat: „Toți cei din satul X sunt…” e prejudecată. „În text, personajul din sat face asta” e o observație. A doua poate deveni prietenie. Prima închide conversația.',
-        'Reține: citești ca să verifici părerea, nu ca să o confirmi dinainte.'
-      )
+      lesson('atribut-substantiv', 'Substantivul și atributul', {
+        theory: 'Substantivul se combină cu un atribut, cuvântul care îl lămurește. Atributul poate fi un adjectiv: prieten bun. Poate fi o prepoziție cu un nume: prieten de ieri. Poate fi un pronume: prietenul lui. Substantivul este centrul grupului. Într-un început de compunere pui cel puțin două astfel de grupuri.',
+        example: '„Două fantome simpatice intră în casă.” fantome e centrul, simpatice e atributul. „Prietenul lui râde.” lui este atributul.',
+        tryThis: '1. În „prieten bun”, centrul este prieten sau bun? Un cuvânt. 2. Câte grupuri minimum pui la începutul compunerii? Scrie numărul.',
+        recap: 'Centrul numește, atributul lămurește. Poate fi adjectiv, grup cu prepoziție sau pronume. Greșeală: un substantiv singur, fără nicio lămurire.'
+      }),
+      lesson('plural-acoperis', 'Pluralul de la acoperiș, aripă, fereastră', {
+        theory: 'La plural, acoperiș dă acoperișuri, nu acoperișe. Genitivul este acoperișurilor. aripile, nu aripele. ferestrele, nu o formă cu r în plus. Când ochii sunt cei știuți, scrii ochii. ochi, fără articol, este forma nehotărâtă.',
+        example: '„Acoperișurile sunt înalte.” „Aripile par albe.” „Ferestrele luminate par ochii unei case.” Articolul stă doar unde obiectul e cunoscut.',
+        tryThis: '1. Pluralul corect este acoperisuri sau acoperise? Un cuvânt. 2. Forma corectă este aripile sau aripele? Un cuvânt.',
+        recap: 'acoperișuri, aripile, ferestrele. Greșeală: inventezi aripele sau acoperișe pentru că așa ți se pare că sună.'
+      }),
+      lesson('prepozitie', 'Prepoziția', {
+        theory: 'Prepoziția este neflexibilă: nu are număr, timp sau persoană. Stă înaintea unui substantiv sau a unui pronume și îl leagă de alt termen. Nu stă înaintea predicatului. „Râd de tine” înseamnă că îți bați joc. „Râd cu tine” înseamnă că râdeți împreună. „Gătesc regina” o pune în oală. „Gătesc cu regina” înseamnă că gătiți amândoi.',
+        example: '„Abia aștept să râd cu tine.” cu repară biletul. „Pune cartea pe bancă.” pe leagă verbul de bancă.',
+        tryThis: '1. Ca să râdeți împreună, scrii de sau cu? Un cuvânt. 2. Prepoziția stă înaintea predicatului? Scrie da sau nu.',
+        recap: 'Prepoziția leagă și nu se schimbă. de și cu nu spun același lucru. Greșeală: o uiți și substantivul devine obiectul verbului.'
+      }),
+      lesson('prepozitie-norma', 'Prepoziția în limba de azi', {
+        theory: 'La comparație scrii mai mari decât. după, nu dupe. Cânți la vioară. Ești interesat de cineva. Viteza se spune pe oră. Pleci la drum. Ești responsabil de curățenie. Pentru o soluție folosești pentru. Sună la telefon. La final de oră, nu pe final. Formele vechi sau regionale cătră, pi ici și dă pă devin către, pe aici, de pe.',
+        example: '„Sună-mă la telefon la final de oră.” „Cântă la vioară.” „S-a ascuns după sobă.” „Nu te lua după mine” înseamnă nu mă copia. „Ia câinele de pe mine” înseamnă dă-l jos.',
+        tryThis: '1. La instrument scrii la sau cu? Un cuvânt. 2. Forma de azi este dupa sau dupe? Un cuvânt.',
+        recap: 'la vioară, la drum, pe oră, responsabil de, după. Greșeală: scrii dupe sau cânți cu vioară.'
+      }),
+      lesson('prejudecati', 'Lectură, prejudecăți, recapitulare', {
+        theory: 'Prietenia e prețuită în cărți, filme și teatru. Principiile rămân: loialitate, acceptarea celuilalt așa cum este, sinceritate și încredere. O prejudecată este o părere gata făcută, înainte de om și de text. Lectura o verifică. În povești, prietenia poate lega ființe foarte diferite.',
+        example: '„Toți cei din satul X sunt la fel” e prejudecată. „În carte, cei doi se ajută” e o observație. A doua poate deveni prietenie.',
+        tryThis: '1. Părerea gata făcută, înainte de text, este prejudecata sau loialitate? Un cuvânt. 2. Acceptarea înseamnă să-l judeci sau să-l primesti? Un cuvânt.',
+        recap: 'Loialitate, acceptare, sinceritate, încredere. Prejudecata se verifică în text. Greșeală: judeci omul înainte să vezi fapta.'
+      }),
+      lesson('carti-prietenie', 'Cărți în care prietenia trece peste diferență', {
+        theory: 'Manualul te trimite la cărți în care prietenia trece peste diferență. Le cauți și le citești. Poți începe cu Epopeea lui Ghilgameș, Iliada, Muzicanții din Bremen, de frații Grimm, Vrăjitorul din Oz, de Lyman Frank Baum, Cei trei muschetari, de Alexandre Dumas, Tom Sawyer și Huckleberry Finn, de Mark Twain, sau Cireșarii, de Constantin Chiriță.',
+        example: 'Alegi o carte și spui un motiv: „Vreau Cireșarii pentru că e o echipă.” Nu povestești capitolul. Colegul poate alege alt titlu.',
+        tryThis: '1. Muzicanții din Bremen sunt de Grimm sau de Twain? Un cuvânt. 2. Cireșarii este de Chirita sau de Dumas? Un cuvânt.',
+        recap: 'Titlul și autorul ajung ca recomandare. Greșeală: copiezi povestea în loc să spui de ce ai ales cartea.'
+      }),
+      lesson('scrisoare-veche', 'Scrisoarea veche și sensul din context', {
+        theory: 'O scrisoare veche își arată anul și în forma cuvintelor. Ieși este grafia de atunci pentru Iași. bădie este respect pentru cineva mai în vârstă. Lângă o despărțire, scârba poate fi mâhnire, nu silă. Luna se scrie decembrie. Sărbătoarea rămâne 1 Decembrie. Scrisoarea sau e-mailul către un prieten plecat are minimum 60 de cuvinte.',
+        example: 'Data se scrie decembrie 1877. Destinatarul primește un cuvânt de respect. În 1877 mesajul a mers pe hârtie.',
+        tryThis: '1. Minimum de cuvinte la scrisoarea către prietenul plecat este 60 sau 15? Scrie numărul. 2. bădie este un salut de respect sau o insulta? Un cuvânt.',
+        recap: 'Anul explică forma veche. Contextul alege sensul. 60 de cuvinte. Greșeală: citești orice scârbă doar ca dezgust.'
+      }),
+      lesson('locuitori', 'Numele locuitorilor', {
+        theory: 'Numele locuitorilor sunt substantive comune, cu literă mică. niște moldoveni, apoi moldovenii. La fel: munteni și muntenii, olteni, bănățeni, maramureșeni, dobrogeni, transilvăneni. Articolul nehotărât stă în față. Articolul hotărât se lipește. Nu judeci o regiune dintr-o singură părere auzită.',
+        example: '„Niște olteni au venit în vizită. Oltenii ne-au povestit despre Craiova.” Prima formă e nehotărâtă. A doua e hotărâtă. Ambele cu literă mică.',
+        tryThis: '1. Locuitorii Moldovei se scriu moldoveni sau Moldoveni? Un cuvânt. 2. Forma cu articol hotărât este munteni sau muntenii? Un cuvânt.',
+        recap: 'Locuitorii se scriu cu literă mică. niște în față, articolul hotărât la final. Greșeală: pui majusculă, ca în engleză.'
+      }),
+      lesson('telefon-scrisoare', 'Mesajul de pe telefon și scrisoarea', {
+        theory: 'Mesajul de pe telefon ajunge repede și poate fi scurt. Se poate pierde între notificări și pleacă uneori înainte să-l recitești. Scrisoarea e mai lentă, dar rămâne o pagină. La evaluare scrii două avantaje și două dezavantaje, nu doar „e mai bun”.',
+        example: 'Avantaj: îl primește în aceeași zi. Dezavantaj: un deget îl trimite prea devreme. Scrisoarea îți lasă timp să tai o propoziție, dar ajunge mai târziu.',
+        tryThis: '1. Câte avantaje se cer? Scrie numărul. 2. Câte dezavantaje se cer? Scrie numărul.',
+        recap: 'Două avantaje și două dezavantaje. Greșeală: alegi un singur camp și îl lași fără pereche.'
+      }),
+      lesson('evaluare-prietenie', 'Evaluarea unității despre prietenie', {
+        theory: 'Zilele, lunile, popoarele și disciplinele stau cu literă mică, în afară de primul cuvânt al enunțului și de numele unei sărbători. Ai 10 puncte din oficiu. Totalul este 100. Nota iese împărțind la 10. Ultimul subiect cere un joc, în 80 până la 100 de cuvinte, cu cel puțin trei prepoziții subliniate, plus regulile.',
+        example: '„Marți mă întâlnesc.” e corect: Marți deschide enunțul. „Ne vedem marți la matematică.” ambele cu literă mică. „1 Decembrie” rămâne nume de sărbătoare.',
+        tryThis: '1. Câte puncte sunt din oficiu? Scrie numărul. 2. Jocul are minimum 80 sau 60 de cuvinte? Scrie numărul.',
+        recap: '10 din oficiu, 100 în total. Trei prepoziții subliniate la joc. Greșeală: scrii Marți și în mijlocul enunțului.'
+      }),
+      lesson('barem-prietenie', 'Baremul evaluării', {
+        theory: 'Primele opt subiecte au câte 8 puncte. La grup iei un punct fără subliniere și încă un punct dacă subliniezi atributul. Varianta fără explicație ia 2 puncte, justificarea ia 6. Subiectul 9 are 26: 5 pentru joc, 5 pentru reguli, 6 pentru prepoziții, 10 pentru redactare. 64 plus 26 fac 90. Cu oficiul, 100.',
+        example: '„Prieten bun”, fără linie sub bun, păstrează punctul de grup și pierde punctul de subliniere. Prepozițiile nesubliniate scad din cei 6 puncte.',
+        tryThis: '1. Subiectul 9 valorează 26 sau 8 puncte? Scrie numărul. 2. Fără subliniere, grupul mai ia 1 punct sau 0? Scrie numărul.',
+        recap: 'Opt subiecte a câte 8, apoi 26. Subliniezi atributul și prepozițiile. Greșeală: le scrii corect și uiți linia cerută de barem.'
+      }),
+      lesson('reflectie-prietenie', 'Fișa de reflecție', {
+        theory: 'La sfârșitul unității completezi fișa de reflecție, la persoana I: ce ai aflat, ce folosești în altă disciplină, ce ai descoperit despre tine și ce vrei să afli. Fișa intră în portofoliu, lângă cele din unitățile dinainte, ca să vezi ce s-a schimbat.',
+        example: '„Am aflat că ID-ul nu e numele real. Îmi folosește când scriu un mesaj. Aleg mai atent prepoziția decât în unitatea despre povestire.”',
+        tryThis: '1. Reflecția se scrie la persoana I sau a II-a? Scrie cifra romană. 2. Fișa nouă se pune în portofoliu sau se arunca? Un cuvânt.',
+        recap: 'Spui ce ai aflat, cu un exemplu. O păstrezi. Greșeală: scrii „a fost ok”, fără o faptă din unitate.'
+      }),
     ]
   },
   {
