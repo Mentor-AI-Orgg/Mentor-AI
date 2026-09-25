@@ -616,7 +616,10 @@ const UNITS = [
       { term: 'imperfect', meaning: 'Timp trecut pentru o acțiune care durează sau se repetă.' },
       { term: 'perfect compus', meaning: 'Timp trecut compus din a avea și participiu, pentru o acțiune încheiată.' },
       { term: 'perfect simplu', meaning: 'Timp trecut simplu, pentru o acțiune încheiată, vie în povestire.' },
-      { term: 'mai-mult-ca-perfect', meaning: 'Acțiune trecută, terminată înaintea altei acțiuni trecute.' }
+      { term: 'mai-mult-ca-perfect', meaning: 'Acțiune trecută, terminată înaintea altei acțiuni trecute.' },
+      { term: 'bandă desenată', meaning: 'Povestire în cadre, unde desenul cântărește mai mult decât vorba.' },
+      { term: 'onomatopee', meaning: 'Cuvânt care imită un zgomot, o acțiune sau un sunet.' },
+      { term: 'pantomimă', meaning: 'Povestire spusă doar prin gest, fără cuvinte.' }
     ],
     lessons: [
       lesson('deschidere-poveste', 'Poveștile care se transmit', {
@@ -751,14 +754,78 @@ const UNITS = [
         tryThis: '1. Reformularea „Înțeleg că vei…” trece la persoana I sau II? Scrie cifra romană. 2. Îl întrerupi ca să arăți că asculți? Scrie da sau nu.',
         recap: 'Asculți până la capăt, apoi reformulezi. Persoana I devine a II-a. Greșeală: îl întrerupi sau lași „voi” când vorbești despre planul lui.'
       }),
-      lesson(
-        'recap-poveste',
-        'Recapitulare și evaluare',
-        'Pui la un loc: cine, unde, când, ce se schimbă. Apoi timpul verbului. Dacă fundalul e lung, imperfect. Dacă fapta e gata și o spui de azi, perfect compus. Dacă e o lovitură scurtă în poveste, perfect simplu. Dacă era deja gata înainte, mai-mult-ca-perfect. Dacă urmează și o iei ca sigură, viitor. Ordinul e imperativ, nu indicativ.',
-        'Personificarea nu se confundă cu comparația. Banda desenată se citește în ordinea casetelor.',
-        'Exemplu lucrat: „Ploaia bătea în geam, iar Ana închisese fereastra. «Stai!» strigă fratele. «Voi veni imediat.»” Imperfect (bătea), mai-mult-ca-perfect (închisese), imperativ (stai), viitor (voi veni).',
-        'Reține: întâi ce se întâmplă, apoi ce timp al verbului spune asta.'
-      )
+      lesson('timp-compus', 'Timpurile compuse și scrierea viitorului', {
+        theory: 'Viitorul nu este singurul timp compus. Perfectul compus se face cu a avea și participiu. Viitorul standard este voi merge. o să merg și am să merg țin de vorbire. Viitorul anterior este voi fi plus participiu. Scrii va fi, nu v-a fii. veți, nu ve-ți. veți ști, nu veți știi.',
+        example: '„Va fi gata.” e viitor. „V-a fi” amestecă perfectul cu viitorul. „Când v-a întrebat” e trecut. „Când va întreba” e viitor.',
+        tryThis: '1. Viitorul este singurul timp compus al indicativului? Scrie da sau nu. 2. Forma corectă este veti sau ve-ti? Un cuvânt.',
+        recap: 'Compuse sunt perfectul compus, viitorul și viitorul anterior. va fi nu se scrie v-a fii. Greșeală: pui cratimă în veți sau un i în plus la ști.'
+      }),
+      lesson('banda-desenata', 'Banda desenată', {
+        theory: 'Banda desenată este un text narativ mixt: desenul cântărește mai mult decât vorba. Are mai multe cadre, citite în ordine. Bula stă pe fond alb: rotundă, curbată sau dreptunghiulară. Norul ține gândul sau visul. Cuvântul care imită un zgomot e o onomatopee. Linia frântă arată drumul. Chenarul explică. Coada bulei arată cine vorbește.',
+        example: 'O fată aleargă, iar lângă pantof scrie „poc”. Norul spune „Oare prind autobuzul?”. Coada de la „Stai!” pleacă de la coleg.',
+        tryThis: '1. Gândul stă într-o bulă sau într-un nor? Un cuvânt. 2. Cuvântul care imită un zgomot este onomatopee sau chenar? Un cuvânt.',
+        recap: 'Cadrul, bula, norul, onomatopeea și coada țin povestea. Greșeală: pui gândul în bula de vorbire sau sari peste cadre.'
+      }),
+      lesson('banda-nonverbal', 'Nonverbalul din bandă și echipa', {
+        theory: 'În desen, fața, poziția corpului, privirea și gestul spun ce nu e scris. Banda poate fi inventată de tine sau poate relua o carte, fără să copiezi textul. În echipă, unul scrie întâmplarea, celălalt o desenează. La sfârșit spui ce ți-a plăcut și ce ai reținut.',
+        example: 'Un băiat stă cu umerii lăsați și nu privește spre coleg. Fără replică, se vede că e supărat. Unul a scris scena, celălalt a desenat-o.',
+        tryThis: '1. În echipă, cine desenează și cine scrie sunt aceeași persoană? Scrie da sau nu. 2. Umerii lăsați, fără cuvinte, țin de verbal sau de nonverbal? Un cuvânt.',
+        recap: 'Nonverbalul stă în față, poziție, privire și gest. Unul scrie, altul desenează. Greșeală: povestea rămâne doar în text.'
+      }),
+      lesson('forme-narative', 'Formele povestirii și etapele compunerii', {
+        theory: 'O povestire poate fi film, desen animat, bandă desenată, text literar sau nonliterar: relatare, anecdotă, știre. Pantomima o spune doar prin gest, fără cuvinte. Compunerea are trei etape: introducerea pregătește, cuprinsul aduce schimbarea, încheierea închide.',
+        example: 'Introducere: „Rămâneam după oră.” Cuprins: „A sunat alarma.” Încheiere: „Am ieșit în curte.” Aceeași întâmplare poate fi jucată și fără vorbe.',
+        tryThis: '1. Povestea jucată doar prin gest se numește film sau pantomima? Un cuvânt. 2. Etapa care închide compunerea este cuprins sau incheiere? Un cuvânt.',
+        recap: 'Narativul are mai multe forme, de la știre la pantomimă. Compunerea are introducere, cuprins, încheiere. Greșeală: pui deznodământul în introducere.'
+      }),
+      lesson('norma-sortare', 'Limbă standard și abatere', {
+        theory: 'La recapitulare desparți forma standard de abatere. sunt e standard. îs nu e forma de azi. luam e corect. loam nu e. eu plecasem, nu plecaserăm: grupul -ră e de plural. vei pustii e corect, fără un i în plus. îngrijesc, nu îngrijăsc. așază și afișează sunt forme corecte de prezent.',
+        example: '„Eu îs și loam caietul.” devine „Eu sunt și luam caietul.” „Eu plecaserăm” devine „Eu plecasem.” „îngrijăsc florile” devine „îngrijesc florile.”',
+        tryThis: '1. Forma standard este sunt sau is? Un cuvânt. 2. Pentru eu, forma corectă este plecasem sau plecaseram? Un cuvânt.',
+        recap: 'Standard înseamnă forma acceptată azi. -ră nu intră la eu. Greșeală: scrii îs, loam sau îngrijăsc pentru că așa se aude.'
+      }),
+      lesson('cratima-le', 'neam, ne-am, le-au', {
+        theory: 'neam, cu sensul de popor, se scrie într-un cuvânt, fără cratimă. ne-am este altceva: noi ne-am dus. le-au leagă pronumele le de auxiliarul au: le-au prețuit. leau, lipit, e greșit. va fi se scrie cu un singur i. va fii are un i în plus și nu e viitorul lui a fi.',
+        example: '„Un neam le-au păstrat poveștile.” neam nu se taie. le-au are cratimă. „Ne-am dus acasă.” e pronume, tot cu cratimă, dar înseamnă noi.',
+        tryThis: '1. Poporul, „un neam”, se scrie neam sau ne-am? Un cuvânt. 2. „Le-au citit.” se scrie le-au sau leau? Un cuvânt.',
+        recap: 'Cratima desparte pronumele de verb: ne-am, le-au. neam, poporul, nu se desparte. Greșeală: lipești leau sau tai neam în două.'
+      }),
+      lesson('proiect-taram', 'Proiectul despre tărâmul de poveste', {
+        theory: 'Proiectul întreabă cum este văzut un tărâm de poveste în cărți și filme, la noi și în alte culturi. Lucrați în grupe de 4 sau 5. Întâi planul, apoi ciorna, apoi revizia, cu termene. Rolurile: liderul coordonează, administratorul adună materialele, informaticianul caută programe, ilustratorul desenează, cronometrul păzește termenele.',
+        example: 'Patru colegi aleg câte un rol. Liderul împarte capitolele: peisaj și mod de viață. Cronometrul scrie data ciornei.',
+        tryThis: '1. Grupa are 4-5 elevi sau 10? Scrie 4-5 sau 10. 2. Cine păzește termenele: liderul sau cronometrul? Un cuvânt.',
+        recap: 'Plan, ciornă, revizie. Cinci roluri și o sarcină comună. Greșeală: toată lumea face de toate și nimeni nu ține termenul.'
+      }),
+      lesson('grila-proiect', 'Grila proiectului', {
+        theory: 'Proiectul se apreciază pe șapte criterii. La fiecare scrii total, parțial sau absent. Tema e respectată și restrânsă. Are structură de carte sau de prezentare, capitole sau slide-uri, informații din mai multe discipline, bibliografie la sfârșit, desene sau tabele. E atractiv și original.',
+        example: 'Trei slide-uri, o hartă și o listă de cărți la final iau „total” la structură, desene și bibliografie. Dacă tema e doar un titlu, scrii „parțial”.',
+        tryThis: '1. Câte criterii are grila? Scrie numărul. 2. Bibliografia stă la început sau la sfarsit? Un cuvânt.',
+        recap: 'Șapte criterii, fiecare total, parțial sau absent. Bibliografia închide proiectul. Greșeală: notezi doar „frumos”, fără să treci prin listă.'
+      }),
+      lesson('recap-poveste', 'Recapitulare și evaluare', {
+        theory: 'La evaluare citești textul din manual și notele de subsol. Completezi enunțul întreg, nu doar spațiul gol. Ai 10 puncte din oficiu. Totalul este 100. Nota iese împărțind la 10. Compunerea are trei paragrafe, fiecare de minimum 15 cuvinte, două informații din text, o personificare subliniată și verbe la fiecare timp al indicativului.',
+        example: 'Un stânjen măsura cam 2 metri. Dacă ceva a crescut cu un stânjen, alegi intervalul dintre 2 și 3 metri. Răspunsul se sprijină pe notă.',
+        tryThis: '1. Câte puncte sunt din oficiu? Scrie numărul. 2. Minimum de cuvinte într-un paragraf este 15 sau 80? Scrie numărul.',
+        recap: '10 din oficiu, 100 în total, nota e totalul împărțit la 10. Greșeală: răspunzi fără enunțul întreg.'
+      }),
+      lesson('barem-poveste', 'Baremul evaluării', {
+        theory: 'Punctele pe subiecte sunt 6, 6, 6, 8, 8, 8, 8, 10, 10 și 20. Compunerea valorează 20: 6 pentru două informații, 1 pentru personificare, 1 dacă o subliniezi, 6 pentru timpurile indicativului, 3 pentru paragrafe, 3 pentru scriere. Din oficiu mai sunt 10. 90 plus 10 fac 100.',
+        example: 'Dacă personificarea nu e subliniată, pierzi punctul de subliniere și păstrezi punctul pentru procedeul folosit.',
+        tryThis: '1. Compunerea valorează 20 sau 6 puncte? Scrie numărul. 2. Primele trei subiecte valorează fiecare 6 sau 8? Scrie numărul.',
+        recap: 'Compunerea are 20 de puncte. Primele trei subiecte au câte 6. Greșeală: uiți sublinierea și pierzi un punct care era al tău.'
+      }),
+      lesson('reflectie-unitate', 'Fișa de reflecție', {
+        theory: 'După unitate completezi o fișă de reflecție, la persoana I. Spui ce ai aflat, ce folosești la altă disciplină, ce ai descoperit despre tine și ce vrei să afli. Mai spui ce ai învățat, unde îți folosește și la ce te descurci mai bine decât înainte. Fișele stau în portofoliu.',
+        example: '„Am aflat că imperfectul ține fundalul. Îmi folosește când povestesc un film. Recunosc mai repede o personificare.”',
+        tryThis: '1. Reflecția se scrie la persoana I sau a III-a? Scrie cifra romană. 2. Fișele stau în portofoliu sau se arunca? Un cuvânt.',
+        recap: 'Reflecția e despre ce ai aflat și ce schimbi. O păstrezi în portofoliu. Greșeală: scrii „a fost ok”, fără un exemplu.'
+      }),
+      lesson('autoevaluare-verb', 'Verb de acțiune și verb de stare', {
+        theory: 'Când te evaluezi, alegi verbul potrivit. La „Mi-a plăcut să…” pui un verb de acțiune: să desenez. La „Am simțit că…” pui o stare: că eram mândru. Mai completezi ce ai reținut, ce nu ți-a plăcut, ce vrei să știi și de ce ți-a amintit lecția.',
+        example: '„Mi-a plăcut să ordonez cadrele.” e acțiune. „Am simțit că povestea era limpede.” e stare. „Am reținut că norul ține gândul.”',
+        tryThis: '1. „Mi-a plăcut să desenez.” cere un verb de actiune sau de stare? Un cuvânt. 2. „Am simțit că eram bucuros.” este actiune sau stare? Un cuvânt.',
+        recap: '„să” plus verb ține acțiunea. „Am simțit că” ține starea. Greșeală: pui aceeași propoziție la ambele începuturi.'
+      }),
     ]
   },
   {
