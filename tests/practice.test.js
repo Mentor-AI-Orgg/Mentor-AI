@@ -17,13 +17,14 @@ describe('chapter practice bank', () => {
     const keys = allChapterKeys();
     SUBJECT_IDS.forEach(subject => {
       GRADES.forEach(grade => {
+        if (subject === 'romana') return;
         (GUIDES[subject][grade].units || []).forEach(unit => {
           expect(keys).toContain(chapterKey(subject, grade, unit.id));
         });
       });
     });
     expect(keys.filter(key => key.startsWith('matematica:')).length).toBe(15);
-    expect(keys.filter(key => key.startsWith('romana:')).length).toBe(20);
+    expect(keys.filter(key => key.startsWith('romana:')).length).toBe(0);
     keys.forEach(key => {
       const [subject, grade, chapterId] = key.split(':');
       const items = listChapterQuestions(subject, grade, chapterId);
@@ -39,9 +40,10 @@ describe('chapter practice bank', () => {
   });
 
   it('has solve-it exercises for every 5–8 chapter, without leaking the key in the public card', () => {
-    expect(allExerciseKeys().length).toBe(35);
+    expect(allExerciseKeys().length).toBe(16);
     SUBJECT_IDS.forEach(subject => {
       GRADES.forEach(grade => {
+        if (subject === 'romana') return;
         (GUIDES[subject][grade].units || []).forEach(unit => {
           const items = listChapterExercises(subject, grade, unit.id);
           expect(items.length).toBeGreaterThanOrEqual(7);

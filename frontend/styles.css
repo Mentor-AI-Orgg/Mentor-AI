@@ -1209,6 +1209,10 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .en-hold-btn { width: 100%; }
 .en-barem-card { padding: 10px 12px; border-radius: 12px; background: rgba(240,195,106,.1); }
 .en-barem-ideas { margin: 8px 0 0; padding-left: 18px; }
+.chapter-toc { margin: 8px 0 14px; padding-left: 1.2rem; color: #d7d9ea; font-size: 13px; line-height: 1.45; }
+.official-competencies { margin: 12px 0; color: #d7d9ea; font-size: 14px; }
+.official-competencies summary { cursor: pointer; color: #f0c36a; }
+.official-competencies ul { margin: 8px 0 0; padding-left: 1.2rem; }
 .chapter-glossary { display: grid; gap: 8px; margin: 0 0 14px; }
 .chapter-glossary dt { font-weight: 700; color: #f0c36a; }
 .chapter-glossary dd { margin: 0; color: #d7d9ea; font-size: 13px; }

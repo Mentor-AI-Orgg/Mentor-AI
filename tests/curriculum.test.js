@@ -34,14 +34,19 @@ describe('gimnaziu curriculum', () => {
     expect(guide.source.disclaimer).toMatch(/manual/i);
   });
 
-  it('serves original platter lessons for every chapter in grades 5–8', () => {
+  it('serves original platter lessons for every loaded chapter', () => {
     const counts = { matematica: {}, romana: {} };
     SUBJECT_IDS.forEach(subject => {
       GRADES.forEach(grade => {
         const guide = getGuide(subject, grade);
         const lessonCount = guide.units.reduce((sum, unit) => sum + (unit.lessons || []).length, 0);
         counts[subject][grade] = { chapters: guide.units.length, lessons: lessonCount };
-        expect(guide.units.length).toBeGreaterThanOrEqual(subject === 'matematica' ? 3 : 5);
+        if (subject === 'romana' && grade !== 5) {
+          expect(guide.restored).toBe(false);
+          expect(guide.units).toHaveLength(0);
+          return;
+        }
+        expect(guide.units.length).toBeGreaterThanOrEqual(subject === 'matematica' ? 3 : 8);
         guide.units.forEach(unit => {
           expect(unit.lessons.length, `${subject}:${grade}:${unit.id}`).toBeGreaterThanOrEqual(4);
           unit.lessons.forEach(entry => {
@@ -58,12 +63,30 @@ describe('gimnaziu curriculum', () => {
     expect(counts.matematica[6].chapters).toBe(4);
     expect(counts.matematica[7].chapters).toBe(4);
     expect(counts.matematica[8].chapters).toBe(4);
-    expect(counts.romana[5].chapters).toBe(5);
-    expect(counts.romana[6].chapters).toBe(5);
-    expect(counts.romana[7].chapters).toBe(5);
-    expect(counts.romana[8].chapters).toBe(5);
+    expect(counts.romana[5].chapters).toBe(8);
+    expect(counts.romana[6].chapters).toBe(0);
+    expect(counts.romana[7].chapters).toBe(0);
+    expect(counts.romana[8].chapters).toBe(0);
     expect(counts.matematica[5].lessons).toBeGreaterThanOrEqual(18);
-    expect(counts.romana[5].lessons).toBeGreaterThanOrEqual(20);
+    expect(counts.romana[5].lessons).toBeGreaterThanOrEqual(40);
+
+    const romana5 = getGuide('romana', 5);
+    expect(romana5.manual.code).toBe('A1249');
+    expect(romana5.manual.approval).toMatch(/4065/);
+    expect(romana5.competencies.map(item => item.code)).toEqual(expect.arrayContaining(['1.1', '4.1', '5.2']));
+    expect(romana5.units.map(unit => unit.title)).toEqual([
+      'Evaluare inițială',
+      'Cuvinte potrivite',
+      'Cartea, sursă de cunoaștere și legătură între generații',
+      'Fascinația povestirii',
+      'Puterea prieteniei',
+      'Omul, parte din natură',
+      'Trepte în viață',
+      'Eroi din cărți, din filme și din viață'
+    ]);
+    romana5.units.forEach(unit => {
+      expect(unit.toc.length).toBeGreaterThan(0);
+    });
 
     const geo5 = getGuide('matematica', 5).units.find(unit => unit.id === 'geometrie');
     const geo8 = getGuide('matematica', 8).units.find(unit => unit.id === 'spatiu');
@@ -92,17 +115,22 @@ describe('gimnaziu curriculum', () => {
     expect(catalog.body.subjects.map(item => item.id)).toEqual(['matematica', 'romana']);
     expect(catalog.body.grades).toEqual([5, 6, 7, 8]);
 
-    const one = await request(app).get('/api/curriculum').query({ subject: 'romana', class_level: 6 });
+    const one = await request(app).get('/api/curriculum').query({ subject: 'romana', class_level: 5 });
     expect(one.status).toBe(200);
-    expect(one.body.grade).toBe(6);
+    expect(one.body.grade).toBe(5);
     expect(one.body.subject).toBe('romana');
-    expect(one.body.units[0].inOwnWords).toBeTruthy();
+    expect(one.body.manual.code).toBe('A1249');
+    expect(one.body.units[0].toc.length).toBeGreaterThan(0);
     expect(one.body.units[0].lessons.length).toBeGreaterThanOrEqual(4);
     expect(one.body.units[0].lessons[0].platter).toMatch(/Exemplu/i);
+    const pending = await request(app).get('/api/curriculum').query({ subject: 'romana', class_level: 6 });
+    expect(pending.body.restored).toBe(false);
+    expect(pending.body.units).toHaveLength(0);
     expect(catalog.body.guides).toHaveLength(8);
     for (const guide of catalog.body.guides) {
-      expect(guide.units.length).toBeGreaterThan(2);
       expect(guide.howISeeIt.length).toBeGreaterThan(30);
+      if (guide.subject === 'romana' && guide.grade !== 5) expect(guide.units).toHaveLength(0);
+      else expect(guide.units.length).toBeGreaterThan(2);
     }
   });
 

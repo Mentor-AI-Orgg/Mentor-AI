@@ -12,6 +12,7 @@
 // ghideze fără să predea dintr-un manual anume.
 
 const { lessonsFor } = require('./gimnaziuLessons');
+const { grade5Guide, emptyYear } = require('./romana5Litera');
 const { shapeUnit } = require('./lessonShape');
 const { glossaryFor } = require('./chapterGlossary');
 const { dailyQuote, formatQuote } = require('./quotes');
@@ -24,7 +25,7 @@ const SOURCE = {
   portal: "https://www.edu.ro/Ordin_ministru_3393_2017",
   textbooks: "https://www.manuale.edu.ro/",
   disclaimer:
-    "Rezumat propriu după programa oficială. Nu înlocuiește manualul ales de școală și nu reproduce text protejat."
+    "La clasa a V-a, româna urmează cuprinsul manualului aprobat (Litera, A1249), cu lecțiile vecine unite. Textul lecțiilor e un rezumat propriu: nu copiem fragmentele și exercițiile. Clasele VI–VIII așteaptă manualul lor."
 };
 
 const GRADES = [5, 6, 7, 8];
@@ -186,154 +187,10 @@ const GUIDES = {
     }
   },
   romana: {
-    5: {
-      title: "Limba și literatura română, clasa a V-a",
-      howISeeIt:
-        "Tema anului, în mintea mea: „eu și lumea mea apropiată”. Elevul învață să asculte, să povestească, să citească un text scurt și să scrie câteva paragrafe curate. Gramatica e în slujba comunicării, nu un catalog de etichete.",
-      units: [
-        {
-          id: "oral",
-          title: "Vorbire și ascultare",
-          inOwnWords:
-            "Să înțeleagă un mesaj auzit, să povestească ceva cunoscut, să întrebe și să răspundă fără să se piardă. Tonul, pauza și privirea contează la fel de mult ca vorbele."
-        },
-        {
-          id: "lectura",
-          title: "Lectură: narațiune, descriere, explicație",
-          inOwnWords:
-            "Caută ideea principală, personaj, timp, loc. Deosebește o poveste de o listă sau de o bandă desenată. Personificarea și comparația se recunosc, nu se tocesc ca definiții goale."
-        },
-        {
-          id: "redactare",
-          title: "Scriere în pași",
-          inOwnWords:
-            "Idei → plan → text cu început, cuprins, sfârșit. Povestire scurtă, autoportret, descrierea unui loc, notițe. Ortografia e respect, nu pedepsă."
-        },
-        {
-          id: "limba5",
-          title: "Cum e construită limba",
-          inOwnWords:
-            "Propoziție simplă/dezvoltată, predicat verbal, subiect, atribut. Verb (indicativ, imperativ), substantiv, articol, pronume personal, adjectiv, numeral. Vocale, silabe, sinonime și antonime. Dicționarul e unelte, nu mobilă."
-        },
-        {
-          id: "inter5",
-          title: "Cine sunt, de unde vin",
-          inOwnWords:
-            "Identitate personală și națională, ideea de carte românească de-a lungul timpului, modele din legende — fără predici, cu exemple pe care elevul le poate povesti."
-        }
-      ]
-    },
-    6: {
-      title: "Limba și literatura română, clasa a VI-a",
-      howISeeIt:
-        "Cercul se lărgește: „eu și lumea din jur”. Textul e mai lung, apare rezumatul, scrisoarea, jurnalul. Gramatica adaugă complementele și cazurile ca să explice de ce o virgulă sau un pronume stă acolo.",
-      units: [
-        {
-          id: "oral6",
-          title: "Rezumat oral și dialog",
-          inOwnWords:
-            "Să spună pe scurt ce a auzit, să treacă de la monolog la dialog, să-și susțină o părere pe o temă din viața clasei."
-        },
-        {
-          id: "lectura6",
-          title: "Lectură mai atentă",
-          inOwnWords:
-            "Texte continue, tabele, știri, e-mail. Elevul compară ce e spus clar cu ce se deduce. Portretul și narațiunea la persoana I sau a III-a se recunosc după indicii, nu după etichetă."
-        },
-        {
-          id: "redactare6",
-          title: "Scrisoare, jurnal, blog",
-          inOwnWords:
-            "Scrie pentru un destinatar real: e-mail, jurnal, o întâmplare cu momente. Descrie o emoție sau un fenomen, nu doar „era frumos”."
-        },
-        {
-          id: "limba6",
-          title: "Predicat nominal, complement, caz",
-          inOwnWords:
-            "„Este” + nume predicativ. Complement direct/indirect, circumstanțiale de loc, timp, mod. Verb la conjunctiv și condițional. Substantivul își schimbă forma după rol. Diftong, triftong, hiat — ca să despartă corect în silabe. Sens propriu și figurat, omonime."
-        },
-        {
-          id: "inter6",
-          title: "Limba română în lume",
-          inOwnWords:
-            "Româna nu trăiește doar în clasă: vorbitori din alte țări, valori din cultura populară, legende ale altor popoare comparate cu ale noastre."
-        }
-      ]
-    },
-    7: {
-      title: "Limba și literatura română, clasa a VII-a",
-      howISeeIt:
-        "„Orizonturile lumii”: elevul distinge epic, liric, dramatic, scrie caracterizări și recenzii, iar fraza (coordonarea) înlocuiește propoziția izolată.",
-      units: [
-        {
-          id: "oral7",
-          title: "Prezentare în fața clasei",
-          inOwnWords:
-            "Să sintetizeze, să dea exemple, să-și controleze vocea și timpul. Să recunoască când gesturile încurcă mesajul."
-        },
-        {
-          id: "lectura7",
-          title: "Tipuri de texte literare",
-          inOwnWords:
-            "Epic / liric / dramatic se recunosc după ce se întâmplă, cine vorbește, dacă e acțiune sau stare. Compară două puncte de vedere pe același text."
-        },
-        {
-          id: "redactare7",
-          title: "Caracterizare, recenzie, cerere",
-          inOwnWords:
-            "Personajul se construiește din fapte și vorbe, nu din adjective înșirate. Apare cererea, interviul, jurnalul de călătorie — texte cu un scop clar."
-        },
-        {
-          id: "limba7",
-          title: "Fraza și îmbogățirea vocabularului",
-          inOwnWords:
-            "Propoziții legate prin și, dar, deci… Atribut realizat în mai multe feluri, cauză și scop. Forme nepersonale ale verbului. Pronume posesiv, demonstrativ, relativ. Derivare, compunere, familie lexicală; evită pleonasmul și confuzia de paronime. Limbaj popular versus termeni de specialitate."
-        },
-        {
-          id: "inter7",
-          title: "Mitologie și vecini culturali",
-          inOwnWords:
-            "Mituri românești, culturi din jurul României, ideea că limba se schimbă când oamenii se întâlnesc."
-        }
-      ]
-    },
-    8: {
-      title: "Limba și literatura română, clasa a VIII-a",
-      howISeeIt:
-        "„Reflecții asupra lumii” plus pregătirea pentru Evaluarea Națională: lectură atentă a unui text necunoscut, limbă aplicată, apoi un text scris scurt și organizat. Mentorul antrenează gândirea, nu recitarea unor comentarii gata făcute.",
-      units: [
-        {
-          id: "oral8",
-          title: "Argumentare și dezbatere",
-          inOwnWords:
-            "O părere are nevoie de un motiv și, dacă e cazul, de o sursă. Elevul continuă ideea altcuiva fără să o strice și deosebește informația de intenție."
-        },
-        {
-          id: "lectura8",
-          title: "Evaluarea unui text",
-          inOwnWords:
-            "Temă, motive, idei; ce e esențial și ce e ornament. Texte literare și nonliterare, tabele, afișe. Nu cerem „autorul vrea să transmită” ca formulă magică, ci dovezi din text."
-        },
-        {
-          id: "redactare8",
-          title: "Text argumentativ și creativ",
-          inOwnWords:
-            "Structură vizibilă, paragraf cu o idee, exemple. La EN, elevul scrie fie despre un text, fie un text scurt creativ — ambele cer plan, nu inspirație de moment."
-        },
-        {
-          id: "limba8",
-          title: "Fraza complexă, pregătire EN",
-          inOwnWords:
-            "Se reiau și se leagă noțiunile din anii anteriori: acorduri, cazuri, vocabular, punctuație. Norma (DOOM) e referință, nu capcană. Exersăm pe texte noi, ca la examen."
-        },
-        {
-          id: "inter8",
-          title: "Noi și ceilalți",
-          inOwnWords:
-            "Modele din literatura lumii, valori românești văzute din afară, relații culturale — ca să iasă din „doar ce e în manualul meu”."
-        }
-      ]
-    }
+    5: grade5Guide(),
+    6: emptyYear(6),
+    7: emptyYear(7),
+    8: emptyYear(8)
   }
 };
 
@@ -349,8 +206,12 @@ function getGuide(subject, grade) {
     quote: formatQuote(dailyQuote()),
     units: (entry.units || []).map(unit => shapeUnit({
       ...unit,
-      lessons: lessonsFor(sid, g, unit.id),
-      glossary: glossaryFor(sid, g, unit.id)
+      lessons: Array.isArray(unit.lessons) && unit.lessons.length
+        ? unit.lessons
+        : lessonsFor(sid, g, unit.id),
+      glossary: Array.isArray(unit.glossary) && unit.glossary.length
+        ? unit.glossary
+        : glossaryFor(sid, g, unit.id)
     })),
     atlas: sid === 'matematica' ? listGeometryAtlas(g) : null
   };
@@ -382,16 +243,21 @@ function listCatalog() {
 function buildMentorContext(subject, grade) {
   const guide = getGuide(subject, grade);
   const units = guide.units.map(unit => `- ${unit.title}: ${unit.inOwnWords}`).join("\n");
+  const manualLine = guide.manual
+    ? `Manual de structură: ${guide.manual.title}, ${guide.manual.author}, ${guide.manual.publisher}, ${guide.manual.year}, aprobat prin ${guide.manual.approval}. Nu cita fragmente din el.`
+    : "";
   return [
     `Ești mentor doar pentru gimnaziu (clasele 5–8), materiile Limba și literatura română și Matematică.`,
     `Elevul este în clasa a ${guide.grade}-a, materia: ${guide.subject === "romana" ? "Limba și literatura română" : "Matematică"}.`,
-    `Cum înțeleg eu programa (${SOURCE.ordinance}): ${guide.howISeeIt}`,
-    `Unități, rezumate de mine, nu citate din manual:`,
-    units,
+    `Cum stă materia acum: ${guide.howISeeIt}`,
+    manualLine,
+    guide.units.length
+      ? `Unități, în ordinea cuprinsului, rezumate aici, nu citate din manual:\n${units}`
+      : "Nu există încă unități pentru clasa asta. Nu inventa un manual.",
     `Dacă întrebarea e din altă materie sau de liceu, spune politicos că aici lucrăm doar română și matematică de gimnaziu și propune o punte (de exemplu: un text de fizică se poate citi ca text explicativ la română; o formulă de liceu se reduce la ce știe deja din clasa lui).`,
     `Nu copia lecții din manuale. Explică cu cuvintele tale, cu un exemplu cotidian, apoi o întrebare ghidată.`,
     SOURCE.disclaimer
-  ].join("\n");
+  ].filter(Boolean).join("\n");
 }
 
 module.exports = {
