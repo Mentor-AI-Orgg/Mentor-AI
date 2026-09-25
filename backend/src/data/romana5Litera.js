@@ -1059,7 +1059,7 @@ const UNITS = [
     id: 'trepte',
     title: 'Trepte în viață',
     inOwnWords:
-      'Unitatea 6 urcă pe trepte: emoții, voce și gest, satul românesc, numeralul cardinal și ordinal. Mesajul se discută pe Hamurabi, de Mircea Sântimbreanu, o oră de istorie. Școala de altădată, cu Creangă, vine în paginile următoare.',
+      'Unitatea 6 urcă pe trepte: emoții, voce, sat, numeral, apoi școala veche din Amintiri din copilărie, de Ion Creangă. Cuvintele se schimbă în timp. Evaluarea compară școala privată cu Școală după școală.',
     toc: [
       'Emoții. Sentimente. Atitudini',
       'Elemente paraverbale și nonverbale',
@@ -1078,7 +1078,9 @@ const UNITS = [
       { term: 'numeral ordinal', meaning: 'Spune al câtelea: primul, al doilea, a doua.' },
       { term: 'paraverbal', meaning: 'Cum spui: ton, ritm, pauză, tărie. Nu e cuvântul, nu e gestul.' },
       { term: 'nonverbal', meaning: 'Ce se vede: gest, față, poziția corpului.' },
-      { term: 'patrimoniu', meaning: 'Obiceiuri, locuri și obiecte păstrate de la o generație la alta.' }
+      { term: 'patrimoniu', meaning: 'Obiceiuri, locuri și obiecte păstrate de la o generație la alta.' },
+      { term: 'învechit', meaning: 'Formă sau sens care nu se mai folosește. În dicționar stă (Înv.).' },
+      { term: 'dascăl', meaning: 'Și învățător, și cântăreț de biserică. Cuvântul a rămas din școala de lângă biserică.' }
     ],
     lessons: [
       lesson('deschidere-trepte', 'Ce vei descoperi în unitate', {
@@ -1153,22 +1155,72 @@ const UNITS = [
         tryThis: '1. Disciplina orei este istorie sau muzica? Un cuvânt. 2. „dintr-a cincea” este ordinal sau cardinal? Un cuvânt.',
         recap: 'Istorie, clasa a cincea, ordinal. Două stări pozitive și una negativă. Greșeală: spui „autorul a vrut” fără o faptă din oră.'
       }),
-      lesson(
-        'variatie',
-        'Cum se schimbă cuvintele. Școala de altădată',
-        'Cuvintele se schimbă în timp și de la un loc la altul. „A toci” și „a învăța” nu sunt același gest: unul e repetare până la uzură, altul e înțelegere. Cuprinsul le pune față în față ca să vezi că limba poartă atitudinea față de școală.',
-        'Școala de altădată e citită, în cuprins, prin Amintiri din copilărie, de Ion Creangă. Nu copiem fragmentul. Reții ce cauți: spațiul (unde e școala, cum arată), timpul (când, cât ține o zi), și ce e altfel față de școala ta. Diferența nu e „ei erau răi, noi suntem buni”. E o comparație de fapte.',
-        'Exemplu lucrat: spațiu — odaie, laviță, ceaslov. Timp — o zi care începe altfel decât ora ta de 8. Atitudine — frica de dascăl nu e aceeași emoție cu nerăbdarea de la un test de azi, chiar dacă ambele sunt „emoții de școală”.',
-        'Reține: cuvântul are istorie. Spațiul și timpul ancorează amintirea. Nu o judeci doar cu regulile de azi, o compari.'
-      ),
-      lesson(
-        'recap-trepte',
-        'Recapitulare și evaluare',
-        'Unitatea se închide dacă poți: numi o emoție și o atitudine fără să le confunzi, marca un indiciu paraverbal, folosi un cardinal și un ordinal corect, spune mesajul unui text cu o dovadă, și așeza o scenă de școală în spațiu și timp.',
-        'Exemplu lucrat: „În a doua oră, doi colegi au vorbit în șoaptă.” Ordinal: a doua. Cardinal: doi. Paraverbal: șoaptă. Spațiu implicit: clasa, la ora aceea.',
-        'Evaluarea nu cere rezumatul lui Creangă pe de rost. Cere să lucrezi cu uneltele astea pe textul din manual.',
-        'Reține: emoție, voce, număr, loc, timp, mesaj cu dovadă.'
-      )
+      lesson('variatie', 'Cum se schimbă cuvintele. Școala de altădată', {
+        theory: 'Cuvintele își schimbă forma și sensul în timp sau după regiune. (Înv.) înseamnă învechit, nu învățat. (Reg.) înseamnă regional. a toci e repetarea pe dinafară. a învăța e să înțelegi. La tocilar, sensul 1 ascute unelte. Sensul 2, cel din manual, e memorarea mecanică. Majusculele scot cuvântul în față.',
+        example: '„Nu toci!” e imperativ negativ. „Niște tocilari” e nehotărât. „Tocilarii?” e hotărât. În fragment, Spider-Man este Peter Parker.',
+        tryThis: '1. (Înv.) înseamnă invechit sau invatat? Un cuvânt. 2. Sensul potrivit din manual este 2 sau 1? Scrie numărul.',
+        recap: '(Înv.) e învechit. Sensul din texte este 2. Antonimul dat este corijent. Greșeală: citești (Înv.) ca „învățat”.'
+      }),
+      lesson('creanga-sat', 'Humulești și școala de la poartă', {
+        theory: 'Ion Creangă s-a născut în 1837, la Humulești, și a murit pe 31 decembrie 1889, la Iași. Cartea mare este Amintiri din copilărie. Nu o copiem. Satul stă peste apa Neamțului și are trei părți: Vatra, Delenii, Bejenii. Școala era o chilie la poarta bisericii. Ziua de ascultat era sâmbăta. La dicționar, părintele devine părinte.',
+        example: '„Sala era foarte mare” este fals. Scaunul nou nu a venit fiindcă mai apăruse un elev. Prezici, apoi verifici în fragmentul următor.',
+        tryThis: '1. Creangă a murit în 1889 sau în 1837? Scrie numărul. 2. Ziua de ascultat era sambata sau joia? Un cuvânt.',
+        recap: 'Humulești, trei părți, chilie la poartă, sâmbăta. Greșeală: marchezi adevărat la sala mare.'
+      }),
+      lesson('nume-scoala', 'Numele din școala veche', {
+        theory: 'Banca cea lungă primește numele Calul Bălan. Nuiaua primește numele Sfântul Nicolai, după hram. Smărăndița e pedepsită la prima abatere. Părerea lui Nică despre băiatul care îl ascultă este proastă. Replica spusă în gând îi aparține lui Nică. Luna acelei ascultări este mai. Un grup are substantiv și atribut. Comparația o cauți la ca, în manual, și nu o copiezi.',
+        example: '„Părinte bun” are atributul bun. „Colegul mai mare” îl arată pe cel care ascultă, fără numele propriu. Luna rămâne mai.',
+        tryThis: '1. Părerea lui Nică este proasta sau buna? Un cuvânt. 2. Luna ascultării este mai sau iunie? Un cuvânt.',
+        recap: 'Calul Bălan, Sfântul Nicolai, prima abatere, luna mai. Greșeală: pui replica din gând în gura colegului.'
+      }),
+      lesson('cuvinte-vechi', 'Forme vechi și dascălul', {
+        theory: 'Pluralul vechi al lui școală a fost școale. carte a însemnat și scrisoare. procitanie înseamnă ascultare sau examinare. dascăl a rămas și cântăreț de biserică, și învățător, pentru că primele școli au stat lângă biserică. Prima școală românească atestată este în 1495, în Șcheii Brașovului, la Sfântul Nicolae. 1495 este cardinal. Prima este ordinal.',
+        example: '„Mă procitește” devine „mă ascultă”. „Dascălul cântă la strană” și „dascălul predă” sunt două meserii, un singur cuvânt.',
+        tryThis: '1. Anul primei școli atestate este 1495 sau 1837? Scrie numărul. 2. (Reg.) înseamnă regional sau invechit? Un cuvânt.',
+        recap: 'școale, carte și ca scrisoare, dascăl cu două sensuri, 1495. Greșeală: iei (Reg.) drept învechit.'
+      }),
+      lesson('timp-sumer', 'Deceniu, secol, mileniu', {
+        theory: 'În jurul anului 3500 î.Hr., sumerienii scriau cu semne cuneiforme. Primele manuale, la Uruk, erau tăblițe de lut cu liste de cuvinte. Un deceniu are 10 ani, un secol 100, un mileniu 1000. Sunt cardinale. Un nume propriu îl cauți în cuprinsul de istorie, nu la întâmplare. Școala fricoșilor e o carte de deschis, nu de copiat. Proverbul îl explici în două paragrafe, cu vorbele tale.',
+        example: '„Un mileniu are 1000 de ani.” 1000 e cardinal. „Uruk” stă la civilizația veche, în cuprins.',
+        tryThis: '1. Un secol are 100 sau 1000 de ani? Scrie numărul. 2. Tăblițele erau la Uruk sau la Iasi? Un cuvânt.',
+        recap: '10, 100, 1000. Uruk și lutul. Cauți în cuprins. Greșeală: numeri mileniul ca pe un deceniu.'
+      }),
+      lesson('casa-memoriala', 'Casa memorială și relatarea', {
+        theory: 'Pentru Casa Memorială „Ion Creangă” faci un tabel cu patru rubrici. Notezi foarte importantă, puțin importantă sau neimportantă. Ora, ziua închisă și GPS-ul contează mult. Casa stă pe malul Ozanei. O experiență de școală se spune în patru paragrafe: la început, apoi, în timp ce, după ce, în sfârșit.',
+        example: '„Ora de deschidere” e foarte importantă. „E-mailul” poate fi neimportant, dacă doar vrei să intri. Primul paragraf spune cine, unde și când.',
+        tryThis: '1. Râul de lângă casă este Ozana sau Oltul? Un cuvânt. 2. Relatarea are minimum 4 sau 1 paragraf? Scrie numărul.',
+        recap: 'Patru rubrici. Ora și ziua închisă sunt foarte importante. Patru paragrafe, cu legături de timp. Greșeală: o listă de fapte, fără apoi.'
+      }),
+      lesson('recap-trepte', 'Recapitulare și evaluare', {
+        theory: 'La recapitulare subliniezi substantivul o dată și adjectivul de două ori. Din câmpul școlii țin teme și program, nu arbori sau pădure. Andrei caută fiindcă sora lui, Ioana, vrea o școală privată odată cu prietena. Revista este Capital, din 4 decembrie 2009. În primul rând, suma de la Școală după școală e mică. În al doilea rând, primești ajutor la teme.',
+        example: 'Seria teme, program ține de școală. „În primul rând rămâi la prânz.” primul e ordinal simplu. „În al doilea rând primești ajutor.”',
+        tryThis: '1. Seria corectă este b sau d? O literă. 2. Revista este Capital sau Litere? Un cuvânt.',
+        recap: 'O linie la substantiv, două la adjectiv. Seria b. Capital, 2009. Greșeală: alegi pădure, timp doar fiindcă sună cunoscut.'
+      }),
+      lesson('forme-vechi', 'Cuvinte de azi și forme corecte', {
+        theory: 'excursie și tematică sunt cuvinte de azi, din 2022. tartaj e cuvântul vechi, lăsat lui Nică, elev în 1850. Scrii avantajele școlii, dorințele familiei, facilității acesteia nu-i poți rezista, copiii de aici. Compunerea are trei paragrafe și două argumente. O secvență din text se dezvoltă, în limba standard.',
+        example: '„avantajele școli” devine „avantajele școlii”. „dorințele familii” devine „dorințele familiei”. Cei știuți sunt copiii, nu copii.',
+        tryThis: '1. Cuvântul vechi este tartaj sau excursie? Un cuvânt. 2. După dorințele scrii familiei sau familii? Un cuvânt.',
+        recap: 'tartaj e învechit. școlii, familiei, facilității, copiii. Trei paragrafe, două argumente. Greșeală: lași școli lângă avantajele.'
+      }),
+      lesson('barem-trepte', 'Baremul evaluării', {
+        theory: 'Din oficiu ai 10 puncte. Totalul este 100. Subiectul 1 are 4. Subiectele 2, 3, 4, 5 și 6 au câte 8. La 2, motivul sau titlul fără enunț ia 2, nu 4. Subiectele 7 și 8 au câte 10. Subiectul 9 are 26: 8 pentru două argumente, 6 pentru explicație, 6 pentru trei paragrafe, 6 pentru limba standard.',
+        example: 'Un motiv fără enunț rămâne la 2 puncte. La 3, numeralul corect ia 2, iar cu greșeală ia 1. Cinci forme la 8, câte 2 puncte. Un singur argument la 9 coboară de la 8 la 4.',
+        tryThis: '1. Subiectul 9 valorează 26 sau 8 puncte? Scrie numărul. 2. Punctele din oficiu sunt 10 sau 4? Scrie numărul.',
+        recap: '1 are 4. 2–6 au câte 8. 7 și 8 au câte 10. 9 are 26. Greșeală: crezi că titlul fără enunț ia punctajul întreg.'
+      }),
+      lesson('relatare-scoala', 'Fișa relatării', {
+        theory: 'Relatarea are trei părți. Introducerea spune cine, unde și când. Cuprinsul spune de ce a pornit întâmplarea, ce a urmat și ce emoție a rămas. Încheierea arată ce s-a schimbat și ce reține cititorul. Mai scrii un enunț exclamativ și un imperativ care cuprinde un numeral cardinal.',
+        example: '„Ce zi lungă!” e exclamativ. „Notează două detalii!” e imperativ, iar două e cardinal. Introducerea nu începe cu de ce.',
+        tryThis: '1. Introducerea răspunde la cand sau la de-ce? Un cuvânt, cu cratimă la al doilea. 2. În imperativ intră un cardinal sau un verb? Un cuvânt.',
+        recap: 'Cine, unde, când, apoi de ce. Scurt: 20–30 de cuvinte. Greșeală: sari la emoție, fără loc și fără timp.'
+      }),
+      lesson('reflectie-trepte', 'Fișa de reflecție', {
+        theory: 'La sfârșit completezi fișa de reflecție, la persoana I: ce ai aflat, ce folosești la altă disciplină, ce ai descoperit despre tine, ce vrei să afli și ce ai învățat. Spui și dacă te descurci mai bine decât la unitatea dinainte. Fișa intră în portofoliu, lângă tabelul de observare a comportamentului.',
+        example: '„Am aflat că (Înv.) înseamnă învechit. La istorie caut Uruk în cuprins. Față de unitatea despre natură aleg mai atent un cuvânt vechi.”',
+        tryThis: '1. Reflecția se scrie la persoana I sau a II-a? Scrie cifra romană. 2. Fișa nouă se pune în portofoliu sau se arunca? Un cuvânt.',
+        recap: 'Răspunzi la persoana I, cu un exemplu din unitate. O păstrezi. Greșeală: scrii „a fost ok”, fără o faptă.'
+      }),
     ]
   },
   {
