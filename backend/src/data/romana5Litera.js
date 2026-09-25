@@ -400,36 +400,110 @@ const UNITS = [
       'Recapitulare și evaluare'
     ],
     glossary: [
-      { term: 'câmp lexical', meaning: 'Cuvinte care țin de aceeași zonă de sens: carte, pagină, copertă, capitol.' },
-      { term: 'sinonim', meaning: 'Altă formă, sens apropiat: curajos / viteaz.' },
-      { term: 'antonim', meaning: 'Sens opus: cald / rece.' }
+      { term: 'câmp lexical', meaning: 'Cuvinte înrudite ca înțeles. Dacă sunt multe, acolo este tema.' },
+      { term: 'cuvânt-cheie', meaning: 'Vorba fără de care nu mai înțelegi despre ce este textul.' },
+      { term: 'diacritice', meaning: 'Semne pe literă: căciulița (ă), virgula (ș, ț), circumflexul (â, î).' },
+      { term: 'silabă', meaning: 'Ce spui dintr-o singură deschidere a gurii. În ea stă o singură vocală.' },
+      { term: 'semivocală', meaning: 'e, i, o sau u care nu ține singură silaba, ci stă lângă o vocală.' },
+      { term: 'accent', meaning: 'Silaba spusă mai puternic. Poate schimba sensul cuvântului.' }
     ],
     lessons: [
-      lesson(
-        'carte-lexic',
-        'Cartea și cuvintele-cheie',
-        'În unitatea asta cartea e cale de cunoaștere: afli despre lume și despre tine. Cuprinsul urmărește cartea românească de învățătură de la prima carte tipărită până la cartea digitală. Nu memorezi un șir de ani aici; reții ideea: aceeași nevoie de a transmite, alt suport.',
-        'Câmpul lexical strânge cuvintele unei teme. Cuvintele-cheie sunt cele fără de care nu poți spune tema. Dacă le scoți, textul cade.',
-        'Exemplu lucrat: temă „bibliotecă”. Câmp: raft, fișă, împrumut, liniște, volum. Cuvânt-cheie într-un afiș scurt: împrumut. Fără el, afișul nu spune ce faci acolo.',
-        'Reține: câmpul lexical e familia temei. Cuvântul-cheie e cel care poartă tema.'
-      ),
-      lesson(
-        'cuvant-alfabet',
-        'Cuvântul, alfabetul, formă și sens',
-        'Cuvântul e unitatea de bază a vocabularului: o formă pe care o scrii și un sens pe care îl porți în context. Aceeași formă poate avea sensuri diferite; contextul alege.',
-        'Alfabetul limbii române are 31 de litere. Scrierea noastră marchează sunete pe care alte limbi le scriu în mai multe feluri: ă, â, î, ș, ț nu sunt „litere în plus de decor”. Specificul scrierii e tocmai că fiecare literă trebuie pusă, nu ghicită.',
-        'Exemplu lucrat: „copii” (fără i-ul de la pluralul lung) și „copiii” nu spun același număr în aceeași poziție. Forma schimbă sensul. Nu le amesteci ca să „arate bine”.',
-        'Reține: forma e ce scrii. Sensul e ce înseamnă acolo. Alfabetul e lista cu care construiești forma.'
-      ),
-      lesson(
-        'silaba',
-        'Silaba, sunetele, accentul, literă și sunet',
-        'Silaba e o bucată de cuvânt pe care o spui dintr-o singură mișcare de voce. O folosești când desparți în silabe la capăt de rând, nu ca să numeri de poftă.',
-        'Sunetele sunt vocale (se rostesc singure: a, e, i, o, u, ă, î) și consoane (au nevoie de o vocală). O literă nu e mereu un sunet, și un sunet nu e mereu o literă: grupurile și literele cu semne (ș, ț) se învață ca perechi, nu ca picturi.',
-        'Accentul e silaba pe care o spui mai apăsat. Uneori mută sensul sau măcar pronunția corectă. Nu îl pui „unde îți vine”.',
-        'Exemplu lucrat: „car-te” are două silabe. Accentul cade pe prima: CAR-te. „co-pil” are tot două; accentul e pe a doua: co-PIL. Aceeași metodă: marchezi vocalele, tai silabele, spui care e mai apăsată.',
-        'Reține: silaba se aude. Litera se vede. Nu sunt mereu una și aceeași numărare.'
-      ),
+      lesson('deschidere-carte', 'Harta unității despre carte', {
+        theory: 'Prin carte afli despre lume și despre tine. Cei de dinainte îți lasă ce au învățat. Pe hartă sunt câmpul lexical, cuvântul, alfabetul, silaba și accentul. Sinonimele vin mai încolo. Competențele 1.1, 1.3, 2.5, 3.2, 3.3, 4.2, 4.3 și 5.1 cer context și scris îngrijit.',
+        example: 'Dacă lecția de azi este alfabetul, nu bifezi paragraful doar pentru că îl vezi anunțat. Harta arată drumul. Cartea rămâne firul: aceeași învățătură, alt suport, altă vreme.',
+        tryThis: '1. Câte competențe numerotate deschid unitatea? Scrie numărul. 2. Sinonimele se lucrează acum sau mai-tarziu? Un cuvânt.',
+        recap: 'Cartea leagă generațiile. Harta anunță, lecția predă. Sunt opt competențe. Greșeală: înveți un titlu doar pentru că stă pe prima pagină.'
+      }),
+      lesson('carte-lexic', 'Cartea și cuvintele-cheie', {
+        theory: 'Oamenii au păstrat ce știau pe piatră, pe lut, pe hârtie, apoi pe ecran. Suportul s-a schimbat. Nevoia a rămas: să nu se piardă învățătura. Cuvintele-cheie sunt vorbele fără de care nu înțelegi tema. Le folosești și la căutare.',
+        example: 'Tema este biblioteca. În câmp stau raft și fișă. Cuvântul-cheie al unui afiș scurt este împrumut. Dacă îl scoți, nu se mai știe ce faci acolo.',
+        tryThis: '1. Cuvântul fără de care tema cade este cheie sau decor? Un cuvânt. 2. De la lut la ecran s-a schimbat suportul sau nevoia? Un cuvânt.',
+        recap: 'Aceeași învățătură, alt suport. Cuvântul-cheie poartă tema și ajută la căutare. Greșeală: alegi un cuvânt frumos, care nu spune despre ce este textul.'
+      }),
+      lesson('camp-lexical', 'Câmpul lexical', {
+        theory: 'Câmpul lexical este o grupă de cuvinte înrudite ca înțeles: păsări, timp, rude. Dacă se adună multe din același câmp, acolo este subiectul. Un text poate avea două câmpuri, de pildă carte și timp. La o altă cultură grupezi la fel: mâncare, muzică, clădiri.',
+        example: 'rândunică, vrabie și ciocănitoare țin de păsări. papirus, tipar și ecran țin de carte. secol, epocă și mileniu țin de timp. Vrabie lângă secol înseamnă două câmpuri, nu unul singur.',
+        tryThis: '1. „raft, copertă, pagină” țin de carte sau de timp? Un cuvânt. 2. Un text poate avea și două câmpuri? Scrie da sau nu.',
+        recap: 'Câmpul arată tema. Poți avea două câmpuri în același text. Greșeală: pui în aceeași listă cuvinte care nu spun același fel de lucru.'
+      }),
+      lesson('stea-intrebari', 'Steaua de întrebări', {
+        theory: 'Ca să explorezi o temă, pui cuvântul în centru. În jur scrii întrebări: ce, la ce, pentru cine, cu cine, cum, unde, când, de ce. Din fiecare răspuns poate porni o întrebare nouă. Așa nu rămâi la o propoziție goală.',
+        example: 'Centrul este carte. La ce folosește? Ca să păstrezi o poveste. De când există? De când oamenii au vrut să nu uite. Unde o cauți azi? La bibliotecă sau pe ecran. Trei întrebări, trei direcții.',
+        tryThis: '1. Întrebarea „unde?” cere un loc sau un motiv? Scrie loc sau motiv. 2. Întrebarea „de ce?” cere un loc sau un motiv? Un cuvânt.',
+        recap: 'Steaua deschide tema în mai multe părți. Greșeală: scrii doar „este important” și te oprești.'
+      }),
+      lesson('lucru-grup', 'Roluri în grup', {
+        theory: 'În grup, fiecare are un rol. Liderul ține echipa unită. Administratorul are grijă de materiale. Informaticianul ține sursele. Ilustratorul adună imaginile. Cronometrul păzește timpul. Vorbiți pe rând. Refuzul se spune politicos, cu motiv. Sursele stau într-o listă separată.',
+        example: 'Trei colegi fac o axă a cărții, de la lut la ecran. Cronometrul oprește căutarea la timp. Liderul îl întreabă pe cel tăcut ce crede. Informaticianul notează de unde este imaginea.',
+        tryThis: '1. Cine păzește timpul: cronometrul sau liderul? Un cuvânt. 2. Poți vorbi peste coleg? Scrie da sau nu.',
+        recap: 'Roluri clare, vorbă pe rând, surse notate. Greșeală: un singur elev face tot, iar ceilalți doar semnează.'
+      }),
+      lesson('poster-lexic', 'Posterul cu un câmp lexical', {
+        theory: 'Posterul amestecă text și imagine. Alegi un câmp: hobby-ul tău sau mâncarea, sportul, simbolurile. Pui cuvinte-cheie care spun subiectul. Informațiile vin din mai multe discipline. Posterul este făcut de tine, nu copiat.',
+        example: 'Subiectul este ciorba. Cuvântul-cheie este ciorba. De la istorie iei o sărbătoare, de la geografie o regiune, de la desen farfuria. Trei discipline, un singur câmp: mâncarea.',
+        tryThis: '1. Pentru diversitate ajunge o singură disciplină? Scrie da sau nu. 2. Vorba care anunță subiectul este cheie sau gol? Un cuvânt.',
+        recap: 'Câmp, cuvinte-cheie, mai multe materii, lucrare făcută de tine. Greșeală: un desen frumos, fără niciun cuvânt care să spună tema.'
+      }),
+      lesson('cuvant-alfabet', 'Cuvântul, alfabetul, formă și sens', {
+        theory: 'Cuvântul este unitatea de bază a vocabularului. Are un sens și o formă: sunete când îl spui, litere când îl scrii. Alfabetul este lista literelor, într-o ordine fixă. Cel românesc are 31 de litere și vine din cel latin. În dicționar cauți după ordinea aceasta.',
+        example: 'carte și book numesc același obiect, cu alte litere. Ca să cauți „roman” într-un dicționar tipărit, nu sări la mijloc. R vine înaintea lui V, deci roman stă înaintea lui viitor.',
+        tryThis: '1. Câte litere are alfabetul limbii române? Scrie numărul. 2. „roman” stă înaintea lui „viitor” sau după? Scrie inainte sau dupa.',
+        recap: 'Sensul plus forma fac cuvântul. Sunt 31 de litere, în ordine latină. Greșeală: cauți în dicționar la întâmplare, nu după alfabet.'
+      }),
+      lesson('chirilic', 'De la chirilică la litere latine', {
+        theory: 'Primele cărți românești au fost scrise cu alfabet chirilic, un alfabet slav vechi. A fost scrisul oficial până în 1860. Apoi au venit literele latine de azi. O cronică veche poate avea semne necunoscute. Nu este neapărat altă limbă.',
+        example: 'Cuvântul carte, scris cu litere latine, îl recunoști. Aceeași idee, scrisă chirilic, îți pare un șir străin până înveți semnele. Pagina nu și-a schimbat limba. Și-a schimbat alfabetul.',
+        tryThis: '1. Până în ce an a fost chirilica scrierea oficială la noi? Scrie anul. 2. Literele de azi sunt latine sau chirilice? Un cuvânt.',
+        recap: 'Până în 1860, oficial, chirilică. Azi, latină. Greșeală: crezi că o pagină cu alte litere este automat altă limbă.'
+      }),
+      lesson('litere-imprumut', 'Litere din cuvintele împrumutate', {
+        theory: 'În alfabet stau și litere folosite mai ales în cuvinte luate din alte limbi sau în nume: k, w, q, y. Le întâlnești în kilometru sau în watt. Nu le schimbi după ureche, dacă norma le păstrează. Sensul îl cauți în dicționar. Litera o verifici la scrierea corectă.',
+        example: 'kilogram se scrie cu k, nu cu c. watt păstrează w. Dacă înlocuiești litera din capul tău, cuvântul nu mai este cel din dicționar și poate să nu mai fie găsit.',
+        tryThis: '1. Litera k din kilometru este imprumut sau diacritica? Un cuvânt. 2. O schimbi după ureche? Scrie da sau nu.',
+        recap: 'k, w, q și y apar în împrumuturi și în nume. Le păstrezi cum cere norma. Greșeală: le înlocuiești cu c sau v doar pentru că așa ți se pare.'
+      }),
+      lesson('diacritice', 'Semnele de pe litere', {
+        theory: 'Diacriticele sunt semne puse pe literă. Ele schimbă pronunția. Căciulița stă pe ă. Virgula stă pe ș și pe ț. Accentul circumflex stă pe â și pe î. Fără ele, cuvântul poate însemna altceva. Le pui mereu, nu doar când ți se pare că arată bine.',
+        example: 'român fără căciuliță devine roman și nu mai spune același lucru. masă fără căciuliță este masa, care poate fi alt cuvânt. Celălalt râde pentru că s-a schimbat sensul.',
+        tryThis: '1. Semnul de pe ă este caciulita sau virgula? Un cuvânt. 2. Fără diacritice, sensul rămâne acelasi sau se poate schimba? Scrie acelasi sau se-schimba.',
+        recap: 'Trei semne: căciuliță, virgulă, circumflex. Ele pot schimba sensul. Greșeală: le lași din grabă și crezi că se înțelege la fel.'
+      }),
+      lesson('silaba', 'Silaba, sunetele, accentul, literă și sunet', {
+        theory: 'Silaba este un sunet sau un grup spus dintr-o singură deschidere a gurii. Într-o silabă stă o singură vocală. Vocalele se rostesc singure: a, ă, â, î, e, i, o, u. Consoanele au nevoie de o vocală: b, c, d, f, g, h, j, k, l, m, n, p, r, s, ș, t, ț, v, z.',
+        example: 'acasă se desparte a-ca-să. Sunt trei deschideri, deci trei silabe. Vocalele sunt a, a și ă. Nu numeri toate literele. Numeri vocalele care țin silaba.',
+        tryThis: '1. Câte silabe are acasă? Scrie numărul. 2. Litera b este vocala sau consoana? Un cuvânt.',
+        recap: 'O silabă, o vocală, o deschidere de gură. Greșeală: numeri toate literele și le numești silabe.'
+      }),
+      lesson('semivocala', 'Semivocala', {
+        theory: 'e, i, o și u sunt vocale când poartă silaba. Sunt semivocale când nu fac singure o silabă, ci stau lângă o altă vocală. Le recunoști ușor când sunt urmate de a, ă sau î, ca în seară. Semivocala se aude mai scurt. Vocala se aude mai prelung.',
+        example: 'În tei, t este consoană, e este vocală, iar i este semivocală. În zeu, e poartă silaba și este vocală. Nu pune i din tei în aceeași cutie cu e din zeu.',
+        tryThis: '1. În tei, litera i este vocala sau semivocala? Un cuvânt. 2. Semivocala face singură o silabă? Scrie da sau nu.',
+        recap: 'e, i, o și u pot fi vocale sau semivocale. Semivocala nu ține singură silaba. Greșeală: orice e sau i ți se pare vocală.'
+      }),
+      lesson('accent', 'Accentul', {
+        theory: 'Accentul este pronunțarea mai puternică sau mai înaltă a unei silabe. Poate schimba sensul. Dacă nu ești sigur, cauți cuvântul în DOOM. Nu pui apăsarea unde îți vine. Limba standard este forma folosită de toată comunitatea, după norme. Accentul face parte din normă.',
+        example: 'Maria e veselă poate însemna că e voioasă, dacă apeși începutul. Dacă apeși mijlocul, veselă poate însemna vasele de pe masă. Aceleași litere, alt accent, alt sens.',
+        tryThis: '1. În carte, silaba accentuată este car sau te? Un cuvânt. 2. Accentul nesigur se verifică în doom sau dupa ureche? Scrie doom sau ureche.',
+        recap: 'Accentul este silaba mai puternică și poate schimba sensul. Greșeală: apeși la întâmplare și crezi că este tot același cuvânt.'
+      }),
+      lesson('litere-sunete', 'Litere și sunete', {
+        theory: 'De regulă, un sunet se scrie cu o literă. Nu este o lege fără excepții. Litera x redă două sunete: cs, ca în fix, sau gz, ca în exemplu. Același sunet poate avea litere diferite. Sunetul k se scrie c în casă și k în karate. Sunetul v se scrie v sau w.',
+        example: 'fix are 3 litere și 4 sunete, pentru că x valorează cs. casă și karate încep cu același sunet, dar nu cu aceeași literă. Nu le corectezi una după cealaltă.',
+        tryThis: '1. În fix, litera x valorează un sunet sau doua? Scrie unu sau doua. 2. karate începe cu litera c sau k? Un cuvânt.',
+        recap: 'De obicei, o literă înseamnă un sunet. x înseamnă două sunete. k și w pot scrie sunete pe care le ai și cu c sau v. Greșeală: numeri literele și spui că ai tot atâtea sunete.'
+      }),
+      lesson('litera-ajutatoare', 'Litera care doar ajută', {
+        theory: 'Unele litere nu se aud ca ele însele. În che, chi, ghe și ghi, h ajută pronunția și nu se citește ca h din haz. În ce, ci, ge și gi, e sau i poate fi doar semn pentru consoana moale, nu o vocală plină. Litera de lângă, adică contextul, decide.',
+        example: 'În chemare, h nu se aude ca în hrană. În hrană, h este consoană. În geme, e de după g schimbă sunetul lui g. Nu este același g ca în gaz.',
+        tryThis: '1. În hrană, h este consoana sau semn? Un cuvânt. 2. În chemare, h se aude ca în haz? Scrie da sau nu.',
+        recap: 'h poate fi consoană sau literă ajutătoare. e și i pot marca un sunet moale. Greșeală: citești che ca pe c, plus h, plus e.'
+      }),
+      lesson('i-sau-a', 'î, â și m înainte de b', {
+        theory: 'La începutul și la sfârșitul cuvântului scrii î: în, coborî. În interior scrii â: adânc, român. Dacă rădăcina începe cu î și pui un prefix, î rămâne: neîngrijit, reîncepe, subînțeles. Înainte de b sau p, prefixul în- se scrie cu m: împăduri, îmbătrâni.',
+        example: 'neângrijit este greșit, pentru că după ne- rădăcina este îngrijit, cu î. Corect este neîngrijit. adânc are â, fiindcă sunetul stă în mijloc, fără prefix. împăduri are m, pentru că urmează p.',
+        tryThis: '1. După ne-, forma corectă păstrează i sau a? Scrie i sau a. 2. Înainte de b sau p scrii m sau n? Un cuvânt.',
+        recap: 'î la capete, â în interior, î după prefix, m înainte de b sau p. Greșeală: pui â peste tot în mijloc, chiar și după ne- sau re-.'
+      }),
       lesson(
         'sinonime',
         'Sinonime și antonime',
