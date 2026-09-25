@@ -1227,7 +1227,7 @@ const UNITS = [
     id: 'eroi',
     title: 'Eroi din cărți, din filme și din viață',
     inOwnWords:
-      'Unitatea 7 mută narațiunea pe nonliterar și pe modele: participanți, pronume personal, pronume de politețe, apoi din nou text literar cu spațiu și timp. Cuprinsul indică Scrisoarea III, de Mihai Eminescu, și Bunica Safta, de Ion Agârbiceanu.',
+      'Unitatea 7 începe cu știrea: text narativ nonliterar, participanți, pronume personal și pronume de politețe, apoi Scrisoarea III, de Mihai Eminescu. Bunica Safta, de Ion Agârbiceanu, vine în partea următoare. Cuprinsul le indică pe amândouă.',
     toc: [
       'Textul narativ nonliterar. Participanții la acțiune',
       'Pronumele. Pronumele personal',
@@ -1238,44 +1238,66 @@ const UNITS = [
       'Recapitulare și evaluare'
     ],
     glossary: [
-      { term: 'pronume personal', meaning: 'Înlocuiește un nume: eu, tu, el, ea, noi, voi, ei, ele.' },
-      { term: 'pronume de politețe', meaning: 'dumneata, dumneavoastră — marchează distanța respectuoasă, nu apropierea.' },
-      { term: 'narativ nonliterar', meaning: 'Povestește fapte reale sau prezentate ca reale: o știre, o relatare, o biografie scurtă.' }
+      { term: 'pronume personal', meaning: 'Înlocuiește un nume: eu, tu, el, ea, noi, voi, ei, ele. Genul se vede doar la persoana a III-a.' },
+      { term: 'pronume de politețe', meaning: 'dumneata, dumneavoastră, mata. Marchează distanța. dumneavoastră cere verbul la plural.' },
+      { term: 'narativ nonliterar', meaning: 'Povestește fapte reale, cu participanți care pot fi numiți, ca să informeze.' },
+      { term: 'participant', meaning: 'Omul real care face fapta într-o știre. Nu e personajul unei povestiri.' }
     ],
     lessons: [
-      lesson(
-        'nonliterar',
-        'Textul narativ nonliterar și participanții',
-        'Și textul nonliterar poate povesti: o știre, o pagină de jurnal real, o fișă despre cineva. Are participanți (cine a făcut), acțiune (ce s-a întâmplat), dar scopul e să informeze, nu să construiască o lume imaginară. Nu îi pui „morala” dacă textul dă fapte.',
-        'Participantul e omul sau grupul din acțiune. Îl deosebești de autor: autorul a scris, participantul a făcut.',
-        'Exemplu lucrat: „Ieri, echipa școlii a câștigat meciul în minutul 40.” Participanți: echipa. Acțiune: a câștigat. Timp: ieri, minutul 40. Nu e literatură. E relatare.',
-        'Reține: nonliterar narativ = fapte în ordine. Participantul nu e automat „erou”.'
-      ),
-      lesson(
-        'pronume',
-        'Pronumele personal',
-        'Pronumele ține locul unui nume, ca să nu repeți substantivul în fiecare frază. Personalul arată persoana: eu / noi (cine vorbește), tu / voi (cu cine vorbești), el / ea / ei / ele (despre cine vorbești).',
-        'Forma se schimbă după rol: eu citesc, pe mine mă cheamă, mie îmi place. Nu e „decor”. Dacă pui „pe mine” la nominativ, fraza se rupe.',
-        'Exemplu lucrat: „Andrei a luat cartea. El a dus-o acasă.” „El” îl înlocuiește pe Andrei. „A dus-o”: „o” ține locul cărții. Două pronume, două nume înlocuite.',
-        'Reține: pronumele personal spune cine, fără să repeți numele. Verifici la cine se referă.'
-      ),
-      lesson(
-        'politete',
-        'Eroi, politețe, pronumele de politețe',
-        'Eroul din carte, din film sau din viață e un model doar dacă poți spune ce faptă îi iei, nu dacă îți place costumul. „Erou de ieri” înseamnă o faptă care încă are rost, nu o statuie pe care o numeri.',
-        'Pronumele de politețe (dumneata, dumneavoastră) marchează respectul și distanța. Nu le amesteci cu „tu” când vorbești cu cineva pe care nu îl tutuiești. Verbul se acordă: dumneavoastră citiți, nu „dumneavoastră citești”.',
-        'Cuprinsul leagă comunicarea politicoasă de Scrisoarea III, de Mihai Eminescu. În manual te uiți la cum e privit un personaj istoric și la ton, nu înveți poezia pe de rost ca să o lipești aici. Noi nu o reproducem.',
-        'Exemplu lucrat: către un invitat în clasă spui „Dumneavoastră când ați publicat cartea?”, nu „Tu când ai scos cartea?”. Aceeași întrebare, alt pronume, altă atitudine.',
-        'Reține: modelul e o faptă pe care o poți numi. Politețea se vede în pronume și în ton.'
-      ),
-      lesson(
-        'marca-persoanei',
-        'Vocea, gestul și textul literar',
-        'Felul în care taci, râzi sau întinzi mâna e o marcă a persoanei, la fel ca vorba. La un erou din film notezi un gest care se repetă. La un om real nu îl caricaturizezi: un gest nu e tot caracterul.',
-        'Textul literar de închidere, în cuprins, este Bunica Safta, de Ion Agârbiceanu. Cauți personaje, spațiu și timp, ca la orice narațiune. Bunica poate fi model prin ce face în text, nu prin eticheta „bătrână bună”. Dovada stă în manual.',
-        'Exemplu lucrat: spațiu — o casă, o cameră, un drum. Timp — o seară, o vârstă, o amintire. Personaj — cine are grijă și cum se vede grija (un gest), nu adjectivul „bună” singur.',
-        'Reține: nonverbalul repetat spune ceva despre persoană. În text, spațiul și timpul țin scena.'
-      ),
+      lesson('deschidere-eroi', 'Ce vei descoperi în unitate', {
+        theory: 'Unitatea are șapte competențe: 1.2, 2.1, 2.5, 3.4, 4.2, 4.4 și 5.2. Reiei textul narativ, participanții, personajele, eroii din legende și detaliul. Descoperi narativul nonliterar, pronumele personal, pronumele de politețe și gestul. Eroul nu e un costum. Contează fapta. Citatele rămân în manual.',
+        example: 'Un copil scoate pe fratele lui dintr-o casă în flăcări. Fapta îl face erou în ziua aceea. Costumul de supererou nu e de trebuință.',
+        tryThis: '1. Câte competențe specifice deschid unitatea? Scrie numărul. 2. Contează fapta sau costumul? Un cuvânt.',
+        recap: 'Șapte competențe. Aici sunt știrea, pronumele și gestul. Greșeală: crezi că eroul e doar cel din film.'
+      }),
+      lesson('nonliterar', 'Textul narativ nonliterar și participanții', {
+        theory: 'Textul narativ nonliterar povestește o faptă reală, într-un loc și un timp reali, ca să informeze și să fie crezut. Participanții pot fi numiți. Autorul scrie. Participantul face fapta. Știrea din 22 mai 2019, de la Runcu de Jos, e semnată de Camelia Nuțu. Ionuț Preda, de 12 ani, își scoate fratele de 5 ani din foc. E erou prin faptă, nu pentru că seamănă cu Spider-Man.',
+        example: '„Joi noaptea, la Runcu de Jos, un băiat a scos un copil pe fereastră.” Timp: joi noaptea. Loc: comuna. Participanți: cei doi copii.',
+        tryThis: '1. În ce an e datată știrea? Patru cifre. 2. Reporterul este Nutu sau Preda? Un nume.',
+        recap: 'Nonliterarul narativ dă fapte reale, cu oameni identificabili. Greșeală: îl confunzi pe autor cu participantul.'
+      }),
+      lesson('participanti-stire', 'Participanții și ordinea faptelor', {
+        theory: 'Întâi Ionuț, apoi fratele. Părinții erau plecați. ISU, fragmentul a, este Inspectoratul General pentru Situații de Urgență. SMURD, fragmentul b, este Serviciul Mobil de Urgență, Reanimare și Descarcerare. AUDACIA ET DEVOTIO înseamnă curaj și devotament. Focul s-a stins în circa 3 ore. Cauza cea mai probabilă: căldura curentului electric. Elicopterul duce băiatul de 12 ani, nu pe unul de 15.',
+        example: 'Copiii dormeau, apoi focul, geamul. La final, elicopterul spre București. Cel mic rămâne la Bistrița. Nu un singur pompier.',
+        tryThis: '1. Câți ani are băiatul dus cu elicopterul? O cifră. 2. SMURD este fragmentul a sau b? O literă.',
+        recap: 'Cine, unde, când și cine a intervenit. Greșeală: alegi 15 ani sau un singur pompier.'
+      }),
+      lesson('pronume', 'Pronumele personal', {
+        theory: 'Pronumele înlocuiește un substantiv. Pronumele personal arată persoana față de vorbitor. Singular: eu, tu, el sau ea. Plural: noi, voi, ei sau ele. Genul se vede doar la persoana a III-a. Scrii Eu, nu Ieu. Scrii Ea, nu Ia. puștiul devine el. sora devine ea. Gabi are dreptate: nu toate fetele sunt sperioase. Ionel greșește.',
+        example: '„Eu sunt de acord.” este corect. „Ieu sunt de acord.” are o literă în plus. Curajul nu ține de faptul că ești fată sau băiat.',
+        tryThis: '1. Forma corectă de subiect este Eu sau Ieu? Scrie forma corectă. 2. Cine are dreptate, Ionel sau Gabi? Un prenume.',
+        recap: 'Personalul se schimbă după persoană și număr. Genul, doar la a III-a. Greșeală: scrii Ieu sau judeci toate fetele la fel.'
+      }),
+      lesson('pronume-forme', 'Formele legate cu cratimă', {
+        theory: 'Dacă nu e subiect, pronumele se leagă de verb cu cratimă: m-a ajutat, nu ma ajutat. Pe Andrei l-a impresionat, nu la impresionat. Spui mie îmi place și mie mi-a plăcut. Miau e pisica. Mi-au e pronume plus verb. nea Ion e adresare. ne-a e pronume plus auxiliar. Nu i-a luat nimeni nimic. Dacă obiceiul ține, ea ia.',
+        example: 'Acuzativ: mă, m-, te, îl, o, ne, vă, v-, îi, le. Dativ: mie, îmi, mi; ție, îți, ți; lui, îi, i-, ei; nouă, ne, ni; vouă, vă, vi; lor.',
+        tryThis: '1. Cum se scrie corect, ma sau m-a? Forma cu cratimă. 2. În „Întrebați-l pe nea Ion”, nea este adresare sau pronume? Scrie nea.',
+        recap: 'Cratima leagă pronumele de verb. Miau e pisica, nea e adresarea. Greșeală: scrii ma sau la lipit de verb.'
+      }),
+      lesson('compunere-eroica', 'Compunerea despre o faptă', {
+        theory: 'Compunerea povestește o faptă demnă de admirat, văzută, auzită sau citită. Pui cel puțin doi participanți și o relație bună, rea sau neutră. Timpul vine dintr-o dată sau dintr-un numeral. Locul și oamenii se scriu ca substantiv plus atribut. Pronumele arată pe cine înlocuiesc. Timpurile păstrează ordinea. Are titlu și trei părți, cu alineat.',
+        example: '„Băiatul curajos din sat a spart geamul gros. El l-a scos pe fratele mic.” Doi participanți. El îl înlocuiește pe băiat.',
+        tryThis: '1. Câți participanți sunt cel puțin? Scrie numărul. 2. Câte părți are compunerea? Scrie numărul.',
+        recap: 'Doi oameni, o relație, un timp, un loc lămurit. Greșeală: un singur participant sau un pronume fără nume.'
+      }),
+      lesson('politete', 'Eroi, politețe, pronumele de politețe', {
+        theory: 'Scrisoarea III, de Mihai Eminescu, are două părți. Prima: invazia otomană în Țara Românească, solul, apoi Baiazid, pe vremea lui Mircea cel Bătrân. A doua critică prezentul. Tema: dragoste de țară și istorie, nu copilărie. Pacea o cere solul: vorbește de domnul nostru. Baiazid îi vorbește lui Mircea fără respect. domn era conducătorul. Azi e și o formulă politicoasă.',
+        example: 'Solul cere pace pentru domn. Tonul lui Baiazid este disprețuitor. Jurnal dublu: două coloane.',
+        tryThis: '1. Pacea este a solului sau a imparatului? Scrie solului sau imparatului. 2. Tonul lui Baiazid este politicoasa sau lipsita? Un cuvânt.',
+        recap: 'Două părți. Pacea o cere solul. Formele de politețe vin apoi. Greșeală: domn nu a fost mereu o formulă.'
+      }),
+      lesson('pronume-politete', 'Pronumele de politețe', {
+        theory: 'Doar la a II-a și a III-a: dumneavoastră, dumneata, dumitale, dumnealui, dumneaei, dumnealor, mata, matale, dânsul, dumisale, mătălică, mătăluță, tălică, tăluță. dumneavoastră: distanță mare, verb la plural, chiar pentru o persoană. dumneata: distanță medie. mata: părinte sau bunic.',
+        example: 'La primărie, la spital și la secretariat spui dumneavoastră. La aceeași vârstă spui tu. Vârstnicul către tânăr poate spune dumneata. „Dumneavoastră citiți.” nu „citești”.',
+        tryThis: '1. La primărie folosești dumneavoastra sau tu? Un cuvânt. 2. Lângă dumneavoastră, verbul corect este cititi sau citesti? Un cuvânt.',
+        recap: 'Trepte: dumneavoastră, dumneata, mata. La dumneavoastră verbul e plural. Greșeală: spui dumneavoastră citești.'
+      }),
+      lesson('marca-persoanei', 'Vocea, gestul și textul literar', {
+        theory: 'Politețea e și gest, postură, ton și intonație: aștepți rândul, refuzi civilizat, saluți și păstrezi distanța, și cu un coleg. Apus și Răsărit, cu majusculă, înseamnă Occident și Orient. apus, cu literă mică, înseamnă asfințit. La conducător: dragoste de țară și demnitate, nu trufie, nu supunere. Baiazid arată desconsiderare, nu cere o informație.',
+        example: 'Cratima grăbește. Apus numește o lume, apus este asfințitul. Unii eroi trec; dragostea de țară poate rămâne.',
+        tryThis: '1. Asfințitul se scrie apus sau Apus? Forma cu literă mică. 2. Baiazid arată desconsiderare sau o informatie? Un cuvânt.',
+        recap: 'Gestul și tonul sunt politețe. Litera mare schimbă Apus. Urmează textul literar. Greșeală: crezi că întrebarea cere date.'
+      }),
       lesson(
         'recap-eroi',
         'Recapitulare și evaluare',
