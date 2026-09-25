@@ -848,50 +848,83 @@ const UNITS = [
     glossary: [
       { term: 'substantiv', meaning: 'Numește o ființă, un lucru, o idee: copil, carte, prietenie.' },
       { term: 'articol', meaning: 'Hotărăște dacă vorbitorul știe despre care substantiv e vorba (hotărât) sau nu (nehotărât).' },
-      { term: 'inferență', meaning: 'Ce poți deduce din indicii, fără să inventezi o altă poveste.' }
+      { term: 'inferență', meaning: 'Ce poți deduce din indicii, fără să inventezi o altă poveste.' },
+      { term: 'identitate', meaning: 'Nume, rol, limbă, etnie și respectul pentru tine, spuse prin fapte.' },
+      { term: 'determinare', meaning: 'Cât de cunoscut este obiectul numit de substantiv, prin articol.' }
     ],
     lessons: [
-      lesson(
-        'identitate',
-        'Identitate personală și națională',
-        'Prietenia din unitatea asta trece peste diferențe de mediu sau de neam. Identitatea personală e ce te face pe tine: nume, familie, obiceiuri, ce-ți place. Identitatea națională e ce ții în comun cu o comunitate: limbă, sărbători, locuri, povești. Nu e o listă de lozinci.',
-        'Cuprinsul lucrează pe textul Vasile Porojan, de Vasile Alecsandri. Îl citești în manual. Metoda: cine sunt cei doi, ce îi separă, ce îi leagă, ce valoare rămâne (loialitate, respect), spusă cu o dovadă din text.',
-        'Exemplu lucrat: „Sunt din orașul X, vorbesc româna, iar duminica merg la bunici.” Asta e identitate spusă prin fapte, nu prin „sunt cel mai bun”.',
-        'Reține: personal = al tău. Național = ce împărtășești. Prietenia nu cere să fie identice.'
-      ),
-      lesson(
-        'inferente',
-        'Explicativ, descriptiv, deducție, real și aparență',
-        'Secvența explicativă spune de ce sau cum. Secvența descriptivă spune cum arată. În același text le poți avea pe amândouă: întâi portretul, apoi motivul unei purtări.',
-        'Deducția și inferența pleacă de la un indiciu și se opresc unde indiciul te lasă. „Ușa e închisă și lumina stinsă” te lasă să spui că probabil nu e nimeni treaz. Nu te lasă să spui că „au plecat în altă țară”.',
-        'Real și aparență: ce pare (haină, ton, un zâmbet) poate să nu fie ce este. La prieteni virtuali, cuprinsul cere exact diferența asta: un profil nu e omul.',
-        'Exemplu lucrat: cineva scrie mereu „sunt fericit” și nu răspunde la o întrebare simplă. Aparența e veselia. Inferența prudentă: nu știi dacă e așa. Nu inventezi o dramă.',
-        'Reține: deduci doar cât ține indiciul. Aparența se verifică, nu se crede dintr-o dată.'
-      ),
-      lesson(
-        'explicativ',
-        'Textul explicativ, norma, pașii scrierii',
-        'Textul explicativ îl învață pe cititor ceva: o regulă, un fenomen, un cuvânt. Are o idee clară și o ordine (ce e, apoi de ce, apoi un exemplu). Limba standard e forma îngrijită, pe care o înțeleg și cei din afara grupului tău. Abaterea poate fi greșeală sau poate fi voită (o glumă, un regionalism). La școală o marchezi, nu o copiezi fără să știi.',
-        'Pașii scrierii rămân cei din unitatea anterioară: idei, plan, text. Aici îi aplici la o explicație, nu la o poveste.',
-        'Exemplu lucrat: „Prietenul virtual nu e automat prieten.” Apoi de ce: nu îi vezi gestul, nu știi cine scrie. Apoi exemplu: un cont poate folosi poza altcuiva. Trei mișcări, un text explicativ.',
-        'Reține: explici ca să înțeleagă și cine nu era în capul tău. Norma te ajută să fii citit.'
-      ),
-      lesson(
-        'substantiv',
-        'Substantivul: gen, număr, comun și propriu',
-        'Substantivul dă nume. Genul, la română, e masculin, feminin sau neutru. Numărul e singular sau plural. Le vezi în însoțitori: un / o, doi / două, acest / această.',
-        'Comun: nume de clasă (oraș, băiat, râu). Propriu: nume unic, scris cu majusculă (Iași, Andrei, Prut). Prietenia nu schimbă regula: prenumele rămâne propriu chiar când îl strigi pe un ton cald.',
-        'Exemplu lucrat: „doi prieteni” (masculin plural), „două prietene” (feminin plural), „un caiet / două caiete” (neutru: singular ca masculinul, plural ca femininul).',
-        'Reține: propriul ia majusculă. Genul și numărul se văd în cuvântul care stă lângă substantiv.'
-      ),
-      lesson(
-        'articol-prepozitie',
-        'Articolul, ortografia, prepoziția',
-        'Articolul nehotărât (un, o, niște, unor) spune că substantivul nu e încă precizat pentru ascultător. Articolul hotărât (-l, -a, -i, -le și formele lui) spune că știi despre care e vorba. Ortografia se lipește de alegerea asta: „un prieten” nu e „prietenul”.',
-        'Substantivul se combină cu atribut, cu alt nume, cu prepoziție. Prepoziția e cuvântul scurt de legătură: cu, de, la, pe, din, pentru. Ea singură nu are gen. Cere uneori o formă anume a numelui care urmează.',
-        'Exemplu lucrat: „Vorbeam cu prietenul.” Prepoziția „cu” leagă verbul de substantivul hotărât. „Vorbeam cu un prieten.” schimbă articolul: nu e același, cunoscut.',
-        'Reține: hotărât = știi care. Nehotărât = unul oarecare dintr-o clasă. Prepoziția leagă, nu numește.'
-      ),
+      lesson('deschidere-prietenie', 'Respectul și ce vei descoperi', {
+        theory: 'Unitatea pornește de la respectul pentru orice om. Reiei substantivul, identitatea personală și descrierea. Descoperi articolul, identitatea națională și textul descriptiv. Prepoziția vine mai târziu. Competențele sunt 1.4, 2.4, 3.1, 4.2 și 5.1.',
+        example: 'Înainte de text notezi numele, rolul, etnia, un portret și un articol. Abia apoi citești scrisoarea din manual.',
+        tryThis: '1. Câte competențe specifice deschid unitatea? Scrie numărul. 2. Prepoziția se învață acum sau mai-tarziu? Un cuvânt, cu cratimă.',
+        recap: 'Respectul deschide unitatea. Aici sunt identitatea, descrierea și articolul. Greșeală: sari la prepoziție înainte să știi despre cine vorbești.'
+      }),
+      lesson('identitate', 'Identitate personală și națională', {
+        theory: 'Identitatea personală se vede în nume, rol, naționalitate, religie și etnie. Imaginea de sine e ce crezi despre tine. Stima de sine e respectul pentru tine. Identitatea națională e limba, sărbătorile și locurile comune. Prietenia poate trece peste etnie. Pe 18 decembrie, Ziua Minorităților Naționale.',
+        example: '„Mă cheamă Ion, sunt elev și vorbesc româna.” Asta e identitate prin fapte. „Sunt cel mai bun” nu spune nici numele, nici limba.',
+        tryThis: '1. Ziua Minorităților Naționale este în ziua de 18 sau de 1? Scrie numărul. 2. Respectul pentru tine se numește imagine sau stima? Un cuvânt.',
+        recap: 'Personal înseamnă nume, rol, etnie, imagine și stimă. Național înseamnă ce împărtășești. Greșeală: reduci omul la un singur grup.'
+      }),
+      lesson('scrisoare-prieten', 'Scrisoarea și cuvântul de azi', {
+        theory: 'În manual citești scrisoarea Vasile Porojan, de Vasile Alecsandri, de la Mircești, din 1881. Destinatarul este cel salutat, nu neapărat cel despre care se povestește. O afirmație poate fi sigură, probabilă sau imposibilă. Cuvântul vechi țigan este înlocuit azi cu rom. Lunile se scriu cu literă mică.',
+        example: 'Scrisoarea salută un prieten și povestește despre altcineva. „Îi este adresată celui povestit” este imposibil. Scrii septembrie, nu Septembrie.',
+        tryThis: '1. În ce an este datată scrisoarea? Scrie numărul. 2. Cuvântul de azi este rom sau tigan? Un cuvânt.',
+        recap: 'Mircești, 1881. Destinatarul stă în salut. Azi spui rom. Greșeală: crezi că scrisoarea îi este adresată celui despre care se vorbește.'
+      }),
+      lesson('proiect-romi', 'Proiectul despre o comunitate', {
+        theory: 'Proiectul poate fi o broșură sau o prezentare, făcut singur sau în echipă. Tema este viața unei comunități înainte și după o schimbare mare, verificată în surse. Cauți în manuale și enciclopedii și poți vorbi cu oameni din comunitate. Un cuvânt nou, de pildă din limba romani, stă lângă înțelesul lui.',
+        example: 'Trei capitole: familia, sărbătoarea, o personalitate. La sfârșit scrii sursele. Cuvântul nou nu rămâne singur pe pagină.',
+        tryThis: '1. Proiectul se face doar în echipă? Scrie da sau nu. 2. La sfârșit pui sursele sau un zvon? Un cuvânt.',
+        recap: 'Broșură sau prezentare, cu surse verificate. Greșeală: povestești din auzite și nu scrii de unde știi.'
+      }),
+      lesson('inferente', 'Explicativ, descriptiv, deducție, real și aparență', {
+        theory: 'Secvența explicativă spune de ce sau cum. Secvența descriptivă spune cum arată. Inferența se oprește la indiciu. Prietenia reală stă pe vorbă directă, loialitate și respect. Pe internet, profilul poate să nu fie omul. ID-ul nu este automat numele real. Forumul adună mesaje. Chatul este o vorbă pe loc.',
+        example: 'Cineva scrie mereu „sunt fericit” și nu răspunde. Aparența e veselia. Nu știi dacă e așa. Nu inventezi o viață dintr-un ID.',
+        tryThis: '1. Numele de utilizator este mereu numele real? Scrie da sau nu. 2. Vorbirea pe loc, scurtă, este forum sau chat? Un cuvânt.',
+        recap: 'Explici de ce, descrii cum arată. ID-ul nu dovedește cine scrie. Greșeală: iei aparența de pe ecran drept omul întreg.'
+      }),
+      lesson('portret-prieten', 'Portretul prietenului', {
+        theory: 'Portretul începe cu un plan: nume, prenume, poreclă, rol, cum arată, ce îi place, unde vă întâlniți și despre ce vorbiți. Scrii o ciornă, o schimbi cu un coleg și asculți o sugestie. Textul final are un enunț scurt și trei paragrafe. Lângă substantiv pui un atribut: prieten loial.',
+        example: 'Plan: Mara, colegă, păr scurt, îi place desenul, vă vedeți în parc. Introducere: „Mara e prietena mea.” Apoi trei paragrafe: înfățișare, ce faceți, de ce contează.',
+        tryThis: '1. Câte paragrafe are portretul, după introducere? Scrie numărul. 2. În „prieten loial”, loial este atribut sau verb? Un cuvânt.',
+        recap: 'Întâi planul, apoi ciorna, apoi trei paragrafe. Atributul stă lângă substantiv. Greșeală: un rând, fără înfățișare și fără loc.'
+      }),
+      lesson('explicativ', 'Textul explicativ, norma, pașii scrierii', {
+        theory: 'Textul explicativ îl învață pe cititor ceva, în ordine. Anunți subiectul: în această prezentare voi vorbi despre. Apoi spui două sau trei aspecte. Le dezvolți cu o comparație sau cu un exemplu. Încheierea reia pe scurt: o reflecție sau o invitație. Pașii sunt idei, plan, text. Limba standard o înțelege și cine nu e în grupul tău.',
+        example: '„Voi vorbi despre prietenul de aproape și cel de pe ecran.” Aspect: îl vezi sau nu. Exemplu: un cont poate folosi poza altcuiva. Încheiere: verifici înainte să crezi.',
+        tryThis: '1. Câte mișcări mari are explicația? Scrie numărul. 2. Prima mișcare este anunt sau exemplu? Un cuvânt.',
+        recap: 'Anunți, alegi aspectele, dai un exemplu, închei. Greșeală: o părere fără exemplu și fără concluzie.'
+      }),
+      lesson('norma-internet', 'Limba standard pe internet', {
+        theory: 'Pe internet, limba standard e respect. Nu înlocui că și ce cu k sau sh. Articulează: copilul, nu copilu. Scrie cuvântul întreg: cineva, nu cnv. Cratima stă la locul ei: dă-mi, nu dămi. voi scrieți este un cuvânt. voi scrie-ți mută cratima greșit. Secundele în plus îl respectă pe cititor. Emoticonul poate arăta fața, gestul sau emoția.',
+        example: '„Knd vii?” devine „Când vii?”. „Dămi caietul” devine „Dă-mi caietul.” „Cnv știe” devine „Cineva știe.”',
+        tryThis: '1. Forma corectă este cineva sau cnv? Un cuvânt. 2. „Dă-mi” se scrie cu cratima sau lipit? Un cuvânt.',
+        recap: 'Scrii cuvinte întregi, cu articolul și cratima la locul lor. Greșeală: prescurtezi tot și lași cititorul să ghicească.'
+      }),
+      lesson('substantiv', 'Substantivul: gen, număr, comun și propriu', {
+        theory: 'Substantivul este cuvântul flexibil care numește persoane, ființe, lucruri, locuri sau idei. Are gen și număr și poate primi un articol. Comunul numește o clasă: băiat. Propriul ia majusculă: Andrei. Lunile stau cu literă mică. După numele strigat pui virgulă. bunătate e substantiv. vesel e adjectiv.',
+        example: '„un băiat / doi băieți” e masculin. „o fată” e feminin. „un dulap / două dulapuri” e neutru. „cățel” e comun, „Max” e propriu.',
+        tryThis: '1. Luna a noua se scrie septembrie sau Septembrie? Un cuvânt. 2. Numele unui singur câine este comun sau propriu? Un cuvânt.',
+        recap: 'Substantivul numește și se schimbă după număr. Propriul ia majusculă, luna nu. Greșeală: scrii Septembrie sau uiți virgula când strigi.'
+      }),
+      lesson('plural-substantiv', 'Pluralul și forma de dicționar', {
+        theory: 'Pluralul se marchează prin sunete: casă, case. În dicționar, substantivul stă la singular: pomi dai pom, lalele dai lalea, creioane dai creion. Formele recomandate: sandviciuri, nu sendvișuri. ghiozdane, nu ghiozdanuri. ciocolate, nu ciocolăți. chibrituri, nu chibrite. aragaze, nu aragazuri.',
+        example: 'Cauți „injecții” la injecție și „mătuși” la mătușă. „Trei ghiozdane și două sandviciuri” urmează forma recomandată, nu cea auzită în grabă.',
+        tryThis: '1. Pluralul recomandat este ghiozdane sau ghiozdanuri? Un cuvânt. 2. Forma de dicționar pentru pomi este pom sau pomi? Un cuvânt.',
+        recap: 'Dicționarul ține singularul. Înveți pluralul recomandat. Greșeală: scrii chibrite sau sendvișuri.'
+      }),
+      lesson('articol-prepozitie', 'Articolul, ortografia, prepoziția', {
+        theory: 'Determinarea arată cât de cunoscut este obiectul. În dicționar, substantivul nu are articol: prieten, nu prietenul. Articolul nehotărât stă în față și arată că obiectul e puțin cunoscut: un, o, niște, unui, unor. Articolul hotărât se lipește și arată că e bine cunoscut: băiatul, fata, copiii. Prepoziția, care leagă fără să numească, vine în lecția următoare.',
+        example: '„Un prieten ajută.” e unul oarecare. „Prietenul meu ajută.” e unul știut de amândoi. În DEX cauți orășel, nu orășelul.',
+        tryThis: '1. „Prietenul meu” este hotarat sau nehotarat? Un cuvânt. 2. În dicționar cauți orasel sau oraselul? Un cuvânt.',
+        recap: 'Nehotărâtul stă în față: un, o, niște. Hotărâtul se lipește. Greșeală: cauți în dicționar forma cu -ul.'
+      }),
+      lesson('articol-scriere', 'Cum se scrie articolul', {
+        theory: 'Articolul hotărât ține de gen și de număr. -ul la masculin singular: băiatul. -a la feminin: fata. -le la plural feminin: mingile, nu mingiile. Lângă niște, doi sau multe nu pui articolul din coadă: niște copii, doi băieți. Toți copiii are și pluralul, și articolul. La genitiv: Florinei, nu lui Florina.',
+        example: '„Un copil. Doi copii. Toți copiii.” Trei scrieri. „Florinei i-am scris.” rămâne Florinei. „mingiei” nu este o formă.',
+        tryThis: '1. După niște scrii copii sau copiii? Un cuvânt. 2. Genitivul corect este Florinei sau lui-Florina? Un cuvânt.',
+        recap: 'niște și doi nu primesc articolul din coadă. Toți copiii îl are. Greșeală: scrii niște copiii sau lui Florina.'
+      }),
       lesson(
         'prejudecati',
         'Lectură, prejudecăți, recapitulare',
