@@ -48,7 +48,7 @@ describe('infinite generated practice', () => {
   });
 
   it('rebuilds a generated flashcard and keeps four options', () => {
-    const item = generateOne({ kind: 'flashcards', subject: 'romana', grade: 5, chapterId: 'limba5' });
+    const item = generateOne({ kind: 'flashcards', subject: 'romana', grade: 5, chapterId: 'cuvinte' });
     expect(item.options).toHaveLength(4);
     const again = fromGeneratedId(item.id);
     expect(again.question).toBe(item.question);

@@ -39,18 +39,6 @@ const GLOSSARY = {
     { term: 'prismă', meaning: 'Două baze paralele, muchii laterale perpendiculare pe baze dacă e dreaptă.' },
     { term: 'volum', meaning: 'Cât umple corpul, nu doar coaja.' }
   ],
-  'romana:5:lectura': [
-    { term: 'idee principală', meaning: 'Ce se întâmplă cu adevărat, pe scurt. Restul e decor.' },
-    { term: 'personaj', meaning: 'Cine vrea ceva și se mișcă în text.' }
-  ],
-  'romana:5:redactare': [
-    { term: 'plan', meaning: 'Început, cuprins, sfârșit — înainte să scrii.' },
-    { term: 'destinatar', meaning: 'Cine citește și ce trebuie să afle.' }
-  ],
-  'romana:8:lectura8': [
-    { term: 'dovadă', meaning: 'O secvență din text, nu o părere goală.' },
-    { term: 'temă', meaning: 'Despre ce e vorba, nu rezumatul faptelor.' }
-  ],
   'en:matematica:numere': [
     { term: 'rațional', meaning: 'Se scrie ca fracție de întregi. √2 nu e.' },
     { term: 'interval', meaning: 'O bucată de axă, cu capete închise sau deschise.' }

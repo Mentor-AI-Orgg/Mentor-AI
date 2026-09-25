@@ -378,6 +378,14 @@ TESTS.inter8 = makeTests(
 );
 
 const CHAPTER_ALIAS = {
+  'evaluare-initiala': 'lectura',
+  cuvinte: 'limba5',
+  cartea: 'redactare',
+  povestirea: 'lectura',
+  prietenia: 'inter5',
+  natura: 'lectura',
+  trepte: 'oral',
+  eroi: 'lectura',
   'proba-ro': 'lectura8',
   receptare: 'lectura8',
   'limba-en': 'limba8',

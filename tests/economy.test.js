@@ -110,7 +110,7 @@ describe('economy purchases', () => {
     expect(mathDone.body.summary.xp).toBeGreaterThanOrEqual(35);
 
     const roPack = await other.post('/api/flashcards/generate').send({
-      chapter_id: 'limba5',
+      chapter_id: 'cuvinte',
       subject: 'romana',
       class_level: 5,
       kind: 'flashcards',
@@ -125,10 +125,10 @@ describe('economy purchases', () => {
     });
     const roDone = await other.post('/api/flashcards/finish').send({
       kind: 'flashcards',
-      chapter_id: 'limba5',
+      chapter_id: 'cuvinte',
       subject: 'romana',
       class_level: 5,
-      title: 'Cum e construită limba',
+      title: 'Cuvinte potrivite',
       picks
     });
     expect(roDone.status).toBe(200);

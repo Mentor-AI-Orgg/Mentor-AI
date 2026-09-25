@@ -363,7 +363,26 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
               </p>
             )}
             {!guideLoading && !guideError && units.length === 0 && subject && (
-              <p className="empty-state">Niciun capitol aici. Alege cealaltă materie sau Evaluarea Națională.</p>
+              <p className="empty-state">
+                {guide?.restored === false
+                  ? 'Manualul acestei clase a fost scos. Se reface de la zero, din manualul oficial, când îl aduci.'
+                  : 'Niciun capitol aici. Alege cealaltă materie sau Evaluarea Națională.'}
+              </p>
+            )}
+            {guide?.manual && (
+              <p className="chapter-disclaimer">
+                {guide.manual.author}, {guide.manual.title}. {guide.manual.publisher}, {guide.manual.year}. Aprobat prin {guide.manual.approval}. Programă: {guide.manual.curriculum}.
+              </p>
+            )}
+            {Array.isArray(guide?.competencies) && guide.competencies.length > 0 && (
+              <details className="official-competencies">
+                <summary>Competențe din programa oficială</summary>
+                <ul>
+                  {guide.competencies.map(item => (
+                    <li key={item.code}><strong>{item.code}</strong> {item.text}</li>
+                  ))}
+                </ul>
+              </details>
             )}
             {guide?.source?.disclaimer && <small className="chapter-disclaimer">{guide.source.disclaimer}</small>}
           </section>
@@ -459,6 +478,11 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                   {open && (
                     <div className="chapter-card-body">
                       <p>{unit.inOwnWords}</p>
+                      {(unit.toc || []).length > 0 && (
+                        <ol className="chapter-toc">
+                          {unit.toc.map(line => <li key={line}>{line}</li>)}
+                        </ol>
+                      )}
                       {(unit.glossary || []).length > 0 && (
                         <dl className="chapter-glossary">
                           {unit.glossary.map(row => (
@@ -502,7 +526,11 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                           ? 'Lecția e aici. Deasupra: simularea EN (minim 60 de minute în sală) și antrenamentul scurt (fără ora de sală, predai când termini). Antrenamentul de capitol e separat, 10 exerciții.'
                           : 'Înainte de test sau flashcarduri spui ce notă ți-ai dori. Itemii se potrivesc. Scrii răspunsul la test; la flashcarduri alegi A–D. Nu se repetă.'}
                       </p>
-                      <small className="chapter-disclaimer">Ghid intern Mentor AI, nu manual. „Cum o văd eu”, după programă.</small>
+                      <small className="chapter-disclaimer">
+                        {guide?.manual
+                          ? 'Ordinea e din cuprinsul manualului aprobat. Textul lecției e un rezumat propriu, nu pagina din manual.'
+                          : 'Ghid intern Mentor AI, nu manual. „Cum o văd eu”, după programă.'}
+                      </small>
                       <div className="learning-actions">
                         <button type="button" className="ghost-button result-action" onClick={() => askMentor(unit)}>
                           Întreabă mentorul <i className="fas fa-comments" />
