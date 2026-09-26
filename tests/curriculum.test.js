@@ -48,7 +48,7 @@ describe('gimnaziu curriculum', () => {
         }
         if (subject === 'romana' && grade === 7) {
           expect(guide.restored).toBe(true);
-          expect(guide.units).toHaveLength(5);
+          expect(guide.units).toHaveLength(6);
           expect(guide.manual.code).toBe('A1732');
           guide.units.forEach(unit => {
             expect(unit.lessons.length, `${subject}:${grade}:${unit.id}`).toBeGreaterThanOrEqual(4);
@@ -98,7 +98,7 @@ describe('gimnaziu curriculum', () => {
     expect(counts.matematica[8].chapters).toBe(4);
     expect(counts.romana[5].chapters).toBe(8);
     expect(counts.romana[6].chapters).toBe(8);
-    expect(counts.romana[7].chapters).toBe(5);
+    expect(counts.romana[7].chapters).toBe(6);
     expect(counts.romana[8].chapters).toBe(0);
     expect(counts.matematica[5].lessons).toBeGreaterThanOrEqual(18);
     expect(counts.romana[5].lessons).toBeGreaterThanOrEqual(40);
@@ -163,7 +163,7 @@ describe('gimnaziu curriculum', () => {
     const seven = await request(app).get('/api/curriculum').query({ subject: 'romana', class_level: 7 });
     expect(seven.body.restored).toBe(true);
     expect(seven.body.manual.code).toBe('A1732');
-    expect(seven.body.units).toHaveLength(5);
+    expect(seven.body.units).toHaveLength(6);
     const pending = await request(app).get('/api/curriculum').query({ subject: 'romana', class_level: 8 });
     expect(pending.body.restored).toBe(false);
     expect(pending.body.units).toHaveLength(0);
@@ -171,7 +171,7 @@ describe('gimnaziu curriculum', () => {
     for (const guide of catalog.body.guides) {
       expect(guide.howISeeIt.length).toBeGreaterThan(30);
       if (guide.subject === 'romana' && guide.grade > 7) expect(guide.units).toHaveLength(0);
-      else if (guide.subject === 'romana' && guide.grade === 7) expect(guide.units).toHaveLength(5);
+      else if (guide.subject === 'romana' && guide.grade === 7) expect(guide.units).toHaveLength(6);
       else if (guide.subject === 'romana' && guide.grade === 6) expect(guide.units).toHaveLength(8);
       else expect(guide.units.length).toBeGreaterThan(2);
     }
