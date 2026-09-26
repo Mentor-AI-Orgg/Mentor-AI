@@ -187,31 +187,111 @@ const GUIDES = {
     6: {
       title: "Matematică, clasa a VI-a",
       howISeeIt:
-        "Apar mulțimile, rapoartele și numerele cu semn. Geometria începe să aibă reguli, nu doar desene: paralele, triunghi, Pitagora văzută ca verificare, nu ca ritual.",
+        "Manualul Litera, clasa a VI-a, merge în ordinea asta: mulțimi și divizibilitate, rapoarte și proporții, numere întregi, numere raționale, apoi geometria. La geometrie înveți unghiul cu minute și secunde, paralelele, perpendiculara, cercul și triunghiul, până la Pitagora.",
       units: [
         {
           id: "multimi",
-          title: "Mulțimi și divizibilitate",
+          title: "Mulțimi. Mulțimea numerelor naturale",
           inOwnWords:
-            "Ce înseamnă „aparține”, reuniune, intersecție. Descompunere în factori primi ca să găsim c.m.m.d.c. și c.m.m.m.c. fără ghicit."
+            "Mulțimea strânge obiecte distincte. Înveți apartenența, incluziunea, reuniunea, intersecția și diferența. Apoi divizibilitatea în ℕ: criterii, descompunere în prime, c.m.m.d.c., c.m.m.m.c. și proprietățile cu care justifici.",
+          toc: [
+            "Mulțimi. Mulțimea numerelor naturale",
+            "Relații între mulțimi",
+            "Reuniunea, intersecția, diferența",
+            "Aplicații cu mulțimi",
+            "Divizibilitate în ℕ",
+            "Descompunerea în factori primi",
+            "Cel mai mare divizor comun",
+            "Cel mai mic multiplu comun",
+            "Proprietăți ale divizibilității",
+            "Recapitulare: mulțimi și divizibilitate"
+          ]
         },
         {
           id: "proportii",
-          title: "Rapoarte, proporții, regula de trei",
+          title: "Rapoarte și proporții",
           inOwnWords:
-            "Un raport compară două mărimi. Dacă sunt direct proporționale, cresc împreună; dacă sunt invers, una crește când cealaltă scade. Regula de trei e doar o proporție cu un loc gol."
+            "Raportul compară două mărimi de aceeași unitate. Proporția are extremi și mezi. Mărimile direct proporționale țin raportul, cele invers proporționale țin produsul. Procentul, graficele și probabilitatea sunt tot părți dintr-un întreg.",
+          toc: [
+            "Rapoarte",
+            "Proporții",
+            "Șir de rapoarte egale",
+            "Mărimi direct și invers proporționale",
+            "Regula de trei simplă",
+            "Procente",
+            "Grafice și frecvențe",
+            "Probabilități",
+            "Recapitulare: rapoarte și proporții"
+          ]
         },
         {
           id: "intregi-rationale",
-          title: "Numere întregi și raționale",
+          title: "Numere întregi și numere raționale",
           inOwnWords:
-            "Minusul e direcție pe axă (temperatura, debit). Modulul e distanța până la zero. Aceleași operații, dar cu semne. Ecuații simple de tipul „ce plus 5 face 12”."
+            "ℤ adaugă numerele negative. Modulul este distanța până la zero. Înveți semnele la operații, puterile, ecuațiile și inecuațiile în ℤ. ℚ strânge fracțiile echivalente, cu axă, operații, exponenți întregi și ecuații.",
+          toc: [
+            "Mulțimea numerelor întregi",
+            "Modulul și compararea",
+            "Adunarea și scăderea în ℤ",
+            "Înmulțirea în ℤ",
+            "Împărțirea în ℤ",
+            "Puterea unui număr întreg",
+            "Calcule cu adunări și scăderi",
+            "Ordinea operațiilor în ℤ",
+            "Ecuații în ℤ",
+            "Inecuații în ℤ",
+            "Probleme cu ecuații în ℤ",
+            "Recapitulare: numere întregi",
+            "Numărul rațional",
+            "Axa și modulul în ℚ",
+            "Compararea numerelor raționale",
+            "Adunarea și scăderea în ℚ",
+            "Înmulțirea și împărțirea în ℚ",
+            "Puterea cu exponent întreg",
+            "Ordinea operațiilor în ℚ",
+            "Ecuații în ℚ",
+            "Probleme cu ecuații în ℚ",
+            "Recapitulare: numere raționale"
+          ]
         },
         {
           id: "triunghi",
-          title: "Unghiuri, cerc, triunghi",
+          title: "Unghiuri, paralele, cerc și triunghi",
           inOwnWords:
-            "Unghiuri opuse la vârf, paralele tăiate de o secantă, cerc (rază, coardă, diametru). Triunghi: clasificare, suma unghiurilor 180°, linii importante, congruență, Pitagora pe triplete care se verifică."
+            "Unghiurile se calculează în grade, minute și secunde. Paralelele și secanta dau criterii. Perpendiculara măsoară distanța. Cercul are rază, diametru și unghi la centru. Triunghiul are suma 180°, linii importante, congruență și Pitagora.",
+          toc: [
+            "Unghiuri: recapitulare și completări",
+            "Unghiuri complementare și suplementare",
+            "Unghiuri opuse la vârf",
+            "Unghiuri adiacente",
+            "Drepte paralele",
+            "Unghiuri formate cu o secantă",
+            "Criterii de paralelism",
+            "Paralele în figuri",
+            "Drepte perpendiculare",
+            "Mediatoarea unui segment",
+            "Simetrie față de o dreaptă",
+            "Cercul și elementele lui",
+            "Unghi la centru",
+            "Poziții: dreaptă și cerc, două cercuri",
+            "Recapitulare: unghiuri, paralele, cerc",
+            "Triunghiul. Clasificare. Perimetru",
+            "Suma unghiurilor. Unghi exterior",
+            "Construcția triunghiurilor",
+            "Bisectoarele triunghiului",
+            "Mediatoarele triunghiului",
+            "Înălțimile triunghiului",
+            "Medianele triunghiului",
+            "Congruența triunghiurilor",
+            "Criterii de congruență",
+            "Congruența triunghiurilor dreptunghice",
+            "Metoda triunghiurilor congruente",
+            "Puncte pe bisectoare și pe mediatoare",
+            "Triunghiul isoscel",
+            "Triunghiul echilateral",
+            "Triunghiul dreptunghic și Pitagora",
+            "Recapitulare: triunghiul și clasa a VI-a"
+          ]
         }
       ]
     },

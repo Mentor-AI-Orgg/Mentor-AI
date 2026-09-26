@@ -62,7 +62,7 @@ const BANK = {
   'matematica:6:triunghi': [
     ex('e6t1', 'suma180', 'Triunghi isoscel, unghiul din vârf 40°. Cât are un unghi de la bază?', ['70', '70°'], 'Baza: (180−40):2 = 70°.', { numeric: { value: 70, tolerance: 0 }, steps: ['Suma unghiurilor = 180°', 'Rămân 140° pentru bazele egale', '140 : 2 = 70°'] }),
     ex('e6t2', 'pitagora', 'Triunghi dreptunghic, catete 9 cm și 12 cm. Cât e perimetrul, în cm?', ['36'], 'Ipotenuza: 81+144=225=15². Perimetrul: 9+12+15=36.', { hint: 'Întâi ipotenuza, apoi aduni cele trei laturi.', numeric: { value: 36, tolerance: 0 }, steps: ['9² + 12² = 81 + 144 = 225', '√225 = 15', 'Perimetrul = 9 + 12 + 15 = 36'] }),
-    ex('e6t3', 'cerc', 'Un cerc are diametrul 14 cm. Cât e lungimea cercului, dacă iei π = 22/7? Doar numărul.', ['44'], 'L = πd = (22/7)×14 = 44.', { numeric: { value: 44, tolerance: 0 }, steps: ['d = 14, π = 22/7', '(22/7) × 14 = 22 × 2 = 44'] }),
+    ex('e6t3', 'cerc', 'Un cerc are raza de 7 cm. Cât este diametrul, în cm?', ['14'], 'Diametrul trece prin centru și este de două ori raza: 2 × 7 = 14.', { numeric: { value: 14, tolerance: 0 }, steps: ['d = 2r', '2 × 7 = 14'] }),
     ex('e6t4', 'opuse', 'Două drepte se taie. Un unghi e 62°. Cât e suma dintre opusul la vârf și unul alăturat?', ['180', '180°'], 'Opusul e tot 62°, alăturatul e 118°. 62+118=180°.', { hint: 'Opusele sunt egale; alăturatele fac 180°.', numeric: { value: 180, tolerance: 0 }, steps: ['Opusul la vârf = 62°', 'Alăturatul (suplementar) = 180 − 62 = 118°', 'Suma = 62 + 118 = 180°'] })
   ],
   'matematica:7:reale': [

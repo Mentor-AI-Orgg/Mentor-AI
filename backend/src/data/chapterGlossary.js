@@ -31,12 +31,33 @@ const GLOSSARY = {
     { term: 'arie', meaning: 'Măsura suprafeței, în pătrate unitate.' }
   ],
   'matematica:6:multimi': [
-    { term: 'reuniune', meaning: 'Tot din cel puțin o mulțime, fără dubluri.' },
-    { term: 'c.m.m.d.c.', meaning: 'Cel mai mare număr care împarte pe amândoi.' }
+    { term: 'apartenență', meaning: 'x ∈ A înseamnă că x este element al mulțimii A.' },
+    { term: 'submulțime', meaning: 'Toate elementele din A sunt și în B. Scrii A ⊂ B.' },
+    { term: 'reuniune', meaning: 'Elementele care sunt în cel puțin una dintre mulțimi.' },
+    { term: 'intersecție', meaning: 'Doar elementele comune. Dacă nu există, mulțimile sunt disjuncte.' },
+    { term: 'c.m.m.d.c.', meaning: 'Cel mai mare număr care împarte pe amândoi. Se notează (a, b).' },
+    { term: 'c.m.m.m.c.', meaning: 'Cel mai mic multiplu comun nenul. Se notează [a, b].' }
   ],
   'matematica:6:proportii': [
-    { term: 'raport', meaning: 'Compari două mărimi printr-o împărțire.' },
-    { term: 'invers proporțional', meaning: 'Una crește, cealaltă scade; produsul rămâne.' }
+    { term: 'raport', meaning: 'Compari două mărimi de aceeași unitate printr-o împărțire.' },
+    { term: 'proporție', meaning: 'Două rapoarte egale. Produsul extremilor este egal cu produsul mezilor.' },
+    { term: 'direct proporțional', meaning: 'Raportul rămâne același. Cresc sau scad împreună.' },
+    { term: 'invers proporțional', meaning: 'Produsul rămâne același. Una crește când cealaltă scade.' },
+    { term: 'procent', meaning: 'p% înseamnă p/100 dintr-un întreg.' },
+    { term: 'probabilitate', meaning: 'Cazuri favorabile împărțite la cazuri posibile, între 0 și 1.' }
+  ],
+  'matematica:6:intregi-rationale': [
+    { term: 'întreg', meaning: 'Naturalele, zero și numerele negative. Mulțimea se notează ℤ.' },
+    { term: 'modul', meaning: 'Distanța până la zero. Este zero sau un număr pozitiv.' },
+    { term: 'rațional', meaning: 'O familie de fracții echivalente, cu numitor nenul.' },
+    { term: 'exponent negativ', meaning: 'a la puterea −n este 1 împărțit la a la puterea n, cu a nenul.' }
+  ],
+  'matematica:6:triunghi': [
+    { term: 'suplementar', meaning: 'Două unghiuri a căror sumă este 180°.' },
+    { term: 'paralel', meaning: 'Două drepte din plan fără niciun punct comun.' },
+    { term: 'mediatoare', meaning: 'Perpendiculara pe un segment în mijlocul lui.' },
+    { term: 'congruent', meaning: 'Figuri care se suprapun. La triunghiuri, ordinea vârfurilor spune corespondența.' },
+    { term: 'ipotenuză', meaning: 'Latura vizavi de unghiul drept.' }
   ],
   'matematica:7:ecuati': [
     { term: 'ecuație', meaning: 'O cântar: ce e stânga trebuie să fie egal cu dreapta.' },
