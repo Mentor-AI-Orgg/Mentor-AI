@@ -1,4 +1,16 @@
 import GeoSolid from './GeoSolid.jsx';
+import MathText from './MathText.jsx';
+
+function SvgFraction({ x, y, num, den, fill = '#fff' }) {
+  const width = Math.max(String(num).length, String(den).length) * 8 + 10;
+  return (
+    <g>
+      <text x={x} y={y - 8} textAnchor="middle" fill={fill} fontSize="12">{num}</text>
+      <line x1={x - width / 2} y1={y - 3} x2={x + width / 2} y2={y - 3} stroke={fill} strokeWidth="1.6" />
+      <text x={x} y={y + 11} textAnchor="middle" fill={fill} fontSize="12">{den}</text>
+    </g>
+  );
+}
 
 const C = {
   aqua: '#6fd7ff',
@@ -645,13 +657,14 @@ const FIGURES = {
   'fraction-bar': {
     label: '3 din 4 părți egale',
     svg: (
-      <svg viewBox="0 0 280 110" role="img" aria-label="Dreptunghi tăiat în patru, cu trei părți colorate">
+      <svg viewBox="0 0 280 124" role="img" aria-label="Dreptunghi tăiat în patru, cu trei părți colorate">
         <rect x="24" y="28" width="232" height="48" fill="none" stroke="#fff" strokeWidth="2" />
         <rect x="24" y="28" width="58" height="48" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
         <rect x="82" y="28" width="58" height="48" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
         <rect x="140" y="28" width="58" height="48" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
         <rect x="198" y="28" width="58" height="48" fill="none" stroke="#fff" strokeWidth="2" />
-        <text x="40" y="96" fill="#fff" fontSize="13">3/4 din întreg</text>
+        <SvgFraction x="36" y="96" num="3" den="4" />
+        <text x="58" y="100" fill="#fff" fontSize="13">din întreg</text>
       </svg>
     )
   },
@@ -661,19 +674,19 @@ const FIGURES = {
       <svg viewBox="0 0 280 120" role="img" aria-label="Două bare egale: jumătate și două sferturi">
         <rect x="24" y="16" width="100" height="36" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
         <rect x="124" y="16" width="100" height="36" fill="none" stroke="#fff" strokeWidth="2" />
-        <text x="232" y="40" fill={C.aqua} fontSize="13">1/2</text>
+        <SvgFraction x="250" y="36" num="1" den="2" fill={C.aqua} />
         <rect x="24" y="68" width="50" height="36" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
         <rect x="74" y="68" width="50" height="36" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
         <rect x="124" y="68" width="50" height="36" fill="none" stroke="#fff" strokeWidth="2" />
         <rect x="174" y="68" width="50" height="36" fill="none" stroke="#fff" strokeWidth="2" />
-        <text x="232" y="92" fill={C.violet} fontSize="13">2/4</text>
+        <SvgFraction x="250" y="88" num="2" den="4" fill={C.violet} />
       </svg>
     )
   },
   'fraction-line': {
     label: 'Fracții pe axă, de la 0 la 2',
     svg: (
-      <svg viewBox="0 0 320 100" role="img" aria-label="Axă cu 0, 1/2, 1 și 3/2">
+      <svg viewBox="0 0 320 112" role="img" aria-label="Axă cu 0, 1/2, 1 și 3/2">
         <line x1="20" y1="42" x2="300" y2="42" stroke="currentColor" strokeWidth="2" />
         <polygon points="300,42 288,36 288,48" fill="currentColor" />
         {[40, 110, 180, 250].map((x, index) => (
@@ -682,22 +695,23 @@ const FIGURES = {
             <circle cx={x} cy="42" r="5" fill={index === 1 ? C.pink : C.aqua} />
           </g>
         ))}
-        <text x="32" y="72" fill="#fff" fontSize="13">0</text>
-        <text x="96" y="72" fill={C.pink} fontSize="13">1/2</text>
-        <text x="174" y="72" fill="#fff" fontSize="13">1</text>
-        <text x="238" y="72" fill="#fff" fontSize="13">3/2</text>
+        <text x="32" y="78" fill="#fff" fontSize="13">0</text>
+        <SvgFraction x="110" y="78" num="1" den="2" fill={C.pink} />
+        <text x="174" y="78" fill="#fff" fontSize="13">1</text>
+        <SvgFraction x="250" y="78" num="3" den="2" />
       </svg>
     )
   },
   'mixed-number': {
     label: '2 întregi și 1/4',
     svg: (
-      <svg viewBox="0 0 300 100" role="img" aria-label="Două pătrate întregi și un sfert din al treilea">
+      <svg viewBox="0 0 300 118" role="img" aria-label="Două pătrate întregi și un sfert din al treilea">
         <rect x="16" y="20" width="64" height="52" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
         <rect x="92" y="20" width="64" height="52" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
         <rect x="168" y="20" width="16" height="52" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
         <rect x="184" y="20" width="48" height="52" fill="none" stroke="#fff" strokeWidth="2" />
-        <text x="16" y="92" fill="#fff" fontSize="13">2 întregi + 1/4</text>
+        <text x="16" y="96" fill="#fff" fontSize="13">2 întregi +</text>
+        <SvgFraction x="118" y="92" num="1" den="4" fill={C.pink} />
       </svg>
     )
   },
@@ -779,7 +793,7 @@ const GeoFigure = ({ kind, caption, formulas, info, flat }) => {
     : (
       <figure className="geo-figure">
         <div className="geo-figure-canvas">{figure.svg}</div>
-        <figcaption>{title}</figcaption>
+        <figcaption><MathText text={title} /></figcaption>
       </figure>
     );
   if ((!formulas || !formulas.length) && !info) return body;
@@ -788,7 +802,7 @@ const GeoFigure = ({ kind, caption, formulas, info, flat }) => {
       {body}
       {formulas?.length > 0 && (
         <ul className="geo-formulas">
-          {formulas.map(row => <li key={row}>{row}</li>)}
+          {formulas.map(row => <li key={row}><MathText text={row} /></li>)}
         </ul>
       )}
       {info ? <p className="geo-figure-info">{info}</p> : null}

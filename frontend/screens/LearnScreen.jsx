@@ -9,6 +9,7 @@ import GeoFigure from '../components/GeoFigure.jsx';
 import GeometryAtlas from '../components/GeometryAtlas.jsx';
 import { dailySlogan } from '../slogans.js';
 import { splitLessonParagraphs } from '../lessonParagraphs.js';
+import MathText from '../components/MathText.jsx';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
 
 function LessonProse({ label, text, className }) {
@@ -19,7 +20,7 @@ function LessonProse({ label, text, className }) {
       {parts.map((part, index) => (
         <p key={`${label}-${index}`}>
           {index === 0 ? <strong>{label} </strong> : null}
-          {part}
+          <MathText text={part} />
         </p>
       ))}
     </div>
