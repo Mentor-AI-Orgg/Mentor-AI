@@ -1,9 +1,10 @@
 // Lecții originale, „pe tavă”, după programa 5–8 (OMEN 3393/2017).
 // Nu copiem manuale. Fiecare lecție: idee + exemplu lucrat + ce să reții.
-// La clasa a V-a, capitolul numerelor naturale urmează cuprinsul manualului
-// Litera A1259 și stă în mate5Naturale.js.
+// La clasa a V-a, numerele naturale și fracțiile urmează cuprinsul manualului
+// Litera A1259 și stau în mate5Naturale.js și mate5Fractii.js.
 
 const { NATURALE_LESSONS } = require('./mate5Naturale');
+const { FRACTII_LESSONS } = require('./mate5Fractii');
 
 function lesson(id, title, ...paragraphs) {
   let extra = {};
@@ -17,56 +18,7 @@ function lesson(id, title, ...paragraphs) {
 
 const LESSONS = {
   'matematica:5:naturale': NATURALE_LESSONS,
-  'matematica:5:fractii': [
-    lesson(
-      'parte',
-      'Ce e o fracție',
-      'O fracție arată câte părți egale luăm dintr-un întreg. Numitorul (jos) taie turtă în felii egale. Numărătorul (sus) spune câte felii iei. 3/4: turtă tăiată în 4, iei 3.',
-      'Dacă numărătorul e cât numitorul, ai tot întregul: 4/4=1. Dacă numărătorul e mai mare, ai mai mult de un întreg: 5/4 = 1 și 1/4.',
-      'Exemplu lucrat: 1/2 din 20. Împarți 20 la 2: 10. 1/4 din 20: 20:4=5. Nu înmulți 1 cu 20 și atât.',
-      'Reține: numitorul e „cât de mici sunt feliile”, numărătorul e „câte iei”.'
-    ),
-    lesson(
-      'amplif',
-      'Amplificare și simplificare',
-      'Amplificarea: înmulțești sus și jos cu același număr. Valoarea rămâne. 1/3 × 2/2 = 2/6. Simplificarea: împarți sus și jos prin același număr. 18/24 : 6/6 = 3/4.',
-      'Cauți un divizor comun. Dacă nu mai găsești, fracția e ireductibilă.',
-      'Exemplu lucrat: simplifică 18/24, apoi amplifică rezultatul cu 5. 18:6=3, 24:6=4 → 3/4. Apoi 3×5=15, 4×5=20 → 15/20. 15/20 e aceeași valoare cu 3/4.',
-      'Reține: nu tai doar o cifră. Tai un factor comun din ambele.'
-    ),
-    lesson(
-      'numitor',
-      'Adunare cu numitor comun',
-      'Nu poți aduna felii de mărimi diferite. 1/3 + 1/6 cere același numitor. 1/3 = 2/6, deci 2/6 + 1/6 = 3/6 = 1/2.',
-      'Numitorul comun e un multiplu al ambilor numitori. Cel mai mic e cel mai comod.',
-      'Exemplu lucrat: 5/6 − 1/3 + 1/2. Trec totul la 6: 5/6 − 2/6 + 3/6 = 6/6 = 1.',
-      'Reține: la adunare și scădere, numitorul rămâne (după ce e comun); lucrezi pe numărător.'
-    ),
-    lesson(
-      'zecimal',
-      'Zecimale',
-      'Virgula e altă scriere a fracției. 0,5 = 1/2, 0,25 = 1/4, 0,75 = 3/4. Prima cifră după virgulă e zecimi, a doua sutimi.',
-      '1,2 l = 1200 ml, pentru că 1 l = 1000 ml. Nu amesteca unitățile.',
-      'Exemplu lucrat: 0,5 + 0,25. 5 zecimi + 25 sutimi = 50 sutimi + 25 sutimi = 75 sutimi = 0,75, adică 3/4.',
-      'Reține: zecimala nu e „un număr mic”. E aceeași idee ca fracția.'
-    ),
-    lesson(
-      'procent',
-      'Procente',
-      'Procentul e „părți din o sută”. 25% = 25/100 = 1/4. 10% dintr-un număr e a zecea parte. 50% e jumătate.',
-      'La o reducere, scazi procentul din preț, nu îl aduni. 15% din 80 = 12, deci plătești 80 − 12 = 68.',
-      'Exemplu lucrat: carte 80 lei, redusă 15%, apoi mai tai 10 lei. 15% din 80 = 12, rămân 68, minus 10 = 58 lei.',
-      'Reține: procentul e din prețul de atunci, nu dintr-un număr inventat.'
-    ),
-    lesson(
-      'media',
-      'Media aritmetică',
-      'Media e suma împărțită la câți termeni ai. Notele 6, 8, 9, 9: suma 32, 4 note, media 8. Nu e nota cea mare și nu e produsul.',
-      'Media e un rezumat: „cam pe unde stau” valorile, nu fiecare notă în parte.',
-      'Exemplu lucrat: 4 și 8. Suma 12, doi termeni, 12:2=6. Dacă mai pui un 10: (4+8+10):3=22:3, nu e întreg — scrii 7,333… sau 22/3.',
-      'Reține: aduni tot, apoi împarți la câți sunt, nu la câți îți convin.'
-    )
-  ],
+  'matematica:5:fractii': FRACTII_LESSONS,
   'matematica:5:geometrie': [
     lesson(
       'punct',

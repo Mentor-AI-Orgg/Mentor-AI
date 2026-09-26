@@ -10,8 +10,14 @@ const GLOSSARY = {
     { term: 'mers invers', meaning: 'Desfaci operațiile de la rezultat spre numărul de la început.' }
   ],
   'matematica:5:fractii': [
-    { term: 'numitor', meaning: 'În câte părți egale tai întregul.' },
-    { term: 'procent', meaning: 'Părți din o sută. 25% = 25/100.' }
+    { term: 'numărător', meaning: 'Câte părți egale iei din întreg.' },
+    { term: 'numitor', meaning: 'În câte părți egale tai întregul. Nu este 0.' },
+    { term: 'echivalente', meaning: 'Aceeași parte din întreg. Proba: produsele în cruce sunt egale.' },
+    { term: 'c.m.m.d.c.', meaning: 'Cel mai mare număr care împarte și numărătorul, și numitorul.' },
+    { term: 'c.m.m.m.c.', meaning: 'Cel mai mic multiplu comun nenul. Dă numitorul comun cel mai mic.' },
+    { term: 'procent', meaning: 'O sutime. 25% = 25/100.' },
+    { term: 'zecimală', meaning: 'Cifră după virgulă: zecimi, sutimi, miimi.' },
+    { term: 'rațional', meaning: 'Un număr scris ca fracție de naturale, cu numitor nenul.' }
   ],
   'matematica:5:geometrie': [
     { term: 'perimetru', meaning: 'Gardul: suma laturilor.' },

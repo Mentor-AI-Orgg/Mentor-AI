@@ -73,7 +73,7 @@ const GUIDES = {
     5: {
       title: "Matematică, clasa a V-a",
       howISeeIt:
-        "Anul ăsta e podul de la aritmetica din primar către gimnaziu. Capitolul numerelor naturale urmează cuprinsul manualului Litera pentru clasa a V-a: scriere, axă, comparare, aproximări, cele patru operații, puteri, metode aritmetice și divizibilitate. Apoi vin fracțiile și figurile. Lucrăm intuitiv: mai întâi desen, estimare, exemplu din viață, abia apoi formulă.",
+        "Anul ăsta e podul de la aritmetica din primar către gimnaziu. Numerele naturale acoperă scrierea, axa, compararea, aproximările, cele patru operații, puterile, metodele și divizibilitatea. Fracțiile ordinare continuă cu echivalența, axa, numerele mixte, c.m.m.d.c., c.m.m.m.c. și operațiile, iar zecimalele adaugă virgula, perioada, media și aceleași metode cu unități de măsură. Apoi vin figurile. Lucrăm intuitiv: mai întâi desen, estimare, exemplu din viață, abia apoi formulă.",
       units: [
         {
           id: "naturale",
@@ -118,7 +118,39 @@ const GUIDES = {
           id: "fractii",
           title: "Fracții ordinare și zecimale",
           inOwnWords:
-            "O fracție e o parte dintr-un întreg. Amplificare/simplificare, adunare cu numitor comun, procente ca „din o sută”. Zecimalele sunt aceeași idee scrisă cu virgulă; media aritmetică e un prim pas spre statistica simplă."
+            "Fracția taie un întreg în părți egale. Înveți felurile ei, echivalența, compararea, axa, numerele mixte, c.m.m.d.c. și c.m.m.m.c., apoi adunarea, înmulțirea, procentul, împărțirea și puterea. Zecimala este aceeași valoare scrisă cu virgulă: o compari, o rotunjești, o calculezi, recunoști perioada și o aduci înapoi la fracție. Media și problemele cu unități de măsură închid capitolul.",
+          toc: [
+            "Fractali: triunghiul și pătratul",
+            "Fracția ordinară",
+            "Fracții echivalente",
+            "Compararea fracțiilor ordinare",
+            "Fracții pe axa numerelor",
+            "Numere mixte",
+            "Cel mai mare divizor comun",
+            "Amplificare și simplificare",
+            "Cel mai mic multiplu comun și numitorul comun",
+            "Recapitulare: fracții ordinare",
+            "Adunarea și scăderea fracțiilor",
+            "Înmulțirea fracțiilor",
+            "Fracție dintr-un număr și procentul",
+            "Împărțirea fracțiilor",
+            "Puterea unei fracții",
+            "Recapitulare: operații cu fracții",
+            "Un tabel pentru un șir de date",
+            "Scrierea fracțiilor zecimale",
+            "Compararea fracțiilor zecimale",
+            "Aproximări și zecimale pe axă",
+            "Recapitulare: scrierea zecimalelor",
+            "Adunarea și scăderea zecimalelor",
+            "Înmulțirea zecimalelor",
+            "Împărțirea cu rezultat zecimal și media",
+            "De la fracție ordinară la zecimală periodică",
+            "Împărțirea a două zecimale",
+            "De la zecimală la fracție ordinară",
+            "Numărul rațional pozitiv și ordinea operațiilor",
+            "Metode cu fracții și unități de măsură",
+            "Recapitulare: fracții zecimale"
+          ]
         },
         {
           id: "geometrie",

@@ -642,6 +642,112 @@ const FIGURES = {
       </svg>
     )
   },
+  'fraction-bar': {
+    label: '3 din 4 părți egale',
+    svg: (
+      <svg viewBox="0 0 280 110" role="img" aria-label="Dreptunghi tăiat în patru, cu trei părți colorate">
+        <rect x="24" y="28" width="232" height="48" fill="none" stroke="#fff" strokeWidth="2" />
+        <rect x="24" y="28" width="58" height="48" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
+        <rect x="82" y="28" width="58" height="48" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
+        <rect x="140" y="28" width="58" height="48" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
+        <rect x="198" y="28" width="58" height="48" fill="none" stroke="#fff" strokeWidth="2" />
+        <text x="40" y="96" fill="#fff" fontSize="13">3/4 din întreg</text>
+      </svg>
+    )
+  },
+  'equivalent-bars': {
+    label: '1/2 și 2/4 sunt aceeași parte',
+    svg: (
+      <svg viewBox="0 0 280 120" role="img" aria-label="Două bare egale: jumătate și două sferturi">
+        <rect x="24" y="16" width="100" height="36" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
+        <rect x="124" y="16" width="100" height="36" fill="none" stroke="#fff" strokeWidth="2" />
+        <text x="232" y="40" fill={C.aqua} fontSize="13">1/2</text>
+        <rect x="24" y="68" width="50" height="36" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
+        <rect x="74" y="68" width="50" height="36" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
+        <rect x="124" y="68" width="50" height="36" fill="none" stroke="#fff" strokeWidth="2" />
+        <rect x="174" y="68" width="50" height="36" fill="none" stroke="#fff" strokeWidth="2" />
+        <text x="232" y="92" fill={C.violet} fontSize="13">2/4</text>
+      </svg>
+    )
+  },
+  'fraction-line': {
+    label: 'Fracții pe axă, de la 0 la 2',
+    svg: (
+      <svg viewBox="0 0 320 100" role="img" aria-label="Axă cu 0, 1/2, 1 și 3/2">
+        <line x1="20" y1="42" x2="300" y2="42" stroke="currentColor" strokeWidth="2" />
+        <polygon points="300,42 288,36 288,48" fill="currentColor" />
+        {[40, 110, 180, 250].map((x, index) => (
+          <g key={x}>
+            <line x1={x} y1="34" x2={x} y2="50" stroke="#fff" strokeWidth="2" />
+            <circle cx={x} cy="42" r="5" fill={index === 1 ? C.pink : C.aqua} />
+          </g>
+        ))}
+        <text x="32" y="72" fill="#fff" fontSize="13">0</text>
+        <text x="96" y="72" fill={C.pink} fontSize="13">1/2</text>
+        <text x="174" y="72" fill="#fff" fontSize="13">1</text>
+        <text x="238" y="72" fill="#fff" fontSize="13">3/2</text>
+      </svg>
+    )
+  },
+  'mixed-number': {
+    label: '2 întregi și 1/4',
+    svg: (
+      <svg viewBox="0 0 300 100" role="img" aria-label="Două pătrate întregi și un sfert din al treilea">
+        <rect x="16" y="20" width="64" height="52" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
+        <rect x="92" y="20" width="64" height="52" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
+        <rect x="168" y="20" width="16" height="52" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
+        <rect x="184" y="20" width="48" height="52" fill="none" stroke="#fff" strokeWidth="2" />
+        <text x="16" y="92" fill="#fff" fontSize="13">2 întregi + 1/4</text>
+      </svg>
+    )
+  },
+  sierpinski: {
+    label: 'Triunghi: colorezi tot, în afară de mijloc',
+    svg: (
+      <svg viewBox="0 0 220 150" role="img" aria-label="Triunghi împărțit în patru, cu mijlocul gol">
+        <polygon points="110,12 20,132 200,132" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
+        <polygon points="110,72 65,132 155,132" fill="#12141c" stroke={C.pink} strokeWidth="2" />
+        <circle cx="110" cy="72" r="3" fill={C.pink} />
+        <circle cx="65" cy="132" r="3" fill={C.violet} />
+        <circle cx="155" cy="132" r="3" fill={C.violet} />
+        <text x="48" y="148" fill="#fff" fontSize="11">mijlocul rămâne gol</text>
+      </svg>
+    )
+  },
+  'decimal-place': {
+    label: 'Virgula desparte întregii de zecimale',
+    svg: (
+      <svg viewBox="0 0 320 110" role="img" aria-label="Numărul 3,25 cu unități, zecimi și sutimi">
+        <rect x="16" y="24" width="70" height="48" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
+        <text x="40" y="54" fill="#fff" fontSize="22">3</text>
+        <text x="96" y="54" fill={C.pink} fontSize="28">,</text>
+        <rect x="118" y="24" width="70" height="48" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
+        <text x="142" y="54" fill="#fff" fontSize="22">2</text>
+        <rect x="196" y="24" width="70" height="48" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
+        <text x="220" y="54" fill="#fff" fontSize="22">5</text>
+        <text x="22" y="92" fill={C.violet} fontSize="11">unități</text>
+        <text x="128" y="92" fill={C.aqua} fontSize="11">zecimi</text>
+        <text x="206" y="92" fill={C.pink} fontSize="11">sutimi</text>
+      </svg>
+    )
+  },
+  'decimal-line': {
+    label: '1,4 stă între 1 și 2, mai aproape de 1',
+    svg: (
+      <svg viewBox="0 0 320 100" role="img" aria-label="Axă cu 0, 1, 1,4 și 2">
+        <line x1="20" y1="42" x2="300" y2="42" stroke="currentColor" strokeWidth="2" />
+        <polygon points="300,42 288,36 288,48" fill="currentColor" />
+        <line x1="50" y1="34" x2="50" y2="50" stroke="#fff" />
+        <line x1="150" y1="34" x2="150" y2="50" stroke="#fff" />
+        <line x1="250" y1="34" x2="250" y2="50" stroke="#fff" />
+        <circle cx="190" cy="42" r="6" fill={C.pink} />
+        <text x="44" y="74" fill="#fff" fontSize="13">0</text>
+        <text x="144" y="74" fill="#fff" fontSize="13">1</text>
+        <text x="176" y="24" fill={C.pink} fontSize="13">1,4</text>
+        <text x="244" y="74" fill="#fff" fontSize="13">2</text>
+      </svg>
+    )
+  },
   sphere: {
     label: 'Sferă',
     svg: (
