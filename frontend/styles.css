@@ -1219,6 +1219,10 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .chapter-map-line, .empty-state { color: #c9cbe0; font-size: 13px; }
 .lesson-try { border-left: 3px solid #f0c36a; padding-left: 10px; margin: 0 0 10px; }
 .lesson-try p:last-child { margin-bottom: 0; }
+.lesson-practice { border-left: 3px solid #6fd7ff; padding-left: 10px; margin: 0 0 10px; }
+.lesson-practice p:last-child { margin-bottom: 0; }
+.lesson-mistakes { border-left: 3px solid #ff8fa3; padding-left: 10px; margin: 0 0 10px; }
+.lesson-mistakes p:last-child { margin-bottom: 0; }
 .mission-list { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 8px; }
 .mission-list li { display: flex; gap: 8px; align-items: center; }
 .mission-list li.done { color: #b8f0c4; }

@@ -73,13 +73,46 @@ const GUIDES = {
     5: {
       title: "Matematică, clasa a V-a",
       howISeeIt:
-        "Anul ăsta e podul de la aritmetica din primar către gimnaziu. Elevul trebuie să se simtă stăpân pe numerele naturale, apoi să treacă la fracții fără panică și să recunoască figuri simple. Lucrăm intuitiv: mai întâi desen, estimare, exemplu din viață, abia apoi formulă.",
+        "Anul ăsta e podul de la aritmetica din primar către gimnaziu. Capitolul numerelor naturale urmează cuprinsul manualului Litera pentru clasa a V-a: scriere, axă, comparare, aproximări, cele patru operații, puteri, metode aritmetice și divizibilitate. Apoi vin fracțiile și figurile. Lucrăm intuitiv: mai întâi desen, estimare, exemplu din viață, abia apoi formulă.",
       units: [
         {
           id: "naturale",
-          title: "Numere naturale și calcule",
+          title: "Numere naturale",
           inOwnWords:
-            "Citire, scriere, comparare, puteri, paranteze, metode aritmetice (reducere la unitate, mers invers). Divizibilitate: ce se împarte exact la 2, 3, 5, 9, 10; numere prime versus compuse."
+            "Scrii și citești numere, le pui pe axă, le compari și le aproximezi. Apoi aduni, scazi, înmulțești și împarți, cu rest sau fără. Înveți puterile, pătratele perfecte, baza 2 și ordinea operațiilor. Rezolvi probleme prin reducere la unitate, comparație, desen, mers invers sau falsă ipoteză. La sfârșit recunoști divizorii, multiplii, criteriile și numerele prime.",
+          toc: [
+            "Curiozități din lumea numerelor naturale",
+            "Scrierea și citirea numerelor naturale",
+            "Reprezentarea numerelor naturale pe axă",
+            "Compararea și ordonarea numerelor naturale",
+            "Aproximări și estimări",
+            "Recapitulare: numere naturale",
+            "Adunarea numerelor naturale",
+            "Scăderea numerelor naturale",
+            "Înmulțirea numerelor naturale",
+            "Împărțirea cu rest zero",
+            "Împărțirea cu rest",
+            "Recapitulare: operații",
+            "Puterea cu exponent natural",
+            "Reguli de calcul cu puteri",
+            "Compararea puterilor",
+            "Pătratul unui număr natural",
+            "Scrierea în baza 10 și în baza 2",
+            "Ordinea efectuării operațiilor",
+            "Recapitulare: puteri",
+            "Metoda reducerii la unitate",
+            "Metoda comparației",
+            "Metoda figurativă",
+            "Metoda mersului invers",
+            "Metoda falsei ipoteze",
+            "Recapitulare: metode aritmetice",
+            "Divizor și multiplu",
+            "Divizor comun și multiplu comun",
+            "Criteriile de divizibilitate cu 2, 5 și 10",
+            "Criteriile de divizibilitate cu 3 și cu 9",
+            "Numere prime și numere compuse",
+            "Recapitulare: divizibilitate"
+          ]
         },
         {
           id: "fractii",

@@ -1,7 +1,13 @@
 const GLOSSARY = {
   'matematica:5:naturale': [
+    { term: 'ordin', meaning: 'Locul unei cifre: unități, zeci, sute, mii.' },
+    { term: 'axă', meaning: 'Dreaptă cu origine, sens și unitate, pe care stă fiecare număr.' },
     { term: 'putere', meaning: 'Baza înmulțită cu ea însăși de atâtea ori cât spune exponentul.' },
-    { term: 'prim', meaning: 'Număr cu exact doi divizori: 1 și el însuși.' }
+    { term: 'rest', meaning: 'Ce rămâne la împărțire. Este mai mic decât împărțitorul.' },
+    { term: 'divizor', meaning: 'Număr nenul care împarte exact.' },
+    { term: 'prim', meaning: 'Număr cu exact doi divizori: 1 și el însuși.' },
+    { term: 'rotunjire', meaning: 'Apropierea unui număr de un ordin, prin lipsă sau prin adaos.' },
+    { term: 'mers invers', meaning: 'Desfaci operațiile de la rezultat spre numărul de la început.' }
   ],
   'matematica:5:fractii': [
     { term: 'numitor', meaning: 'În câte părți egale tai întregul.' },

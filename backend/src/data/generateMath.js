@@ -35,16 +35,16 @@ const BY_CHAPTER = {
       (rand) => { const n = pick(rand, [15, 20, 24, 35, 42, 50]); const ok = n % 5 === 0; return flash('div5', `${n} se împarte exact la 5?`, [ok ? 'Da, se termină cu 0 sau 5' : 'Nu, ultima cifră nu e 0 sau 5', 'Da, e impar', 'Doar dacă e prim', 'Doar dacă e par'], 'Criteriul lui 5: ultima cifră 0 sau 5.', 4); },
       (rand) => { const p = pick(rand, [11, 13, 17, 19, 23, 29]); return flash('prime', `${p} e prim pentru că…`, ['are exact doi divizori: 1 și el', 'se împarte la 3', 'e par', 'are mulți divizori'], 'Prim = doar 1 și el însuși.', 5); },
       () => flash('paranteze', 'În 3 + 4 × 2, întâi…', ['înmulțești 4 × 2', 'aduni 3 + 4', 'faci 3 × 2', 'scazi 4'], 'Înmulțirea bate adunarea, dacă nu sunt paranteze.', 6),
-      () => flash('cmmdc', 'c.m.m.d.c. a două numere e…', ['cel mai mare număr care le împarte pe amândouă', 'cel mai mic multiplu comun', 'suma lor', 'produsul lor'], 'Cel mai mare „prieten” la împărțire.', 7),
-      () => flash('cmmmc', 'c.m.m.m.c. e…', ['cel mai mic număr care se împarte la amândouă', 'cel mai mare divizor', 'diferența lor', 'un număr prim'], 'Prima stație comună pe axa multiplilor.', 8)
+      () => flash('cmmdc', 'Cel mai mare divizor comun al celor două numere e…', ['cel mai mare număr care le împarte pe amândouă', 'cel mai mic multiplu comun', 'suma lor', 'produsul lor'], 'Este cel mai mare dintre divizorii comuni.', 7),
+      () => flash('cmmmc', 'Cel mai mic multiplu comun nenul e…', ['cel mai mic număr nenul care se împarte la amândouă', 'cel mai mare divizor', 'diferența lor', 'un număr prim'], 'Este primul multiplu comun pe care îl întâlnești după 0.', 8)
     ],
     tests: [
       (rand, lv) => { const a = int(rand, 2, 9); const b = int(rand, 2, 9); return test('adunare', `Calculează ${a} + ${b}. Doar rezultatul.`, a + b, [`${a} + ${b} = ${a + b}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 2, 8); return test('puteri', `Calculează ${a}².`, a * a, [`${a} × ${a} = ${a * a}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 2, 6); const b = int(rand, 2, 5); const c = int(rand, 1, 8); const val = a ** 2 * b + c; return test('paranteze', `Calculează ${a}² × ${b} + ${c}.`, val, [`${a}² = ${a * a}`, `${a * a} × ${b} = ${a * a * b}`, `+ ${c} = ${val}`], { level: lv }); },
       (rand, lv) => { const n = int(rand, 12, 40) * 3; const sum = String(n).split('').reduce((acc, d) => acc + Number(d), 0); return test('div3', `Suma cifrelor numărului ${n}. Doar suma.`, sum, [`Cifrele lui ${n}`, `Suma = ${sum}`], { level: lv }); },
-      (rand, lv) => { const g = int(rand, 2, 6); const a = g * int(rand, 2, 7); const b = g * int(rand, 2, 7); return test('cmmdc', `Cel mai mare divizor comun al numerelor ${a} și ${b}.`, gcd(a, b), [`c.m.m.d.c.(${a}, ${b}) = ${gcd(a, b)}`], { level: lv }); },
-      (rand, lv) => { const a = pick(rand, [4, 6, 8, 9, 10]); const b = pick(rand, [6, 8, 12, 15]); return test('cmmmc', `Cel mai mic multiplu comun al numerelor ${a} și ${b}.`, lcm(a, b), [`c.m.m.m.c.(${a}, ${b}) = ${lcm(a, b)}`], { level: lv }); },
+      (rand, lv) => { const g = int(rand, 2, 6); const a = g * int(rand, 2, 7); const b = g * int(rand, 2, 7); return test('cmmdc', `Cel mai mare număr care împarte și pe ${a}, și pe ${b}.`, gcd(a, b), [`Divizorii comuni se opresc la ${gcd(a, b)}`], { level: lv }); },
+      (rand, lv) => { const a = pick(rand, [4, 6, 8, 9, 10]); const b = pick(rand, [6, 8, 12, 15]); return test('cmmmc', `Cel mai mic multiplu comun nenul al numerelor ${a} și ${b}.`, lcm(a, b), [`Multiplul comun nenul cel mai mic este ${lcm(a, b)}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 2, 5); const b = int(rand, 2, 4); const c = int(rand, 2, 6); const val = a ** 2 * b - c ** 2; return test('paranteze', `Calculează ${a}² × ${b} − ${c}². Doar rezultatul.`, val, [`${a}² = ${a * a}`, `${a * a} × ${b} = ${a * a * b}`, `${c}² = ${c * c}`, `${a * a * b} − ${c * c} = ${val}`], { level: lv }); }
     ]
   },

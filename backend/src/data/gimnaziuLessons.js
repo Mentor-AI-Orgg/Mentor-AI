@@ -1,5 +1,9 @@
 // Lecții originale, „pe tavă”, după programa 5–8 (OMEN 3393/2017).
 // Nu copiem manuale. Fiecare lecție: idee + exemplu lucrat + ce să reții.
+// La clasa a V-a, capitolul numerelor naturale urmează cuprinsul manualului
+// Litera A1259 și stă în mate5Naturale.js.
+
+const { NATURALE_LESSONS } = require('./mate5Naturale');
 
 function lesson(id, title, ...paragraphs) {
   let extra = {};
@@ -12,56 +16,7 @@ function lesson(id, title, ...paragraphs) {
 }
 
 const LESSONS = {
-  'matematica:5:naturale': [
-    lesson(
-      'citire',
-      'Citire, scriere, comparare',
-      'Un număr natural e un număr de numărat: 0, 1, 2, 3… Nu are virgulă și nu e negativ. Citirea merge de la stânga: sute de mii, zeci de mii, mii, sute, zeci, unități. 3 405 se citește „trei mii patru sute cinci”.',
-      'Ca să compari, te uiți întâi cine are mai multe cifre: 999 < 1000. Dacă au același număr de cifre, compari de la stânga, prima cifră care diferă decide. 2 817 și 2 871: sutele sunt egale (8), zecile 1 < 7, deci 2 817 < 2 871.',
-      'Exemplu lucrat: pune în ordine 408, 480, 84. 84 are două cifre, deci e cel mai mic. 408 și 480 au ambele 4 sute; zecile 0 < 8, deci 408 < 480. Ordinea: 84, 408, 480.',
-      'Reține: compararea nu e adunare. Spune doar care e mai mare sau dacă sunt egale.'
-    ),
-    lesson(
-      'operatii',
-      'Cele patru operații',
-      'Adunarea pune grămezi la un loc. Scăderea ia dintr-o grămadă. Înmulțirea e adunare repetată: 4 × 6 = 6+6+6+6. Împărțirea taie în părți egale: 24 : 4 = 6, pentru că 4 × 6 = 24.',
-      'Restul la împărțire e ce rămâne când nu iese exact. 17 : 5 = 3 rest 2, pentru că 5 × 3 = 15 și mai rămân 2.',
-      'Exemplu lucrat: o cutie are 3 rânduri a câte 8 creioane. Câte sunt? 3 × 8 = 24. Dai 5 copii câte 4. 5 × 4 = 20. Rămân 24 − 20 = 4 creioane.',
-      'Reține: înmulțirea și împărțirea se „desfac” una pe alta. Dacă 7 × 9 = 63, atunci 63 : 9 = 7.'
-    ),
-    lesson(
-      'puteri',
-      'Puteri',
-      'O putere e o înmulțire a aceluiași număr cu el însuși. Baza e numărul care se înmulțește; exponentul spune de câte ori. 3⁴ = 3 × 3 × 3 × 3 = 81. Nu e 3 × 4 și nu e 34.',
-      '2³ = 8, 5² = 25, 10² = 100. 10ⁿ e 1 urmat de n zerouri: 10³ = 1000.',
-      'Exemplu lucrat: calculează 2³ × 5. Întâi puterea: 2 × 2 × 2 = 8, apoi 8 × 5 = 40. Dacă ai fi făcut 2 × 3 × 5 = 30, ai fi greșit exponentul.',
-      'Reține: exponentul nu e un plus lipit. E „de câte ori se înmulțește baza”.'
-    ),
-    lesson(
-      'paranteze',
-      'Paranteze și ordinea operațiilor',
-      'Fără paranteze, întâi puterile, apoi înmulțirea și împărțirea (de la stânga la dreapta), apoi adunarea și scăderea. Parantezele schimbă regula: întâi interiorul.',
-      '3 + 4 × 2 = 3 + 8 = 11, nu 14. Dar (3 + 4) × 2 = 7 × 2 = 14.',
-      'Exemplu lucrat: 5 × [18 − (3 + 5)] : 2 + 7. Paranteza mică: 3+5=8. Apoi 18−8=10. 5×10=50. 50:2=25. 25+7=32.',
-      'Reține: parantezele nu sunt ornament. Ele spun „fă treaba asta prima”.'
-    ),
-    lesson(
-      'divizibilitate',
-      'Când un număr se împarte exact',
-      'La 2: ultima cifră e pară (0, 2, 4, 6, 8). La 5: ultima e 0 sau 5. La 10: ultima e 0. La 3 și la 9: te uiți la suma cifrelor. Dacă suma se împarte la 3, numărul se împarte la 3. La 9, suma trebuie să se împartă la 9.',
-      '45: 4+5=9, 9 se împarte la 3 și la 9, deci 45 se împarte la 3 și la 9. 45 se termină cu 5, deci și la 5.',
-      'Exemplu lucrat: cel mai mic număr de 3 cifre care se împarte și la 2, și la 3, și la 5. Trebuie multiplu de 2, 3 și 5, deci de 30. Primul de 3 cifre: 120. Verificare: se termină cu 0 (la 2 și 5), 1+2+0=3 (la 3).',
-      'Reține: nu împarți „din ochi”. Ai o regulă pe ultima cifră sau pe suma cifrelor.'
-    ),
-    lesson(
-      'prime',
-      'Prime, compuse, metode aritmetice',
-      'Un număr prim are exact doi divizori: 1 și el însuși. 2, 3, 5, 7, 11, 13 sunt prime. 1 nu e prim (are un singur divizor). Un număr compus are și alți divizori: 4, 6, 8, 9, 15.',
-      'Reducerea la unitate: dacă 3 caiete costă 18 lei, un caiet costă 18:3=6, deci 5 caiete costă 30. Mersul invers: dacă la final ai 20 după ce ai adunat 8, înainte era 12.',
-      'Exemplu lucrat: câte prime sunt între 40 și 50? Tai parele. 45=9×5, 49=7×7. Rămân 41, 43, 47 — trei numere.',
-      'Reține: prim ≠ impar. 9 e impar și totuși compus.'
-    )
-  ],
+  'matematica:5:naturale': NATURALE_LESSONS,
   'matematica:5:fractii': [
     lesson(
       'parte',

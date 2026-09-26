@@ -528,8 +528,10 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                               )}
                               <LessonProse label="Teorie." text={entry.theory} />
                               <LessonProse label="Exemplu." text={entry.example} />
-                              <LessonProse label="Încearcă tu." text={entry.tryThis} className="lesson-try" />
-                              <LessonProse label="Recap." text={entry.recap} />
+                              {entry.practice ? <LessonProse label="Exersează." text={entry.practice} className="lesson-practice" /> : null}
+                              {entry.mistakes ? <LessonProse label="Greșeli frecvente." text={entry.mistakes} className="lesson-mistakes" /> : null}
+                              <LessonProse label={entry.practice || entry.mistakes ? 'Învață și tu.' : 'Încearcă tu.'} text={entry.tryThis} className="lesson-try" />
+                              <LessonProse label={entry.practice || entry.mistakes ? 'Recapitulare.' : 'Recap.'} text={entry.recap} />
                               {!entry.theory && (entry.platter || '').split(/\n\n+/).map((para, paraIndex) => (
                                 <p key={`${entry.id}-${paraIndex}`}>{para}</p>
                               ))}

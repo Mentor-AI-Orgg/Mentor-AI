@@ -513,6 +513,135 @@ const FIGURES = {
       </svg>
     )
   },
+  'number-line': {
+    label: 'Axa numerelor naturale',
+    svg: (
+      <svg viewBox="0 0 320 110" role="img" aria-label="Axă cu originea O, unitatea u și punctele 0, 1, 2, 3, 4">
+        <line x1="24" y1="58" x2="300" y2="58" stroke="currentColor" strokeWidth="2" />
+        <polygon points="300,58 288,52 288,64" fill="currentColor" />
+        <text x="292" y="44" fill={C.pink} fontSize="12">sens</text>
+        {[0, 1, 2, 3, 4].map(n => (
+          <g key={n}>
+            <line x1={48 + n * 48} y1="50" x2={48 + n * 48} y2="66" stroke={C.aqua} strokeWidth="2" />
+            <circle cx={48 + n * 48} cy="58" r="4" fill={n === 0 ? C.pink : C.violet} />
+            <text x={42 + n * 48} y="86" fill="#fff" fontSize="13">{n}</text>
+          </g>
+        ))}
+        <text x="36" y="36" fill={C.pink} fontSize="13">O</text>
+        <line x1="48" y1="58" x2="96" y2="58" stroke={C.aqua} strokeWidth="6" strokeLinecap="round" />
+        <text x="60" y="28" fill={C.aqua} fontSize="12">u</text>
+      </svg>
+    )
+  },
+  'compare-line': {
+    label: 'Pe axă, numărul mai mare stă mai la dreapta',
+    svg: (
+      <svg viewBox="0 0 320 100" role="img" aria-label="Trei puncte pe axă, în ordine crescătoare">
+        <line x1="20" y1="48" x2="300" y2="48" stroke="currentColor" strokeWidth="2" />
+        <polygon points="300,48 288,42 288,54" fill="currentColor" />
+        <circle cx="70" cy="48" r="6" fill={C.aqua} />
+        <circle cx="150" cy="48" r="6" fill={C.violet} />
+        <circle cx="230" cy="48" r="6" fill={C.pink} />
+        <text x="58" y="78" fill={C.aqua} fontSize="13">84</text>
+        <text x="132" y="78" fill={C.violet} fontSize="13">408</text>
+        <text x="212" y="78" fill={C.pink} fontSize="13">480</text>
+        <text x="250" y="28" fill="#fff" fontSize="12">mai mare →</text>
+      </svg>
+    )
+  },
+  'place-value': {
+    label: 'Clase și ordine, de la dreapta la stânga',
+    svg: (
+      <svg viewBox="0 0 320 120" role="img" aria-label="Numărul 530957 împărțit în clasa miilor și clasa unităților">
+        <rect x="16" y="28" width="140" height="56" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
+        <rect x="164" y="28" width="140" height="56" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
+        <text x="28" y="20" fill={C.violet} fontSize="11">clasa miilor</text>
+        <text x="176" y="20" fill={C.aqua} fontSize="11">clasa unităților</text>
+        {['5', '3', '0', '9', '5', '7'].map((digit, index) => (
+          <text key={digit + index} x={32 + index * 46} y="62" fill="#fff" fontSize="22">{digit}</text>
+        ))}
+        <text x="24" y="104" fill={C.violet} fontSize="10">sute mii · zeci mii · mii</text>
+        <text x="176" y="104" fill={C.aqua} fontSize="10">sute · zeci · unități</text>
+      </svg>
+    )
+  },
+  'dot-numbers': {
+    label: 'Număr triunghiular și pătrat perfect',
+    svg: (
+      <svg viewBox="0 0 280 130" role="img" aria-label="Trei puncte în triunghi și nouă puncte în pătrat">
+        {[
+          [40, 28],
+          [28, 52], [52, 52],
+          [16, 76], [40, 76], [64, 76]
+        ].map(([x, y], index) => (
+          <circle key={`t${index}`} cx={x} cy={y} r="6" fill={C.aqua} />
+        ))}
+        <text x="16" y="108" fill={C.aqua} fontSize="12">1+2+3 = 6</text>
+        {[0, 1, 2].map(row => [0, 1, 2].map(col => (
+          <circle key={`s${row}${col}`} cx={150 + col * 22} cy={28 + row * 22} r="6" fill={C.violet} />
+        )))}
+        <text x="150" y="108" fill={C.violet} fontSize="12">3×3 = 9</text>
+      </svg>
+    )
+  },
+  remainder: {
+    label: 'Împărțire cu rest: 17 = 5×3 + 2',
+    svg: (
+      <svg viewBox="0 0 300 120" role="img" aria-label="Trei grupe de câte cinci puncte și un rest de două">
+        {[0, 1, 2].map(group => (
+          <g key={group}>
+            <rect x={16 + group * 78} y="24" width="66" height="36" rx="8" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
+            {[0, 1, 2, 3, 4].map(dot => (
+              <circle key={dot} cx={28 + group * 78 + dot * 11} cy="42" r="4" fill={C.aqua} />
+            ))}
+          </g>
+        ))}
+        <circle cx="250" cy="42" r="5" fill={C.pink} />
+        <circle cx="266" cy="42" r="5" fill={C.pink} />
+        <text x="16" y="90" fill="#fff" fontSize="13">3 grupe de 5, rest 2</text>
+      </svg>
+    )
+  },
+  'power-grid': {
+    label: '3² înseamnă 3×3, nu 3×2',
+    svg: (
+      <svg viewBox="0 0 220 140" role="img" aria-label="Grilă 3 pe 3 pentru pătratul lui 3">
+        {[0, 1, 2].map(row => [0, 1, 2].map(col => (
+          <rect key={`${row}-${col}`} x={30 + col * 36} y={20 + row * 36} width="30" height="30" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
+        )))}
+        <text x="150" y="70" fill="#fff" fontSize="16">3² = 9</text>
+      </svg>
+    )
+  },
+  segments: {
+    label: 'Sumă și diferență pe segmente',
+    svg: (
+      <svg viewBox="0 0 300 120" role="img" aria-label="Două segmente: numărul mic și numărul mare, cu diferența marcată">
+        <line x1="30" y1="36" x2="170" y2="36" stroke={C.aqua} strokeWidth="8" strokeLinecap="round" />
+        <text x="180" y="40" fill={C.aqua} fontSize="13">mic</text>
+        <line x1="30" y1="72" x2="230" y2="72" stroke={C.violet} strokeWidth="8" strokeLinecap="round" />
+        <line x1="170" y1="64" x2="170" y2="80" stroke={C.pink} strokeWidth="2" />
+        <text x="176" y="96" fill={C.pink} fontSize="12">diferență</text>
+        <text x="30" y="112" fill="#fff" fontSize="12">suma − diferența = de două ori numărul mic</text>
+      </svg>
+    )
+  },
+  'bar-sum': {
+    label: 'Suma pune grupele la un loc',
+    svg: (
+      <svg viewBox="0 0 280 130" role="img" aria-label="Trei bare, 4, 6 și 2, a căror sumă este 12">
+        <line x1="36" y1="20" x2="36" y2="100" stroke="currentColor" strokeWidth="2" />
+        <line x1="36" y1="100" x2="250" y2="100" stroke="currentColor" strokeWidth="2" />
+        <rect x="56" y="60" width="36" height="40" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
+        <rect x="108" y="40" width="36" height="60" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
+        <rect x="160" y="80" width="36" height="20" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
+        <text x="66" y="54" fill={C.aqua} fontSize="12">4</text>
+        <text x="118" y="34" fill={C.violet} fontSize="12">6</text>
+        <text x="170" y="74" fill={C.pink} fontSize="12">2</text>
+        <text x="56" y="120" fill="#fff" fontSize="13">4 + 6 + 2 = 12</text>
+      </svg>
+    )
+  },
   sphere: {
     label: 'Sferă',
     svg: (
