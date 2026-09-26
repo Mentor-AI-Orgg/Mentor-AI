@@ -528,7 +528,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                       </p>
                       <small className="chapter-disclaimer">
                         {guide?.manual
-                          ? 'Ordinea e din cuprinsul manualului aprobat. Textul lecției e un rezumat propriu, nu pagina din manual.'
+                          ? 'Ordinea urmează temele din programă. Scena de care ai nevoie este scrisă în lecție. La școală repeți aceiași pași pe textul pe care îl ai deschis, chiar dacă titlul este altul.'
                           : 'Ghid intern Mentor AI, nu manual. „Cum o văd eu”, după programă.'}
                       </small>
                       <div className="learning-actions">
