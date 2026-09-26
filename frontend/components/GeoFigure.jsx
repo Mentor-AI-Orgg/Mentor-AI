@@ -1,13 +1,18 @@
 import GeoSolid from './GeoSolid.jsx';
 import MathText from './MathText.jsx';
 
-function SvgFraction({ x, y, num, den, fill = '#fff' }) {
-  const width = Math.max(String(num).length, String(den).length) * 8 + 10;
+function SvgFraction({ x, y, num, den, fill = '#fff', label }) {
+  const cx = Number(x);
+  const cy = Number(y);
+  const half = Math.max(String(num).length, String(den).length) * 4.5 + 1.5;
   return (
     <g>
-      <text x={x} y={y - 8} textAnchor="middle" fill={fill} fontSize="12">{num}</text>
-      <line x1={x - width / 2} y1={y - 3} x2={x + width / 2} y2={y - 3} stroke={fill} strokeWidth="1.6" />
-      <text x={x} y={y + 11} textAnchor="middle" fill={fill} fontSize="12">{den}</text>
+      <text x={cx} y={cy - 5} textAnchor="middle" fill={fill} fontSize="13">{num}</text>
+      <line x1={cx - half} y1={cy} x2={cx + half} y2={cy} stroke={fill} strokeWidth="1.15" />
+      <text x={cx} y={cy + 12} textAnchor="middle" fill={fill} fontSize="13">{den}</text>
+      {label ? (
+        <text x={cx + half + 10} y={cy} dominantBaseline="middle" fill={fill} fontSize="13">{label}</text>
+      ) : null}
     </g>
   );
 }
@@ -657,14 +662,13 @@ const FIGURES = {
   'fraction-bar': {
     label: '3 din 4 părți egale',
     svg: (
-      <svg viewBox="0 0 280 124" role="img" aria-label="Dreptunghi tăiat în patru, cu trei părți colorate">
-        <rect x="24" y="28" width="232" height="48" fill="none" stroke="#fff" strokeWidth="2" />
-        <rect x="24" y="28" width="58" height="48" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
-        <rect x="82" y="28" width="58" height="48" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
-        <rect x="140" y="28" width="58" height="48" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
-        <rect x="198" y="28" width="58" height="48" fill="none" stroke="#fff" strokeWidth="2" />
-        <SvgFraction x="36" y="96" num="3" den="4" />
-        <text x="58" y="100" fill="#fff" fontSize="13">din întreg</text>
+      <svg viewBox="0 0 280 132" role="img" aria-label="Dreptunghi tăiat în patru, cu trei părți colorate, etichetat 3 pe 4 din întreg">
+        <rect x="24" y="16" width="232" height="48" fill="none" stroke="#fff" strokeWidth="2" />
+        <rect x="24" y="16" width="58" height="48" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
+        <rect x="82" y="16" width="58" height="48" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
+        <rect x="140" y="16" width="58" height="48" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
+        <rect x="198" y="16" width="58" height="48" fill="none" stroke="#fff" strokeWidth="2" />
+        <SvgFraction x="98" y="96" num="3" den="4" label="din întreg" />
       </svg>
     )
   },
@@ -705,13 +709,13 @@ const FIGURES = {
   'mixed-number': {
     label: '2 întregi și 1/4',
     svg: (
-      <svg viewBox="0 0 300 118" role="img" aria-label="Două pătrate întregi și un sfert din al treilea">
-        <rect x="16" y="20" width="64" height="52" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
-        <rect x="92" y="20" width="64" height="52" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
-        <rect x="168" y="20" width="16" height="52" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
-        <rect x="184" y="20" width="48" height="52" fill="none" stroke="#fff" strokeWidth="2" />
-        <text x="16" y="96" fill="#fff" fontSize="13">2 întregi +</text>
-        <SvgFraction x="118" y="92" num="1" den="4" fill={C.pink} />
+      <svg viewBox="0 0 300 128" role="img" aria-label="Două pătrate întregi și un sfert din al treilea">
+        <rect x="16" y="16" width="64" height="52" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
+        <rect x="92" y="16" width="64" height="52" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
+        <rect x="168" y="16" width="16" height="52" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
+        <rect x="184" y="16" width="48" height="52" fill="none" stroke="#fff" strokeWidth="2" />
+        <text x="16" y="100" fill="#fff" fontSize="13">2 întregi +</text>
+        <SvgFraction x="156" y="96" num="1" den="4" fill={C.pink} />
       </svg>
     )
   },
