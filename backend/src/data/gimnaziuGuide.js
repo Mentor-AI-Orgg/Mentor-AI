@@ -26,7 +26,7 @@ const SOURCE = {
   portal: "https://www.edu.ro/Ordin_ministru_3393_2017",
   textbooks: "https://www.manuale.edu.ro/",
   disclaimer:
-    "La clasa a V-a, româna urmează cuprinsul manualului Litera, A1249. La clasa a VI-a a început manualul Litera, A1470: recapitularea inițială și Unitățile 1–5. Textul lecțiilor e un rezumat propriu: nu copiem fragmentele și exercițiile. Restul clasei a VI-a și clasele VII–VIII așteaptă bucățile lor."
+    "La clasa a V-a, româna urmează cuprinsul manualului Litera, A1249. La clasa a VI-a, manualul Litera, A1470, este parcurs până la capăt: recapitularea inițială, Unitățile 1–6 și încheierea anului. Textul lecțiilor e un rezumat propriu: nu copiem fragmentele și exercițiile. Clasele VII–VIII așteaptă bucățile lor."
 };
 
 const GRADES = [5, 6, 7, 8];
