@@ -813,6 +813,34 @@ const FIGURES = {
       </svg>
     )
   },
+  venn: {
+    label: 'Două mulțimi și partea lor comună',
+    svg: (
+      <svg viewBox="0 0 280 140" role="img" aria-label="Diagramă cu două cercuri care se taie, A și B">
+        <circle cx="110" cy="72" r="48" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
+        <circle cx="168" cy="72" r="48" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
+        <text x="78" y="68" fill="#fff" fontSize="16">A</text>
+        <text x="186" y="68" fill="#fff" fontSize="16">B</text>
+        <text x="128" y="76" fill={C.pink} fontSize="13">∩</text>
+      </svg>
+    )
+  },
+  'integer-line': {
+    label: 'Axa numerelor întregi',
+    svg: (
+      <svg viewBox="0 0 320 100" role="img" aria-label="Axă cu numerele de la −3 la 3">
+        <line x1="16" y1="48" x2="304" y2="48" stroke="currentColor" strokeWidth="2" />
+        <polygon points="304,48 292,42 292,54" fill="currentColor" />
+        {[-3, -2, -1, 0, 1, 2, 3].map(n => (
+          <g key={n}>
+            <line x1={48 + (n + 3) * 36} y1="40" x2={48 + (n + 3) * 36} y2="56" stroke={C.aqua} strokeWidth="2" />
+            <circle cx={48 + (n + 3) * 36} cy="48" r="4" fill={n === 0 ? C.pink : C.violet} />
+            <text x={n < 0 ? 34 + (n + 3) * 36 : 40 + (n + 3) * 36} y="78" fill="#fff" fontSize="13">{n}</text>
+          </g>
+        ))}
+      </svg>
+    )
+  },
   'frequency-bars': {
     label: 'Bare: de câte ori apare fiecare notă',
     svg: (

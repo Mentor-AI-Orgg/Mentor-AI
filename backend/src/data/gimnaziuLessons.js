@@ -6,6 +6,10 @@
 const { NATURALE_LESSONS } = require('./mate5Naturale');
 const { FRACTII_LESSONS } = require('./mate5Fractii');
 const { GEOMETRIE_LESSONS } = require('./mate5Geometrie');
+const { MULTIMI_LESSONS } = require('./mate6Multimi');
+const { PROPORTII_LESSONS } = require('./mate6Proportii');
+const { NUMERE_LESSONS } = require('./mate6Numere');
+const { GEOMETRIE6_LESSONS } = require('./mate6Geometrie');
 
 function lesson(id, title, ...paragraphs) {
   let extra = {};
@@ -21,204 +25,10 @@ const LESSONS = {
   'matematica:5:naturale': NATURALE_LESSONS,
   'matematica:5:fractii': FRACTII_LESSONS,
   'matematica:5:geometrie': GEOMETRIE_LESSONS,
-  'matematica:6:multimi': [
-    lesson(
-      'apartine',
-      'Apartenență, reuniune, intersecție',
-      'x ∈ A înseamnă „x e un element din A”. Reuniunea A ∪ B strânge tot ce e în cel puțin una, fără dubluri. Intersecția A ∩ B ține doar ce e în amândouă.',
-      'Mulțimea vidă ∅ nu are elemente. {0} nu e vidă: zero e un oaspete.',
-      'Exemplu lucrat: A={2,4,6,8}, B={1,2,3,4}, C={4,8,12}. A ∪ B = {1,2,3,4,6,8}. (A ∪ B) ∩ C = {4,8}. Două elemente.',
-      'Reține: reuniunea e „sau”, intersecția e „și”.'
-    ),
-    lesson(
-      'cardinal',
-      'Câte elemente: cardinalul',
-      '|A| e numărul de elemente distincte. {1,3,5,7} are 4, nu 16. Nu aduni valorile — numeri oaspeții.',
-      'La probleme cu „câți fac cel puțin una”, folosești |A ∪ B| = |A| + |B| − |A ∩ B|, ca să nu numeri de două ori intersecția.',
-      'Exemplu lucrat: 32 elevi, 18 mate, 16 română, 7 pe amândouă. În cel puțin un cerc: 18+16−7=27. În niciunul: 32−27=5.',
-      'Reține: intersecția se scade o dată din sumă, nu se ignoră.'
-    ),
-    lesson(
-      'factori',
-      'Descompunere în factori primi',
-      'Scrii numărul ca produs de prime. 12 = 2 × 2 × 3 = 2² × 3. 48 = 2⁴ × 3. Împarți la 2 cât poți, apoi la 3, 5…',
-      'Factorii primi sunt cărămizile. Cu ele găsești c.m.m.d.c. și c.m.m.m.c. fără ghicit.',
-      'Exemplu lucrat: 18 = 2 × 3². 48 = 2⁴ × 3. Pentru c.m.m.d.c. iei puterile cele mai mici: 2¹ × 3¹ = 6.',
-      'Reține: 1 nu e prim. Nu intra în descompunere.'
-    ),
-    lesson(
-      'cmmdc',
-      'c.m.m.d.c.',
-      'Cel mai mare număr care împarte pe amândoi. Pe factori: iei puterile cele mai mici comune. 12=2²×3, 18=2×3² → c.m.m.d.c.=2×3=6.',
-      'Dacă nu au factor comun în afară de 1, sunt prime între ele: c.m.m.d.c.=1.',
-      'Exemplu lucrat: c.m.m.d.c.(48,18)×c.m.m.m.c.(48,18):48. Produsul c.m.m.d.c. și c.m.m.m.c. e 48×18, deci iese 18.',
-      'Reține: „cel mai mare care împarte”, nu „cel mai mic multiplu”.'
-    ),
-    lesson(
-      'cmmmc',
-      'c.m.m.m.c.',
-      'Cel mai mic număr care se împarte la amândoi. Pe factori: iei puterile cele mai mari. 8=2³, 12=2²×3 → c.m.m.m.c.=2³×3=24.',
-      'E „prima stație comună” pe axa multiplilor. Semafoare, coincidențe, resturi egale.',
-      'Exemplu lucrat: semnale la 8 s, 12 s, 18 s. 8=2³, 12=2²×3, 18=2×3². c.m.m.m.c.=2³×3²=72.',
-      'Reține: c.m.m.m.c. e mai mare (sau egal) decât ambele numere, c.m.m.d.c. e mai mic (sau egal).'
-    ),
-    lesson(
-      'diagrame',
-      'Probleme cu mulțimi',
-      'Desenează două cercuri. În intersecție pui pe cei care sunt în amândouă. În restul fiecărui cerc: doar acea categorie. Afară: niciuna.',
-      'Nu aduna 18+16 fără să scoți cei 7 de două ori numărați.',
-      'Exemplu lucrat: 18 sport, 16 muzică, 7 amândouă. Doar sport: 18−7=11. Doar muzică: 16−7=9. Amândouă: 7. Cel puțin una: 11+9+7=27.',
-      'Reține: desenul evită dubla numărare.'
-    )
-  ],
-  'matematica:6:proportii': [
-    lesson(
-      'raport',
-      'Raportul',
-      'Un raport compară două mărimi printr-o împărțire. 3:6 = 1:2. Împarți ambele părți cu același număr. Poți scrie și 3/6.',
-      'Ordinea contează: 3:6 nu e 6:3.',
-      'Exemplu lucrat: simplifică 3:6. Împarți la 3: 1:2. Verificare: 1/2 = 3/6.',
-      'Reține: raportul e o comparație, nu o scădere.'
-    ),
-    lesson(
-      'proportie',
-      'Proporția',
-      'O proporție e două rapoarte egale: a/b = c/d. Produsele în cruce sunt egale: a×d = b×c. Asta e unealta ca să afli un loc gol.',
-      'Exemplu lucrat: 2/5 = x/20. 2×20 = 5x, 40=5x, x=8. Verificare: 2/5 = 8/20.',
-      'Reține: crucea e pentru proporții, nu pentru orice două fracții pe care le vezi.'
-    ),
-    lesson(
-      'direct',
-      'Direct proporționale',
-      'Cresc sau scad împreună, în același ritm. Dublu cantitate, dublu preț, dacă prețul pe bucată e fix. Raportul rămâne constant.',
-      'Exemplu lucrat: 8 m costă 96 lei. 1 m = 12 lei. 5 m = 60 lei. Apoi 10% reducere: 6 lei, plătești 54.',
-      'Reține: „împreună” nu e destul. Trebuie același ritm (raport constant).'
-    ),
-    lesson(
-      'invers',
-      'Invers proporționale',
-      'Una crește când cealaltă scade, iar produsul rămâne. Mai mulți robinete, mai puțin timp. 6 robinete × 4 ore = 24 = 3 robinete × 8 ore.',
-      'Exemplu lucrat: 6 robinete umplu în 4 ore. La 3 robinete: 6×4=24, 24:3=8 ore.',
-      'Reține: nu înjumătățești ambele. Dacă înjumătățești lucrătorii, dublezi timpul.'
-    ),
-    lesson(
-      'regula3',
-      'Regula de trei',
-      'Trei valori știute, a patra se află. Reduci la unitate sau pui o proporție. Direct sau invers, după cum se leagă mărimile.',
-      'Exemplu lucrat: 8 m = 96 lei, cumperi 5 m cu 10% reducere. Unitate: 12 lei/m, 5 m = 60, 10% = 6, rămân 54.',
-      'Reține: întâi întrebi: dacă una crește, cealaltă crește sau scade?'
-    ),
-    lesson(
-      'scara',
-      'Scară și procent la rapoarte',
-      'Scara 1:50 000 înseamnă 1 cm pe hartă = 50 000 cm reali. Treci km în cm (sau invers) înainte să împarți. Procentul e tot un raport cu 100 la numitor.',
-      'Exemplu lucrat: 2,5 km pe teren, scara 1:50 000. 2,5 km = 250 000 cm. 250 000 : 50 000 = 5 cm pe hartă.',
-      'Reține: scara e un raport, nu un procent de 1%.'
-    )
-  ],
-  'matematica:6:intregi-rationale': [
-    lesson(
-      'axa',
-      'Axa, opusul, modulul',
-      'Minusul e direcție: −3 e trei pași în stânga lui 0, ca −3 °C. Opusul lui 5 e −5; suma e 0. Modulul |−5| = 5 e distanța până la zero, deci pozitivă.',
-      'Exemplu lucrat: |−5| − |3−8| + |−2|. |3−8|=|−5|=5. 5 − 5 + 2 = 2.',
-      'Reține: modulul nu „șterge minusul de formă”. E o distanță.'
-    ),
-    lesson(
-      'adunare',
-      'Adunare și scădere de întregi',
-      'Aduni un negativ = te muți spre stânga. 5+(−2)=3. Scăderea e adunarea opusului: 4−(−4)=4+4=8.',
-      'Exemplu lucrat: (−7)+12+(−9)−(−4). −7+12=5, 5+(−9)=−4, −4−(−4)=0.',
-      'Reține: două minusuri la rând, la scădere, se fac plus.'
-    ),
-    lesson(
-      'semne',
-      'Înmulțire și împărțire cu semne',
-      'Semne la fel → plus. Semne diferite → minus. (−3)×4 = −12. (−3)×(−4)=12. Aceeași regulă la împărțire.',
-      'Exemplu lucrat: (−2)×4 = −8. Apoi (−3/4)+(5/6): numitor 12, −9/12+10/12=1/12.',
-      'Reține: semnul se decide separat de mărime.'
-    ),
-    lesson(
-      'rationale',
-      'Numere raționale',
-      'Se scriu ca fracție de întregi, numitor ≠ 0. −3/4, 0,7, 5 sunt raționale. Pe axă stau printre întregi, nu „altundeva”.',
-      'Operațiile sunt cele de la fracții, plus regula semnelor.',
-      'Exemplu lucrat: (−3/4)+(5/6). c.m.m.m.c.(4,6)=12. −9/12+10/12=1/12.',
-      'Reține: rațional ≠ „rezonabil”. Înseamnă „fracție de întregi”.'
-    ),
-    lesson(
-      'ecuatie',
-      'Ecuații simple',
-      'x + 5 = 12 întreabă ce număr plus 5 face 12. Scazi 5 din ambele părți: x=7. 3x−8=−2x+7: treci necunoscutele într-o parte, numerele în cealaltă.',
-      'Exemplu lucrat: 3x−8=−2x+7. 3x+2x=7+8, 5x=15, x=3. Verificare: 9−8=1, −6+7=1.',
-      'Reține: ce faci într-o parte faci și în cealaltă. Apoi verifici.'
-    ),
-    lesson(
-      'verificare',
-      'Verificarea e parte din treabă',
-      'După ce găsești x, îl pui înapoi. Dacă stânga nu e dreapta, ai greșit un semn sau o mutare, nu „aproape”.',
-      'Exemplu lucrat: x=3 în 3x−8 și −2x+7. 9−8=1, −6+7=1. Egalitate adevărată.',
-      'Reține: verificarea nu e opțională la gimnaziu. E cum știi că ai închis cântarul.'
-    )
-  ],
-  'matematica:6:triunghi': [
-    lesson(
-      'opuse',
-      'Unghiuri când se taie dreptele',
-      'Două drepte se taie: unghiurile față în față (opuse la vârf) sunt egale. Alăturatele fac 180°. Paralele tăiate de o secantă: unghiurile corespunzătoare sunt egale.',
-      'Exemplu lucrat: un unghi 62°. Opusul e 62°. Alăturatul e 118°. Suma opus + alăturat = 180°.',
-      'Reține: „față în față” = egale; „pe aceeași linie” = 180°.',
-      { figure: 'parallels', formulas: ['corespunzătoare = egale', 'interne de aceeași parte: 180°'] }
-    ),
-    lesson(
-      'cerc',
-      'Cerc: rază, diametru, lungime',
-      'Raza e de la centru la cerc. Diametrul e 2 raze în linie, trece prin centru. Coarda unește două puncte de pe cerc, nu neapărat prin centru. Lungimea cercului: L=πd=2πr.',
-      'Exemplu lucrat: diametru 14 cm, π=22/7. L=(22/7)×14=44.',
-      'Reține: diametrul e o coardă specială, cea mai lungă.',
-      { figure: 'circle', formulas: ['d = 2r', 'L = 2πr = πd'] }
-    ),
-    lesson(
-      'clasif',
-      'Cum clasifici un triunghi',
-      'După unghiuri: ascuțitunghic, dreptunghic (un 90°), obtuzunghic. După laturi: oarecare, isoscel (două laturi egale), echilateral (toate egale). Dreptunghicul are ipotenuza vizavi de 90°.',
-      'Exemplu lucrat: isoscel, vârful 40°. Baza: (180−40):2=70° fiecare.',
-      'Reține: un triunghi nu poate avea două unghiuri drepte — suma ar trece de 180°.',
-      { figure: 'triangle-iso', formulas: ['isoscel: două laturi egale', 'echilateral: 60° + 60° + 60°'] }
-    ),
-    lesson(
-      'suma180',
-      'Suma unghiurilor e 180°',
-      'Oricâte forme ar avea, cele trei colțuri fac un unghi alungit. Dacă știi două, al treilea e 180 minus ele.',
-      'Exemplu lucrat: 50° și 60°. Al treilea: 70°. La isoscel, unghiurile de la baza egală sunt egale.',
-      'Reține: 180° e lege, nu medie. Nu e 90°, nu e 360°.',
-      { figure: 'triangle', formulas: ['A + B + C = 180°', 'A = (bază × h) / 2'] }
-    ),
-    lesson(
-      'linii-tri',
-      'Înălțime, mediană, bisectoare, mediatoare',
-      'Înălțimea e perpendiculara din vârf pe latura opusă — o folosești la arie. Mediana unește vârful cu mijlocul laturii opuse; cele trei se taie la 2/3 de la vârf. Bisectoarea taie unghiul în două; se întâlnesc în centrul cercului înscris. Mediatoarea e perpendiculara prin mijlocul laturii; se întâlnesc în centrul cercului circumscris.',
-      'Nu le amesteca: „linia din mijloc” nu e destul. Întrebi: taie latura, taie unghiul, sau e perpendiculară?',
-      'Exemplu lucrat: isoscel cu baza 8 cm, vârful deasupra mijlocului. Înălțimea pe bază e și mediană, și bisectoare. Dacă baza e 8, medianele pe bază cad la 4 cm de fiecare capăt.',
-      'Reține: patru nume, patru trebi. Aria cere înălțime, nu mediană.',
-      { figure: 'triangle-lines', formulas: ['înălțime → arie', 'mediană → mijlocul laturii', 'bisectoare → cerc înscris'] }
-    ),
-    lesson(
-      'congr',
-      'Congruența',
-      'Triunghiuri congruente au aceeași formă și aceleași mărimi: se potrivesc dacă le suprapui. Criterii LUL, ULU, LLL — le vei exersa pe cazuri, nu ca pe lozinci goale.',
-      'Exemplu lucrat: dacă două triunghiuri au laturile 3, 4, 5, sunt congruente (aceleași trei lungimi). Aria lor e aceeași, dar și forma.',
-      'Reține: aceeași arie nu e destul. Un dreptunghi lung și un pătrat pot avea aceeași arie și forme diferite.'
-    ),
-    lesson(
-      'pitagora',
-      'Pitagora ca verificare',
-      'În triunghiul dreptunghic, a² + b² = c², unde c e ipotenuza (față de 90°). Triplete: 3-4-5, 5-12-13, și multiplii lor (6-8-10).',
-      'Exemplu lucrat: catete 9 și 12. 81+144=225=15². Perimetrul: 9+12+15=36.',
-      'Reține: Pitagora e doar în dreptul. Nu o pui pe un ascuțitunghic oarecare.',
-      { figure: 'triangle-right', formulas: ['a² + b² = c²', 'A = (a × b) / 2'] }
-    )
-  ],
+  'matematica:6:multimi': MULTIMI_LESSONS,
+  'matematica:6:proportii': PROPORTII_LESSONS,
+  'matematica:6:intregi-rationale': NUMERE_LESSONS,
+  'matematica:6:triunghi': GEOMETRIE6_LESSONS,
   'matematica:7:reale': [
     lesson(
       'radical',

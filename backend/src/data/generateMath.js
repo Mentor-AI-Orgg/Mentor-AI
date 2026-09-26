@@ -169,7 +169,7 @@ const BY_CHAPTER = {
       (rand, lv) => { const a = int(rand, 30, 70); const b = int(rand, 30, 80); const useB = a + b < 170 ? b : 40; return test('suma180', `Unghiurile ${a}° și ${useB}°. Al treilea unghi?`, 180 - a - useB, [`180 − ${a} − ${useB} = ${180 - a - useB}`], { level: lv }); },
       (rand, lv) => { const varf = pick(rand, [20, 30, 40, 50, 80]); const baza = (180 - varf) / 2; return test('suma180', `Triunghi isoscel, unghiul din vârf ${varf}°. Un unghi de la bază?`, baza, [`Rămân ${180 - varf}°`, `${180 - varf} : 2 = ${baza}`], { level: lv }); },
       (rand, lv) => { const triples = [[3, 4, 5], [5, 12, 13], [6, 8, 10]]; const [x, y, z] = pick(rand, triples); return test('pitagora', `Catete ${x} și ${y}. Ipotenuza?`, z, [`${x}² + ${y}² = ${z}²`], { level: lv }); },
-      (rand, lv) => { const d = pick(rand, [7, 14, 21]); const val = (22 * d) / 7; return test('cerc', `Diametru ${d} cm, π = 22/7. Lungimea cercului.`, val, [`L = πd = (22/7)×${d} = ${val}`], { level: lv }); },
+      (rand, lv) => { const r = pick(rand, [3, 5, 7, 8]); return test('cerc', `Raza unui cerc este ${r} cm. Cât este diametrul?`, 2 * r, [`d = 2r = ${2 * r}`], { level: lv }); },
       (rand, lv) => { const triples = [[3, 4, 5], [6, 8, 10], [5, 12, 13]]; const [x, y, z] = pick(rand, triples); const k = int(rand, 1, 3); return test('pitagora', `Catete ${x * k} și ${y * k}. Perimetrul triunghiului dreptunghic.`, (x + y + z) * k, [`Ipotenuza = ${z * k}`, `Perimetru = ${(x + y + z) * k}`], { level: lv }); },
       (rand, lv) => { const a = pick(rand, [40, 50, 62]); return test('opuse', `Două drepte se taie. Un unghi e ${a}°. Suma dintre opusul la vârf și unul alăturat?`, 180, [`Opusul = ${a}°`, `Alăturatul = ${180 - a}°`, `Suma = 180`], { level: lv }); }
     ]
