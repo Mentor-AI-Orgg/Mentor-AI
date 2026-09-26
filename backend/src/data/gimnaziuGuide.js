@@ -12,9 +12,10 @@
 // ghideze fără să predea dintr-un manual anume.
 
 const { lessonsFor } = require('./gimnaziuLessons');
-const { grade5Guide, emptyYear } = require('./romana5Litera');
+const { grade5Guide } = require('./romana5Litera');
 const { grade6Guide } = require('./romana6Litera');
 const { grade7Guide } = require('./romana7Litera');
+const { grade8Guide } = require('./romana8Litera');
 const { shapeUnit } = require('./lessonShape');
 const { glossaryFor } = require('./chapterGlossary');
 const { dailyQuote, formatQuote } = require('./quotes');
@@ -27,7 +28,7 @@ const SOURCE = {
   portal: "https://www.edu.ro/Ordin_ministru_3393_2017",
   textbooks: "https://www.manuale.edu.ro/",
   disclaimer:
-    "La clasa a V-a, româna urmează cuprinsul manualului Litera, A1249. La clasa a VI-a, manualul Litera, A1470, este parcurs până la capăt: recapitularea inițială, Unitățile 1–6 și încheierea anului. La clasa a VII-a, manualul Litera, A1732, cuprinde recapitularea inițială, Unitatea 1 până la capăt, Unitatea 2 până la capăt, Unitatea 3, Tărâmul sentimentelor, până la capăt, Unitatea 4, Lumea teatrului, până la capăt, Unitatea 5, Călător prin lume, până la capăt, Unitatea 6, Privind către mine, până la capăt, și recapitularea finală. Textul lecțiilor e un rezumat propriu: nu copiem fragmentele și exercițiile. Clasa a VIII-a așteaptă bucățile ei."
+    "La clasa a V-a, româna urmează cuprinsul manualului Litera, A1249. La clasa a VI-a, manualul Litera, A1470, este parcurs până la capăt: recapitularea inițială, Unitățile 1–6 și încheierea anului. La clasa a VII-a, manualul Litera, A1732, cuprinde recapitularea inițială, Unitatea 1 până la capăt, Unitatea 2 până la capăt, Unitatea 3, Tărâmul sentimentelor, până la capăt, Unitatea 4, Lumea teatrului, până la capăt, Unitatea 5, Călător prin lume, până la capăt, Unitatea 6, Privind către mine, până la capăt, și recapitularea finală. La clasa a VIII-a, manualul Litera, A1954, este deschis la testul inițial, ca deprinderi, și la Unitatea 1, Călătoria. Planul principal ține itemii care aduc puncte la Evaluarea Națională: două texte, fraza, ortografia și cele cinci compuneri. Planul secundar păstrează, scurt, construcțiile și textele de rezervă. Textul lecțiilor e un rezumat propriu: nu copiem fragmentele și exercițiile. Restul clasei a VIII-a așteaptă."
 };
 
 const GRADES = [5, 6, 7, 8];
@@ -192,7 +193,7 @@ const GUIDES = {
     5: grade5Guide(),
     6: grade6Guide(),
     7: grade7Guide(),
-    8: emptyYear(8)
+    8: grade8Guide()
   }
 };
 
