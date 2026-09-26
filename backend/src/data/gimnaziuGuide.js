@@ -13,6 +13,7 @@
 
 const { lessonsFor } = require('./gimnaziuLessons');
 const { grade5Guide, emptyYear } = require('./romana5Litera');
+const { grade6Guide } = require('./romana6Litera');
 const { shapeUnit } = require('./lessonShape');
 const { glossaryFor } = require('./chapterGlossary');
 const { dailyQuote, formatQuote } = require('./quotes');
@@ -25,7 +26,7 @@ const SOURCE = {
   portal: "https://www.edu.ro/Ordin_ministru_3393_2017",
   textbooks: "https://www.manuale.edu.ro/",
   disclaimer:
-    "La clasa a V-a, româna urmează cuprinsul manualului aprobat (Litera, A1249), cu lecțiile vecine unite. Textul lecțiilor e un rezumat propriu: nu copiem fragmentele și exercițiile. Clasele VI–VIII așteaptă manualul lor."
+    "La clasa a V-a, româna urmează cuprinsul manualului Litera, A1249. La clasa a VI-a a început manualul Litera, A1470: recapitularea inițială, Unitatea 1 și Unitatea 2. Textul lecțiilor e un rezumat propriu: nu copiem fragmentele și exercițiile. Restul clasei a VI-a și clasele VII–VIII așteaptă bucățile lor."
 };
 
 const GRADES = [5, 6, 7, 8];
@@ -188,7 +189,7 @@ const GUIDES = {
   },
   romana: {
     5: grade5Guide(),
-    6: emptyYear(6),
+    6: grade6Guide(),
     7: emptyYear(7),
     8: emptyYear(8)
   }
