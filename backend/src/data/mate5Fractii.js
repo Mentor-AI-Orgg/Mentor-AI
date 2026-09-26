@@ -1,5 +1,5 @@
 // Capitolele II și III din Matematică, clasa a V-a, Litera, cod A1259 (2022):
-// fracții ordinare, operații cu ele, fracții zecimale și operații cu ele.
+// fracții ordinare, operații cu ele, fracții zecimale și organizarea datelor.
 // Lecțiile vecine rămân separate, ca în cuprins. Textul e al nostru:
 // nu copiem enunțurile, tabelele și testele din manual.
 
@@ -337,7 +337,39 @@ const FRACTII_LESSONS = [
     practice: '1. Scrie 1/4 ca zecimală. 2. Scrie 0,(4) ca fracție. 3. Media numerelor 2 și 6.\n\nRăspunsuri: 0,25. 4/9. 4.',
     mistakes: 'Nu trata virgula ca pe un punct decorativ. Nu numi periodice toate zecimalele. 0,25 se termină. Nu calcula media împărțind la un număr ales de tine.',
     tryThis: 'Fă o fișă cu patru rânduri: o scriere zecimală, o comparație, o medie și o transformare în fracție. La fiecare rând scrie regula folosită.',
-    recap: 'Zecimala, perioada, media, raționalul și unitățile de măsură închid capitolul. Aceeași valoare poate sta ca fracție, ca virgulă sau ca punct pe axă.'
+    recap: 'Zecimala, perioada, media și raționalul închid scrierea numerelor. Aceeași valoare poate sta ca fracție, ca virgulă sau ca punct pe axă. Urmează organizarea unui set de date.'
+  }),
+
+  lesson('frecventa', 'Tabelul de frecvențe', {
+    formulas: ['Frecvența = de câte ori apare valoarea', 'Valorile numerice se ordonează crescător'],
+    theory: 'Uneori strângi date despre un grup: notele unei clase, limba aleasă, înălțimea. Trăsătura pe care o urmărești se numește caracteristică sau variabilă. Persoanele sau obiectele alese formează un eșantion. Ce poate lua variabila se numește valoare. Valorile pot fi numere, ca notele, sau însușiri, ca numele unei limbi.\n\nDatele se așază în ordine. La numere, de obicei crescător. La însușiri, alegi tu o ordine și o ții.\n\nFrecvența unei valori este de câte ori apare ea. Tabelul de frecvențe are pe primul rând valorile, iar pe al doilea frecvențele. Cu el răspunzi repede: aduni frecvențele valorilor care te interesează, fără să numeri din nou lista lungă.\n\nPoți afla câți sunt peste un prag, câți sunt sub un prag și care valoare apare cel mai des.',
+    example: 'Notele sunt 5, 7, 8, 8, 8, 9, 9, 10. În ordine, sunt deja crescătoare. Frecvențele: 5 apare o dată, 7 o dată, 8 de trei ori, 9 de două ori, 10 o dată. Sunt 8 note. Peste 8 sunt notele 9 și 10, deci 2 + 1 = 3 elevi. Cel mai des apare 8.',
+    practice: '1. În exemplul de mai sus, care este frecvența notei 9? 2. Câți elevi au notă mai mică decât 8? 3. Care valoare are frecvența cea mai mare?\n\nRăspunsuri: 2. 2. Nota 8.',
+    mistakes: 'Nu lăsa lista amestecată când construiești tabelul: ordoneaz-o întâi. Nu confunda valoarea cu frecvența. 8 este nota. 3 este de câte ori apare. Nu aduna notele ca să afli câți elevi: aduni frecvențele.',
+    tryThis: 'Notează într-un tabel ce fruct preferă opt colegi, cu trei fructe la alegere. Fă tabelul de frecvențe și spune care fruct apare cel mai des. Nu calcula o medie: fructul nu este un număr.',
+    recap: 'Variabila este trăsătura studiată. Frecvența spune de câte ori apare o valoare. Tabelul are valorile și, sub ele, frecvențele. Întrebările despre „câți” se rezolvă adunând frecvențe.'
+  }),
+
+  lesson('grafice-media', 'Grafice și media unui set de date', {
+    figure: 'frequency-bars',
+    formulas: ['Bara are înălțimea frecvenței', 'Media = suma valorilor : numărul lor', 'Media se scrie, de regulă, cu două zecimale'],
+    theory: 'Tabelul de frecvențe se poate desena. Iei două semidrepte cu aceeași origine: Ox pe orizontală și Oy pe verticală.\n\nLa barele verticale, pe Ox pui valorile, iar pe Oy pui frecvențele. Fiecare bară pornește de pe axă și urcă până la frecvența valorii. La barele orizontale, valorile stau pe Oy, iar lungimea barei este frecvența.\n\nLa diagrama cu linii, pentru fiecare valoare marchezi punctul la înălțimea frecvenței, apoi unești punctele printr-o linie frântă.\n\nMedia unui set de date numerice este media aritmetică a tuturor valorilor. Aduni valorile și împarți la câți sunt. Poți folosi și tabelul: fiecare valoare se înmulțește cu frecvența ei, aduni produsele și împarți la numărul total. De regulă, scrii media cu două zecimale exacte. Poți estima întâi, uitându-te unde se înghesuie datele, apoi compari estimarea cu calculul.\n\nDacă valorile nu sunt numere, nu există medie. Nu faci media unor culori sau a unor limbi.',
+    example: 'La notele 5, 7, 8, 8, 8, 9, 9, 10, suma este 64, iar media este 64 : 8 = 8. Cu frecvențe: 5 · 1 + 7 · 1 + 8 · 3 + 9 · 2 + 10 · 1 = 64, apoi 64 : 8 = 8. Bara cea mai înaltă este la nota 8. O estimare „pe lângă 8” se potrivește cu calculul.',
+    practice: '1. Media numerelor 4, 6 și 8. 2. Dacă valoarea 6 apare de 2 ori și valoarea 10 apare o dată, câți sunt în total? 3. Poți calcula media culorilor preferate?\n\nRăspunsuri: 6. 3. Nu.',
+    mistakes: 'Nu împărți suma la o frecvență oarecare. Împarți la numărul tuturor datelor, adică la suma frecvențelor. Nu citi bara ca pe valoarea însăși: înălțimea este frecvența. Nu calcula media când variabila nu este numerică.',
+    tryThis: 'Alege șase note ale tale, fă tabelul de frecvențe și graficul cu bare. Estimează media, apoi calculeaz-o. Scrie dacă estimarea a fost aproape.',
+    recap: 'Barele și linia frântă arată frecvențele. Media numerică este suma împărțită la câți sunt, de regulă cu două zecimale. Fără numere nu există medie.'
+  }),
+
+  lesson('recap-date', 'Recapitulare: organizarea datelor', {
+    figure: 'frequency-bars',
+    formulas: ['Frecvența numără aparițiile', 'Media = suma : efectiv'],
+    theory: 'Un set de date se ordonează, apoi se strânge într-un tabel de frecvențe. Din tabel afli câți sunt peste un prag și care valoare apare cel mai des.\n\nGraficul cu bare sau cu linii face același lucru vizibil. Media se calculează doar pentru valori numerice. Capitolul fracțiilor se închide aici: scrierea, operațiile, raționalul și, la urmă, datele.',
+    example: 'Valorile 3, 3, 5, 7 au frecvențele 2, 1 și 1. Suma este 18. Media este 18 : 4 = 4,5. Bara lui 3 este cea mai înaltă.',
+    practice: '1. Frecvența lui 3 în lista 3, 3, 5, 7. 2. Media aceleiași liste. 3. Graficul cu bare pune pe înălțime valoarea sau frecvența?\n\nRăspunsuri: 2. 4,5. Frecvența.',
+    mistakes: 'Nu uita o valoare cu frecvența 0 dacă tabelul trebuie să arate toate notele posibile. Nu împărți media la numărul de coloane ale tabelului, ci la suma frecvențelor.',
+    tryThis: 'Fă o fișă cu un tabel de patru valori, barele lor și media, dacă valorile sunt numere. Scrie într-o propoziție ce ai aflat.',
+    recap: 'Ordonezi, numeri frecvențele, desenezi bare sau o linie și, la numere, calculezi media. Asta închide organizarea datelor din capitolul fracțiilor.'
   })
 ];
 

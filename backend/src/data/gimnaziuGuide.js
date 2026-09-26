@@ -73,7 +73,7 @@ const GUIDES = {
     5: {
       title: "Matematică, clasa a V-a",
       howISeeIt:
-        "Anul ăsta e podul de la aritmetica din primar către gimnaziu. Numerele naturale acoperă scrierea, axa, compararea, aproximările, cele patru operații, puterile, metodele și divizibilitatea. Fracțiile ordinare continuă cu echivalența, axa, numerele mixte, c.m.m.d.c., c.m.m.m.c. și operațiile, iar zecimalele adaugă virgula, perioada, media și aceleași metode cu unități de măsură. Apoi vin figurile. Lucrăm intuitiv: mai întâi desen, estimare, exemplu din viață, abia apoi formulă.",
+        "Anul ăsta e podul de la aritmetica din primar către gimnaziu. Numerele naturale acoperă scrierea, axa, compararea, aproximările, cele patru operații, puterile, metodele și divizibilitatea. Fracțiile ordinare continuă cu echivalența, axa, numerele mixte, c.m.m.d.c., c.m.m.m.c. și operațiile, iar zecimalele adaugă virgula, perioada și media. La sfârșitul capitolului de fracții organizezi datele: frecvență, bare și media setului. Apoi vin figurile: punct, dreaptă, segment, unghi, congruență, simetrie și unitățile de lungime, arie și volum. Lucrăm intuitiv: mai întâi desen, estimare, exemplu din viață, abia apoi formulă.",
       units: [
         {
           id: "naturale",
@@ -149,14 +149,38 @@ const GUIDES = {
             "De la zecimală la fracție ordinară",
             "Numărul rațional pozitiv și ordinea operațiilor",
             "Metode cu fracții și unități de măsură",
-            "Recapitulare: fracții zecimale"
+            "Recapitulare: fracții zecimale",
+            "Tabelul de frecvențe",
+            "Grafice și media unui set de date",
+            "Recapitulare: organizarea datelor"
           ]
         },
         {
           id: "geometrie",
-          title: "Figuri, unghiuri, măsurători",
+          title: "Elemente de geometrie și unități de măsură",
           inOwnWords:
-            "Punct, dreaptă, segment, unghi (ascuțit, drept, obtuz). Perimetru, aria pătratului și a dreptunghiului, volumul cubului și al cutiei. Transformăm metri, centimetri, litre fără să amestecăm unitățile."
+            "Punctul, dreapta și planul deschid geometria. Înveți semidreapta, segmentul, semiplanul și poziția a două drepte. Măsori lungimea, găsești mijlocul și construiești unghiul cu raportorul. Clasifici unghiurile, calculezi cu grade și minute, recunoști figuri congruente și axa de simetrie. La urmă treci lungimi, arii și volume dintr-o unitate în alta și calculezi perimetrul, aria dreptunghiului și volumul cutiei.",
+          toc: [
+            "Punct, dreaptă, plan",
+            "Punctul și dreapta. Puncte coliniare",
+            "Semidreaptă, segment, semiplan",
+            "Poziții relative a două drepte",
+            "Distanța și segmente congruente",
+            "Mijlocul unui segment",
+            "Recapitulare: punct, dreaptă, segment",
+            "Unghiul: vârf, laturi, interior",
+            "Măsura unui unghi",
+            "Clasificări și unghiuri congruente",
+            "Grade și minute",
+            "Recapitulare: unghiuri",
+            "Figuri congruente",
+            "Axă de simetrie",
+            "Recapitulare: congruență și simetrie",
+            "Unități pentru lungime și perimetrul",
+            "Unități pentru arie",
+            "Unități pentru volum și capacitate",
+            "Recapitulare: geometrie și unități"
+          ]
         }
       ]
     },

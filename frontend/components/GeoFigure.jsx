@@ -766,6 +766,72 @@ const FIGURES = {
       </svg>
     )
   },
+  collinear: {
+    label: 'Trei puncte pe aceeași dreaptă, unul în afară',
+    svg: (
+      <svg viewBox="0 0 280 110" role="img" aria-label="Punctele A, B și C sunt coliniare, iar D nu">
+        <line x1="20" y1="70" x2="250" y2="70" stroke="currentColor" strokeWidth="2" />
+        <circle cx="60" cy="70" r="5" fill={C.aqua} />
+        <circle cx="130" cy="70" r="5" fill={C.aqua} />
+        <circle cx="200" cy="70" r="5" fill={C.aqua} />
+        <circle cx="130" cy="28" r="5" fill={C.pink} />
+        <text x="52" y="92" fill="#fff" fontSize="13">A</text>
+        <text x="122" y="92" fill="#fff" fontSize="13">B</text>
+        <text x="192" y="92" fill="#fff" fontSize="13">C</text>
+        <text x="138" y="24" fill={C.pink} fontSize="13">D</text>
+      </svg>
+    )
+  },
+  midpoint: {
+    label: 'M este mijlocul segmentului AB',
+    svg: (
+      <svg viewBox="0 0 280 100" role="img" aria-label="Segmentul AB cu mijlocul M">
+        <line x1="40" y1="48" x2="240" y2="48" stroke={C.aqua} strokeWidth="4" strokeLinecap="round" />
+        <circle cx="40" cy="48" r="6" fill={C.violet} />
+        <circle cx="140" cy="48" r="6" fill={C.pink} />
+        <circle cx="240" cy="48" r="6" fill={C.violet} />
+        <text x="32" y="78" fill="#fff" fontSize="14">A</text>
+        <text x="132" y="78" fill={C.pink} fontSize="14">M</text>
+        <text x="232" y="78" fill="#fff" fontSize="14">B</text>
+      </svg>
+    )
+  },
+  'symmetry-axis': {
+    label: 'Dreapta d este axă de simetrie',
+    svg: (
+      <svg viewBox="0 0 240 140" role="img" aria-label="Două puncte simetrice față de o dreaptă verticală">
+        <line x1="120" y1="16" x2="120" y2="124" stroke={C.aqua} strokeWidth="2" strokeDasharray="5 4" />
+        <line x1="48" y1="70" x2="192" y2="70" stroke={C.pink} strokeWidth="2" />
+        <circle cx="48" cy="70" r="6" fill={C.violet} />
+        <circle cx="192" cy="70" r="6" fill={C.violet} />
+        <circle cx="120" cy="70" r="5" fill={C.pink} />
+        <rect x="120" y="58" width="12" height="12" fill="none" stroke="#fff" />
+        <text x="36" y="96" fill="#fff" fontSize="13">M</text>
+        <text x="112" y="96" fill={C.pink} fontSize="13">P</text>
+        <text x="184" y="96" fill="#fff" fontSize="13">N</text>
+        <text x="128" y="28" fill={C.aqua} fontSize="13">d</text>
+      </svg>
+    )
+  },
+  'frequency-bars': {
+    label: 'Bare: de câte ori apare fiecare notă',
+    svg: (
+      <svg viewBox="0 0 280 140" role="img" aria-label="Diagramă cu bare pentru notele 5, 7, 8, 9 și 10">
+        <line x1="36" y1="20" x2="36" y2="108" stroke="currentColor" strokeWidth="2" />
+        <line x1="36" y1="108" x2="250" y2="108" stroke="currentColor" strokeWidth="2" />
+        <rect x="52" y="84" width="28" height="24" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
+        <rect x="92" y="84" width="28" height="24" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
+        <rect x="132" y="36" width="28" height="72" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
+        <rect x="172" y="60" width="28" height="48" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
+        <rect x="212" y="84" width="28" height="24" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
+        <text x="60" y="124" fill="#fff" fontSize="12">5</text>
+        <text x="100" y="124" fill="#fff" fontSize="12">7</text>
+        <text x="140" y="124" fill="#fff" fontSize="12">8</text>
+        <text x="180" y="124" fill="#fff" fontSize="12">9</text>
+        <text x="216" y="124" fill="#fff" fontSize="12">10</text>
+      </svg>
+    )
+  },
   sphere: {
     label: 'Sferă',
     svg: (
