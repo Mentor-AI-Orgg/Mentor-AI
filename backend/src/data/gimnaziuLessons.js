@@ -1,10 +1,11 @@
 // Lecții originale, „pe tavă”, după programa 5–8 (OMEN 3393/2017).
 // Nu copiem manuale. Fiecare lecție: idee + exemplu lucrat + ce să reții.
-// La clasa a V-a, numerele naturale și fracțiile urmează cuprinsul manualului
-// Litera A1259 și stau în mate5Naturale.js și mate5Fractii.js.
+// La clasa a V-a, cuprinsul manualului Litera A1259 stă în mate5Naturale.js,
+// mate5Fractii.js și mate5Geometrie.js.
 
 const { NATURALE_LESSONS } = require('./mate5Naturale');
 const { FRACTII_LESSONS } = require('./mate5Fractii');
+const { GEOMETRIE_LESSONS } = require('./mate5Geometrie');
 
 function lesson(id, title, ...paragraphs) {
   let extra = {};
@@ -19,70 +20,7 @@ function lesson(id, title, ...paragraphs) {
 const LESSONS = {
   'matematica:5:naturale': NATURALE_LESSONS,
   'matematica:5:fractii': FRACTII_LESSONS,
-  'matematica:5:geometrie': [
-    lesson(
-      'punct',
-      'Punct, dreaptă, segment',
-      'Punctul arată un loc, fără lungime. Dreapta nu se termină. Segmentul are două capete: îl poți măsura. Semidreapta are un capăt și merge la infinit într-o parte.',
-      'Două puncte determină o dreaptă. Trei puncte pot fi pe o dreaptă (coliniare) sau formează un triunghi.',
-      'Exemplu lucrat: de la A la B ai un segment de 7 cm. Dacă prelungești dincolo de B fără capăt, ai o semidreaptă cu originea în A, care trece prin B.',
-      'Reține: punctul e „unde”, segmentul e „cât de lung”.',
-      { figure: 'points-line', formulas: ['Două puncte determină o dreaptă', 'Segmentul are lungime'] }
-    ),
-    lesson(
-      'unghi',
-      'Unghiuri',
-      'Unghiul e deschiderea dintre două semidrepte cu același vârf. Drept: 90° (colțul pătratului). Ascuțit: sub 90°. Obtuz: între 90° și 180°. Alungit: 180° (linie dreaptă).',
-      'Două unghiuri alăturate pe o linie fac 180°. Dacă unul e 47°, celălalt e 133°.',
-      'Exemplu lucrat: un ascuțit de 47° și un obtuz alăturat formează un alungit. 180 − 47 = 133°. 133° e obtuz, deci se potrivește.',
-      'Reține: nu ghicești „pare ascuțit”. Compari cu 90°.',
-      { figure: 'angle', formulas: ['drept = 90°', 'ascuțit < 90°', 'obtuz: 90°–180°'] }
-    ),
-    lesson(
-      'perimetru',
-      'Perimetrul',
-      'Perimetrul e „gardul”: suma lungimilor laturilor. Pătrat de latură a: 4a. Dreptunghi L pe l: 2(L+l).',
-      'Nu confunda perimetrul cu aria. Perimetrul e linie, aria e interior.',
-      'Exemplu lucrat: dreptunghi 12 cm × 5 cm. P = 2×(12+5)=34 cm. Un pătrat cu același perimetru: 34:4=8,5 cm latura.',
-      'Reține: același perimetru nu înseamnă aceeași arie.',
-      { figure: 'rectangle', formulas: ['Pătrat: P = 4a', 'Dreptunghi: P = 2(L + l)'] }
-    ),
-    lesson(
-      'patrat',
-      'Pătratul',
-      'Pătratul are patru laturi egale și patru unghiuri drepte. E un dreptunghi special și un romb special. Diagonalele sunt egale, perpendiculare și se taie în jumătăți. Diagonala măsoară a√2.',
-      'Nu e „altceva” decât dreptunghiul: e dreptul cu L = l.',
-      'Exemplu lucrat: latură 6 cm. P = 24 cm. A = 36 cm². Diagonala: 6√2 cm. Un dreptunghi 9×4 are tot perimetrul 26, nu 24 — nu e pătrat.',
-      'Reține: patru laturi egale nu ajung (poate fi romb strâmb). Mai trebuie și 90°.',
-      { figure: 'square', formulas: ['P = 4a', 'A = a²', 'diagonală = a√2'] }
-    ),
-    lesson(
-      'arie',
-      'Aria pătratului și a dreptunghiului',
-      'Aria e câte pătrățele de 1 cm² încap înăuntru. Pătrat: latură × latură. Dreptunghi: lungime × lățime.',
-      'Dacă tai o bucată, scazi aria tăieturii din aria foii.',
-      'Exemplu lucrat: foaie 20×14 cm, tai un pătrat de latură 6 cm. 20×14=280, 6×6=36, rămân 244 cm².',
-      'Reține: unitatea ariei e cm², nu cm. Cm e pentru lungimi.',
-      { figure: 'square', formulas: ['A_pătrat = a²', 'A_dreptunghi = L × l'] }
-    ),
-    lesson(
-      'volum',
-      'Volumul cubului și al cutiei',
-      'Volumul e câte cubulețe umplu cutia. Cub de latură a: a×a×a. Cutie (paralelipiped): lungime × lățime × înălțime.',
-      'Nu înmulți doar două dimensiuni: aia e o față, nu cutia.',
-      'Exemplu lucrat: cub de 5 cm. Volum 125 cm³. Tai din colț un cubuleț de 2 cm: 8 cm³. Rămân 117 cm³.',
-      'Reține: volum = cm³. Aria unei fețe = cm².',
-      { figure: 'cube', formulas: ['V_cub = a³', 'V_cutie = L × l × h', 'A_totală cub = 6a²'] }
-    ),
-    lesson(
-      'unitati',
-      'Unități de măsură',
-      '1 m = 100 cm = 1000 mm. 1 km = 1000 m. 1 l = 1000 ml. Când treci la o unitate mai mică, înmulțești. Când treci la una mai mare, împarți.',
-      'Nu aduni metri cu centimetri până nu sunt aceeași unitate.',
-      'Exemplu lucrat: vas 1,2 l, bei 350 ml. 1,2 l = 1200 ml. 1200 − 350 = 850 ml.',
-      'Reține: treci totul într-o singură unitate, apoi calculezi.'
-    )
-  ],
+  'matematica:5:geometrie': GEOMETRIE_LESSONS,
   'matematica:6:multimi': [
     lesson(
       'apartine',

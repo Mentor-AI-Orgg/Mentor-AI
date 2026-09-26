@@ -27,13 +27,14 @@ const BANK = {
     item('m5f7', 'media', 'Media aritmetică a două note e…', ['suma lor împărțită la 2', 'produsul lor', 'nota cea mai mare', 'diferența lor'], 0, 'Aduni, apoi împarți la câți termeni ai.')
   ],
   'matematica:5:geometrie': [
-    item('m5g1', 'punct', 'Un punct, în geometria de clasa a V-a, e…', ['o locație, fără lungime', 'o linie infinită', 'o suprafață', 'un cub'], 0, 'Punctul doar arată „unde”.'),
+    item('m5g1', 'punct', 'Un punct, în geometria de clasa a V-a, e…', ['o poziție, fără lungime', 'o linie infinită', 'o suprafață', 'un cub'], 0, 'Punctul doar arată „unde”.'),
     item('m5g2', 'unghi', 'Un unghi drept măsoară…', ['90 de grade', '45 de grade', '180 de grade', '360 de grade'], 0, 'Colțul unui pătrat e un unghi drept.'),
-    item('m5g3', 'ascutit', 'Un unghi ascuțit e…', ['mai mic decât 90°', 'exact 90°', 'mai mare decât 90°', 'doar 0°'], 0, 'Ascuțit = îngust, sub un drept.'),
-    item('m5g4', 'perimetru', 'Perimetrul unei figuri e…', ['suma lungimilor laturilor', 'spațiul din interior', 'o diagonală', 'un unghi'], 0, 'E „gardul” din jurul figurii.'),
-    item('m5g5', 'arie-drep', 'Aria dreptunghiului se gândește ca…', ['lungime × lățime', 'suma laturilor', 'doar lungimea', 'volumul cutiei'], 0, 'Câte pătrățele de 1 cm încap înăuntru.'),
-    item('m5g6', 'volum-cub', 'Volumul cubului e…', ['latură × latură × latură', '4 × latură', 'suma muchiilor', 'doar o față'], 0, 'Câte cubulețe umplu cutia.'),
-    item('m5g7', 'unitati', 'Când treci de la metri la centimetri…', ['înmulțești cu 100', 'împarți cu 100', 'aduni 100', 'nu schimbi nimic'], 0, '1 m = 100 cm. Nu amesteca unitățile în același calcul.')
+    item('m5g3', 'ascutit', 'Un unghi ascuțit e…', ['mai mic decât 90°', 'exact 90°', 'mai mare decât 90°', 'doar 0°'], 0, 'Ascuțit = sub un unghi drept.'),
+    item('m5g4', 'perimetru', 'Perimetrul unei figuri e…', ['suma lungimilor laturilor', 'spațiul din interior', 'o diagonală', 'un unghi'], 0, 'Este lungimea conturului.'),
+    item('m5g5', 'arie-drep', 'Aria dreptunghiului se gândește ca…', ['lungime × lățime', 'suma laturilor', 'doar lungimea', 'volumul cutiei'], 0, 'Câte pătrate unitate acoperă suprafața.'),
+    item('m5g6', 'volum-cub', 'Volumul cubului e…', ['latură × latură × latură', '4 × latură', 'suma muchiilor', 'doar o față'], 0, 'Câte cuburi unitate umplu corpul.'),
+    item('m5g7', 'unitati', 'Când treci de la metri la centimetri…', ['înmulțești cu 100', 'împarți cu 100', 'aduni 100', 'nu schimbi nimic'], 0, '1 m = 100 cm. Nu amesteca unitățile în același calcul.'),
+    item('m5g8', 'mijloc', 'Mijlocul unui segment…', ['stă pe segment și este la fel de departe de capete', 'este orice punct la egală distanță, chiar în afara dreptei', 'este un capăt', 'taie unghiul în două'], 0, 'M este pe AB și AM = MB.')
   ],
   'matematica:6:multimi': [
     item('m6m1', 'apartine', '„x aparține mulțimii A” înseamnă…', ['x e un element din A', 'A e mai mare decât x', 'x e în afara lui A', 'A e vidă'], 0, 'Simbolul ∈ spune „face parte din”.'),

@@ -51,6 +51,7 @@ describe('math notation', () => {
   it('does not turn lesson words into fractions', () => {
     const { FRACTII_LESSONS } = require('../backend/src/data/mate5Fractii.js');
     const { NATURALE_LESSONS } = require('../backend/src/data/mate5Naturale.js');
+    const { GEOMETRIE_LESSONS } = require('../backend/src/data/mate5Geometrie.js');
     const sides = [];
     let fractions = 0;
     const visit = node => {
@@ -63,7 +64,7 @@ describe('math notation', () => {
         if (side.kind === 'frac' || side.kind === 'pow') visit(side.kind === 'pow' ? side.base : side);
       });
     };
-    [...FRACTII_LESSONS, ...NATURALE_LESSONS].forEach(lesson => {
+    [...FRACTII_LESSONS, ...NATURALE_LESSONS, ...GEOMETRIE_LESSONS].forEach(lesson => {
       ['theory', 'example', 'practice', 'mistakes', 'tryThis', 'recap', ...(lesson.formulas || [])].forEach(field => {
         const text = lesson[field] === undefined ? field : lesson[field];
         if (typeof text === 'string') parseMath(text).forEach(visit);

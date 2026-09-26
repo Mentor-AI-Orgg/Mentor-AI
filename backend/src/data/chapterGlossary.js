@@ -17,11 +17,18 @@ const GLOSSARY = {
     { term: 'c.m.m.m.c.', meaning: 'Cel mai mic multiplu comun nenul. Dă numitorul comun cel mai mic.' },
     { term: 'procent', meaning: 'O sutime. 25% = 25/100.' },
     { term: 'zecimală', meaning: 'Cifră după virgulă: zecimi, sutimi, miimi.' },
-    { term: 'rațional', meaning: 'Un număr scris ca fracție de naturale, cu numitor nenul.' }
+    { term: 'rațional', meaning: 'Un număr scris ca fracție de naturale, cu numitor nenul.' },
+    { term: 'frecvență', meaning: 'De câte ori apare o valoare într-un set de date.' }
   ],
   'matematica:5:geometrie': [
-    { term: 'perimetru', meaning: 'Gardul: suma laturilor.' },
-    { term: 'arie', meaning: 'Câte pătrățele încap înăuntru.' }
+    { term: 'coliniare', meaning: 'Puncte distincte care stau pe aceeași dreaptă.' },
+    { term: 'segment', meaning: 'Bucata de dreaptă dintre două capete.' },
+    { term: 'paralel', meaning: 'Două drepte din plan care nu au niciun punct comun.' },
+    { term: 'unghi', meaning: 'Două semidrepte cu aceeași origine, numită vârf.' },
+    { term: 'congruent', meaning: 'Figuri care se suprapun perfect. Au aceleași măsuri corespunzătoare.' },
+    { term: 'axă de simetrie', meaning: 'Dreapta după care figura se îndoaie și se acoperă singură.' },
+    { term: 'perimetru', meaning: 'Suma lungimilor laturilor.' },
+    { term: 'arie', meaning: 'Măsura suprafeței, în pătrate unitate.' }
   ],
   'matematica:6:multimi': [
     { term: 'reuniune', meaning: 'Tot din cel puțin o mulțime, fără dubluri.' },
