@@ -48,7 +48,7 @@ describe('gimnaziu curriculum', () => {
         }
         if (subject === 'romana' && grade === 8) {
           expect(guide.restored).toBe(true);
-          expect(guide.units).toHaveLength(4);
+          expect(guide.units).toHaveLength(5);
           expect(guide.manual.code).toBe('A1954');
           guide.units.forEach(unit => {
             expect(unit.lessons.length, `${subject}:${grade}:${unit.id}`).toBeGreaterThanOrEqual(4);
@@ -115,7 +115,7 @@ describe('gimnaziu curriculum', () => {
     expect(counts.romana[5].chapters).toBe(8);
     expect(counts.romana[6].chapters).toBe(8);
     expect(counts.romana[7].chapters).toBe(7);
-    expect(counts.romana[8].chapters).toBe(4);
+    expect(counts.romana[8].chapters).toBe(5);
     expect(counts.matematica[5].lessons).toBeGreaterThanOrEqual(18);
     expect(counts.romana[5].lessons).toBeGreaterThanOrEqual(40);
 
@@ -183,12 +183,12 @@ describe('gimnaziu curriculum', () => {
     const eight = await request(app).get('/api/curriculum').query({ subject: 'romana', class_level: 8 });
     expect(eight.body.restored).toBe(true);
     expect(eight.body.manual.code).toBe('A1954');
-    expect(eight.body.units).toHaveLength(4);
+    expect(eight.body.units).toHaveLength(5);
     expect(catalog.body.guides).toHaveLength(8);
     for (const guide of catalog.body.guides) {
       expect(guide.howISeeIt.length).toBeGreaterThan(30);
       if (guide.subject === 'romana' && guide.grade > 8) expect(guide.units).toHaveLength(0);
-      else if (guide.subject === 'romana' && guide.grade === 8) expect(guide.units).toHaveLength(4);
+      else if (guide.subject === 'romana' && guide.grade === 8) expect(guide.units).toHaveLength(5);
       else if (guide.subject === 'romana' && guide.grade === 7) expect(guide.units).toHaveLength(7);
       else if (guide.subject === 'romana' && guide.grade === 6) expect(guide.units).toHaveLength(8);
       else expect(guide.units.length).toBeGreaterThan(2);
