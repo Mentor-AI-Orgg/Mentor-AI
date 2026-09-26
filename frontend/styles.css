@@ -1217,7 +1217,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .chapter-glossary dt { font-weight: 700; color: #f0c36a; }
 .chapter-glossary dd { margin: 0; color: #d7d9ea; font-size: 13px; }
 .chapter-map-line, .empty-state { color: #c9cbe0; font-size: 13px; }
-.lesson-try { border-left: 3px solid #f0c36a; padding-left: 10px; }
+.lesson-try { border-left: 3px solid #f0c36a; padding-left: 10px; margin: 0 0 10px; }
+.lesson-try p:last-child { margin-bottom: 0; }
 .mission-list { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 8px; }
 .mission-list li { display: flex; gap: 8px; align-items: center; }
 .mission-list li.done { color: #b8f0c4; }
