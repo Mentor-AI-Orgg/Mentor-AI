@@ -8,7 +8,23 @@ import QuoteCard from '../components/QuoteCard.jsx';
 import GeoFigure from '../components/GeoFigure.jsx';
 import GeometryAtlas from '../components/GeometryAtlas.jsx';
 import { dailySlogan } from '../slogans.js';
+import { splitLessonParagraphs } from '../lessonParagraphs.js';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
+
+function LessonProse({ label, text, className }) {
+  const parts = splitLessonParagraphs(text);
+  if (!parts.length) return null;
+  return (
+    <div className={className || undefined}>
+      {parts.map((part, index) => (
+        <p key={`${label}-${index}`}>
+          {index === 0 ? <strong>{label} </strong> : null}
+          {part}
+        </p>
+      ))}
+    </div>
+  );
+}
 
 const makeConversationId = prefix => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 const SESSION_STEPS = [
@@ -510,10 +526,10 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                               {entry.figure && (
                                 <GeoFigure kind={entry.figure} formulas={entry.formulas} />
                               )}
-                              {entry.theory && <p><strong>Teorie. </strong>{entry.theory}</p>}
-                              {entry.example && <p><strong>Exemplu. </strong>{entry.example}</p>}
-                              {entry.tryThis && <p className="lesson-try"><strong>Încearcă tu. </strong>{entry.tryThis}</p>}
-                              {entry.recap && <p><strong>Recap. </strong>{entry.recap}</p>}
+                              <LessonProse label="Teorie." text={entry.theory} />
+                              <LessonProse label="Exemplu." text={entry.example} />
+                              <LessonProse label="Încearcă tu." text={entry.tryThis} className="lesson-try" />
+                              <LessonProse label="Recap." text={entry.recap} />
                               {!entry.theory && (entry.platter || '').split(/\n\n+/).map((para, paraIndex) => (
                                 <p key={`${entry.id}-${paraIndex}`}>{para}</p>
                               ))}

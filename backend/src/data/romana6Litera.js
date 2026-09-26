@@ -765,7 +765,7 @@ function grade6Guide() {
     manual: MANUAL,
     competencies: COMPETENCIES,
     howISeeIt:
-      'Manualul Litera pentru clasa a VI-a, cod A1470, este parcurs până la capăt: recapitularea inițială, Unitățile 1–6 și încheierea anului. Scena sau regula stă în lecție. Clasele a VII-a și a VIII-a așteaptă bucățile lor.',
+      'Manualul Litera pentru clasa a VI-a, cod A1470, este parcurs până la capăt: recapitularea inițială, Unitățile 1–6 și încheierea anului. Scena sau regula stă în lecție.',
     units: UNITS
   };
 }

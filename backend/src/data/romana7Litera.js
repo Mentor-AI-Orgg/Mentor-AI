@@ -908,7 +908,7 @@ function grade7Guide() {
     manual: MANUAL,
     competencies: COMPETENCIES,
     howISeeIt:
-      'Manualul Litera pentru clasa a VII-a, cod A1732, cuprinde recapitularea inițială, Unitatea 1 până la capăt, Unitatea 2, Punți între lumi, până la capăt, Unitatea 3, Tărâmul sentimentelor, până la capăt, Unitatea 4, Lumea teatrului, până la capăt, Unitatea 5, Călător prin lume, până la capăt, Unitatea 6, Privind către mine, până la capăt, și recapitularea finală. Scena sau regula stă în lecție. Clasa a VIII-a așteaptă bucățile ei.',
+      'Manualul Litera pentru clasa a VII-a, cod A1732, cuprinde recapitularea inițială, Unitatea 1 până la capăt, Unitatea 2, Punți între lumi, până la capăt, Unitatea 3, Tărâmul sentimentelor, până la capăt, Unitatea 4, Lumea teatrului, până la capăt, Unitatea 5, Călător prin lume, până la capăt, Unitatea 6, Privind către mine, până la capăt, și recapitularea finală. Scena sau regula stă în lecție.',
     units: UNITS
   };
 }
