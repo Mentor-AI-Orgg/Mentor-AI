@@ -3,6 +3,7 @@ import { MentorAPI } from '../apiClient.js';
 import { formatScore, verdictClass, verdictLabel } from '../verdictCopy.js';
 import QuoteCard from './QuoteCard.jsx';
 import GradeGoalPicker from './GradeGoalPicker.jsx';
+import MathText from './MathText.jsx';
 
 const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onRewardClaim, onAskMentor }) => {
   const [cards, setCards] = useState([]);
@@ -132,7 +133,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
       {card && !report && (
         <>
           <p className="quiz-progress">Exercițiul {index + 1} din {cards.length}{card.level ? ` · treapta ${card.level}` : ''}</p>
-          <p className="quiz-question">{card.prompt}</p>
+          <p className="quiz-question"><MathText text={card.prompt} /></p>
           {card.long ? (
             <textarea
               className="field form-input quiz-work quiz-write"
@@ -188,10 +189,10 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
             {(report.items || []).map((item, itemIndex) => (
               <li key={item.id || itemIndex} className={verdictClass(item)}>
                 <strong>Exercițiul {itemIndex + 1} · {verdictLabel(item)}</strong>
-                <p>{item.prompt}</p>
-                <p>Tu: {item.given || '—'}</p>
-                <p>În barem: {item.sample}</p>
-                {item.explain && <p className="quiz-explain">{item.explain}</p>}
+                <p><MathText text={item.prompt} /></p>
+                <p>Tu: <MathText text={item.given || '—'} /></p>
+                <p>În barem: <MathText text={item.sample} /></p>
+                {item.explain && <p className="quiz-explain"><MathText text={item.explain} /></p>}
                 {item.rubric && (
                   <div className="writing-barem">
                     <strong>Am citit foaia · {item.rubric.total}/{item.rubric.max} · nota {item.rubric.note10}</strong>
@@ -215,7 +216,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
                 {item.steps?.length > 0 && (
                   <ol className="quiz-steps">
                     {item.steps.map((step, stepIndex) => (
-                      <li key={`${item.id}-step-${stepIndex}`}>{step}</li>
+                      <li key={`${item.id}-step-${stepIndex}`}><MathText text={step} /></li>
                     ))}
                   </ol>
                 )}

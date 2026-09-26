@@ -73,19 +73,84 @@ const GUIDES = {
     5: {
       title: "Matematică, clasa a V-a",
       howISeeIt:
-        "Anul ăsta e podul de la aritmetica din primar către gimnaziu. Elevul trebuie să se simtă stăpân pe numerele naturale, apoi să treacă la fracții fără panică și să recunoască figuri simple. Lucrăm intuitiv: mai întâi desen, estimare, exemplu din viață, abia apoi formulă.",
+        "Anul ăsta e podul de la aritmetica din primar către gimnaziu. Numerele naturale acoperă scrierea, axa, compararea, aproximările, cele patru operații, puterile, metodele și divizibilitatea. Fracțiile ordinare continuă cu echivalența, axa, numerele mixte, c.m.m.d.c., c.m.m.m.c. și operațiile, iar zecimalele adaugă virgula, perioada, media și aceleași metode cu unități de măsură. Apoi vin figurile. Lucrăm intuitiv: mai întâi desen, estimare, exemplu din viață, abia apoi formulă.",
       units: [
         {
           id: "naturale",
-          title: "Numere naturale și calcule",
+          title: "Numere naturale",
           inOwnWords:
-            "Citire, scriere, comparare, puteri, paranteze, metode aritmetice (reducere la unitate, mers invers). Divizibilitate: ce se împarte exact la 2, 3, 5, 9, 10; numere prime versus compuse."
+            "Scrii și citești numere, le pui pe axă, le compari și le aproximezi. Apoi aduni, scazi, înmulțești și împarți, cu rest sau fără. Înveți puterile, pătratele perfecte, baza 2 și ordinea operațiilor. Rezolvi probleme prin reducere la unitate, comparație, desen, mers invers sau falsă ipoteză. La sfârșit recunoști divizorii, multiplii, criteriile și numerele prime.",
+          toc: [
+            "Curiozități din lumea numerelor naturale",
+            "Scrierea și citirea numerelor naturale",
+            "Reprezentarea numerelor naturale pe axă",
+            "Compararea și ordonarea numerelor naturale",
+            "Aproximări și estimări",
+            "Recapitulare: numere naturale",
+            "Adunarea numerelor naturale",
+            "Scăderea numerelor naturale",
+            "Înmulțirea numerelor naturale",
+            "Împărțirea cu rest zero",
+            "Împărțirea cu rest",
+            "Recapitulare: operații",
+            "Puterea cu exponent natural",
+            "Reguli de calcul cu puteri",
+            "Compararea puterilor",
+            "Pătratul unui număr natural",
+            "Scrierea în baza 10 și în baza 2",
+            "Ordinea efectuării operațiilor",
+            "Recapitulare: puteri",
+            "Metoda reducerii la unitate",
+            "Metoda comparației",
+            "Metoda figurativă",
+            "Metoda mersului invers",
+            "Metoda falsei ipoteze",
+            "Recapitulare: metode aritmetice",
+            "Divizor și multiplu",
+            "Divizor comun și multiplu comun",
+            "Criteriile de divizibilitate cu 2, 5 și 10",
+            "Criteriile de divizibilitate cu 3 și cu 9",
+            "Numere prime și numere compuse",
+            "Recapitulare: divizibilitate"
+          ]
         },
         {
           id: "fractii",
           title: "Fracții ordinare și zecimale",
           inOwnWords:
-            "O fracție e o parte dintr-un întreg. Amplificare/simplificare, adunare cu numitor comun, procente ca „din o sută”. Zecimalele sunt aceeași idee scrisă cu virgulă; media aritmetică e un prim pas spre statistica simplă."
+            "Fracția taie un întreg în părți egale. Înveți felurile ei, echivalența, compararea, axa, numerele mixte, c.m.m.d.c. și c.m.m.m.c., apoi adunarea, înmulțirea, procentul, împărțirea și puterea. Zecimala este aceeași valoare scrisă cu virgulă: o compari, o rotunjești, o calculezi, recunoști perioada și o aduci înapoi la fracție. Media și problemele cu unități de măsură închid capitolul.",
+          toc: [
+            "Fractali: triunghiul și pătratul",
+            "Fracția ordinară",
+            "Fracții echivalente",
+            "Compararea fracțiilor ordinare",
+            "Fracții pe axa numerelor",
+            "Numere mixte",
+            "Cel mai mare divizor comun",
+            "Amplificare și simplificare",
+            "Cel mai mic multiplu comun și numitorul comun",
+            "Recapitulare: fracții ordinare",
+            "Adunarea și scăderea fracțiilor",
+            "Înmulțirea fracțiilor",
+            "Fracție dintr-un număr și procentul",
+            "Împărțirea fracțiilor",
+            "Puterea unei fracții",
+            "Recapitulare: operații cu fracții",
+            "Un tabel pentru un șir de date",
+            "Scrierea fracțiilor zecimale",
+            "Compararea fracțiilor zecimale",
+            "Aproximări și zecimale pe axă",
+            "Recapitulare: scrierea zecimalelor",
+            "Adunarea și scăderea zecimalelor",
+            "Înmulțirea zecimalelor",
+            "Împărțirea cu rezultat zecimal și media",
+            "De la fracție ordinară la zecimală periodică",
+            "Împărțirea a două zecimale",
+            "De la zecimală la fracție ordinară",
+            "Numărul rațional pozitiv și ordinea operațiilor",
+            "Metode cu fracții și unități de măsură",
+            "Recapitulare: fracții zecimale"
+          ]
         },
         {
           id: "geometrie",
