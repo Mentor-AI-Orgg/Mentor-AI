@@ -21,6 +21,7 @@ import ModerationScreen from './screens/ModerationScreen.jsx';
 import { ProfessorScreen } from './components/StudyScreens.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
 import Mascota from './components/mascot/Mascota.jsx';
+import MascotLayer from './components/mascot/MascotLayer.jsx';
 
 const LearnScreen = lazy(() => import('./screens/LearnScreen.jsx'));
 const ShopScreen = lazy(() => import('./components/ShopScreen.jsx'));
@@ -629,6 +630,7 @@ function AppShell({ userData, setUserData }) {
       </Suspense>
       {showNav && <BottomNav active={navScreen} onNavigate={handleNavigate} />}
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      <MascotLayer />
     </div>
   );
 }
