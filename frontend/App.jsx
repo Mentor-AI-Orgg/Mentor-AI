@@ -6,7 +6,7 @@ import { appearanceFromAccount, applyAppearance } from './themePrefs.js';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
 import { hashForRoute, parseAppHash } from './appRoutes.js';
 import AdaptiveContainer from './components/AdaptiveContainer.jsx';
-import FloatingLines from './components/FloatingLines.jsx';
+import AppBackground from './components/AppBackground.jsx';
 import BottomNav from './components/BottomNav.jsx';
 import Toast from './components/Toast.jsx';
 import SplashScreen from './components/SplashScreen.jsx';
@@ -607,7 +607,7 @@ function AppShell({ userData, setUserData }) {
       <AdaptiveContainer />
       <div className="app-background">
         <BackgroundSafe>
-          <FloatingLines
+          <AppBackground
             linesGradient={['#44D6D7', '#0F2A52', '#93FC09']}
             enabledWaves={['top', 'middle', 'bottom']}
             lineCount={[6, 8, 10]}
