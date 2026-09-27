@@ -82,17 +82,29 @@ const GLOSSARY = {
     { term: 'asemenea', meaning: 'Aceeași formă, altă scară. Unghiuri egale și laturi proporționale.' },
     { term: 'sinus', meaning: 'În triunghiul dreptunghic, cateta opusă împărțită la ipotenuză.' }
   ],
+  'matematica:8:intervale': [
+    { term: 'plan principal', meaning: 'Ce cere programa: mulțimi, intervale și inecuații ax + b, explicate până la capăt.' },
+    { term: 'interval', meaning: 'O bucată de axă. Paranteza dreaptă ține capătul, cea rotundă îl taie.' },
+    { term: 'inecuație', meaning: 'Întreabă pentru ce x inegalitatea rămâne adevărată. Răspunsul este o mulțime.' },
+    { term: 'reuniune', meaning: 'Elementele care stau în cel puțin una dintre mulțimi.' }
+  ],
   'matematica:8:algebric': [
-    { term: 'termeni asemenea', meaning: 'Aceeași literă, același exponent — îi poți aduna.' },
-    { term: 'identitate', meaning: 'E adevărată pentru orice valoare a literei.' }
+    { term: 'termeni asemenea', meaning: 'Aceeași parte cu litere, inclusiv același exponent. Coeficienții se adună.' },
+    { term: 'identitate', meaning: 'O egalitate adevărată pentru orice valoare permisă a literei.' },
+    { term: 'conjugată', meaning: 'Schimbă semnul din mijloc, ca să dispară radicalul de la numitor.' },
+    { term: 'plan secundar', meaning: 'O scurtătură din manual care nu este în programă, cum este formula cu Δ. Nu înlocuiește metoda.' }
   ],
   'matematica:8:functii': [
-    { term: 'funcție', meaning: 'Unește un x de un singur f(x).' },
-    { term: 'pantă', meaning: 'Cât urcă sau coboară dreapta când x crește cu 1.' }
+    { term: 'funcție', meaning: 'Leagă fiecare x din domeniu de un singur f(x).' },
+    { term: 'grafic', meaning: 'Mulțimea punctelor (x, f(x)) desenate în axe.' },
+    { term: 'medie', meaning: 'Suma valorilor împărțită la câte sunt. Frecvențele pot fi ponderi.' },
+    { term: 'mediană', meaning: 'Valoarea din mijloc, după ce ai ordonat datele.' }
   ],
   'matematica:8:spatiu': [
-    { term: 'prismă', meaning: 'Două baze paralele, muchii laterale perpendiculare pe baze dacă e dreaptă.' },
-    { term: 'volum', meaning: 'Cât umple corpul, nu doar coaja.' }
+    { term: 'prismă', meaning: 'Două baze congruente în plane paralele. La cea dreaptă, fețele laterale sunt dreptunghiuri.' },
+    { term: 'volum', meaning: 'Cât umple corpul. La piramidă este o treime din aria bazei ori înălțime.' },
+    { term: 'proiecție', meaning: 'Piciorul perpendicularei pe un plan. Lungimea ei nu depășește segmentul.' },
+    { term: 'diedru', meaning: 'Două semiplane cu aceeași muchie. Unghiul lui se citește într-un plan perpendicular pe muchie.' }
   ],
   'en:matematica:numere': [
     { term: 'rațional', meaning: 'Se scrie ca fracție de întregi. √2 nu e.' },
