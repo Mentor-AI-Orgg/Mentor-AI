@@ -61,6 +61,9 @@ function sessionCookieOptions(maxAge) {
   };
 }
 
+const path = require("path");
+const { MASCOT_NAME } = require("../config/mascot");
+
 function consentMail({ req, account, token }) {
   const link = `${publicBaseUrl(req)}/#/acord/${token}`;
   const subject = "Confirmați contul copilului dumneavoastră pe Sunt de 10";
@@ -74,7 +77,15 @@ function consentMail({ req, account, token }) {
     link,
     "Dacă nu confirmați în 14 zile, contul și datele se șterg automat."
   ].join("\n");
-  return { link, subject, body };
+  const alt = `${MASCOT_NAME}, furnicuța care te ajută`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const safeBody = body.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const html = `<p>${safeBody.replace(/\n/g, "</p><p>")}</p><img src="cid:mascot" alt="${alt}" width="96" height="96">`;
+  const attachments = [{
+    filename: "mascot-salut.png",
+    path: path.join(__dirname, "../notify/mascot-salut.png"),
+    cid: "mascot"
+  }];
+  return { link, subject, body, html, attachments };
 }
 
 async function sendConsentEmail(req, account, { resend = false } = {}) {
@@ -91,6 +102,8 @@ async function sendConsentEmail(req, account, { resend = false } = {}) {
     to: parentEmail,
     subject: mail.subject,
     body: mail.body,
+    html: mail.html,
+    attachments: mail.attachments,
     channel: "email"
   });
   markConfirmationSent(account.email, parentEmail, { resend });

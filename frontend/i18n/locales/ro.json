@@ -190,6 +190,10 @@
     "calendarConnected": "Calendarul a fost conectat.",
     "calendarError": "Nu am putut conecta calendarul."
   },
+  "mascot": {
+    "aria": "{mascota}, furnicuța care te ajută",
+    "hello": "Salut! Ce învățăm azi?"
+  },
   "languages": {
     "ro": "Română",
     "en": "English",

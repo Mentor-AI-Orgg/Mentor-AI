@@ -1,3 +1,7 @@
+const fs = require("fs");
+const path = require("path");
+const salutSvg = fs.readFileSync(path.join(__dirname, "../../shared/mascot-salut.svg"), "utf8");
+
 function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
   const error = previewError
     ? `<p class="err">${escapeHtml(previewError)}</p>`
@@ -25,11 +29,13 @@ function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
       font-family: Nunito, "Segoe UI", sans-serif;
       color: #fff;
       background:
-        radial-gradient(circle at 18% 16%, rgba(185, 167, 255, .18), transparent 34%),
-        radial-gradient(circle at 82% 72%, rgba(111, 215, 255, .16), transparent 38%),
-        linear-gradient(180deg, #0c0e22, #070910 72%);
+        radial-gradient(circle at 18% 16%, rgba(68, 214, 215, .18), transparent 34%),
+        radial-gradient(circle at 82% 72%, rgba(147, 252, 9, .12), transparent 38%),
+        linear-gradient(180deg, #08142A, #070910 72%);
     }
     main { width: min(440px, 100%); text-align: center; }
+    .mascot { width: 160px; height: 160px; margin: 0 auto; }
+    .mascot svg { width: 160px; height: 160px; }
     .pill {
       display: inline-block;
       margin: 0;
@@ -81,6 +87,7 @@ function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
 </head>
 <body>
   <main>
+    <div class="mascot">${salutSvg}</div>
     <p class="pill">În curând</p>
     <h1>Sunt de 10</h1>
     <section class="gate" aria-label="Intrare creator">

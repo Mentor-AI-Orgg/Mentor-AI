@@ -20,6 +20,7 @@ import RenameScreen from './components/RenameScreen.jsx';
 import ModerationScreen from './screens/ModerationScreen.jsx';
 import { ProfessorScreen } from './components/StudyScreens.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
+import Mascota from './components/mascot/Mascota.jsx';
 
 const LearnScreen = lazy(() => import('./screens/LearnScreen.jsx'));
 const ShopScreen = lazy(() => import('./components/ShopScreen.jsx'));
@@ -583,6 +584,7 @@ function AppShell({ userData, setUserData }) {
           <main className="screen-page animate-fadeIn">
             <header className="screen-header">
               <div className="eyebrow">Pagină lipsă</div>
+              <Mascota mood="gandeste" size="md" />
               <h1 className="display-font screen-title">Nu am găsit ecranul.</h1>
               <p>Sesiunea e în regulă. Întoarce-te acasă sau la lecții.</p>
               <button type="button" className="accent-button" onClick={() => handleNavigate('home')}>Acasă</button>

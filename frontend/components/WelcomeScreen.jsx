@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Mascota from './mascot/Mascota.jsx';
 
 const FEATURES = [
   { icon: 'fa-book-open', title: 'Lecții pe programă', text: 'Câte un capitol, pe înțelesul tău, la română și la matematică.' },
@@ -50,7 +51,7 @@ const WelcomeScreen = ({ onConnect, onRegister, onParent }) => {
         <div className="welcome-mark" aria-hidden="true">10</div>
         <h1 className="display-font welcome-title">Mate și română pentru clasele V–VIII, pe înțelesul tău</h1>
         <p className="welcome-lead">Lecții după programa școlară, exerciții și un tutore care te ajută pas cu pas. Gratuit.</p>
-        <div className="welcome-mascot-slot" aria-hidden="true">Loc pentru furnicuță</div>
+        <div className="welcome-mascot-slot"><Mascota mood="salut" size="lg" /></div>
         <button type="button" className="accent-button welcome-connect" onClick={onRegister}>Începe gratuit</button>
       </section>
 

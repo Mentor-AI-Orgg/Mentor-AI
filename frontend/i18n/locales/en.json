@@ -190,6 +190,10 @@
     "calendarConnected": "The calendar is connected.",
     "calendarError": "We could not connect the calendar."
   },
+  "mascot": {
+    "aria": "{mascota}, the little ant who helps you",
+    "hello": "Hi! What shall we learn today?"
+  },
   "languages": {
     "ro": "Română",
     "en": "English",

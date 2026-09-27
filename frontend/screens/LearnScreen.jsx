@@ -11,6 +11,7 @@ import { dailySlogan } from '../slogans.js';
 import { splitLessonParagraphs } from '../lessonParagraphs.js';
 import MathText from '../components/MathText.jsx';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
+import Mascota from '../components/mascot/Mascota.jsx';
 
 function LessonProse({ label, text, className }) {
   const parts = splitLessonParagraphs(text);
@@ -264,6 +265,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
 
   return (
     <main className="screen-page learn-page animate-fadeIn">
+      <div className="mascot-corner"><Mascota mood="explica" size="sm" /></div>
       <header className="screen-header">
         <div className="learn-hero">
           <div className="eyebrow">{isEn ? 'EVALUARE NAȚIONALĂ · CLASA A VIII-A' : 'LECȚII DE GIMNAZIU'}</div>

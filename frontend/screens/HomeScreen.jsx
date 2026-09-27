@@ -5,6 +5,7 @@ import { xpProgress } from '../xpProgress.js';
 import { dailySlogan } from '../slogans.js';
 import QuoteCard from '../components/QuoteCard.jsx';
 import LevelBar from '../components/LevelBar.jsx';
+import Mascota from '../components/mascot/Mascota.jsx';
 
 const HomeScreen = ({ userData, onNavigate }) => {
   const { t, locale } = useI18n();
@@ -40,6 +41,9 @@ const HomeScreen = ({ userData, onNavigate }) => {
           <div className="eyebrow">{dateLabel}</div>
           <h1 className="display-font home-title">{t('home.hello', { name: userData.name || t('home.studentFallback') })}</h1>
           <p className="home-role-tag">{userData.titleName ? `${userData.titleName} · ` : ''}{t('home.roleStudent')} · {t('home.gradeOnly', { grade })}</p>
+          <div className="home-mascot">
+            <Mascota mood="salut" size="md" message={t('mascot.hello')} />
+          </div>
           <p className="home-slogan">{dailySlogan()}</p>
           <QuoteCard />
           {userData.nudge?.body && (

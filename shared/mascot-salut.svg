@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="mascot-svg mascot-mood-salut" viewBox="0 0 240 240" width="160" height="160" aria-hidden="true"><g class="mascot-body">
+    <polyline data-part="picior-1" points="108,118 86,86 70,58" fill="none" stroke="#091C3C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><polyline data-part="picior-2" points="112,132 74,148 46,158" fill="none" stroke="#091C3C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><polyline data-part="picior-3" points="118,140 86,172 58,196" fill="none" stroke="#091C3C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><polyline data-part="picior-4" points="132,122 168,108 188,90" fill="none" stroke="#091C3C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><polyline data-part="picior-5" points="134,134 176,152 208,162" fill="none" stroke="#091C3C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><polyline data-part="picior-6" points="128,142 168,176 198,198" fill="none" stroke="#091C3C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <ellipse data-part="abdomen" cx="148" cy="176" rx="56" ry="44" fill="#091C3C"/>
+    <path d="M118,158 Q148,142 176,160" fill="none" stroke="#44D6D7" stroke-width="4" stroke-linecap="round"/>
+    <text data-part="zece" x="148" y="188" text-anchor="middle" font-family="Nunito, sans-serif" font-size="36" font-weight="700" fill="#FFFFFF">10</text>
+    <ellipse data-part="torace" cx="118" cy="124" rx="22" ry="16" fill="#091C3C"/>
+    <path d="M104,118 Q118,110 132,118" fill="none" stroke="#44D6D7" stroke-width="3" stroke-linecap="round"/>
+    <ellipse data-part="cap" cx="84" cy="74" rx="26" ry="22" fill="#091C3C"/>
+    <path d="M68,66 Q84,56 100,66" fill="none" stroke="#44D6D7" stroke-width="3" stroke-linecap="round"/>
+    <g data-part="ochi">
+    <circle cx="70" cy="72" r="5" fill="#FFFFFF"/>
+    <circle cx="70" cy="71" r="2.4" fill="#091C3C"/>
+    <circle cx="68.8" cy="70" r="0.8" fill="#FFFFFF"/>
+    <circle cx="94" cy="72" r="5" fill="#FFFFFF"/>
+    <circle cx="94" cy="71" r="2.4" fill="#091C3C"/>
+    <circle cx="92.8" cy="70" r="0.8" fill="#FFFFFF"/>
+  </g>
+    <path d="M66,84 Q82,94 98,84" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+    <g data-part="ochelari" fill="none" stroke="#44D6D7" stroke-width="3">
+      <circle cx="70" cy="72" r="13"/>
+      <circle cx="94" cy="72" r="13"/>
+      <path d="M83,72 H81" stroke-width="2"/>
+    </g>
+    <polyline data-part="antena-stanga" points="72,56 52,22 34,8" fill="none" stroke="#091C3C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <polyline data-part="antena-dreapta" points="98,54 126,16 154,6" fill="none" stroke="#091C3C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="40" cy="16" r="3" fill="#44D6D7"/>
+    <circle cx="142" cy="14" r="3" fill="#44D6D7"/>
+    <g data-part="creion">
+    <rect x="168" y="96" width="46" height="8" rx="2" fill="#93FC09" transform="rotate(-28 168 100)"/>
+    <polygon points="206,78 214,86 204,90" fill="#4B5563"/>
+  </g>
+    
+    
+    
+    
+  </g></svg>
