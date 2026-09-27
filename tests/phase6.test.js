@@ -38,8 +38,8 @@ describe('phase 6 product polish', () => {
     expect(res.body.integrations.stripe.status).toBe('online (mock)');
     expect(res.body.integrations.smtp.status).toBe('online (mock)');
     expect(res.body.integrations.twilio.status).toBe('online (mock)');
-    expect(res.body.integrations.google_calendar.status).toBe('online (mock)');
-    expect(res.body.integrations.notion.status).toBe('online (mock)');
+    expect(res.body.integrations.google_calendar.status).toBe('oprit');
+    expect(res.body.integrations.notion.status).toBe('oprit');
   });
 
   it('lists only the free plan and rejects paid checkout', async () => {
@@ -90,16 +90,12 @@ describe('phase 6 product polish', () => {
     expect(verifyStripeSignature(payload, `t=${timestamp},v1=deadbeef`, secret)).toBe(false);
   });
 
-  it('connects a calendar provider as mock when OAuth keys are missing', async () => {
+  it('refuses an external calendar connection', async () => {
     const agent = request.agent(app);
     await registerStudent(agent);
     const res = await agent.post('/api/calendar/connect').send({ provider: 'google' });
-    expect(res.status).toBe(200);
-    expect(res.body.mocked).toBe(true);
-    expect(res.body.connection.connected).toBe(true);
-    expect(res.body.connection.mocked).toBe(true);
-    expect(res.body.oauth_url).toBeUndefined();
-    expect(res.body.syncedEvents.length).toBeGreaterThan(0);
+    expect(res.status).toBe(410);
+    expect(res.body.error).toMatch(/aplicație/i);
   });
 
   it('builds the leaderboard from activity using pseudonyms, ignoring spoofed query params', async () => {

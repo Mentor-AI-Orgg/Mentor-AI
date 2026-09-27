@@ -176,6 +176,19 @@ const MentorAPI = {
     }
   },
 
+  async resetPassword(payload) {
+    try {
+      const data = await safeFetchJson('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async forgotPassword(payload) {
     try {
       const data = await safeFetchJson('/api/auth/forgot-password', {

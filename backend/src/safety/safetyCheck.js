@@ -1,18 +1,13 @@
-// Filtru de siguranță pe două straturi:
-//   1. listă de cuvinte-cheie (pre-filtru ieftin, mereu activ);
-//   2. API-ul de moderare OpenAI, dacă OPENAI_KEY este setat.
-//
-// Lista de cuvinte singură e trivial de ocolit (sinonime, diacritice, engleză).
-// Moderarea reală prinde mai mult, dar nu trebuie să lase chat-ul jos: dacă
-// API-ul pică, rămânem pe pre-filtru și lăsăm mesajul să treacă mai departe.
+// Filtru local. Nu pleacă mesajul copilului către un serviciu plătit.
 
-const config = require("../config");
+const CRISIS_KEYWORDS = [
+  "sinucidere", "suicid", "sinucid", "vreau sa mor", "sa ma omor", "ma omor",
+  "sunt abuzat", "ma abuzeaza", "abuz sexual", "kill myself", "want to die", "end my life"
+];
 
 const INAPPROPRIATE_KEYWORDS = [
-  "bomba", "arma", "ucide", "sinucidere", "suicid", "sinucid", "droguri",
-  "sex explicit", "pornografie", "hack", "fura banca", "virus", "terorism",
-  "criminal", "viol", "abuz", "omor", "explod", "kill myself", "make a bomb",
-  "want to die", "end my life"
+  "bomba", "arma", "droguri", "sex explicit", "pornografie", "fura banca", "terorism",
+  "make a bomb", "explod"
 ];
 
 function foldSafety(text) {
@@ -43,8 +38,6 @@ const DIRECT_ANSWER_PATTERNS = [
   /^(what is|give me)\s+(the\s+)?(answer|solution|result)\b/i
 ];
 
-const MODERATION_TIMEOUT_MS = 4000;
-
 function hasNeedle(folded, needle) {
   if (!needle) return false;
   if (needle.length >= 6) {
@@ -63,6 +56,9 @@ function escapeReg(value) {
 function keywordFlags(message) {
   const folded = foldSafety(message);
   const flags = [];
+  for (const kw of CRISIS_KEYWORDS) {
+    if (hasNeedle(folded, foldSafety(kw))) flags.push("crisis");
+  }
   for (const kw of INAPPROPRIATE_KEYWORDS) {
     if (hasNeedle(folded, foldSafety(kw))) flags.push("inappropriate_content");
   }
@@ -80,71 +76,33 @@ function isDirectRequest(message) {
   return false;
 }
 
-async function checkOpenAIModeration(text) {
-  if (!config.OPENAI_KEY) return null;
-
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), MODERATION_TIMEOUT_MS);
-  try {
-    const response = await fetch("https://api.openai.com/v1/moderations", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${config.OPENAI_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ input: String(text || "").slice(0, 8000) }),
-      signal: controller.signal
-    });
-    if (!response.ok) return null;
-    const data = await response.json();
-    const result = data.results && data.results[0];
-    if (!result) return null;
-    if (result.flagged) {
-      const categories = Object.entries(result.categories || {})
-        .filter(([, value]) => value)
-        .map(([name]) => name);
-      return { flagged: true, categories, source: "openai" };
-    }
-    return { flagged: false, source: "openai" };
-  } catch {
-    return null;
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
 async function safetyCheck(message) {
   const flags = keywordFlags(message);
   const direct = isDirectRequest(message);
 
   // Pre-filtrul refuză imediat: nu are rost să mai chemăm API-ul (și să
   // plătim) pentru un mesaj deja marcat.
-  if (flags.includes("inappropriate_content")) {
-    return { safe: false, flags, isDirectRequest: direct, moderation: "keyword" };
+  if (flags.includes("crisis")) {
+    return { safe: false, kind: "crisis", flags, isDirectRequest: direct, moderation: "keyword" };
   }
 
-  const moderation = await checkOpenAIModeration(message);
-  if (moderation && moderation.flagged) {
-    flags.push("inappropriate_content", "openai_moderation", ...(moderation.categories || []));
-    return {
-      safe: false,
-      flags: [...new Set(flags)],
-      isDirectRequest: direct,
-      moderation: "openai"
-    };
+  if (flags.includes("inappropriate_content")) {
+    return { safe: false, kind: "blocked", flags, isDirectRequest: direct, moderation: "keyword" };
   }
 
   return {
     safe: flags.length === 0,
+    kind: flags.length ? "caution" : "ok",
     flags: flags.length ? flags : ["none"],
     isDirectRequest: direct,
-    moderation: moderation ? moderation.source : "keyword"
+    moderation: "keyword"
   };
 }
 
 module.exports = {
   safetyCheck,
   isDirectRequest,
+  CRISIS_KEYWORDS,
   INAPPROPRIATE_KEYWORDS,
   CHEATING_PATTERNS,
   DIRECT_ANSWER_PATTERNS

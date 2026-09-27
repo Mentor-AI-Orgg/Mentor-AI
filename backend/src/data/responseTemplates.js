@@ -30,4 +30,9 @@ const DIRECT_ANSWER_GUARD_TEXT = {
 
 const ALL_ENGINES_DOWN_TEXT = "⚠️ Momentan toate serverele AI sunt ocupate. Te rog să încerci din nou în câteva secunde. Între timp, încearcă să rezolvi singur folosind manualul! 💪";
 
-module.exports = { SAFETY_REFUSAL_TEXT, DIRECT_ANSWER_GUARD_TEXT, ALL_ENGINES_DOWN_TEXT };
+const CRISIS_HELP_TEXT = {
+  ro: "Îmi pare rău că treci prin asta. Nu ești singur și nu te cert.\n\nSună acum la Telefonul Copilului: 116 111. Este gratuit.\nDacă ești în pericol acum, sună la 112.\nSpune unui părinte, unui profesor sau consilierului școlii.\n\nEu rămân aici pentru lecții, dar un om adevărat te poate ajuta mai bine decât un mesaj.",
+  en: "I am sorry you are going through this. You are not in trouble.\n\nIn Romania, call Telefonul Copilului: 116 111. It is free.\nIf you are in danger right now, call 112.\nTell a parent, a teacher, or the school counselor."
+};
+
+module.exports = { SAFETY_REFUSAL_TEXT, DIRECT_ANSWER_GUARD_TEXT, ALL_ENGINES_DOWN_TEXT, CRISIS_HELP_TEXT };

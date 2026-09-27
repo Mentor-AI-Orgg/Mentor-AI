@@ -39,6 +39,8 @@ function createApp(options = {}) {
   const app = express();
   app.set("trust proxy", 1);
 
+  // Formularul de intrare creator trimite parola prin POST, nu prin adresă.
+  app.use(express.urlencoded({ extended: false, limit: "2kb" }));
   app.use(comingSoon());
 
   app.use(basicAuth({

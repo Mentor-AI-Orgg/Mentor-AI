@@ -140,4 +140,23 @@ describe('auth', () => {
     expect(login.text).not.toMatch(/Acces restricționat/);
     expect(login.body.error).toMatch(/Email sau parolă/i);
   });
+
+  it('resets the password from a one-time link and closes the old session', async () => {
+    const forgot = await request(app).post('/api/auth/forgot-password').send({ email: studentEmail });
+    expect(forgot.body.success).toBe(true);
+    expect(forgot.body.message).toMatch(/Dacă adresa/);
+    const notes = await studentAgent.get('/api/economy/notifications');
+    const body = (notes.body.inbox || []).map(item => item.body || '').join('\n');
+    const token = (body.match(/#\/parola\/([a-f0-9]+)/) || [])[1];
+    expect(token).toBeTruthy();
+
+    const reset = await request(app).post('/api/auth/reset-password').send({ token, password: 'Nouapass1!' });
+    expect(reset.status).toBe(200);
+    const oldSession = await studentAgent.get('/api/auth/me');
+    expect(oldSession.status).toBe(401);
+    const reused = await request(app).post('/api/auth/reset-password').send({ token, password: 'AltaPass1!' });
+    expect(reused.status).toBe(400);
+    const fresh = await request(app).post('/api/auth/login').send({ email: studentEmail, password: 'Nouapass1!' });
+    expect(fresh.status).toBe(200);
+  });
 });

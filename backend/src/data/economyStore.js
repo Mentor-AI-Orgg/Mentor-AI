@@ -1083,15 +1083,26 @@ function markNotificationRead(notificationId) {
   return notification;
 }
 
-async function sendParentReview({ userId = 'demo_user', parentEmail = '', role = 'student', message = '' }) {
-  const user = ensureUser(userId, { parentEmail, role });
-  const to = parentEmail || user.preferences.parentEmail;
-  const subject = `Mentor AI este gratuit pentru ${user.preferences.username || user.preferences.profileName || 'elev'}`;
+async function sendParentReview({ userId = 'demo_user', role = 'student' }) {
+  const { findAccount } = require('./authStore');
+  const account = findAccount(userId);
+  const to = account?.profile?.parentEmail || '';
+  if (!to) {
+    return { ok: false, error: 'Nu există un email de părinte salvat în cont.' };
+  }
+  const user = ensureUser(userId, { role });
+  const today = new Date().toISOString().slice(0, 10);
+  user.parentNotify = user.parentNotify || {};
+  if (user.parentNotify.reviewDate === today) {
+    return { ok: false, error: 'Părintele a primit deja acest mesaj azi.' };
+  }
+  user.parentNotify.reviewDate = today;
+  const subject = `Mentor AI este gratuit pentru ${account.profile.name || account.profile.username || 'elev'}`;
   const body = [
     'Aplicația Mentor AI este gratuită. Nu există abonament de plătit.',
     `Cont: ${role}`,
     `Monede în magazin (cosmetice): ${user.balance}`,
-    `Mesaj suplimentar: ${message || 'Nu există mesaj suplimentar.'}`
+    'Mesajul este un text fix. Adresa și textul nu pot fi alese de copil, ca să nu se trimită scrisori către oricine.'
   ].join('\n');
 
   const { deliverMessage } = require('../notify/deliver');
