@@ -65,7 +65,7 @@ const chatSchema = z.object({
   language: z.string().max(8).optional().default("ro"),
   plan_id: z.string().max(20).optional().default("free"),
   conversation_id: z.string().max(80).optional(),
-  image_base64: z.string().max(7_000_000).optional().default("")
+  image_base64: z.string().max(4000).optional().default("")
 });
 
 const detectSchema = z.object({
@@ -210,7 +210,7 @@ const friendRespondSchema = z.object({
 const enPhotoSchema = z.object({
   paper_id: z.string().trim().min(1).max(120),
   target: z.string().trim().min(1).max(80),
-  image_base64: z.string().min(32).max(7_000_000)
+  image_base64: z.string().min(32).max(4000)
 });
 
 module.exports = {

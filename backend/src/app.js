@@ -28,6 +28,8 @@ const { startDigestSchedule } = require("./notify/parentActivity");
 const { migrateLegacyProfiles } = require("./data/authStore");
 const { corsAllowlist } = require("./middleware/corsAllowlist");
 const { generalApiLimiter, chatLimiter, detectLimiter } = require("./middleware/rateLimits");
+const { securityHeaders } = require("./middleware/security");
+const { requestLog } = require("./logger");
 const persistence = require("./data/persistence");
 const calendarOauthRoute = require("./routes/calendarOauth");
 const curriculumRoute = require("./routes/curriculum");
@@ -51,6 +53,8 @@ function createApp(options = {}) {
 
   const app = express();
   app.set("trust proxy", 1);
+  app.use(securityHeaders());
+  app.use(requestLog);
 
   // Formularul de intrare creator trimite parola prin POST, nu prin adresă.
   app.use(express.urlencoded({ extended: false, limit: "2kb" }));
@@ -77,7 +81,7 @@ function createApp(options = {}) {
   app.post("/api/subscriptions/webhook", express.raw({ type: "application/json" }), handleStripeWebhook);
   app.post("/api/v1/subscriptions/webhook", express.raw({ type: "application/json" }), handleStripeWebhook);
 
-  app.use(express.json({ limit: "10mb" }));
+  app.use(express.json({ limit: "64kb" }));
   app.use("/api", generalApiLimiter);
   app.use(attachUser);
 

@@ -46,7 +46,7 @@ npm run lint
 npm run build && npm start   # ca pe hosting: Express servește frontend/dist
 ```
 
-Cookie-ul de sesiune (`mentor_session`, httpOnly, SameSite=lax) circulă doar
+Cookie-ul de sesiune (`s10_session`, httpOnly, SameSite=lax) circulă doar
 pe aceeași origine. Deschide SPA-ul de pe `:5173` (dev) sau `:3001` (build),
 nu ca `file://`.
 
@@ -60,7 +60,7 @@ părintelui, `parental_consent: true` și `privacy_accepted: true`.
 
 ```
 Browser (React + Vite)
-    cookie mentor_session
+    cookie s10_session
 Express  (backend/src/app.js)
     basicAuth (opțional, staging)
     CORS allowlist
@@ -113,7 +113,7 @@ Pe `main`. Asta era blocajul: fără identitate, restul rutelor erau IDOR.
 - `POST /api/auth/register`, `/login`, `/logout`, `GET /api/auth/me`,
   `POST /api/auth/forgot-password`.
 - Parola: scrypt + salt unic. Nu se stochează niciodată în clar.
-- Sesinea: token aleator în cookie `mentor_session`; pe disc se salvează
+- Sesinea: token aleator în cookie `s10_session`; pe disc se salvează
   doar SHA-256-ul tokenului, nu valoarea din cookie.
 - `authRequired` și `roleGuard` pe rutele care ating un cont.
 - Profesorul nu se poate auto-înregistra: trebuie `TEACHER_INVITE_CODE`.

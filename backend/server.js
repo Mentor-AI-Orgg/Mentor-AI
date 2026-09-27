@@ -3,6 +3,12 @@ const persistence = require("./src/data/persistence");
 const { createApp } = require("./src/app");
 
 const { app, restored } = createApp();
+const { run: prelansare } = require("./src/ops/prelansare");
+for (const item of prelansare().items) {
+  if (!item.ok) {
+    console.log(`[prelansare] ${item.key}: ${item.required ? "lipsește, site-ul rămâne închis" : "opțional, lipsește"}`);
+  }
+}
 
 const server = app.listen(config.PORT, () => {
   console.log(`${config.APP_NAME} backend listening on http://localhost:${config.PORT}`);

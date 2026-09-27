@@ -24,14 +24,10 @@ describe('phase 6 product polish', () => {
     ({ app } = createApp({ autosave: false }));
   });
 
-  it('exposes mock vs real status for payments, notify and calendar', async () => {
+  it('keeps health to a yes or no, without integrations', async () => {
     const res = await request(app).get('/api/health');
     expect(res.status).toBe(200);
-    expect(res.body.integrations.stripe.status).toBe('online (mock)');
-    expect(res.body.integrations.smtp.status).toBe('online (mock)');
-    expect(res.body.integrations.twilio.status).toBe('online (mock)');
-    expect(res.body.integrations.google_calendar.status).toBe('oprit');
-    expect(res.body.integrations.notion.status).toBe('oprit');
+    expect(res.body).toEqual({ ok: true });
   });
 
   it('lists only the free plan and rejects paid checkout', async () => {

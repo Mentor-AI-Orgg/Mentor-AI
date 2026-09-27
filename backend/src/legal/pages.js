@@ -80,7 +80,7 @@ function privacyHtml() {
     <ul>
       <li><strong>Cont de elev:</strong> nume de utilizator, clasa (5–8) și hash-ul parolei. Nu cerem emailul copilului, numele real, telefonul sau școala.</li>
       <li><strong>Părinte:</strong> adresa de email, ca să confirme contul și să primească un rezumat. Părintele intră cu un link trimis pe email, fără parolă.</li>
-      <li><strong>Sesiune:</strong> cookie-ul httpOnly <code>mentor_session</code>, 7 zile, și cookie-ul <code>s10_parent</code> pentru zona de părinte.</li>
+      <li><strong>Sesiune:</strong> cookie-ul httpOnly <code>s10_session</code>, 7 zile, și cookie-ul <code>s10_parent</code> pentru zona de părinte.</li>
       <li><strong>Învățare:</strong> progresul la lecții, testele, conversația cu mentorul, calendarul, prietenii (după nume de utilizator) și obiectele din magazinul cu monede de studiu.</li>
       <li><strong>Tehnic:</strong> adresa IP, doar ca să limităm încercările repetate.</li>
     </ul>

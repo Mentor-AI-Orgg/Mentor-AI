@@ -15,14 +15,7 @@
       <p>Se încarcă Mentor AI…</p>
     </div>
   </div>
-  <script>
-    window.addEventListener('error', function (event) {
-      var fallback = document.getElementById('boot-fallback');
-      var root = document.getElementById('root');
-      if (!fallback || !root || root.children.length > 1) return;
-      fallback.innerHTML = '<p style="max-width:320px;text-align:center;padding:0 20px;">Nu am putut încărca aplicația (' + (event.message || 'eroare necunoscută') + '). Reîncarcă pagina.</p>';
-    });
-  </script>
+  <script src="/boot.js"></script>
   <script type="module" src="/main.jsx"></script>
 </body>
 </html>

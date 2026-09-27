@@ -178,7 +178,7 @@ ai setat variabilele din pasul 5.
 ## Protecție extra pe prototipul public
 
 Autentificarea pe conturi există (Faza 1): identitatea vine din cookie-ul
-`mentor_session`, nu din `user_id` trimis de client. Cât instanța e un
+`s10_session`, nu din `user_id` trimis de client. Cât instanța e un
 prototip pe un URL ghicibil, ține totuși `STAGING_AUTH_USER` și
 `STAGING_AUTH_PASSWORD` setate, ca să nu indexeze motoarele de căutare
 paginile și ca Basic Auth să stea în fața formularului de register.

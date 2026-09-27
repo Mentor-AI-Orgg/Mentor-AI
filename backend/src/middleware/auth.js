@@ -9,7 +9,7 @@
 const { getSession, findAccount, isConsentGranted } = require("../data/authStore");
 const { getParentSession } = require("../data/consentStore");
 
-const SESSION_COOKIE = "mentor_session";
+const SESSION_COOKIE = "s10_session";
 const PARENT_COOKIE = "s10_parent";
 
 // Parser minimal de cookie-uri, ca să nu adăugăm dependința `cookie-parser`
