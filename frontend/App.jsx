@@ -107,6 +107,12 @@ function AppShell({ userData, setUserData }) {
     setToast({ message, type });
   }, []);
 
+  useEffect(() => {
+    const onUpdate = () => showToast('Există o versiune nouă. Reîncarcă.', 'success');
+    window.addEventListener('s10-update', onUpdate);
+    return () => window.removeEventListener('s10-update', onUpdate);
+  }, [showToast]);
+
   const handleEconomyUpdate = useCallback((balance, equipped = {}, role = null, extra = {}) => {
     let leveledTo = null;
     setUserData(prev => {

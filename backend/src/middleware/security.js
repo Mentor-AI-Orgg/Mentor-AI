@@ -14,7 +14,9 @@ function securityHeaders() {
         objectSrc: ["'none'"],
         frameAncestors: ["'none'"],
         baseUri: ["'self'"],
-        formAction: ["'self'"]
+        formAction: ["'self'"],
+        workerSrc: ["'self'"],
+        manifestSrc: ["'self'"]
       }
     },
     crossOriginEmbedderPolicy: false

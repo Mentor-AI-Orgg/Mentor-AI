@@ -69,6 +69,16 @@ contului și ștergerea citesc doar registrul. Termenele de păstrare stau în
 `backend/src/config/retention.js`; pagina de confidențialitate trebuie să
 folosească aceleași numere.
 
+## Pe telefon
+
+Manifestul e `frontend/public/manifest.webmanifest`. Iconițele se regenerează cu `node scripts/make-icons.mjs` (nu rulează la build și nu se urcă scriptul pe server).
+
+Service worker-ul (`frontend/public/sw.js`) păstrează doar fișiere statice: `/assets/`, iconițe, fonturi, manifest. Nu pune în cache `/api/`, paginile de părinte sau de creator, nici răspunsurile cu cookie. `index.html` se cere mereu de la rețea. Fără internet se arată `offline.html`.
+
+Dacă după un deploy ceva rămâne blocat, deschide `frontend/public/sw.js`, pune `SW_DISABLED = true`, urcă din nou. La următoarea vizită worker-ul se șterge și golește cache-ul. Apoi pune-l înapoi pe `false`.
+
+Cât site-ul e închis, pagina „În curând” nu înregistrează worker-ul. Înregistrarea pornește doar din aplicație, după ce creatorul a intrat.
+
 ## Structură
 
 - `backend/` — Express: autentificare, chat din lecții, economie, calendar, persistență JSON

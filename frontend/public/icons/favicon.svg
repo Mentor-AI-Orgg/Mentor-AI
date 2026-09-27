@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+    <rect width="32" height="32" fill="#08142A"/>
+    <g transform="translate(2 7.25) scale(0.4375)"><g class="mascot-head-icon">
+    <ellipse data-part="cap" cx="32" cy="22" rx="12" ry="10" fill="#091C3C"/>
+    <path d="M24,18 Q32,13 40,18" fill="none" stroke="#44D6D7" stroke-width="1.6" stroke-linecap="round"/>
+    <g data-part="ochi"><circle cx="27" cy="21" r="2" fill="#FFFFFF"/><circle cx="37" cy="21" r="2" fill="#FFFFFF"/><circle cx="27" cy="21" r="1" fill="#091C3C"/><circle cx="37" cy="21" r="1" fill="#091C3C"/></g>
+    <g data-part="ochelari" fill="none" stroke="#44D6D7" stroke-width="1.6">
+      <circle cx="27" cy="21" r="5"/>
+      <circle cx="37" cy="21" r="5"/>
+    </g>
+    <polyline data-part="antena-stanga" points="26,14 20,6 14,3" fill="none" stroke="#091C3C" stroke-width="1.6" stroke-linecap="round"/>
+    <polyline data-part="antena-dreapta" points="38,14 46,6 52,3" fill="none" stroke="#091C3C" stroke-width="1.6" stroke-linecap="round"/>
+  </g></g>
+  </svg>

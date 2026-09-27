@@ -127,7 +127,16 @@ function createApp(options = {}) {
 
   const distDir = path.join(__dirname, "..", "..", "frontend", "dist");
   if (fs.existsSync(distDir)) {
-    app.use(express.static(distDir));
+    app.use(express.static(distDir, {
+      setHeaders(res, filePath) {
+        const base = path.basename(filePath);
+        if (base === "sw.js" || base === "manifest.webmanifest") {
+          res.setHeader("Cache-Control", "no-cache");
+        } else if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        }
+      }
+    }));
     app.get(/^\/(?!api\/).*/, (req, res) => {
       res.sendFile(path.join(distDir, "index.html"));
     });

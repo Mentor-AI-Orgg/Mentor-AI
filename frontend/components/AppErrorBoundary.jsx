@@ -31,7 +31,7 @@ class AppErrorBoundary extends Component {
   render() {
     if (!this.state.failed) return this.props.children;
     return (
-      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 24, textAlign: 'center' }}>
+      <div className="boot-fallback">
         <div>
           <Mascota mood="trist-bland" size="md" message="Ceva n-a mers de partea mea. Mai încercăm o dată?" />
           <p>Ceva n-a mers. Reîncarcă pagina.</p>
