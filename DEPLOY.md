@@ -130,6 +130,10 @@ din formularul **Intrare creator**, cu `PREVIEW_PASSWORD` setată în
 DirectAdmin. Dacă parola lipsește, nimeni nu intră. Nu o pune în adresă.
 Cookie-ul se semnează cu `PREVIEW_COOKIE_SECRET`. Ca să vezi iar pagina
 publică: `https://suntde10.ro/creator/iesire`.
+`BACKUP_KEY` cifrează copiile de rezervă ale fișierului de date. Pune un șir
+de cel puțin 16 caractere, altul decât parolele, și păstrează-l. Fără cheie,
+copiile bak rămân în clar. Restaurare: `node backend/src/ops/restoreBackup.js`.
+
 Pagina de confidențialitate rămâne deschisă și cât site-ul e închis.
 Adresa de contact de pe ea este `LEGAL_CONTACT`. Dacă lipsește, pagina
 spune că operatorul încă nu a publicat-o.

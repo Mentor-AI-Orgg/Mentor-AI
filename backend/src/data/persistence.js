@@ -55,8 +55,32 @@ function backupPath(n) {
   return `${DATA_FILE}.bak${n}`;
 }
 
+function encryptedBackupPath(n) {
+  return `${DATA_FILE}.bak${n}.enc`;
+}
+
+function readBackupFile(file) {
+  const { backupKeyConfigured, decrypt } = require("../ops/backupCrypto");
+  const raw = fs.readFileSync(file);
+  if (file.endsWith(".enc")) {
+    if (!backupKeyConfigured()) throw new Error("BACKUP_KEY lipsește");
+    return decrypt(raw).toString("utf8");
+  }
+  return raw.toString("utf8");
+}
+
 function rotateBackups() {
   try {
+    const { backupKeyConfigured, encrypt } = require("../ops/backupCrypto");
+    if (backupKeyConfigured()) {
+      if (fs.existsSync(encryptedBackupPath(2))) fs.renameSync(encryptedBackupPath(2), encryptedBackupPath(3));
+      if (fs.existsSync(encryptedBackupPath(1))) fs.renameSync(encryptedBackupPath(1), encryptedBackupPath(2));
+      fs.writeFileSync(encryptedBackupPath(1), encrypt(fs.readFileSync(DATA_FILE)));
+      for (const n of [1, 2, 3]) {
+        if (fs.existsSync(backupPath(n))) fs.rmSync(backupPath(n));
+      }
+      return;
+    }
     if (fs.existsSync(backupPath(2))) fs.renameSync(backupPath(2), backupPath(3));
     if (fs.existsSync(backupPath(1))) fs.renameSync(backupPath(1), backupPath(2));
     fs.copyFileSync(DATA_FILE, backupPath(1));
@@ -66,11 +90,15 @@ function rotateBackups() {
 }
 
 function tryLoadBackup() {
+  const files = [];
   for (const n of [1, 2, 3]) {
-    const file = backupPath(n);
+    files.push(encryptedBackupPath(n));
+    files.push(backupPath(n));
+  }
+  for (const file of files) {
     if (!fs.existsSync(file)) continue;
     try {
-      const parsed = JSON.parse(fs.readFileSync(file, "utf8"));
+      const parsed = JSON.parse(readBackupFile(file));
       if (parsed?.version !== FORMAT_VERSION) continue;
       const restored = [];
       for (const [name, handlers] of collections.entries()) {

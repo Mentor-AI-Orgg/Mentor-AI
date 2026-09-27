@@ -1,0 +1,32 @@
+// Restaurează ultimul backup criptat peste fișierul de date.
+// Se rulează de mână: node backend/src/ops/restoreBackup.js
+
+const fs = require("fs");
+const persistence = require("../data/persistence");
+
+function restoreBackup() {
+  if (!fs.existsSync(`${persistence.DATA_FILE}.bak1.enc`) && !fs.existsSync(`${persistence.DATA_FILE}.bak1`)) {
+    return { ok: false, reason: "no_backup" };
+  }
+  const broken = `${persistence.DATA_FILE}.inainte-de-restaurare`;
+  if (fs.existsSync(persistence.DATA_FILE)) {
+    fs.copyFileSync(persistence.DATA_FILE, broken);
+    fs.rmSync(persistence.DATA_FILE);
+  }
+  const restored = persistence.load();
+  if (!restored.loaded) return { ok: false, reason: restored.reason || "failed" };
+  persistence.saveNow();
+  return { ok: true, reason: restored.reason || "backup" };
+}
+
+if (require.main === module) {
+  const result = restoreBackup();
+  if (!result.ok) {
+    console.error(`Nu am putut restaura (${result.reason}).`);
+    process.exit(1);
+  }
+  console.log("Datele au fost restaurate din backup.");
+  process.exit(0);
+}
+
+module.exports = { restoreBackup };
