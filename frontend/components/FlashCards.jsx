@@ -3,6 +3,7 @@ import { MentorAPI } from '../apiClient.js';
 import { formatScore, verdictClass, verdictLabel } from '../verdictCopy.js';
 import QuoteCard from './QuoteCard.jsx';
 import GradeGoalPicker from './GradeGoalPicker.jsx';
+import MathText from './MathText.jsx';
 
 const letters = ['A', 'B', 'C', 'D'];
 
@@ -176,7 +177,7 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
         <>
           <div className="flashcards-progress-track"><div style={{ width: `${((index + 1) / cards.length) * 100}%` }} /></div>
           <p className="quiz-progress">Cardul {index + 1} din {cards.length}{card.level ? ` · treapta ${card.level}` : ''}</p>
-          <p className="quiz-question">{card.question}</p>
+          <p className="quiz-question"><MathText text={card.question} /></p>
           <div className="quiz-options">
             {card.options.map((option, optionIndex) => {
               const locked = Number.isInteger(choices[card.id]);
@@ -190,21 +191,21 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
                   onClick={() => choose(optionIndex)}
                 >
                   <em>{letters[optionIndex]}</em>
-                  <span>{option}</span>
+                  <span><MathText text={option} /></span>
                 </button>
               );
             })}
           </div>
           {Number.isInteger(choices[card.id]) && (
             <p className={`quiz-feedback ${choices[card.id] === card.correct ? 'ok' : 'bad'}`}>
-              {choices[card.id] === card.correct ? 'Corect.' : 'Ai greșit.'} {card.explain}
+              {choices[card.id] === card.correct ? 'Corect.' : 'Ai greșit.'} <MathText text={card.explain} />
             </p>
           )}
           {Number.isInteger(choices[card.id]) && (
             <ol className="quiz-steps">
               <li>Citești enunțul cu voce tare.</li>
               <li>Tai variantele care nu se potrivesc.</li>
-              <li>{card.explain || 'Rămâne varianta care ține de idee, nu de o vorbă frumoasă.'}</li>
+              <li><MathText text={card.explain || 'Rămâne varianta care ține de idee, nu de o vorbă frumoasă.'} /></li>
             </ol>
           )}
           <div className="quiz-nav">
@@ -239,10 +240,10 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
             {(report.items || []).map((item, itemIndex) => (
               <li key={item.id || itemIndex} className={verdictClass(item)}>
                 <strong>{verdictLabel(item)}</strong>
-                <p>{item.prompt}</p>
-                <p>Tu: {item.given || '—'}</p>
-                <p>În barem: {item.sample}</p>
-                {item.explain && <p className="quiz-explain">{item.explain}</p>}
+                <p><MathText text={item.prompt} /></p>
+                <p>Tu: <MathText text={item.given || '—'} /></p>
+                <p>În barem: <MathText text={item.sample} /></p>
+                {item.explain && <p className="quiz-explain"><MathText text={item.explain} /></p>}
               </li>
             ))}
           </ol>

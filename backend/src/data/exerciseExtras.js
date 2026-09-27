@@ -31,7 +31,7 @@ const EXTRAS = {
   ],
   'matematica:5:geometrie': [
     ex('e5g5', 'unghi', 'Câte grade are un unghi drept?', ['90', '90°'], 'Colțul pătratului: 90°.', { level: 1, numeric: { value: 90, tolerance: 0 }, steps: ['Unghi drept = 90°'] }),
-    ex('e5g6', 'perimetru', 'Pătrat de latură 4 cm. Perimetrul, în cm?', ['16'], '4 laturi egale: 4×4=16.', { level: 2, numeric: { value: 16, tolerance: 0 }, steps: ['P = 4 × latura', '4 × 4 = 16'] }),
+    ex('e5g6', 'mijloc', 'Segmentul AB are 16 cm. M este mijlocul. Cât este AM, în cm?', ['8'], 'Mijlocul taie lungimea în două: 16 : 2 = 8.', { level: 2, numeric: { value: 8, tolerance: 0 }, steps: ['AM = AB : 2', '16 : 2 = 8'] }),
     ex('e5g7', 'unitati', '3 metri câți centimetri sunt?', ['300', '300 cm'], '1 m = 100 cm, deci 300 cm.', { level: 3, numeric: { value: 300, tolerance: 0 }, steps: ['1 m = 100 cm', '3 × 100 = 300'] })
   ],
   'matematica:6:multimi': [

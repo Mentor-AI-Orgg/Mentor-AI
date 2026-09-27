@@ -73,118 +73,432 @@ const GUIDES = {
     5: {
       title: "Matematică, clasa a V-a",
       howISeeIt:
-        "Anul ăsta e podul de la aritmetica din primar către gimnaziu. Elevul trebuie să se simtă stăpân pe numerele naturale, apoi să treacă la fracții fără panică și să recunoască figuri simple. Lucrăm intuitiv: mai întâi desen, estimare, exemplu din viață, abia apoi formulă.",
+        "Anul ăsta e podul de la aritmetica din primar către gimnaziu. Numerele naturale acoperă scrierea, axa, compararea, aproximările, cele patru operații, puterile, metodele și divizibilitatea. Fracțiile ordinare continuă cu echivalența, axa, numerele mixte, c.m.m.d.c., c.m.m.m.c. și operațiile, iar zecimalele adaugă virgula, perioada și media. La sfârșitul capitolului de fracții organizezi datele: frecvență, bare și media setului. Apoi vin figurile: punct, dreaptă, segment, unghi, congruență, simetrie și unitățile de lungime, arie și volum. Lucrăm intuitiv: mai întâi desen, estimare, exemplu din viață, abia apoi formulă.",
       units: [
         {
           id: "naturale",
-          title: "Numere naturale și calcule",
+          title: "Numere naturale",
           inOwnWords:
-            "Citire, scriere, comparare, puteri, paranteze, metode aritmetice (reducere la unitate, mers invers). Divizibilitate: ce se împarte exact la 2, 3, 5, 9, 10; numere prime versus compuse."
+            "Scrii și citești numere, le pui pe axă, le compari și le aproximezi. Apoi aduni, scazi, înmulțești și împarți, cu rest sau fără. Înveți puterile, pătratele perfecte, baza 2 și ordinea operațiilor. Rezolvi probleme prin reducere la unitate, comparație, desen, mers invers sau falsă ipoteză. La sfârșit recunoști divizorii, multiplii, criteriile și numerele prime.",
+          toc: [
+            "Curiozități din lumea numerelor naturale",
+            "Scrierea și citirea numerelor naturale",
+            "Reprezentarea numerelor naturale pe axă",
+            "Compararea și ordonarea numerelor naturale",
+            "Aproximări și estimări",
+            "Recapitulare: numere naturale",
+            "Adunarea numerelor naturale",
+            "Scăderea numerelor naturale",
+            "Înmulțirea numerelor naturale",
+            "Împărțirea cu rest zero",
+            "Împărțirea cu rest",
+            "Recapitulare: operații",
+            "Puterea cu exponent natural",
+            "Reguli de calcul cu puteri",
+            "Compararea puterilor",
+            "Pătratul unui număr natural",
+            "Scrierea în baza 10 și în baza 2",
+            "Ordinea efectuării operațiilor",
+            "Recapitulare: puteri",
+            "Metoda reducerii la unitate",
+            "Metoda comparației",
+            "Metoda figurativă",
+            "Metoda mersului invers",
+            "Metoda falsei ipoteze",
+            "Recapitulare: metode aritmetice",
+            "Divizor și multiplu",
+            "Divizor comun și multiplu comun",
+            "Criteriile de divizibilitate cu 2, 5 și 10",
+            "Criteriile de divizibilitate cu 3 și cu 9",
+            "Numere prime și numere compuse",
+            "Recapitulare: divizibilitate"
+          ]
         },
         {
           id: "fractii",
           title: "Fracții ordinare și zecimale",
           inOwnWords:
-            "O fracție e o parte dintr-un întreg. Amplificare/simplificare, adunare cu numitor comun, procente ca „din o sută”. Zecimalele sunt aceeași idee scrisă cu virgulă; media aritmetică e un prim pas spre statistica simplă."
+            "Fracția taie un întreg în părți egale. Înveți felurile ei, echivalența, compararea, axa, numerele mixte, c.m.m.d.c. și c.m.m.m.c., apoi adunarea, înmulțirea, procentul, împărțirea și puterea. Zecimala este aceeași valoare scrisă cu virgulă: o compari, o rotunjești, o calculezi, recunoști perioada și o aduci înapoi la fracție. Media și problemele cu unități de măsură închid capitolul.",
+          toc: [
+            "Fractali: triunghiul și pătratul",
+            "Fracția ordinară",
+            "Fracții echivalente",
+            "Compararea fracțiilor ordinare",
+            "Fracții pe axa numerelor",
+            "Numere mixte",
+            "Cel mai mare divizor comun",
+            "Amplificare și simplificare",
+            "Cel mai mic multiplu comun și numitorul comun",
+            "Recapitulare: fracții ordinare",
+            "Adunarea și scăderea fracțiilor",
+            "Înmulțirea fracțiilor",
+            "Fracție dintr-un număr și procentul",
+            "Împărțirea fracțiilor",
+            "Puterea unei fracții",
+            "Recapitulare: operații cu fracții",
+            "Un tabel pentru un șir de date",
+            "Scrierea fracțiilor zecimale",
+            "Compararea fracțiilor zecimale",
+            "Aproximări și zecimale pe axă",
+            "Recapitulare: scrierea zecimalelor",
+            "Adunarea și scăderea zecimalelor",
+            "Înmulțirea zecimalelor",
+            "Împărțirea cu rezultat zecimal și media",
+            "De la fracție ordinară la zecimală periodică",
+            "Împărțirea a două zecimale",
+            "De la zecimală la fracție ordinară",
+            "Numărul rațional pozitiv și ordinea operațiilor",
+            "Metode cu fracții și unități de măsură",
+            "Recapitulare: fracții zecimale",
+            "Tabelul de frecvențe",
+            "Grafice și media unui set de date",
+            "Recapitulare: organizarea datelor"
+          ]
         },
         {
           id: "geometrie",
-          title: "Figuri, unghiuri, măsurători",
+          title: "Elemente de geometrie și unități de măsură",
           inOwnWords:
-            "Punct, dreaptă, segment, unghi (ascuțit, drept, obtuz). Perimetru, aria pătratului și a dreptunghiului, volumul cubului și al cutiei. Transformăm metri, centimetri, litre fără să amestecăm unitățile."
+            "Punctul, dreapta și planul deschid geometria. Înveți semidreapta, segmentul, semiplanul și poziția a două drepte. Măsori lungimea, găsești mijlocul și construiești unghiul cu raportorul. Clasifici unghiurile, calculezi cu grade și minute, recunoști figuri congruente și axa de simetrie. La urmă treci lungimi, arii și volume dintr-o unitate în alta și calculezi perimetrul, aria dreptunghiului și volumul cutiei.",
+          toc: [
+            "Punct, dreaptă, plan",
+            "Punctul și dreapta. Puncte coliniare",
+            "Semidreaptă, segment, semiplan",
+            "Poziții relative a două drepte",
+            "Distanța și segmente congruente",
+            "Mijlocul unui segment",
+            "Recapitulare: punct, dreaptă, segment",
+            "Unghiul: vârf, laturi, interior",
+            "Măsura unui unghi",
+            "Clasificări și unghiuri congruente",
+            "Grade și minute",
+            "Recapitulare: unghiuri",
+            "Figuri congruente",
+            "Axă de simetrie",
+            "Recapitulare: congruență și simetrie",
+            "Unități pentru lungime și perimetrul",
+            "Unități pentru arie",
+            "Unități pentru volum și capacitate",
+            "Recapitulare: geometrie și unități"
+          ]
         }
       ]
     },
     6: {
       title: "Matematică, clasa a VI-a",
       howISeeIt:
-        "Apar mulțimile, rapoartele și numerele cu semn. Geometria începe să aibă reguli, nu doar desene: paralele, triunghi, Pitagora văzută ca verificare, nu ca ritual.",
+        "Manualul Litera, clasa a VI-a, merge în ordinea asta: mulțimi și divizibilitate, rapoarte și proporții, numere întregi, numere raționale, apoi geometria. La geometrie înveți unghiul cu minute și secunde, paralelele, perpendiculara, cercul și triunghiul, până la Pitagora.",
       units: [
         {
           id: "multimi",
-          title: "Mulțimi și divizibilitate",
+          title: "Mulțimi. Mulțimea numerelor naturale",
           inOwnWords:
-            "Ce înseamnă „aparține”, reuniune, intersecție. Descompunere în factori primi ca să găsim c.m.m.d.c. și c.m.m.m.c. fără ghicit."
+            "Mulțimea strânge obiecte distincte. Înveți apartenența, incluziunea, reuniunea, intersecția și diferența. Apoi divizibilitatea în ℕ: criterii, descompunere în prime, c.m.m.d.c., c.m.m.m.c. și proprietățile cu care justifici.",
+          toc: [
+            "Mulțimi. Mulțimea numerelor naturale",
+            "Relații între mulțimi",
+            "Reuniunea, intersecția, diferența",
+            "Aplicații cu mulțimi",
+            "Divizibilitate în ℕ",
+            "Descompunerea în factori primi",
+            "Cel mai mare divizor comun",
+            "Cel mai mic multiplu comun",
+            "Proprietăți ale divizibilității",
+            "Recapitulare: mulțimi și divizibilitate"
+          ]
         },
         {
           id: "proportii",
-          title: "Rapoarte, proporții, regula de trei",
+          title: "Rapoarte și proporții",
           inOwnWords:
-            "Un raport compară două mărimi. Dacă sunt direct proporționale, cresc împreună; dacă sunt invers, una crește când cealaltă scade. Regula de trei e doar o proporție cu un loc gol."
+            "Raportul compară două mărimi de aceeași unitate. Proporția are extremi și mezi. Mărimile direct proporționale țin raportul, cele invers proporționale țin produsul. Procentul, graficele și probabilitatea sunt tot părți dintr-un întreg.",
+          toc: [
+            "Rapoarte",
+            "Proporții",
+            "Șir de rapoarte egale",
+            "Mărimi direct și invers proporționale",
+            "Regula de trei simplă",
+            "Procente",
+            "Grafice și frecvențe",
+            "Probabilități",
+            "Recapitulare: rapoarte și proporții"
+          ]
         },
         {
           id: "intregi-rationale",
-          title: "Numere întregi și raționale",
+          title: "Numere întregi și numere raționale",
           inOwnWords:
-            "Minusul e direcție pe axă (temperatura, debit). Modulul e distanța până la zero. Aceleași operații, dar cu semne. Ecuații simple de tipul „ce plus 5 face 12”."
+            "ℤ adaugă numerele negative. Modulul este distanța până la zero. Înveți semnele la operații, puterile, ecuațiile și inecuațiile în ℤ. ℚ strânge fracțiile echivalente, cu axă, operații, exponenți întregi și ecuații.",
+          toc: [
+            "Mulțimea numerelor întregi",
+            "Modulul și compararea",
+            "Adunarea și scăderea în ℤ",
+            "Înmulțirea în ℤ",
+            "Împărțirea în ℤ",
+            "Puterea unui număr întreg",
+            "Calcule cu adunări și scăderi",
+            "Ordinea operațiilor în ℤ",
+            "Ecuații în ℤ",
+            "Inecuații în ℤ",
+            "Probleme cu ecuații în ℤ",
+            "Recapitulare: numere întregi",
+            "Numărul rațional",
+            "Axa și modulul în ℚ",
+            "Compararea numerelor raționale",
+            "Adunarea și scăderea în ℚ",
+            "Înmulțirea și împărțirea în ℚ",
+            "Puterea cu exponent întreg",
+            "Ordinea operațiilor în ℚ",
+            "Ecuații în ℚ",
+            "Probleme cu ecuații în ℚ",
+            "Recapitulare: numere raționale"
+          ]
         },
         {
           id: "triunghi",
-          title: "Unghiuri, cerc, triunghi",
+          title: "Unghiuri, paralele, cerc și triunghi",
           inOwnWords:
-            "Unghiuri opuse la vârf, paralele tăiate de o secantă, cerc (rază, coardă, diametru). Triunghi: clasificare, suma unghiurilor 180°, linii importante, congruență, Pitagora pe triplete care se verifică."
+            "Unghiurile se calculează în grade, minute și secunde. Paralelele și secanta dau criterii. Perpendiculara măsoară distanța. Cercul are rază, diametru și unghi la centru. Triunghiul are suma 180°, linii importante, congruență și Pitagora.",
+          toc: [
+            "Unghiuri: recapitulare și completări",
+            "Unghiuri complementare și suplementare",
+            "Unghiuri opuse la vârf",
+            "Unghiuri adiacente",
+            "Drepte paralele",
+            "Unghiuri formate cu o secantă",
+            "Criterii de paralelism",
+            "Paralele în figuri",
+            "Drepte perpendiculare",
+            "Mediatoarea unui segment",
+            "Simetrie față de o dreaptă",
+            "Cercul și elementele lui",
+            "Unghi la centru",
+            "Poziții: dreaptă și cerc, două cercuri",
+            "Recapitulare: unghiuri, paralele, cerc",
+            "Triunghiul. Clasificare. Perimetru",
+            "Suma unghiurilor. Unghi exterior",
+            "Construcția triunghiurilor",
+            "Bisectoarele triunghiului",
+            "Mediatoarele triunghiului",
+            "Înălțimile triunghiului",
+            "Medianele triunghiului",
+            "Congruența triunghiurilor",
+            "Criterii de congruență",
+            "Congruența triunghiurilor dreptunghice",
+            "Metoda triunghiurilor congruente",
+            "Puncte pe bisectoare și pe mediatoare",
+            "Triunghiul isoscel",
+            "Triunghiul echilateral",
+            "Triunghiul dreptunghic și Pitagora",
+            "Recapitulare: triunghiul și clasa a VI-a"
+          ]
         }
       ]
     },
     7: {
       title: "Matematică, clasa a VII-a",
       howISeeIt:
-        "Spațiul numeric se lărgește la reale: apar iraționalele și radicalii. Algebra capătă sisteme. Geometria se leagă: patrulatere, cerc, Thales, asemănare, apoi trigonometrie ușoară în triunghiul dreptunghic.",
+        "Întâi numerele reale: radicali, iraționale, modul, medii și ecuația x^2 = a. Apoi ecuațiile și sistemele liniare. Organizarea datelor înseamnă produs cartezian, axe și dependențe, fără noțiunea de funcție. Geometria urmează ordinea din manual: patrulater, cerc, asemănare, relații metrice. Formulele de calcul prescurtat, descompunerea algebrică și raționalizarea cu conjugată rămân la clasa a VIII-a.",
       units: [
         {
           id: "reale",
           title: "Numere reale și radicali",
           inOwnWords:
-            "Rădăcina pătrată „desface” un pătrat. Unele numere nu se scriu frumos ca fracție — le numim iraționale. Calculăm cu reale, raționalizăm un numitor simplu, folosim medii."
+            "Rădăcina pătrată desface un pătrat. Iraționalele au zecimale infinite, fără perioadă. Calculezi cu radicali, raționalizezi un numitor de forma a√b, folosești media ponderată și media geometrică, apoi rezolvi x^2 = a.",
+          toc: [
+            "Ne amintim din clasa a VI-a",
+            "Rădăcina pătrată a unui pătrat perfect",
+            "Rădăcina pătrată a unui rațional",
+            "Estimarea rădăcinii pătrate",
+            "Numere iraționale",
+            "Mulțimea numerelor reale",
+            "Scoaterea factorilor de sub radical",
+            "Introducerea factorilor sub radical",
+            "Aproximare și reprezentare pe axă",
+            "Compararea numerelor reale",
+            "Modulul unui număr real",
+            "Operații cu numere reale",
+            "Puteri ale numerelor reale",
+            "Raționalizarea numitorului a√b",
+            "Ordinea operațiilor",
+            "Media aritmetică ponderată",
+            "Media geometrică",
+            "Ecuații de forma x^2 = a",
+            "Recapitulare: numere reale"
+          ]
         },
         {
           id: "ecuati",
           title: "Ecuații și sisteme liniare",
           inOwnWords:
-            "O ecuație e un cântar: ce faci într-o parte faci și în cealaltă. Un sistem e două cântare cu aceleași necunoscute. Substituție sau reducere, apoi verificăm în enunțul real."
+            "O ecuație este un cântar: ce faci într-o parte faci și în cealaltă. ax + b = 0 are o soluție, niciuna sau o infinitate. Un sistem cere o pereche care ține în ambele ecuații. O afli prin substituție sau prin reducere, apoi o verifici în poveste.",
+          toc: [
+            "Egalități echivalente și identități",
+            "Ecuația ax + b = 0",
+            "Ecuații cu două necunoscute",
+            "Sisteme de două ecuații",
+            "Metoda substituției și metoda reducerii",
+            "Probleme cu ecuații și sisteme",
+            "Recapitulare: ecuații și sisteme"
+          ]
         },
         {
           id: "date",
-          title: "Date în plan",
+          title: "Organizarea datelor",
           inOwnWords:
-            "Perechi de numere ca puncte pe axe. Tabele și grafice care arată o dependență, nu doar „niște numere”."
+            "Produsul cartezian strânge perechile ordonate. Axele Ox și Oy așază punctele, distanțele și mijlocul unui segment. O dependență dă un singur corespondent pentru fiecare element, prin diagramă, tabel sau grafic.",
+          toc: [
+            "Produsul cartezian",
+            "Sistem de axe ortogonale",
+            "Dependențe prin diagrame și tabele",
+            "Dependențe prin grafice",
+            "Recapitulare: organizarea datelor"
+          ]
         },
         {
           id: "geo7",
           title: "Patrulater, cerc, asemănare, metrică",
           inOwnWords:
-            "Paralelogram, dreptunghi, romb, pătrat, trapez — proprietăți, perimetre, arii. În cerc: unghi înscris, tangente, lungimea cercului, aria discului. Thales și asemănarea ca „aceeași formă, altă scară”. Pitagora cu demonstrația așteptată la acest nivel, plus sinus/cosinus/tangentă pe unghi ascuțit."
+            "Patrulaterul aduce paralelogramul, dreptunghiul, rombul, pătratul, trapezul și ariile, inclusiv linia mijlocie în triunghi și centrul de greutate. Cercul aduce coarde, unghiul înscris, tangente, poligoane regulate, lungimea și aria. Asemănarea pleacă de la Thales. În triunghiul dreptunghic apar proiecțiile, Pitagora și sinusul.",
+          toc: [
+            "Patrulater convex și suma unghiurilor",
+            "Paralelogramul",
+            "Condiții pentru paralelogram",
+            "Linia mijlocie și centrul de greutate",
+            "Dreptunghiul",
+            "Rombul",
+            "Pătratul",
+            "Trapezul",
+            "Linia mijlocie a trapezului",
+            "Perimetru și aria pătratului și a dreptunghiului",
+            "Aria paralelogramului",
+            "Aria triunghiului",
+            "Aria rombului",
+            "Aria trapezului",
+            "Recapitulare: patrulaterul",
+            "Coarde și arce",
+            "Unghi înscris",
+            "Tangente",
+            "Poligoane regulate",
+            "Lungimea cercului și aria discului",
+            "Recapitulare: cercul",
+            "Segmente proporționale",
+            "Paralele echidistante",
+            "Teorema lui Thales",
+            "Reciproca lui Thales",
+            "Împărțirea în părți proporționale",
+            "Triunghiuri asemenea",
+            "Criterii de asemănare",
+            "Aplicații practice ale asemănării",
+            "Recapitulare: asemănarea",
+            "Proiecții ortogonale",
+            "Teorema înălțimii",
+            "Teorema catetei",
+            "Teorema lui Pitagora și reciproca",
+            "Sinus, cosinus, tangentă, cotangentă",
+            "Rezolvarea triunghiului dreptunghic",
+            "Aplicații în poligoane regulate",
+            "Recapitulare: relații metrice și clasa a VII-a"
+          ]
         }
       ]
     },
     8: {
       title: "Matematică, clasa a VIII-a",
       howISeeIt:
-        "Anul Evaluării Naționale. Calculul trece pe litere, apar funcția de gradul I și geometria în spațiu. Mentorul ține elevul pe înțelegere, nu pe tocit formule de arii și volume.",
+        "Programa ține nucleul, iar acesta este planul principal: intervale și inecuații, calculul cu litere și formulele scurte, ecuația de gradul II prin completarea pătratului, funcția f(x) = ax + b, frecvența, media, mediana, modul, amplitudinea, geometria în spațiu, ariile și volumele. Planul secundar rămâne scurt: formula cu Δ, Thales în spațiu, poreclele de demonstrație și corpurile lui Platon. Nu se învață pași de click.",
       units: [
         {
           id: "intervale",
           title: "Intervale și inecuații",
           inOwnWords:
-            "Un interval e o bucată de axă. Inecuația întreabă „pentru ce x rămâne adevărat?”, nu „care e singurul x”."
+            "O mulțime se scrie printr-o proprietate, un interval este o bucată de axă, iar inecuația ax + b întreabă pentru ce x rămâne adevărată. Sensul se întoarce când înmulțești sau împarți cu un număr negativ.",
+          toc: [
+            "Ne amintim din clasa a VII-a",
+            "Mulțimi descrise printr-o proprietate",
+            "Relații și operații cu mulțimi",
+            "Axa și submulțimi ale dreptei",
+            "Intervale de numere reale",
+            "Operații cu intervale",
+            "Proprietăți ale inegalităților",
+            "Inecuația ax + b",
+            "Inecuații cu paranteze, fracții și regula semnelor",
+            "Recapitulare: intervale și inecuații"
+          ]
         },
         {
           id: "algebric",
           title: "Calcul algebric",
           inOwnWords:
-            "Termeni asemenea, formule scurte de tip (a±b)² și diferență de pătrate, scoatere de factor, fracții cu litere, ecuația de gradul II doar cât cere programa de gimnaziu."
+            "Termenii asemenea se reduc. (a ± b)^2 și a^2 − b^2 se descompun și raționalizează. Fracția algebrică cere numitor nenul. Ecuația de gradul II se rezolvă formând un pătrat sau un produs. Formula cu Δ este plan secundar.",
+          toc: [
+            "Calcule cu numere reale și litere",
+            "Pătratul sumei și al diferenței. Diferența de pătrate",
+            "Raționalizarea cu conjugată",
+            "Factor comun și grupare",
+            "Descompunere cu formule de calcul prescurtat",
+            "Trinomul și alte descompuneri",
+            "Fracții algebrice. Domeniu",
+            "Operații cu fracții algebrice",
+            "Ecuația de gradul al doilea",
+            "Plan secundar: formula cu Δ",
+            "Probleme cu ecuații de gradul al doilea",
+            "Recapitulare: calcul algebric"
+          ]
         },
         {
           id: "functii",
-          title: "Funcții și statistici simple",
+          title: "Funcții și statistică",
           inOwnWords:
-            "O funcție leagă un x de un f(x). Dreapta f(x)=ax+b se citește din grafic. La date: medie, mediană, modul, amplitudine — ce spune setul, nu doar cum se calculează."
+            "O funcție dă fiecărui x un singur f(x). f(x) = ax + b are graficul o dreaptă sau o bucată de dreaptă. La date, frecvența, media, mediana, modul și amplitudinea spun ce face setul.",
+          toc: [
+            "Noțiunea de funcție",
+            "Graficul unei funcții",
+            "Funcția f(x) = ax + b",
+            "Funcții pe un interval. Lecturi grafice",
+            "Sortare și frecvență",
+            "Tabel, bare și poligon",
+            "Media, mediana, modul și amplitudinea",
+            "Recapitulare: funcții și statistică"
+          ]
         },
         {
           id: "spatiu",
           title: "Geometrie în spațiu",
           inOwnWords:
-            "Puncte, drepte, plane; paralelism și perpendicularitate; piramidă, prismă, cilindru, con, trunchiuri, sferă. Aria și volumul au sens doar dacă elevul vede desfășurarea și înălțimea, nu un șir de litere."
+            "Puncte, drepte și plane, apoi piramida, prisma, cilindrul și conul. Paralelismul, perpendicularitatea, proiecțiile și diedrul pregătesc ariile și volumele, inclusiv trunchiurile și sfera. Thales în spațiu rămâne plan secundar.",
+          toc: [
+            "Puncte, drepte și plane",
+            "Drepte în spațiu și determinarea planului",
+            "Dreapta și planul",
+            "Plane secante și plane paralele",
+            "Piramida și desfășurarea ei",
+            "Prisma dreaptă și desfășurarea ei",
+            "Cilindrul circular drept",
+            "Conul circular drept",
+            "Unghiul a două drepte în spațiu",
+            "Dreaptă paralelă cu un plan",
+            "Plane paralele tăiate de o secantă",
+            "Secțiuni paralele cu baza și trunchiuri",
+            "Plan secundar: Thales în spațiu",
+            "Dreaptă perpendiculară pe un plan",
+            "Distanța dintre plane paralele",
+            "Plane perpendiculare și secțiuni",
+            "Proiecții pe un plan",
+            "Unghiul dintre o dreaptă și un plan",
+            "Unghiul diedru",
+            "Teorema celor trei perpendiculare",
+            "Distanțe în corpuri",
+            "Unghiuri în corpuri",
+            "Aria și volumul prismei",
+            "Aria și volumul piramidei",
+            "Trunchiul de piramidă regulată",
+            "Aria și volumul cilindrului",
+            "Aria și volumul conului",
+            "Trunchiul de con",
+            "Sfera",
+            "Recapitulare: geometrie în spațiu și clasa a VIII-a"
+          ]
         }
       ]
     }

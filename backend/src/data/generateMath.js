@@ -35,16 +35,16 @@ const BY_CHAPTER = {
       (rand) => { const n = pick(rand, [15, 20, 24, 35, 42, 50]); const ok = n % 5 === 0; return flash('div5', `${n} se împarte exact la 5?`, [ok ? 'Da, se termină cu 0 sau 5' : 'Nu, ultima cifră nu e 0 sau 5', 'Da, e impar', 'Doar dacă e prim', 'Doar dacă e par'], 'Criteriul lui 5: ultima cifră 0 sau 5.', 4); },
       (rand) => { const p = pick(rand, [11, 13, 17, 19, 23, 29]); return flash('prime', `${p} e prim pentru că…`, ['are exact doi divizori: 1 și el', 'se împarte la 3', 'e par', 'are mulți divizori'], 'Prim = doar 1 și el însuși.', 5); },
       () => flash('paranteze', 'În 3 + 4 × 2, întâi…', ['înmulțești 4 × 2', 'aduni 3 + 4', 'faci 3 × 2', 'scazi 4'], 'Înmulțirea bate adunarea, dacă nu sunt paranteze.', 6),
-      () => flash('cmmdc', 'c.m.m.d.c. a două numere e…', ['cel mai mare număr care le împarte pe amândouă', 'cel mai mic multiplu comun', 'suma lor', 'produsul lor'], 'Cel mai mare „prieten” la împărțire.', 7),
-      () => flash('cmmmc', 'c.m.m.m.c. e…', ['cel mai mic număr care se împarte la amândouă', 'cel mai mare divizor', 'diferența lor', 'un număr prim'], 'Prima stație comună pe axa multiplilor.', 8)
+      () => flash('cmmdc', 'Cel mai mare divizor comun al celor două numere e…', ['cel mai mare număr care le împarte pe amândouă', 'cel mai mic multiplu comun', 'suma lor', 'produsul lor'], 'Este cel mai mare dintre divizorii comuni.', 7),
+      () => flash('cmmmc', 'Cel mai mic multiplu comun nenul e…', ['cel mai mic număr nenul care se împarte la amândouă', 'cel mai mare divizor', 'diferența lor', 'un număr prim'], 'Este primul multiplu comun pe care îl întâlnești după 0.', 8)
     ],
     tests: [
       (rand, lv) => { const a = int(rand, 2, 9); const b = int(rand, 2, 9); return test('adunare', `Calculează ${a} + ${b}. Doar rezultatul.`, a + b, [`${a} + ${b} = ${a + b}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 2, 8); return test('puteri', `Calculează ${a}².`, a * a, [`${a} × ${a} = ${a * a}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 2, 6); const b = int(rand, 2, 5); const c = int(rand, 1, 8); const val = a ** 2 * b + c; return test('paranteze', `Calculează ${a}² × ${b} + ${c}.`, val, [`${a}² = ${a * a}`, `${a * a} × ${b} = ${a * a * b}`, `+ ${c} = ${val}`], { level: lv }); },
       (rand, lv) => { const n = int(rand, 12, 40) * 3; const sum = String(n).split('').reduce((acc, d) => acc + Number(d), 0); return test('div3', `Suma cifrelor numărului ${n}. Doar suma.`, sum, [`Cifrele lui ${n}`, `Suma = ${sum}`], { level: lv }); },
-      (rand, lv) => { const g = int(rand, 2, 6); const a = g * int(rand, 2, 7); const b = g * int(rand, 2, 7); return test('cmmdc', `Cel mai mare divizor comun al numerelor ${a} și ${b}.`, gcd(a, b), [`c.m.m.d.c.(${a}, ${b}) = ${gcd(a, b)}`], { level: lv }); },
-      (rand, lv) => { const a = pick(rand, [4, 6, 8, 9, 10]); const b = pick(rand, [6, 8, 12, 15]); return test('cmmmc', `Cel mai mic multiplu comun al numerelor ${a} și ${b}.`, lcm(a, b), [`c.m.m.m.c.(${a}, ${b}) = ${lcm(a, b)}`], { level: lv }); },
+      (rand, lv) => { const g = int(rand, 2, 6); const a = g * int(rand, 2, 7); const b = g * int(rand, 2, 7); return test('cmmdc', `Cel mai mare număr care împarte și pe ${a}, și pe ${b}.`, gcd(a, b), [`Divizorii comuni se opresc la ${gcd(a, b)}`], { level: lv }); },
+      (rand, lv) => { const a = pick(rand, [4, 6, 8, 9, 10]); const b = pick(rand, [6, 8, 12, 15]); return test('cmmmc', `Cel mai mic multiplu comun nenul al numerelor ${a} și ${b}.`, lcm(a, b), [`Multiplul comun nenul cel mai mic este ${lcm(a, b)}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 2, 5); const b = int(rand, 2, 4); const c = int(rand, 2, 6); const val = a ** 2 * b - c ** 2; return test('paranteze', `Calculează ${a}² × ${b} − ${c}². Doar rezultatul.`, val, [`${a}² = ${a * a}`, `${a * a} × ${b} = ${a * a * b}`, `${c}² = ${c * c}`, `${a * a * b} − ${c * c} = ${val}`], { level: lv }); }
     ]
   },
@@ -72,22 +72,22 @@ const BY_CHAPTER = {
   geometrie: {
     flashes: [
       () => flash('unghi', 'Un unghi drept măsoară…', ['90 de grade', '45 de grade', '180 de grade', '360 de grade'], 'Colțul pătratului.', 1),
-      () => flash('ascutit', 'Un unghi ascuțit e…', ['mai mic decât 90°', 'exact 90°', 'mai mare decât 90°', 'doar 0°'], 'Ascuțit = îngust, sub un drept.', 2),
+      () => flash('ascutit', 'Un unghi ascuțit e…', ['mai mic decât 90°', 'exact 90°', 'mai mare decât 90°', 'doar 0°'], 'Ascuțit = sub un drept.', 2),
       (rand) => { const a = int(rand, 3, 9); return flash('arie-patrat', `Aria pătratului de latură ${a} cm e…`, uniqueOptions(rand, `${a * a} cm²`, [`${4 * a} cm²`, `${2 * a} cm²`, `${a + a} cm²`]), `latura × latura = ${a * a}.`, 3); },
-      (rand) => { const L = int(rand, 4, 12); const l = int(rand, 3, 8); const p = 2 * (L + l); return flash('perimetru', `Perimetrul unui dreptunghi ${L} cm × ${l} cm e…`, uniqueOptions(rand, `${p} cm`, [`${L * l} cm`, `${L + l} cm`, `${2 * L} cm`]), `2 × (${L}+${l}) = ${p}.`, 4); },
+      (rand) => { const a = int(rand, 3, 8); const b = int(rand, 3, 8); const c = int(rand, 3, 8); return flash('perimetru', `Perimetrul triunghiului cu laturile ${a}, ${b} și ${c} cm e…`, uniqueOptions(rand, `${a + b + c} cm`, [`${a * b * c} cm`, `${a + b} cm`, `${a * b} cm`]), `${a} + ${b} + ${c} = ${a + b + c}.`, 4); },
       (rand) => { const L = int(rand, 5, 10); const l = int(rand, 3, 7); return flash('arie-drep', `Aria dreptunghiului ${L}×${l} e…`, uniqueOptions(rand, L * l, [2 * (L + l), L + l, L * 2]), `lungime × lățime = ${L * l}.`, 5); },
-      () => flash('volum-cub', 'Volumul cubului e…', ['latură × latură × latură', '4 × latură', 'suma muchiilor', 'doar o față'], 'Câte cubulețe umplu cutia.', 6),
+      () => flash('volum-cub', 'Volumul cubului e…', ['latură × latură × latură', '4 × latură', 'suma muchiilor', 'doar o față'], 'Câte cuburi unitate umplu corpul.', 6),
       () => flash('unitati', 'Când treci de la metri la centimetri…', ['înmulțești cu 100', 'împarți cu 100', 'aduni 100', 'nu schimbi nimic'], '1 m = 100 cm.', 7),
-      () => flash('alungit', 'Un unghi alungit măsoară…', ['180°', '90°', '360°', '45°'], 'O linie dreaptă, văzută ca unghi.', 8)
+      () => flash('alungit', 'Un unghi alungit măsoară…', ['180°', '90°', '360°', '45°'], 'Laturile sunt semidrepte opuse.', 8)
     ],
     tests: [
       (rand, lv) => test('unghi', 'Câte grade are un unghi drept?', 90, ['Unghi drept = 90°'], { level: lv }),
-      (rand, lv) => { const a = int(rand, 3, 9); return test('perimetru', `Pătrat de latură ${a} cm. Perimetrul, în cm.`, 4 * a, [`4 × ${a} = ${4 * a}`], { level: lv }); },
-      (rand, lv) => { const L = int(rand, 6, 15); const l = int(rand, 3, 9); return test('perimetru', `Dreptunghi ${L} cm × ${l} cm. Perimetrul, în cm.`, 2 * (L + l), [`2 × (${L} + ${l}) = ${2 * (L + l)}`], { level: lv }); },
+      (rand, lv) => { const a = int(rand, 3, 9); return test('perimetru', `Pătrat de latură ${a} cm. Perimetrul, în cm.`, 4 * a, [`Patru laturi egale`, `4 × ${a} = ${4 * a}`], { level: lv }); },
+      (rand, lv) => { const a = int(rand, 4, 9); const b = int(rand, 4, 9); const c = int(rand, 4, 9); return test('perimetru', `Triunghi cu laturile ${a} cm, ${b} cm și ${c} cm. Perimetrul, în cm.`, a + b + c, [`${a} + ${b} + ${c} = ${a + b + c}`], { level: lv }); },
       (rand, lv) => { const L = int(rand, 6, 14); const l = int(rand, 4, 9); return test('arie-drep', `Aria unui dreptunghi ${L} cm × ${l} cm, în cm².`, L * l, [`${L} × ${l} = ${L * l}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 20, 70); return test('unghi', `Un unghi de ${a}° și unul alăturat fac 180°. Cât e alăturatul?`, 180 - a, [`180 − ${a} = ${180 - a}`], { level: lv }); },
-      (rand, lv) => { const b = int(rand, 6, 14); let h = int(rand, 4, 10); if ((b * h) % 2) h += 1; const val = (b * h) / 2; return test('arie-tri', `Triunghi baza ${b} cm, înălțimea ${h} cm. Aria, cm².`, val, [`(${b} × ${h}) : 2 = ${val}`], { level: lv }); },
-      (rand, lv) => { const L = int(rand, 10, 18); const l = int(rand, 6, 10); const cut = int(rand, 3, 5); return test('arie-drep', `Foaie ${L}×${l} cm. Tai un pătrat de latură ${cut} cm. Aria rămasă, cm².`, L * l - cut * cut, [`Aria foii = ${L * l}`, `Tăietura = ${cut * cut}`, `Rămân ${L * l - cut * cut}`], { level: lv }); }
+      (rand, lv) => { const whole = int(rand, 4, 12) * 2; return test('mijloc', `Segment de ${whole} cm. Cât măsoară jumătatea până la mijloc, în cm?`, whole / 2, [`${whole} : 2 = ${whole / 2}`], { level: lv }); },
+      (rand, lv) => { const a = int(rand, 2, 6); return test('volum-cub', `Cub cu latura ${a} cm. Volumul, în cm³.`, a * a * a, [`${a} × ${a} × ${a} = ${a * a * a}`], { level: lv }); }
     ]
   },
   multimi: {
@@ -169,7 +169,7 @@ const BY_CHAPTER = {
       (rand, lv) => { const a = int(rand, 30, 70); const b = int(rand, 30, 80); const useB = a + b < 170 ? b : 40; return test('suma180', `Unghiurile ${a}° și ${useB}°. Al treilea unghi?`, 180 - a - useB, [`180 − ${a} − ${useB} = ${180 - a - useB}`], { level: lv }); },
       (rand, lv) => { const varf = pick(rand, [20, 30, 40, 50, 80]); const baza = (180 - varf) / 2; return test('suma180', `Triunghi isoscel, unghiul din vârf ${varf}°. Un unghi de la bază?`, baza, [`Rămân ${180 - varf}°`, `${180 - varf} : 2 = ${baza}`], { level: lv }); },
       (rand, lv) => { const triples = [[3, 4, 5], [5, 12, 13], [6, 8, 10]]; const [x, y, z] = pick(rand, triples); return test('pitagora', `Catete ${x} și ${y}. Ipotenuza?`, z, [`${x}² + ${y}² = ${z}²`], { level: lv }); },
-      (rand, lv) => { const d = pick(rand, [7, 14, 21]); const val = (22 * d) / 7; return test('cerc', `Diametru ${d} cm, π = 22/7. Lungimea cercului.`, val, [`L = πd = (22/7)×${d} = ${val}`], { level: lv }); },
+      (rand, lv) => { const r = pick(rand, [3, 5, 7, 8]); return test('cerc', `Raza unui cerc este ${r} cm. Cât este diametrul?`, 2 * r, [`d = 2r = ${2 * r}`], { level: lv }); },
       (rand, lv) => { const triples = [[3, 4, 5], [6, 8, 10], [5, 12, 13]]; const [x, y, z] = pick(rand, triples); const k = int(rand, 1, 3); return test('pitagora', `Catete ${x * k} și ${y * k}. Perimetrul triunghiului dreptunghic.`, (x + y + z) * k, [`Ipotenuza = ${z * k}`, `Perimetru = ${(x + y + z) * k}`], { level: lv }); },
       (rand, lv) => { const a = pick(rand, [40, 50, 62]); return test('opuse', `Două drepte se taie. Un unghi e ${a}°. Suma dintre opusul la vârf și unul alăturat?`, 180, [`Opusul = ${a}°`, `Alăturatul = ${180 - a}°`, `Suma = 180`], { level: lv }); }
     ]
