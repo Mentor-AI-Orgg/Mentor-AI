@@ -6,7 +6,7 @@ const { listAccounts, isConsentGranted } = require("../data/authStore");
 const { authRequired, consentRequired } = require("../middleware/auth");
 
 // GET /api/leaderboard?limit=10
-// Clasament all-time după XP. Profilurile private nu apar, în afară de tine.
+// Clasament all-time după XP. Profilurile private rămân cu locul și punctajul, fără nume.
 function grantedEntry(entry) {
   const account = listAccounts().find(item => publicId(item.email) === entry.id);
   return Boolean(account && isConsentGranted(account));
@@ -21,14 +21,18 @@ router.get("/", authRequired, consentRequired, (req, res) => {
   const currentEmail = req.auth?.email || "";
   const raw = listLeaderboardEntries({ limit: 50, currentEmail });
   const board = raw
-    .filter(entry => grantedEntry(entry) && (entry.isCurrentUser || !isPrivatePublicId(entry.id)))
+    .filter(entry => grantedEntry(entry))
     .filter(entry => {
       const account = findByPublicId(entry.id);
       if (account?.hiddenFromLeaderboard) return false;
       if (currentEmail && account && isBlocked(currentEmail, account.email)) return false;
       return true;
     })
-    .slice(0, limit);
+    .slice(0, limit)
+    .map(entry => {
+      if (entry.isCurrentUser || !isPrivatePublicId(entry.id)) return entry;
+      return { rank: entry.rank, xp: entry.xp, private: true };
+    });
 
   res.json({
     leaderboard: board,

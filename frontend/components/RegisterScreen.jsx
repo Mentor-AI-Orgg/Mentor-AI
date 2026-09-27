@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import QuoteCard from './QuoteCard.jsx';
+import Mascota from './mascot/Mascota.jsx';
 import { passwordHint } from '../passwordHint.js';
 const isValidEmail = value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || '');
 const isUsernameShape = value => /^[A-Za-zĂÂÎȘȚăâîșț0-9][A-Za-zĂÂÎȘȚăâîșț0-9_.-]{1,18}[A-Za-zĂÂÎȘȚăâîșț0-9]$/.test(String(value || '').trim());
@@ -161,6 +162,9 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
         </div>
       </div>
 
+      {serverError && serverError.includes('nume de utilizator') && (
+        <Mascota mood="explica" size="sm" message="Alege alt nume. Nu folosi numele tău real." />
+      )}
       {serverError && <div className="form-error" role="alert"><i className="fas fa-circle-exclamation"></i> {serverError}</div>}
 
       <button onClick={handleSubmit} className="accent-button form-submit" type="button" disabled={submitting}>

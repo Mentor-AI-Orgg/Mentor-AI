@@ -63,6 +63,7 @@ describe('export, ștergere și păstrare', () => {
     const email = account.email;
     const friend = await registerGranted(app);
     const stranger = await registerGranted(app);
+    await friend.agent.patch('/api/friends/settings').send({ profilePrivate: false, acceptFriendRequests: true });
 
     const search = await created.agent.get('/api/friends/search').query({ q: friend.username });
     expect(search.status).toBe(200);

@@ -13,6 +13,10 @@ function uniqueEmail(prefix) {
   return `${prefix}.${Date.now()}.${Math.random().toString(16).slice(2)}@example.com`;
 }
 
+async function openProfile(student) {
+  await student.agent.patch('/api/friends/settings').send({ profilePrivate: false, acceptFriendRequests: true });
+}
+
 async function registerStudent(overrides = {}) {
   const created = await registerGranted(app, {
     username: overrides.username,
@@ -52,6 +56,8 @@ describe('friends and profile edit', () => {
   it('finds a classmate only by exact username and hides the real name and school', async () => {
     const ana = await registerStudent({ name: 'Ana Public', username: `pub${Date.now().toString(16).slice(-4)}` });
     const ion = await registerStudent({ name: 'Ion Privat', username: `prv${Date.now().toString(16).slice(-4)}` });
+    await openProfile(ana);
+    await openProfile(ion);
 
     const byName = await ana.agent.get('/api/friends/search').query({ q: 'Ion' });
     expect(byName.status).toBe(200);
@@ -73,6 +79,7 @@ describe('friends and profile edit', () => {
     const ids = [];
     for (let i = 0; i < 10; i += 1) {
       const peer = await registerStudent({ name: `Peer ${i}`, username: `p${i}${Date.now().toString(16).slice(-3)}` });
+      await openProfile(peer);
       const search = await sender.agent.get('/api/friends/search').query({ q: peer.username });
       expect(search.body.results[0]?.id).toBeTruthy();
       ids.push(search.body.results[0].id);
@@ -80,6 +87,7 @@ describe('friends and profile edit', () => {
       expect(sent.status).toBe(201);
     }
     const extra = await registerStudent({ name: 'Peer Extra', username: `pex${Date.now().toString(16).slice(-4)}` });
+    await openProfile(extra);
     const extraSearch = await sender.agent.get('/api/friends/search').query({ q: extra.username });
     const blocked = await sender.agent.post('/api/friends/request').send({ user_id: extraSearch.body.results[0].id });
     expect(blocked.status).toBe(429);
@@ -89,6 +97,7 @@ describe('friends and profile edit', () => {
   it('accepts a request and becomes friends', async () => {
     const left = await registerStudent({ name: 'Left', username: `lft${Date.now().toString(16).slice(-4)}` });
     const right = await registerStudent({ name: 'Right', username: `rgt${Date.now().toString(16).slice(-4)}` });
+    await openProfile(right);
     const search = await left.agent.get('/api/friends/search').query({ q: right.username });
     await left.agent.post('/api/friends/request').send({ user_id: search.body.results[0].id });
     const inbox = await right.agent.get('/api/friends/me');
@@ -106,6 +115,8 @@ describe('friends and profile edit', () => {
     const me = await registerStudent({ name: 'Eu', username: `me${Date.now().toString(16).slice(-4)}` });
     const low = await registerStudent({ name: 'Puține XP', username: `low${Date.now().toString(16).slice(-4)}` });
     const high = await registerStudent({ name: 'Multe XP', username: `hi${Date.now().toString(16).slice(-4)}` });
+    await openProfile(low);
+    await openProfile(high);
 
     const highEmail = authStore.findByUsername(high.username).email;
     economyStore.recordProgress({

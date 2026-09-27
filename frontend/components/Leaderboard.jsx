@@ -24,13 +24,13 @@ const LeaderboardRow = ({ entry }) => (
     <div className={`leaderboard-rank ${entry.rank <= 3 ? `rank-${entry.rank}` : ''}`}>
       {RANK_ICONS[entry.rank] ? <i className={`fas ${RANK_ICONS[entry.rank]}`} /> : entry.rank}
     </div>
-    <div className="leaderboard-avatar">{entry.initials || (entry.name || '?').charAt(0)}</div>
+    <div className="leaderboard-avatar">{entry.private ? <i className="fas fa-lock" aria-hidden="true" /> : (entry.initials || (entry.name || '?').charAt(0))}</div>
     <div className="leaderboard-row-copy">
-      <strong>{entry.name}{entry.title ? ` · ${entry.titleEmoji || ''} ${entry.title}` : ''}{entry.isCurrentUser && <span className="leaderboard-you-tag">Tu</span>}</strong>
-      <small>{entry.class || `Nivel ${entry.level || 1}`} · streak {entry.streak || 0}z</small>
+      <strong>{entry.private ? 'Profil privat' : entry.name}{!entry.private && entry.title ? ` · ${entry.titleEmoji || ''} ${entry.title}` : ''}{entry.isCurrentUser && <span className="leaderboard-you-tag">Tu</span>}</strong>
+      <small>{entry.private ? 'Loc și punctaj' : (entry.class || `Nivel ${entry.level || 1}`)}{entry.private ? '' : ` · streak ${entry.streak || 0}z`}</small>
     </div>
     <div className="leaderboard-xp"><i className="fas fa-bolt" /> {entry.xp?.toLocaleString?.('ro-RO') || entry.xp}</div>
-    {!entry.isCurrentUser && <ReportButton userId={entry.id} />}
+    {!entry.isCurrentUser && !entry.private && <ReportButton userId={entry.id} />}
   </div>
 );
 

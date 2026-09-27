@@ -111,6 +111,7 @@ function comingSoon() {
 
     const path = normalizePath(req);
     if (SKIP_PATHS.has(path) || path.startsWith("/fonts/")) return next();
+    if (path.startsWith("/api/parent/make-private")) return next();
 
     if (path === "/robots.txt") {
       res.set("X-Robots-Tag", "noindex, nofollow");

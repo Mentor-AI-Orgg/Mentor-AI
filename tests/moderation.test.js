@@ -9,9 +9,9 @@ const nodeRequire = createRequire(import.meta.url);
 const deliver = nodeRequire('../backend/src/notify/deliver.js');
 const moderation = nodeRequire('../backend/src/data/moderationStore.js');
 
-async function publicIdOf(agent, username) {
-  const found = await agent.get('/api/friends/search').query({ q: username });
-  return found.body.results?.[0]?.id || '';
+async function publicIdOf(agent) {
+  const me = await agent.get('/api/friends/me');
+  return me.body.id || '';
 }
 
 describe('raportare și moderare', () => {
@@ -42,7 +42,7 @@ describe('raportare și moderare', () => {
 
     const reporter = await registerGranted(app, { username: uniqueUsername('vulpe') });
     const target = await registerGranted(app, { username: uniqueUsername('iepure') });
-    const targetId = await publicIdOf(reporter.agent, target.username);
+    const targetId = await publicIdOf(target.agent);
     expect(targetId).toBeTruthy();
 
     const bad = await reporter.agent.post('/api/friends/report').send({ user_id: targetId, reason: 'gluma' });
@@ -63,7 +63,8 @@ describe('raportare și moderare', () => {
     const adminMails = spy.mock.calls.filter(call => call[0]?.to === 'admin@example.com');
     expect(adminMails).toHaveLength(1);
 
-    const asked = await reporter.agent.post('/api/friends/request').send({ user_id: targetId });
+    const targetMe = await target.agent.get('/api/friends/me');
+    const asked = await reporter.agent.post('/api/friends/request-code').send({ code: targetMe.body.settings.friendCode });
     expect(asked.status).toBe(201);
     const inbox = await target.agent.get('/api/friends/me');
     const requestId = inbox.body.incoming[0].id;
@@ -121,7 +122,7 @@ describe('raportare și moderare', () => {
     const { app } = createApp({ autosave: false });
     const reporter = await registerGranted(app, { username: uniqueUsername('bufnita') });
     const target = await registerGranted(app, { username: uniqueUsername('arici') });
-    const targetId = await publicIdOf(reporter.agent, target.username);
+    const targetId = await publicIdOf(target.agent);
     const report = await reporter.agent.post('/api/friends/report').send({
       user_id: targetId,
       reason: 'altceva',

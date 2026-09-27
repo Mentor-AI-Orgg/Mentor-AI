@@ -7,6 +7,7 @@ import LevelBar from '../components/LevelBar.jsx';
 import ReportButton from '../components/ReportButton.jsx';
 import { passwordHint } from '../passwordHint.js';
 import { readAppearance, saveAppearance } from '../themePrefs.js';
+import Mascota from '../components/mascot/Mascota.jsx';
 
 const CLASSES = ['5', '6', '7', '8'];
 
@@ -52,6 +53,9 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
   const [wardrobe, setWardrobe] = useState({ items: [], titles: [], inventory: [], equipped: {} });
   const [listOpen, setListOpen] = useState(false);
   const [look, setLook] = useState(() => readAppearance());
+  const [publicWarn, setPublicWarn] = useState(false);
+  const [understood, setUnderstood] = useState(false);
+  const [friendCode, setFriendCode] = useState('');
   const friendsListRef = useRef(null);
   const rankedFriends = [...(friends.friends || [])].sort((a, b) => (
     (Number(b.xp) || 0) - (Number(a.xp) || 0) || String(a.name || '').localeCompare(String(b.name || ''), 'ro')
@@ -151,6 +155,17 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
     }
     setPasswords({ currentPassword: '', newPassword: '' });
     onToast?.('Parola a fost schimbată.', 'success');
+  };
+
+  const askPublic = () => {
+    setUnderstood(false);
+    setPublicWarn(true);
+  };
+
+  const confirmPublic = async () => {
+    if (!understood) return;
+    setPublicWarn(false);
+    await toggleSetting('profilePrivate', false);
   };
 
   const toggleSetting = async (key, value) => {
@@ -440,13 +455,25 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         <div className="eyebrow">Setări</div>
         <h3 className="display-font profile-tool-title">Cine te poate găsi.</h3>
         <label className="settings-toggle">
-          <input type="checkbox" checked={Boolean(friends.settings.profilePrivate)} onChange={e => toggleSetting('profilePrivate', e.target.checked)} />
+          <input type="checkbox" checked={Boolean(friends.settings.profilePrivate)} onChange={e => (e.target.checked ? toggleSetting('profilePrivate', true) : askPublic())} />
           <span>Profil privat — nu apar la căutare și nici în clasament (în afară de tine).</span>
         </label>
         <label className="settings-toggle">
           <input type="checkbox" checked={friends.settings.acceptFriendRequests !== false} onChange={e => toggleSetting('acceptFriendRequests', e.target.checked)} />
           <span>Accept cereri de prietenie.</span>
         </label>
+        {friends.settings.friendCode && <p className="profile-empty-note">Codul tău de prieten: <strong>{friends.settings.friendCode}</strong>. Dă-l unui coleg. Profilul privat se găsește doar cu acest cod.</p>}
+        {publicWarn && (
+          <div className="profile-tool-card" role="dialog" aria-label="Profil public">
+            <Mascota mood="explica" size="sm" />
+            <p>Dacă profilul e public, alți copii îți vor vedea numele de utilizator, avatarul și punctajul în clasament. Nu pune niciodată în numele de utilizator numele tău real, școala sau orașul.</p>
+            <label className="settings-toggle">
+              <input type="checkbox" checked={understood} onChange={e => setUnderstood(e.target.checked)} />
+              <span>Am înțeles</span>
+            </label>
+            <button type="button" className="accent-button" disabled={!understood} onClick={confirmPublic}>Fă profilul public</button>
+          </div>
+        )}
       </section>
 
       <section ref={friendsListRef} className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
@@ -496,6 +523,19 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         <div className="eyebrow">Prieteni</div>
         <h3 className="display-font profile-tool-title">Caută un nume sau un username.</h3>
         <p className="profile-empty-note">Poți trimite {friends.dailyLimit} cereri pe zi. Mai ai {friends.remainingToday} azi. Fără mesaje între voi — doar prietenie.</p>
+        <form className="friend-search" onSubmit={async event => {
+          event.preventDefault();
+          if (!friendCode.trim()) return;
+          const result = await MentorAPI.sendFriendByCode(friendCode.trim());
+          onToast?.(result.success ? 'Am trimis cererea.' : (result.error || 'Codul nu se potrivește.'), result.success ? 'success' : 'warning');
+          if (result.success) {
+            setFriendCode('');
+            loadSocial();
+          }
+        }}>
+          <input className="field form-input" value={friendCode} onChange={e => setFriendCode(e.target.value)} placeholder="Cod de prieten" />
+          <button type="submit" className="ghost-button">Adaugă cu cod</button>
+        </form>
         <form className="friend-search" onSubmit={runSearch}>
           <input className="field form-input" value={query} onChange={e => setQuery(e.target.value)} placeholder="Caută Ana sau @ana5" />
           <button type="submit" className="accent-button">Caută</button>
