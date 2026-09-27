@@ -20,8 +20,7 @@ const spec = {
     { name: "health" },
     { name: "auth" },
     { name: "chat" },
-    { name: "account" },
-    { name: "links" }
+    { name: "account" }
   ],
   components: {
     securitySchemes: {
@@ -39,7 +38,7 @@ const spec = {
     "/health": {
       get: {
         tags: ["health"],
-        summary: "Starea procesului și a motoarelor AI",
+        summary: "Starea procesului",
         responses: { 200: { description: "OK" } }
       }
     },
@@ -74,17 +73,8 @@ const spec = {
         security: [{ cookieAuth: [] }],
         summary: "Mesaj către mentorul AI",
         description:
-          "Răspunsul include `engine_used`, `engine_mocked` și `fallback_path`. " +
-          "Dacă `engine_mocked` este true, răspunsul NU vine de la un model real.",
+          "Răspunsul vine din lecțiile din aplicație (`engine_used: lectii`).",
         responses: { 200: { description: "OK" }, 401: { description: "Neautentificat" } }
-      }
-    },
-    "/detect": {
-      post: {
-        tags: ["chat"],
-        security: [{ cookieAuth: [] }],
-        summary: "Scor demonstrativ de text (euristic, nu un detector real)",
-        responses: { 200: { description: "OK" } }
       }
     },
     "/account/profile": {
@@ -111,14 +101,6 @@ const spec = {
         responses: { 200: { description: "Șters" } }
       }
     },
-    "/subscriptions/checkout": {
-      post: {
-        tags: ["account"],
-        security: [{ cookieAuth: [] }],
-        summary: "Checkout Stripe sau mock etichetat dacă lipsește STRIPE_SECRET_KEY",
-        responses: { 200: { description: "OK" } }
-      }
-    },
     "/leaderboard": {
       get: {
         tags: ["health"],
@@ -126,14 +108,6 @@ const spec = {
         responses: { 200: { description: "OK" } }
       }
     },
-    "/links": {
-      get: {
-        tags: ["links"],
-        security: [{ cookieAuth: [] }],
-        summary: "Invitații și legături active",
-        responses: { 200: { description: "OK" } }
-      }
-    }
   }
 };
 

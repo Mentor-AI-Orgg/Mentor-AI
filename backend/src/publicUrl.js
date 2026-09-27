@@ -1,6 +1,6 @@
 const config = require("./config");
 
-// URL-ul public al aplicației, folosit pentru redirecturi Stripe și OAuth.
+// URL-ul public al aplicației, folosit în linkurile din email.
 // Preferă APP_BASE_URL când e setat (producție). Altfel reconstruiește din
 // request, ca fluxul să meargă și pe localhost / Vite proxy fără configurare.
 function publicBaseUrl(req) {

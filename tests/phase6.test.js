@@ -2,9 +2,6 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
 import { registerGranted, uniqueEmail } from './registerStudent.js';
-import { verifyStripeSignature } from '../backend/src/payments/stripe.js';
-import crypto from 'node:crypto';
-
 let app;
 
 async function registerStudent(agent, extra = {}) {
@@ -28,54 +25,6 @@ describe('phase 6 product polish', () => {
     const res = await request(app).get('/api/health');
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ ok: true });
-  });
-
-  it('lists only the free plan and rejects paid checkout', async () => {
-    const agent = request.agent(app);
-    await registerStudent(agent);
-
-    const listed = await agent.get('/api/subscriptions');
-    expect(listed.status).toBe(200);
-    expect(listed.body.subscriptions.map(plan => plan.id)).toEqual(['free']);
-    expect(listed.body.subscriptions.every(plan => Number(plan.priceMonthly) === 0)).toBe(true);
-
-    const paid = await agent.post('/api/subscriptions/checkout').send({
-      plan_id: 'pro',
-      billing_cycle: 'monthly'
-    });
-    expect(paid.status).toBe(410);
-    expect(paid.body.reason).toBe('app_is_free');
-    expect(paid.body.url).toBeUndefined();
-  });
-
-  it('activates the free plan without Stripe', async () => {
-    const agent = request.agent(app);
-    await registerStudent(agent);
-    const res = await agent.post('/api/subscriptions/checkout').send({
-      plan_id: 'free',
-      billing_cycle: 'monthly'
-    });
-    expect(res.status).toBe(200);
-    expect(res.body.mocked).toBe(false);
-    expect(res.body.subscription.planId).toBe('free');
-  });
-
-  it('rejects Stripe webhooks when the webhook secret is missing', async () => {
-    const res = await request(app)
-      .post('/api/subscriptions/webhook')
-      .set('Content-Type', 'application/json')
-      .send({ type: 'checkout.session.completed' });
-    expect(res.status).toBe(503);
-    expect(res.body.mocked).toBe(true);
-  });
-
-  it('verifies a Stripe webhook HMAC', () => {
-    const secret = 'whsec_test';
-    const payload = '{"id":"evt_1"}';
-    const timestamp = Math.floor(Date.now() / 1000);
-    const mac = crypto.createHmac('sha256', secret).update(`${timestamp}.${payload}`).digest('hex');
-    expect(verifyStripeSignature(payload, `t=${timestamp},v1=${mac}`, secret)).toBe(true);
-    expect(verifyStripeSignature(payload, `t=${timestamp},v1=deadbeef`, secret)).toBe(false);
   });
 
   it('refuses an external calendar connection', async () => {

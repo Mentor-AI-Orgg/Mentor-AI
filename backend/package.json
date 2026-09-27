@@ -2,7 +2,7 @@
   "name": "mentor-ai-backend",
   "version": "3.0.0",
   "private": true,
-  "description": "Backend API for Mentor AI: routes for Claude Haiku, GPT-4o, Gemini, Wolfram Alpha and Mathpix, plus mock memory and subscriptions.",
+  "description": "Backend API for Mentor AI: lessons, accounts, economy and a local calendar.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

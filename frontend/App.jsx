@@ -22,7 +22,6 @@ import HomeScreen from './screens/HomeScreen.jsx';
 
 const LearnScreen = lazy(() => import('./screens/LearnScreen.jsx'));
 const ShopScreen = lazy(() => import('./components/ShopScreen.jsx'));
-const SubscriptionsScreen = lazy(() => import('./screens/SubscriptionsScreen.jsx'));
 const ProfileScreen = lazy(() => import('./screens/ProfileScreen.jsx'));
 const CalendarScreen = lazy(() => import('./screens/CalendarScreen.jsx'));
 
@@ -179,10 +178,9 @@ function AppShell({ userData, setUserData }) {
     });
 
     const params = new URLSearchParams(window.location.search);
-    const checkout = params.get('checkout');
     const calendarConnected = params.get('calendar_connected');
     const calendarError = params.get('calendar_error');
-    if (checkout || calendarConnected || calendarError) {
+    if (calendarConnected || calendarError) {
       window.history.replaceState({}, '', window.location.pathname);
     }
 
@@ -230,27 +228,6 @@ function AppShell({ userData, setUserData }) {
       showToast(t('toast.calendarConnected'), 'success');
       return;
     }
-    if (checkout === 'success') {
-      const sub = await MentorAPI.getMySubscription();
-      if (sub.success && sub.data?.subscription) {
-        setUserData(prev => ({
-          ...prev,
-          planId: sub.data.subscription.planId || prev.planId,
-          planStatus: sub.data.subscription.status || 'active'
-        }));
-      }
-      setScreen('subscriptions');
-      setNavScreen('subscriptions');
-      showToast(t('toast.checkoutSuccess'), 'success');
-      return;
-    }
-    if (checkout === 'cancel') {
-      setScreen('subscriptions');
-      setNavScreen('subscriptions');
-      showToast(t('toast.checkoutCancel'), 'warning');
-      return;
-    }
-
     await syncEconomy();
     if (route.kind === 'app') {
       if (route.extras) {
@@ -582,8 +559,6 @@ function AppShell({ userData, setUserData }) {
         return <ShopScreen userData={userData} onBack={() => handleNavigate('home')} onCoinsChange={handleEconomyUpdate} onAppearanceChange={handleAppearanceChange} onRewardToast={showToast} onProgress={syncEconomy} />;
       case 'calendar':
         return <CalendarScreen onBack={() => handleNavigate('home')} userData={userData} />;
-      case 'subscriptions':
-        return <SubscriptionsScreen onBack={() => handleNavigate('home')} />;
       case 'profile':
         return (
           <ProfileScreen

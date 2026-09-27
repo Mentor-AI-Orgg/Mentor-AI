@@ -68,14 +68,14 @@ folosească aceleași numere.
 
 ## Structură
 
-- `backend/` — Express: autentificare, chat, economie, plăți, calendar, persistență JSON
+- `backend/` — Express: autentificare, chat din lecții, economie, calendar, persistență JSON
 - `frontend/` — React compilat cu Vite (ES modules, i18n `ro` / `en`)
-- `tests/` — Vitest + Supertest (auth, chat mock, cumpărături, plăți mock, clasament)
+- `tests/` — Vitest + Supertest (auth, chat din lecții, cumpărături, clasament)
 
-Fără chei externe (Stripe, SMTP, Twilio, Google/Notion, motoare AI) aplicația
-pornește pe mock-uri etichetate. Variabilele sunt în
+Fără SMTP aplicația pornește, iar emailurile rămân în inbox. Variabilele sunt în
 [backend/.env.example](backend/.env.example).
 
-Ce s-a implementat, pe faze și PR-uri: [IMPLEMENTARE.md](IMPLEMENTARE.md).
-Planul original: [plan-imbunatatiri.md](plan-imbunatatiri.md).
+Note vechi, mutate, nu mai descriu codul de acum:
+[docs/arhiva/IMPLEMENTARE.md](docs/arhiva/IMPLEMENTARE.md),
+[docs/arhiva/plan-imbunatatiri.md](docs/arhiva/plan-imbunatatiri.md).
 Deploy pe gazduire.net: [DEPLOY.md](DEPLOY.md).

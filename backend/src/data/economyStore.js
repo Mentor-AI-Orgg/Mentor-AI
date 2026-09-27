@@ -247,8 +247,7 @@ function findStudentsForTeacher(teacherEmail) {
   return students;
 }
 
-// Emailurile elevilor legați de un profesor. Folosit de linkStore ca să
-// listeze legăturile active, fără să expună obiectele interne de user.
+// Emailurile elevilor care au salvat acest profesor în preferințe.
 function listStudentEmailsForTeacher(teacherEmail) {
   return findStudentsForTeacher(teacherEmail).map(student => student.userId);
 }
@@ -345,7 +344,7 @@ async function generateAccessCode({ parentEmail = '', childEmail = '', phone = '
     phone,
     subject,
     body,
-    channel: 'sms'
+    channel: 'email'
   });
 
   // Inbox-ul păstrează mesajul (inclusiv codul) ca rezervă locală. Răspunsul

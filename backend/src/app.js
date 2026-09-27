@@ -4,10 +4,6 @@ const express = require("express");
 
 const config = require("./config");
 const chatRoute = require("./routes/chat");
-const detectRoute = require("./routes/detect");
-const wolframRoute = require("./routes/wolfram");
-const mathpixRoute = require("./routes/mathpix");
-const subscriptionsRoute = require("./routes/subscriptions");
 const healthRoute = require("./routes/health");
 const leaderboardRoute = require("./routes/leaderboard");
 const calendarRoute = require("./routes/calendar");
@@ -15,7 +11,6 @@ const flashcardsRoute = require("./routes/flashcards");
 const diagnosticsRoute = require("./routes/diagnostics");
 const economyRoute = require("./routes/economy");
 const authRoute = require("./routes/auth");
-const linksRoute = require("./routes/links");
 const accountRoute = require("./routes/account");
 const friendsRoute = require("./routes/friends");
 const moderationRoute = require("./routes/moderation");
@@ -28,15 +23,13 @@ const { startRetention } = require("./data/retentionJob");
 const { startDigestSchedule } = require("./notify/parentActivity");
 const { migrateLegacyProfiles } = require("./data/authStore");
 const { corsAllowlist } = require("./middleware/corsAllowlist");
-const { generalApiLimiter, chatLimiter, detectLimiter } = require("./middleware/rateLimits");
+const { generalApiLimiter, chatLimiter } = require("./middleware/rateLimits");
 const { securityHeaders } = require("./middleware/security");
 const { requestLog } = require("./logger");
 const clientErrorRoute = require("./routes/clientError");
 const { newId, reportError, watchOperations } = require("./ops/errorMonitor");
 const persistence = require("./data/persistence");
-const calendarOauthRoute = require("./routes/calendarOauth");
 const curriculumRoute = require("./routes/curriculum");
-const { handleStripeWebhook } = require("./payments/stripe");
 const { privacyHtml, termsHtml } = require("./legal/pages");
 
 function createApp(options = {}) {
@@ -70,21 +63,11 @@ function createApp(options = {}) {
       "/api/health",
       "/api/v1/health",
       "/api/client-error",
-      "/api/v1/client-error",
-      "/api/subscriptions/webhook",
-      "/api/v1/subscriptions/webhook",
-      "/api/calendar/oauth/google/callback",
-      "/api/calendar/oauth/notion/callback",
-      "/api/v1/calendar/oauth/google/callback",
-      "/api/v1/calendar/oauth/notion/callback"
+      "/api/v1/client-error"
     ]
   }));
 
   app.use(corsAllowlist);
-
-  // Stripe semnează body-ul brut. Parser-ul JSON trebuie montat DUPĂ webhook.
-  app.post("/api/subscriptions/webhook", express.raw({ type: "application/json" }), handleStripeWebhook);
-  app.post("/api/v1/subscriptions/webhook", express.raw({ type: "application/json" }), handleStripeWebhook);
 
   app.use(express.json({ limit: "64kb" }));
   app.use("/api", generalApiLimiter);
@@ -116,19 +99,13 @@ function createApp(options = {}) {
 
     const studentOnly = [authRequired, studentRequired];
 
-    app.use(`${prefix}/calendar/oauth`, calendarOauthRoute);
     app.use(`${prefix}/chat`, ...studentOnly, chatLimiter, chatRoute);
-    app.use(`${prefix}/detect`, ...studentOnly, detectLimiter, detectRoute);
-    app.use(`${prefix}/wolfram`, ...studentOnly, wolframRoute);
-    app.use(`${prefix}/mathpix`, ...studentOnly, mathpixRoute);
     app.use(`${prefix}/flashcards`, ...studentOnly, flashcardsRoute);
     app.use(`${prefix}/diagnostics`, ...studentOnly, diagnosticsRoute);
     app.use(`${prefix}/calendar`, ...studentOnly, calendarRoute);
     app.use(`${prefix}/economy`, ...studentOnly, economyRoute);
-    app.use(`${prefix}/links`, ...studentOnly, linksRoute);
     app.use(`${prefix}/account`, ...studentOnly, accountRoute);
     app.use(`${prefix}/friends`, ...studentOnly, consentRequired, friendsRoute);
-    app.use(`${prefix}/subscriptions`, subscriptionsRoute);
   }
 
   mountApi("/api");

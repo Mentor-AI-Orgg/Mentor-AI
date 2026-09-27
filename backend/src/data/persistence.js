@@ -117,8 +117,46 @@ function tryLoadBackup() {
   return null;
 }
 
+const REMOVED_COLLECTIONS = ["subscriptions", "links"];
+
+function stripRemovedCollections(parsed) {
+  if (!parsed || typeof parsed !== "object" || !parsed.collections) return false;
+  let changed = false;
+  for (const name of REMOVED_COLLECTIONS) {
+    if (Object.prototype.hasOwnProperty.call(parsed.collections, name)) {
+      delete parsed.collections[name];
+      changed = true;
+    }
+  }
+  const connections = parsed.collections.calendar && parsed.collections.calendar.connections;
+  if (connections && Object.keys(connections).length) {
+    parsed.collections.calendar.connections = {};
+    changed = true;
+  }
+  return changed;
+}
+
+// Șterge datele funcțiilor scoase (abonamente, invitații, tokenuri de calendar
+// extern). Copiază fișierul înainte, o singură dată pe zi.
+function migrateFile(file = DATA_FILE) {
+  if (!fs.existsSync(file)) return { migrated: false, reason: "no_file" };
+  let parsed;
+  try {
+    parsed = JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch {
+    return { migrated: false, reason: "unreadable" };
+  }
+  if (!stripRemovedCollections(parsed)) return { migrated: false, reason: "clean" };
+  const stamp = new Date().toISOString().slice(0, 10);
+  const backup = `${file}.pre-t12-${stamp}`;
+  if (!fs.existsSync(backup)) fs.copyFileSync(file, backup);
+  fs.writeFileSync(file, JSON.stringify(parsed));
+  return { migrated: true, backup };
+}
+
 function load() {
   loaded = true;
+  migrateFile();
   if (!fs.existsSync(DATA_FILE)) {
     return { loaded: false, reason: "no_file" };
   }
@@ -238,6 +276,8 @@ module.exports = {
   stopAutosave,
   isLoaded: () => loaded,
   mapToObject,
+  stripRemovedCollections,
+  migrateFile,
   restoreMap,
   restoreArray,
   restoreObject

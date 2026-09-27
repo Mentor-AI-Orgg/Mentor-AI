@@ -147,28 +147,17 @@ Pagina de confidențialitate rămâne deschisă și cât site-ul e închis.
 Adresa de contact de pe ea este `LEGAL_CONTACT`. Dacă lipsește, pagina
 spune că operatorul încă nu a publicat-o.
 
-Fără chei de AI aplicația funcționează, dar toate răspunsurile sunt mock.
-La fel pentru plăți (Stripe), email (SMTP), SMS (Twilio) și calendar
-(Google/Notion): fără chei, fluxurile rămân mock și răspunsul include
-`mocked: true`.
+Tutorele răspunde din lecții, fără chei de AI. Emailul către părinte
+are nevoie de SMTP. Calendarul stă în aplicație, fără Google sau Notion.
+Nu există plăți.
 
-Pentru plăți live și OAuth, setează și:
+Pentru linkurile din email:
 
 ```
-APP_BASE_URL=https://domeniul-tau.ro
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-NOTION_CLIENT_ID=
-NOTION_CLIENT_SECRET=
+APP_BASE_URL=https://suntde10.ro
 SMTP_HOST=
 SMTP_FROM=
 ```
-
-Webhook-ul Stripe este `POST /api/subscriptions/webhook` (body brut, fără
-JSON parser). Redirectul OAuth este
-`/api/calendar/oauth/{google|notion}/callback`.
 
 Dacă frontend-ul și API-ul sunt pe același domeniu, nu trebuie să setezi
 `CORS_ORIGINS`. Completeaz-o doar dacă apeți API-ul de pe un alt origin
@@ -182,7 +171,7 @@ folosit cross-site de un domeniu oarecare.
 https://domeniul-tau.ro/api/health
 ```
 
-Ruta răspunde cu starea fiecărui provider și rămâne accesibilă fără parolă, ca
+Ruta răspunde cu `{ "ok": true }` și rămâne accesibilă fără parolă, ca
 să poți conecta monitorizare externă. Restul site-ului cere user și parolă dacă
 ai setat variabilele din pasul 5.
 

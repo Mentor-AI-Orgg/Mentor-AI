@@ -140,9 +140,7 @@ router.post('/parent-review', async (req, res) => {
   res.json(result);
 });
 
-// Legarea directă a fost înlocuită cu invitație acceptată de celălalt cont
-// (POST /api/links/invite). Păstrăm ruta ca să răspundă explicit, în loc să
-// dea 404 unui client mai vechi care încă o apelează.
+// Legarea directă din client nu mai există. Ruta răspunde explicit.
 router.post('/connect-child', (_req, res) => {
   res.status(410).json(STUDENTS_ONLY);
 });

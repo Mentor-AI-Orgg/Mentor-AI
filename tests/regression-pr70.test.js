@@ -15,7 +15,7 @@ const nodeRequire = createRequire(import.meta.url);
 const persistence = nodeRequire('../backend/src/data/persistence.js');
 const config = nodeRequire('../backend/src/config.js');
 
-const AI_KEYS = ['OPENAI_KEY', 'CLAUDE_KEY', 'GEMINI_KEY', 'WOLFRAM_KEY', 'MATHPIX_APP_ID', 'MATHPIX_APP_KEY'];
+const AI_KEYS = ['OPENAI_KEY', 'MATHPIX_APP_ID', 'MATHPIX_APP_KEY'];
 
 function hashToken(token) {
   return crypto.createHash('sha256').update(String(token)).digest('hex');

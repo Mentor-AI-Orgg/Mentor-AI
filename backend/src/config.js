@@ -1,14 +1,8 @@
 // singura fila de atinge .env, care contine cheile pentru fiecare engine de chat si tool specializat.
 // de protejat
 const path = require("path");
-const crypto = require("crypto");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 require("dotenv").config();
-
-// Secret de proces pentru semnare OAuth state, folosit doar dacă nu e setat
-// OAUTH_STATE_SECRET. Se regenerează la restart, deci fluxurile OAuth în
-// curs expiră — acceptabil; în producție setează o valoare stabilă.
-const processOauthSecret = crypto.randomBytes(32).toString("hex");
 
 module.exports = {
   PORT: process.env.PORT || 3001,
@@ -41,15 +35,9 @@ module.exports = {
   // de către client.
   TEACHER_INVITE_CODE: process.env.TEACHER_INVITE_CODE || "",
 
-  // --- AI chat engines (fallback order: Claude -> OpenAI -> Gemini) ---
-  CLAUDE_KEY: process.env.CLAUDE_KEY || "",
-  CLAUDE_MODEL: process.env.CLAUDE_MODEL || "claude-haiku-4-5-20251001",
-
+  // Recenzia foto de la EN, dacă există chei. Tutorele răspunde din lecții.
   OPENAI_KEY: process.env.OPENAI_KEY || "",
   OPENAI_MODEL: process.env.OPENAI_MODEL || "gpt-4o",
-
-  GEMINI_KEY: process.env.GEMINI_KEY || "",
-  GEMINI_MODEL: process.env.GEMINI_MODEL || "gemini-1.5-pro",
 
   // Timeout per provider (ms). Un motor agățat trebuie să cedeze locul
   // următorului din lanț, nu să țină toată cererea de chat deschisă.
@@ -58,34 +46,19 @@ module.exports = {
   // 500 tăia răspunsurile de scaffolding pe mai mulți pași.
   MAX_TOKENS: Number(process.env.MAX_TOKENS) || 2048,
 
-  // --- specialized tools ---
-  WOLFRAM_KEY: process.env.WOLFRAM_KEY || "",
   MATHPIX_APP_ID: process.env.MATHPIX_APP_ID || "",
   MATHPIX_APP_KEY: process.env.MATHPIX_APP_KEY || "",
 
   APP_NAME: "Mentor AI v3.0",
   APP_VERSION: "3.0.0",
 
-  // URL public (fără slash final) pentru redirecturi Stripe / OAuth.
+  // URL public (fără slash final) pentru linkurile din email.
   // Dacă lipsește, rutele reconstruiesc originea din request.
   APP_BASE_URL: String(process.env.APP_BASE_URL || "").replace(/\/$/, ""),
-
-  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
-  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || "",
-
-  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
-  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
-  NOTION_CLIENT_ID: process.env.NOTION_CLIENT_ID || "",
-  NOTION_CLIENT_SECRET: process.env.NOTION_CLIENT_SECRET || "",
-  OAUTH_STATE_SECRET: process.env.OAUTH_STATE_SECRET || processOauthSecret,
 
   SMTP_HOST: process.env.SMTP_HOST || "",
   SMTP_PORT: process.env.SMTP_PORT || "",
   SMTP_USER: process.env.SMTP_USER || "",
   SMTP_PASS: process.env.SMTP_PASS || "",
-  SMTP_FROM: process.env.SMTP_FROM || "",
-
-  TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID || "",
-  TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || "",
-  TWILIO_FROM: process.env.TWILIO_FROM || ""
+  SMTP_FROM: process.env.SMTP_FROM || ""
 };

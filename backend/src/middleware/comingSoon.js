@@ -11,13 +11,7 @@ const SKIP_PATHS = new Set([
   "/api/health",
   "/api/v1/health",
   "/api/client-error",
-  "/api/v1/client-error",
-  "/api/subscriptions/webhook",
-  "/api/v1/subscriptions/webhook",
-  "/api/calendar/oauth/google/callback",
-  "/api/calendar/oauth/notion/callback",
-  "/api/v1/calendar/oauth/google/callback",
-  "/api/v1/calendar/oauth/notion/callback"
+  "/api/v1/client-error"
 ]);
 
 function truthy(value) {

@@ -96,4 +96,5 @@ jobs:
             tests/**
             scripts/**
             reports/**
+            docs/arhiva/**
             coverage/**

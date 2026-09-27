@@ -37,8 +37,7 @@ function basicAuth({ user, password, skipPaths = [], skipPrefixes = [] }) {
 
   return (req, res, next) => {
     // Health check-ul rămâne public, ca monitorizarea externă să poată
-    // verifica serverul fără credențiale. Webhook-ul Stripe și callback-ul
-    // OAuth vin de la terți, deci nu pot trimite Basic Auth.
+    // verifica serverul fără credențiale.
     // Creatorul care a trecut de pagina „În curând” nu mai ia și Basic Auth.
     if (req.previewAccess) return next();
     if (skipPaths.includes(req.path)) return next();

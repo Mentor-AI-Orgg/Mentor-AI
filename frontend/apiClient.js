@@ -29,33 +29,6 @@ const buildApiUrl = url => {
   return new URL(url, `${getApiBaseUrl()}/`).toString();
 };
 
-const DEFAULT_SUBSCRIPTIONS = [
-  {
-    id: 'free',
-    name: 'Gratuit',
-    priceMonthly: 0,
-    priceQuarterly: 0,
-    priceHalfYear: 0,
-    priceYearly: 0,
-    currency: 'RON',
-    tagline: 'Mentorul de gimnaziu, fără abonament',
-    features: [
-      { label: 'Mentor AI la română și matematică, clasele 5–8', included: true },
-      { label: 'Întrebări nelimitate către mentor', included: true },
-      { label: 'Capitole, flashcarduri și sesiuni de focus', included: true },
-      { label: 'Magazin cosmetic cu monede câștigate din învățare', included: true },
-      { label: 'Email către părinte la activitatea copilului', included: true }
-    ]
-  }
-];
-
-const normalizePlan = plan => ({
-  ...plan,
-  price: typeof plan.price === 'string' ? plan.price : `${Number(plan.priceMonthly || 0)} lei/lună`,
-  description: plan.description || plan.tagline || '',
-  features: (plan.features || []).map(feature => (typeof feature === 'string' ? { label: feature, included: true } : feature))
-});
-
 const mergeFetchOptions = options => {
   const { headers: extraHeaders, ...rest } = options || {};
   return {
@@ -421,15 +394,6 @@ const MentorAPI = {
     }
   },
 
-  async getMySubscription() {
-    try {
-      const data = await safeFetchJson('/api/subscriptions/me');
-      return { success: true, data };
-    } catch (error) {
-      return { success: false, data: null };
-    }
-  },
-
   async exportAccount() {
     try {
       const data = await safeFetchJson('/api/account/export');
@@ -445,52 +409,6 @@ const MentorAPI = {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password, confirm })
-      });
-      return { success: true, data };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  },
-
-  // --- legaturi intre conturi (parinte-copil, profesor-elev) ---
-  // Legatura nu exista pana cand celalalt cont accepta invitatia.
-  async getLinks() {
-    try {
-      const data = await safeFetchJson('/api/links');
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: { incoming: [], outgoing: [], links: [] }, fallback: true };
-    }
-  },
-
-  async inviteLink(payload) {
-    try {
-      const data = await safeFetchJson('/api/links/invite', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      return { success: true, data };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  },
-
-  async respondToInvitation(invitationId, action) {
-    try {
-      const data = await safeFetchJson(`/api/links/${invitationId}/${action}`, { method: 'POST' });
-      return { success: true, data };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  },
-
-  async unlinkAccount(otherEmail) {
-    try {
-      const data = await safeFetchJson('/api/links/unlink', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ other_email: otherEmail })
       });
       return { success: true, data };
     } catch (error) {
@@ -514,46 +432,6 @@ const MentorAPI = {
           response: 'Momentan nu pot contacta backend-ul. Încearcă din nou în câteva secunde.'
         }
       };
-    }
-  },
-
-  async detect(payload) {
-    try {
-      const data = await safeFetchJson('/api/detect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return {
-        success: false,
-        fallback: true,
-        data: { verdict: 'Service indisponibil', ai_probability: 0 }
-      };
-    }
-  },
-
-  async getSubscriptions() {
-    try {
-      const data = await safeFetchJson('/api/subscriptions');
-      const subscriptions = (data.subscriptions || data.plans || data || []).map(normalizePlan);
-      return { success: true, data: subscriptions, fallback: false };
-    } catch (error) {
-      return { success: false, data: DEFAULT_SUBSCRIPTIONS.map(normalizePlan), fallback: true };
-    }
-  },
-
-  async checkoutSubscription(payload) {
-    try {
-      const data = await safeFetchJson('/api/subscriptions/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: null, fallback: true };
     }
   },
 

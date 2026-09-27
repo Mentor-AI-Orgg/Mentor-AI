@@ -1,6 +1,6 @@
 // Exportul și ștergerea contului (GDPR: dreptul de acces și de ștergere).
 // Orchestrează toate store-urile: un DELETE trebuie să șteargă sesiunile,
-// monedele, calendarul, conversațiile, invitațiile și abonamentul, nu doar
+// monedele, calendarul și conversațiile, nu doar
 // rândul din authStore.
 
 const express = require("express");
@@ -45,8 +45,6 @@ function collectExport(email) {
     prieteni: slices.friends,
     calendar: slices.calendar,
     conversatii: slices.memory,
-    invitatii: slices.links,
-    abonament: slices.subscriptions,
     acord: slices.consent,
     evaluare: slices.evaluare,
     fotografii: slices.fotografii,

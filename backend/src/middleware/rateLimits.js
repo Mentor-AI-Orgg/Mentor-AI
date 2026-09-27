@@ -28,9 +28,7 @@ const generalApiLimiter = rateLimit({
   ...common,
   skip: req => skipInTests()
     || /\/health$/.test(req.path)
-    || /\/api(?:\/v1)?\/health/.test(req.originalUrl)
-    || /\/subscriptions\/webhook$/.test(req.path)
-    || /\/calendar\/oauth\/[^/]+\/callback$/.test(req.path),
+    || /\/api(?:\/v1)?\/health/.test(req.originalUrl),
   handler: romanianHandler("Prea multe cereri. Încearcă din nou în câteva minute.")
 });
 
@@ -72,19 +70,10 @@ const clientErrorLimiter = rateLimit({
   handler: romanianHandler("Prea multe raportări de eroare. Încearcă din nou mai târziu.")
 });
 
-const detectLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 15,
-  ...common,
-  keyGenerator: req => (req.auth && req.auth.email) || req.ip,
-  handler: romanianHandler("Prea multe analize. Încearcă din nou într-un minut.")
-});
-
 module.exports = {
   generalApiLimiter,
   authLimiter,
   chatLimiter,
   clientErrorLimiter,
-  accessCodeVerifyLimiter,
-  detectLimiter
+  accessCodeVerifyLimiter
 };

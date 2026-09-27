@@ -286,9 +286,6 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
           <button type="button" className="ghost-button" onClick={() => onNavigate?.('calendar')}>
             <i className="fas fa-calendar-check" /> {t('nav.calendar')}
           </button>
-          <button type="button" className="ghost-button" onClick={() => onNavigate?.('subscriptions')}>
-            <i className="fas fa-unlock" /> {t('nav.subscriptions')}
-          </button>
         </div>
       </div>
 
