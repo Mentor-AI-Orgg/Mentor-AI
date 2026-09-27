@@ -16,7 +16,7 @@ const {
   markNotificationRead,
   sendParentReview
 } = require('../data/economyStore');
-const { notifyParent } = require('../notify/parentActivity');
+const { notifyParent, ALLOWED_TYPES } = require('../notify/parentActivity');
 
 // Toate rutele de aici sunt montate în spatele `authRequired` (vezi
 // backend/server.js), deci `req.auth` există mereu. Identitatea vine exclusiv
@@ -164,8 +164,8 @@ router.post('/progress', validateBody(progressSchema), async (req, res) => {
 
 router.post('/activity', async (req, res) => {
   const { type, note = '', meta = {}, amount = 0 } = req.body || {};
-  if (!type) {
-    return res.status(400).json({ error: 'type este obligatoriu.' });
+  if (!type || !ALLOWED_TYPES.has(type)) {
+    return res.status(400).json({ error: 'Tip de activitate necunoscut.' });
   }
   const result = logActivity({ userId: req.auth.email, type, note, meta, amount });
   const parentNotify = await notifyParent({

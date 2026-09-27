@@ -44,6 +44,11 @@ const forgotPasswordSchema = z.object({
   email: z.string().trim().max(254).optional().default("")
 });
 
+const resetPasswordSchema = z.object({
+  token: z.string().trim().min(20).max(200),
+  password: z.string().min(1).max(200)
+});
+
 const chatSchema = z.object({
   message: z
     .string({ required_error: "Câmpul 'message' este obligatoriu." })
@@ -207,6 +212,7 @@ module.exports = {
   registerSchema,
   loginSchema,
   forgotPasswordSchema,
+  resetPasswordSchema,
   chatSchema,
   detectSchema,
   inviteLinkSchema,

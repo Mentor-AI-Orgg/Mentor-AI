@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
 import {
-  DEFAULT_CREATOR_PASSWORD,
   PREVIEW_COOKIE,
   previewToken
 } from '../backend/src/middleware/comingSoon.js';
@@ -12,6 +11,7 @@ describe('coming soon gate', () => {
     delete process.env.SITE_CLOSED;
     delete process.env.SITE_PUBLIC;
     delete process.env.PREVIEW_PASSWORD;
+    delete process.env.PREVIEW_COOKIE_SECRET;
     delete process.env.STAGING_AUTH_PASSWORD;
     delete process.env.ENABLE_STAGING_AUTH;
     delete process.env.STAGING_AUTH_USER;
@@ -56,21 +56,17 @@ describe('coming soon gate', () => {
     expect(robots.text).toContain('Disallow: /');
   });
 
-  it('lets the creator in with the default password when PREVIEW_PASSWORD is unset', async () => {
+  it('stays closed when PREVIEW_PASSWORD is unset, even with the old built-in password', async () => {
     process.env.SITE_CLOSED = '1';
     const { app } = createApp({ autosave: false });
 
-    const unlock = await request(app).get('/?acces=gresit');
-    expect(unlock.status).toBe(401);
-    expect(unlock.text).toContain('nu e corectă');
+    const fromUrl = await request(app).get('/?acces=suntde10-creator');
+    expect(fromUrl.status).toBe(200);
+    expect(fromUrl.text).toContain('În curând');
 
-    const agent = request.agent(app);
-    const ok = await agent.get(`/?acces=${DEFAULT_CREATOR_PASSWORD}`);
-    expect(ok.status).toBe(303);
-    expect(ok.headers.location).toBe('/');
-
-    const opened = await agent.get('/');
-    expect(opened.text).not.toMatch(/În curând/);
+    const posted = await request(app).post('/creator').type('form').send({ password: 'suntde10-creator' });
+    expect(posted.status).toBe(401);
+    expect(posted.text).toContain('nu e corectă');
   });
 
   it('lets the team in with PREVIEW_PASSWORD and then serves the app', async () => {
@@ -81,12 +77,12 @@ describe('coming soon gate', () => {
     const locked = await request(app).get('/');
     expect(locked.text).toContain('Intrare creator');
 
-    const unlock = await request(app).get('/?acces=gresit');
+    const unlock = await request(app).post('/creator').type('form').send({ password: 'gresit' });
     expect(unlock.status).toBe(401);
     expect(unlock.text).toContain('nu e corectă');
 
     const agent = request.agent(app);
-    const ok = await agent.get('/?acces=lucru-secret');
+    const ok = await agent.post('/creator').type('form').send({ password: 'lucru-secret' });
     expect(ok.status).toBe(303);
     expect(ok.headers.location).toBe('/');
 
@@ -99,6 +95,7 @@ describe('coming soon gate', () => {
 
   it('opens the app from /creator and can return to the public page', async () => {
     process.env.SITE_CLOSED = '1';
+    process.env.PREVIEW_PASSWORD = 'lucru-secret';
     const { app } = createApp({ autosave: false });
 
     const login = await request(app).get('/creator');
@@ -106,7 +103,7 @@ describe('coming soon gate', () => {
     expect(login.text).toContain('Intrare creator');
 
     const agent = request.agent(app);
-    const ok = await agent.get(`/creator?acces=${DEFAULT_CREATOR_PASSWORD}`);
+    const ok = await agent.post('/creator').type('form').send({ password: 'lucru-secret' });
     expect(ok.status).toBe(303);
 
     const opened = await agent.get('/');
@@ -130,6 +127,7 @@ describe('coming soon gate', () => {
   it('accepts the preview cookie without a query string', async () => {
     process.env.SITE_CLOSED = '1';
     process.env.PREVIEW_PASSWORD = 'cookie-ok';
+    process.env.PREVIEW_COOKIE_SECRET = 'secret-de-cookie-separat';
     const { app } = createApp({ autosave: false });
     const page = await request(app)
       .get('/')

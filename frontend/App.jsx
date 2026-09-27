@@ -11,6 +11,7 @@ import Toast from './components/Toast.jsx';
 import SplashScreen from './components/SplashScreen.jsx';
 import WelcomeScreen from './components/WelcomeScreen.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
+import ResetPasswordScreen from './components/ResetPasswordScreen.jsx';
 import RegisterScreen from './components/RegisterScreen.jsx';
 import OnboardingScreen from './components/OnboardingScreen.jsx';
 import { ProfessorScreen } from './components/StudyScreens.jsx';
@@ -153,6 +154,11 @@ function AppShell({ userData, setUserData }) {
     const session = await MentorAPI.me();
     if (!session.success) {
       setUserData(prev => ({ ...prev, isLoggedIn: false }));
+      const route = parseAppHash(window.location.hash);
+      if (route.screen === 'reset') {
+        setScreen('reset');
+        return;
+      }
       setScreen('welcome');
       writeHash('welcome', {}, 'replace');
       return;
@@ -456,6 +462,15 @@ function AppShell({ userData, setUserData }) {
             onRegister={() => { setScreen('register'); writeHash('register'); }}
           />
         );
+      case 'reset': {
+        const token = parseAppHash(window.location.hash).extras?.token || '';
+        return (
+          <ResetPasswordScreen
+            token={token}
+            onDone={() => { setScreen('login'); writeHash('login'); }}
+          />
+        );
+      }
       case 'login':
         return (
           <LoginScreen

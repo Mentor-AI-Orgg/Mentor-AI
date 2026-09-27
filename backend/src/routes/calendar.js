@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const store = require("../data/calendarStore");
-const oauth = require("../calendar/oauth");
-const { publicBaseUrl } = require("../publicUrl");
 const { validateBody } = require("../middleware/validate");
 const { calendarEventSchema, calendarPatchSchema } = require("../validation/schemas");
 const { notifyParent } = require("../notify/parentActivity");
@@ -61,43 +59,16 @@ router.get("/status", (req, res) => {
   res.json({ connections: store.getConnections(resolveUserId(req)) });
 });
 
-// POST /api/calendar/connect  { provider: 'google' | 'notion' }
-router.post("/connect", (req, res) => {
-  const userId = resolveUserId(req);
-  const { provider } = req.body || {};
-  if (!["google", "notion"].includes(provider)) {
-    return res.status(400).json({ error: "Provider necunoscut. Folosește 'google' sau 'notion'." });
-  }
-
-  if (oauth.isConfigured(provider)) {
-    const oauthUrl = oauth.buildAuthorizeUrl({
-      provider,
-      email: userId,
-      baseUrl: publicBaseUrl(req)
-    });
-    return res.json({
-      success: true,
-      mocked: false,
-      oauth_url: oauthUrl,
-      message: `Deschide URL-ul OAuth pentru a conecta ${provider === "google" ? "Google Calendar" : "Notion"}.`
-    });
-  }
-
-  const result = store.connectProvider(userId, provider, { mocked: true });
-  res.json({
-    success: true,
-    mocked: true,
-    message: `Cont ${provider === "google" ? "Google Calendar" : "Notion Calendar"} conectat (mock). Adaugă GOOGLE_CLIENT_ID/SECRET sau NOTION_CLIENT_ID/SECRET pentru OAuth real.`,
-    ...result
+router.post("/connect", (_req, res) => {
+  res.status(410).json({
+    error: "Calendarul stă doar în aplicație. Nu se conectează la Google sau la alt serviciu."
   });
 });
 
-// POST /api/calendar/disconnect { provider }
-router.post("/disconnect", (req, res) => {
-  const userId = resolveUserId(req);
-  const { provider } = req.body || {};
-  store.disconnectProvider(userId, provider);
-  res.json({ success: true });
+router.post("/disconnect", (_req, res) => {
+  res.status(410).json({
+    error: "Calendarul stă doar în aplicație. Nu există o legătură externă de închis."
+  });
 });
 
 module.exports = router;

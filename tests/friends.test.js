@@ -50,17 +50,23 @@ describe('friends and profile edit', () => {
     expect(res.body.user.email).toBe(email);
   });
 
-  it('hides a private profile from search and blocks the request', async () => {
+  it('finds a classmate only by exact username and hides the real name and school', async () => {
     const ana = await registerStudent({ name: 'Ana Public', username: `pub${Date.now().toString(16).slice(-4)}` });
     const ion = await registerStudent({ name: 'Ion Privat', username: `prv${Date.now().toString(16).slice(-4)}` });
-    await ion.agent.patch('/api/friends/settings').send({ profilePrivate: true, acceptFriendRequests: true });
+
+    const byName = await ana.agent.get('/api/friends/search').query({ q: 'Ion' });
+    expect(byName.status).toBe(200);
+    expect(byName.body.results).toHaveLength(0);
 
     const found = await ana.agent.get('/api/friends/search').query({ q: ion.username });
-    expect(found.status).toBe(200);
-    expect(found.body.results).toHaveLength(0);
+    expect(found.body.results).toHaveLength(1);
+    expect(found.body.results[0].username).toBe(ion.username);
+    expect(found.body.results[0].name).not.toMatch(/Ion Privat/);
+    expect(found.body.results[0].school).toBe('');
 
     const visible = await ion.agent.get('/api/friends/search').query({ q: ana.username });
     expect(visible.body.results[0]?.username).toBe(ana.username);
+    expect(visible.body.results[0].school).toBe('');
   });
 
   it('sends at most 10 friend requests per day', async () => {

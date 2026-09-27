@@ -126,8 +126,9 @@ poarta HTTP Basic, pune `ENABLE_STAGING_AUTH=1` plus `STAGING_AUTH_USER`
 și `STAGING_AUTH_PASSWORD`.
 
 Cât site-ul e închis, publicul vede „În curând”. Tu deschizi aplicația
-cu **Intrare creator** (parola implicită `suntde10-creator`, sau
-`PREVIEW_PASSWORD` dacă o setezi în DirectAdmin). Ca să vezi iar pagina
+din formularul **Intrare creator**, cu `PREVIEW_PASSWORD` setată în
+DirectAdmin. Dacă parola lipsește, nimeni nu intră. Nu o pune în adresă.
+Cookie-ul se semnează cu `PREVIEW_COOKIE_SECRET`. Ca să vezi iar pagina
 publică: `https://suntde10.ro/creator/iesire`.
 
 Fără chei de AI aplicația funcționează, dar toate răspunsurile sunt mock.

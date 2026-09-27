@@ -307,7 +307,7 @@ describe('EN papers and barem', () => {
     expect(all.body.items.length).toBeGreaterThan(10);
   });
 
-  it('caps EN photo reviews at three per day and grades a notebook page after start', async () => {
+  it('refuses notebook photos because reading them is a paid service', async () => {
     const agent = request.agent(app);
     const stamp = Date.now();
     const register = await agent.post('/api/auth/register').send({
@@ -323,25 +323,13 @@ describe('EN papers and barem', () => {
     expect([200, 201]).toContain(register.status);
     const start = await agent.post('/api/curriculum/en/papers/start').send({ paper_id: 'en-ro-a' });
     expect(start.status).toBe(200);
-    expect(start.body.photoQuota.remaining).toBe(3);
-    const blob = `data:image/jpeg;base64,${'A'.repeat(80)}`;
     const first = await agent.post('/api/curriculum/en/photo-review').send({
       paper_id: 'en-ro-a',
       target: 'composition',
-      image_base64: blob
+      image_base64: 'data:image/jpeg;base64,AAAA'
     });
-    expect(first.status).toBe(200);
-    expect(first.body.review.feedback.length).toBeGreaterThan(20);
-    expect(first.body.photoQuota.remaining).toBe(2);
-    await agent.post('/api/curriculum/en/photo-review').send({ paper_id: 'en-ro-a', target: 'composition', image_base64: blob });
-    await agent.post('/api/curriculum/en/photo-review').send({ paper_id: 'en-ro-a', target: 'composition', image_base64: blob });
-    const fourth = await agent.post('/api/curriculum/en/photo-review').send({
-      paper_id: 'en-ro-a',
-      target: 'composition',
-      image_base64: blob
-    });
-    expect(fourth.status).toBe(429);
-    expect(fourth.body.error).toMatch(/3 poze/i);
+    expect(first.status).toBe(410);
+    expect(first.body.error).toMatch(/Pozele nu se mai încarcă/);
   });
 
   it('keeps extra original Romanian packs in the infinite pool, with longer texts', () => {

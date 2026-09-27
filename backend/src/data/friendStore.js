@@ -24,7 +24,7 @@ const todayKey = () => new Date().toISOString().slice(0, 10);
 function getSettings(email) {
   const key = normalizeEmail(email);
   if (!SETTINGS.has(key)) {
-    SETTINGS.set(key, { profilePrivate: false, acceptFriendRequests: true });
+    SETTINGS.set(key, { profilePrivate: true, acceptFriendRequests: true });
   }
   return SETTINGS.get(key);
 }
@@ -77,11 +77,12 @@ function publicCard(account, viewerEmail = "") {
   const self = viewer && viewer === account.email;
   const friend = Boolean(viewer && areFriends(viewer, account.email));
   if (settings.profilePrivate && !self && !friend) {
+    const handle = account.profile.username || "Elev";
     return {
       id: publicId(account.email),
       private: true,
-      name: "Profil privat",
-      username: "",
+      name: handle,
+      username: account.profile.username || "",
       class: "",
       school: "",
       level: 1,
@@ -90,7 +91,7 @@ function publicCard(account, viewerEmail = "") {
       friends: false,
       outgoing: false,
       incoming: false,
-      acceptFriendRequests: false
+      acceptFriendRequests: settings.acceptFriendRequests !== false
     };
   }
   const user = getUser(account.email) || ensureUser(account.email, {
@@ -102,13 +103,16 @@ function publicCard(account, viewerEmail = "") {
   const xp = Number(user.xp || 0);
   const pendingOut = REQUESTS.find(item => item.status === "pending" && item.from === viewer && item.to === account.email);
   const pendingIn = REQUESTS.find(item => item.status === "pending" && item.from === account.email && item.to === viewer);
+  const visibleName = self
+    ? (account.profile.name || account.profile.username || "Elev")
+    : (account.profile.username || "Elev");
   return {
     id: publicId(account.email),
     private: false,
-    name: account.profile.name || account.profile.username || "Elev",
+    name: visibleName,
     username: account.profile.username || "",
-    class: account.profile.class || "",
-    school: account.profile.school || "",
+    class: self ? (account.profile.class || "") : "",
+    school: self ? (account.profile.school || "") : "",
     level: levelFromXp(xp).level,
     xp,
     avatarId: user.equipped?.avatar || "",
@@ -129,14 +133,8 @@ function searchStudents(query, viewerEmail) {
   const viewer = normalizeEmail(viewerEmail);
   return listAccounts()
     .filter(account => account.role === "student" && account.email !== viewer)
-    .filter(account => {
-      const settings = getSettings(account.email);
-      if (settings.profilePrivate && !areFriends(viewer, account.email)) return false;
-      const name = String(account.profile?.name || "").toLowerCase();
-      const username = String(account.profile?.username || "").toLowerCase();
-      return name.includes(q) || username.includes(q);
-    })
-    .slice(0, 12)
+    .filter(account => String(account.profile?.username || "").toLowerCase() === q)
+    .slice(0, 8)
     .map(account => publicCard(account, viewer));
 }
 
@@ -149,9 +147,6 @@ function sendRequest(fromEmail, toPublicId) {
   if (areFriends(from.email, to.email)) return { ok: false, error: "Sunteți deja prieteni.", status: 400 };
 
   const settings = getSettings(to.email);
-  if (settings.profilePrivate && !areFriends(from.email, to.email)) {
-    return { ok: false, error: "Acest profil este privat.", status: 403 };
-  }
   if (settings.acceptFriendRequests === false) {
     return { ok: false, error: "Elevul nu acceptă cereri de prietenie.", status: 403 };
   }

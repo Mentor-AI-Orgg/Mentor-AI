@@ -87,9 +87,9 @@ function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
     <h1>Sunt de 10</h1>
     <section class="gate" aria-label="Intrare creator">
       <h2>Intrare creator</h2>
-      <form method="get" action="${creatorPage ? "/creator" : "/"}">
-        <label for="acces">Parolă</label>
-        <input id="acces" type="password" name="acces" autocomplete="current-password" placeholder="Scrie parola aici" autofocus />
+      <form method="post" action="/creator">
+        <label for="parola-creator">Parolă</label>
+        <input id="parola-creator" type="password" name="password" autocomplete="current-password" placeholder="Scrie parola aici" autofocus />
         <button type="submit">Deschide aplicația</button>
       </form>
       ${error}

@@ -9,12 +9,15 @@ const {
   findAccount,
   createSession,
   destroySession,
-  normalizeEmail
+  normalizeEmail,
+  issueResetToken,
+  consumeResetToken
 } = require("../data/authStore");
 const { SESSION_COOKIE, authRequired, STUDENTS_ONLY } = require("../middleware/auth");
 const { authLimiter } = require("../middleware/rateLimits");
 const { validateBody } = require("../middleware/validate");
-const { registerSchema, loginSchema, forgotPasswordSchema } = require("../validation/schemas");
+const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema } = require("../validation/schemas");
+const { publicBaseUrl } = require("../publicUrl");
 const { ensureUser, pushNotification } = require("../data/economyStore");
 const { deliverMessage, smtpConfigured } = require("../notify/deliver");
 const { notifyParent } = require("../notify/parentActivity");
@@ -206,10 +209,26 @@ router.post("/forgot-password", authLimiter, validateBody(forgotPasswordSchema),
   const account = isValidEmail(email) ? findAccount(email) : null;
 
   if (account) {
+    const token = issueResetToken(account.email);
+    const link = `${publicBaseUrl(req)}/#/parola/${token}`;
     const subject = "Resetare parolă Mentor AI";
-    const body = "Ai cerut resetarea parolei. Dacă nu ai fost tu, ignoră acest mesaj. Pentru a seta o parolă nouă, contactează administratorul.";
+    const body = [
+      "Ai cerut o parolă nouă.",
+      "Linkul este valabil 45 de minute și se folosește o singură dată:",
+      link,
+      "Dacă nu ai fost tu, ignoră mesajul. După schimbare, sesiunile vechi se închid."
+    ].join("\n");
     const delivery = await deliverMessage({ to: account.email, subject, body, channel: "email" });
     pushNotification(account.email, account.email, subject, body, "email", delivery);
+    const parentEmail = account.profile && account.profile.parentEmail;
+    if (parentEmail) {
+      await deliverMessage({
+        to: parentEmail,
+        subject,
+        body: `Copilul cu adresa ${account.email} a cerut o parolă nouă.\n${link}`,
+        channel: "email"
+      });
+    }
   }
 
   res.json({
@@ -217,6 +236,16 @@ router.post("/forgot-password", authLimiter, validateBody(forgotPasswordSchema),
     mocked: !smtpConfigured(),
     message: "Dacă adresa are un cont, vei primi instrucțiuni de resetare."
   });
+});
+
+router.post("/reset-password", authLimiter, validateBody(resetPasswordSchema), async (req, res) => {
+  const passwordError = validatePassword(req.body.password);
+  if (passwordError) return res.status(400).json({ error: passwordError, field: "password" });
+  const result = await consumeResetToken(req.body.token, req.body.password);
+  if (!result.ok) {
+    return res.status(400).json({ error: "Linkul de resetare nu mai este valabil. Cere unul nou." });
+  }
+  res.json({ success: true });
 });
 
 module.exports = router;

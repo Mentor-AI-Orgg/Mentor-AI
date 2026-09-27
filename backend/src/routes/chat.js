@@ -2,76 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 const { safetyCheck } = require("../safety/safetyCheck");
-const { SAFETY_REFUSAL_TEXT, DIRECT_ANSWER_GUARD_TEXT, ALL_ENGINES_DOWN_TEXT } = require("../data/responseTemplates");
-const { getSystemPrompt } = require("../data/systemPrompts");
-const { buildMentorContext, normalizeGrade, normalizeSubject } = require("../data/gimnaziuGuide");
+const { SAFETY_REFUSAL_TEXT, DIRECT_ANSWER_GUARD_TEXT, CRISIS_HELP_TEXT } = require("../data/responseTemplates");
+const { normalizeGrade, normalizeSubject } = require("../data/gimnaziuGuide");
+const { answerFromLessons } = require("../mentor/localMentor");
 const memory = require("../memory/memoryStore");
-const { callClaude } = require("../providers/claude");
-const { callGPT4o } = require("../providers/openai");
-const { callGemini } = require("../providers/gemini");
-const { askWolfram } = require("../providers/wolfram");
-const { recognizeImage } = require("../providers/mathpix");
 const { validateBody } = require("../middleware/validate");
 const { chatSchema } = require("../validation/schemas");
-
-function buildMessages(userMsg, history, subject, classLevel, lang) {
-  const sid = normalizeSubject(subject);
-  const grade = normalizeGrade(classLevel);
-  const context = `\n[Context: Subject=${sid}, Grade=${grade}, Language=${lang}]\n\n${buildMentorContext(sid, grade)}`;
-  const messages = [{ role: "system", content: getSystemPrompt(lang) + context }];
-  for (const h of history) messages.push({ role: h.role, content: h.content });
-  messages.push({ role: "user", content: userMsg });
-  return messages;
-}
-
-function joinPods(pods = []) {
-  return pods
-    .filter(Boolean)
-    .map(pod => pod.text ? `${pod.title || "Pod"}: ${pod.text}` : pod.title)
-    .filter(Boolean)
-    .join("\n");
-}
-
-async function runFreeChain({ messages, userMsg, imageBase64, lang }) {
-  const gpt4o = await callGPT4o(messages, lang);
-  if (gpt4o?.success) {
-    return { response: gpt4o.content, engine_used: gpt4o.engine || "gpt4o", engine_mocked: !!gpt4o.mocked, fallback_path: ["gpt4o"] };
-  }
-
-  const wolfram = await askWolfram(userMsg);
-  if (wolfram?.success) {
-    return {
-      response: wolfram.pods?.length ? `${wolfram.result}\n\n${joinPods(wolfram.pods)}` : wolfram.result,
-      engine_used: "wolfram",
-      engine_mocked: !!wolfram.mocked,
-      fallback_path: ["gpt4o", "wolfram"]
-    };
-  }
-
-  if (imageBase64) {
-    const mathpix = await recognizeImage(imageBase64);
-    if (mathpix?.success) {
-      return {
-        response: mathpix.text || mathpix.latex || "Am extras conținutul din imagine, dar nu am primit text lizibil.",
-        engine_used: "mathpix",
-        engine_mocked: !!mathpix.mocked,
-        fallback_path: ["gpt4o", "wolfram", "mathpix"]
-      };
-    }
-  }
-
-  const gemini = await callGemini(messages, lang);
-  if (gemini?.success) {
-    return { response: gemini.content, engine_used: gemini.engine || "gemini", engine_mocked: !!gemini.mocked, fallback_path: ["gpt4o", "wolfram", "mathpix", "gemini"] };
-  }
-
-  const claude = await callClaude(messages, lang);
-  if (claude?.success) {
-    return { response: claude.content, engine_used: claude.engine || "claude", engine_mocked: !!claude.mocked, fallback_path: ["gpt4o", "wolfram", "mathpix", "gemini", "claude"] };
-  }
-
-  return null;
-}
 
 router.post("/", validateBody(chatSchema), async (req, res) => {
   const startTotal = Date.now();
@@ -88,6 +24,30 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
   const normalizedPlanId = "free";
 
   const safety = await safetyCheck(message);
+
+  if (safety.kind === "crisis") {
+    try {
+      const { notifyParentSoon } = require("../notify/parentActivity");
+      notifyParentSoon({
+        studentEmail: req.auth.email,
+        type: "crisis_help",
+        note: "A primit numerele de ajutor 116 111 și 112. Textul mesajului nu este inclus.",
+        meta: { subject, grade: class_level }
+      });
+    } catch {
+      // ajutorul către copil nu depinde de email
+    }
+    return res.json({
+      response: CRISIS_HELP_TEXT[lang] || CRISIS_HELP_TEXT.ro,
+      engine_used: "crisis_help",
+      engine_mocked: false,
+      subject, class_level,
+      scaffolding_level: 0,
+      safety_flags: safety.flags,
+      processing_time_ms: Date.now() - startTotal,
+      conversation_id: requestedConversationId
+    });
+  }
 
   if (!safety.safe) {
     return res.json({
@@ -114,23 +74,15 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
   }
 
   const history = memory.get(conversationId);
-  const messages = buildMessages(message, history, subject, class_level, lang);
-
-  // Aplicația e gratuită: toți elevii primesc același lanț de fallback.
-  // plan_id din body e ignorat ca să nu se poată „cumpăra” consiliul premium.
-  const result = await runFreeChain({ messages, userMsg: message, imageBase64: image_base64, lang });
-
-  if (!result) {
-    return res.json({
-      response: ALL_ENGINES_DOWN_TEXT,
-      engine_used: "all_failed",
-      subject, class_level,
-      scaffolding_level: 0,
-      safety_flags: ["engine_failure"],
-      processing_time_ms: Date.now() - startTotal,
-      conversation_id: requestedConversationId
-    });
-  }
+  const local = answerFromLessons({ message, subject, grade: class_level });
+  const result = {
+    response: image_base64
+      ? `${local.text}\n\nPozele nu se încarcă: citirea unei fotografii costa bani. Scrie întrebarea cu cuvinte.`
+      : local.text,
+    engine_used: "lectii",
+    engine_mocked: false,
+    fallback_path: ["lectii"]
+  };
 
   memory.add(conversationId, "user", message);
   memory.add(conversationId, "assistant", result.response, { engine: result.engine_used, plan_id: normalizedPlanId });

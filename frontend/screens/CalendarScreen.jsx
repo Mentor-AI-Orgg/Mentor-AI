@@ -10,10 +10,8 @@ const CalendarScreen = ({ onBack, userData }) => {
   const [cursor, setCursor] = useState(() => { const d = new Date(); d.setDate(1); return d; });
   const [events, setEvents] = useState([]);
   const [orar, setOrar] = useState([]);
-  const [connections, setConnections] = useState({ google: { connected: false }, notion: { connected: false } });
   const [loading, setLoading] = useState(true);
   const [offline, setOffline] = useState(false);
-  const [connecting, setConnecting] = useState('');
   const [selectedDay, setSelectedDay] = useState(null);
   const [newTitle, setNewTitle] = useState('');
   const [newTime, setNewTime] = useState('');
@@ -31,7 +29,6 @@ const CalendarScreen = ({ onBack, userData }) => {
     if (result.success) {
       setEvents(result.data.events || []);
       setOrar(result.data.orar || []);
-      setConnections(result.data.connections || { google: { connected: false }, notion: { connected: false } });
       setOffline(false);
     } else {
       setEvents([]);
@@ -54,25 +51,6 @@ const CalendarScreen = ({ onBack, userData }) => {
   const changeMonth = delta => {
     setCursor(prev => { const d = new Date(prev); d.setMonth(d.getMonth() + delta); return d; });
     setSelectedDay(null);
-  };
-
-  const connect = async provider => {
-    setConnecting(provider);
-    const result = await MentorAPI.connectCalendarProvider(provider);
-    if (result.success && result.data?.oauth_url) {
-      window.location.href = result.data.oauth_url;
-      return;
-    }
-    if (result.success) {
-      setConnections(prev => ({ ...prev, [provider]: result.data.connection }));
-      await loadEvents();
-    }
-    setConnecting('');
-  };
-
-  const disconnect = async provider => {
-    await MentorAPI.disconnectCalendarProvider(provider);
-    await loadEvents();
   };
 
   const addEvent = async () => {
@@ -217,38 +195,7 @@ const CalendarScreen = ({ onBack, userData }) => {
               </section>
             )}
 
-            <section className="surface calendar-connect-card">
-              <div className="calendar-connect-head">
-                <div className="eyebrow">Opțional</div>
-                <h2 className="display-font">Google sau Notion</h2>
-                <p className="form-subtitle" style={{ margin: '6px 0 0' }}>Nu e obligatoriu. Orarul și datele tale stau aici, în aplicație.</p>
-              </div>
-              <div className="calendar-connect-row">
-                <div className={`calendar-provider ${connections.google?.connected ? 'connected' : ''}`}>
-                  <div className="calendar-provider-copy"><i className="fab fa-google"></i><span>Google Calendar</span></div>
-                  {connections.google?.connected ? (
-                    <button type="button" className="ghost-button" onClick={() => disconnect('google')}>Deconectează</button>
-                  ) : (
-                    <button type="button" className="accent-button" onClick={() => connect('google')} disabled={connecting === 'google'}>
-                      {connecting === 'google' ? <i className="fas fa-spinner fa-spin" /> : 'Conectează'}
-                    </button>
-                  )}
-                </div>
-                <div className={`calendar-provider ${connections.notion?.connected ? 'connected' : ''}`}>
-                  <div className="calendar-provider-copy"><i className="fas fa-book-bookmark"></i><span>Notion Calendar</span></div>
-                  {connections.notion?.connected ? (
-                    <button type="button" className="ghost-button" onClick={() => disconnect('notion')}>Deconectează</button>
-                  ) : (
-                    <button type="button" className="accent-button" onClick={() => connect('notion')} disabled={connecting === 'notion'}>
-                      {connecting === 'notion' ? <i className="fas fa-spinner fa-spin" /> : 'Conectează'}
-                    </button>
-                  )}
-                </div>
-              </div>
-              {(connections.google?.mocked || connections.notion?.mocked) && (
-                <p className="calendar-mock-note"><i className="fas fa-circle-info" /> Conectare demo. Pentru sincronizare live trebuie chei OAuth pe server.</p>
-              )}
-            </section>
+            <p className="form-subtitle">Zilele importante și orarul stau doar aici, în aplicație. Nu se leagă de Google sau de alt calendar.</p>
           </>
         )}
 

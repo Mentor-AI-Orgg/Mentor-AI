@@ -162,6 +162,34 @@ function destroySession(token) {
 }
 
 // Invalidează toate sesiunile unui cont (schimbare de parolă, logout global).
+const RESETS = new Map();
+const RESET_TTL_MS = 45 * 60 * 1000;
+
+function issueResetToken(email) {
+  const account = findAccount(email);
+  if (!account) return null;
+  const token = crypto.randomBytes(32).toString("hex");
+  RESETS.set(hashToken(token), { email: account.email, expiresAt: Date.now() + RESET_TTL_MS });
+  return token;
+}
+
+async function consumeResetToken(token, nextPassword) {
+  const key = hashToken(String(token || ""));
+  const row = RESETS.get(key);
+  if (!row || Date.now() > row.expiresAt) {
+    if (row) RESETS.delete(key);
+    return { ok: false, reason: "invalid" };
+  }
+  const account = findAccount(row.email);
+  RESETS.delete(key);
+  if (!account) return { ok: false, reason: "invalid" };
+  const { salt, hash } = await hashPassword(nextPassword);
+  account.salt = salt;
+  account.passwordHash = hash;
+  destroySessionsForEmail(account.email);
+  return { ok: true, email: account.email };
+}
+
 function destroySessionsForEmail(email) {
   const key = normalizeEmail(email);
   for (const [token, session] of SESSIONS.entries()) {
@@ -224,11 +252,13 @@ purgeTimer.unref();
 persistence.register("auth", {
   snapshot: () => ({
     accounts: persistence.mapToObject(ACCOUNTS),
-    sessions: persistence.mapToObject(SESSIONS)
+    sessions: persistence.mapToObject(SESSIONS),
+    resets: persistence.mapToObject(RESETS)
   }),
   restore: data => {
     persistence.restoreMap(ACCOUNTS, data?.accounts);
     persistence.restoreMap(SESSIONS, data?.sessions);
+    persistence.restoreMap(RESETS, data?.resets);
     // Sesiunile expirate în timpul cât procesul a fost oprit nu au de ce să
     // ajungă înapoi în memorie.
     purgeExpiredSessions();
@@ -246,6 +276,8 @@ module.exports = {
   listAccounts,
   usernameTaken,
   changePassword,
+  issueResetToken,
+  consumeResetToken,
   createSession,
   getSession,
   destroySession,

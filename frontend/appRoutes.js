@@ -18,6 +18,7 @@ export function parseAppHash(hash) {
   if (head === 'conectare' || head === 'login') return { kind: 'guest', screen: 'login' };
   if (head === 'cont' || head === 'register') return { kind: 'guest', screen: 'register' };
   if (head === 'onboarding') return { kind: 'guest', screen: 'onboarding' };
+  if (head === 'parola') return { kind: 'guest', screen: 'reset', extras: { token: a || '' } };
 
   if (head === 'acasa' || head === 'home') return { kind: 'app', screen: 'home', navScreen: 'home' };
   if (head === 'mentor' || head === 'professor') return { kind: 'app', screen: 'professor', navScreen: 'professor' };
@@ -58,6 +59,8 @@ export function hashForRoute(screen, extras = {}) {
       return '#/cont';
     case 'onboarding':
       return '#/onboarding';
+    case 'reset':
+      return `#/parola/${extras.token || ''}`;
     case 'home':
       return '#/acasa';
     case 'professor':

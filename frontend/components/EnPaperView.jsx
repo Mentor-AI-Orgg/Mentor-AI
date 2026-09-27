@@ -76,68 +76,6 @@ function saveDraft(paperId, answers) {
   }
 }
 
-function EnPhotoBox({ paperId, target, label, remaining, onDone }) {
-  const [busy, setBusy] = useState(false);
-  const [note, setNote] = useState('');
-
-  const readFile = file => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result || ''));
-    reader.onerror = () => reject(new Error('Nu am putut citi poza.'));
-    reader.readAsDataURL(file);
-  });
-
-  const send = async event => {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (!file) return;
-    if (file.size > 4_500_000) {
-      setNote('Poza e prea mare (max 4,5 MB). Taie pagina sau coboară calitatea.');
-      return;
-    }
-    if (!file.type.startsWith('image/')) {
-      setNote('Trimite o fotografie a paginii din caiet.');
-      return;
-    }
-    setBusy(true);
-    setNote('');
-    try {
-      const dataUrl = await readFile(file);
-      const response = await MentorAPI.reviewEnPhoto({
-        paper_id: paperId,
-        target,
-        image_base64: dataUrl
-      });
-      if (!response.success) {
-        setNote(response.error || 'Nu am putut citi poza. Mai ai voie doar 3 pe zi.');
-        if (response.photoQuota) onDone({ photoQuota: response.photoQuota });
-        return;
-      }
-      onDone(response.data);
-    } catch (error) {
-      setNote(error.message || 'Nu am putut citi poza.');
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const blocked = remaining <= 0;
-  return (
-    <div className="en-photo-box">
-      <p>
-        {label}
-        {' '}
-        <small>{remaining} poze rămase azi (din 3).</small>
-      </p>
-      <label className={`ghost-button en-photo-btn ${blocked || busy ? 'is-disabled' : ''}`}>
-        <input type="file" accept="image/*" capture="environment" hidden disabled={blocked || busy} onChange={send} />
-        {busy ? 'Mentorul citește pagina…' : blocked ? 'Ai folosit cele 3 poze de azi' : 'Fotografiază pagina din caiet'}
-      </label>
-      {note ? <small className="guide-error">{note}</small> : null}
-    </div>
-  );
-}
-
 const EnPaperView = ({ paper, onClose, session: initialSession }) => {
   const [session, setSession] = useState(initialSession || null);
   const [answers, setAnswers] = useState(() => loadDraft(paper?.id));
@@ -146,7 +84,6 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
   const [error, setError] = useState('');
   const [now, setNow] = useState(Date.now());
   const [result, setResult] = useState(initialSession?.result || null);
-  const [photoQuota, setPhotoQuota] = useState({ remaining: 3, used: 0, limit: 3 });
 
   useEffect(() => {
     if (!paper?.id) return undefined;
@@ -154,7 +91,6 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
       if (!response.success) return;
       setSession(response.data.session);
       if (response.data.session?.result) setResult(response.data.session.result);
-      if (response.data.photoQuota) setPhotoQuota(response.data.photoQuota);
     });
     return undefined;
   }, [paper?.id]);
@@ -211,7 +147,6 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
       return;
     }
     setSession(response.data.session);
-    if (response.data.photoQuota) setPhotoQuota(response.data.photoQuota);
     setNow(Date.now());
   };
 
@@ -245,7 +180,6 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
     }
     setSession(response.data.session);
     setResult(response.data.result || response.data.session?.result || null);
-    if (response.data.photoQuota) setPhotoQuota(response.data.photoQuota);
   };
 
   if (!paper) return null;
@@ -397,17 +331,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                               );
                             })}
                             {finished ? (
-                              <EnPhotoBox
-                                paperId={paper.id}
-                                target={`${block.label}:${entry.n}`}
-                                remaining={photoQuota.remaining}
-                                label="Vrei feedback pe rezolvarea de pe caiet? Trimite o poză (Subiectul III)."
-                                onDone={data => {
-                                  if (data.photoQuota) setPhotoQuota(data.photoQuota);
-                                  if (data.session?.result) setResult(data.session.result);
-                                  if (data.session) setSession(data.session);
-                                }}
-                              />
+                              <p>Rezolvarea se scrie în casetă. Pozele nu se încarcă, pentru că citirea lor costa bani.</p>
                             ) : null}
                           </div>
                         ) : null}
@@ -518,13 +442,12 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                         {entry.kind === 'write' && entry.photoOnly && !finished && (
                           <div className="en-notebook-note">
                             <p>
-                              Compunerea <strong>nu se tastează</strong> aici, ca la examen. O scrii în caiet
-                              {entry.minWords ? ` (minimum ${entry.minWords} de cuvinte)` : ''}. După predare fotografiază pagina —
-                              mentorul o corectează pe barem. Ai {photoQuota.remaining} poze rămase azi din 3.
+                              Compunerea se scrie aici
+                              {entry.minWords ? ` (minimum ${entry.minWords} de cuvinte)` : ''}. Pozele nu se încarcă.
                             </p>
                           </div>
                         )}
-                        {entry.kind === 'write' && !entry.photoOnly && session?.started && !finished && (
+                        {entry.kind === 'write' && session?.started && !finished && (
                           <textarea
                             className="field form-input quiz-work quiz-write en-write"
                             value={draft.text || ''}
@@ -534,21 +457,11 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                             rows={8}
                           />
                         )}
-                        {entry.kind === 'write' && !entry.photoOnly && !session?.started && !finished && (
+                        {entry.kind === 'write' && !session?.started && !finished && (
                           <small>Câmpul de redactare se deschide după ce începi testul.</small>
                         )}
-                        {entry.kind === 'write' && entry.photoOnly && finished && (
-                          <EnPhotoBox
-                            paperId={paper.id}
-                            target="composition"
-                            remaining={photoQuota.remaining}
-                            label="Fotografiază compunerea din caiet. Mentorul o citește pe barem și îți dă sfaturi — nu un text de copiat."
-                            onDone={data => {
-                              if (data.photoQuota) setPhotoQuota(data.photoQuota);
-                              if (data.session?.result) setResult(data.session.result);
-                              if (data.session) setSession(data.session);
-                            }}
-                          />
+                        {entry.kind === 'write' && finished && (
+                          <p>Compunerea a rămas în casetă. Nu se trimite o poză a caietului.</p>
                         )}
                         {finished && scoredItem && (
                           <div className="en-barem-card">

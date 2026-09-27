@@ -3,12 +3,9 @@ const router = express.Router();
 const { getGuide, listCatalog } = require("../data/gimnaziuGuide");
 const { getEnGuide, listEnCatalog, enCounts } = require("../data/en8Guide");
 const { recommendedList, generatePaper, publicPaperById, getBaremItem, listBarem, scoreAttempt } = require("../data/enPaperFactory");
-const { previewPaper, startPaper, canFinish, finishPaper, isFinished, applyPhotoReview } = require("../data/enSessionStore");
-const { photoStatus, consumePhotoSlot, PHOTO_DAILY_LIMIT } = require("../data/enPhotoQuota");
-const { reviewEnPhoto, targetFromPaper } = require("../grading/enPhotoReview");
+const { previewPaper, startPaper, canFinish, finishPaper, isFinished } = require("../data/enSessionStore");
+const { photoStatus, PHOTO_DAILY_LIMIT } = require("../data/enPhotoQuota");
 const { authRequired, studentRequired } = require("../middleware/auth");
-const { validateBody } = require("../middleware/validate");
-const { enPhotoSchema } = require("../validation/schemas");
 const { notifyParent } = require("../notify/parentActivity");
 const { recordProgress } = require("../data/economyStore");
 
@@ -140,53 +137,9 @@ router.get("/en/photo-quota", authRequired, studentRequired, (req, res) => {
   res.json({ photoQuota: photoStatus(req.auth.email), limit: PHOTO_DAILY_LIMIT });
 });
 
-router.post("/en/photo-review", authRequired, studentRequired, validateBody(enPhotoSchema), async (req, res) => {
-  const paperId = String(req.body.paper_id || "");
-  const paper = publicPaperById(paperId);
-  if (!paper) return res.status(404).json({ error: "Modelul nu a fost găsit." });
-  const session = previewPaper(req.auth.email, paperId);
-  if (!session.started) {
-    return res.status(403).json({ error: "Pornește testul înainte de a fotografia pagina." });
-  }
-  const found = targetFromPaper(paperId, req.body.target);
-  if (!found) {
-    return res.status(400).json({ error: "Poza e pentru compunere (Subiectul II) sau pentru Subiectul III la mate." });
-  }
-  const slot = consumePhotoSlot(req.auth.email);
-  if (!slot.ok) {
-    return res.status(429).json({ error: slot.error, photoQuota: slot });
-  }
-  const review = await reviewEnPhoto({
-    imageBase64: req.body.image_base64,
-    kind: found.kind === 'write' ? 'write' : 'math-iii',
-    item: { ...found.item, points: found.item.points },
-    barem: found.barem
-  });
-  const next = applyPhotoReview(req.auth.email, paperId, {
-    kind: found.kind,
-    block: found.block,
-    n: found.n,
-    feedback: review.feedback,
-    tips: review.tips,
-    extracted: review.extracted,
-    points: found.kind === 'write' ? review.points : null,
-    mocked: review.mocked
-  });
-  res.json({
-    paper,
-    session: next,
-    review: {
-      kind: found.kind,
-      block: found.block,
-      n: found.n,
-      feedback: review.feedback,
-      tips: review.tips || [],
-      extracted: review.extracted || '',
-      points: found.kind === 'write' ? review.points : null,
-      mocked: Boolean(review.mocked),
-      engine: review.engine || ''
-    },
-    photoQuota: photoStatus(req.auth.email)
+router.post("/en/photo-review", authRequired, studentRequired, (req, res) => {
+  res.status(410).json({
+    error: "Pozele nu se mai încarcă. Citirea unei fotografii folosea un serviciu plătit. Scrie răspunsul în casetă."
   });
 });
 

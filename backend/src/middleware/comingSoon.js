@@ -2,7 +2,7 @@ const crypto = require("crypto");
 const { comingSoonPage, robotsTxt } = require("../comingSoonPage");
 
 const PREVIEW_COOKIE = "mentor_preview";
-const DEFAULT_CREATOR_PASSWORD = "suntde10-creator";
+const processPreviewSecret = crypto.randomBytes(32).toString("hex");
 
 const SKIP_PATHS = new Set([
   "/api/health",
@@ -37,21 +37,13 @@ function configuredPreviewPassword() {
 }
 
 function previewSecret() {
-  return configuredPreviewPassword() || DEFAULT_CREATOR_PASSWORD;
-}
-
-function acceptedPasswords() {
-  const passwords = [DEFAULT_CREATOR_PASSWORD];
-  const configured = configuredPreviewPassword();
-  if (configured) passwords.push(configured);
-  const staging = String(process.env.STAGING_AUTH_PASSWORD || "").trim();
-  if (staging) passwords.push(staging);
-  return [...new Set(passwords)];
+  return String(process.env.PREVIEW_COOKIE_SECRET || "").trim() || processPreviewSecret;
 }
 
 function passwordMatches(submitted) {
-  if (!submitted) return false;
-  return acceptedPasswords().some((candidate) => safeEqual(submitted, candidate));
+  const configured = configuredPreviewPassword();
+  if (!configured || !submitted) return false;
+  return safeEqual(submitted, configured);
 }
 
 function previewToken() {
@@ -91,7 +83,8 @@ function hasPreviewAccess(req) {
 }
 
 function submittedPassword(req) {
-  return String(req.query?.acces || req.query?.preview || req.body?.password || "").trim();
+  if (req.method !== "POST") return "";
+  return String(req.body?.password || "").trim();
 }
 
 function grantPreview(res, nextPath = "/") {
@@ -167,7 +160,6 @@ module.exports = {
   comingSoon,
   isSiteClosed,
   PREVIEW_COOKIE,
-  DEFAULT_CREATOR_PASSWORD,
   previewToken,
   hasPreviewAccess
 };

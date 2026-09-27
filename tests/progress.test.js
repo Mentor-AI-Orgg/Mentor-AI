@@ -97,7 +97,7 @@ describe('verified study progress', () => {
     expect(blocked.status).toBe(400);
   });
 
-  it('sends only one parent study digest per day', async () => {
+  it('emails the parent for each study action', async () => {
     const agent = request.agent(app);
     await registerStudent(agent);
 
@@ -113,8 +113,7 @@ describe('verified study progress', () => {
       meta: { minutes: 50 }
     });
     expect(second.status).toBe(200);
-    expect(second.body.parentNotify.skipped).toBe(true);
-    expect(second.body.parentNotify.reason).toBe('study_digest_today');
+    expect(second.body.parentNotify.skipped).toBe(false);
   });
 
   it('still emails the parent for every chapter test after the daily digest', async () => {

@@ -118,8 +118,6 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
   const [claiming, setClaiming] = useState(false);
   const [buyingId, setBuyingId] = useState('');
   const [equippingId, setEquippingId] = useState('');
-  const [parentEmail, setParentEmail] = useState(userData.parentEmail || '');
-  const [parentMessage, setParentMessage] = useState('');
   const [parentSending, setParentSending] = useState(false);
   const [pendingItem, setPendingItem] = useState(null);
   const [deliveryNote, setDeliveryNote] = useState('');
@@ -168,10 +166,6 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
   };
 
   useEffect(() => { load(); }, [userData.email]);
-
-  useEffect(() => {
-    if (userData.parentEmail) setParentEmail(userData.parentEmail);
-  }, [userData.parentEmail]);
 
   const ownedItems = new Set(summary?.inventory || []);
   const claimedRewards = summary?.dailyClaims || [];
@@ -268,9 +262,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
   const sendParentReview = async () => {
     setParentSending(true);
     const result = await MentorAPI.sendParentReview({
-      parent_email: parentEmail,
-      role: 'student',
-      message: parentMessage
+      role: 'student'
     });
     setParentSending(false);
     if (result.success) {
@@ -387,12 +379,10 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
           </div>
           <span className="shop-chip"><i className="fas fa-envelope" /> {deliveryNote || 'un mesaj'}</span>
         </div>
-        <p className="shop-subtitle">Părintele primește un singur rezumat pe zi când înveți. De aici îi poți trimite un mesaj scurt: nu există abonament de plătit.</p>
+        <p className="shop-subtitle">Părintele salvat în cont primește fiecare activitate. De aici îi poți trimite o dată pe zi mesajul fix că mentorul este gratuit. Nu se poate scrie o adresă sau un text liber.</p>
         <div className="shop-parent-form">
-          <input value={parentEmail} onChange={e => setParentEmail(e.target.value)} placeholder="Email părinte" />
-          <input value={parentMessage} onChange={e => setParentMessage(e.target.value)} placeholder="Mesaj opțional" />
-          <button type="button" className="accent-button" onClick={sendParentReview} disabled={parentSending || !parentEmail.trim()}>
-            {parentSending ? 'Se trimite...' : 'Trimite mesajul'}
+          <button type="button" className="accent-button" onClick={sendParentReview} disabled={parentSending}>
+            {parentSending ? 'Se trimite...' : 'Spune-i că este gratuit'}
           </button>
         </div>
         <div className="shop-notes">

@@ -19,6 +19,7 @@ const LABELS = {
   claim: "a revendicat o recompensă",
   buy: "a cumpărat din magazin",
   calendar_event: "a adăugat un eveniment în calendar",
+  crisis_help: "a primit numerele de ajutor 116 111 și 112",
   checkout: "folosește mentorul gratuit",
   friend_request: "a trimis o cerere de prietenie",
   chapter_test: "a finalizat un test de capitol",
@@ -26,9 +27,10 @@ const LABELS = {
   test_result: "a finalizat un test"
 };
 
-const ALWAYS_SEND = new Set(["account_created"]);
 const TEST_TYPES = new Set(["chapter_test", "en_exam", "test_result"]);
-const STUDY_TYPES = new Set([
+const ALLOWED_TYPES = new Set([
+  "account_created",
+  "login",
   "mentor_message",
   "learn_module",
   "flashcards_generate",
@@ -37,9 +39,18 @@ const STUDY_TYPES = new Set([
   "focus_session",
   "chapter_open",
   "session_complete",
-  "friend_request"
+  "save_session",
+  "friend_request",
+  "chapter_test",
+  "en_exam",
+  "test_result",
+  "calendar_event",
+  "claim",
+  "buy",
+  "crisis_help"
 ]);
-const SKIP_TYPES = new Set(["claim", "buy", "ai_detect", "checkout", "calendar_event"]);
+const INDIVIDUAL_CAP = 20;
+const BATCH_SIZE = 8;
 
 function clip(text, n) {
   const value = String(text || "").replace(/\s+/g, " ").trim();
@@ -95,6 +106,21 @@ function testEmailLines({ name, studentEmail, type, note, meta }) {
   ].filter(line => line !== "");
 }
 
+function activityLine(type, note) {
+  const action = LABELS[type] || "a făcut ceva în aplicație";
+  const detail = clip(note, 180);
+  return detail ? `${action}: ${detail}` : action;
+}
+
+async function sendParentMail({ studentEmail, parentEmail, subject, body, isTest }) {
+  const { pushNotification } = require("../data/economyStore");
+  const delivery = await deliverMessage({ to: parentEmail, subject, body, channel: "email" });
+  if (isTest || subject.includes("rezumat")) {
+    pushNotification(studentEmail, parentEmail, subject, body, "email", delivery);
+  }
+  return delivery;
+}
+
 async function notifyParent({ studentEmail, type, note = "", meta = {} }) {
   const account = findAccount(studentEmail);
   if (!account || account.role !== "student") {
@@ -106,60 +132,99 @@ async function notifyParent({ studentEmail, type, note = "", meta = {} }) {
     return { skipped: true, reason: "no_parent" };
   }
 
-  const { getUser, ensureUser, getTodayKey, pushNotification } = require("../data/economyStore");
+  if (!ALLOWED_TYPES.has(type)) {
+    return { skipped: true, reason: "unknown_type" };
+  }
+
+  const { getUser, ensureUser, getTodayKey } = require("../data/economyStore");
   const economy = getUser(studentEmail) || ensureUser(studentEmail);
   const today = getTodayKey();
-  if (!economy.parentNotify) economy.parentNotify = { studyDate: null, loginDate: null };
+  if (!economy.parentNotify || economy.parentNotify.date !== today) {
+    const leftover = economy.parentNotify?.pending || [];
+    economy.parentNotify = {
+      date: today,
+      sent: 0,
+      pending: [],
+      loginDate: null,
+      reviewDate: economy.parentNotify?.reviewDate || null,
+      carry: leftover
+    };
+  }
+  if (!Array.isArray(economy.parentLog)) economy.parentLog = [];
+  economy.parentLog.push({
+    at: new Date().toISOString(),
+    type,
+    note: clip(note, 180)
+  });
+  if (economy.parentLog.length > 300) economy.parentLog.splice(0, economy.parentLog.length - 300);
 
-  if (SKIP_TYPES.has(type)) {
-    return { skipped: true, reason: "throttled_noise" };
+  if (type === "login" && economy.parentNotify.loginDate === today) {
+    return { skipped: true, reason: "login_already_today", logged: true };
   }
-  if (type === "login") {
-    if (economy.parentNotify.loginDate === today) {
-      return { skipped: true, reason: "login_already_today" };
-    }
-    economy.parentNotify.loginDate = today;
-  }
-
-  const isTest = TEST_TYPES.has(type);
-  if (STUDY_TYPES.has(type) && !ALWAYS_SEND.has(type) && !isTest) {
-    if (economy.parentNotify.studyDate === today) {
-      return { skipped: true, reason: "study_digest_today" };
-    }
-    economy.parentNotify.studyDate = today;
-  }
-  if (isTest) {
-    economy.parentNotify.studyDate = today;
-  }
+  if (type === "login") economy.parentNotify.loginDate = today;
 
   const name = (account.profile && (account.profile.name || account.profile.username)) || studentEmail;
-  const action = isTest
-    ? (LABELS[type] || "a finalizat un test")
-    : (STUDY_TYPES.has(type)
-      ? "a învățat astăzi (un singur mesaj pe zi)"
-      : (LABELS[type] || `a făcut o activitate (${type})`));
-  const detail = String(note || "").replace(/\s+/g, " ").trim().slice(0, 280);
-  const subject = isTest
+  const isTest = TEST_TYPES.has(type);
+  const carry = economy.parentNotify.carry || [];
+  economy.parentNotify.carry = [];
+  const line = activityLine(type, type === "crisis_help" ? note : note);
+  const subjectBase = isTest
     ? `Mentor AI: ${name} — nota ${meta.gradeNote != null ? meta.gradeNote : meta.grade || "—"} la ${meta.title || note || "test"}`
-    : `Mentor AI: ${name} ${action}`;
+    : `Mentor AI: ${name} ${LABELS[type] || "a făcut o activitate"}`;
+
+  if (economy.parentNotify.sent >= INDIVIDUAL_CAP) {
+    economy.parentNotify.pending.push(line);
+    if (economy.parentNotify.pending.length < BATCH_SIZE && !carry.length) {
+      return { skipped: false, reason: "batched", logged: true, parentEmail };
+    }
+    const batch = economy.parentNotify.pending.splice(0, economy.parentNotify.pending.length);
+    const body = [
+      "Salut,",
+      "",
+      `${name} a mai făcut aceste lucruri în Mentor AI:`,
+      ...carry.map(item => `- ${item}`),
+      ...batch.map(item => `- ${item}`),
+      "",
+      "Primești fiecare activitate. După 20 de mesaje într-o zi, restul pleacă grupat, ca să nu umple căsuța."
+    ].join("\n");
+    const delivery = await sendParentMail({
+      studentEmail,
+      parentEmail,
+      name,
+      subject: `Mentor AI: ${name} — rezumat de activitate`,
+      body,
+      isTest: false
+    });
+    return { skipped: false, parentEmail, subject: `Mentor AI: ${name} — rezumat de activitate`, body, delivery, logged: true };
+  }
+
+  economy.parentNotify.sent += 1;
+  const detail = type === "crisis_help"
+    ? "A primit numerele de ajutor. Textul scris de copil nu este copiat în acest mesaj."
+    : clip(note, 280);
   const body = isTest
     ? testEmailLines({ name, studentEmail, type, note, meta }).join("\n")
     : [
       "Salut,",
       "",
-      `${name} (${studentEmail}) ${action} în Mentor AI.`,
+      `${name} (${studentEmail}) ${LABELS[type] || "a făcut o activitate"} în Mentor AI.`,
       detail ? `Detaliu: ${detail}` : "",
+      carry.length ? "De ieri au mai rămas:" : "",
+      ...carry.map(item => `- ${item}`),
       meta && meta.subject ? `Materie: ${meta.subject}` : "",
       "",
-      "Nu ai nevoie de un cont în aplicație. Primești aceste mesaje pe emailul dat la înregistrarea copilului.",
-      smtpConfigured() ? "" : "Notă: serverul nu are SMTP configurat, deci mesajul rămâne în jurnalul de livrare (mock)."
-    ].filter(line => line !== "").join("\n");
+      "Nu ai nevoie de un cont. Primești un mesaj pentru fiecare lucru pe care îl face copilul în aplicație, la adresa salvată în contul lui."
+    ].filter(item => item !== "").join("\n");
 
-  const delivery = await deliverMessage({ to: parentEmail, subject, body, channel: "email" });
-  if (isTest) {
-    pushNotification(studentEmail, parentEmail, subject, body, "email", delivery);
-  }
-  return { skipped: false, parentEmail, subject, body, delivery };
+  const delivery = await sendParentMail({
+    studentEmail,
+    parentEmail,
+    name,
+    subject: subjectBase,
+    body,
+    isTest
+  });
+  return { skipped: false, parentEmail, subject: subjectBase, body, delivery, logged: true };
 }
 
 function notifyParentSoon(payload) {
@@ -168,4 +233,4 @@ function notifyParentSoon(payload) {
   });
 }
 
-module.exports = { notifyParent, notifyParentSoon, LABELS, formatDuration };
+module.exports = { notifyParent, notifyParentSoon, LABELS, ALLOWED_TYPES, formatDuration };

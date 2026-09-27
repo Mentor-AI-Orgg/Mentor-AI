@@ -32,8 +32,8 @@ describe('chat fallback chain', () => {
       .send({ message: 'Am rămas blocat la o problemă de geometrie, cum aș putea să încep?', language: 'ro', plan_id: 'free' });
     expect(res.status).toBe(200);
     expect(res.body.response).toBeTruthy();
-    expect(res.body.engine_mocked).toBe(true);
-    expect(String(res.body.engine_used || '')).toMatch(/mock/i);
+    expect(res.body.engine_mocked).toBe(false);
+    expect(res.body.engine_used).toBe('lectii');
   });
 
   it('answers a normal “ce este” question instead of the old scaffolding wall', async () => {
@@ -50,6 +50,7 @@ describe('chat fallback chain', () => {
       .post('/api/v1/chat')
       .send({ message: 'Nu știu de unde să încep tema de fizică.', language: 'ro' });
     expect(res.status).toBe(200);
-    expect(res.body.engine_mocked).toBe(true);
+    expect(res.body.engine_used).toBe('lectii');
+    expect(res.body.engine_mocked).toBe(false);
   });
 });
