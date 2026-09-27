@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
+import Mascota from './mascot/Mascota.jsx';
 
 const ConsentWaitScreen = ({ parentEmail = '', onOpenLessons }) => {
   const [note, setNote] = useState('');
@@ -26,9 +27,10 @@ const ConsentWaitScreen = ({ parentEmail = '', onOpenLessons }) => {
 
   return (
     <main className="form-page animate-fadeIn">
+      <Mascota mood="explica" size="md" />
       <div className="eyebrow">Aproape gata</div>
       <h1 className="display-font form-title">Contul tău așteaptă confirmarea părintelui</h1>
-      <p className="form-subtitle">Până atunci poți citi lecțiile și face exerciții. Prietenii, clasamentul și magazinul se deschid după confirmare.</p>
+      <p className="form-subtitle">Am trimis un email părintelui tău. Până confirmă, poți citi lecțiile și face exerciții.</p>
       {parentEmail ? <p className="field-hint">Emailul părintelui: {parentEmail}</p> : null}
       <label className="field-label">
         Alt email de părinte
