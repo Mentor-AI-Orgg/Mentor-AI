@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { judgeAnswer, letterOfChoice, numberHit } from '../backend/src/grading/answerJudge.js';
+import { judgeAnswer, letterOfChoice, normalizeRo, numberHit } from '../backend/src/grading/answerJudge.js';
 import { checkExercise } from '../backend/src/data/exerciseBank.js';
 import { getBundle, recommendedList, scoreAttempt } from '../backend/src/data/enPaperFactory.js';
 
@@ -87,5 +87,54 @@ describe('intelligent barem', () => {
       tokens: ['4', '8']
     });
     expect(judged.ok).toBe(true);
+  });
+
+  it('respinge fragmente, perechi inversate, paranteze greșite și simboluri turtite', () => {
+    expect(judgeAnswer({ given: '2', answers: ['(−3, 2)'] }).ok).toBe(false);
+    expect(judgeAnswer({ given: '(2, −3)', answers: ['(−3, 2)'] }).ok).toBe(false);
+    expect(judgeAnswer({ given: '(0, 5)', answers: ['[0, 5]'] }).ok).toBe(false);
+    expect(judgeAnswer({ given: '4', answers: ['[−4, +∞)'] }).ok).toBe(false);
+    expect(judgeAnswer({ given: '23', answers: ['2√3'] }).ok).toBe(false);
+    expect(judgeAnswer({ given: '3', answers: ['3π'] }).ok).toBe(false);
+    expect(judgeAnswer({ given: 'a', answers: ['atributivă'] }).ok).toBe(false);
+    expect(judgeAnswer({ given: 'ti', answers: ['atributivă'] }).ok).toBe(false);
+    expect(judgeAnswer({ given: 'atrib', answers: ['atributivă'] }).ok).toBe(false);
+    expect(judgeAnswer({ given: 'a', answers: ['subordonată atributivă'] }).ok).toBe(false);
+    expect(judgeAnswer({ given: 'care aparținuse', answers: ['care aparținuse bunicului meu'] }).ok).toBe(false);
+  });
+
+  it('acceptă scrieri echivalente la perechi, mulțimi, radicali și text românesc', () => {
+    expect(judgeAnswer({ given: '(-3,2)', answers: ['(−3, 2)'] }).ok).toBe(true);
+    expect(judgeAnswer({ given: '( -3 ; 2 )', answers: ['(−3, 2)'] }).ok).toBe(true);
+    expect(judgeAnswer({ given: '{8, 4}', answers: ['{4, 8}'] }).ok).toBe(true);
+    expect(judgeAnswer({ given: '2rad3', answers: ['2√3'] }).ok).toBe(true);
+    expect(judgeAnswer({ given: '2 √3', answers: ['2√3'] }).ok).toBe(true);
+    expect(judgeAnswer({
+      given: 'Care apartinuse bunicului meu.',
+      answers: ['care aparținuse bunicului meu']
+    }).ok).toBe(true);
+    expect(judgeAnswer({ given: 'apar\u0163inuse', answers: ['aparținuse'] }).ok).toBe(true);
+    expect(judgeAnswer({ given: 'nu-i', answers: ['nui'] }).ok).toBe(false);
+    expect(normalizeRo('Care aparținuse bunicului meu.')).toBe('care apartinuse bunicului meu');
+    expect(normalizeRo('apar\u0163inuse')).toBe(normalizeRo('aparținuse'));
+    expect(normalizeRo('nu-i')).not.toBe(normalizeRo('nui'));
+  });
+
+  it('la match exact nu acceptă un răspuns mai lung și păstrează cratima', () => {
+    expect(judgeAnswer({
+      given: 'care aparținuse bunicului meu și al tău',
+      answers: ['care aparținuse bunicului meu'],
+      match: 'exact'
+    }).ok).toBe(false);
+    expect(judgeAnswer({
+      given: 'Care aparținuse bunicului meu.',
+      answers: ['care aparținuse bunicului meu'],
+      match: 'exact'
+    }).ok).toBe(true);
+    expect(judgeAnswer({ given: '(2, -3)', answers: ['(-3, 2)'], match: 'ordered' }).ok).toBe(false);
+    expect(judgeAnswer({ given: '(-3, 2)', answers: ['(-3, 2)'], match: 'ordered' }).ok).toBe(true);
+    expect(judgeAnswer({ given: '{8, 4}', answers: ['{4, 8}'], match: 'set' }).ok).toBe(true);
+    expect(judgeAnswer({ given: '(0, 5)', answers: ['[0, 5]'], match: 'interval' }).ok).toBe(false);
+    expect(judgeAnswer({ given: '[0,5]', answers: ['[0, 5]'], match: 'interval' }).ok).toBe(true);
   });
 });

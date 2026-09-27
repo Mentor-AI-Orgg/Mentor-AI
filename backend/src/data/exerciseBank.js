@@ -183,7 +183,8 @@ function judgeExercise(given, exercise) {
     answers: exercise.answers || [],
     numeric: exercise.numeric,
     tokens: exercise.tokens || [],
-    explain: exercise.explain || ''
+    explain: exercise.explain || '',
+    match: exercise.match || ''
   });
 }
 

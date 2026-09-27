@@ -2,8 +2,10 @@ import { describe, it, expect } from 'vitest';
 import { pickPractice } from '../backend/src/data/practicePicker.js';
 import { checkExercise, findExercise, listChapterExercises } from '../backend/src/data/exerciseBank.js';
 import { findQuestion } from '../backend/src/data/practiceBank.js';
-import { fromGeneratedId, generateOne, generateMany, itemLooksSound } from '../backend/src/data/itemGenerator.js';
+import { fromGeneratedId, generateOne, generateMany, itemLooksSound, parseGenId } from '../backend/src/data/itemGenerator.js';
 import { GRADES, GUIDES, SUBJECT_IDS } from '../backend/src/data/gimnaziuGuide.js';
+import { createApp } from '../backend/src/app.js';
+import { registerGranted } from './registerStudent.js';
 
 describe('infinite generated practice', () => {
   it('rebuilds the same item from its id and keeps whole-number answers', () => {
@@ -152,5 +154,31 @@ describe('infinite generated practice', () => {
         });
       });
     });
+  });
+
+  it('aduce nivelul 9 și 10 la 8 în id, iar /check îl corectează', async () => {
+    const item = generateOne({ kind: 'test', subject: 'matematica', grade: 5, chapterId: 'naturale', level: 10 });
+    expect(item).toBeTruthy();
+    expect(item.level).toBe(8);
+    expect(item.id).toMatch(/^g:t:matematica:5:naturale:8:[0-9a-f]+$/i);
+    expect(parseGenId(item.id).level).toBe(8);
+    expect(parseGenId(item.id).chapterId).toBe('naturale');
+    const again = fromGeneratedId(item.id);
+    expect(again.prompt).toBe(item.prompt);
+    expect(again.answers).toEqual(item.answers);
+
+    const nine = generateMany({ kind: 'test', subject: 'matematica', grade: 5, chapterId: 'naturale', levels: [9] }, 1);
+    expect(nine[0].level).toBe(8);
+    expect(nine[0].id).toMatch(/:naturale:8:/);
+    expect(parseGenId(nine[0].id).level).toBe(8);
+
+    const { app } = createApp({ autosave: false });
+    const created = await registerGranted(app);
+    const res = await created.agent.post('/api/flashcards/check').send({
+      card_id: item.id,
+      answer: item.answers[0]
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
   });
 });

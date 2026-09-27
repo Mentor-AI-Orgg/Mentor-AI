@@ -28,23 +28,34 @@ function parseGenId(id) {
   };
 }
 
+function clampLevel(level) {
+  const n = Number(level);
+  if (!Number.isFinite(n) || n === 0) return 0;
+  if (n < 1) return 1;
+  if (n > 8) return 8;
+  return n;
+}
+
 function makeId(meta, seed) {
   const mark = meta.kind === 'test' ? 't' : 'f';
-  const lv = Number(meta.level) > 0 ? `:${Number(meta.level)}` : '';
+  const level = clampLevel(meta.level);
+  const lv = level > 0 ? `:${level}` : '';
   return `g:${mark}:${meta.subject}:${meta.grade}:${meta.chapterId}${lv}:${seed}`;
 }
 
 function materialize(meta) {
-  const rand = rng(seedFromHex(meta.seed));
-  const built = meta.subject === 'romana'
-    ? generateRomana(meta.chapterId, meta.kind, rand, meta.level)
-    : generateMath(meta.chapterId, meta.kind, rand, meta.level);
-  if (!built || !itemLooksSound(built, meta.kind)) return null;
+  const level = clampLevel(meta.level);
+  const scoped = { ...meta, level };
+  const rand = rng(seedFromHex(scoped.seed));
+  const built = scoped.subject === 'romana'
+    ? generateRomana(scoped.chapterId, scoped.kind, rand, level)
+    : generateMath(scoped.chapterId, scoped.kind, rand, level);
+  if (!built || !itemLooksSound(built, scoped.kind)) return null;
   return {
     ...built,
-    id: makeId(meta, meta.seed),
+    id: makeId(scoped, scoped.seed),
     generated: true,
-    level: Number(meta.level) || built.level || 1
+    level: level || built.level || 1
   };
 }
 
@@ -93,7 +104,7 @@ function generateOne({ kind, subject, grade, chapterId, excludeIds = [], level }
     subject: String(subject),
     grade: String(grade),
     chapterId: String(chapterId),
-    level: Number(level) || 0
+    level: clampLevel(Number(level) || 0)
   };
   for (let i = 0; i < 48; i += 1) {
     const seed = newSeed();
@@ -118,7 +129,7 @@ function generateMany(opts, count) {
     ? opts.levels
     : Array.from({ length: want }, (_, i) => start + i);
   for (let i = 0; i < want; i += 1) {
-    const level = Number(plan[i] || plan[plan.length - 1] || start) || 1;
+    const level = clampLevel(Number(plan[i] || plan[plan.length - 1] || start) || 1);
     const item = generateOne({ ...opts, excludeIds: exclude, level });
     if (!item) break;
     exclude.push(item.id);

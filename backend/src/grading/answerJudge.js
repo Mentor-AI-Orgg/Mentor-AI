@@ -16,6 +16,36 @@ function fold(text) {
     .trim();
 }
 
+// Litere mici, sedilă → ș/ț, apoi fără diacritice, fără ghilimele,
+// fără punctuația de la final. Cratima rămâne: „nu-i” ≠ „nui”.
+function normalizeRo(text) {
+  let s = String(text || '').toLowerCase();
+  s = s.replace(/ş/g, 'ș').replace(/ţ/g, 'ț');
+  s = s
+    .replace(/ă/g, 'a')
+    .replace(/â/g, 'a')
+    .replace(/î/g, 'i')
+    .replace(/ș/g, 's')
+    .replace(/ț/g, 't')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+  s = s.replace(/[„”«»"']/g, '');
+  s = s.replace(/[.?!…,:;]+$/g, '');
+  s = s.replace(/\s+/g, ' ').trim();
+  return s;
+}
+
+function applySymbols(text) {
+  return String(text || '')
+    .replace(/√/g, 'rad')
+    .replace(/π/g, 'pi')
+    .replace(/∞/g, 'inf')
+    .replace(/∪/g, 'u')
+    .replace(/∩/g, 'n')
+    .replace(/≤/g, '<=')
+    .replace(/≥/g, '>=');
+}
+
 function clip(text, max = 80) {
   const raw = String(text || '').replace(/\s+/g, ' ').trim();
   if (raw.length <= max) return raw;
@@ -23,7 +53,7 @@ function clip(text, max = 80) {
 }
 
 function compact(text) {
-  return fold(text).replace(/[^a-z0-9./+-]/g, '');
+  return fold(applySymbols(text)).replace(/[^a-z0-9./+-]/g, '');
 }
 
 function stripUnits(text) {
@@ -72,11 +102,48 @@ function numberHit(given, target, tolerance = 0) {
   return closeEnough(nums[nums.length - 1], want, tolerance) || closeEnough(nums[0], want, tolerance);
 }
 
-function numberSetEqual(given, expected) {
+function isSetAnswer(text) {
+  const raw = String(text || '').trim();
+  if (raw.startsWith('{')) return true;
+  const folded = fold(raw);
+  return /\d/.test(folded) && /\bsi\b/.test(folded);
+}
+
+function isStructuredMath(text) {
+  const raw = String(text || '').trim();
+  if (!/^[\[(]/.test(raw) || !/[)\]]$/.test(raw)) return false;
+  return /\d|∞/.test(raw);
+}
+
+function orderedKey(text) {
+  let s = applySymbols(String(text || '')).trim().toLowerCase();
+  s = s.replace(/[–—−]/g, '-');
+  s = s.replace(/\s*(și|si)\s*/g, ',');
+  s = s.replace(/\s*;\s*/g, ',');
+  s = s.replace(/\s*,\s*/g, ',');
+  s = s.replace(/\s+/g, '');
+  return s;
+}
+
+function numbersUnorderedEqual(given, expected) {
   const a = [...new Set(candidateNumbers(given))].sort((x, y) => x - y);
   const b = [...new Set(candidateNumbers(expected))].sort((x, y) => x - y);
   if (!a.length || a.length !== b.length) return false;
   return a.every((value, index) => closeEnough(value, b[index], 1e-9));
+}
+
+function numberSetEqual(given, expected) {
+  if (!isSetAnswer(expected)) return false;
+  return numbersUnorderedEqual(given, expected);
+}
+
+function setEqual(given, expected) {
+  if (numbersUnorderedEqual(given, expected) && candidateNumbers(expected).length >= 2) return true;
+  const parts = value => orderedKey(value).replace(/^\{/, '').replace(/\}$/, '').split(',').filter(Boolean).sort();
+  const a = parts(given);
+  const b = parts(expected);
+  if (!a.length || a.length !== b.length) return false;
+  return a.every((value, index) => value === b[index]);
 }
 
 const YES = /^(da|yes|adevarat|corect|apartine|e inauntru|inauntru)\b/;
@@ -90,14 +157,28 @@ function yesNoHit(given, expected) {
   return false;
 }
 
-function textHit(given, expected) {
+function textHit(given, expected, options = {}) {
+  const match = String(options.match || '');
   const g = fold(given);
   const e = fold(expected);
-  if (!e) return false;
-  if (g === e || compact(g) === compact(e)) return true;
-  if (e.length >= 6 && (g.includes(e) || e.includes(g))) return true;
+  const gRo = normalizeRo(given);
+  const eRo = normalizeRo(expected);
+  if (!e && !eRo) return false;
+
+  if (match === 'exact') return Boolean(eRo) && gRo === eRo;
+  if (match === 'set') return setEqual(given, expected);
+  if (match === 'ordered') return Boolean(orderedKey(expected)) && orderedKey(given) === orderedKey(expected);
+  if (match === 'interval' || (!match && isStructuredMath(expected))) {
+    const key = orderedKey(expected);
+    return Boolean(key) && orderedKey(given) === key;
+  }
+
+  if (gRo && gRo === eRo) return true;
+  if (g === e || compact(given) === compact(expected)) return true;
+  if (e.length >= 6 && g.includes(e)) return true;
+  if (eRo.length >= 6 && gRo.includes(eRo)) return true;
   if (yesNoHit(g, e)) return true;
-  if (numberSetEqual(g, e) && candidateNumbers(e).length >= 2) return true;
+  if (numberSetEqual(given, expected) && candidateNumbers(expected).length >= 2) return true;
   return false;
 }
 
@@ -120,6 +201,8 @@ function judgeAnswer(payload = {}) {
   const numeric = payload.numeric && Number.isFinite(Number(payload.numeric.value))
     ? { value: Number(payload.numeric.value), tolerance: Number(payload.numeric.tolerance) || 0 }
     : null;
+  const match = String(payload.match || '');
+  const strictShape = match === 'exact' || match === 'ordered' || match === 'interval' || match === 'set';
 
   if (!given) {
     return {
@@ -150,7 +233,7 @@ function judgeAnswer(payload = {}) {
   }
 
   for (const answer of expected) {
-    if (textHit(given, answer)) {
+    if (textHit(given, answer, { match })) {
       const exact = fold(given) === fold(answer);
       return {
         ok: true,
@@ -163,7 +246,7 @@ function judgeAnswer(payload = {}) {
       };
     }
     const asNumber = parseOneNumber(answer);
-    if (Number.isFinite(asNumber) && numberHit(given, asNumber, numeric ? numeric.tolerance : 1e-9)) {
+    if (!strictShape && Number.isFinite(asNumber) && numberHit(given, asNumber, numeric ? numeric.tolerance : 1e-9)) {
       return {
         ok: true,
         credit: 1,
@@ -174,7 +257,7 @@ function judgeAnswer(payload = {}) {
     }
   }
 
-  if (numeric && numberHit(given, numeric.value, numeric.tolerance)) {
+  if (!strictShape && numeric && numberHit(given, numeric.value, numeric.tolerance)) {
     return {
       ok: true,
       credit: 1,
@@ -184,7 +267,7 @@ function judgeAnswer(payload = {}) {
     };
   }
 
-  if (tokens.length) {
+  if (!strictShape && tokens.length) {
     const g = fold(given);
     const hit = tokens.filter(token => g.includes(token));
     if (hit.length === tokens.length) {
@@ -240,4 +323,4 @@ function judgeAnswer(payload = {}) {
   };
 }
 
-module.exports = { judgeAnswer, fold, parseOneNumber, numberHit, letterOfChoice };
+module.exports = { judgeAnswer, fold, normalizeRo, parseOneNumber, numberHit, letterOfChoice };
