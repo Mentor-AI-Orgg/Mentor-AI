@@ -5,6 +5,9 @@ const PREVIEW_COOKIE = "mentor_preview";
 const processPreviewSecret = crypto.randomBytes(32).toString("hex");
 
 const SKIP_PATHS = new Set([
+  "/privacy.html",
+  "/terms.html",
+  "/fonts/faces.css",
   "/api/health",
   "/api/v1/health",
   "/api/subscriptions/webhook",
@@ -111,7 +114,7 @@ function comingSoon() {
     if (!isSiteClosed()) return next();
 
     const path = normalizePath(req);
-    if (SKIP_PATHS.has(path)) return next();
+    if (SKIP_PATHS.has(path) || path.startsWith("/fonts/")) return next();
 
     if (path === "/robots.txt") {
       res.set("X-Robots-Tag", "noindex, nofollow");

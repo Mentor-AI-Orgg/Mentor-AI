@@ -32,6 +32,7 @@ const persistence = require("./data/persistence");
 const calendarOauthRoute = require("./routes/calendarOauth");
 const curriculumRoute = require("./routes/curriculum");
 const { handleStripeWebhook } = require("./payments/stripe");
+const { privacyHtml, termsHtml } = require("./legal/pages");
 
 function createApp(options = {}) {
   const { autosave = true } = options;
@@ -114,6 +115,13 @@ function createApp(options = {}) {
 
   mountApi("/api");
   mountApi("/api/v1");
+
+  app.get("/privacy.html", (req, res) => {
+    res.type("html").send(privacyHtml());
+  });
+  app.get("/terms.html", (req, res) => {
+    res.type("html").send(termsHtml());
+  });
 
   const distDir = path.join(__dirname, "..", "..", "frontend", "dist");
   if (fs.existsSync(distDir)) {

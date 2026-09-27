@@ -10,9 +10,7 @@ function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
   <title>Sunt de 10 · În curând</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/fonts/faces.css" />
   <style>
     :root { color-scheme: dark; }
     * { box-sizing: border-box; }
@@ -24,7 +22,7 @@ function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
       align-items: flex-start;
       justify-content: center;
       padding: 28px 18px 24px;
-      font-family: "DM Sans", sans-serif;
+      font-family: Nunito, "Segoe UI", sans-serif;
       color: #fff;
       background:
         radial-gradient(circle at 18% 16%, rgba(185, 167, 255, .18), transparent 34%),

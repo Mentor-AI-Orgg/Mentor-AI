@@ -29,6 +29,14 @@ export default defineConfig({
       '/api/': {
         target: 'http://localhost:3001',
         changeOrigin: true
+      },
+      '/privacy.html': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      },
+      '/terms.html': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
       }
     }
   }

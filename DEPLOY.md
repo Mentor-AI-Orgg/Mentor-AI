@@ -130,6 +130,9 @@ din formularul **Intrare creator**, cu `PREVIEW_PASSWORD` setată în
 DirectAdmin. Dacă parola lipsește, nimeni nu intră. Nu o pune în adresă.
 Cookie-ul se semnează cu `PREVIEW_COOKIE_SECRET`. Ca să vezi iar pagina
 publică: `https://suntde10.ro/creator/iesire`.
+Pagina de confidențialitate rămâne deschisă și cât site-ul e închis.
+Adresa de contact de pe ea este `LEGAL_CONTACT`. Dacă lipsește, pagina
+spune că operatorul încă nu a publicat-o.
 
 Fără chei de AI aplicația funcționează, dar toate răspunsurile sunt mock.
 La fel pentru plăți (Stripe), email (SMTP), SMS (Twilio) și calendar
