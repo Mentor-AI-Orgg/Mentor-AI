@@ -406,31 +406,99 @@ const GUIDES = {
     8: {
       title: "Matematică, clasa a VIII-a",
       howISeeIt:
-        "Anul Evaluării Naționale. Calculul trece pe litere, apar funcția de gradul I și geometria în spațiu. Mentorul ține elevul pe înțelegere, nu pe tocit formule de arii și volume.",
+        "Programa ține nucleul, iar acesta este planul principal: intervale și inecuații, calculul cu litere și formulele scurte, ecuația de gradul II prin completarea pătratului, funcția f(x) = ax + b, frecvența, media, mediana, modul, amplitudinea, geometria în spațiu, ariile și volumele. Planul secundar rămâne scurt: formula cu Δ, Thales în spațiu, poreclele de demonstrație și corpurile lui Platon. Nu se învață pași de click.",
       units: [
         {
           id: "intervale",
           title: "Intervale și inecuații",
           inOwnWords:
-            "Un interval e o bucată de axă. Inecuația întreabă „pentru ce x rămâne adevărat?”, nu „care e singurul x”."
+            "O mulțime se scrie printr-o proprietate, un interval este o bucată de axă, iar inecuația ax + b întreabă pentru ce x rămâne adevărată. Sensul se întoarce când înmulțești sau împarți cu un număr negativ.",
+          toc: [
+            "Ne amintim din clasa a VII-a",
+            "Mulțimi descrise printr-o proprietate",
+            "Relații și operații cu mulțimi",
+            "Axa și submulțimi ale dreptei",
+            "Intervale de numere reale",
+            "Operații cu intervale",
+            "Proprietăți ale inegalităților",
+            "Inecuația ax + b",
+            "Inecuații cu paranteze, fracții și regula semnelor",
+            "Recapitulare: intervale și inecuații"
+          ]
         },
         {
           id: "algebric",
           title: "Calcul algebric",
           inOwnWords:
-            "Termeni asemenea, formule scurte de tip (a±b)² și diferență de pătrate, scoatere de factor, fracții cu litere, ecuația de gradul II doar cât cere programa de gimnaziu."
+            "Termenii asemenea se reduc. (a ± b)^2 și a^2 − b^2 se descompun și raționalizează. Fracția algebrică cere numitor nenul. Ecuația de gradul II se rezolvă formând un pătrat sau un produs. Formula cu Δ este plan secundar.",
+          toc: [
+            "Calcule cu numere reale și litere",
+            "Pătratul sumei și al diferenței. Diferența de pătrate",
+            "Raționalizarea cu conjugată",
+            "Factor comun și grupare",
+            "Descompunere cu formule de calcul prescurtat",
+            "Trinomul și alte descompuneri",
+            "Fracții algebrice. Domeniu",
+            "Operații cu fracții algebrice",
+            "Ecuația de gradul al doilea",
+            "Plan secundar: formula cu Δ",
+            "Probleme cu ecuații de gradul al doilea",
+            "Recapitulare: calcul algebric"
+          ]
         },
         {
           id: "functii",
-          title: "Funcții și statistici simple",
+          title: "Funcții și statistică",
           inOwnWords:
-            "O funcție leagă un x de un f(x). Dreapta f(x)=ax+b se citește din grafic. La date: medie, mediană, modul, amplitudine — ce spune setul, nu doar cum se calculează."
+            "O funcție dă fiecărui x un singur f(x). f(x) = ax + b are graficul o dreaptă sau o bucată de dreaptă. La date, frecvența, media, mediana, modul și amplitudinea spun ce face setul.",
+          toc: [
+            "Noțiunea de funcție",
+            "Graficul unei funcții",
+            "Funcția f(x) = ax + b",
+            "Funcții pe un interval. Lecturi grafice",
+            "Sortare și frecvență",
+            "Tabel, bare și poligon",
+            "Media, mediana, modul și amplitudinea",
+            "Recapitulare: funcții și statistică"
+          ]
         },
         {
           id: "spatiu",
           title: "Geometrie în spațiu",
           inOwnWords:
-            "Puncte, drepte, plane; paralelism și perpendicularitate; piramidă, prismă, cilindru, con, trunchiuri, sferă. Aria și volumul au sens doar dacă elevul vede desfășurarea și înălțimea, nu un șir de litere."
+            "Puncte, drepte și plane, apoi piramida, prisma, cilindrul și conul. Paralelismul, perpendicularitatea, proiecțiile și diedrul pregătesc ariile și volumele, inclusiv trunchiurile și sfera. Thales în spațiu rămâne plan secundar.",
+          toc: [
+            "Puncte, drepte și plane",
+            "Drepte în spațiu și determinarea planului",
+            "Dreapta și planul",
+            "Plane secante și plane paralele",
+            "Piramida și desfășurarea ei",
+            "Prisma dreaptă și desfășurarea ei",
+            "Cilindrul circular drept",
+            "Conul circular drept",
+            "Unghiul a două drepte în spațiu",
+            "Dreaptă paralelă cu un plan",
+            "Plane paralele tăiate de o secantă",
+            "Secțiuni paralele cu baza și trunchiuri",
+            "Plan secundar: Thales în spațiu",
+            "Dreaptă perpendiculară pe un plan",
+            "Distanța dintre plane paralele",
+            "Plane perpendiculare și secțiuni",
+            "Proiecții pe un plan",
+            "Unghiul dintre o dreaptă și un plan",
+            "Unghiul diedru",
+            "Teorema celor trei perpendiculare",
+            "Distanțe în corpuri",
+            "Unghiuri în corpuri",
+            "Aria și volumul prismei",
+            "Aria și volumul piramidei",
+            "Trunchiul de piramidă regulată",
+            "Aria și volumul cilindrului",
+            "Aria și volumul conului",
+            "Trunchiul de con",
+            "Sfera",
+            "Recapitulare: geometrie în spațiu și clasa a VIII-a"
+          ]
         }
       ]
     }
