@@ -1,4 +1,10 @@
 const { z } = require("zod");
+const { usernameError } = require("../safety/usernamePolicy");
+
+const usernameField = z.string().trim().superRefine((value, ctx) => {
+  const error = usernameError(value);
+  if (error) ctx.addIssue({ code: z.ZodIssueCode.custom, message: error });
+});
 
 const email = z
   .string({ required_error: "Adresa de email este obligatorie." })
@@ -19,7 +25,7 @@ const optionalEmail = z
   .default("");
 
 const registerSchema = z.object({
-  username: z.string().trim().min(3, "Numele de utilizator are cel puțin 3 caractere.").max(20),
+  username: usernameField,
   password: z.string({ required_error: "Parola este obligatorie." }).min(1).max(200),
   confirmPassword: z.string().min(1).max(200),
   class: z.enum(["5", "6", "7", "8"]),
@@ -174,7 +180,7 @@ const deleteAccountSchema = z.object({
 
 const profileSchema = z.object({
   name: z.string().max(80).optional(),
-  username: z.string().max(40).optional(),
+  username: usernameField.optional(),
   phone: z.string().max(20).optional(),
   school: z.string().max(120).optional(),
   class: z.string().max(40).optional(),

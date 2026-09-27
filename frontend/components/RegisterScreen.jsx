@@ -10,7 +10,7 @@ const PASSWORD_RULES = [
 
 const isPasswordValid = value => PASSWORD_RULES.every(rule => rule.test(value || ''));
 const isValidEmail = value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || '');
-const isUsernameShape = value => /^[A-Za-zĂÂÎȘȚăâîșț0-9_.]{3,20}$/.test(String(value || '').trim());
+const isUsernameShape = value => /^[A-Za-zĂÂÎȘȚăâîșț0-9][A-Za-zĂÂÎȘȚăâîșț0-9_.-]{1,18}[A-Za-zĂÂÎȘȚăâîșț0-9]$/.test(String(value || '').trim());
 
 const FieldStatus = ({ touched, valid }) => {
   if (!touched) return null;
@@ -31,7 +31,6 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
   const markTouched = key => setTouched(prev => ({ ...prev, [key]: true }));
 
   const validators = useMemo(() => ({
-    // TODO(T6): verificarea numelor urâte se face pe server.
     username: v => isUsernameShape(v),
     password: v => isPasswordValid(v),
     confirmPassword: v => v && v === form.password,

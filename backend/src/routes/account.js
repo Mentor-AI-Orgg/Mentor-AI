@@ -119,6 +119,11 @@ router.patch("/profile", validateBody(profileSchema), async (req, res) => {
       });
     }
   }
+  if (patch.username) {
+    const { usernameError } = require("../safety/usernamePolicy");
+    const nameError = usernameError(patch.username);
+    if (nameError) return res.status(400).json({ error: nameError, field: "username" });
+  }
   if (patch.username && usernameTaken(patch.username, req.auth.email)) {
     return res.status(409).json({ error: "Username-ul este deja folosit.", field: "username" });
   }

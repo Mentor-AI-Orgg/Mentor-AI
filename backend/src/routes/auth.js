@@ -123,7 +123,6 @@ router.post("/register", authLimiter, validateBody(registerSchema), async (req, 
       field: "parentEmail"
     });
   }
-  // TODO(T6): verificarea numelui de utilizator pe server, dincolo de unicitate.
   if (findByUsername(username)) {
     return res.status(409).json({ error: "Acest nume de utilizator este deja folosit.", field: "username" });
   }
