@@ -41,21 +41,12 @@ const { deliverMessage, smtpConfigured } = require("../notify/deliver");
 // Aceleași reguli pe care le arată RegisterScreen în interfață. Validarea din
 // browser e doar pentru UX; asta e cea care contează, pentru că un client
 // poate trimite orice direct către API.
-const PASSWORD_RULES = [
-  { test: v => v.length >= 8, message: "Parola trebuie să aibă minim 8 caractere." },
-  { test: v => /[A-ZĂÂÎȘȚ]/.test(v), message: "Parola trebuie să conțină o literă mare." },
-  { test: v => /[0-9]/.test(v), message: "Parola trebuie să conțină o cifră." },
-  { test: v => /[^A-Za-z0-9ĂÂÎȘȚăâîșț]/.test(v), message: "Parola trebuie să conțină un caracter special." }
-];
+const { passwordError } = require("../safety/passwordPolicy");
 
 const isValidEmail = value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || ""));
 
-function validatePassword(password) {
-  const value = String(password || "");
-  for (const rule of PASSWORD_RULES) {
-    if (!rule.test(value)) return rule.message;
-  }
-  return null;
+function validatePassword(password, username = "") {
+  return passwordError(password, username);
 }
 
 function sessionCookieOptions(maxAge) {
@@ -115,7 +106,7 @@ router.post("/register", authLimiter, validateBody(registerSchema), async (req, 
   if (String(password) !== String(confirmPassword)) {
     return res.status(400).json({ error: "Parolele nu coincid.", field: "confirmPassword" });
   }
-  const passwordError = validatePassword(password);
+  const passwordError = validatePassword(password, username);
   if (passwordError) return res.status(400).json({ error: passwordError, field: "password" });
   if (!isValidEmail(parentEmail)) {
     return res.status(400).json({
@@ -332,6 +323,7 @@ router.post("/reset-password", authLimiter, validateBody(resetPasswordSchema), a
   if (passwordError) return res.status(400).json({ error: passwordError, field: "password" });
   const result = await consumeResetToken(req.body.token, req.body.password);
   if (!result.ok) {
+    if (result.reason === "weak") return res.status(400).json({ error: result.error, field: "password" });
     return res.status(400).json({ error: "Linkul de resetare nu mai este valabil. Cere unul nou." });
   }
   res.json({ success: true });

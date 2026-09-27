@@ -461,13 +461,25 @@ function chapterUniverse(grade) {
   return Math.max(1, mate + romana);
 }
 
+const DAILY_XP_CAP = 120;
+const DAILY_COIN_CAP = 80;
+
 function grantAward(user, award, type, note, meta = {}) {
-  const coins = awardCoins(user, award.coins, type, note, { ...meta, xp: award.xp });
-  user.xp = (user.xp || 0) + award.xp;
-  return { coins: coins.amount, xp: award.xp, balance: coins.balance };
+  const today = getTodayKey();
+  if (!user.awardDay || user.awardDay.date !== today) user.awardDay = { date: today, xp: 0, coins: 0 };
+  let xp = Math.max(0, Number(award.xp) || 0);
+  let coins = Math.max(0, Number(award.coins) || 0);
+  xp = Math.min(xp, Math.max(0, DAILY_XP_CAP - user.awardDay.xp));
+  coins = Math.min(coins, Math.max(0, DAILY_COIN_CAP - user.awardDay.coins));
+  if (!xp && !coins) return null;
+  user.awardDay.xp += xp;
+  user.awardDay.coins += coins;
+  const paid = awardCoins(user, coins, type, note, { ...meta, xp });
+  user.xp = (user.xp || 0) + xp;
+  return { coins: paid.amount, xp, balance: paid.balance };
 }
 
-function recordProgress({ userId, type, meta = {}, note = '' }) {
+function recordProgress({ userId, type, meta = {}, note = '', trusted = false }) {
   const user = ensureUser(userId);
   if (meta.grade) user.preferences.className = String(meta.grade);
   const todayKey = getTodayKey();
@@ -478,10 +490,7 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
     user.streakDays.push(todayKey);
     user.streakDays = user.streakDays.slice(-60);
   }
-  if (study.firstToday && !user.streakBonusDate) {
-    user.streakBonusDate = todayKey;
-    grantAward(user, AWARDS.streak_day, 'reward', `Serie de ${user.metrics.streak} zile`, { streak: user.metrics.streak });
-  } else if (study.firstToday && user.streakBonusDate !== todayKey) {
+  if (trusted && study.firstToday && user.streakBonusDate !== todayKey) {
     user.streakBonusDate = todayKey;
     grantAward(user, AWARDS.streak_day, 'reward', `Serie de ${user.metrics.streak} zile`, { streak: user.metrics.streak });
   }
@@ -500,7 +509,7 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
         track: meta.track || '',
         at: new Date().toISOString()
       };
-      awarded = grantAward(user, AWARDS.chapter_open, 'chapter_open', note || meta.title || 'Capitol deschis', meta);
+      if (trusted) awarded = grantAward(user, AWARDS.chapter_open, 'chapter_open', note || meta.title || 'Capitol deschis', meta);
     } else if (key && user.chapters[key] && user.chapters[key].status !== 'done') {
       user.chapters[key].at = new Date().toISOString();
       if (meta.track) user.chapters[key].track = meta.track;
@@ -523,7 +532,7 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
           at: new Date().toISOString()
         };
       }
-      awarded = grantAward(user, AWARDS.session_complete, 'session_complete', note || 'Sesiune terminată', meta);
+      if (trusted) awarded = grantAward(user, AWARDS.session_complete, 'session_complete', note || 'Sesiune terminată', meta);
     }
   }
 
@@ -535,7 +544,7 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
     const count = user.flashKnown[todayKey][topic];
     if (count >= 5 && !user.flashcardRewardDates[todayKey]) {
       user.flashcardRewardDates[todayKey] = true;
-      awarded = grantAward(user, AWARDS.flashcards_5, 'flashcards_5', '5 flashcarduri corecte', { topic, count });
+      if (trusted) awarded = grantAward(user, AWARDS.flashcards_5, 'flashcards_5', '5 flashcarduri corecte', { topic, count });
     }
   }
 
@@ -544,7 +553,7 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
     if (!user.focusAwards[todayKey] && minutes >= 25) {
       user.focusAwards[todayKey] = minutes >= 50 ? 'focus_50' : 'focus_25';
       const award = minutes >= 50 ? AWARDS.focus_50 : AWARDS.focus_25;
-      awarded = grantAward(user, award, 'focus_session', `Focus ${minutes} minute`, { minutes });
+      if (trusted) awarded = grantAward(user, award, 'focus_session', `Focus ${minutes} minute`, { minutes });
     }
   }
 
@@ -553,7 +562,7 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
     const stamp = `${key}:${todayKey}`;
     if (key && !user.practiceTests[stamp]) {
       user.practiceTests[stamp] = { at: new Date().toISOString(), score: Number(meta.score) || 0 };
-      awarded = grantAward(user, AWARDS.chapter_test, 'chapter_test', note || 'Test de capitol', meta);
+      if (trusted) awarded = grantAward(user, AWARDS.chapter_test, 'chapter_test', note || 'Test de capitol', meta);
     }
   }
 
@@ -561,7 +570,7 @@ function recordProgress({ userId, type, meta = {}, note = '' }) {
     const today = user.mentorAwards[todayKey] || 0;
     if (today < 5) {
       user.mentorAwards[todayKey] = today + 1;
-      awarded = grantAward(user, AWARDS.mentor_message, 'mentor_message', note || 'Mesaj către mentor', meta);
+      if (trusted) awarded = grantAward(user, AWARDS.mentor_message, 'mentor_message', note || 'Mesaj către mentor', meta);
     }
   }
 

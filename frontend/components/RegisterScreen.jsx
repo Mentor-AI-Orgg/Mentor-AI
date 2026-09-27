@@ -1,14 +1,6 @@
 import { useState, useMemo } from 'react';
 import QuoteCard from './QuoteCard.jsx';
-
-const PASSWORD_RULES = [
-  { key: 'length', label: 'Minim 8 caractere', test: v => v.length >= 8 },
-  { key: 'upper', label: 'O literă mare', test: v => /[A-ZĂÂÎȘȚ]/.test(v) },
-  { key: 'digit', label: 'O cifră', test: v => /[0-9]/.test(v) },
-  { key: 'special', label: 'Un caracter special', test: v => /[^A-Za-z0-9ĂÂÎȘȚăâîșț]/.test(v) }
-];
-
-const isPasswordValid = value => PASSWORD_RULES.every(rule => rule.test(value || ''));
+import { passwordHint } from '../passwordHint.js';
 const isValidEmail = value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || '');
 const isUsernameShape = value => /^[A-Za-zĂÂÎȘȚăâîșț0-9][A-Za-zĂÂÎȘȚăâîșț0-9_.-]{1,18}[A-Za-zĂÂÎȘȚăâîșț0-9]$/.test(String(value || '').trim());
 
@@ -32,11 +24,11 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
 
   const validators = useMemo(() => ({
     username: v => isUsernameShape(v),
-    password: v => isPasswordValid(v),
+    password: v => passwordHint(v, form.username).ok,
     confirmPassword: v => v && v === form.password,
     class: v => ['5', '6', '7', '8'].includes(String(v)),
     parentEmail: v => isValidEmail(v)
-  }), [form.password]);
+  }), [form.password, form.username]);
 
   const fieldValid = key => (validators[key] ? validators[key](form[key]) : true);
   const requiredFields = ['username', 'password', 'confirmPassword', 'class', 'parentEmail'];
@@ -126,11 +118,9 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
             />
           </label>
           <ul className="password-checklist">
-            {PASSWORD_RULES.map(rule => (
-              <li key={rule.key} className={rule.test(form.password) ? 'rule-ok' : 'rule-pending'}>
-                <i className={`fas ${rule.test(form.password) ? 'fa-circle-check' : 'fa-circle'}`}></i> {rule.label}
-              </li>
-            ))}
+            <li className={passwordHint(form.password, form.username).ok ? 'rule-ok' : 'rule-pending'}>
+              <i className={`fas ${passwordHint(form.password, form.username).ok ? 'fa-circle-check' : 'fa-circle'}`}></i> {passwordHint(form.password, form.username).label}
+            </li>
           </ul>
         </div>
 

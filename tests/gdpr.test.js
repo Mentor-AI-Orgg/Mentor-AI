@@ -75,6 +75,12 @@ describe('export, ștergere și păstrare', () => {
     });
     expect(progress.status).toBe(200);
     await created.agent.post('/api/economy/claim').send({ type: 'login_bonus' });
+    economy.recordProgress({
+      userId: email,
+      type: 'session_complete',
+      trusted: true,
+      meta: { subject: 'matematica', grade: '5', chapterId: 'fractii-premiu', title: 'Premiu' }
+    });
     await created.agent.post('/api/economy/progress').send({
       type: 'session_complete',
       meta: { subject: 'matematica', grade: '5', chapterId: 'fractii' }

@@ -1,9 +1,14 @@
 import { describe, it, expect, beforeAll } from 'vitest';
+import { createRequire } from 'node:module';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
 import { registerGranted } from './registerStudent.js';
 import { levelFromXp, XP_THRESHOLDS } from '../backend/src/data/progressEngine.js';
 import { xpProgress } from '../frontend/xpProgress.js';
+
+const nodeRequire = createRequire(import.meta.url);
+const economyStore = nodeRequire('../backend/src/data/economyStore.js');
+const authStore = nodeRequire('../backend/src/data/authStore.js');
 
 let app;
 
@@ -44,8 +49,9 @@ describe('verified study progress', () => {
       meta: { subject: 'matematica', grade: '6', chapterId: 'fractii', title: 'Fracții' }
     });
     expect(open.status).toBe(200);
-    expect(open.body.awarded.coins).toBe(8);
-    expect(open.body.summary.balance).toBeGreaterThanOrEqual(38);
+    expect(open.body.awarded).toBeNull();
+    expect(open.body.summary.balance).toBe(30);
+    expect(open.body.summary.xp).toBe(20);
 
     const again = await agent.post('/api/economy/progress').send({
       type: 'chapter_open',
@@ -59,27 +65,26 @@ describe('verified study progress', () => {
       meta: { subject: 'matematica', grade: '6', chapterId: 'fractii', title: 'Fracții' }
     });
     expect(session.status).toBe(200);
-    expect(session.body.awarded.coins).toBe(15);
+    expect(session.body.awarded).toBeNull();
+    expect(session.body.summary.balance).toBe(30);
     expect(session.body.summary.chaptersDone).toBeGreaterThanOrEqual(1);
 
-    let knownAward = null;
     for (let i = 0; i < 5; i += 1) {
       const known = await agent.post('/api/economy/progress').send({
         type: 'flashcard_known',
         meta: { topic: 'fractii' }
       });
       expect(known.status).toBe(200);
-      if (known.body.awarded) knownAward = known.body.awarded;
+      expect(known.body.awarded).toBeNull();
     }
-    expect(knownAward).toBeTruthy();
-    expect(knownAward.coins).toBe(10);
 
     const focus = await agent.post('/api/economy/progress').send({
       type: 'focus_session',
       meta: { minutes: 25 }
     });
     expect(focus.status).toBe(200);
-    expect(focus.body.awarded.coins).toBe(12);
+    expect(focus.body.awarded).toBeNull();
+    expect(focus.body.summary.xp).toBe(20);
 
     const blocked = await agent.post('/api/economy/progress').send({ type: 'mentor_message' });
     expect(blocked.status).toBe(400);
@@ -144,7 +149,7 @@ describe('verified study progress', () => {
 
   it('returns level fields on economy summary after study XP', async () => {
     const agent = request.agent(app);
-    await registerStudent(agent);
+    const username = await registerStudent(agent);
 
     const login = await agent.post('/api/economy/claim').send({ type: 'login_bonus' });
     expect(login.body.summary.xp).toBe(20);
@@ -154,23 +159,49 @@ describe('verified study progress', () => {
     expect(login.body.summary.levelSpan).toBe(60);
     expect(login.body.summary.nextLevelAt).toBe(60);
 
-    const opened = await agent.post('/api/economy/progress').send({
+    const email = authStore.findByUsername(username).email;
+    const opened = economyStore.recordProgress({
+      userId: email,
       type: 'chapter_open',
+      trusted: true,
       meta: { subject: 'matematica', grade: '6', chapterId: 'nivel-bar', title: 'Nivel' }
     });
-    expect(opened.body.summary.xp).toBe(45);
-    expect(opened.body.summary.level).toBe(1);
-    expect(opened.body.summary.xpIntoLevel).toBe(45);
-    expect(opened.body.summary.xpToNext).toBe(15);
+    expect(opened.summary.xp).toBe(45);
+    expect(opened.summary.level).toBe(1);
+    expect(opened.summary.xpIntoLevel).toBe(45);
+    expect(opened.summary.xpToNext).toBe(15);
 
-    const session = await agent.post('/api/economy/progress').send({
+    const session = economyStore.recordProgress({
+      userId: email,
       type: 'session_complete',
+      trusted: true,
       meta: { subject: 'matematica', grade: '6', chapterId: 'nivel-bar', title: 'Nivel' }
     });
-    expect(session.body.summary.xp).toBe(70);
-    expect(session.body.summary.level).toBe(2);
-    expect(session.body.summary.xpIntoLevel).toBe(10);
-    expect(session.body.summary.xpToNext).toBe(110);
-    expect(session.body.summary.levelSpan).toBe(120);
+    expect(session.summary.xp).toBe(70);
+    expect(session.summary.level).toBe(2);
+    expect(session.summary.xpIntoLevel).toBe(10);
+    expect(session.summary.xpToNext).toBe(110);
+    expect(session.summary.levelSpan).toBe(120);
+  });
+
+  it('stops trusted awards at the daily cap so a burst cannot reach level 5', async () => {
+    const agent = request.agent(app);
+    const username = await registerStudent(agent);
+    const email = authStore.findByUsername(username).email;
+    await agent.post('/api/economy/claim').send({ type: 'login_bonus' });
+
+    let last = null;
+    for (let i = 0; i < 12; i += 1) {
+      last = economyStore.recordProgress({
+        userId: email,
+        type: 'session_complete',
+        trusted: true,
+        meta: { subject: 'matematica', grade: '6', chapterId: `rafala-${i}`, title: `Rafală ${i}` }
+      });
+    }
+    expect(last.summary.xp).toBeGreaterThan(20);
+    expect(last.summary.xp).toBeLessThanOrEqual(140);
+    expect(last.summary.level).toBeLessThan(5);
+    expect(last.summary.balance).toBeLessThanOrEqual(110);
   });
 });

@@ -313,8 +313,14 @@ async function consumeResetToken(token, nextPassword) {
     return { ok: false, reason: "invalid" };
   }
   const account = findAccount(row.email);
+  if (!account) {
+    RESETS.delete(key);
+    return { ok: false, reason: "invalid" };
+  }
+  const { passwordError } = require("../safety/passwordPolicy");
+  const weak = passwordError(nextPassword, account.profile?.username || "");
+  if (weak) return { ok: false, reason: "weak", error: weak };
   RESETS.delete(key);
-  if (!account) return { ok: false, reason: "invalid" };
   const { salt, hash } = await hashPassword(nextPassword);
   account.salt = salt;
   account.passwordHash = hash;

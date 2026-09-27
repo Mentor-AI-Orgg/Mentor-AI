@@ -1,11 +1,17 @@
 import { describe, it, expect, beforeAll } from 'vitest';
+import { createRequire } from 'node:module';
 import { createApp } from '../backend/src/app.js';
 import { registerGranted } from './registerStudent.js';
 import { findExercise } from '../backend/src/data/exerciseBank.js';
 import { findQuestion } from '../backend/src/data/practiceBank.js';
 
+const nodeRequire = createRequire(import.meta.url);
+const economyStore = nodeRequire('../backend/src/data/economyStore.js');
+const authStore = nodeRequire('../backend/src/data/authStore.js');
+
 let app;
 let agent;
+let studentUsername;
 
 describe('economy purchases', () => {
   beforeAll(async () => {
@@ -13,6 +19,7 @@ describe('economy purchases', () => {
     const created = await registerGranted(app);
     expect(created.res.status).toBe(201);
     agent = created.agent;
+    studentUsername = created.username;
   });
 
   it('grants the first-login bonus and spends coins on an item', async () => {
@@ -21,12 +28,27 @@ describe('economy purchases', () => {
     expect(bonus.body.ok).toBe(true);
     expect(bonus.body.balance).toBe(30);
 
-    const study = await agent.post('/api/economy/progress').send({
+    const forged = await agent.post('/api/economy/progress').send({
       type: 'session_complete',
       meta: { subject: 'matematica', grade: '5', chapterId: 'start', title: 'Start' }
     });
-    expect(study.status).toBe(200);
-    expect(study.body.summary.balance).toBeGreaterThanOrEqual(50);
+    expect(forged.status).toBe(200);
+    expect(forged.body.awarded).toBeNull();
+    expect(forged.body.summary.balance).toBe(30);
+
+    const tooSoon = await agent.post('/api/economy/buy').send({ item_id: 'avatar-neon-fox' });
+    expect(tooSoon.status).toBe(400);
+    expect(tooSoon.body.reason).toBe('insufficient_coins');
+
+    const email = authStore.findByUsername(studentUsername).email;
+    const study = economyStore.recordProgress({
+      userId: email,
+      type: 'session_complete',
+      trusted: true,
+      meta: { subject: 'matematica', grade: '5', chapterId: 'premiu', title: 'Premiu' }
+    });
+    expect(study.awarded.coins).toBe(15);
+    expect(study.summary.balance).toBeGreaterThanOrEqual(45);
 
     const catalog = await agent.get('/api/economy/catalog');
     expect(catalog.status).toBe(200);
@@ -43,7 +65,7 @@ describe('economy purchases', () => {
     const buy = await agent.post('/api/economy/buy').send({ item_id: 'avatar-neon-fox' });
     expect(buy.status).toBe(200);
     expect(buy.body.ok).toBe(true);
-    expect(buy.body.balance).toBe(study.body.summary.balance - 40);
+    expect(buy.body.balance).toBe(study.summary.balance - 40);
     expect(buy.body.inventory).toContain('avatar-neon-fox');
 
     const again = await agent.post('/api/economy/buy').send({ item_id: 'avatar-neon-fox' });

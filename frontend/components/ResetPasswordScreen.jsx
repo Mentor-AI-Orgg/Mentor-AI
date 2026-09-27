@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
+import { passwordHint } from '../passwordHint.js';
 
 const ResetPasswordScreen = ({ token = '', onDone }) => {
   const [password, setPassword] = useState('');
@@ -42,8 +43,9 @@ const ResetPasswordScreen = ({ token = '', onDone }) => {
               required
             />
           </label>
+          <p className={passwordHint(password).ok ? 'field-hint' : 'field-hint'}>{passwordHint(password).label}</p>
           {error ? <div className="form-error" role="alert">{error}</div> : null}
-          <button type="submit" className="accent-button form-submit" disabled={loading || password.length < 8}>
+          <button type="submit" className="accent-button form-submit" disabled={loading || !passwordHint(password).ok}>
             {loading ? 'Se salvează…' : 'Salvează parola'}
           </button>
         </form>

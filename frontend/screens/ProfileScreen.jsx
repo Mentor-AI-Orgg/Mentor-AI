@@ -5,15 +5,9 @@ import { useI18n } from '../i18n/index.jsx';
 import { avatarIcon, itemEmoji } from '../appearance.js';
 import LevelBar from '../components/LevelBar.jsx';
 import ReportButton from '../components/ReportButton.jsx';
+import { passwordHint } from '../passwordHint.js';
 
 const CLASSES = ['5', '6', '7', '8'];
-
-const PASSWORD_RULES = [
-  { key: 'length', label: 'Minim 8 caractere', test: v => v.length >= 8 },
-  { key: 'upper', label: 'O literă mare', test: v => /[A-ZĂÂÎȘȚ]/.test(v) },
-  { key: 'digit', label: 'O cifră', test: v => /[0-9]/.test(v) },
-  { key: 'special', label: 'Un caracter special', test: v => /[^A-Za-z0-9ĂÂÎȘȚăâîșț]/.test(v) }
-];
 
 const FriendCard = ({ person, rank, actionLabel, onAction, disabled, onToast }) => (
   <article className={`friend-card ${rank != null ? 'has-rank' : ''}`}>
@@ -131,8 +125,9 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
 
   const savePassword = async () => {
     if (!passwords.currentPassword || !passwords.newPassword) return;
-    if (!PASSWORD_RULES.every(rule => rule.test(passwords.newPassword))) {
-      onToast?.('Parola nouă: minim 8 caractere, o literă mare, o cifră și un caracter special.', 'warning');
+    const hint = passwordHint(passwords.newPassword, form.username);
+    if (!hint.ok) {
+      onToast?.(hint.label, 'warning');
       return;
     }
     const result = await MentorAPI.changePassword(passwords);
@@ -317,11 +312,9 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
           </label>
         </div>
         <ul className="password-checklist">
-          {PASSWORD_RULES.map(rule => (
-            <li key={rule.key} className={rule.test(passwords.newPassword) ? 'rule-ok' : 'rule-pending'}>
-              <i className={`fas ${rule.test(passwords.newPassword) ? 'fa-circle-check' : 'fa-circle'}`} /> {rule.label}
-            </li>
-          ))}
+          <li className={passwordHint(passwords.newPassword, form.username).ok ? 'rule-ok' : 'rule-pending'}>
+            <i className={`fas ${passwordHint(passwords.newPassword, form.username).ok ? 'fa-circle-check' : 'fa-circle'}`} /> {passwordHint(passwords.newPassword, form.username).label}
+          </li>
         </ul>
         <button type="button" className="ghost-button profile-tool-action" onClick={savePassword}>Schimbă parola</button>
       </section>

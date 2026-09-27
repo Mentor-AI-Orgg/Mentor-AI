@@ -21,6 +21,7 @@ const { SESSION_COOKIE } = require("../middleware/auth");
 const economyStore = require("../data/economyStore");
 const registry = require("../data/userDataRegistry");
 const { usernameError } = require("../safety/usernamePolicy");
+const { passwordError } = require("../safety/passwordPolicy");
 
 const SECRET_KEY = /password|salt|token|secret|hash/i;
 
@@ -166,12 +167,8 @@ router.patch("/profile", validateBody(profileSchema), async (req, res) => {
 
 router.post("/password", validateBody(passwordChangeSchema), async (req, res) => {
   const next = String(req.body.newPassword || "");
-  if (next.length < 8 || !/[A-ZĂÂÎȘȚ]/.test(next) || !/[0-9]/.test(next) || !/[^A-Za-z0-9ĂÂÎȘȚăâîșț]/.test(next)) {
-    return res.status(400).json({
-      error: "Parola nouă: minim 8 caractere, o literă mare, o cifră și un caracter special.",
-      field: "newPassword"
-    });
-  }
+  const weak = passwordError(next, req.auth.account?.profile?.username || "");
+  if (weak) return res.status(400).json({ error: weak, field: "newPassword" });
   const result = await changePassword(req.auth.email, req.body.currentPassword, next);
   if (!result.ok) {
     return res.status(result.reason === "wrong" ? 401 : 400).json({

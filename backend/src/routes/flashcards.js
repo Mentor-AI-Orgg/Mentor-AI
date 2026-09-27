@@ -228,6 +228,7 @@ router.post("/finish", async (req, res) => {
     award = recordProgress({
       userId: req.auth.email,
       type: "chapter_test",
+      trusted: true,
       note: title || "Test de capitol",
       meta: { subject, grade: classLevel, chapterId, title, score: correct, total, gradeNote, durationMs: duration }
     });
@@ -235,6 +236,7 @@ router.post("/finish", async (req, res) => {
     award = recordProgress({
       userId: req.auth.email,
       type: "flashcard_known",
+      trusted: true,
       note: title || "Flashcarduri",
       meta: { subject, grade: classLevel, chapterId, title, topic: title || chapterId, correct }
     });

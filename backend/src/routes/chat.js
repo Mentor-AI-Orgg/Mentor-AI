@@ -94,6 +94,7 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
     progress = recordProgress({
       userId: req.auth.email,
       type: "mentor_message",
+      trusted: true,
       note: message.slice(0, 80),
       meta: { subject, grade: class_level }
     });

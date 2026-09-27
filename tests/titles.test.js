@@ -1,6 +1,11 @@
 import { describe, it, expect, beforeAll } from 'vitest';
+import { createRequire } from 'node:module';
 import { createApp } from '../backend/src/app.js';
 import { registerGranted } from './registerStudent.js';
+
+const nodeRequire = createRequire(import.meta.url);
+const economyStore = nodeRequire('../backend/src/data/economyStore.js');
+const authStore = nodeRequire('../backend/src/data/authStore.js');
 
 let app;
 
@@ -54,10 +59,15 @@ describe('shop titles and equip', () => {
   });
 
   it('unlocks Prima cumpărătură after a shop buy and can switch avatar', async () => {
-    const agent = await registerStudent();
+    const created = await registerGranted(app, { class: '5' });
+    expect(created.res.status).toBe(201);
+    const agent = created.agent;
     await agent.post('/api/economy/claim').send({ type: 'login_bonus' });
-    await agent.post('/api/economy/progress').send({
+    const email = authStore.findByUsername(created.username).email;
+    economyStore.recordProgress({
+      userId: email,
       type: 'session_complete',
+      trusted: true,
       meta: { subject: 'matematica', grade: '5', chapterId: 'coins', title: 'Coins' }
     });
     const buy = await agent.post('/api/economy/buy').send({ item_id: 'avatar-neon-fox' });
@@ -86,11 +96,11 @@ describe('shop titles and equip', () => {
       });
     }
     const summary = await agent.get('/api/economy/summary');
-    expect(summary.body.summary.level).toBeGreaterThanOrEqual(5);
-    expect(summary.body.summary.balance).toBeGreaterThanOrEqual(280);
+    expect(summary.body.summary.level).toBeLessThan(5);
+    expect(summary.body.summary.xp).toBe(20);
 
     const buy = await agent.post('/api/economy/buy').send({ item_id: 'avatar-unicorn' });
-    expect(buy.status).toBe(200);
-    expect(buy.body.inventory).toContain('avatar-unicorn');
+    expect(buy.status).toBe(400);
+    expect(buy.body.reason).toBe('level_required');
   });
 });

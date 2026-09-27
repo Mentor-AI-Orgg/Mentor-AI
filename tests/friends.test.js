@@ -1,6 +1,11 @@
 import { describe, it, expect, beforeAll } from 'vitest';
+import { createRequire } from 'node:module';
 import { createApp } from '../backend/src/app.js';
 import { registerGranted } from './registerStudent.js';
+
+const nodeRequire = createRequire(import.meta.url);
+const economyStore = nodeRequire('../backend/src/data/economyStore.js');
+const authStore = nodeRequire('../backend/src/data/authStore.js');
 
 let app;
 
@@ -102,13 +107,12 @@ describe('friends and profile edit', () => {
     const low = await registerStudent({ name: 'Puține XP', username: `low${Date.now().toString(16).slice(-4)}` });
     const high = await registerStudent({ name: 'Multe XP', username: `hi${Date.now().toString(16).slice(-4)}` });
 
-    await high.agent.post('/api/economy/progress').send({
+    const highEmail = authStore.findByUsername(high.username).email;
+    economyStore.recordProgress({
+      userId: highEmail,
       type: 'session_complete',
+      trusted: true,
       meta: { subject: 'matematica', grade: '5', chapterId: 'high-a', title: 'High A' }
-    });
-    await high.agent.post('/api/economy/progress').send({
-      type: 'session_complete',
-      meta: { subject: 'matematica', grade: '5', chapterId: 'high-b', title: 'High B' }
     });
 
     const findAndAdd = async (agent, username) => {
