@@ -95,4 +95,5 @@ jobs:
             mentor_ai_v3*.html
             tests/**
             scripts/**
+            reports/**
             coverage/**

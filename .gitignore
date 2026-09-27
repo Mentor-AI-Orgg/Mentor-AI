@@ -9,6 +9,9 @@ node_modules/
 # Loguri
 logs/
 *.log
+
+# Rapoarte locale (pot conține fragmente din lecții sau din manuale)
+reports/
 npm-debug.log*
 
 # Cache / build

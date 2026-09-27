@@ -36,6 +36,28 @@ npm run lint
 npm run build
 ```
 
+## Lecții copiate din manual
+
+`npm test` rulează `tests/lessonContentGuard.test.js`. Testul citește lecțiile
+și scrie `reports/lesson-content-guard.md`: lecția, câmpul, fraza și motivul
+(cheie de răspunsuri, citat lung, sursă încă protejată). Raportul stă în
+`reports/`, este ignorat de git și nu se urcă pe server. Testul pică doar
+pentru unitățile din lista `RESTRUCTURED`
+(`backend/src/data/restructuredLessons.js`), când promptul de lecții a
+rescris deja unitatea. Până atunci rămâne verde și doar raportează.
+
+Compararea cu manualele extrase se face doar local. Fișierele `.txt` stau pe
+laptop (de exemplu `manual-romana-8-litera\mai-putine`) și nu se urcă în repo.
+Scriptul nu rulează în CI:
+
+```bash
+node scripts/check-lesson-copy.mjs --surse "C:\Users\Kiril\Desktop\manual-romana-8-litera\mai-putine"
+```
+
+Caută 10 cuvinte la rând identici, după `normalizeRo()`, și scrie
+`reports/lesson-copy.md`: lecția, fișierul-sursă și secvența. Rescrierea
+lecțiilor semnalate se face cu `prompt-cursor-lectii.md`, unitate cu unitate.
+
 ## Datele copilului
 
 Orice etapă care adaugă date despre un copil le înregistrează în
