@@ -10,6 +10,8 @@ const SKIP_PATHS = new Set([
   "/fonts/faces.css",
   "/api/health",
   "/api/v1/health",
+  "/api/client-error",
+  "/api/v1/client-error",
   "/api/subscriptions/webhook",
   "/api/v1/subscriptions/webhook",
   "/api/calendar/oauth/google/callback",

@@ -10,7 +10,8 @@ function checklist(env = process.env) {
     { key: "PREVIEW_COOKIE_SECRET", ok: Boolean(value("PREVIEW_COOKIE_SECRET")), required: true },
     { key: "LEGAL_CONTACT", ok: Boolean(value("LEGAL_CONTACT")), required: false },
     { key: "BACKUP_KEY", ok: value("BACKUP_KEY").length >= 16, required: true },
-    { key: "SMTP", ok: smtpConfigured(), required: false }
+    { key: "SMTP", ok: smtpConfigured(), required: false },
+    { key: "ADMIN_EMAIL", ok: Boolean(value("ADMIN_EMAIL")), required: false }
   ];
 }
 

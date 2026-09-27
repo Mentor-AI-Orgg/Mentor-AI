@@ -74,8 +74,10 @@ deploy.
 
 ## Pasul 3 - Primul deploy
 
-Fă un push pe `main` (sau rulează workflow-ul manual din tab-ul **Actions** →
-**Deploy** → **Run workflow**). Workflow-ul din
+Fă un push pe `main`. Workflow-ul **CI** rulează lint, teste și build.
+**Deploy** pornește doar după ce CI s-a încheiat cu succes pe `main`
+(`workflow_run`, condiția `conclusion == success`). Poți porni deploy-ul și
+manual: **Actions** → **Deploy** → **Run workflow**. Workflow-ul din
 [.github/workflows/deploy.yml](.github/workflows/deploy.yml):
 
 1. instalează dependințele și compilează frontend-ul cu Vite (`npm run build`);
@@ -133,6 +135,13 @@ publică: `https://suntde10.ro/creator/iesire`.
 `BACKUP_KEY` cifrează copiile de rezervă ale fișierului de date. Pune un șir
 de cel puțin 16 caractere, altul decât parolele, și păstrează-l. Fără cheie,
 copiile bak rămân în clar. Restaurare: `node backend/src/ops/restoreBackup.js`.
+
+`ADMIN_EMAIL` primește alerta când aplicația înregistrează o eroare (prima
+de un tip într-o oră, maxim 10 pe zi), când ultima copie de siguranță are
+peste 26 de ore, sau când SMTP eșuează de 3 ori la rând. Mesajul are tipul,
+numărul de apariții și un id scurt, fără date despre copii. Fără adresă,
+erorile rămân doar în `logs/errors.log` pe server (în afara site-ului public,
+nu se urcă în git). Sentry nu este pornit.
 
 Pagina de confidențialitate rămâne deschisă și cât site-ul e închis.
 Adresa de contact de pe ea este `LEGAL_CONTACT`. Dacă lipsește, pagina
@@ -218,16 +227,56 @@ server. Când numărul de utilizatori crește, locul de înlocuit este doar
 `backend/src/data/persistence.js` - MySQL este disponibil în DirectAdmin, iar
 driverul `mysql2` este pur JavaScript, deci nu cere compilare.
 
+## Deploy doar după CI verde
+
+Deploy-ul nu mai pornește la fiecare push. `.github/workflows/deploy.yml`
+ascultă `workflow_run` pentru workflow-ul **CI**, pe ramura `main`, și intră
+în job doar dacă `github.event.workflow_run.conclusion == 'success'`.
+Pornirea manuală (`workflow_dispatch`) rămâne. Excluderile din upload
+(`data/**`, `scripts/**`, `tests/**`, `*.md`) rămân.
+
+Un push pe o ramură, sau un merge pe `main` al unui commit cu teste picate,
+nu sincronizează hostingul. După ce CI e verde pe `main`, deploy-ul pornește
+singur.
+
+### Protecția ramurii main
+
+Ca un PR cu teste picate să nu poată fi unit în `main`:
+
+1. Pe GitHub: **Settings** → **Rules** → **Rulesets** (sau **Branches** →
+   **Add branch protection rule**), ramura `main`.
+2. Activează **Require a pull request before merging**.
+3. Activează **Require status checks to pass before merging**.
+4. Caută și bifează jobul **quality** din workflow-ul **CI**.
+5. Salvează. De aici, butonul de merge stă blocat până CI e verde.
+
+Dependabot deschide săptămânal PR-uri npm pentru rădăcină și pentru
+`backend/` (`.github/dependabot.yml`).
+
+## UptimeRobot
+
+Ca să afli când site-ul nu mai răspunde, fără să instalezi nimic pe server:
+
+1. Cont gratuit pe [uptimerobot.com](https://uptimerobot.com).
+2. **Add New Monitor** → tip **HTTP(s)**.
+3. URL: `https://suntde10.ro/api/health`.
+4. Interval: **5 minute**.
+5. Alert Contacts: adresa de email a lui David.
+6. Salvează. Ruta răspunde `{ "ok": true }` fără date despre copii.
+
+Dacă oprești aplicația din DirectAdmin, monitorul vede că health nu mai
+răspunde și trimite emailul.
+
 ## Rollback
 
-Deploy-ul urmează `main`, deci cel mai rapid rollback este:
+Deploy-ul urmează `main` după un CI reușit, deci cel mai rapid rollback este:
 
 ```bash
 git revert <commit>
 git push origin main
 ```
 
-Următorul deploy pornește automat și readuce versiunea anterioară.
+După ce CI reușește pe `main`, deploy-ul readuce versiunea anterioară.
 
 ## Alternativă: deploy prin SSH
 

@@ -47,8 +47,10 @@ async function sendEmail({ to, subject, body }) {
       subject,
       text: body
     });
+    require("../ops/errorMonitor").noteSmtpSuccess();
     return { mocked: false, delivered: true, channel: "email" };
   } catch (error) {
+    require("../ops/errorMonitor").noteSmtpFailure();
     return {
       mocked: false,
       delivered: false,

@@ -30,6 +30,8 @@ const { corsAllowlist } = require("./middleware/corsAllowlist");
 const { generalApiLimiter, chatLimiter, detectLimiter } = require("./middleware/rateLimits");
 const { securityHeaders } = require("./middleware/security");
 const { requestLog } = require("./logger");
+const clientErrorRoute = require("./routes/clientError");
+const { newId, reportError, watchOperations } = require("./ops/errorMonitor");
 const persistence = require("./data/persistence");
 const calendarOauthRoute = require("./routes/calendarOauth");
 const curriculumRoute = require("./routes/curriculum");
@@ -66,6 +68,8 @@ function createApp(options = {}) {
     skipPaths: [
       "/api/health",
       "/api/v1/health",
+      "/api/client-error",
+      "/api/v1/client-error",
       "/api/subscriptions/webhook",
       "/api/v1/subscriptions/webhook",
       "/api/calendar/oauth/google/callback",
@@ -84,6 +88,14 @@ function createApp(options = {}) {
   app.use(express.json({ limit: "64kb" }));
   app.use("/api", generalApiLimiter);
   app.use(attachUser);
+  app.use("/api/client-error", clientErrorRoute);
+  app.use("/api/v1/client-error", clientErrorRoute);
+
+  if (options.probeErrors) {
+    app.post("/api/__boom", (req, res, next) => {
+      next(new Error("boom"));
+    });
+  }
 
   function mountApi(prefix) {
     app.get(`${prefix}/openapi.json`, (req, res) => res.json(openapiSpec));
@@ -140,6 +152,26 @@ function createApp(options = {}) {
       );
     });
   }
+
+  app.use((err, req, res, next) => {
+    if (res.headersSent) return next(err);
+    const status = Number(err.status || err.statusCode) || 500;
+    if (status >= 400 && status < 500) {
+      return res.status(status).json({ error: status === 413 ? "too_large" : "bad_request" });
+    }
+    const id = newId();
+    const route = String(req.originalUrl || req.url || "/").split("?")[0];
+    reportError({
+      id,
+      status: 500,
+      route,
+      code: err.code || err.name || "Error",
+      stack: err.stack || ""
+    }).catch(() => {});
+    return res.status(500).json({ error: "server_error", id });
+  });
+
+  if (process.env.NODE_ENV !== "test") watchOperations(persistence.DATA_FILE);
 
   return { app, restored };
 }
