@@ -111,7 +111,9 @@ function isSetAnswer(text) {
 
 function isStructuredMath(text) {
   const raw = String(text || '').trim();
-  if (!/^[\[(]/.test(raw) || !/[)\]]$/.test(raw)) return false;
+  const open = raw[0];
+  const close = raw[raw.length - 1];
+  if ((open !== '[' && open !== '(') || (close !== ']' && close !== ')')) return false;
   return /\d|∞/.test(raw);
 }
 
