@@ -5,6 +5,8 @@ const { validateBody } = require("../middleware/validate");
 const { friendSettingsSchema, friendRequestSchema, friendRespondSchema } = require("../validation/schemas");
 const friends = require("../data/friendStore");
 const { notifyParent } = require("../notify/parentActivity");
+const { textRejected } = require("../safety/usernamePolicy");
+const moderation = require("../data/moderationStore");
 
 router.get("/me", (req, res) => {
   res.json(friends.inboxFor(req.auth.email));
@@ -41,6 +43,34 @@ router.post("/request", validateBody(friendRequestSchema), async (req, res) => {
     meta: { to: target?.profile?.username || target?.profile?.name || "" }
   }).catch(() => {});
   res.status(201).json({ success: true, remaining: result.remaining });
+});
+
+router.post("/report", async (req, res) => {
+  const note = String(req.body?.note || "");
+  const rejected = textRejected(note);
+  if (rejected) return res.status(400).json({ error: rejected });
+  const target = friends.findByPublicId(req.body?.user_id);
+  if (!target || target.role !== "student") {
+    return res.status(404).json({ error: "Nu am găsit acest elev." });
+  }
+  const result = await moderation.createReport({
+    reporterEmail: req.auth.email,
+    targetId: friends.publicId(target.email),
+    reason: String(req.body?.reason || ""),
+    note
+  });
+  if (!result.ok) return res.status(result.status || 400).json({ error: result.error });
+  res.status(201).json({ message: result.message, reportId: result.report.id });
+});
+
+router.post("/block", (req, res) => {
+  const target = friends.findByPublicId(req.body?.user_id);
+  if (!target || target.role !== "student") {
+    return res.status(404).json({ error: "Nu am găsit acest elev." });
+  }
+  const result = friends.blockPair(req.auth.email, target.email);
+  if (!result.ok) return res.status(result.status || 400).json({ error: result.error });
+  res.json({ ok: true });
 });
 
 router.post("/respond", validateBody(friendRespondSchema), (req, res) => {

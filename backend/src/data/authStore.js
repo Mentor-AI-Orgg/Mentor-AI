@@ -262,6 +262,7 @@ function publicAccount(account) {
     role: account.role,
     ...safeProfile,
     consent: account.consent?.status || "pending",
+    mustRename: Boolean(account.mustRename),
     parentalConsentAt: account.parentalConsentAt || null,
     privacyAcceptedAt: account.privacyAcceptedAt || null,
     createdAt: account.createdAt
@@ -383,6 +384,32 @@ const PROFILE_STRING_FIELDS = [
   "language"
 ];
 
+function markMustRename(email) {
+  const account = findAccount(email);
+  if (!account) return false;
+  account.mustRename = true;
+  return true;
+}
+
+function hideFromLeaderboard(email) {
+  const account = findAccount(email);
+  if (!account) return false;
+  account.hiddenFromLeaderboard = true;
+  return true;
+}
+
+function suspendAccount(email, untilIso) {
+  const account = findAccount(email);
+  if (!account) return false;
+  account.suspendedUntil = untilIso;
+  return true;
+}
+
+function isSuspended(account, now = Date.now()) {
+  const until = Date.parse(account?.suspendedUntil || "");
+  return Number.isFinite(until) && until > now;
+}
+
 function updateProfile(email, patch = {}) {
   const account = findAccount(email);
   if (!account) return null;
@@ -451,6 +478,10 @@ module.exports = {
   findByUsername,
   authenticate,
   publicAccount,
+  markMustRename,
+  hideFromLeaderboard,
+  suspendAccount,
+  isSuspended,
   updateProfile,
   listAccounts,
   usernameTaken,

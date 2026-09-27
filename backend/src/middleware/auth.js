@@ -6,7 +6,7 @@
 // exclusiv din cookie-ul de sesiune, semnat server-side și imposibil de
 // falsificat din browser.
 
-const { getSession, findAccount, isConsentGranted } = require("../data/authStore");
+const { getSession, findAccount, isConsentGranted, isSuspended } = require("../data/authStore");
 const { getParentSession } = require("../data/consentStore");
 
 const SESSION_COOKIE = "s10_session";
@@ -80,12 +80,22 @@ function parentRequired(req, res, next) {
   next();
 }
 
+function isForcedRename(req) {
+  return req.method === "POST" && /\/account\/rename$/.test(String(req.originalUrl || "").split("?")[0]);
+}
+
 function studentRequired(req, res, next) {
   if (!req.auth) {
     return res.status(401).json({ error: "Autentificare necesară.", code: "unauthenticated" });
   }
   if (req.auth.role !== "student") {
     return res.status(403).json(STUDENTS_ONLY);
+  }
+  if (isSuspended(req.auth.account)) {
+    return res.status(403).json({ error: "Contul este suspendat temporar.", code: "suspended" });
+  }
+  if (req.auth.account.mustRename && !isForcedRename(req)) {
+    return res.status(409).json({ error: "Alege un alt nume de utilizator.", code: "username_required" });
   }
   next();
 }

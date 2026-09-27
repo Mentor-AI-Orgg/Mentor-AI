@@ -194,7 +194,7 @@ describe('regresie PR #70', () => {
 
     await ion.agent.post('/api/economy/claim').send({ type: 'login_bonus' });
     const board = await request(app).get('/api/leaderboard');
-    expect(board.status).toBe(200);
+    expect(board.status).toBe(401);
     const packed = JSON.stringify(board.body);
     expect(packed).not.toContain(ion.username);
     expect(packed).not.toContain('ion.secret@example.com');

@@ -2,6 +2,6 @@
 // + streak). Numele reale și emailurile nu ies pe acest endpoint: doar
 // pseudonimul (username ales sau „Elev ABCD”).
 
-const { listLeaderboardEntries } = require("./economyStore");
+const { listLeaderboardEntries, lessonsThisWeek } = require("./economyStore");
 
-module.exports = { listLeaderboardEntries };
+module.exports = { listLeaderboardEntries, lessonsThisWeek };

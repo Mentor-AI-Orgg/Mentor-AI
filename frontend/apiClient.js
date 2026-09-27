@@ -747,6 +747,63 @@ const MentorAPI = {
     }
   },
 
+  async reportStudent({ userId, reason, note }) {
+    try {
+      const data = await safeFetchJson('/api/friends/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, reason, note })
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async blockStudent(userId) {
+    try {
+      const data = await safeFetchJson('/api/friends/block', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId })
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async renameUsername(username) {
+    try {
+      const data = await safeFetchJson('/api/account/rename', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username })
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async moderationReports() {
+    try {
+      const data = await safeFetchJson('/api/moderation/reports');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async moderate(id, action) {
+    try {
+      const data = await safeFetchJson(`/api/moderation/reports/${encodeURIComponent(id)}/${action}`, { method: 'POST' });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async getLeaderboard(params = {}) {
     try {
       const qs = new URLSearchParams(params).toString();

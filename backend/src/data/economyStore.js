@@ -1171,6 +1171,19 @@ function listLeaderboardEntries({ limit = 10, currentEmail = '' } = {}) {
   return board;
 }
 
+function lessonsThisWeek(now = Date.now()) {
+  const cutoff = now - 7 * 24 * 60 * 60 * 1000;
+  let count = 0;
+  for (const user of USERS.values()) {
+    const log = Array.isArray(user.activityLog) ? user.activityLog : [];
+    count += log.filter(entry => {
+      const at = Date.parse(entry.createdAt || "");
+      return Number.isFinite(at) && at >= cutoff && (entry.type === "chapter_open" || entry.type === "session_complete" || entry.type === "chapter_test");
+    }).length;
+  }
+  return count;
+}
+
 function exportEconomyFor(email) {
   const key = String(email || '').trim().toLowerCase();
   const user = getUser(key);
@@ -1308,6 +1321,7 @@ module.exports = {
   getParentAnalytics,
   sendParentReview,
   listLeaderboardEntries,
+  lessonsThisWeek,
   getDeterministicJackpotDay,
   getMonthKey,
   getTodayKey,

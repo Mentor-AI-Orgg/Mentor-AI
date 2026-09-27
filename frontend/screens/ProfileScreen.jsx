@@ -4,6 +4,7 @@ import Leaderboard from '../components/Leaderboard.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { avatarIcon, itemEmoji } from '../appearance.js';
 import LevelBar from '../components/LevelBar.jsx';
+import ReportButton from '../components/ReportButton.jsx';
 
 const CLASSES = ['5', '6', '7', '8'];
 
@@ -14,7 +15,7 @@ const PASSWORD_RULES = [
   { key: 'special', label: 'Un caracter special', test: v => /[^A-Za-z0-9ĂÂÎȘȚăâîșț]/.test(v) }
 ];
 
-const FriendCard = ({ person, rank, actionLabel, onAction, disabled }) => (
+const FriendCard = ({ person, rank, actionLabel, onAction, disabled, onToast }) => (
   <article className={`friend-card ${rank != null ? 'has-rank' : ''}`}>
     {rank != null && <div className={`friend-rank ${rank <= 3 ? 'is-top' : ''}`}>{rank}</div>}
     <div className="friend-card-avatar">
@@ -29,6 +30,7 @@ const FriendCard = ({ person, rank, actionLabel, onAction, disabled }) => (
         {actionLabel}
       </button>
     )}
+    <ReportButton userId={person.id} onToast={onToast} />
   </article>
 );
 
@@ -425,7 +427,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
               <>
                 <h4 className="friend-subhead">Cereri primite</h4>
                 {friends.incoming.map(item => (
-                  <FriendCard key={item.id} person={item.from} actionLabel="Acceptă" onAction={() => respond(item.id, 'accept')} />
+                  <FriendCard key={item.id} person={item.from} actionLabel="Acceptă" onAction={() => respond(item.id, 'accept')} onToast={onToast} />
                 ))}
               </>
             )}
@@ -440,6 +442,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
                     rank={index + 1}
                     actionLabel="Profil"
                     onAction={() => openPeer(person.id)}
+                    onToast={onToast}
                   />
                 ))}
               </div>
@@ -465,6 +468,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
                 actionLabel={person.friends ? 'Prieten' : person.outgoing ? 'Trimisă' : person.incoming ? 'Acceptă' : 'Adaugă prieten'}
                 disabled={person.friends || person.outgoing}
                 onAction={() => (person.incoming ? respond(person.incomingRequestId, 'accept') : addFriend(person.id))}
+                onToast={onToast}
               />
             ))}
           </div>

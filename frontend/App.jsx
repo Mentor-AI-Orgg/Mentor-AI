@@ -15,6 +15,8 @@ import ResetPasswordScreen from './components/ResetPasswordScreen.jsx';
 import RegisterScreen from './components/RegisterScreen.jsx';
 import { ConsentWaitScreen, ConsentScreen, ParentScreen } from './components/ConsentScreens.jsx';
 import OnboardingScreen from './components/OnboardingScreen.jsx';
+import RenameScreen from './components/RenameScreen.jsx';
+import ModerationScreen from './screens/ModerationScreen.jsx';
 import { ProfessorScreen } from './components/StudyScreens.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
 
@@ -61,6 +63,7 @@ function applyAccount(user, prev = {}) {
     language: user.language || prev.language || 'ro',
     hasCompletedOnboarding: Boolean(user.hasCompletedOnboarding),
     consent: user.consent || prev.consent || 'pending',
+    mustRename: Boolean(user.mustRename),
     avatarId: user.avatarId !== undefined ? user.avatarId : prev.avatarId,
     themeId: user.themeId !== undefined ? user.themeId : prev.themeId,
     titleId: user.titleId !== undefined ? user.titleId : prev.titleId,
@@ -152,7 +155,7 @@ function AppShell({ userData, setUserData }) {
     });
   }, []);
 
-  const isParentLink = route => route.screen === 'reset' || route.screen === 'consent' || route.screen === 'parent';
+  const isParentLink = route => route.screen === 'reset' || route.screen === 'consent' || route.screen === 'parent' || route.screen === 'moderare';
 
   const handleSplashFinish = async () => {
     const route = parseAppHash(window.location.hash);
@@ -181,6 +184,12 @@ function AppShell({ userData, setUserData }) {
     const calendarError = params.get('calendar_error');
     if (checkout || calendarConnected || calendarError) {
       window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    if (session.user.mustRename) {
+      setScreen('rename');
+      writeHash('rename', {}, 'replace');
+      return;
     }
 
     if (session.user.consent !== 'granted') {
@@ -269,6 +278,13 @@ function AppShell({ userData, setUserData }) {
 
     const user = result.data.user || {};
     setUserData(prev => applyAccount(user, prev));
+
+    if (user.mustRename) {
+      setScreen('rename');
+      writeHash('rename', {}, 'replace');
+      showToast(t('toast.welcome'), 'success');
+      return { success: true };
+    }
 
     if (user.consent !== 'granted') {
       setScreen('consent-wait');
@@ -440,6 +456,11 @@ function AppShell({ userData, setUserData }) {
         historySilent.current = false;
         return;
       }
+      if (route.screen === 'moderare') {
+        setScreen('moderare');
+        historySilent.current = false;
+        return;
+      }
       if (loggedInRef.current) {
         if (route.kind === 'app') {
           handleNavigateRef.current(route.screen, route.extras || {});
@@ -492,6 +513,20 @@ function AppShell({ userData, setUserData }) {
         const token = parseAppHash(window.location.hash).extras?.token || '';
         return <ParentScreen token={token} />;
       }
+      case 'moderare':
+        return <ModerationScreen />;
+      case 'rename':
+        return (
+          <RenameScreen
+            onToast={showToast}
+            onDone={user => {
+              setUserData(prev => applyAccount({ ...user, mustRename: false }, prev));
+              setScreen('home');
+              setNavScreen('home');
+              writeHash('home', {}, 'replace');
+            }}
+          />
+        );
       case 'consent-wait':
         return (
           <ConsentWaitScreen

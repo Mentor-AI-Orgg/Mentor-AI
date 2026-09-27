@@ -174,6 +174,10 @@ router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) =
     return res.status(403).json(STUDENTS_ONLY);
   }
 
+  if (Date.parse(result.account.suspendedUntil || "") > Date.now()) {
+    return res.status(403).json({ error: "Contul este suspendat temporar.", code: "suspended" });
+  }
+
   if (!isConsentGranted(result.account)) {
     const firstPending = !result.account.consent;
     stripLegacyProfile(result.account);

@@ -20,6 +20,7 @@ const {
 const { SESSION_COOKIE } = require("../middleware/auth");
 const economyStore = require("../data/economyStore");
 const registry = require("../data/userDataRegistry");
+const { usernameError } = require("../safety/usernamePolicy");
 
 const SECRET_KEY = /password|salt|token|secret|hash/i;
 
@@ -48,7 +49,8 @@ function collectExport(email) {
     abonament: slices.subscriptions,
     acord: slices.consent,
     evaluare: slices.evaluare,
-    fotografii: slices.fotografii
+    fotografii: slices.fotografii,
+    moderare: slices.moderare
   });
 }
 
@@ -78,6 +80,26 @@ function eraseAccount(email) {
     : Promise.resolve(null);
   return notice.then(() => ({ erased: true }));
 }
+
+router.post("/rename", (req, res) => {
+  if (!req.auth.account.mustRename) {
+    return res.status(403).json({ error: "Nu ți s-a cerut un nume nou." });
+  }
+  const username = String(req.body?.username || "").trim();
+  const error = usernameError(username);
+  if (error) return res.status(400).json({ error });
+  if (usernameTaken(username, req.auth.email)) {
+    return res.status(409).json({ error: "Alege un alt nume de utilizator." });
+  }
+  req.auth.account.profile.username = username;
+  req.auth.account.mustRename = false;
+  const user = economyStore.getUser(req.auth.email);
+  if (user) {
+    user.preferences = user.preferences || {};
+    user.preferences.username = username;
+  }
+  res.json({ success: true, user: publicAccount(req.auth.account) });
+});
 
 router.get("/export", (req, res) => {
   const payload = collectExport(req.auth.email);

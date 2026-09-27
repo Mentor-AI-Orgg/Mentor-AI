@@ -13,6 +13,7 @@ const SETTINGS = new Map();
 const FRIENDS = new Map();
 const REQUESTS = [];
 const SENDS = new Map();
+const BLOCKS = new Set();
 
 const DAILY_REQUEST_LIMIT = 10;
 
@@ -40,6 +41,31 @@ function friendList(email) {
   const key = normalizeEmail(email);
   if (!FRIENDS.has(key)) FRIENDS.set(key, []);
   return FRIENDS.get(key);
+}
+
+function blockKey(a, b) {
+  return [normalizeEmail(a), normalizeEmail(b)].sort().join("|");
+}
+
+function isBlocked(a, b) {
+  if (!a || !b) return false;
+  return BLOCKS.has(blockKey(a, b));
+}
+
+function blockPair(a, b) {
+  const from = normalizeEmail(a);
+  const to = normalizeEmail(b);
+  if (!from || !to || from === to) return { ok: false, error: "Nu te poți bloca pe tine.", status: 400 };
+  BLOCKS.add(blockKey(from, to));
+  FRIENDS.set(from, friendList(from).filter(item => item !== to));
+  FRIENDS.set(to, friendList(to).filter(item => item !== from));
+  for (let i = REQUESTS.length - 1; i >= 0; i -= 1) {
+    const item = REQUESTS[i];
+    if ((item.from === from && item.to === to) || (item.from === to && item.to === from)) {
+      REQUESTS.splice(i, 1);
+    }
+  }
+  return { ok: true };
 }
 
 function areFriends(a, b) {
@@ -75,6 +101,7 @@ function publicCard(account, viewerEmail = "") {
   const settings = getSettings(account.email);
   const viewer = normalizeEmail(viewerEmail);
   const self = viewer && viewer === account.email;
+  if (viewer && !self && isBlocked(viewer, account.email)) return null;
   const friend = Boolean(viewer && areFriends(viewer, account.email));
   if (settings.profilePrivate && !self && !friend) {
     const handle = account.profile.username || "Elev";
@@ -132,7 +159,7 @@ function searchStudents(query, viewerEmail) {
   if (q.length < 2) return [];
   const viewer = normalizeEmail(viewerEmail);
   return listAccounts()
-    .filter(account => account.role === "student" && account.email !== viewer)
+    .filter(account => account.role === "student" && account.email !== viewer && !isBlocked(viewer, account.email))
     .filter(account => String(account.profile?.username || "").toLowerCase() === q)
     .slice(0, 8)
     .map(account => publicCard(account, viewer));
@@ -144,6 +171,7 @@ function sendRequest(fromEmail, toPublicId) {
   if (!from || from.role !== "student") return { ok: false, error: "Doar elevii pot trimite cereri.", status: 403 };
   if (!to || to.role !== "student") return { ok: false, error: "Nu am găsit acest elev.", status: 404 };
   if (to.email === from.email) return { ok: false, error: "Nu te poți adăuga pe tine.", status: 400 };
+  if (isBlocked(from.email, to.email)) return { ok: false, error: "Nu puteți comunica.", status: 403 };
   if (areFriends(from.email, to.email)) return { ok: false, error: "Sunteți deja prieteni.", status: 400 };
 
   const settings = getSettings(to.email);
@@ -196,11 +224,13 @@ function inboxFor(email) {
   const key = normalizeEmail(email);
   const incoming = REQUESTS
     .filter(item => item.status === "pending" && item.to === key)
-    .map(item => ({ id: item.id, at: item.at, from: publicCard(findAccount(item.from), key) }));
+    .map(item => ({ id: item.id, at: item.at, from: publicCard(findAccount(item.from), key) }))
+    .filter(item => item.from);
   const outgoing = REQUESTS
     .filter(item => item.status === "pending" && item.from === key)
     .map(item => ({ id: item.id, at: item.at, to: publicCard(findAccount(item.to), key) }));
   const friends = friendList(key)
+    .filter(other => !isBlocked(key, other))
     .map(other => publicCard(findAccount(other), key))
     .filter(Boolean)
     .sort((a, b) => (Number(b.xp) || 0) - (Number(a.xp) || 0) || String(a.name || '').localeCompare(String(b.name || ''), 'ro'));
@@ -253,6 +283,9 @@ function eraseFriendsFor(email) {
     if (REQUESTS[i].from === key || REQUESTS[i].to === key) REQUESTS.splice(i, 1);
   }
   SENDS.delete(key);
+  for (const pair of [...BLOCKS]) {
+    if (pair.split("|").includes(key)) BLOCKS.delete(pair);
+  }
 }
 
 require("./userDataRegistry").register("friends", {
@@ -265,13 +298,16 @@ persistence.register("friends", {
     settings: persistence.mapToObject(SETTINGS),
     friends: persistence.mapToObject(FRIENDS),
     requests: REQUESTS.slice(),
-    sends: persistence.mapToObject(SENDS)
+    sends: persistence.mapToObject(SENDS),
+    blocks: [...BLOCKS]
   }),
   restore: data => {
     persistence.restoreMap(SETTINGS, data?.settings);
     persistence.restoreMap(FRIENDS, data?.friends);
     REQUESTS.splice(0, REQUESTS.length, ...(Array.isArray(data?.requests) ? data.requests : []));
     persistence.restoreMap(SENDS, data?.sends);
+    BLOCKS.clear();
+    (Array.isArray(data?.blocks) ? data.blocks : []).forEach(pair => BLOCKS.add(String(pair)));
   }
 });
 
@@ -287,5 +323,7 @@ module.exports = {
   inboxFor,
   findByPublicId,
   isPrivatePublicId,
-  areFriends
+  areFriends,
+  isBlocked,
+  blockPair
 };

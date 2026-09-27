@@ -45,4 +45,12 @@ function usernameError(value) {
   return "";
 }
 
-module.exports = { usernameError, SHAPE_MESSAGE, BLOCKED_MESSAGE };
+function textRejected(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (raw.length > 200) return "Textul are cel mult 200 de caractere.";
+  if (blocked(raw)) return BLOCKED_MESSAGE;
+  return "";
+}
+
+module.exports = { usernameError, textRejected, SHAPE_MESSAGE, BLOCKED_MESSAGE };

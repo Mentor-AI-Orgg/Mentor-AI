@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
+import ReportButton from './ReportButton.jsx';
 
 const LeaderboardSkeleton = () => (
   <div className="leaderboard-list" aria-hidden="true">
@@ -29,6 +30,7 @@ const LeaderboardRow = ({ entry }) => (
       <small>{entry.class || `Nivel ${entry.level || 1}`} · streak {entry.streak || 0}z</small>
     </div>
     <div className="leaderboard-xp"><i className="fas fa-bolt" /> {entry.xp?.toLocaleString?.('ro-RO') || entry.xp}</div>
+    {!entry.isCurrentUser && <ReportButton userId={entry.id} />}
   </div>
 );
 

@@ -18,6 +18,7 @@ const authRoute = require("./routes/auth");
 const linksRoute = require("./routes/links");
 const accountRoute = require("./routes/account");
 const friendsRoute = require("./routes/friends");
+const moderationRoute = require("./routes/moderation");
 const { spec: openapiSpec } = require("./openapi");
 const { basicAuth } = require("./middleware/basicAuth");
 const { comingSoon } = require("./middleware/comingSoon");
@@ -110,6 +111,7 @@ function createApp(options = {}) {
     app.use(`${prefix}/parent`, parentRoute);
     app.use(`${prefix}/health`, healthRoute);
     app.use(`${prefix}/leaderboard`, leaderboardRoute);
+    app.use(`${prefix}/moderation`, moderationRoute);
     app.use(`${prefix}/curriculum`, curriculumRoute);
 
     const studentOnly = [authRequired, studentRequired];

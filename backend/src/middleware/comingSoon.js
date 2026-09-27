@@ -161,8 +161,16 @@ function comingSoon() {
   };
 }
 
+function creatorRequired(req, res, next) {
+  if (!hasPreviewAccess(req)) {
+    return res.status(403).json({ error: "Acces de creator necesar.", code: "creator_required" });
+  }
+  next();
+}
+
 module.exports = {
   comingSoon,
+  creatorRequired,
   isSiteClosed,
   PREVIEW_COOKIE,
   previewToken,
