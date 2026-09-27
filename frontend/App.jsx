@@ -20,6 +20,7 @@ import RenameScreen from './components/RenameScreen.jsx';
 import ModerationScreen from './screens/ModerationScreen.jsx';
 import { ProfessorScreen } from './components/StudyScreens.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
+import MistakesScreen from './screens/MistakesScreen.jsx';
 import Mascota from './components/mascot/Mascota.jsx';
 import MascotLayer from './components/mascot/MascotLayer.jsx';
 
@@ -568,6 +569,8 @@ function AppShell({ userData, setUserData }) {
         );
       case 'home':
         return <HomeScreen userData={userData} onNavigate={handleNavigate} />;
+      case 'caiet':
+        return <MistakesScreen onNavigate={handleNavigate} />;
       case 'professor':
         return <ProfessorScreen userData={userData} studyFocus={studyFocus} onProgress={syncEconomy} />;
       case 'learn':

@@ -109,6 +109,8 @@ function ensureUser(userId, patch = {}) {
   if (!current.practiceTests) current.practiceTests = {};
   if (!current.enPapers) current.enPapers = {};
   if (!current.enPhotoDay || typeof current.enPhotoDay !== 'object') current.enPhotoDay = { date: '', used: 0 };
+  if (!current.mistakeBoxes || typeof current.mistakeBoxes !== 'object') current.mistakeBoxes = {};
+  if (!current.cardBoxes || typeof current.cardBoxes !== 'object') current.cardBoxes = {};
   if (!Array.isArray(current.streakDays)) current.streakDays = [];
   if (!current.lastAnalogy) current.lastAnalogy = {};
   if (!Array.isArray(current.skillLog)) current.skillLog = [];
@@ -1209,7 +1211,12 @@ function exportEconomyFor(email) {
       la: entry.createdAt,
       cantitate: entry.amount
     })),
-    cumparaturi: cumparaturi.filter(Boolean)
+    cumparaturi: cumparaturi.filter(Boolean),
+    greseli: require("./mistakeBook").exportRows(user),
+    carduri: Object.entries(user.cardBoxes || {}).map(([id, card]) => ({
+      id,
+      la: card.due || null
+    }))
   };
 }
 

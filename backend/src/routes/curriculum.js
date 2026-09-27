@@ -85,6 +85,23 @@ router.post("/en/papers/finish", authRequired, studentRequired, async (req, res)
     });
   }
   const score = scoreAttempt(paperId, answers);
+  if (score) {
+    const { ensureUser } = require("../data/economyStore");
+    const { noteCards } = require("../data/mistakeBook");
+    const recapId = paper.subject === "romana" ? "strategie" : "proba";
+    noteCards(ensureUser(req.auth.email), (score.items || []).map(item => ({
+      id: `${paperId}:${item.block}:${item.n}`,
+      ok: item.ok,
+      found: true,
+      skipped: !String(item.given || item.text || item.letter || "").trim(),
+      point: item.prompt
+    })), {
+      lesson: paper.title,
+      lessonId: recapId,
+      subject: paper.subject,
+      grade: "8"
+    });
+  }
   if (!score) return res.status(404).json({ error: "Modelul nu a fost găsit." });
   const session = finishPaper(req.auth.email, paperId, score, answers);
   recordProgress({

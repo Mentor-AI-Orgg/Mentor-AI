@@ -6,6 +6,8 @@ const { checkExercise, checkMany, scoreToGrade, encouragementFor } = require("..
 const { findQuestion } = require("../data/practiceBank");
 const { judgeAnswer } = require("../grading/answerJudge");
 const { ensureUser, getTodayKey, recordProgress, recordSkillReview, getSkillHistory } = require("../data/economyStore");
+const { noteCards } = require("../data/mistakeBook");
+const { rate } = require("../data/spacedRepetition");
 
 function trimPracticeIds(ids) {
   const list = (ids || []).map(String);
@@ -86,6 +88,12 @@ router.post("/check", (req, res) => {
   if (!result.found) {
     return res.status(404).json({ error: "Exercițiul nu a fost găsit." });
   }
+  const user = ensureUser(req.auth.email);
+  if (!user.cardBoxes) user.cardBoxes = {};
+  const next = rate(user.cardBoxes[cardId] || {}, result.ok);
+  if (next.retired) delete user.cardBoxes[cardId];
+  else user.cardBoxes[cardId] = { box: next.box, streak: next.streak, due: next.due };
+  if (!result.ok) noteCards(user, [{ id: cardId, ok: false, found: true, point: result.point }], { lesson: result.point || cardId });
   res.json({
     ok: result.ok,
     credit: Number(result.credit) || 0,
@@ -205,6 +213,13 @@ router.post("/finish", async (req, res) => {
     }
   });
     user.practiceSeen[pack.key].questionIds = trimPracticeIds(user.practiceSeen[pack.key].questionIds);
+
+  noteCards(user, items, {
+    lesson: title || chapterId || "Lecție",
+    lessonId: chapterId,
+    subject,
+    grade: classLevel
+  });
 
   const review = recordSkillReview(req.auth.email, {
     kind: isTest ? "test" : "flashcards",

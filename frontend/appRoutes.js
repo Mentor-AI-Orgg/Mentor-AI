@@ -30,6 +30,7 @@ export function parseAppHash(hash) {
   if (head === 'magazin' || head === 'shop') return { kind: 'app', screen: 'shop', navScreen: 'shop' };
   if (head === 'profil' || head === 'profile') return { kind: 'app', screen: 'profile', navScreen: 'profile' };
   if (head === 'calendar') return { kind: 'app', screen: 'calendar', navScreen: 'calendar' };
+  if (head === 'caiet') return { kind: 'app', screen: 'caiet', navScreen: 'home' };
 
   if (head === 'en') {
     return {
@@ -85,6 +86,8 @@ export function hashForRoute(screen, extras = {}) {
       return '#/profil';
     case 'calendar':
       return '#/calendar';
+    case 'caiet':
+      return '#/caiet';
     case 'learn':
       if (extras.track === 'en') {
         return `#/en/${extras.subject || 'matematica'}`;
