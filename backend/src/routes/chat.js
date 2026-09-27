@@ -28,15 +28,10 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
 
   if (safety.kind === "crisis") {
     try {
-      const { notifyParentSoon } = require("../notify/parentActivity");
-      notifyParentSoon({
-        studentEmail: req.auth.email,
-        type: "crisis_help",
-        note: "A primit numerele de ajutor 116 111 și 112. Textul mesajului nu este inclus.",
-        meta: { subject, grade: class_level }
-      });
+      const { bumpCrisis } = require("../safety/crisisCounter");
+      bumpCrisis();
     } catch {
-      // ajutorul către copil nu depinde de email
+      // ajutorul către copil nu depinde de contor
     }
     return res.json({
       response: CRISIS_HELP_TEXT[lang] || CRISIS_HELP_TEXT.ro,

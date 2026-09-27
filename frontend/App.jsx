@@ -1,6 +1,6 @@
 import { Component, lazy, Suspense, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { MentorAPI } from './apiClient.js';
-import { STORAGE_KEY, defaultUserData } from './userData.js';
+import { STORAGE_KEY, defaultUserData, toStoredUser, cleanStoredUser } from './userData.js';
 import { applyProgress, applyTheme } from './appearance.js';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
 import { hashForRoute, parseAppHash } from './appRoutes.js';
@@ -88,7 +88,7 @@ function AppShell({ userData, setUserData }) {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toStoredUser(userData)));
   }, [userData]);
 
   useEffect(() => {
@@ -344,14 +344,6 @@ function AppShell({ userData, setUserData }) {
   const onboardingSteps = useMemo(() => [
     {
       step: 1,
-      title: t('onboarding.step1.title'),
-      desc: t('onboarding.step1.desc'),
-      inputKey: 'name',
-      options: [],
-      progress: 20
-    },
-    {
-      step: 2,
       title: t('onboarding.step2.title'),
       desc: t('onboarding.step2.desc'),
       inputKey: 'class',
@@ -361,10 +353,10 @@ function AppShell({ userData, setUserData }) {
         { icon: 'fa-compass', label: t('onboarding.step2.grade7'), value: '7' },
         { icon: 'fa-flag-checkered', label: t('onboarding.step2.grade8'), value: '8' }
       ],
-      progress: 50
+      progress: 40
     },
     {
-      step: 3,
+      step: 2,
       title: t('onboarding.step4.title'),
       desc: t('onboarding.step4.desc'),
       inputKey: 'exam',
@@ -372,10 +364,10 @@ function AppShell({ userData, setUserData }) {
         { icon: 'fa-book-open', label: t('onboarding.step4.daily'), value: 'daily' },
         { icon: 'fa-clipboard-check', label: t('onboarding.step4.evaluare'), value: 'evaluare' }
       ],
-      progress: 75
+      progress: 70
     },
     {
-      step: 4,
+      step: 3,
       title: t('onboarding.step5.title'),
       desc: t('onboarding.step5.desc'),
       inputKey: 'dailyHours',
@@ -524,36 +516,7 @@ function AppShell({ userData, setUserData }) {
           />
         );
       case 'onboarding':
-        return currentOnboarding.step === 1 ? (
-          <main className="onboarding-page animate-fadeIn">
-            <div className="onboarding-topline"><span>{t('onboarding.setup')}</span><span>01 / 04</span></div>
-            <div className="onboarding-progress"><div style={{ width: currentOnboarding.progress + '%' }}></div></div>
-            <div className="onboarding-copy">
-              <div className="eyebrow">{t('onboarding.stepOf', { step: 1, total: 4 })}</div>
-              <h1 className="display-font onboarding-title">{currentOnboarding.title}</h1>
-              <p className="form-subtitle">{currentOnboarding.desc}</p>
-            </div>
-            <input
-              type="text"
-              value={onboardingData.name || ''}
-              onChange={e => setOnboardingData({ ...onboardingData, name: e.target.value })}
-              className="field form-input"
-              placeholder={t('onboarding.namePlaceholder')}
-            />
-            <div className="onboarding-actions"><div className="onboarding-action-row"><button
-                onClick={() => {
-                  if (!onboardingData.name) {
-                    showToast(t('onboarding.nameRequired'), 'warning');
-                    return;
-                  }
-                  handleOnboardingNext();
-                }}
-                className="accent-button onboarding-next">
-                {t('common.continue')} <i className="fas fa-arrow-right"></i>
-              </button>
-            </div></div>
-          </main>
-        ) : (
+        return (
           <OnboardingScreen
             step={currentOnboarding.step}
             total={onboardingSteps.length}
@@ -648,7 +611,7 @@ export default function App() {
   const [userData, setUserData] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? { ...defaultUserData, ...JSON.parse(saved) } : defaultUserData;
+      return saved ? cleanStoredUser(JSON.parse(saved)) : defaultUserData;
     } catch {
       return defaultUserData;
     }

@@ -1,33 +1,24 @@
-// Email către părintele declarat la înregistrare. Părintele nu are cont;
-// primește doar un mesaj scurt despre ce a făcut elevul.
-//
-// Fără SMTP, livrarea rămâne mock (ca restul integrărilor). Eșecul de
-// email nu trebuie să strice cererea elevului.
+// Activitatea copilului se adună și pleacă cel mult un rezumat pe zi.
+// Nu copiem mesaje, răspunsuri sau câmpul note trimis de browser.
 
-const { findAccount, isConsentGranted } = require("../data/authStore");
-const { deliverMessage, smtpConfigured } = require("./deliver");
+const { findAccount, isConsentGranted, listAccounts } = require("../data/authStore");
+const { getGuide } = require("../data/gimnaziuGuide");
+const { publicPaperById } = require("../data/enPaperFactory");
 
 const LABELS = {
-  account_created: "și-a creat contul",
-  login: "s-a conectat",
-  mentor_message: "a întrebat mentorul",
-  learn_module: "a lucrat un modul de învățare",
-  flashcards_generate: "a generat flashcarduri",
-  flashcards_result: "a rezolvat flashcarduri",
-  ai_detect: "a folosit detectorul demo",
-  focus_session: "a terminat o sesiune de focus",
-  claim: "a revendicat o recompensă",
-  buy: "a cumpărat din magazin",
-  calendar_event: "a adăugat un eveniment în calendar",
-  crisis_help: "a primit numerele de ajutor 116 111 și 112",
-  checkout: "folosește mentorul gratuit",
-  friend_request: "a trimis o cerere de prietenie",
-  chapter_test: "a finalizat un test de capitol",
-  en_exam: "a finalizat un test Evaluare Națională",
-  test_result: "a finalizat un test"
+  learn_module: "lecție",
+  chapter_open: "lecție",
+  flashcards_generate: "lecție",
+  flashcards_result: "lecție",
+  flashcard_known: "lecție",
+  focus_session: "lecție",
+  session_complete: "lecție",
+  save_session: "lecție",
+  chapter_test: "test",
+  en_exam: "test",
+  test_result: "test"
 };
 
-const TEST_TYPES = new Set(["chapter_test", "en_exam", "test_result"]);
 const ALLOWED_TYPES = new Set([
   "account_created",
   "login",
@@ -49,191 +40,202 @@ const ALLOWED_TYPES = new Set([
   "buy",
   "crisis_help"
 ]);
-const INDIVIDUAL_CAP = 20;
-const BATCH_SIZE = 8;
 
-function clip(text, n) {
-  const value = String(text || "").replace(/\s+/g, " ").trim();
-  if (value.length <= n) return value;
-  return `${value.slice(0, Math.max(0, n - 1))}…`;
+const QUIET = new Set(["login", "mentor_message", "crisis_help", "account_created"]);
+const TEST_TYPES = new Set(["chapter_test", "en_exam", "test_result"]);
+const LESSON_TYPES = new Set([
+  "learn_module",
+  "chapter_open",
+  "flashcards_generate",
+  "flashcards_result",
+  "flashcard_known",
+  "focus_session",
+  "session_complete",
+  "save_session"
+]);
+const DAILY_CAP = 3;
+const SENT = {};
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
-function formatDuration(ms) {
-  const totalSec = Math.max(0, Math.round(Number(ms) || 0) / 1000);
-  const hours = Math.floor(totalSec / 3600);
-  const minutes = Math.floor((totalSec % 3600) / 60);
-  const seconds = Math.floor(totalSec % 60);
-  if (hours > 0) {
-    return `${hours} ${hours === 1 ? "oră" : "ore"}${minutes ? ` ${minutes} min` : ""}`;
-  }
-  if (minutes > 0) {
-    return `${minutes} min${seconds ? ` ${seconds} s` : ""}`;
-  }
-  return `${seconds} s`;
-}
-
-function testEmailLines({ name, studentEmail, type, note, meta }) {
-  const title = meta.title || note || (type === "en_exam" ? "Test Evaluare Națională" : "Test");
-  const grade = meta.gradeNote != null ? meta.gradeNote : meta.grade;
-  const answers = Array.isArray(meta.answers) ? meta.answers : [];
-  const answerLines = answers.slice(0, 40).map((row, index) => {
-    const given = row.letter || row.text || row.given || "—";
-    const verdict = String(row.verdict || "");
-    let mark = "";
-    if (verdict === "equivalent") mark = " (corect, altfel spus)";
-    else if (verdict === "partial") mark = " (jumătate)";
-    else if (verdict === "near") mark = " (aproape, nepunctat)";
-    else if (verdict === "empty") mark = " (fără răspuns)";
-    else if (row.ok === true) mark = " (corect)";
-    else if (row.ok === false) mark = " (nepunctat)";
-    const why = row.teacher || row.explain ? `\n   De ce: ${clip(row.teacher || row.explain, 180)}` : "";
-    return `${index + 1}. ${clip(row.prompt, 90)}\n   Răspunsul copilului: ${clip(given, 220)}${mark}${why}`;
+function bucharestParts(now = new Date()) {
+  const fmt = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Bucharest",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    weekday: "short",
+    hourCycle: "h23"
   });
-  return [
-    "Salut,",
-    "",
-    `${name} (${studentEmail}) a finalizat un test în Mentor AI.`,
-    `Test: ${title}`,
-    meta.subject ? `Materie: ${meta.subject}` : "",
-    grade != null && grade !== "" ? `Nota: ${grade}` : "",
-    `Durată: ${formatDuration(meta.durationMs || meta.duration_ms || 0)}`,
-    "",
-    "Ce a răspuns copilul:",
-    answerLines.length ? answerLines.join("\n") : "(fără răspunsuri salvate)",
-    "",
-    "Nu ai nevoie de un cont în aplicație. Primești aceste mesaje pe emailul dat la înregistrarea copilului.",
-    smtpConfigured() ? "" : "Notă: serverul nu are SMTP configurat, deci mesajul rămâne în jurnalul de livrare (mock)."
-  ].filter(line => line !== "");
+  const parts = Object.fromEntries(fmt.formatToParts(now).map(part => [part.type, part.value]));
+  return {
+    date: `${parts.year}-${parts.month}-${parts.day}`,
+    hour: Number(parts.hour),
+    minute: Number(parts.minute),
+    weekday: parts.weekday
+  };
 }
 
-function activityLine(type, note) {
-  const action = LABELS[type] || "a făcut ceva în aplicație";
-  const detail = clip(note, 180);
-  return detail ? `${action}: ${detail}` : action;
+function numberOrNull(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
 }
 
-async function sendParentMail({ studentEmail, parentEmail, subject, body, isTest }) {
-  const { pushNotification } = require("../data/economyStore");
-  const delivery = await deliverMessage({ to: parentEmail, subject, body, channel: "email" });
-  if (isTest || subject.includes("rezumat")) {
-    pushNotification(studentEmail, parentEmail, subject, body, "email", delivery);
+function catalogTitle(meta = {}) {
+  const chapterId = meta.chapterId || meta.chapter_id;
+  if (chapterId) {
+    try {
+      const guide = getGuide(meta.subject || "matematica", meta.grade || meta.class_level || meta.class || 5);
+      const unit = (guide.units || []).find(item => item.id === chapterId);
+      if (unit?.title) return unit.title;
+    } catch {
+      /* titlul rămâne gol dacă materia nu e în catalog */
+    }
   }
-  return delivery;
+  if (meta.paperId) {
+    const paper = publicPaperById(meta.paperId);
+    if (paper?.title) return paper.title;
+  }
+  return "";
 }
 
-async function notifyParent({ studentEmail, type, note = "", meta = {} }) {
+function reserveOutbound(parentEmail, date) {
+  const key = String(parentEmail || "").trim().toLowerCase();
+  if (!key) return false;
+  const row = SENT[key];
+  if (!row || row.date !== date) SENT[key] = { date, count: 0 };
+  if (SENT[key].count >= DAILY_CAP) return false;
+  SENT[key].count += 1;
+  return true;
+}
+
+function outboundCount(parentEmail, date) {
+  const row = SENT[String(parentEmail || "").trim().toLowerCase()];
+  if (!row || row.date !== date) return 0;
+  return row.count;
+}
+
+async function notifyParent({ studentEmail, type, meta = {} }) {
   const account = findAccount(studentEmail);
-  if (!account || account.role !== "student") {
-    return { skipped: true, reason: "not_student" };
-  }
-  if (!isConsentGranted(account)) {
-    return { skipped: true, reason: "consent_pending" };
-  }
+  if (!account || account.role !== "student") return { skipped: true, reason: "not_student" };
+  if (type === "crisis_help") return { skipped: true, reason: "crisis_no_email" };
+  if (!isConsentGranted(account)) return { skipped: true, reason: "consent_pending" };
+  if (!account.profile?.parentEmail) return { skipped: true, reason: "no_parent" };
+  if (!ALLOWED_TYPES.has(type)) return { skipped: true, reason: "unknown_type" };
+  if (QUIET.has(type)) return { skipped: true, reason: "not_emailed" };
+  if (account.profile.parentEmails === "off") return { skipped: true, reason: "emails_off" };
 
-  const parentEmail = account.profile && account.profile.parentEmail;
-  if (!parentEmail) {
-    return { skipped: true, reason: "no_parent" };
-  }
-
-  if (!ALLOWED_TYPES.has(type)) {
-    return { skipped: true, reason: "unknown_type" };
-  }
-
-  const { getUser, ensureUser, getTodayKey } = require("../data/economyStore");
+  const { getUser, ensureUser } = require("../data/economyStore");
   const economy = getUser(studentEmail) || ensureUser(studentEmail);
-  const today = getTodayKey();
-  if (!economy.parentNotify || economy.parentNotify.date !== today) {
-    const leftover = economy.parentNotify?.pending || [];
-    economy.parentNotify = {
-      date: today,
-      sent: 0,
-      pending: [],
-      loginDate: null,
-      reviewDate: economy.parentNotify?.reviewDate || null,
-      carry: leftover
-    };
-  }
-  if (!Array.isArray(economy.parentLog)) economy.parentLog = [];
-  economy.parentLog.push({
+  if (!Array.isArray(economy.digestEvents)) economy.digestEvents = [];
+  const minutes = numberOrNull(meta.minutes) ?? (
+    numberOrNull(meta.durationMs) != null ? Math.max(0, Math.round(numberOrNull(meta.durationMs) / 60000)) : 0
+  );
+  economy.digestEvents.push({
     at: new Date().toISOString(),
     type,
-    note: clip(note, 180)
+    title: catalogTitle(meta),
+    correct: numberOrNull(meta.correct ?? meta.score),
+    total: numberOrNull(meta.total),
+    minutes
   });
-  if (economy.parentLog.length > 300) economy.parentLog.splice(0, economy.parentLog.length - 300);
+  if (economy.digestEvents.length > 400) economy.digestEvents.splice(0, economy.digestEvents.length - 400);
+  return {
+    skipped: false,
+    reason: "digest",
+    delivery: { mocked: true, deferred: true, delivered: false }
+  };
+}
 
-  if (type === "login" && economy.parentNotify.loginDate === today) {
-    return { skipped: true, reason: "login_already_today", logged: true };
-  }
-  if (type === "login") economy.parentNotify.loginDate = today;
+function notifyParentSoon() {
+  return { skipped: true, reason: "not_emailed" };
+}
 
-  const name = (account.profile && (account.profile.name || account.profile.username)) || studentEmail;
-  const isTest = TEST_TYPES.has(type);
-  const carry = economy.parentNotify.carry || [];
-  economy.parentNotify.carry = [];
-  const line = activityLine(type, type === "crisis_help" ? note : note);
-  const subjectBase = isTest
-    ? `Mentor AI: ${name} — nota ${meta.gradeNote != null ? meta.gradeNote : meta.grade || "—"} la ${meta.title || note || "test"}`
-    : `Mentor AI: ${name} ${LABELS[type] || "a făcut o activitate"}`;
+function digestLine(events, username) {
+  const lessons = events.filter(event => LESSON_TYPES.has(event.type)).length;
+  const tests = events.filter(event => TEST_TYPES.has(event.type));
+  const minutes = events.reduce((sum, event) => sum + (Number(event.minutes) || 0), 0);
+  const testBits = tests.map(event => {
+    const title = event.title || "Test";
+    if (event.correct != null && event.total != null) return `${title}: ${event.correct} din ${event.total}`;
+    return title;
+  });
+  const bits = [`${lessons} ${lessons === 1 ? "lecție" : "lecții"}`];
+  if (tests.length) bits.push(`${tests.length} ${tests.length === 1 ? "test" : "teste"}${testBits.length ? ` (${testBits.join(", ")})` : ""}`);
+  return `Azi, ${username} a lucrat ${minutes} ${minutes === 1 ? "minut" : "minute"}: ${bits.join(", ")}.`;
+}
 
-  if (economy.parentNotify.sent >= INDIVIDUAL_CAP) {
-    economy.parentNotify.pending.push(line);
-    if (economy.parentNotify.pending.length < BATCH_SIZE && !carry.length) {
-      return { skipped: false, reason: "batched", logged: true, parentEmail };
-    }
-    const batch = economy.parentNotify.pending.splice(0, economy.parentNotify.pending.length);
+async function sendDueDigests(now = new Date(), { force = false } = {}) {
+  const clock = bucharestParts(now);
+  if (!force && clock.hour < 19) return [];
+  const { issueUnsubscribeToken } = require("../data/consentStore");
+  const { publicBaseUrl } = require("../publicUrl");
+  const sent = [];
+  for (const account of listAccounts()) {
+    if (account.role !== "student" || !isConsentGranted(account)) continue;
+    const freq = account.profile.parentEmails || "daily";
+    if (freq === "off") continue;
+    if (freq === "weekly" && clock.weekday !== "Sun" && !force) continue;
+    const { getUser } = require("../data/economyStore");
+    const economy = getUser(account.email);
+    if (!economy || !economy.digestEvents?.length) continue;
+    if (economy.digestSentOn === clock.date) continue;
+    const parentEmail = account.profile.parentEmail;
+    if (!reserveOutbound(parentEmail, clock.date)) continue;
+    const username = escapeHtml(account.profile.username || "copilul");
+    const events = economy.digestEvents.map(event => ({
+      ...event,
+      title: escapeHtml(event.title || "")
+    }));
+    const token = issueUnsubscribeToken(account.email);
+    const base = publicBaseUrl({ headers: {}, protocol: "https" });
     const body = [
-      "Salut,",
-      "",
-      `${name} a mai făcut aceste lucruri în Mentor AI:`,
-      ...carry.map(item => `- ${item}`),
-      ...batch.map(item => `- ${item}`),
-      "",
-      "Primești fiecare activitate. După 20 de mesaje într-o zi, restul pleacă grupat, ca să nu umple căsuța."
+      digestLine(events, username),
+      `Zona de părinte: ${base}/#/parinte`,
+      `Fără emailuri: ${base}/#/emailuri/${token}`
     ].join("\n");
-    const delivery = await sendParentMail({
-      studentEmail,
-      parentEmail,
-      name,
-      subject: `Mentor AI: ${name} — rezumat de activitate`,
+    const subject = "Rezumatul zilei pe Sunt de 10";
+    const delivery = await require("./deliver").deliverMessage({
+      to: parentEmail,
+      subject,
       body,
-      isTest: false
+      channel: "email"
     });
-    return { skipped: false, parentEmail, subject: `Mentor AI: ${name} — rezumat de activitate`, body, delivery, logged: true };
+    economy.digestSentOn = clock.date;
+    if (freq === "daily") economy.digestEvents = [];
+    sent.push({ to: parentEmail, subject, body, delivery, username: account.profile.username });
   }
-
-  economy.parentNotify.sent += 1;
-  const detail = type === "crisis_help"
-    ? "A primit numerele de ajutor. Textul scris de copil nu este copiat în acest mesaj."
-    : clip(note, 280);
-  const body = isTest
-    ? testEmailLines({ name, studentEmail, type, note, meta }).join("\n")
-    : [
-      "Salut,",
-      "",
-      `${name} (${studentEmail}) ${LABELS[type] || "a făcut o activitate"} în Mentor AI.`,
-      detail ? `Detaliu: ${detail}` : "",
-      carry.length ? "De ieri au mai rămas:" : "",
-      ...carry.map(item => `- ${item}`),
-      meta && meta.subject ? `Materie: ${meta.subject}` : "",
-      "",
-      "Nu ai nevoie de un cont. Primești un mesaj pentru fiecare lucru pe care îl face copilul în aplicație, la adresa salvată în contul lui."
-    ].filter(item => item !== "").join("\n");
-
-  const delivery = await sendParentMail({
-    studentEmail,
-    parentEmail,
-    name,
-    subject: subjectBase,
-    body,
-    isTest
-  });
-  return { skipped: false, parentEmail, subject: subjectBase, body, delivery, logged: true };
+  return sent;
 }
 
-function notifyParentSoon(payload) {
-  setImmediate(() => {
-    notifyParent(payload).catch(() => {});
-  });
+let digestTimer = null;
+function startDigestSchedule() {
+  if (digestTimer) return;
+  digestTimer = setInterval(() => {
+    sendDueDigests().catch(() => {});
+  }, 15 * 60 * 1000);
+  digestTimer.unref();
 }
 
-module.exports = { notifyParent, notifyParentSoon, LABELS, ALLOWED_TYPES, formatDuration };
+module.exports = {
+  notifyParent,
+  notifyParentSoon,
+  sendDueDigests,
+  startDigestSchedule,
+  reserveOutbound,
+  outboundCount,
+  escapeHtml,
+  bucharestParts,
+  digestLine,
+  LABELS,
+  ALLOWED_TYPES,
+  DAILY_CAP
+};

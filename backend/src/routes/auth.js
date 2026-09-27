@@ -27,16 +27,16 @@ const {
   markConfirmationSent,
   issueConsentToken,
   peekConsent,
-  consumeConsent
+  consumeConsent,
+  consumeEmailChangeToken
 } = require("../data/consentStore");
 const { SESSION_COOKIE, authRequired, STUDENTS_ONLY } = require("../middleware/auth");
 const { authLimiter } = require("../middleware/rateLimits");
 const { validateBody } = require("../middleware/validate");
-const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, consentActionSchema, parentEmailSchema } = require("../validation/schemas");
+const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, consentActionSchema, parentEmailSchema, tokenSchema } = require("../validation/schemas");
 const { publicBaseUrl } = require("../publicUrl");
 const { ensureUser, pushNotification } = require("../data/economyStore");
 const { deliverMessage, smtpConfigured } = require("../notify/deliver");
-const { notifyParent } = require("../notify/parentActivity");
 
 // Aceleași reguli pe care le arată RegisterScreen în interfață. Validarea din
 // browser e doar pentru UX; asta e cea care contează, pentru că un client
@@ -192,16 +192,10 @@ router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) =
   const { token, maxAge } = createSession(result.account.email);
   res.cookie(SESSION_COOKIE, token, sessionCookieOptions(maxAge));
 
-  const parentNotify = await notifyParent({
-    studentEmail: result.account.email,
-    type: "login",
-    note: "Elevul s-a autentificat în aplicație."
-  });
-
   res.json({
     success: true,
     user: publicAccount(result.account),
-    parentNotified: !parentNotify.skipped
+    parentNotified: false
   });
 });
 
@@ -310,6 +304,21 @@ router.post("/consent/parent-email", authLimiter, validateBody(parentEmailSchema
     user: publicAccount(req.auth.account),
     confirmationMessage: confirmation.message || ""
   });
+});
+
+router.post("/parent-email/confirm", validateBody(tokenSchema), async (req, res) => {
+  const found = consumeEmailChangeToken(req.body.token);
+  if (!found) return res.status(400).json({ error: "Linkul nu mai este valabil." });
+  const previous = found.account.profile.parentEmail;
+  const previousParent = findAccount(previous);
+  if (previousParent && Array.isArray(previousParent.children)) {
+    previousParent.children = previousParent.children.filter(email => normalizeEmail(email) !== found.account.email);
+  }
+  found.account.profile.parentEmail = found.nextEmail;
+  delete found.account.profile.parentEmailPending;
+  const parent = await ensureParentAccount(found.nextEmail);
+  if (parent) linkChildToParent(parent.email, found.account.email);
+  res.json({ success: true, parentEmail: found.nextEmail });
 });
 
 router.post("/reset-password", authLimiter, validateBody(resetPasswordSchema), async (req, res) => {

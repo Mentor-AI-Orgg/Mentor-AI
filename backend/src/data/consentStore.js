@@ -12,6 +12,8 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 const CONSENT_TOKENS = new Map();
 const MAGIC_TOKENS = new Map();
+const EMAIL_CHANGE_TOKENS = new Map();
+const UNSUB_TOKENS = new Map();
 const PARENT_SESSIONS = new Map();
 const SENDS = {
   child: {},
@@ -113,6 +115,53 @@ function consumeMagicToken(token) {
   return account;
 }
 
+function issueEmailChangeToken(childEmail, nextEmail) {
+  const account = findAccount(childEmail);
+  if (!account) return null;
+  const token = crypto.randomBytes(32).toString("hex");
+  EMAIL_CHANGE_TOKENS.set(hashToken(token), {
+    childEmail: account.email,
+    nextEmail: normalizeEmail(nextEmail),
+    expiresAt: Date.now() + CONSENT_TTL_MS
+  });
+  return token;
+}
+
+function consumeEmailChangeToken(token) {
+  const key = hashToken(token);
+  const row = EMAIL_CHANGE_TOKENS.get(key);
+  if (!row || Date.now() > row.expiresAt) {
+    if (row) EMAIL_CHANGE_TOKENS.delete(key);
+    return null;
+  }
+  EMAIL_CHANGE_TOKENS.delete(key);
+  const account = findAccount(row.childEmail);
+  if (!account) return null;
+  return { account, nextEmail: row.nextEmail };
+}
+
+function issueUnsubscribeToken(childEmail) {
+  const account = findAccount(childEmail);
+  if (!account) return null;
+  const token = crypto.randomBytes(32).toString("hex");
+  UNSUB_TOKENS.set(hashToken(token), {
+    childEmail: account.email,
+    expiresAt: Date.now() + 90 * 24 * 60 * 60 * 1000
+  });
+  return token;
+}
+
+function consumeUnsubscribeToken(token) {
+  const key = hashToken(token);
+  const row = UNSUB_TOKENS.get(key);
+  if (!row || Date.now() > row.expiresAt) {
+    if (row) UNSUB_TOKENS.delete(key);
+    return null;
+  }
+  UNSUB_TOKENS.delete(key);
+  return findAccount(row.childEmail);
+}
+
 function createParentSession(parentEmail) {
   const token = crypto.randomBytes(32).toString("hex");
   PARENT_SESSIONS.set(hashToken(token), {
@@ -148,18 +197,28 @@ function purgeExpiredTokens() {
   for (const [key, row] of PARENT_SESSIONS) {
     if (now > row.expiresAt) PARENT_SESSIONS.delete(key);
   }
+  for (const [key, row] of EMAIL_CHANGE_TOKENS) {
+    if (now > row.expiresAt) EMAIL_CHANGE_TOKENS.delete(key);
+  }
+  for (const [key, row] of UNSUB_TOKENS) {
+    if (now > row.expiresAt) UNSUB_TOKENS.delete(key);
+  }
 }
 
 persistence.register("consent", {
   snapshot: () => ({
     tokens: persistence.mapToObject(CONSENT_TOKENS),
     magic: persistence.mapToObject(MAGIC_TOKENS),
+    emailChanges: persistence.mapToObject(EMAIL_CHANGE_TOKENS),
+    unsubs: persistence.mapToObject(UNSUB_TOKENS),
     parentSessions: persistence.mapToObject(PARENT_SESSIONS),
     sends: SENDS
   }),
   restore: data => {
     persistence.restoreMap(CONSENT_TOKENS, data?.tokens);
     persistence.restoreMap(MAGIC_TOKENS, data?.magic);
+    persistence.restoreMap(EMAIL_CHANGE_TOKENS, data?.emailChanges);
+    persistence.restoreMap(UNSUB_TOKENS, data?.unsubs);
     persistence.restoreMap(PARENT_SESSIONS, data?.parentSessions);
     SENDS.child = data?.sends?.child || {};
     SENDS.parent = data?.sends?.parent || {};
@@ -177,6 +236,10 @@ module.exports = {
   consumeConsent,
   issueMagicToken,
   consumeMagicToken,
+  issueEmailChangeToken,
+  consumeEmailChangeToken,
+  issueUnsubscribeToken,
+  consumeUnsubscribeToken,
   createParentSession,
   getParentSession,
   destroyParentSession,

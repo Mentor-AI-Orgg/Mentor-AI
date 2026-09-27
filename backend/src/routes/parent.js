@@ -52,6 +52,14 @@ function childCard(email) {
   };
 }
 
+router.post("/unsubscribe", (req, res) => {
+  const { consumeUnsubscribeToken } = require("../data/consentStore");
+  const account = consumeUnsubscribeToken(String(req.body?.token || ""));
+  if (!account) return res.status(400).json({ error: "Linkul nu mai este valabil." });
+  account.profile.parentEmails = "off";
+  res.json({ success: true, emails: false });
+});
+
 router.post("/magic", authLimiter, async (req, res) => {
   const email = normalizeEmail(req.body?.email || "");
   const account = findAccount(email);

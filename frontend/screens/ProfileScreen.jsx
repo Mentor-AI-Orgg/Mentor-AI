@@ -44,9 +44,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [form, setForm] = useState({
-    name: userData.name || '',
     username: userData.username || '',
-    school: userData.school || '',
     class: String(userData.class || '5'),
     parentEmail: userData.parentEmail || ''
   });
@@ -240,7 +238,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
           </div>
           <div>
             <div className="text-xl font-extrabold">{userData.name || t('profile.defaultName')}</div>
-            <div className="text-sm text-slate-400">{userData.school || t('profile.personalProfile')}</div>
+            <div className="text-sm text-slate-400">{userData.username || t('profile.personalProfile')}</div>
             <div className="profile-role-pill">{userData.titleName ? `${wardrobe.titles.find(item => item.id === userData.titleId)?.emoji || ''} ${userData.titleName} · `.trim() : ''}{t('common.student')} · {t('home.level')} {userData.level || 1}</div>
           </div>
         </div>
@@ -286,15 +284,10 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
       <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
         <div className="eyebrow">Editează</div>
         <h3 className="display-font profile-tool-title">Datele tale de elev.</h3>
-        <label className="field-label">Nume
-          <input className="field form-input" value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} />
-        </label>
-        <label className="field-label">Username
+        <label className="field-label">Nume de utilizator
           <input className="field form-input" value={form.username} onChange={e => setForm(prev => ({ ...prev, username: e.target.value }))} />
         </label>
-        <label className="field-label">Școală
-          <input className="field form-input" value={form.school} onChange={e => setForm(prev => ({ ...prev, school: e.target.value }))} />
-        </label>
+        <small className="field-hint">Nu folosi numele tău real.</small>
         <label className="field-label">Clasă
           <select className="field form-input" value={form.class} onChange={e => setForm(prev => ({ ...prev, class: e.target.value }))}>
             {CLASSES.map(item => <option key={item} value={item}>Clasa a {item}-a</option>)}
@@ -303,6 +296,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         <label className="field-label">Email părinte
           <input className="field form-input" type="email" value={form.parentEmail} onChange={e => setForm(prev => ({ ...prev, parentEmail: e.target.value }))} />
         </label>
+        <small className="field-hint">Adresa nouă primește un email. Până confirmă, rămâne cea veche.</small>
         <button type="button" className="accent-button profile-tool-action" onClick={saveProfile} disabled={saving}>
           {saving ? 'Salvez…' : 'Salvează profilul'}
         </button>

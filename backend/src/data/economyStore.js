@@ -1097,7 +1097,11 @@ async function sendParentReview({ userId = 'demo_user', role = 'student' }) {
     return { ok: false, error: 'Părintele a primit deja acest mesaj azi.' };
   }
   user.parentNotify.reviewDate = today;
-  const subject = `Mentor AI este gratuit pentru ${account.profile.name || account.profile.username || 'elev'}`;
+  const { reserveOutbound, bucharestParts } = require("../notify/parentActivity");
+  if (!reserveOutbound(to, bucharestParts().date)) {
+    return { ok: false, error: "Am trimis deja toate emailurile de azi." };
+  }
+  const subject = `Sunt de 10 este gratuită pentru ${account.profile.username || "elev"}`;
   const body = [
     'Aplicația Mentor AI este gratuită. Nu există abonament de plătit.',
     `Cont: ${role}`,

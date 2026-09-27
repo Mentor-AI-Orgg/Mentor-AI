@@ -24,6 +24,7 @@ const { comingSoon } = require("./middleware/comingSoon");
 const { attachUser, authRequired, studentRequired, consentRequired } = require("./middleware/auth");
 const parentRoute = require("./routes/parent");
 const { startPendingCleanup } = require("./data/pendingCleanup");
+const { startDigestSchedule } = require("./notify/parentActivity");
 const { migrateLegacyProfiles } = require("./data/authStore");
 const { corsAllowlist } = require("./middleware/corsAllowlist");
 const { generalApiLimiter, chatLimiter, detectLimiter } = require("./middleware/rateLimits");
@@ -45,6 +46,7 @@ function createApp(options = {}) {
   }
   migrateLegacyProfiles();
   startPendingCleanup();
+  startDigestSchedule();
 
   const app = express();
   app.set("trust proxy", 1);

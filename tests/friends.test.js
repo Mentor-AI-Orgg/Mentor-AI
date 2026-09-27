@@ -26,19 +26,21 @@ describe('friends and profile edit', () => {
     ({ app } = createApp({ autosave: false }));
   });
 
-  it('lets a student edit name, class and parent email', async () => {
-    const { agent } = await registerStudent({ name: 'Mara' });
+  it('lets a student edit class and keeps the parent email until the new one confirms', async () => {
+    const created = await registerStudent({ name: 'Mara' });
     const parent = uniqueEmail('parinte-nou');
-    const res = await agent.patch('/api/account/profile').send({
+    const res = await created.agent.patch('/api/account/profile').send({
       name: 'Mara Nouă',
       class: '6',
       school: 'Liceul Test',
       parentEmail: parent
     });
     expect(res.status).toBe(200);
-    expect(res.body.user.name).toBe('Mara Nouă');
+    expect(res.body.user.name).toBe('');
+    expect(res.body.user.school).toBe('');
     expect(res.body.user.class).toBe('6');
-    expect(res.body.user.parentEmail).toBe(parent);
+    expect(res.body.user.parentEmail).not.toBe(parent);
+    expect(res.body.user.parentEmailPending).toBe(parent);
     expect(res.body.user.email).toBe('');
   });
 

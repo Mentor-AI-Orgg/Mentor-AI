@@ -82,21 +82,21 @@ describe('auth', () => {
     expect(created.res.body.parentNotified).toBe(true);
   });
 
-  it('emails the parent when the student logs in', async () => {
+  it('does not email the parent when the student logs in', async () => {
     const res = await request(app)
       .post('/api/auth/login')
       .send({ email: studentEmail, password: PASSWORD });
     expect(res.status).toBe(200);
-    expect(res.body.parentNotified).toBe(true);
+    expect(res.body.parentNotified).toBe(false);
   });
 
-  it('emails the parent when the student logs an activity', async () => {
+  it('does not email the parent for each tutor message', async () => {
     const res = await studentAgent
       .post('/api/economy/activity')
       .send({ type: 'mentor_message', note: 'Cât face 2+2?' });
     expect(res.status).toBe(200);
-    expect(res.body.parentNotified).toBe(true);
-    expect(res.body.parentNotify.delivery.mocked).toBe(true);
+    expect(res.body.parentNotified).toBe(false);
+    expect(res.body.parentNotify.reason).toBe('not_emailed');
   });
 
   it('exposes the session at /api/auth/me', async () => {

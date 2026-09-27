@@ -58,10 +58,39 @@ router.get("/export", (req, res) => {
   res.json(payload);
 });
 
-router.patch("/profile", validateBody(profileSchema), (req, res) => {
+router.patch("/profile", validateBody(profileSchema), async (req, res) => {
   const patch = { ...req.body };
+  delete patch.name;
+  delete patch.phone;
+  delete patch.school;
+  const nextParent = patch.parentEmail;
+  delete patch.parentEmail;
   if (patch.class && !["5", "6", "7", "8"].includes(String(patch.class))) {
     return res.status(400).json({ error: "Clasa trebuie să fie 5, 6, 7 sau 8.", field: "class" });
+  }
+  if (nextParent && normalizeEmail(nextParent) !== normalizeEmail(req.auth.account.profile.parentEmail)) {
+    const { issueEmailChangeToken } = require("../data/consentStore");
+    const { deliverMessage } = require("../notify/deliver");
+    const { publicBaseUrl } = require("../publicUrl");
+    const token = issueEmailChangeToken(req.auth.email, nextParent);
+    req.auth.account.profile.parentEmailPending = normalizeEmail(nextParent);
+    const link = `${publicBaseUrl(req)}/#/email-nou/${token}`;
+    if (process.env.NODE_ENV !== "production") console.log(`[DEV] ${link}`);
+    await deliverMessage({
+      to: nextParent,
+      subject: "Confirmați noul email de părinte pe Sunt de 10",
+      body: `Confirmați că vreți să primiți veștile despre ${req.auth.account.profile.username || "copil"} la această adresă.\n${link}\nPână atunci rămâne valabilă adresa veche.`,
+      channel: "email"
+    });
+    const previous = req.auth.account.profile.parentEmail;
+    if (previous) {
+      await deliverMessage({
+        to: previous,
+        subject: "S-a cerut schimbarea emailului de părinte",
+        body: `Pentru ${req.auth.account.profile.username || "copil"} s-a cerut o adresă nouă. Până la confirmare, mesajele vin în continuare aici.`,
+        channel: "email"
+      });
+    }
   }
   if (patch.username && usernameTaken(patch.username, req.auth.email)) {
     return res.status(409).json({ error: "Username-ul este deja folosit.", field: "username" });

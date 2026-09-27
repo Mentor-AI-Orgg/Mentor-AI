@@ -32,6 +32,10 @@ const consentActionSchema = z.object({
   action: z.enum(["grant", "refuse"])
 });
 
+const tokenSchema = z.object({
+  token: z.string().trim().min(20).max(200)
+});
+
 const parentEmailSchema = z.object({
   parentEmail: email
 });
@@ -109,7 +113,6 @@ const progressSchema = z.object({
     "mentor_message",
     "chapter_test"
   ], { errorMap: () => ({ message: "Tip de progres necunoscut." }) }),
-  note: z.string().max(200).optional().default(""),
   meta: z.record(z.any()).optional().default({})
 });
 
@@ -212,6 +215,7 @@ const enPhotoSchema = z.object({
 module.exports = {
   registerSchema,
   consentActionSchema,
+  tokenSchema,
   parentEmailSchema,
   loginSchema,
   forgotPasswordSchema,

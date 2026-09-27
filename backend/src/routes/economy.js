@@ -175,15 +175,14 @@ router.post('/progress', validateBody(progressSchema), async (req, res) => {
 });
 
 router.post('/activity', async (req, res) => {
-  const { type, note = '', meta = {}, amount = 0 } = req.body || {};
+  const { type, meta = {}, amount = 0 } = req.body || {};
   if (!type || !ALLOWED_TYPES.has(type)) {
     return res.status(400).json({ error: 'Tip de activitate necunoscut.' });
   }
-  const result = logActivity({ userId: req.auth.email, type, note, meta, amount });
+  const result = logActivity({ userId: req.auth.email, type, note: '', meta, amount });
   const parentNotify = await notifyParent({
     studentEmail: req.auth.email,
     type,
-    note,
     meta
   });
   res.json({

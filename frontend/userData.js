@@ -54,4 +54,26 @@ const formatRoDate = () => {
   return label.charAt(0).toUpperCase() + label.slice(1);
 };
 
-export { STORAGE_KEY, defaultUserData, DEFAULT_PARENT_NOTIFICATION_PREFERENCES, formatRoDate };
+const PRIVATE_FIELDS = ['email', 'phone', 'parentEmail', 'parentEmailPending', 'school', 'name', 'surname', 'fullName'];
+
+function toStoredUser(data = {}) {
+  const next = { ...data };
+  PRIVATE_FIELDS.forEach(key => {
+    delete next[key];
+  });
+  return next;
+}
+
+function cleanStoredUser(data = {}) {
+  return toStoredUser({ ...defaultUserData, ...data });
+}
+
+export {
+  STORAGE_KEY,
+  defaultUserData,
+  DEFAULT_PARENT_NOTIFICATION_PREFERENCES,
+  formatRoDate,
+  toStoredUser,
+  cleanStoredUser,
+  PRIVATE_FIELDS
+};
