@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const config = require("../config");
-const { findAccount, normalizeEmail } = require("../data/authStore");
+const { findAccount, listAccounts, normalizeEmail } = require("../data/authStore");
 const { publicId, setSettings, getSettings } = require("../data/friendStore");
 const { getUser } = require("../data/economyStore");
 const { deliverMessage } = require("../notify/deliver");
@@ -103,6 +103,10 @@ function ownedChild(req, id) {
     .find(account => account && publicId(account.email) === id) || null;
 }
 
+function foreignChild(id) {
+  return listAccounts().find(account => account.role === "student" && publicId(account.email) === id) || null;
+}
+
 router.post("/children/:id/emails", parentRequired, (req, res) => {
   const child = ownedChild(req, req.params.id);
   if (!child) return res.status(404).json({ error: "Nu am găsit copilul." });
@@ -122,8 +126,10 @@ router.post("/children/:id/privacy", parentRequired, (req, res) => {
 
 router.get("/children/:id/export", parentRequired, (req, res) => {
   const child = ownedChild(req, req.params.id);
-  if (!child) return res.status(404).json({ error: "Nu am găsit copilul." });
-  // TODO(T3): exportul complet, din registrul tuturor store-urilor.
+  if (!child) {
+    if (foreignChild(req.params.id)) return res.status(403).json({ error: "Nu poți vedea contul altui copil." });
+    return res.status(404).json({ error: "Nu am găsit copilul." });
+  }
   const { collectExport } = require("./account");
   res.setHeader("Content-Disposition", "attachment; filename=\"sunt-de-10-date.json\"");
   res.json(collectExport(child.email));
@@ -131,24 +137,17 @@ router.get("/children/:id/export", parentRequired, (req, res) => {
 
 router.post("/children/:id/delete", parentRequired, async (req, res) => {
   const child = ownedChild(req, req.params.id);
-  if (!child) return res.status(404).json({ error: "Nu am găsit copilul." });
+  if (!child) {
+    if (foreignChild(req.params.id)) return res.status(403).json({ error: "Nu poți vedea contul altui copil." });
+    return res.status(404).json({ error: "Nu am găsit copilul." });
+  }
   if (String(req.body?.confirm || "") !== "ȘTERGE") {
     return res.status(400).json({ error: "Scrie ȘTERGE ca să confirmi." });
   }
-  // TODO(T3): ștergerea completă din toate store-urile.
   const { eraseAccount } = require("./account");
-  const parent = req.parentAuth.account;
-  const parentEmail = parent.email;
-  eraseAccount(child.email);
-  parent.children = (parent.children || []).filter(email => normalizeEmail(email) !== child.email);
-  await deliverMessage({
-    to: parentEmail,
-    subject: "Contul și datele au fost șterse",
-    body: "Contul și datele au fost șterse.",
-    channel: "email"
-  });
-  if (!parent.children.length) {
-    eraseAccount(parentEmail);
+  const parentEmail = req.parentAuth.account.email;
+  await eraseAccount(child.email);
+  if (!findAccount(parentEmail)) {
     destroyParentSession(req.parentAuth.token);
     res.clearCookie(PARENT_COOKIE, { path: "/" });
   }

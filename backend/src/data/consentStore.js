@@ -186,8 +186,7 @@ function destroyParentSession(token) {
   if (token) PARENT_SESSIONS.delete(hashToken(token));
 }
 
-function purgeExpiredTokens() {
-  const now = Date.now();
+function purgeExpiredTokens(now = Date.now()) {
   for (const [key, row] of CONSENT_TOKENS) {
     if (now > row.expiresAt) CONSENT_TOKENS.delete(key);
   }
@@ -204,6 +203,36 @@ function purgeExpiredTokens() {
     if (now > row.expiresAt) UNSUB_TOKENS.delete(key);
   }
 }
+
+function exportConsentFor(email) {
+  const account = findAccount(email);
+  if (!account) return null;
+  return {
+    stare: account.consent?.status || "",
+    versiune: account.consent?.policyVersion || ""
+  };
+}
+
+function eraseConsentFor(email) {
+  const key = normalizeEmail(email);
+  const parentHash = hashToken(key);
+  const maps = [CONSENT_TOKENS, MAGIC_TOKENS, EMAIL_CHANGE_TOKENS, UNSUB_TOKENS, PARENT_SESSIONS];
+  for (const map of maps) {
+    for (const [id, row] of map.entries()) {
+      if (!row) continue;
+      if (row.childEmail === key || row.parentEmail === key || row.email === key || row.nextEmail === key) {
+        map.delete(id);
+      }
+    }
+  }
+  delete SENDS.child[key];
+  delete SENDS.parent[parentHash];
+}
+
+require("./userDataRegistry").register("consent", {
+  exportFor: exportConsentFor,
+  eraseFor: eraseConsentFor
+});
 
 persistence.register("consent", {
   snapshot: () => ({

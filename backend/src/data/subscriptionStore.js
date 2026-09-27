@@ -32,8 +32,22 @@ function setSubscription(userId, subscription) {
 }
 
 function deleteSubscription(userId) {
+  const key = String(userId || "").trim().toLowerCase();
+  SUBSCRIPTIONS.delete(key);
   return SUBSCRIPTIONS.delete(userId);
 }
+
+function exportSubscriptionFor(email) {
+  const key = String(email || "").trim().toLowerCase();
+  if (!SUBSCRIPTIONS.has(key) && !SUBSCRIPTIONS.has(email)) return { plan: "free", stare: "active" };
+  const stored = getSubscription(SUBSCRIPTIONS.has(key) ? key : email);
+  return { plan: stored.planId, stare: stored.status };
+}
+
+require("./userDataRegistry").register("subscriptions", {
+  exportFor: exportSubscriptionFor,
+  eraseFor: deleteSubscription
+});
 
 persistence.register("subscriptions", {
   snapshot: () => persistence.mapToObject(SUBSCRIPTIONS),

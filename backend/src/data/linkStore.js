@@ -298,6 +298,38 @@ function purgeExpired() {
 const purgeTimer = setInterval(purgeExpired, 6 * 60 * 60 * 1000);
 purgeTimer.unref();
 
+function exportLinksFor(email) {
+  const key = normalize(email);
+  const invitatii = [];
+  for (const invitation of INVITATIONS.values()) {
+    if (invitation.fromEmail !== key && invitation.toEmail !== key) continue;
+    invitatii.push({
+      tip: invitation.kind || "",
+      stare: invitation.status || "",
+      sens: invitation.fromEmail === key ? "trimisa" : "primita"
+    });
+  }
+  return { invitatii };
+}
+
+function eraseLinksFor(email) {
+  const key = normalize(email);
+  const user = getUser(key);
+  if (user?.preferences) {
+    user.preferences.childEmail = "";
+    user.preferences.parentEmail = "";
+    user.preferences.teacherEmail = "";
+  }
+  for (const [id, invitation] of INVITATIONS.entries()) {
+    if (invitation.fromEmail === key || invitation.toEmail === key) INVITATIONS.delete(id);
+  }
+}
+
+require("./userDataRegistry").register("links", {
+  exportFor: exportLinksFor,
+  eraseFor: eraseLinksFor
+});
+
 persistence.register("links", {
   snapshot: () => ({ invitations: persistence.mapToObject(INVITATIONS) }),
   restore: data => {

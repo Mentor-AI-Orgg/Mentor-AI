@@ -36,6 +36,14 @@ npm run lint
 npm run build
 ```
 
+## Datele copilului
+
+Orice etapă care adaugă date despre un copil le înregistrează în
+`backend/src/data/userDataRegistry.js`, cu export și ștergere. Exportul
+contului și ștergerea citesc doar registrul. Termenele de păstrare stau în
+`backend/src/config/retention.js`; pagina de confidențialitate trebuie să
+folosească aceleași numere.
+
 ## Structură
 
 - `backend/` — Express: autentificare, chat, economie, plăți, calendar, persistență JSON

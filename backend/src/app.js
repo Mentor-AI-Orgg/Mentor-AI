@@ -23,7 +23,7 @@ const { basicAuth } = require("./middleware/basicAuth");
 const { comingSoon } = require("./middleware/comingSoon");
 const { attachUser, authRequired, studentRequired, consentRequired } = require("./middleware/auth");
 const parentRoute = require("./routes/parent");
-const { startPendingCleanup } = require("./data/pendingCleanup");
+const { startRetention } = require("./data/retentionJob");
 const { startDigestSchedule } = require("./notify/parentActivity");
 const { migrateLegacyProfiles } = require("./data/authStore");
 const { corsAllowlist } = require("./middleware/corsAllowlist");
@@ -45,7 +45,7 @@ function createApp(options = {}) {
     if (!fs.existsSync(backup)) fs.copyFileSync(persistence.DATA_FILE, backup);
   }
   migrateLegacyProfiles();
-  startPendingCleanup();
+  startRetention();
   startDigestSchedule();
 
   const app = express();

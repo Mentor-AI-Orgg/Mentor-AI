@@ -182,6 +182,9 @@ router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) =
     if (firstPending) await sendConsentEmail(req, result.account);
   }
 
+  result.account.lastLoginAt = new Date().toISOString();
+  result.account.inactivityWarningSent = false;
+
   ensureUser(result.account.email, {
     role: result.account.role,
     username: result.account.profile.username,

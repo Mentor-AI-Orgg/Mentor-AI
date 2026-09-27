@@ -1,4 +1,5 @@
 // Câte mesaje de criză au apărut într-o zi. Fără cine și fără text.
+// Nu se leagă de un cont: ștergerea unui elev nu atinge acest contor.
 
 const persistence = require("../data/persistence");
 

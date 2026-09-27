@@ -1171,6 +1171,55 @@ function listLeaderboardEntries({ limit = 10, currentEmail = '' } = {}) {
   return board;
 }
 
+function exportEconomyFor(email) {
+  const key = String(email || '').trim().toLowerCase();
+  const user = getUser(key);
+  if (!user) return null;
+  const cumparaturi = [];
+  for (const [code, row] of PURCHASES.entries()) {
+    if (code === key || code.startsWith(`${key}:`)) cumparaturi.push(row?.itemId || '');
+  }
+  return {
+    xp: Number(user.xp || 0),
+    monede: Number(user.balance || 0),
+    lectii: Object.keys(user.chapters || {}),
+    activitate: (Array.isArray(user.activityLog) ? user.activityLog : []).map(entry => ({
+      tip: entry.type,
+      la: entry.createdAt,
+      cantitate: entry.amount
+    })),
+    cumparaturi: cumparaturi.filter(Boolean)
+  };
+}
+
+function pruneHistory(maxAgeMs, now = Date.now()) {
+  const cutoff = now - maxAgeMs;
+  let removed = 0;
+  const fresh = (stamp) => {
+    const at = Date.parse(stamp || '');
+    return Number.isFinite(at) && at >= cutoff;
+  };
+  for (const user of USERS.values()) {
+    if (Array.isArray(user.activityLog)) {
+      const before = user.activityLog.length;
+      user.activityLog = user.activityLog.filter(entry => fresh(entry.createdAt));
+      removed += before - user.activityLog.length;
+    }
+    if (Array.isArray(user.digestEvents)) {
+      const before = user.digestEvents.length;
+      user.digestEvents = user.digestEvents.filter(entry => fresh(entry.at));
+      removed += before - user.digestEvents.length;
+    }
+  }
+  for (let i = NOTIFICATIONS.length - 1; i >= 0; i -= 1) {
+    if (!fresh(NOTIFICATIONS[i].createdAt)) {
+      NOTIFICATIONS.splice(i, 1);
+      removed += 1;
+    }
+  }
+  return removed;
+}
+
 function exportUser(email) {
   const user = getUser(email);
   if (!user) return null;
@@ -1209,12 +1258,20 @@ function deleteUser(email) {
     }
   }
   PURCHASES.delete(key);
+  for (const purchaseKey of [...PURCHASES.keys()]) {
+    if (purchaseKey === key || purchaseKey.startsWith(`${key}:`)) PURCHASES.delete(purchaseKey);
+  }
   for (const codeKey of [...ACCESS_CODES.keys()]) {
     if (codeKey === key || codeKey.startsWith(`${key}:`) || codeKey.endsWith(`:${key}`)) {
       ACCESS_CODES.delete(codeKey);
     }
   }
 }
+
+require('./userDataRegistry').register('economy', {
+  exportFor: exportEconomyFor,
+  eraseFor: deleteUser
+});
 
 persistence.register('economy', {
   snapshot: () => ({
@@ -1263,5 +1320,7 @@ module.exports = {
   purgeExpiredAccessCodes,
   purgeExpiredNotifications,
   exportUser,
-  deleteUser
+  deleteUser,
+  pruneHistory,
+  exportEconomyFor
 };

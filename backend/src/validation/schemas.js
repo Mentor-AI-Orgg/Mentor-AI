@@ -166,9 +166,10 @@ const calendarPatchSchema = z.object({
 });
 
 const deleteAccountSchema = z.object({
-  confirm: z.literal("DELETE", {
-    errorMap: () => ({ message: "Pentru a șterge contul, trimite { \"confirm\": \"DELETE\" }." })
-  })
+  confirm: z.literal("ȘTERGE", {
+    errorMap: () => ({ message: "Scrie ȘTERGE ca să confirmi." })
+  }),
+  password: z.string().min(1, "Parola este obligatorie.")
 });
 
 const profileSchema = z.object({

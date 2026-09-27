@@ -225,6 +225,13 @@ function startDigestSchedule() {
   digestTimer.unref();
 }
 
+require("../data/userDataRegistry").register("emailuri", {
+  exportFor: () => null,
+  eraseFor(email) {
+    delete SENT[String(email || "").trim().toLowerCase()];
+  }
+});
+
 module.exports = {
   notifyParent,
   notifyParentSoon,

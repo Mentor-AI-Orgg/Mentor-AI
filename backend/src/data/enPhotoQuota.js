@@ -1,4 +1,4 @@
-const { ensureUser, getTodayKey } = require('./economyStore');
+const { ensureUser, getUser, getTodayKey } = require('./economyStore');
 
 const PHOTO_DAILY_LIMIT = 3;
 
@@ -31,5 +31,18 @@ function consumePhotoSlot(userId) {
   day.used = (Number(day.used) || 0) + 1;
   return { ok: true, ...photoStatus(userId) };
 }
+
+require('./userDataRegistry').register('fotografii', {
+  exportFor(email) {
+    const user = getUser(email);
+    const day = user?.enPhotoDay;
+    if (!day) return { zi: '', folosite: 0 };
+    return { zi: day.date || '', folosite: Number(day.used) || 0 };
+  },
+  eraseFor(email) {
+    const user = getUser(email);
+    if (user) delete user.enPhotoDay;
+  }
+});
 
 module.exports = { PHOTO_DAILY_LIMIT, photoStatus, consumePhotoSlot };

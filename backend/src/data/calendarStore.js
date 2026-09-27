@@ -122,9 +122,29 @@ function disconnectProvider(userId, provider) {
 }
 
 function deleteUser(userId) {
+  const key = String(userId || "").trim().toLowerCase();
+  delete eventsByUser[key];
   delete eventsByUser[userId];
+  delete connectionsByUser[key];
   delete connectionsByUser[userId];
 }
+
+function exportCalendarFor(email) {
+  const key = String(email || "").trim().toLowerCase();
+  const events = eventsByUser[key] || eventsByUser[email] || [];
+  return {
+    evenimente: events.map(event => ({
+      titlu: event.title || "",
+      data: event.date || "",
+      tip: event.type || ""
+    }))
+  };
+}
+
+require("./userDataRegistry").register("calendar", {
+  exportFor: exportCalendarFor,
+  eraseFor: deleteUser
+});
 
 persistence.register("calendar", {
   snapshot: () => ({ events: eventsByUser, connections: connectionsByUser }),

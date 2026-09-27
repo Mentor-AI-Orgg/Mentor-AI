@@ -1,10 +1,9 @@
 // Conturile rămase fără acordul părintelui se șterg după 14 zile.
-// TODO(T3): înlocuiește eraseAccount cu ștergerea completă din registrul GDPR.
+// eraseAccount trece prin registrul GDPR, deci dispar și datele din celelalte store-uri.
 
 const { listAccounts } = require("./authStore");
 const { eraseAccount } = require("../routes/account");
-
-const PENDING_MS = 14 * 24 * 60 * 60 * 1000;
+const { PENDING_MS } = require("../config/retention");
 let timer = null;
 
 function pendingSince(account) {

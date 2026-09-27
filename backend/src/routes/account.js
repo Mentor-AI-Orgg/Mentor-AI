@@ -10,8 +10,8 @@ const { validateBody } = require("../middleware/validate");
 const { deleteAccountSchema, profileSchema, passwordChangeSchema } = require("../validation/schemas");
 const {
   publicAccount,
-  deleteAccount,
   findAccount,
+  authenticate,
   updateProfile,
   usernameTaken,
   changePassword,
@@ -19,42 +19,69 @@ const {
 } = require("../data/authStore");
 const { SESSION_COOKIE } = require("../middleware/auth");
 const economyStore = require("../data/economyStore");
-const calendarStore = require("../data/calendarStore");
-const memory = require("../memory/memoryStore");
-const linkStore = require("../data/linkStore");
-const subscriptionStore = require("../data/subscriptionStore");
+const registry = require("../data/userDataRegistry");
+
+const SECRET_KEY = /password|salt|token|secret|hash/i;
+
+function scrubSecrets(value) {
+  if (Array.isArray(value)) return value.map(scrubSecrets);
+  if (!value || typeof value !== "object") return value;
+  const out = {};
+  for (const [key, item] of Object.entries(value)) {
+    if (SECRET_KEY.test(key)) continue;
+    out[key] = scrubSecrets(item);
+  }
+  return out;
+}
 
 function collectExport(email) {
-  const account = findAccount(email);
-  return {
-    exportedAt: new Date().toISOString(),
-    account: publicAccount(account),
-    economy: economyStore.exportUser(email),
-    calendar: {
-      events: calendarStore.getEvents(email),
-      connections: calendarStore.getConnections(email)
-    },
-    conversations: memory.exportForEmail(email),
-    links: {
-      invitations: linkStore.listForUser(email),
-      active: linkStore.listLinks(email)
-    },
-    subscription: subscriptionStore.getSubscription(email)
-  };
+  const slices = registry.exportAll(email);
+  return scrubSecrets({
+    explicatie: "Acestea sunt datele păstrate despre acest cont pe Sunt de 10. Parola și tokenurile nu sunt incluse.",
+    exportatLa: new Date().toISOString(),
+    cont: slices.auth,
+    economie: slices.economy,
+    prieteni: slices.friends,
+    calendar: slices.calendar,
+    conversatii: slices.memory,
+    invitatii: slices.links,
+    abonament: slices.subscriptions,
+    acord: slices.consent,
+    evaluare: slices.evaluare,
+    fotografii: slices.fotografii
+  });
 }
 
 function eraseAccount(email) {
-  linkStore.purgeForEmail(email);
-  memory.deleteForEmail(email);
-  calendarStore.deleteUser(email);
-  economyStore.deleteUser(email);
-  subscriptionStore.deleteSubscription(email);
-  deleteAccount(email);
+  const account = findAccount(email);
+  if (!account) {
+    registry.eraseAll(email);
+    return Promise.resolve({ erased: false });
+  }
+  const parentEmail = account.role === "student" ? (account.profile?.parentEmail || "") : "";
+  registry.eraseAll(email);
+  registry.recordDeletion(email);
+  if (parentEmail) {
+    const parent = findAccount(parentEmail);
+    if (parent && parent.role === "parent" && !(parent.children || []).length) {
+      registry.eraseAll(parentEmail);
+      registry.recordDeletion(parentEmail);
+    }
+  }
+  const notice = parentEmail
+    ? require("../notify/deliver").deliverMessage({
+      to: parentEmail,
+      subject: "Contul și datele au fost șterse",
+      body: "Contul și datele au fost șterse.",
+      channel: "email"
+    }).catch(() => null)
+    : Promise.resolve(null);
+  return notice.then(() => ({ erased: true }));
 }
 
 router.get("/export", (req, res) => {
   const payload = collectExport(req.auth.email);
-  res.setHeader("Content-Disposition", "attachment; filename=\"mentor-ai-date.json\"");
+  res.setHeader("Content-Disposition", "attachment; filename=\"sunt-de-10-date.json\"");
   res.json(payload);
 });
 
@@ -129,11 +156,14 @@ router.post("/password", validateBody(passwordChangeSchema), async (req, res) =>
   res.json({ success: true });
 });
 
-router.delete("/", validateBody(deleteAccountSchema), (req, res) => {
-  const email = req.auth.email;
-  eraseAccount(email);
+router.delete("/", validateBody(deleteAccountSchema), async (req, res) => {
+  const check = await authenticate({ email: req.auth.email, password: req.body.password });
+  if (!check.ok) {
+    return res.status(401).json({ error: "Parola nu este corectă." });
+  }
+  await eraseAccount(req.auth.email);
   res.clearCookie(SESSION_COOKIE, { path: "/" });
-  res.json({ success: true, deleted: email });
+  res.json({ success: true, deleted: true });
 });
 
 module.exports = router;

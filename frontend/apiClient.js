@@ -439,12 +439,12 @@ const MentorAPI = {
     }
   },
 
-  async deleteAccount() {
+  async deleteAccount({ password, confirm } = {}) {
     try {
       const data = await safeFetchJson('/api/account', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ confirm: 'DELETE' })
+        body: JSON.stringify({ password, confirm })
       });
       return { success: true, data };
     } catch (error) {

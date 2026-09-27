@@ -43,6 +43,9 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState('');
   const [form, setForm] = useState({
     username: userData.username || '',
     class: String(userData.class || '5'),
@@ -203,7 +206,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'mentor-ai-date.json';
+    link.download = 'sunt-de-10-date.json';
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -212,10 +215,16 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
   };
 
   const deleteAccount = async () => {
-    if (!window.confirm('Ștergi definitiv contul și toate datele asociate? Acțiunea nu poate fi anulată.')) return;
-    if (!window.confirm('Ultima confirmare: vrei să ștergi acest cont acum?')) return;
+    if (deleteConfirm !== 'ȘTERGE') {
+      onToast?.('Scrie ȘTERGE ca să confirmi.', 'warning');
+      return;
+    }
+    if (!deletePassword) {
+      onToast?.('Scrie parola ca să confirmi.', 'warning');
+      return;
+    }
     setDeleting(true);
-    const result = await MentorAPI.deleteAccount();
+    const result = await MentorAPI.deleteAccount({ password: deletePassword, confirm: 'ȘTERGE' });
     setDeleting(false);
     if (!result.success) {
       onToast?.('Nu am putut șterge contul.', 'warning');
@@ -529,9 +538,30 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         <button type="button" onClick={exportAccount} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition" disabled={exporting}>
           <i className="fas fa-download mr-2"></i>{exporting ? t('profile.exporting') : t('profile.export')}
         </button>
-        <button type="button" onClick={deleteAccount} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition" disabled={deleting}>
-          <i className="fas fa-trash mr-2"></i>{deleting ? t('profile.deleting') : t('profile.delete')}
-        </button>
+        {deleteOpen ? (
+          <form
+            className="surface rounded-3xl p-4 grid gap-3"
+            onSubmit={event => {
+              event.preventDefault();
+              deleteAccount();
+            }}
+          >
+            <p className="text-sm text-slate-300">Scrie parola și ȘTERGE. Contul și datele dispar.</p>
+            <label className="field-label">Parola
+              <input className="field form-input" type="password" autoComplete="current-password" value={deletePassword} onChange={event => setDeletePassword(event.target.value)} />
+            </label>
+            <label className="field-label">Confirmare
+              <input className="field form-input" value={deleteConfirm} onChange={event => setDeleteConfirm(event.target.value)} placeholder="ȘTERGE" />
+            </label>
+            <button type="submit" className="accent-button" disabled={deleting}>
+              {deleting ? t('profile.deleting') : 'Șterge definitiv'}
+            </button>
+          </form>
+        ) : (
+          <button type="button" onClick={() => setDeleteOpen(true)} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">
+            <i className="fas fa-trash mr-2"></i>{t('profile.delete')}
+          </button>
+        )}
         <a href="/privacy.html" target="_blank" rel="noopener noreferrer" className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">{t('profile.privacy')}</a>
         <button type="button" onClick={onLogout} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">
           <i className="fas fa-arrow-right-from-bracket mr-2"></i>{t('profile.logout')}

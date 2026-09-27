@@ -224,6 +224,42 @@ function isPrivatePublicId(id) {
   return Boolean(account && isPrivateEmail(account.email));
 }
 
+function exportFriendsFor(email) {
+  const key = normalizeEmail(email);
+  const utilizatori = friendList(key).map(other => findAccount(other)?.profile?.username || "").filter(Boolean);
+  const cereri = REQUESTS
+    .filter(item => item.from === key || item.to === key)
+    .map(item => ({
+      stare: item.status,
+      la: item.at,
+      sens: item.from === key ? "trimisa" : "primita",
+      utilizator: findAccount(item.from === key ? item.to : item.from)?.profile?.username || ""
+    }));
+  return {
+    utilizatori,
+    cereri,
+    profilPrivat: Boolean(SETTINGS.get(key)?.profilePrivate)
+  };
+}
+
+function eraseFriendsFor(email) {
+  const key = normalizeEmail(email);
+  SETTINGS.delete(key);
+  FRIENDS.delete(key);
+  for (const [other, list] of FRIENDS.entries()) {
+    FRIENDS.set(other, (list || []).filter(item => item !== key));
+  }
+  for (let i = REQUESTS.length - 1; i >= 0; i -= 1) {
+    if (REQUESTS[i].from === key || REQUESTS[i].to === key) REQUESTS.splice(i, 1);
+  }
+  SENDS.delete(key);
+}
+
+require("./userDataRegistry").register("friends", {
+  exportFor: exportFriendsFor,
+  eraseFor: eraseFriendsFor
+});
+
 persistence.register("friends", {
   snapshot: () => ({
     settings: persistence.mapToObject(SETTINGS),

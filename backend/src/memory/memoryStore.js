@@ -3,6 +3,7 @@
 // conversația nu se mai pierde la restartul procesului.
 
 const persistence = require("../data/persistence");
+const { TUTOR_MEMORY_MS } = require("../config/retention");
 
 const MAX_MESSAGES = 15;
 const store = {};
@@ -47,10 +48,10 @@ function deleteForEmail(email) {
   }
 }
 
-const MEMORY_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const MEMORY_TTL_MS = TUTOR_MEMORY_MS;
 
-function purgeStale(ttlMs = MEMORY_TTL_MS) {
-  const cutoff = Date.now() - ttlMs;
+function purgeStale(ttlMs = MEMORY_TTL_MS, now = Date.now()) {
+  const cutoff = now - ttlMs;
   let removed = 0;
   for (const [id, messages] of Object.entries(store)) {
     const last = Array.isArray(messages) && messages.length ? messages[messages.length - 1] : null;
@@ -72,6 +73,11 @@ persistence.register("memory", {
     persistence.restoreObject(store, data);
     purgeStale();
   }
+});
+
+require("../data/userDataRegistry").register("memory", {
+  exportFor: exportForEmail,
+  eraseFor: deleteForEmail
 });
 
 module.exports = { get, add, clear, all, exportForEmail, deleteForEmail, purgeStale, MAX_MESSAGES };

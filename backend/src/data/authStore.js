@@ -328,10 +328,43 @@ function destroySessionsForEmail(email) {
   }
 }
 
+function exportAccountFor(email) {
+  const account = findAccount(email);
+  if (!account) return null;
+  return {
+    utilizator: account.profile?.username || "",
+    rol: account.role,
+    clasa: account.profile?.class || "",
+    emailParinte: account.role === "student" ? (account.profile?.parentEmail || "") : "",
+    acord: account.consent?.status || "",
+    creatLa: account.createdAt || "",
+    ultimaAutentificare: account.lastLoginAt || ""
+  };
+}
+
 function deleteAccount(email) {
   const key = normalizeEmail(email);
   destroySessionsForEmail(key);
+  for (const [token, row] of RESETS.entries()) {
+    if (row?.email === key) RESETS.delete(token);
+  }
+  for (const account of ACCOUNTS.values()) {
+    if (account.role === "parent" && Array.isArray(account.children)) {
+      account.children = account.children.filter(child => normalizeEmail(child) !== key);
+    }
+  }
   return ACCOUNTS.delete(key);
+}
+
+function purgeExpiredResets(now = Date.now()) {
+  let removed = 0;
+  for (const [token, row] of RESETS.entries()) {
+    if (!row || now > row.expiresAt) {
+      RESETS.delete(token);
+      removed += 1;
+    }
+  }
+  return removed;
 }
 
 const PROFILE_STRING_FIELDS = [
@@ -380,6 +413,11 @@ function purgeExpiredSessions() {
 const purgeTimer = setInterval(purgeExpiredSessions, 60 * 60 * 1000);
 purgeTimer.unref();
 
+require("./userDataRegistry").register("auth", {
+  exportFor: exportAccountFor,
+  eraseFor: deleteAccount
+});
+
 persistence.register("auth", {
   snapshot: () => ({
     accounts: persistence.mapToObject(ACCOUNTS),
@@ -425,6 +463,7 @@ module.exports = {
   destroySessionsForEmail,
   deleteAccount,
   purgeExpiredSessions,
+  purgeExpiredResets,
   // expuse pentru teste
   hashPassword,
   verifyPassword

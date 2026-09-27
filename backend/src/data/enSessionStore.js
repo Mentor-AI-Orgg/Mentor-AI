@@ -143,6 +143,27 @@ function isFinished(userId, paperId) {
 // Compat: open = preview, fără cronometru de examen.
 const openPaper = previewPaper;
 
+const { getUser } = require('./economyStore');
+const registry = require('./userDataRegistry');
+
+registry.register('evaluare', {
+  exportFor(email) {
+    const user = getUser(email);
+    const papers = user?.enPapers && typeof user.enPapers === 'object' ? user.enPapers : {};
+    return {
+      lucrari: Object.entries(papers).map(([id, state]) => ({
+        id,
+        punctaj: state?.score ?? null,
+        deschisLa: state?.openedAt || 0
+      }))
+    };
+  },
+  eraseFor(email) {
+    const user = getUser(email);
+    if (user) delete user.enPapers;
+  }
+});
+
 module.exports = {
   previewPaper,
   openPaper,
