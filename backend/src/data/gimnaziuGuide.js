@@ -298,31 +298,108 @@ const GUIDES = {
     7: {
       title: "Matematică, clasa a VII-a",
       howISeeIt:
-        "Spațiul numeric se lărgește la reale: apar iraționalele și radicalii. Algebra capătă sisteme. Geometria se leagă: patrulatere, cerc, Thales, asemănare, apoi trigonometrie ușoară în triunghiul dreptunghic.",
+        "Întâi numerele reale: radicali, iraționale, modul, medii și ecuația x^2 = a. Apoi ecuațiile și sistemele liniare. Organizarea datelor înseamnă produs cartezian, axe și dependențe, fără noțiunea de funcție. Geometria urmează ordinea din manual: patrulater, cerc, asemănare, relații metrice. Formulele de calcul prescurtat, descompunerea algebrică și raționalizarea cu conjugată rămân la clasa a VIII-a.",
       units: [
         {
           id: "reale",
           title: "Numere reale și radicali",
           inOwnWords:
-            "Rădăcina pătrată „desface” un pătrat. Unele numere nu se scriu frumos ca fracție — le numim iraționale. Calculăm cu reale, raționalizăm un numitor simplu, folosim medii."
+            "Rădăcina pătrată desface un pătrat. Iraționalele au zecimale infinite, fără perioadă. Calculezi cu radicali, raționalizezi un numitor de forma a√b, folosești media ponderată și media geometrică, apoi rezolvi x^2 = a.",
+          toc: [
+            "Ne amintim din clasa a VI-a",
+            "Rădăcina pătrată a unui pătrat perfect",
+            "Rădăcina pătrată a unui rațional",
+            "Estimarea rădăcinii pătrate",
+            "Numere iraționale",
+            "Mulțimea numerelor reale",
+            "Scoaterea factorilor de sub radical",
+            "Introducerea factorilor sub radical",
+            "Aproximare și reprezentare pe axă",
+            "Compararea numerelor reale",
+            "Modulul unui număr real",
+            "Operații cu numere reale",
+            "Puteri ale numerelor reale",
+            "Raționalizarea numitorului a√b",
+            "Ordinea operațiilor",
+            "Media aritmetică ponderată",
+            "Media geometrică",
+            "Ecuații de forma x^2 = a",
+            "Recapitulare: numere reale"
+          ]
         },
         {
           id: "ecuati",
           title: "Ecuații și sisteme liniare",
           inOwnWords:
-            "O ecuație e un cântar: ce faci într-o parte faci și în cealaltă. Un sistem e două cântare cu aceleași necunoscute. Substituție sau reducere, apoi verificăm în enunțul real."
+            "O ecuație este un cântar: ce faci într-o parte faci și în cealaltă. ax + b = 0 are o soluție, niciuna sau o infinitate. Un sistem cere o pereche care ține în ambele ecuații. O afli prin substituție sau prin reducere, apoi o verifici în poveste.",
+          toc: [
+            "Egalități echivalente și identități",
+            "Ecuația ax + b = 0",
+            "Ecuații cu două necunoscute",
+            "Sisteme de două ecuații",
+            "Metoda substituției și metoda reducerii",
+            "Probleme cu ecuații și sisteme",
+            "Recapitulare: ecuații și sisteme"
+          ]
         },
         {
           id: "date",
-          title: "Date în plan",
+          title: "Organizarea datelor",
           inOwnWords:
-            "Perechi de numere ca puncte pe axe. Tabele și grafice care arată o dependență, nu doar „niște numere”."
+            "Produsul cartezian strânge perechile ordonate. Axele Ox și Oy așază punctele, distanțele și mijlocul unui segment. O dependență dă un singur corespondent pentru fiecare element, prin diagramă, tabel sau grafic.",
+          toc: [
+            "Produsul cartezian",
+            "Sistem de axe ortogonale",
+            "Dependențe prin diagrame și tabele",
+            "Dependențe prin grafice",
+            "Recapitulare: organizarea datelor"
+          ]
         },
         {
           id: "geo7",
           title: "Patrulater, cerc, asemănare, metrică",
           inOwnWords:
-            "Paralelogram, dreptunghi, romb, pătrat, trapez — proprietăți, perimetre, arii. În cerc: unghi înscris, tangente, lungimea cercului, aria discului. Thales și asemănarea ca „aceeași formă, altă scară”. Pitagora cu demonstrația așteptată la acest nivel, plus sinus/cosinus/tangentă pe unghi ascuțit."
+            "Patrulaterul aduce paralelogramul, dreptunghiul, rombul, pătratul, trapezul și ariile, inclusiv linia mijlocie în triunghi și centrul de greutate. Cercul aduce coarde, unghiul înscris, tangente, poligoane regulate, lungimea și aria. Asemănarea pleacă de la Thales. În triunghiul dreptunghic apar proiecțiile, Pitagora și sinusul.",
+          toc: [
+            "Patrulater convex și suma unghiurilor",
+            "Paralelogramul",
+            "Condiții pentru paralelogram",
+            "Linia mijlocie și centrul de greutate",
+            "Dreptunghiul",
+            "Rombul",
+            "Pătratul",
+            "Trapezul",
+            "Linia mijlocie a trapezului",
+            "Perimetru și aria pătratului și a dreptunghiului",
+            "Aria paralelogramului",
+            "Aria triunghiului",
+            "Aria rombului",
+            "Aria trapezului",
+            "Recapitulare: patrulaterul",
+            "Coarde și arce",
+            "Unghi înscris",
+            "Tangente",
+            "Poligoane regulate",
+            "Lungimea cercului și aria discului",
+            "Recapitulare: cercul",
+            "Segmente proporționale",
+            "Paralele echidistante",
+            "Teorema lui Thales",
+            "Reciproca lui Thales",
+            "Împărțirea în părți proporționale",
+            "Triunghiuri asemenea",
+            "Criterii de asemănare",
+            "Aplicații practice ale asemănării",
+            "Recapitulare: asemănarea",
+            "Proiecții ortogonale",
+            "Teorema înălțimii",
+            "Teorema catetei",
+            "Teorema lui Pitagora și reciproca",
+            "Sinus, cosinus, tangentă, cotangentă",
+            "Rezolvarea triunghiului dreptunghic",
+            "Aplicații în poligoane regulate",
+            "Recapitulare: relații metrice și clasa a VII-a"
+          ]
         }
       ]
     },

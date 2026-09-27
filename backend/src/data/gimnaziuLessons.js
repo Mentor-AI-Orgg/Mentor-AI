@@ -10,6 +10,10 @@ const { MULTIMI_LESSONS } = require('./mate6Multimi');
 const { PROPORTII_LESSONS } = require('./mate6Proportii');
 const { NUMERE_LESSONS } = require('./mate6Numere');
 const { GEOMETRIE6_LESSONS } = require('./mate6Geometrie');
+const { REALE_LESSONS } = require('./mate7Reale');
+const { ECUATII_LESSONS } = require('./mate7Ecuatii');
+const { DATE_LESSONS } = require('./mate7Date');
+const { GEO7_LESSONS } = require('./mate7Geometrie');
 
 function lesson(id, title, ...paragraphs) {
   let extra = {};
@@ -29,185 +33,10 @@ const LESSONS = {
   'matematica:6:proportii': PROPORTII_LESSONS,
   'matematica:6:intregi-rationale': NUMERE_LESSONS,
   'matematica:6:triunghi': GEOMETRIE6_LESSONS,
-  'matematica:7:reale': [
-    lesson(
-      'radical',
-      'Rădăcina pătrată',
-      '√n întreabă: ce număr pozitiv, înmulțit cu el, dă n? √9=3 pentru că 3×3=9. √(a²)=a dacă a>0. √(9×16)=√144=12, nu e obligatoriu √9×√16, dar aici da: 3×4=12.',
-      'Exemplu lucrat: √(9×16) − √9 × 2 = 12 − 3×2 = 12−6=6.',
-      'Reține: radicalul „desface” un pătrat, nu împarte la 2.'
-    ),
-    lesson(
-      'irational',
-      'Raționale și iraționale, pe aceeași axă',
-      'Un irațional nu se scrie frumos ca fracție de întregi. √2 ≈ 1,41 stă între 1 și 2. Realele = raționale + iraționale, toată dreapta continuă.',
-      'Exemplu lucrat: 3 < √n < 6. n ≥ 10 și n ≤ 35. De la 10 la 35: 26 numere naturale.',
-      'Reține: √2 nu e „inexistent”. E un punct pe axă, doar scrierea e infinită fără periodicitate.'
-    ),
-    lesson(
-      'operatii-rad',
-      'Operații cu radicali',
-      '√a × √b = √(ab). Nu aduni sub radical: √a + √b nu e √(a+b). Poți scoate un pătrat: √50 = √(25×2)=5√2.',
-      'Exemplu lucrat: 2 × √9 = 2×3=6. √16 + 1 = 4+1=5.',
-      'Reține: produsul se strânge sub un acoperiș; suma nu.'
-    ),
-    lesson(
-      'rationaliz',
-      'Raționalizarea numitorului',
-      'Scapi de radicalul de la numitor, înmulțind sus și jos potrivit. 6/√3 × √3/√3 = 6√3/3 = 2√3. Valoarea rămâne, scrierea se liniștește.',
-      'Exemplu lucrat: 6/√3 → 2√3. Verificare numerică: 6/1,732… ≈ 3,464 și 2×1,732… ≈ 3,464.',
-      'Reține: nu ștergi numitorul. Îl înmulțești ca să dispară radicalul.'
-    ),
-    lesson(
-      'medii',
-      'Medii',
-      'Aritmetică: (a+b)/2. Geometrică: √(ab). Pentru 4 și 16: aritmetică 10, geometrică √64=8. Geometrica e mai mică sau egală (egalitate când a=b).',
-      'Exemplu lucrat: media geometrică a lui 4 și 16 e 8. Nu e 10.',
-      'Reține: „medie” fără adjectiv, la note, e de obicei aritmetică. La radicali, întreabă care.'
-    )
-  ],
-  'matematica:7:ecuati': [
-    lesson(
-      'cantar',
-      'Ecuația ca un cântar',
-      'Ce faci într-o parte faci și în cealaltă. x+5=12 → x=7. 2x=10 → x=5. (3x−1)/2 = x+4: înmulțești cu 2, apoi strângi necunoscutele.',
-      'Exemplu lucrat: (3x−1)/2 = x+4. 3x−1=2x+8, x=9. Verificare: (27−1)/2=13, 9+4=13.',
-      'Reține: nu schimbi doar stânga. Cântarul trebuie să rămână echilibrat.'
-    ),
-    lesson(
-      'paranteze-eq',
-      'Paranteze și fracții în ecuație',
-      'Întâi scapi de numitor (înmulțești totul). Apoi deschizi parantezele. Apoi aduni termenii asemenea.',
-      'Exemplu lucrat: 3x−8=−2x+7, deja fără numitor. 5x=15, x=3.',
-      'Reține: un numitor comun pe toată ecuația, nu doar pe un termen.'
-    ),
-    lesson(
-      'substituie',
-      'Sisteme: substituția',
-      'Un sistem e două cântare cu aceleași necunoscute. Dintr-una afli o necunoscută (x=y+2) și o pui în cealaltă.',
-      'Exemplu lucrat: 3x+2y=16, x=y+2. 3(y+2)+2y=16, 5y=10, y=2, x=4.',
-      'Reține: înlocuiești tot x-ul, nu doar într-un loc.'
-    ),
-    lesson(
-      'reducere',
-      'Sisteme: reducerea',
-      'Aduni sau scazi ecuațiile ca să dispară o necunoscută. Poți înmulți mai întâi ca termenii să se anuleze. 2x+y=11 și x−y=1: aduni, 3x=12, x=4, apoi y=3.',
-      'Exemplu lucrat: x−y=1, x+y=7. Aduni: 2x=8, x=4, y=3.',
-      'Reține: dispariția e intenționată. Nu „se anulează” de la sine dacă nu ai pregătit coeficienții.'
-    ),
-    lesson(
-      'solutie',
-      'Verificarea perechii (x, y)',
-      'Soluția trebuie să țină în ambele ecuații. Dacă una minte, perechea nu e bună. Calculezi 4x−y și, separat, verifici x+2y.',
-      'Exemplu lucrat: (1, −2). 4·1 − (−2)=6. 1+2·(−2)=−3. Dacă a doua ecuație cere −3, da.',
-      'Reține: două bife, nu una.'
-    )
-  ],
-  'matematica:7:date': [
-    lesson(
-      'axe',
-      'Axe, origine, coordonate',
-      'Originea e (0,0), acolo se taie axele. Abscisa e x (prima). Ordonata e y (a doua). A(2,3): 2 la dreapta, 3 în sus.',
-      'Exemplu lucrat: la A(2,3), abscisa e 2. Nu e 3 și nu e originea.',
-      'Reține: prima cifră e pe orizontală.'
-    ),
-    lesson(
-      'simetrie',
-      'Simetrie față de origine și față de axe',
-      'Față de origine: schimbi ambele semne. A(3,−2) → (−3,2). Față de Ox: schimbi semnul lui y. Față de Oy: semnul lui x.',
-      'Exemplu lucrat: A(3,−2) simetric față de origine: B(−3,2).',
-      'Reține: origine = ambele semne; Ox = doar y.'
-    ),
-    lesson(
-      'distanta',
-      'Distanța dintre două puncte',
-      'Pitagora pe diferențele de coordonate. Δx și Δy, apoi √(Δx²+Δy²).',
-      'Exemplu lucrat: A(−1,4), C(5,−4). Δx=6, Δy=8. 36+64=100, distanța 10.',
-      'Reține: nu scazi x-urile și te oprești. Ai nevoie de ambele diferențe, apoi radical.'
-    ),
-    lesson(
-      'tabel',
-      'Tabele și dependențe',
-      'Un tabel leagă x de y, nu e o listă oarecare. Cauți regula: +2 la y când x crește cu 1, deci y=2x+k. Verifici pe un punct.',
-      'Exemplu lucrat: x=0,1,2 și y=3,5,7. y=2x+3. Pentru x=4, y=11.',
-      'Reține: regula trebuie să țină pe toate rândurile, nu pe două din trei.'
-    ),
-    lesson(
-      'grafic',
-      'Citirea graficului',
-      'Punctele unei dependențe liniare stau pe o dreaptă. y=−3x+5: pentru y=−4, −3x+5=−4, x=3. Intersecția cu Oy e f(0).',
-      'Exemplu lucrat: y=−3x+5, y=−4 → x=3. Punctul (3,−4) e pe dreaptă.',
-      'Reține: citești un punct: cobori la x, apoi la y, nu ghicești din ochi.'
-    )
-  ],
-  'matematica:7:geo7': [
-    lesson(
-      'patrulatere',
-      'Paralelogram, dreptunghi, romb, pătrat',
-      'Paralelogram: laturi opuse paralele și egale, unghiuri opuse egale, aria = bază × înălțime. Dreptunghi: unghiuri 90°. Romb: toate laturile egale, diagonale perpendiculare. Pătrat: și romb, și dreptunghi.',
-      'Exemplu lucrat: paralelogram 9 cm și 6 cm, un unghi 90° — e dreptunghi, aria 54.',
-      'Reține: pătratul e un caz special, nu o figură „de altceva”.',
-      { figure: 'parallelogram', formulas: ['A = bază × h', 'P = 2(a + b)', 'diagonalele se taie în jumătăți'] }
-    ),
-    lesson(
-      'romb',
-      'Rombul',
-      'Rombul are toate laturile egale. Diagonalele sunt perpendiculare și se taie în jumătăți. Aria e (d₁ × d₂) / 2, sau bază × înălțime. Dacă mai are și unghiuri de 90°, e pătrat.',
-      'Nu e „pătrat strâmb” ca insultă: e o figură cu reguli ale ei. Unghiurile opuse sunt egale.',
-      'Exemplu lucrat: diagonale 6 cm și 8 cm. A = 48/2 = 24 cm². Latura: jumătățile 3 și 4, deci 5 (Pitagora). P = 20 cm.',
-      'Reține: patru laturi egale. Diagonalele ⊥. 90° doar dacă e și pătrat.',
-      { figure: 'rhombus', formulas: ['P = 4a', 'A = (d₁ × d₂) / 2'] }
-    ),
-    lesson(
-      'trapez',
-      'Trapezul și ariile',
-      'Trapez: exact o pereche de laturi paralele (bazele). Aria: (B+b)×h / 2. Isoscel: laturile neparalele egale, diagonale egale. Dreptunghic: o latură neparalelă e și înălțime.',
-      'Exemplu lucrat: baze 10 și 6, înălțime 4. (10+6)×4 / 2 = 32.',
-      'Reține: înălțimea e perpendiculara dintre baze, nu o latură piezișă.',
-      { figure: 'trapezoid', formulas: ['A = (B + b) × h / 2', 'linie mijlocie = (B + b) / 2'] }
-    ),
-    lesson(
-      'cerc7',
-      'Lungimea cercului și aria discului',
-      'L=2πr=πd. Aria discului πr². Lungimea e gardul, aria e umplutura.',
-      'Exemplu lucrat: rază 7, π=22/7. L=2×(22/7)×7=44. Aria=(22/7)×49=154.',
-      'Reține: πr² nu e lungimea. 2πr nu e aria.',
-      { figure: 'circle', formulas: ['L = 2πr', 'A = πr²'] }
-    ),
-    lesson(
-      'hexagon',
-      'Hexagonul regulat',
-      'Șase laturi egale, șase unghiuri egale. Se taie în 6 triunghiuri echilaterale cu latura a. Raza cercului circumscris e tot a. Perimetrul 6a. Aria: (3a²√3)/2.',
-      'Dacă știi echilateralul, știi hexagonul: e o floare de 6 triunghiuri.',
-      'Exemplu lucrat: latură 4 cm. P = 24 cm. Un triunghi din cele 6 are aria (16√3)/4 = 4√3, deci tot hexagonul 24√3 cm².',
-      'Reține: R = a la hexagonul regulat. Nu e valabil la pentagon.',
-      { figure: 'hexagon', formulas: ['P = 6a', 'A = (3a²√3) / 2', 'R = a'] }
-    ),
-    lesson(
-      'thales',
-      'Thales: paralele, segmente proporționale',
-      'O paralelă taie laturile unui unghi (sau ale triunghiului) în segmente proporționale. 4/6 = x/(x+3).',
-      'Exemplu lucrat: 4/6 = x/(x+3). 4(x+3)=6x, 4x+12=6x, x=6.',
-      'Reține: aceeași ordine: mic/mare pe o secantă ca mic/mare pe cealaltă.',
-      { figure: 'thales', formulas: ['a / a′ = b / b′'] }
-    ),
-    lesson(
-      'asemanare',
-      'Asemănarea',
-      'Aceeași formă, altă scară. Raportul laturilor e k; raportul ariilor e k²; al perimetrelor e k.',
-      'Exemplu lucrat: raport laturi 3/2, aria mare 54. Aria mică: 54 × 4/9 = 24.',
-      'Reține: ariile cresc cu pătratul scării, nu cu scara.',
-      { figure: 'similar', formulas: ['raport laturi = k', 'raport arii = k²'] }
-    ),
-    lesson(
-      'trig',
-      'Sinus, cosinus, tangentă',
-      'În triunghiul dreptunghic, pe un unghi ascuțit: sin = opusă/ipotenuză, cos = alăturată/ipotenuză, tg = opusă/alăturată. Ipotenuza e cea mai lungă.',
-      'Exemplu lucrat: catete 8 și 15, ipotenuză 17. cos unghiului opus lui 8: alăturata e 15, deci 15/17.',
-      'Reține: „opusă” e vizavi de unghiul despre care vorbești, nu de 90°.',
-      { figure: 'triangle-right', formulas: ['sin = opusă / ipotenuză', 'cos = alăturată / ipotenuză', 'tg = opusă / alăturată'] }
-    )
-  ],
+  'matematica:7:reale': REALE_LESSONS,
+  'matematica:7:ecuati': ECUATII_LESSONS,
+  'matematica:7:date': DATE_LESSONS,
+  'matematica:7:geo7': GEO7_LESSONS,
   'matematica:8:intervale': [
     lesson(
       'interval',
