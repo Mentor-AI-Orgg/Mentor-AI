@@ -5,21 +5,21 @@ const TRUST_LINE = 'Lecții originale, pe programă. Tu scrii. Nota e după pred
 const STEPS = [
   { n: '1', title: 'Citești o lecție', text: 'Pe înțelesul tău, cu exemplu lucrat. Nu e copie din manual.' },
   { n: '2', title: 'Încerci singur', text: 'Test de 10 itemi sau flashcarduri A–D. Scrii tu. Nota vine la final.' },
-  { n: '3', title: 'Vezi unde ai greșit', text: 'Apoi întrebi mentorul: îți explică altfel, nu îți face tema.' }
+  { n: '3', title: 'Vezi unde ai greșit', text: 'Apoi întrebi tutorele: îți explică altfel, nu îți face tema.' }
 ];
 
 const FEATURES = [
   { icon: 'fa-book-open', title: 'Română și matematică', text: 'Clasele 5–8. Capitole, lecții, recapitulare.' },
   { icon: 'fa-clipboard-check', title: 'Teste și flashcarduri', text: 'De la ușor la greu. Itemii nu se repetă.' },
   { icon: 'fa-flag-checkered', title: 'Evaluare Națională', text: 'Începi testul, stai ca la examen, apoi vezi baremul. Părintele primește nota.' },
-  { icon: 'fa-comments', title: 'Mentor când te blochezi', text: 'Îți dă primul pas și un exemplu nou. Nu îți dă rezolvarea gata.' }
+  { icon: 'fa-comments', title: 'Tutore când te blochezi', text: 'Îți dă primul pas și un exemplu nou. Nu îți dă rezolvarea gata.' }
 ];
 
 const WelcomeScreen = ({ onConnect, onRegister }) => (
   <main className="welcome-page animate-fadeIn">
-    <div className="welcome-mark" aria-hidden="true">M</div>
+    <div className="welcome-mark" aria-hidden="true">10</div>
     <p className="welcome-slogan">{TRUST_LINE}</p>
-    <h1 className="display-font welcome-title">Mentor AI</h1>
+    <h1 className="display-font welcome-title">Sunt de 10</h1>
     <p className="welcome-lead">
       Aplicația ta de gimnaziu la <strong>română</strong> și <strong>matematică</strong>.
       Înveți, încerci, greșești, mai încerci, <strong className="welcome-succeed">reușești</strong>.
@@ -28,7 +28,7 @@ const WelcomeScreen = ({ onConnect, onRegister }) => (
     <QuoteCard />
 
     <p className="welcome-pitch">
-      Nu e un chat care îți face tema. E un loc unde lucrezi tu, iar mentorul te ajută când te blochezi.
+      Nu e un chat care îți face tema. E un loc unde lucrezi tu, iar tutorele te ajută când te blochezi.
     </p>
 
     <ol className="welcome-steps" aria-label="Cum funcționează">

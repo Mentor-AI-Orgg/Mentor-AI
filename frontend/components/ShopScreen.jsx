@@ -375,11 +375,11 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         <div className="shop-section-head">
           <div>
             <div className="eyebrow">Părinte</div>
-            <h2 className="display-font">Spune-i că mentorul e gratuit.</h2>
+            <h2 className="display-font">Spune-i că aplicația e gratuită.</h2>
           </div>
           <span className="shop-chip"><i className="fas fa-envelope" /> {deliveryNote || 'un mesaj'}</span>
         </div>
-        <p className="shop-subtitle">Părintele salvat în cont primește fiecare activitate. De aici îi poți trimite o dată pe zi mesajul fix că mentorul este gratuit. Nu se poate scrie o adresă sau un text liber.</p>
+        <p className="shop-subtitle">Părintele salvat în cont primește fiecare activitate. De aici îi poți trimite o dată pe zi mesajul fix că Sunt de 10 este gratuită. Nu se poate scrie o adresă sau un text liber.</p>
         <div className="shop-parent-form">
           <button type="button" className="accent-button" onClick={sendParentReview} disabled={parentSending}>
             {parentSending ? 'Se trimite...' : 'Spune-i că este gratuit'}
@@ -387,7 +387,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         </div>
         <div className="shop-notes">
           <div><strong>Monede de studiu</strong><span>Nu sunt lei. Se cheltuie doar pe avatar și fundal.</span></div>
-          <div><strong>Cum le iei</strong><span>Logare 30, capitol 8, sesiune 15, flashcarduri 10, test 10, concentrare 12–20, mentor 4, serie 5. Premiul lunii 50.</span></div>
+          <div><strong>Cum le iei</strong><span>Logare 30, capitol 8, sesiune 15, flashcarduri 10, test 10, concentrare 12–20, tutore 4, serie 5. Premiul lunii 50.</span></div>
           <div><strong>Mitic</strong><span>Ultima raritate se cumpără de la nivelul 5 în sus.</span></div>
         </div>
       </section>

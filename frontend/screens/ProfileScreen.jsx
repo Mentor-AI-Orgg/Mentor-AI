@@ -203,7 +203,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'sunt-de-10-date.json';
+    link.download = 'suntde10-date.json';
     document.body.appendChild(link);
     link.click();
     link.remove();

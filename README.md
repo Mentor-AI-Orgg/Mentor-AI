@@ -1,9 +1,12 @@
-# Mentor AI
+# Sunt de 10
 
-Aplicație educațională pentru gimnaziu (clasele 5–8): un mentor AI de
-română și matematică, cu scaffolding, gamificare și dashboard-uri pentru
-părinte și profesor. Conținutul urmează programa oficială (OMEN 3393/2017)
-și e scris ca rezumat propriu, nu ca text de manual.
+Aplicație gratuită de română și matematică pentru clasele 5–8
+(suntde10.ro). Tutorele răspunde din lecțiile salvate. Conținutul urmează
+programa oficială (OMEN 3393/2017) și e scris ca rezumat propriu, nu ca text
+de manual.
+
+Numele tehnic vechi rămâne la cookie-uri, la fișierul `data/mentor-ai.json`
+și la numele repo-ului, ca să nu se piardă conturile.
 
 ## Cum rulezi local
 

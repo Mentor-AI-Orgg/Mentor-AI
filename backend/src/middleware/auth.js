@@ -52,7 +52,7 @@ function authRequired(req, res, next) {
 }
 
 const STUDENTS_ONLY = {
-  error: "Mentor AI este doar pentru elevi. Părinții primesc email cu activitatea copilului, fără cont.",
+  error: "Sunt de 10 este doar pentru elevi. Părinții primesc email cu activitatea copilului, fără cont.",
   code: "students_only"
 };
 

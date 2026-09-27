@@ -1,4 +1,4 @@
-// Ghid intern pentru Mentor AI, clasele 5–8, doar Română și Matematică.
+// Ghid intern pentru Sunt de 10, clasele 5–8, doar Română și Matematică.
 //
 // Sursa de orientare: programa școlară oficială aprobată prin
 // OMEN nr. 3393/28.02.2017 (Ministerul Educației), publicată în

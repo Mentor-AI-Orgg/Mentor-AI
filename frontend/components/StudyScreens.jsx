@@ -20,8 +20,8 @@ const chatRequest = async ({ message, conversationId, subject, classLevel, langu
   return { response: mockReply, mocked: true, engine_used: 'offline' };
 };
 
-const MessageBubble = ({ role, children }) => <div className={`mentor-message ${role === 'user' ? 'mentor-message-user' : 'mentor-message-ai'}`}><span className="mentor-message-role">{role === 'user' ? 'Tu' : 'Mentor AI'}</span><div>{children}</div></div>;
-const LoadingMessage = () => <div className="mentor-message mentor-message-ai"><span className="mentor-message-role">Mentor AI</span><div className="loading-dots"><i /><i /><i /></div></div>;
+const MessageBubble = ({ role, children }) => <div className={`mentor-message ${role === 'user' ? 'mentor-message-user' : 'mentor-message-ai'}`}><span className="mentor-message-role">{role === 'user' ? 'Tu' : 'Tutore'}</span><div>{children}</div></div>;
+const LoadingMessage = () => <div className="mentor-message mentor-message-ai"><span className="mentor-message-role">Tutore</span><div className="loading-dots"><i /><i /><i /></div></div>;
 
 const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
   const [messages, setMessages] = useState([]);
@@ -167,7 +167,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
       <button type="button" className={`ghost-button composer-tool ${listening ? 'is-live' : ''}`} onClick={toggleMic} aria-label={listening ? 'Oprește microfonul' : 'Vorbește, apoi apasă Enter'}><i className={`fas ${listening ? 'fa-stop' : 'fa-microphone'}`} /></button>
       <div className="composer-field">
         {micNote && <span className="composer-chip">{micNote}</span>}
-        <input value={draft} onChange={event => setDraft(event.target.value)} placeholder={listening ? 'Te-am auzit. Apasă Enter ca să trimiți.' : (diagMode ? 'Scrie orice, va rula diagnosticarea...' : 'Scrie sau vorbește, apoi Enter…')} aria-label="Întrebarea pentru Mentor AI" />
+        <input value={draft} onChange={event => setDraft(event.target.value)} placeholder={listening ? 'Te-am auzit. Apasă Enter ca să trimiți.' : (diagMode ? 'Scrie orice, va rula diagnosticarea...' : 'Scrie sau vorbește, apoi Enter…')} aria-label="Întrebarea pentru tutore" />
       </div>
       <button className="accent-button" type="submit" disabled={loading || !draft.trim()} aria-label="Trimite întrebarea"><i className={`fas ${diagMode ? 'fa-stethoscope' : 'fa-arrow-up'}`} /></button>
     </form>

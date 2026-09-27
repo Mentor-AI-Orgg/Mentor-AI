@@ -335,7 +335,7 @@ async function generateAccessCode({ parentEmail = '', childEmail = '', phone = '
     attempts: 0
   });
 
-  const subject = 'Cod de acces Mentor AI';
+  const subject = 'Cod de acces Sunt de 10';
   const body = `Codul tău de acces temporar pentru contul copilului: ${code}. Valabil 10 minute. Nu este parola contului -- se folosește doar pentru autorizare rapidă.`;
 
   const { deliverMessage } = require('../notify/deliver');
@@ -1111,7 +1111,7 @@ async function sendParentReview({ userId = 'demo_user', role = 'student' }) {
   }
   const subject = `Sunt de 10 este gratuită pentru ${account.profile.username || "elev"}`;
   const body = [
-    'Aplicația Mentor AI este gratuită. Nu există abonament de plătit.',
+    'Aplicația Sunt de 10 este gratuită. Nu există abonament de plătit.',
     `Cont: ${role}`,
     `Monede în magazin (cosmetice): ${user.balance}`,
     'Mesajul este un text fix. Adresa și textul nu pot fi alese de copil, ca să nu se trimită scrisori către oricine.'

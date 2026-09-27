@@ -221,7 +221,7 @@ router.post("/forgot-password", authLimiter, validateBody(forgotPasswordSchema),
   if (account) {
     const token = issueResetToken(account.email);
     const link = `${publicBaseUrl(req)}/#/parola/${token}`;
-    const subject = "Resetare parolă Mentor AI";
+    const subject = "Resetare parolă Sunt de 10";
     const body = [
       "Ai cerut o parolă nouă.",
       "Linkul este valabil 45 de minute și se folosește o singură dată:",

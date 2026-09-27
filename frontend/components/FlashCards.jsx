@@ -250,7 +250,7 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
           <div className="learning-actions">
             {typeof onAskMentor === 'function' && source && (
               <button type="button" className="ghost-button" onClick={() => onAskMentor(source)}>
-                Întreabă mentorul
+                Întreabă tutorele
               </button>
             )}
             <button type="button" className="ghost-button" onClick={() => { setCards([]); setReport(null); setPendingUnit(source); }}>Altă notă</button>
