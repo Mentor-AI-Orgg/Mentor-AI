@@ -2,6 +2,7 @@ import { Component, lazy, Suspense, useState, useEffect, useCallback, useMemo, u
 import { MentorAPI } from './apiClient.js';
 import { STORAGE_KEY, defaultUserData, toStoredUser, cleanStoredUser } from './userData.js';
 import { applyProgress, applyTheme } from './appearance.js';
+import { appearanceFromAccount, applyAppearance } from './themePrefs.js';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
 import { hashForRoute, parseAppHash } from './appRoutes.js';
 import AdaptiveContainer from './components/AdaptiveContainer.jsx';
@@ -66,7 +67,11 @@ function applyAccount(user, prev = {}) {
     avatarId: user.avatarId !== undefined ? user.avatarId : prev.avatarId,
     themeId: user.themeId !== undefined ? user.themeId : prev.themeId,
     titleId: user.titleId !== undefined ? user.titleId : prev.titleId,
-    titleName: user.titleName !== undefined ? user.titleName : prev.titleName
+    titleName: user.titleName !== undefined ? user.titleName : prev.titleName,
+    theme: user.theme || prev.theme || '',
+    textSize: user.textSize || prev.textSize || '',
+    readableFont: user.readableFont || prev.readableFont || '',
+    motion: user.motion || prev.motion || ''
   };
 }
 
@@ -176,6 +181,8 @@ function AppShell({ userData, setUserData }) {
       merged = applyAccount(session.user, prev);
       return merged;
     });
+    const savedLook = appearanceFromAccount(session.user);
+    if (savedLook) applyAppearance(savedLook);
 
     const params = new URLSearchParams(window.location.search);
     const calendarConnected = params.get('calendar_connected');
@@ -593,7 +600,7 @@ function AppShell({ userData, setUserData }) {
       <div className="app-background">
         <BackgroundSafe>
           <FloatingLines
-            linesGradient={['#b9a7ff', '#6fd7ff', '#5a4fcf', '#5353b8']}
+            linesGradient={['#44D6D7', '#0F2A52', '#93FC09']}
             enabledWaves={['top', 'middle', 'bottom']}
             lineCount={[6, 8, 10]}
             lineDistance={[5, 4, 3]}

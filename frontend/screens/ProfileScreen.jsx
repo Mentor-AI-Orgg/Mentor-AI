@@ -6,6 +6,7 @@ import { avatarIcon, itemEmoji } from '../appearance.js';
 import LevelBar from '../components/LevelBar.jsx';
 import ReportButton from '../components/ReportButton.jsx';
 import { passwordHint } from '../passwordHint.js';
+import { readAppearance, saveAppearance } from '../themePrefs.js';
 
 const CLASSES = ['5', '6', '7', '8'];
 
@@ -50,6 +51,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
   const [passwords, setPasswords] = useState({ currentPassword: '', newPassword: '' });
   const [wardrobe, setWardrobe] = useState({ items: [], titles: [], inventory: [], equipped: {} });
   const [listOpen, setListOpen] = useState(false);
+  const [look, setLook] = useState(() => readAppearance());
   const friendsListRef = useRef(null);
   const rankedFriends = [...(friends.friends || [])].sort((a, b) => (
     (Number(b.xp) || 0) - (Number(a.xp) || 0) || String(a.name || '').localeCompare(String(b.name || ''), 'ro')
@@ -110,6 +112,18 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
       });
     });
   }, [userData.email]);
+
+  const chooseLook = async (patch) => {
+    const next = saveAppearance({ ...look, ...patch });
+    setLook(next);
+    if (!userData?.isLoggedIn && !userData?.username) return;
+    await MentorAPI.updateProfile({
+      theme: next.theme,
+      textSize: next.textSize,
+      readableFont: next.readableFont ? '1' : '0',
+      motion: next.motion ? '1' : '0'
+    });
+  };
 
   const saveProfile = async () => {
     setSaving(true);
@@ -383,6 +397,43 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
+        <div className="eyebrow">Setări</div>
+        <h3 className="display-font profile-tool-title">Aspect.</h3>
+        <h4 className="friend-subhead">Temă</h4>
+        <div className="favorite-grid">
+          {[
+            ['dark', 'Întunecată'],
+            ['light', 'Luminoasă'],
+            ['system', 'Ca telefonul']
+          ].map(([value, label]) => (
+            <button key={value} type="button" className={`favorite-chip ${look.theme === value ? 'is-on' : ''}`} onClick={() => chooseLook({ theme: value })}>
+              <span>{label}</span>
+            </button>
+          ))}
+        </div>
+        <h4 className="friend-subhead">Mărimea textului</h4>
+        <div className="favorite-grid">
+          {[
+            ['normal', 'Normal'],
+            ['large', 'Mare'],
+            ['xlarge', 'Foarte mare']
+          ].map(([value, label]) => (
+            <button key={value} type="button" className={`favorite-chip ${look.textSize === value ? 'is-on' : ''}`} onClick={() => chooseLook({ textSize: value })}>
+              <span>{label}</span>
+            </button>
+          ))}
+        </div>
+        <label className="settings-toggle">
+          <input type="checkbox" checked={look.readableFont} onChange={e => chooseLook({ readableFont: e.target.checked })} />
+          <span>Font ușor de citit.</span>
+        </label>
+        <label className="settings-toggle">
+          <input type="checkbox" checked={look.motion} onChange={e => chooseLook({ motion: e.target.checked })} />
+          <span>Animații.</span>
+        </label>
       </section>
 
       <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">

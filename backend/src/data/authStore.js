@@ -387,7 +387,11 @@ const PROFILE_STRING_FIELDS = [
   "exam",
   "dailyHours",
   "uiLanguage",
-  "language"
+  "language",
+  "theme",
+  "textSize",
+  "readableFont",
+  "motion"
 ];
 
 function markMustRename(email) {

@@ -198,7 +198,7 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
           </div>
           {Number.isInteger(choices[card.id]) && (
             <p className={`quiz-feedback ${choices[card.id] === card.correct ? 'ok' : 'bad'}`}>
-              {choices[card.id] === card.correct ? 'Corect.' : 'Ai greșit.'} <MathText text={card.explain} />
+              {choices[card.id] === card.correct ? '✓ Corect.' : '✗ Ai greșit.'} <MathText text={card.explain} />
             </p>
           )}
           {Number.isInteger(choices[card.id]) && (

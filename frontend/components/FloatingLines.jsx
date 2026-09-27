@@ -214,7 +214,7 @@ function hexToVec3(hex) {
 }
 
 function FloatingLines({
-  linesGradient = ['#b9a7ff', '#6fd7ff', '#4c48a7'],
+  linesGradient = ['#44D6D7', '#0F2A52', '#93FC09'],
   enabledWaves = ['top', 'middle', 'bottom'],
   lineCount = [6, 7, 8],
   lineDistance = [5, 4, 3],
