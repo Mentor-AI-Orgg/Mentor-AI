@@ -59,13 +59,28 @@ const GLOSSARY = {
     { term: 'congruent', meaning: 'Figuri care se suprapun. La triunghiuri, ordinea vârfurilor spune corespondența.' },
     { term: 'ipotenuză', meaning: 'Latura vizavi de unghiul drept.' }
   ],
+  'matematica:7:reale': [
+    { term: 'radical', meaning: 'Întreabă ce număr nenegativ, înmulțit cu el, dă numărul de sub semn.' },
+    { term: 'irațional', meaning: 'Are zecimale infinite, fără perioadă. Nu se scrie ca fracție de întregi.' },
+    { term: 'modul', meaning: 'Distanța până la 0 pe axa reală. Este 0 sau un număr pozitiv.' },
+    { term: 'medie geometrică', meaning: 'Rădăcina pătrată a produsului a două numere pozitive.' }
+  ],
   'matematica:7:ecuati': [
-    { term: 'ecuație', meaning: 'O cântar: ce e stânga trebuie să fie egal cu dreapta.' },
-    { term: 'sistem', meaning: 'Două relații, două necunoscute.' }
+    { term: 'ecuație', meaning: 'O egalitate în care cauți necunoscuta. Ce faci într-o parte faci și în cealaltă.' },
+    { term: 'identitate', meaning: 'O egalitate adevărată pentru orice valoare permisă.' },
+    { term: 'sistem', meaning: 'Două ecuații cu aceleași necunoscute. Soluția este o pereche care le ține pe amândouă.' }
   ],
   'matematica:7:date': [
-    { term: 'medie', meaning: 'Suma împărțită la câți termeni ai.' },
-    { term: 'mediană', meaning: 'Valoarea din mijloc, după ce ai așezat șirul.' }
+    { term: 'produs cartezian', meaning: 'Mulțimea perechilor ordonate făcute cu un element din fiecare mulțime.' },
+    { term: 'abscisă', meaning: 'Prima coordonată, pe axa Ox.' },
+    { term: 'ordonată', meaning: 'A doua coordonată, pe axa Oy.' },
+    { term: 'dependență', meaning: 'Fiecărui element din prima mulțime îi corespunde exact unul din a doua.' }
+  ],
+  'matematica:7:geo7': [
+    { term: 'paralelogram', meaning: 'Patrulater cu laturile opuse paralele. Diagonalele se înjumătățesc.' },
+    { term: 'linie mijlocie', meaning: 'În triunghi, unește mijloacele a două laturi și este jumătate din a treia. În trapez, este media bazelor.' },
+    { term: 'asemenea', meaning: 'Aceeași formă, altă scară. Unghiuri egale și laturi proporționale.' },
+    { term: 'sinus', meaning: 'În triunghiul dreptunghic, cateta opusă împărțită la ipotenuză.' }
   ],
   'matematica:8:algebric': [
     { term: 'termeni asemenea', meaning: 'Aceeași literă, același exponent — îi poți aduna.' },

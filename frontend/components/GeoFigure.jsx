@@ -825,6 +825,37 @@ const FIGURES = {
       </svg>
     )
   },
+  axes: {
+    label: 'Sistem de axe ortogonale',
+    svg: (
+      <svg viewBox="0 0 280 180" role="img" aria-label="Axe Ox și Oy care se taie în origine, cu un punct în cadranul întâi">
+        <line x1="36" y1="92" x2="252" y2="92" stroke="currentColor" strokeWidth="2" />
+        <line x1="132" y1="18" x2="132" y2="162" stroke="currentColor" strokeWidth="2" />
+        <polygon points="252,92 240,86 240,98" fill="currentColor" />
+        <polygon points="132,18 126,30 138,30" fill="currentColor" />
+        <circle cx="132" cy="92" r="4" fill={C.pink} />
+        <circle cx="196" cy="48" r="5" fill={C.violet} />
+        <line x1="196" y1="92" x2="196" y2="48" stroke={C.aqua} strokeDasharray="4 3" />
+        <line x1="132" y1="48" x2="196" y2="48" stroke={C.aqua} strokeDasharray="4 3" />
+        <text x="238" y="84" fill="#fff" fontSize="13">x</text>
+        <text x="140" y="28" fill="#fff" fontSize="13">y</text>
+        <text x="112" y="110" fill={C.pink} fontSize="12">O</text>
+        <text x="204" y="44" fill="#fff" fontSize="13">A</text>
+      </svg>
+    )
+  },
+  'dot-grid': {
+    label: 'Rețea de puncte pentru un produs cartezian',
+    svg: (
+      <svg viewBox="0 0 240 150" role="img" aria-label="Șase puncte așezate pe două linii și trei coloane">
+        {[0, 1].map(row => [0, 1, 2].map(col => (
+          <circle key={`${row}-${col}`} cx={58 + col * 62} cy={48 + row * 48} r="7" fill={C.violet} />
+        )))}
+        <text x="48" y="28" fill={C.aqua} fontSize="13">A</text>
+        <text x="214" y="56" fill={C.pink} fontSize="13">B</text>
+      </svg>
+    )
+  },
   'integer-line': {
     label: 'Axa numerelor întregi',
     svg: (
