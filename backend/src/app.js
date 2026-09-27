@@ -30,7 +30,7 @@ const clientErrorRoute = require("./routes/clientError");
 const { newId, reportError, watchOperations } = require("./ops/errorMonitor");
 const persistence = require("./data/persistence");
 const curriculumRoute = require("./routes/curriculum");
-const { privacyHtml, termsHtml } = require("./legal/pages");
+const { privacyHtml, termsHtml, legalContact } = require("./legal/pages");
 
 function createApp(options = {}) {
   const { autosave = true } = options;
@@ -110,6 +110,13 @@ function createApp(options = {}) {
 
   mountApi("/api");
   mountApi("/api/v1");
+
+  app.get("/api/legal-contact", (_req, res) => {
+    res.json({ contact: legalContact() });
+  });
+  app.get("/api/v1/legal-contact", (_req, res) => {
+    res.json({ contact: legalContact() });
+  });
 
   app.get("/privacy.html", (req, res) => {
     res.type("html").send(privacyHtml());

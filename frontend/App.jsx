@@ -471,6 +471,7 @@ function AppShell({ userData, setUserData }) {
           <WelcomeScreen
             onConnect={() => { setScreen('login'); writeHash('login'); }}
             onRegister={() => { setScreen('register'); writeHash('register'); }}
+            onParent={() => { setScreen('parent'); writeHash('parent'); }}
           />
         );
       case 'reset': {

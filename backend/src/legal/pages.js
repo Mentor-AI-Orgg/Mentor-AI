@@ -22,8 +22,12 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;");
 }
 
+function legalContact() {
+  return String(process.env.LEGAL_CONTACT || "").trim();
+}
+
 function contactLine() {
-  const contact = String(process.env.LEGAL_CONTACT || "").trim();
+  const contact = legalContact();
   if (!contact) {
     return "Pentru întrebări despre date, operatorul publică adresa în variabila LEGAL_CONTACT.";
   }
@@ -140,4 +144,4 @@ function termsHtml() {
   `);
 }
 
-module.exports = { privacyHtml, termsHtml, days, months };
+module.exports = { privacyHtml, termsHtml, days, months, legalContact };

@@ -970,6 +970,24 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .geo-solid figcaption strong { display: block; }
 .geo-solid figcaption small { display: block; margin-top: 4px; color: var(--muted); font-weight: 600; }
 
+.welcome-bar {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+}
+.welcome-nav { display: flex; flex-wrap: wrap; gap: 8px; }
+.welcome-hero { margin-top: 18px; }
+.welcome-section-title { margin: 28px 0 10px; font-size: 22px; }
+.welcome-mascot-slot {
+  margin: 16px 0; min-height: 72px; border-radius: 18px;
+  display: grid; place-items: center;
+  background: var(--surface); color: var(--muted);
+  font-size: 13px;
+}
+.welcome-faq { margin-top: 8px; }
+.welcome-faq summary { cursor: pointer; font-weight: 700; }
+.welcome-faq p { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+.welcome-foot { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; font-size: 14px; }
+.welcome-foot a, .welcome-parent a { color: var(--aqua); }
+
 .welcome-page {
   min-height: 100vh;
   padding: 48px 24px 36px;
@@ -1029,8 +1047,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   color: #171633;
   font: 800 13px 'Space Grotesk', sans-serif;
 }
-.welcome-steps strong { display: block; font-size: 14px; }
-.welcome-steps small { color: var(--muted); font-size: 12px; line-height: 1.45; }
+.welcome-steps strong { display: block; font-size: 16px; }
+.welcome-steps small { color: var(--muted); font-size: 15px; line-height: 1.45; }
 .welcome-features { margin: 20px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
 .welcome-features li {
   display: grid;
@@ -1043,14 +1061,15 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   background: rgba(26, 26, 62, .72);
 }
 .welcome-features i { color: var(--lime); margin-top: 4px; }
-.welcome-features strong { display: block; font-size: 14px; }
-.welcome-features small { color: var(--muted); font-size: 12px; line-height: 1.45; }
-.welcome-free, .welcome-parent {
+.welcome-features strong { display: block; font-size: 16px; }
+.welcome-features small { color: var(--muted); font-size: 15px; line-height: 1.45; }
+.welcome-free {
   margin: 14px 0 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 15px;
   line-height: 1.45;
 }
+.welcome-parent p { margin: 8px 0 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
 .welcome-free { color: var(--aqua); font-weight: 700; }
 .welcome-connect { margin-top: 22px; width: 100%; min-height: 54px; }
 .welcome-register {
