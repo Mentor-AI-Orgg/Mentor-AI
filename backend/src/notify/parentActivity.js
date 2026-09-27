@@ -4,7 +4,7 @@
 // Fără SMTP, livrarea rămâne mock (ca restul integrărilor). Eșecul de
 // email nu trebuie să strice cererea elevului.
 
-const { findAccount } = require("../data/authStore");
+const { findAccount, isConsentGranted } = require("../data/authStore");
 const { deliverMessage, smtpConfigured } = require("./deliver");
 
 const LABELS = {
@@ -125,6 +125,9 @@ async function notifyParent({ studentEmail, type, note = "", meta = {} }) {
   const account = findAccount(studentEmail);
   if (!account || account.role !== "student") {
     return { skipped: true, reason: "not_student" };
+  }
+  if (!isConsentGranted(account)) {
+    return { skipped: true, reason: "consent_pending" };
   }
 
   const parentEmail = account.profile && account.profile.parentEmail;

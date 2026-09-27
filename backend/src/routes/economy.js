@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { STUDENTS_ONLY } = require('../middleware/auth');
+const { isConsentGranted } = require('../data/authStore');
 const { validateBody } = require('../middleware/validate');
 const { claimSchema, buySchema, equipSchema, progressSchema } = require('../validation/schemas');
 const {
@@ -84,7 +85,16 @@ router.post('/claim', validateBody(claimSchema), async (req, res) => {
   res.status(result.ok ? 200 : 400).json(result);
 });
 
+function blockPending(req, res) {
+  if (!isConsentGranted(req.auth.account)) {
+    res.status(403).json({ error: 'consent_pending' });
+    return true;
+  }
+  return false;
+}
+
 router.post('/buy', validateBody(buySchema), async (req, res) => {
+  if (blockPending(req, res)) return;
   const { item_id } = req.body || {};
   if (!item_id) {
     return res.status(400).json({ error: 'item_id este obligatoriu.' });
@@ -102,6 +112,7 @@ router.post('/buy', validateBody(buySchema), async (req, res) => {
 });
 
 router.post('/equip', validateBody(equipSchema), (req, res) => {
+  if (blockPending(req, res)) return;
   const { item_id, title_id, slot } = req.body || {};
   if (item_id === undefined && title_id === undefined && !slot) {
     return res.status(400).json({ error: 'Spune ce vrei să porți: item_id, title_id sau slot.' });
@@ -116,6 +127,7 @@ router.post('/equip', validateBody(equipSchema), (req, res) => {
 });
 
 router.post('/parent-review', async (req, res) => {
+  if (blockPending(req, res)) return;
   const { parent_email = '', plan_id = '', billing_cycle = 'monthly', message = '' } = req.body || {};
   const result = await sendParentReview({
     userId: req.auth.email,

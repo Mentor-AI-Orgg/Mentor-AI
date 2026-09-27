@@ -35,11 +35,11 @@ const LoginScreen = ({ onBack, onLogin, onForgotPassword }) => {
       <form className="form-fields" onSubmit={submit}>
         <label className="field-label">{t('login.email')}
           <input
-            type="email"
+            type="text"
             value={email}
             onChange={e => setEmail(e.target.value)}
             autoComplete="username"
-            placeholder="nume@email.com"
+            placeholder="numele tău de utilizator"
             className="field form-input"
             required
           />

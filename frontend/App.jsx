@@ -13,6 +13,7 @@ import WelcomeScreen from './components/WelcomeScreen.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
 import ResetPasswordScreen from './components/ResetPasswordScreen.jsx';
 import RegisterScreen from './components/RegisterScreen.jsx';
+import { ConsentWaitScreen, ConsentScreen, ParentScreen } from './components/ConsentScreens.jsx';
 import OnboardingScreen from './components/OnboardingScreen.jsx';
 import { ProfessorScreen } from './components/StudyScreens.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
@@ -59,6 +60,7 @@ function applyAccount(user, prev = {}) {
     uiLanguage: user.uiLanguage || prev.uiLanguage || prev.language || 'ro',
     language: user.language || prev.language || 'ro',
     hasCompletedOnboarding: Boolean(user.hasCompletedOnboarding),
+    consent: user.consent || prev.consent || 'pending',
     avatarId: user.avatarId !== undefined ? user.avatarId : prev.avatarId,
     themeId: user.themeId !== undefined ? user.themeId : prev.themeId,
     titleId: user.titleId !== undefined ? user.titleId : prev.titleId,
@@ -150,15 +152,18 @@ function AppShell({ userData, setUserData }) {
     });
   }, []);
 
+  const isParentLink = route => route.screen === 'reset' || route.screen === 'consent' || route.screen === 'parent';
+
   const handleSplashFinish = async () => {
+    const route = parseAppHash(window.location.hash);
+    if (isParentLink(route)) {
+      setScreen(route.screen);
+      return;
+    }
+
     const session = await MentorAPI.me();
     if (!session.success) {
       setUserData(prev => ({ ...prev, isLoggedIn: false }));
-      const route = parseAppHash(window.location.hash);
-      if (route.screen === 'reset') {
-        setScreen('reset');
-        return;
-      }
       setScreen('welcome');
       writeHash('welcome', {}, 'replace');
       return;
@@ -176,6 +181,25 @@ function AppShell({ userData, setUserData }) {
     const calendarError = params.get('calendar_error');
     if (checkout || calendarConnected || calendarError) {
       window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    if (session.user.consent !== 'granted') {
+      if (route.kind === 'app' && ['learn', 'home', 'calendar'].includes(route.screen)) {
+        if (route.extras) {
+          setStudyFocus(prev => ({
+            subject: route.extras.subject !== undefined ? route.extras.subject : prev.subject,
+            grade: route.extras.grade || prev.grade,
+            chapter: route.extras.chapter || null,
+            track: route.extras.track !== undefined ? route.extras.track : prev.track
+          }));
+        }
+        setNavScreen(route.navScreen || route.screen);
+        setScreen(route.screen);
+        return;
+      }
+      setScreen('consent-wait');
+      writeHash('consent-wait', {}, 'replace');
+      return;
     }
 
     const completed = Boolean(session.user.hasCompletedOnboarding) || Boolean(merged?.hasCompletedOnboarding);
@@ -219,7 +243,6 @@ function AppShell({ userData, setUserData }) {
     }
 
     await syncEconomy();
-    const route = parseAppHash(window.location.hash);
     if (route.kind === 'app') {
       if (route.extras) {
         setStudyFocus(prev => ({
@@ -246,6 +269,13 @@ function AppShell({ userData, setUserData }) {
 
     const user = result.data.user || {};
     setUserData(prev => applyAccount(user, prev));
+
+    if (user.consent !== 'granted') {
+      setScreen('consent-wait');
+      writeHash('consent-wait', {}, 'replace');
+      showToast(t('toast.welcome'), 'success');
+      return { success: true };
+    }
 
     if (!user.hasCompletedOnboarding) {
       setOnboardingData(prev => ({ ...prev, name: user.name || prev.name }));
@@ -291,17 +321,12 @@ function AppShell({ userData, setUserData }) {
 
   const handleRegister = async formData => {
     const registration = await MentorAPI.register({
-      email: formData.email,
-      password: formData.password,
-      role: 'student',
-      name: formData.name,
       username: formData.username,
-      phone: formData.phone,
-      school: formData.school,
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
       class: formData.class || '5',
       parentEmail: formData.parentEmail || '',
-      parental_consent: Boolean(formData.parentalConsent),
-      privacy_accepted: Boolean(formData.privacyAccepted)
+      role: 'student'
     });
 
     if (!registration.success) {
@@ -309,24 +334,10 @@ function AppShell({ userData, setUserData }) {
       return { success: false, error: registration.error, field: registration.field };
     }
 
-    const nameParts = (formData.name || '').split(' ');
-    setUserData(prev => ({
-      ...prev,
-      name: nameParts[0] || '',
-      surname: nameParts.slice(1).join(' ') || '',
-      email: formData.email || '',
-      phone: formData.phone || '',
-      username: formData.username || '',
-      school: formData.school || '',
-      class: formData.class || '5',
-      role: 'student',
-      parentEmail: formData.parentEmail || '',
-      isLoggedIn: true
-    }));
-    setOnboardingData(prev => ({ ...prev, name: formData.name || prev.name, class: formData.class || prev.class }));
-    setOnboardingStep(formData.name ? 2 : 1);
-    setScreen('onboarding');
-    writeHash('onboarding', {}, 'replace');
+    const user = registration.data?.user || {};
+    setUserData(prev => applyAccount({ ...user, consent: user.consent || 'pending', parentEmail: formData.parentEmail }, prev));
+    setScreen('consent-wait');
+    writeHash('consent-wait', {}, 'replace');
     return { success: true };
   };
 
@@ -407,6 +418,11 @@ function AppShell({ userData, setUserData }) {
   };
 
   const handleNavigate = (target, extras = {}) => {
+    if (userData.consent !== 'granted' && ['professor', 'shop', 'profile'].includes(target)) {
+      setScreen('consent-wait');
+      writeHash('consent-wait');
+      return;
+    }
     setStudyFocus(prev => ({
       subject: extras.subject !== undefined ? extras.subject : prev.subject,
       grade: extras.grade || prev.grade,
@@ -427,6 +443,11 @@ function AppShell({ userData, setUserData }) {
     const onPop = () => {
       const route = parseAppHash(window.location.hash);
       historySilent.current = true;
+      if (route.screen === 'reset' || route.screen === 'consent' || route.screen === 'parent') {
+        setScreen(route.screen);
+        historySilent.current = false;
+        return;
+      }
       if (loggedInRef.current) {
         if (route.kind === 'app') {
           handleNavigateRef.current(route.screen, route.extras || {});
@@ -471,6 +492,21 @@ function AppShell({ userData, setUserData }) {
           />
         );
       }
+      case 'consent': {
+        const token = parseAppHash(window.location.hash).extras?.token || '';
+        return <ConsentScreen token={token} />;
+      }
+      case 'parent': {
+        const token = parseAppHash(window.location.hash).extras?.token || '';
+        return <ParentScreen token={token} />;
+      }
+      case 'consent-wait':
+        return (
+          <ConsentWaitScreen
+            parentEmail={userData.parentEmail}
+            onOpenLessons={() => handleNavigate('learn')}
+          />
+        );
       case 'login':
         return (
           <LoginScreen

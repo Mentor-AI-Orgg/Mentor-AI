@@ -1,12 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
-
-const PASSWORD = 'Testpass1!';
-
-function uniqueEmail(prefix) {
-  return `${prefix}.${Date.now()}.${Math.random().toString(16).slice(2)}@example.com`;
-}
+import { registerGranted } from './registerStudent.js';
 
 describe('calendar dates and timetable', () => {
   let app;
@@ -16,16 +10,9 @@ describe('calendar dates and timetable', () => {
   });
 
   it('stores an important date and a weekday orar slot', async () => {
-    const agent = request.agent(app);
-    const register = await agent.post('/api/auth/register').send({
-      email: uniqueEmail('cal'),
-      password: PASSWORD,
-      role: 'student',
-      parentEmail: uniqueEmail('parinte'),
-      parental_consent: true,
-      privacy_accepted: true
-    });
-    expect(register.status).toBe(201);
+    const created = await registerGranted(app);
+    expect(created.res.status).toBe(201);
+    const agent = created.agent;
 
     const day = await agent.post('/api/calendar/events').send({
       date: '2026-09-14',
@@ -64,15 +51,9 @@ describe('calendar dates and timetable', () => {
   });
 
   it('rejects an orar slot without a weekday', async () => {
-    const agent = request.agent(app);
-    await agent.post('/api/auth/register').send({
-      email: uniqueEmail('calbad'),
-      password: PASSWORD,
-      role: 'student',
-      parentEmail: uniqueEmail('parinte'),
-      parental_consent: true,
-      privacy_accepted: true
-    });
+    const created = await registerGranted(app);
+    const agent = created.agent;
+    expect(created.res.status).toBe(201);
     const res = await agent.post('/api/calendar/events').send({
       type: 'orar',
       title: 'Fără zi',

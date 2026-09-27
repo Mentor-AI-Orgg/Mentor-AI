@@ -103,7 +103,14 @@ async function sendSms({ to, body }) {
 }
 
 // SMS dacă canalul e sms și avem număr; altfel email. Fără chei, mock.
+function refusedAddress(to) {
+  return String(to || "").trim().toLowerCase().endsWith("@elev.invalid");
+}
+
 async function deliverMessage({ to, phone = "", subject, body, channel = "email" }) {
+  if (refusedAddress(to) || refusedAddress(phone)) {
+    return { mocked: true, delivered: false, channel, refused: true, reason: "elev_invalid" };
+  }
   if (channel === "sms") {
     const sms = await sendSms({ to: phone || to, body: subject ? `${subject}\n${body}` : body });
     if (sms.delivered || !to || to === phone) return sms;

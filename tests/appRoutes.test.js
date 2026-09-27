@@ -14,7 +14,12 @@ describe('app hash routes', () => {
       ['calendar', {}, '#/calendar'],
       ['learn', {}, '#/lectii'],
       ['learn', { subject: 'romana', grade: '6', chapter: 'fractii' }, '#/lectii/romana/6/fractii'],
-      ['learn', { track: 'en', subject: 'matematica' }, '#/en/matematica']
+      ['learn', { track: 'en', subject: 'matematica' }, '#/en/matematica'],
+      ['reset', { token: 'abc' }, '#/parola/abc'],
+      ['consent', { token: 'abc' }, '#/acord/abc'],
+      ['parent', {}, '#/parinte'],
+      ['parent', { token: 'abc' }, '#/parinte/abc'],
+      ['consent-wait', {}, '#/asteptare']
     ];
 
     for (const [screen, extras, hash] of cases) {

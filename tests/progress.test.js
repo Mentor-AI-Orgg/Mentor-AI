@@ -1,29 +1,17 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
+import { registerGranted } from './registerStudent.js';
 import { levelFromXp, XP_THRESHOLDS } from '../backend/src/data/progressEngine.js';
 import { xpProgress } from '../frontend/xpProgress.js';
 
-const PASSWORD = 'Testpass1!';
 let app;
 
-function uniqueEmail(prefix) {
-  return `${prefix}.${Date.now()}.${Math.random().toString(16).slice(2)}@example.com`;
-}
-
 async function registerStudent(agent) {
-  const email = uniqueEmail('prog');
-  const res = await agent.post('/api/auth/register').send({
-    email,
-    password: PASSWORD,
-    role: 'student',
-    class: '6',
-    parentEmail: uniqueEmail('parinte'),
-    parental_consent: true,
-    privacy_accepted: true
-  });
-  expect(res.status).toBe(201);
-  return email;
+  const created = await registerGranted(app, { agent, class: '6' });
+  expect(created.res.status).toBe(201);
+  expect(created.confirm.status).toBe(200);
+  return created.username;
 }
 
 describe('verified study progress', () => {

@@ -21,7 +21,10 @@ const friendsRoute = require("./routes/friends");
 const { spec: openapiSpec } = require("./openapi");
 const { basicAuth } = require("./middleware/basicAuth");
 const { comingSoon } = require("./middleware/comingSoon");
-const { attachUser, authRequired, studentRequired } = require("./middleware/auth");
+const { attachUser, authRequired, studentRequired, consentRequired } = require("./middleware/auth");
+const parentRoute = require("./routes/parent");
+const { startPendingCleanup } = require("./data/pendingCleanup");
+const { migrateLegacyProfiles } = require("./data/authStore");
 const { corsAllowlist } = require("./middleware/corsAllowlist");
 const { generalApiLimiter, chatLimiter, detectLimiter } = require("./middleware/rateLimits");
 const persistence = require("./data/persistence");
@@ -35,6 +38,13 @@ function createApp(options = {}) {
   // Store-urile se înregistrează la require, deci restaurăm înainte de cereri.
   const restored = persistence.isLoaded() ? { loaded: true } : persistence.load();
   if (autosave) persistence.startAutosave();
+  if (fs.existsSync(persistence.DATA_FILE)) {
+    const stamp = new Date().toISOString().slice(0, 10);
+    const backup = `${persistence.DATA_FILE}.pre-t1-${stamp}`;
+    if (!fs.existsSync(backup)) fs.copyFileSync(persistence.DATA_FILE, backup);
+  }
+  migrateLegacyProfiles();
+  startPendingCleanup();
 
   const app = express();
   app.set("trust proxy", 1);
@@ -78,6 +88,7 @@ function createApp(options = {}) {
     }));
 
     app.use(`${prefix}/auth`, authRoute);
+    app.use(`${prefix}/parent`, parentRoute);
     app.use(`${prefix}/health`, healthRoute);
     app.use(`${prefix}/leaderboard`, leaderboardRoute);
     app.use(`${prefix}/curriculum`, curriculumRoute);
@@ -95,7 +106,7 @@ function createApp(options = {}) {
     app.use(`${prefix}/economy`, ...studentOnly, economyRoute);
     app.use(`${prefix}/links`, ...studentOnly, linksRoute);
     app.use(`${prefix}/account`, ...studentOnly, accountRoute);
-    app.use(`${prefix}/friends`, ...studentOnly, friendsRoute);
+    app.use(`${prefix}/friends`, ...studentOnly, consentRequired, friendsRoute);
     app.use(`${prefix}/subscriptions`, subscriptionsRoute);
   }
 

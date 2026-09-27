@@ -1,29 +1,16 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
+import { registerGranted } from './registerStudent.js';
 
-const PASSWORD = 'Testpass1!';
 let app;
 let agent;
-
-function uniqueEmail(prefix) {
-  return `${prefix}.${Date.now()}.${Math.random().toString(16).slice(2)}@example.com`;
-}
 
 describe('chat fallback chain', () => {
   beforeAll(async () => {
     ({ app } = createApp({ autosave: false }));
-    agent = request.agent(app);
-    const email = uniqueEmail('chat');
-    const register = await agent.post('/api/auth/register').send({
-      email,
-      password: PASSWORD,
-      role: 'student',
-      parentEmail: uniqueEmail('parinte'),
-      parental_consent: true,
-      privacy_accepted: true
-    });
-    expect(register.status).toBe(201);
+    const created = await registerGranted(app);
+    expect(created.res.status).toBe(201);
+    agent = created.agent;
   });
 
   it('returns a mocked engine when no provider keys are set', async () => {

@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
+import { registerGranted } from './registerStudent.js';
 import { recommendedList, generatePaper, getBaremItem, getBundle, scoreAttempt, timingForPaper } from '../backend/src/data/enPaperFactory.js';
 
 describe('EN papers and barem', () => {
@@ -233,17 +234,8 @@ describe('EN papers and barem', () => {
 
   it('does not start the exam on open and hides the barem until finish', async () => {
     const agent = request.agent(app);
-    const register = await agent.post('/api/auth/register').send({
-      email: `en.barem.lock.${Date.now()}@example.com`,
-      password: 'Testpass1!',
-      name: 'Barem',
-      username: `baremlock${Date.now()}`,
-      class: '8',
-      parentEmail: `parinte.barem.${Date.now()}@example.com`,
-      parental_consent: true,
-      privacy_accepted: true
-    });
-    expect([200, 201]).toContain(register.status);
+    const register = await registerGranted(app, { agent, class: '8' });
+    expect(register.res.status).toBe(201);
     const open = await agent.post('/api/curriculum/en/papers/open').send({ paper_id: 'en-mate-a' });
     expect(open.status).toBe(200);
     expect(open.body.session.started).toBe(false);
@@ -267,18 +259,8 @@ describe('EN papers and barem', () => {
 
   it('allows finish after the official min stay and then opens the full barem', async () => {
     const agent = request.agent(app);
-    const stamp = Date.now();
-    const register = await agent.post('/api/auth/register').send({
-      email: `en.finish.${stamp}@example.com`,
-      password: 'Testpass1!',
-      name: 'Elev EN',
-      username: `enfinish${stamp}`,
-      class: '8',
-      parentEmail: `parinte.en.${stamp}@example.com`,
-      parental_consent: true,
-      privacy_accepted: true
-    });
-    expect([200, 201]).toContain(register.status);
+    const register = await registerGranted(app, { agent, class: '8' });
+    expect(register.res.status).toBe(201);
 
     const start = await agent.post('/api/curriculum/en/papers/start').send({ paper_id: 'en-mate-a' });
     expect(start.status).toBe(200);
@@ -309,18 +291,8 @@ describe('EN papers and barem', () => {
 
   it('refuses notebook photos because reading them is a paid service', async () => {
     const agent = request.agent(app);
-    const stamp = Date.now();
-    const register = await agent.post('/api/auth/register').send({
-      email: `en.photo.${stamp}@example.com`,
-      password: 'Testpass1!',
-      name: 'Foto EN',
-      username: `enphoto${stamp}`,
-      class: '8',
-      parentEmail: `parinte.photo.${stamp}@example.com`,
-      parental_consent: true,
-      privacy_accepted: true
-    });
-    expect([200, 201]).toContain(register.status);
+    const register = await registerGranted(app, { agent, class: '8' });
+    expect(register.res.status).toBe(201);
     const start = await agent.post('/api/curriculum/en/papers/start').send({ paper_id: 'en-ro-a' });
     expect(start.status).toBe(200);
     const first = await agent.post('/api/curriculum/en/photo-review').send({
@@ -435,18 +407,8 @@ describe('EN papers and barem', () => {
 
   it('lets a student finish a drill immediately while a full EN paper still waits', async () => {
     const agent = request.agent(app);
-    const stamp = Date.now();
-    const register = await agent.post('/api/auth/register').send({
-      email: `en.drill.${stamp}@example.com`,
-      password: 'Testpass1!',
-      name: 'Drill EN',
-      username: `endrill${stamp}`,
-      class: '8',
-      parentEmail: `parinte.drill.${stamp}@example.com`,
-      parental_consent: true,
-      privacy_accepted: true
-    });
-    expect([200, 201]).toContain(register.status);
+    const register = await registerGranted(app, { agent, class: '8' });
+    expect(register.res.status).toBe(201);
 
     const gen = await agent.post('/api/curriculum/en/papers/generate').send({
       subject: 'romana',

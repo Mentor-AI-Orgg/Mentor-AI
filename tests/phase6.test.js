@@ -1,30 +1,22 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
+import { registerGranted, uniqueEmail } from './registerStudent.js';
 import { verifyStripeSignature } from '../backend/src/payments/stripe.js';
 import crypto from 'node:crypto';
 
-const PASSWORD = 'Testpass1!';
 let app;
-
-function uniqueEmail(prefix) {
-  return `${prefix}.${Date.now()}.${Math.random().toString(16).slice(2)}@example.com`;
-}
 
 async function registerStudent(agent, extra = {}) {
   const email = uniqueEmail('elev');
-  const res = await agent.post('/api/auth/register').send({
-    email,
-    password: PASSWORD,
-    role: 'student',
-    name: extra.name || 'Nume Real Copil',
-    username: extra.username || '',
-    parentEmail: uniqueEmail('parinte'),
-    parental_consent: true,
-    privacy_accepted: true
+  const created = await registerGranted(app, {
+    agent,
+    username: extra.username || undefined,
+    name: extra.name
   });
-  expect(res.status).toBe(201);
-  return { email, res };
+  expect(created.res.status).toBe(201);
+  expect(created.confirm.status).toBe(200);
+  return { email, username: created.username, res: created.res };
 }
 
 describe('phase 6 product polish', () => {
@@ -126,12 +118,12 @@ describe('phase 6 product polish', () => {
     expect(current.xp).toBeLessThan(999999);
   });
 
-  it('assigns Elev <hash> when the student has no username', async () => {
+  it('shows the username on the leaderboard, not the real name', async () => {
     const agent = request.agent(app);
-    await registerStudent(agent, { name: 'Maria Radu', username: '' });
+    const { username } = await registerStudent(agent, { name: 'Maria Radu' });
     const res = await agent.get('/api/leaderboard');
     const current = (res.body.leaderboard || []).find(entry => entry.isCurrentUser);
-    expect(current.name).toMatch(/^Elev [A-F0-9]{4}$/);
+    expect(current.name).toBe(username);
     expect(current.name).not.toMatch(/Maria/);
   });
 

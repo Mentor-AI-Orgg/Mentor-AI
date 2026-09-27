@@ -6,6 +6,7 @@ const { smtpConfigured, twilioConfigured } = require("../notify/deliver");
 router.get("/", async (req, res) => {
   res.json({
     ok: true,
+    mail: smtpConfigured(),
     status: "healthy",
     version: config.APP_VERSION,
     mentor: "lectii",

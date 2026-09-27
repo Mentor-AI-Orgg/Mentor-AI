@@ -1,20 +1,6 @@
 import { useState, useMemo } from 'react';
 import QuoteCard from './QuoteCard.jsx';
 
-// Cuvinte care nu au voie într-un nume de utilizator public (afișat pe
-// leaderboard etc.). Listă minimă de pornire -- de extins pe măsură ce
-// aplicația crește, ideal cu o listă întreținută separat, nu hardcodată.
-const FORBIDDEN_USERNAME_WORDS = [
-  'prost', 'idiot', 'nesimtit', 'nesimțit', 'handicapat', 'retardat',
-  'sex', 'porno', 'drog', 'nazist', 'hitler', 'admin', 'moderator',
-  'fuck', 'shit', 'bitch', 'nigger', 'whore'
-];
-
-const containsForbiddenWord = value => {
-  const normalized = (value || '').toLowerCase();
-  return FORBIDDEN_USERNAME_WORDS.some(word => normalized.includes(word));
-};
-
 const PASSWORD_RULES = [
   { key: 'length', label: 'Minim 8 caractere', test: v => v.length >= 8 },
   { key: 'upper', label: 'O literă mare', test: v => /[A-ZĂÂÎȘȚ]/.test(v) },
@@ -24,10 +10,8 @@ const PASSWORD_RULES = [
 
 const isPasswordValid = value => PASSWORD_RULES.every(rule => rule.test(value || ''));
 const isValidEmail = value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || '');
-const isValidPhone = value => /^0\d{9}$/.test((value || '').replace(/\s/g, ''));
+const isUsernameShape = value => /^[A-Za-zĂÂÎȘȚăâîșț0-9_.]{3,20}$/.test(String(value || '').trim());
 
-// FieldStatus arată un check verde / X roșu lângă fiecare câmp, live, în
-// loc de un singur alert generic la final -- exact ce lipsea în UX-ul vechi.
 const FieldStatus = ({ touched, valid }) => {
   if (!touched) return null;
   return valid
@@ -37,9 +21,7 @@ const FieldStatus = ({ touched, valid }) => {
 
 const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
   const [form, setForm] = useState({
-    name: '', phone: '', email: '', username: '', password: '', confirmPassword: '',
-    role: 'student', school: '', class: '5', parentEmail: '',
-    parentalConsent: false, privacyAccepted: false
+    username: '', password: '', confirmPassword: '', class: '5', parentEmail: ''
   });
   const [touched, setTouched] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -49,22 +31,16 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
   const markTouched = key => setTouched(prev => ({ ...prev, [key]: true }));
 
   const validators = useMemo(() => ({
-    name: v => (v || '').trim().length >= 3,
-    phone: v => isValidPhone(v),
-    email: v => isValidEmail(v),
-    username: v => (v || '').trim().length >= 3 && !containsForbiddenWord(v),
+    // TODO(T6): verificarea numelor urâte se face pe server.
+    username: v => isUsernameShape(v),
     password: v => isPasswordValid(v),
     confirmPassword: v => v && v === form.password,
-    school: v => (v || '').trim().length >= 2,
     class: v => ['5', '6', '7', '8'].includes(String(v)),
-    parentEmail: v => isValidEmail(v) && v.trim().toLowerCase() !== (form.email || '').trim().toLowerCase(),
-    parentalConsent: v => v === true,
-    privacyAccepted: v => v === true
-  }), [form.password, form.email]);
+    parentEmail: v => isValidEmail(v)
+  }), [form.password]);
 
   const fieldValid = key => (validators[key] ? validators[key](form[key]) : true);
-
-  const requiredFields = ['name', 'phone', 'email', 'username', 'password', 'confirmPassword', 'school', 'class', 'parentEmail', 'parentalConsent', 'privacyAccepted'];
+  const requiredFields = ['username', 'password', 'confirmPassword', 'class', 'parentEmail'];
   const allValid = requiredFields.every(fieldValid);
 
   const handleSubmit = async () => {
@@ -76,8 +52,6 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
       return;
     }
 
-    // Contul se creează pe server, deci pot apărea erori pe care validarea din
-    // browser nu le poate prinde: email deja folosit, email părinte invalid.
     setSubmitting(true);
     const result = await onContinue(form);
     setSubmitting(false);
@@ -87,71 +61,54 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
     }
   };
 
-  const studentFields = [
-    { key: 'name', label: 'Nume complet', type: 'text', placeholder: 'Ex: Andrei Popescu', autoComplete: 'name', hint: 'Minim 3 caractere.' },
-    { key: 'phone', label: 'Număr de telefon', type: 'tel', placeholder: '07xx xxx xxx', autoComplete: 'tel', hint: 'Format românesc, 10 cifre.' },
-    { key: 'email', label: 'Email', type: 'email', placeholder: 'nume@email.com', autoComplete: 'email' },
-    { key: 'username', label: 'Nume de utilizator (public, pe leaderboard)', type: 'text', placeholder: 'Ex: andrei_p', autoComplete: 'off', hint: 'Fără cuvinte nepotrivite.' },
-    { key: 'school', label: 'Școala', type: 'text', placeholder: 'Școala Gimnazială nr. 1', autoComplete: 'off' },
-    {
-      key: 'class',
-      label: 'Clasa',
-      type: 'select',
-      options: [
-        { value: '5', label: 'Clasa a V-a' },
-        { value: '6', label: 'Clasa a VI-a' },
-        { value: '7', label: 'Clasa a VII-a' },
-        { value: '8', label: 'Clasa a VIII-a' }
-      ]
-    }
-  ];
-
   return (
     <main className="form-page animate-fadeIn">
-      <button onClick={onBack} className="back-link"><i className="fas fa-arrow-left"></i> Înapoi</button>
+      <button onClick={onBack} className="back-link" type="button"><i className="fas fa-arrow-left"></i> Înapoi</button>
       <div className="brand-mark form-mark">M</div>
       <div className="eyebrow">Cont de elev</div>
-      <h1 className="display-font form-title">Hai să te cunoaștem.</h1>
-      <p className="form-subtitle">Mentor AI este doar pentru elevi. Părintele primește pe email tot ce faci aici, fără să-și facă cont.</p>
+      <h1 className="display-font form-title">Fă-ți un cont.</h1>
+      <p className="form-subtitle">Îi trimitem un email părintelui tău. După ce confirmă, poți folosi tot ce e în aplicație. Până atunci poți citi lecțiile și face exerciții.</p>
       <QuoteCard />
 
       <div className="form-fields">
-        {studentFields.map(field => (
-          <div key={field.key}>
-            <label className="field-label">
-              <span className="field-label-row">
-                {field.label}
-                <FieldStatus touched={Boolean(touched[field.key])} valid={fieldValid(field.key)} />
-              </span>
-              {field.type === 'select' ? (
-                <select
-                  value={form[field.key]}
-                  onChange={e => setField(field.key, e.target.value)}
-                  onBlur={() => markTouched(field.key)}
-                  className={`field form-input ${touched[field.key] ? (fieldValid(field.key) ? 'field-valid' : 'field-invalid') : ''}`}
-                >
-                  {field.options.map(option => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  type={field.type}
-                  value={form[field.key]}
-                  onChange={e => setField(field.key, e.target.value)}
-                  onBlur={() => markTouched(field.key)}
-                  placeholder={field.placeholder}
-                  autoComplete={field.autoComplete}
-                  className={`field form-input ${touched[field.key] ? (fieldValid(field.key) ? 'field-valid' : 'field-invalid') : ''}`}
-                />
-              )}
-            </label>
-            {field.hint && <small className="field-hint">{field.hint}</small>}
-            {touched[field.key] && !fieldValid(field.key) && field.key === 'username' && containsForbiddenWord(form.username) && (
-              <small className="field-hint field-hint-bad">Numele de utilizator conține un cuvânt care nu este permis.</small>
-            )}
-          </div>
-        ))}
+        <div>
+          <label className="field-label">
+            <span className="field-label-row">
+              Nume de utilizator
+              <FieldStatus touched={Boolean(touched.username)} valid={fieldValid('username')} />
+            </span>
+            <input
+              type="text"
+              value={form.username}
+              onChange={e => setField('username', e.target.value)}
+              onBlur={() => markTouched('username')}
+              placeholder="Ex: andrei_p"
+              autoComplete="off"
+              className={`field form-input ${touched.username ? (fieldValid('username') ? 'field-valid' : 'field-invalid') : ''}`}
+            />
+          </label>
+          <small className="field-hint">Nu folosi numele tău real.</small>
+        </div>
+
+        <div>
+          <label className="field-label">
+            <span className="field-label-row">
+              Clasa
+              <FieldStatus touched={Boolean(touched.class)} valid={fieldValid('class')} />
+            </span>
+            <select
+              value={form.class}
+              onChange={e => setField('class', e.target.value)}
+              onBlur={() => markTouched('class')}
+              className={`field form-input ${touched.class ? (fieldValid('class') ? 'field-valid' : 'field-invalid') : ''}`}
+            >
+              <option value="5">Clasa a V-a</option>
+              <option value="6">Clasa a VI-a</option>
+              <option value="7">Clasa a VII-a</option>
+              <option value="8">Clasa a VIII-a</option>
+            </select>
+          </label>
+        </div>
 
         <div>
           <label className="field-label">
@@ -199,7 +156,7 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
         <div>
           <label className="field-label">
             <span className="field-label-row">
-              Email părinte / tutore
+              Emailul părintelui
               <FieldStatus touched={Boolean(touched.parentEmail)} valid={fieldValid('parentEmail')} />
             </span>
             <input
@@ -211,33 +168,13 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
               className={`field form-input ${touched.parentEmail ? (fieldValid('parentEmail') ? 'field-valid' : 'field-invalid') : ''}`}
             />
           </label>
-          <small className="field-hint">Obligatoriu și diferit de emailul tău. Părintele nu își face cont: primește pe acest email tot ce faci în aplicație.</small>
+          <small className="field-hint">Părintele tău va primi politica de confidențialitate. <a href="/privacy.html">Citește politica</a>.</small>
         </div>
-
-        <label className={`consent-check ${touched.parentalConsent && !fieldValid('parentalConsent') ? 'consent-check-invalid' : ''}`}>
-          <input
-            type="checkbox"
-            checked={form.parentalConsent}
-            onChange={e => setField('parentalConsent', e.target.checked)}
-            onBlur={() => markTouched('parentalConsent')}
-          />
-          <span>Un părinte sau tutore își dă acordul pentru crearea acestui cont de elev. <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Detalii în politica de confidențialitate</a>.</span>
-        </label>
-
-        <label className={`consent-check ${touched.privacyAccepted && !fieldValid('privacyAccepted') ? 'consent-check-invalid' : ''}`}>
-          <input
-            type="checkbox"
-            checked={form.privacyAccepted}
-            onChange={e => setField('privacyAccepted', e.target.checked)}
-            onBlur={() => markTouched('privacyAccepted')}
-          />
-          <span>Am citit și accept <a href="/privacy.html" target="_blank" rel="noopener noreferrer">politica de confidențialitate</a> și <a href="/terms.html" target="_blank" rel="noopener noreferrer">termenii de utilizare</a>.</span>
-        </label>
       </div>
 
       {serverError && <div className="form-error" role="alert"><i className="fas fa-circle-exclamation"></i> {serverError}</div>}
 
-      <button onClick={handleSubmit} className="accent-button form-submit" disabled={submitting}>
+      <button onClick={handleSubmit} className="accent-button form-submit" type="button" disabled={submitting}>
         {submitting ? 'Se creează contul...' : <>Continuă <i className="fas fa-arrow-right"></i></>}
       </button>
     </main>

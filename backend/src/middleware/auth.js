@@ -6,9 +6,11 @@
 // exclusiv din cookie-ul de sesiune, semnat server-side și imposibil de
 // falsificat din browser.
 
-const { getSession, findAccount } = require("../data/authStore");
+const { getSession, findAccount, isConsentGranted } = require("../data/authStore");
+const { getParentSession } = require("../data/consentStore");
 
 const SESSION_COOKIE = "mentor_session";
+const PARENT_COOKIE = "s10_parent";
 
 // Parser minimal de cookie-uri, ca să nu adăugăm dependința `cookie-parser`
 // pentru un singur cookie.
@@ -54,6 +56,30 @@ const STUDENTS_ONLY = {
   code: "students_only"
 };
 
+function consentRequired(req, res, next) {
+  if (!req.auth) {
+    return res.status(401).json({ error: "Autentificare necesară.", code: "unauthenticated" });
+  }
+  if (!isConsentGranted(req.auth.account)) {
+    return res.status(403).json({ error: "consent_pending" });
+  }
+  next();
+}
+
+function parentRequired(req, res, next) {
+  const token = readCookie(req, PARENT_COOKIE);
+  const session = getParentSession(token);
+  if (!session) {
+    return res.status(401).json({ error: "Autentificare necesară.", code: "unauthenticated" });
+  }
+  const account = findAccount(session.email);
+  if (!account || account.role !== "parent") {
+    return res.status(401).json({ error: "Autentificare necesară.", code: "unauthenticated" });
+  }
+  req.parentAuth = { email: account.email, role: "parent", account, token };
+  next();
+}
+
 function studentRequired(req, res, next) {
   if (!req.auth) {
     return res.status(401).json({ error: "Autentificare necesară.", code: "unauthenticated" });
@@ -81,4 +107,15 @@ function roleGuard(...roles) {
   };
 }
 
-module.exports = { SESSION_COOKIE, readCookie, attachUser, authRequired, studentRequired, roleGuard, STUDENTS_ONLY };
+module.exports = {
+  SESSION_COOKIE,
+  PARENT_COOKIE,
+  readCookie,
+  attachUser,
+  authRequired,
+  studentRequired,
+  consentRequired,
+  parentRequired,
+  roleGuard,
+  STUDENTS_ONLY
+};

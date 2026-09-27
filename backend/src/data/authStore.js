@@ -63,6 +63,20 @@ function usernameTaken(username, exceptEmail = "") {
   ));
 }
 
+function findByUsername(username) {
+  const needle = String(username || "").trim().toLowerCase();
+  if (!needle) return null;
+  return listAccounts().find(account => String(account.profile?.username || "").trim().toLowerCase() === needle) || null;
+}
+
+function isInternalEmail(email) {
+  return normalizeEmail(email).endsWith("@elev.invalid");
+}
+
+function isConsentGranted(account) {
+  return Boolean(account && account.consent && account.consent.status === "granted");
+}
+
 async function changePassword(email, currentPassword, nextPassword) {
   const account = findAccount(email);
   if (!account) return { ok: false, reason: "missing" };
@@ -72,6 +86,122 @@ async function changePassword(email, currentPassword, nextPassword) {
   account.salt = salt;
   account.passwordHash = hash;
   return { ok: true };
+}
+
+async function createStudentAccount({ username, password, className, parentEmail }) {
+  const handle = String(username || "").trim();
+  if (usernameTaken(handle)) return { ok: false, reason: "username_taken" };
+  const id = crypto.randomBytes(16).toString("hex");
+  const email = `u-${id}@elev.invalid`;
+  const { salt, hash } = await hashPassword(password);
+  const now = new Date().toISOString();
+  const account = {
+    email,
+    salt,
+    passwordHash: hash,
+    role: "student",
+    profile: {
+      name: "",
+      username: handle,
+      phone: "",
+      school: "",
+      class: String(className || ""),
+      subject: "",
+      parentEmail: normalizeEmail(parentEmail),
+      teacherEmail: "",
+      profile: "",
+      exam: "",
+      dailyHours: "",
+      uiLanguage: "",
+      language: "",
+      hasCompletedOnboarding: false,
+      parentEmails: "daily"
+    },
+    consent: { status: "pending", requestedAt: now },
+    parentalConsentAt: null,
+    privacyAcceptedAt: null,
+    createdAt: now
+  };
+  ACCOUNTS.set(email, account);
+  return { ok: true, account };
+}
+
+async function ensureParentAccount(parentEmail) {
+  const key = normalizeEmail(parentEmail);
+  const existing = ACCOUNTS.get(key);
+  if (existing) return existing.role === "parent" ? existing : null;
+  const now = new Date().toISOString();
+  const account = {
+    email: key,
+    salt: "",
+    passwordHash: "",
+    role: "parent",
+    profile: {
+      name: "",
+      username: "",
+      phone: "",
+      school: "",
+      class: "",
+      subject: "",
+      parentEmail: "",
+      teacherEmail: "",
+      profile: "",
+      exam: "",
+      dailyHours: "",
+      uiLanguage: "",
+      language: "",
+      hasCompletedOnboarding: true
+    },
+    consent: { status: "granted", at: now, method: "parent-account" },
+    children: [],
+    parentalConsentAt: null,
+    privacyAcceptedAt: now,
+    createdAt: now
+  };
+  ACCOUNTS.set(key, account);
+  return account;
+}
+
+function linkChildToParent(parentEmail, childEmail) {
+  const parent = ACCOUNTS.get(normalizeEmail(parentEmail));
+  if (!parent) return;
+  if (!Array.isArray(parent.children)) parent.children = [];
+  const child = normalizeEmail(childEmail);
+  if (!parent.children.includes(child)) parent.children.push(child);
+}
+
+function grantConsent(account, { policyVersion, parentEmail }) {
+  account.consent = {
+    status: "granted",
+    at: new Date().toISOString(),
+    policyVersion,
+    method: "email-link",
+    parentEmailHash: crypto.createHash("sha256").update(normalizeEmail(parentEmail)).digest("hex")
+  };
+  account.parentalConsentAt = account.consent.at;
+}
+
+function markPending(account) {
+  if (isConsentGranted(account)) return account;
+  const now = new Date().toISOString();
+  account.consent = {
+    status: "pending",
+    requestedAt: account.consent?.requestedAt || now
+  };
+  return account;
+}
+
+function stripLegacyProfile(account) {
+  if (!account || !account.profile) return;
+  account.profile.name = "";
+  account.profile.phone = "";
+  account.profile.school = "";
+}
+
+function migrateLegacyProfiles() {
+  for (const account of listAccounts()) {
+    if (account.role === "student" && !isConsentGranted(account)) stripLegacyProfile(account);
+  }
 }
 
 async function createAccount({ email, password, role = "student", profile = {} }) {
@@ -111,8 +241,8 @@ async function createAccount({ email, password, role = "student", profile = {} }
 }
 
 async function authenticate({ email, password }) {
-  const account = findAccount(email);
-  if (!account) {
+  const account = findAccount(email) || findByUsername(email);
+  if (!account || account.role === "parent" || !account.passwordHash) {
     // Consumăm oricum timpul unui hash, ca durata răspunsului să nu spună
     // atacatorului dacă adresa există sau nu.
     await hashPassword(String(password || ""), "dummy_salt_for_timing");
@@ -128,9 +258,10 @@ function publicAccount(account) {
   if (!account) return null;
   const { parentViewToken: _parentViewToken, ...safeProfile } = account.profile || {};
   return {
-    email: account.email,
+    email: isInternalEmail(account.email) ? "" : account.email,
     role: account.role,
     ...safeProfile,
+    consent: account.consent?.status || "pending",
     parentalConsentAt: account.parentalConsentAt || null,
     privacyAcceptedAt: account.privacyAcceptedAt || null,
     createdAt: account.createdAt
@@ -269,7 +400,17 @@ module.exports = {
   ROLES,
   normalizeEmail,
   createAccount,
+  createStudentAccount,
+  ensureParentAccount,
+  linkChildToParent,
+  grantConsent,
+  markPending,
+  stripLegacyProfile,
+  migrateLegacyProfiles,
+  isConsentGranted,
+  isInternalEmail,
   findAccount,
+  findByUsername,
   authenticate,
   publicAccount,
   updateProfile,

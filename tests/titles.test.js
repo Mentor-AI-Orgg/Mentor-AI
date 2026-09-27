@@ -1,30 +1,14 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
+import { registerGranted } from './registerStudent.js';
 
-const PASSWORD = 'Testpass1!';
 let app;
 
-function uniqueEmail(prefix) {
-  return `${prefix}.${Date.now()}.${Math.random().toString(16).slice(2)}@example.com`;
-}
-
-async function registerStudent(name = 'Elev Titlu') {
-  const agent = request.agent(app);
-  const res = await agent.post('/api/auth/register').send({
-    email: uniqueEmail('titlu'),
-    password: PASSWORD,
-    role: 'student',
-    name,
-    username: `t${Math.random().toString(16).slice(2, 8)}`,
-    school: 'Școala Test',
-    class: '5',
-    parentEmail: uniqueEmail('parinte'),
-    parental_consent: true,
-    privacy_accepted: true
-  });
-  expect(res.status).toBe(201);
-  return agent;
+async function registerStudent() {
+  const created = await registerGranted(app, { class: '5' });
+  expect(created.res.status).toBe(201);
+  expect(created.confirm.status).toBe(200);
+  return created.agent;
 }
 
 describe('shop titles and equip', () => {

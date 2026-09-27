@@ -19,25 +19,26 @@ const optionalEmail = z
   .default("");
 
 const registerSchema = z.object({
-  email,
+  username: z.string().trim().min(3, "Numele de utilizator are cel puțin 3 caractere.").max(20),
   password: z.string({ required_error: "Parola este obligatorie." }).min(1).max(200),
-  role: z.enum(["student", "parent", "teacher"]).optional().default("student"),
-  invite_code: z.string().max(80).optional().default(""),
-  name: z.string().max(80).optional().default(""),
-  username: z.string().max(40).optional().default(""),
-  phone: z.string().max(20).optional().default(""),
-  school: z.string().max(120).optional().default(""),
-  class: z.string().max(40).optional().default(""),
-  subject: z.string().max(80).optional().default(""),
-  parentEmail: optionalEmail,
-  teacherEmail: optionalEmail,
-  parental_consent: z.boolean().optional().default(false),
-  privacy_accepted: z.boolean().optional().default(false)
+  confirmPassword: z.string().min(1).max(200),
+  class: z.enum(["5", "6", "7", "8"]),
+  parentEmail: email,
+  role: z.enum(["student", "parent", "teacher"]).optional().default("student")
+});
+
+const consentActionSchema = z.object({
+  token: z.string().trim().min(20).max(200),
+  action: z.enum(["grant", "refuse"])
+});
+
+const parentEmailSchema = z.object({
+  parentEmail: email
 });
 
 const loginSchema = z.object({
-  email: z.string().trim().min(1, "Emailul și parola sunt obligatorii.").max(254),
-  password: z.string().min(1, "Emailul și parola sunt obligatorii.").max(200)
+  email: z.string().trim().min(1, "Numele de utilizator și parola sunt obligatorii.").max(254),
+  password: z.string().min(1, "Numele de utilizator și parola sunt obligatorii.").max(200)
 });
 
 const forgotPasswordSchema = z.object({
@@ -210,6 +211,8 @@ const enPhotoSchema = z.object({
 
 module.exports = {
   registerSchema,
+  consentActionSchema,
+  parentEmailSchema,
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,

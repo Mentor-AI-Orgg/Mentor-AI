@@ -108,3 +108,5 @@ router.delete("/", validateBody(deleteAccountSchema), (req, res) => {
 });
 
 module.exports = router;
+module.exports.eraseAccount = eraseAccount;
+module.exports.collectExport = collectExport;

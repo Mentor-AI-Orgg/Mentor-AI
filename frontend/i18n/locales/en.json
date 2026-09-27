@@ -42,15 +42,15 @@
   "login": {
     "eyebrow": "Welcome back",
     "title": "Enter your space.",
-    "subtitle": "Your student email and password. Then lessons, tests and the mentor.",
-    "needEmail": "Fill in your email, then try again.",
-    "email": "Email",
+    "subtitle": "Your username and password. Then lessons and exercises.",
+    "needEmail": "Type your username, then try again.",
+    "email": "Username",
     "password": "Password",
     "passwordPlaceholder": "Your password",
     "submit": "Sign in",
     "submitting": "Signing in...",
     "forgot": "Forgot your password?",
-    "error": "Incorrect email or password."
+    "error": "The username or password is not correct."
   },
   "nav": {
     "home": "Home",
@@ -175,8 +175,8 @@
   "toast": {
     "welcome": "Welcome!",
     "loggedOut": "You have signed out.",
-    "forgotPassword": "If this address has an account, you will receive instructions.",
-    "forgotNeedEmail": "Type your email above, then tap “Forgot your password?”.",
+    "forgotPassword": "If an account exists, we sent a link to your parent.",
+    "forgotNeedEmail": "Type your username above, then tap “Forgot your password?”.",
     "forgotFailed": "We could not send a reset right now. Try again.",
     "registerFailed": "We could not create the account.",
     "onboardingDone": "Your profile is ready!",

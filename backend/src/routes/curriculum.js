@@ -5,7 +5,7 @@ const { getEnGuide, listEnCatalog, enCounts } = require("../data/en8Guide");
 const { recommendedList, generatePaper, publicPaperById, getBaremItem, listBarem, scoreAttempt } = require("../data/enPaperFactory");
 const { previewPaper, startPaper, canFinish, finishPaper, isFinished } = require("../data/enSessionStore");
 const { photoStatus, PHOTO_DAILY_LIMIT } = require("../data/enPhotoQuota");
-const { authRequired, studentRequired } = require("../middleware/auth");
+const { authRequired, studentRequired, consentRequired } = require("../middleware/auth");
 const { notifyParent } = require("../notify/parentActivity");
 const { recordProgress } = require("../data/economyStore");
 
@@ -133,11 +133,11 @@ router.post("/en/papers/finish", authRequired, studentRequired, async (req, res)
   });
 });
 
-router.get("/en/photo-quota", authRequired, studentRequired, (req, res) => {
+router.get("/en/photo-quota", authRequired, studentRequired, consentRequired, (req, res) => {
   res.json({ photoQuota: photoStatus(req.auth.email), limit: PHOTO_DAILY_LIMIT });
 });
 
-router.post("/en/photo-review", authRequired, studentRequired, (req, res) => {
+router.post("/en/photo-review", authRequired, studentRequired, consentRequired, (req, res) => {
   res.status(410).json({
     error: "Pozele nu se mai încarcă. Citirea unei fotografii folosea un serviciu plătit. Scrie răspunsul în casetă."
   });

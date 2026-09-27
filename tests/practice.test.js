@@ -1,16 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
+import { registerGranted } from './registerStudent.js';
 import { allChapterKeys, chapterKey, listChapterQuestions } from '../backend/src/data/practiceBank.js';
 import { allExerciseKeys, checkExercise, listChapterExercises } from '../backend/src/data/exerciseBank.js';
 import { pickPractice } from '../backend/src/data/practicePicker.js';
 import { GRADES, GUIDES, SUBJECT_IDS } from '../backend/src/data/gimnaziuGuide.js';
-
-const PASSWORD = 'Testpass1!';
-
-function uniqueEmail(prefix) {
-  return `${prefix}.${Date.now()}.${Math.random().toString(16).slice(2)}@example.com`;
-}
 
 describe('chapter practice bank', () => {
   it('has original theory questions with 4 options for every 5–8 chapter', () => {
@@ -129,16 +123,9 @@ describe('practice API', () => {
   });
 
   it('returns a chapter test and records seen ideas', async () => {
-    const agent = request.agent(app);
-    const register = await agent.post('/api/auth/register').send({
-      email: uniqueEmail('quiz'),
-      password: PASSWORD,
-      role: 'student',
-      parentEmail: uniqueEmail('parinte'),
-      parental_consent: true,
-      privacy_accepted: true
-    });
-    expect(register.status).toBe(201);
+    const created = await registerGranted(app);
+    expect(created.res.status).toBe(201);
+    const agent = created.agent;
 
     const generated = await agent.post('/api/flashcards/generate').send({
       chapter_id: 'fractii',

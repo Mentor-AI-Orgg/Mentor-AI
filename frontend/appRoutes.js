@@ -19,6 +19,9 @@ export function parseAppHash(hash) {
   if (head === 'cont' || head === 'register') return { kind: 'guest', screen: 'register' };
   if (head === 'onboarding') return { kind: 'guest', screen: 'onboarding' };
   if (head === 'parola') return { kind: 'guest', screen: 'reset', extras: { token: a || '' } };
+  if (head === 'acord') return { kind: 'guest', screen: 'consent', extras: { token: a || '' } };
+  if (head === 'parinte') return { kind: 'guest', screen: 'parent', extras: { token: a || '' } };
+  if (head === 'asteptare') return { kind: 'app', screen: 'consent-wait', navScreen: 'home' };
 
   if (head === 'acasa' || head === 'home') return { kind: 'app', screen: 'home', navScreen: 'home' };
   if (head === 'mentor' || head === 'professor') return { kind: 'app', screen: 'professor', navScreen: 'professor' };
@@ -61,6 +64,12 @@ export function hashForRoute(screen, extras = {}) {
       return '#/onboarding';
     case 'reset':
       return `#/parola/${extras.token || ''}`;
+    case 'consent':
+      return `#/acord/${extras.token || ''}`;
+    case 'parent':
+      return extras.token ? `#/parinte/${extras.token}` : '#/parinte';
+    case 'consent-wait':
+      return '#/asteptare';
     case 'home':
       return '#/acasa';
     case 'professor':

@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
+import { registerGranted } from './registerStudent.js';
 
-const PASSWORD = 'Testpass1!';
 let app;
 
 function uniqueEmail(prefix) {
@@ -10,23 +9,16 @@ function uniqueEmail(prefix) {
 }
 
 async function registerStudent(overrides = {}) {
-  const email = overrides.email || uniqueEmail('elev');
-  const agent = request.agent(app);
-  const parentEmail = uniqueEmail('parinte');
-  const res = await agent.post('/api/auth/register').send({
-    email,
-    password: PASSWORD,
-    role: 'student',
-    name: overrides.name || 'Ana Test',
-    username: overrides.username || `ana${Math.random().toString(16).slice(2, 6)}`,
-    school: 'Școala Test',
-    class: '5',
-    parentEmail,
-    parental_consent: true,
-    privacy_accepted: true
+  const created = await registerGranted(app, {
+    username: overrides.username,
+    name: overrides.name,
+    class: overrides.class || '5',
+    school: overrides.school,
+    parentEmail: overrides.parentEmail
   });
-  expect(res.status).toBe(201);
-  return { agent, email, username: res.body.user.username };
+  expect(created.res.status).toBe(201);
+  expect(created.confirm.status).toBe(200);
+  return { agent: created.agent, email: created.username, username: created.username };
 }
 
 describe('friends and profile edit', () => {
@@ -35,7 +27,7 @@ describe('friends and profile edit', () => {
   });
 
   it('lets a student edit name, class and parent email', async () => {
-    const { agent, email } = await registerStudent({ name: 'Mara' });
+    const { agent } = await registerStudent({ name: 'Mara' });
     const parent = uniqueEmail('parinte-nou');
     const res = await agent.patch('/api/account/profile').send({
       name: 'Mara Nouă',
@@ -47,7 +39,7 @@ describe('friends and profile edit', () => {
     expect(res.body.user.name).toBe('Mara Nouă');
     expect(res.body.user.class).toBe('6');
     expect(res.body.user.parentEmail).toBe(parent);
-    expect(res.body.user.email).toBe(email);
+    expect(res.body.user.email).toBe('');
   });
 
   it('finds a classmate only by exact username and hides the real name and school', async () => {

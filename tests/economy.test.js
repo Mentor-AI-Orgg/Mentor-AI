@@ -1,30 +1,18 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
+import { registerGranted } from './registerStudent.js';
 import { findExercise } from '../backend/src/data/exerciseBank.js';
 import { findQuestion } from '../backend/src/data/practiceBank.js';
 
-const PASSWORD = 'Testpass1!';
 let app;
 let agent;
-
-function uniqueEmail(prefix) {
-  return `${prefix}.${Date.now()}.${Math.random().toString(16).slice(2)}@example.com`;
-}
 
 describe('economy purchases', () => {
   beforeAll(async () => {
     ({ app } = createApp({ autosave: false }));
-    agent = request.agent(app);
-    const register = await agent.post('/api/auth/register').send({
-      email: uniqueEmail('shop'),
-      password: PASSWORD,
-      role: 'student',
-      parentEmail: uniqueEmail('parinte'),
-      parental_consent: true,
-      privacy_accepted: true
-    });
-    expect(register.status).toBe(201);
+    const created = await registerGranted(app);
+    expect(created.res.status).toBe(201);
+    agent = created.agent;
   });
 
   it('grants the first-login bonus and spends coins on an item', async () => {
@@ -70,16 +58,9 @@ describe('economy purchases', () => {
   });
 
   it('grades a maths and a Romanian pack, then XP and coins still buy from the shop', async () => {
-    const other = request.agent(app);
-    const register = await other.post('/api/auth/register').send({
-      email: uniqueEmail('xpshop'),
-      password: PASSWORD,
-      role: 'student',
-      parentEmail: uniqueEmail('parinte'),
-      parental_consent: true,
-      privacy_accepted: true
-    });
-    expect(register.status).toBe(201);
+    const created = await registerGranted(app);
+    expect(created.res.status).toBe(201);
+    const other = created.agent;
 
     await other.post('/api/economy/claim').send({ type: 'login_bonus' });
 

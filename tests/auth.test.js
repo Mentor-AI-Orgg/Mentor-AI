@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
+import { registerGranted } from './registerStudent.js';
 
 const PASSWORD = 'Testpass1!';
 let app;
@@ -18,49 +19,43 @@ describe('auth', () => {
     studentEmail = uniqueEmail('elev');
   });
 
-  it('refuses student signup without parental consent', async () => {
+  it('refuses student signup without a parent email', async () => {
     const res = await request(app)
       .post('/api/auth/register')
       .send({
-        email: uniqueEmail('nocon'),
+        username: 'fara_parinte',
         password: PASSWORD,
-        role: 'student',
-        parentEmail: uniqueEmail('parinte'),
-        privacy_accepted: true
+        confirmPassword: PASSWORD,
+        class: '5'
       });
     expect(res.status).toBe(400);
-    expect(res.body.field).toBe('parental_consent');
   });
 
   it('registers a student and returns the current session', async () => {
-    const res = await studentAgent
-      .post('/api/auth/register')
-      .send({
-        email: studentEmail,
-        password: PASSWORD,
-        role: 'student',
-        name: 'Ana Test',
-        parentEmail: uniqueEmail('parinte'),
-        parental_consent: true,
-        privacy_accepted: true
-      });
-    expect(res.status).toBe(201);
-    expect(res.body.user.email).toBe(studentEmail);
-    expect(res.body.user.role).toBe('student');
+    const created = await registerGranted(app, {
+      agent: studentAgent,
+      username: 'ana_test',
+      parentEmail: uniqueEmail('parinte')
+    });
+    studentEmail = created.username;
+    expect(created.res.status).toBe(201);
+    expect(created.res.body.user.username).toBe('ana_test');
+    expect(created.res.body.user.role).toBe('student');
+    expect(created.res.body.user.email).toBe('');
   });
 
-  it('rejects a duplicate email', async () => {
+  it('rejects a duplicate username', async () => {
     const res = await request(app)
       .post('/api/auth/register')
       .send({
-        email: studentEmail,
+        username: 'ana_test',
         password: PASSWORD,
-        role: 'student',
-        parentEmail: uniqueEmail('parinte'),
-        parental_consent: true,
-        privacy_accepted: true
+        confirmPassword: PASSWORD,
+        class: '5',
+        parentEmail: uniqueEmail('parinte')
       });
     expect(res.status).toBe(409);
+    expect(res.body.field).toBe('username');
   });
 
   it('rejects parent and teacher signup', async () => {
@@ -68,10 +63,12 @@ describe('auth', () => {
       const res = await request(app)
         .post('/api/auth/register')
         .send({
-          email: uniqueEmail(role),
+          username: `rol_${role}`,
           password: PASSWORD,
-          role,
-          privacy_accepted: true
+          confirmPassword: PASSWORD,
+          class: '6',
+          parentEmail: uniqueEmail('parinte'),
+          role
         });
       expect(res.status).toBe(403);
       expect(res.body.field).toBe('role');
@@ -80,19 +77,9 @@ describe('auth', () => {
   });
 
   it('emails the parent when the student account is created', async () => {
-    const res = await request(app)
-      .post('/api/auth/register')
-      .send({
-        email: uniqueEmail('notify'),
-        password: PASSWORD,
-        role: 'student',
-        name: 'Ionel Test',
-        parentEmail: uniqueEmail('parinte'),
-        parental_consent: true,
-        privacy_accepted: true
-      });
-    expect(res.status).toBe(201);
-    expect(res.body.parentNotified).toBe(true);
+    const created = await registerGranted(app, { username: 'ionel_test' });
+    expect(created.res.status).toBe(201);
+    expect(created.res.body.parentNotified).toBe(true);
   });
 
   it('emails the parent when the student logs in', async () => {
@@ -115,7 +102,7 @@ describe('auth', () => {
   it('exposes the session at /api/auth/me', async () => {
     const res = await studentAgent.get('/api/auth/me');
     expect(res.status).toBe(200);
-    expect(res.body.user.email).toBe(studentEmail);
+    expect(res.body.user.username).toBe(studentEmail);
   });
 
   it('rejects a wrong password', async () => {
@@ -138,13 +125,13 @@ describe('auth', () => {
       .post('/api/auth/login')
       .send({ email: studentEmail, password: 'Wrongpass1!' });
     expect(login.text).not.toMatch(/Acces restricționat/);
-    expect(login.body.error).toMatch(/Email sau parolă/i);
+    expect(login.body.error).toMatch(/parola nu sunt corecte/i);
   });
 
   it('resets the password from a one-time link and closes the old session', async () => {
     const forgot = await request(app).post('/api/auth/forgot-password').send({ email: studentEmail });
     expect(forgot.body.success).toBe(true);
-    expect(forgot.body.message).toMatch(/Dacă adresa/);
+    expect(forgot.body.message).toMatch(/părintelui/);
     const notes = await studentAgent.get('/api/economy/notifications');
     const body = (notes.body.inbox || []).map(item => item.body || '').join('\n');
     const token = (body.match(/#\/parola\/([a-f0-9]+)/) || [])[1];

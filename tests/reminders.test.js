@@ -1,13 +1,10 @@
+import { createRequire } from 'node:module';
 import { describe, it, expect, beforeAll } from 'vitest';
-import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
+import { registerGranted } from './registerStudent.js';
 import { buildNudge, issueStudentNudge } from '../backend/src/notify/studentReminders.js';
 
-const PASSWORD = 'Testpass1!';
-
-function uniqueEmail(prefix) {
-  return `${prefix}.${Date.now()}.${Math.random().toString(16).slice(2)}@example.com`;
-}
+const { findByUsername } = createRequire(import.meta.url)('../backend/src/data/authStore.js');
 
 describe('student reminders', () => {
   let app;
@@ -46,17 +43,9 @@ describe('student reminders', () => {
   });
 
   it('issues at most one nudge a day and keeps it on the next home load', async () => {
-    const agent = request.agent(app);
-    const email = uniqueEmail('nudge');
-    const register = await agent.post('/api/auth/register').send({
-      email,
-      password: PASSWORD,
-      role: 'student',
-      parentEmail: uniqueEmail('parinte'),
-      parental_consent: true,
-      privacy_accepted: true
-    });
-    expect(register.status).toBe(201);
+    const created = await registerGranted(app);
+    expect(created.res.status).toBe(201);
+    const agent = created.agent;
 
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -77,7 +66,7 @@ describe('student reminders', () => {
     const second = await agent.get('/api/economy/summary');
     expect(second.body.summary.nudge.body).toMatch(/Serbare/);
 
-    const again = issueStudentNudge(email, { summary: first.body.summary });
+    const again = issueStudentNudge(findByUsername(created.username).email, { summary: first.body.summary });
     expect(again.already).toBe(true);
     expect(again.nudge.body).toMatch(/Serbare/);
 

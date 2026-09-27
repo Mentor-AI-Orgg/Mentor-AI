@@ -42,15 +42,15 @@
   "login": {
     "eyebrow": "Bine ai revenit",
     "title": "Intră în spațiul tău.",
-    "subtitle": "Emailul și parola de elev. Apoi ajungi la lecții, teste și mentor.",
-    "needEmail": "Completează emailul, apoi apasă din nou.",
-    "email": "Email",
+    "subtitle": "Numele de utilizator și parola. Apoi ajungi la lecții și exerciții.",
+    "needEmail": "Scrie numele de utilizator, apoi apasă din nou.",
+    "email": "Nume de utilizator",
     "password": "Parolă",
     "passwordPlaceholder": "Parola ta",
     "submit": "Conectează-te",
     "submitting": "Se conectează...",
     "forgot": "Ai uitat parola?",
-    "error": "Email sau parolă incorecte."
+    "error": "Numele de utilizator sau parola nu sunt corecte."
   },
   "nav": {
     "home": "Acasă",
@@ -175,8 +175,8 @@
   "toast": {
     "welcome": "Bun venit!",
     "loggedOut": "Te-ai deconectat.",
-    "forgotPassword": "Dacă adresa are un cont, vei primi instrucțiuni.",
-    "forgotNeedEmail": "Scrie emailul deasupra, apoi apasă „Ai uitat parola?”.",
+    "forgotPassword": "Dacă există un cont, am trimis un link părintelui tău.",
+    "forgotNeedEmail": "Scrie numele de utilizator deasupra, apoi apasă „Ai uitat parola?”.",
     "forgotFailed": "Nu am putut trimite resetarea acum. Încearcă din nou.",
     "registerFailed": "Nu am putut crea contul.",
     "onboardingDone": "Profilul tău este gata!",

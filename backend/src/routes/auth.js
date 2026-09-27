@@ -3,20 +3,36 @@ const router = express.Router();
 
 const config = require("../config");
 const {
-  createAccount,
+  createStudentAccount,
   authenticate,
   publicAccount,
   findAccount,
+  findByUsername,
   createSession,
   destroySession,
   normalizeEmail,
   issueResetToken,
-  consumeResetToken
+  consumeResetToken,
+  isInternalEmail,
+  isConsentGranted,
+  markPending,
+  ensureParentAccount,
+  linkChildToParent,
+  grantConsent,
+  stripLegacyProfile
 } = require("../data/authStore");
+const {
+  POLICY_VERSION,
+  confirmationAllowed,
+  markConfirmationSent,
+  issueConsentToken,
+  peekConsent,
+  consumeConsent
+} = require("../data/consentStore");
 const { SESSION_COOKIE, authRequired, STUDENTS_ONLY } = require("../middleware/auth");
 const { authLimiter } = require("../middleware/rateLimits");
 const { validateBody } = require("../middleware/validate");
-const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema } = require("../validation/schemas");
+const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, consentActionSchema, parentEmailSchema } = require("../validation/schemas");
 const { publicBaseUrl } = require("../publicUrl");
 const { ensureUser, pushNotification } = require("../data/economyStore");
 const { deliverMessage, smtpConfigured } = require("../notify/deliver");
@@ -54,113 +70,116 @@ function sessionCookieOptions(maxAge) {
   };
 }
 
-router.post("/register", authLimiter, validateBody(registerSchema), async (req, res) => {
-  const { email, password, role = "student", parental_consent: parentalConsent, privacy_accepted: privacyAccepted, ...profile } = req.body || {};
+function consentMail({ req, account, token }) {
+  const link = `${publicBaseUrl(req)}/#/acord/${token}`;
+  const subject = "Confirmați contul copilului dumneavoastră pe Sunt de 10";
+  const body = [
+    "Cineva a creat un cont de copil pe Sunt de 10, aplicația gratuită de română și matematică.",
+    "Nu are reclame și nu folosește un serviciu de inteligență artificială plătit.",
+    `Păstrăm numele de utilizator (${account.profile.username}), clasa (${account.profile.class}), progresul și emailul părintelui, ca să știm cine învață și cine a dat acordul.`,
+    "Profilul este privat de la început.",
+    `Politica de confidențialitate: ${publicBaseUrl(req)}/#/confidentialitate`,
+    "Deschide linkul și apasă un buton. Linkul nu confirmă singur.",
+    link,
+    "Dacă nu confirmați în 14 zile, contul și datele se șterg automat."
+  ].join("\n");
+  return { link, subject, body };
+}
 
-  if (!privacyAccepted) {
-    return res.status(400).json({
-      error: "Trebuie să accepți politica de confidențialitate și termenii de utilizare.",
-      field: "privacy_accepted"
-    });
+async function sendConsentEmail(req, account, { resend = false } = {}) {
+  const parentEmail = account.profile && account.profile.parentEmail;
+  if (!parentEmail) return { sent: false, reason: "no_parent" };
+  const room = confirmationAllowed(account.email, parentEmail, { resend });
+  if (!room.ok) return { sent: false, limited: true, message: room.message };
+  const token = issueConsentToken(account.email);
+  const mail = consentMail({ req, account, token });
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`[DEV] ${mail.link}`);
   }
+  const delivery = await deliverMessage({
+    to: parentEmail,
+    subject: mail.subject,
+    body: mail.body,
+    channel: "email"
+  });
+  markConfirmationSent(account.email, parentEmail, { resend });
+  return { sent: true, delivery, link: mail.link };
+}
 
-  if (!isValidEmail(email)) {
-    return res.status(400).json({ error: "Adresa de email nu este validă.", field: "email" });
+router.post("/register", authLimiter, validateBody(registerSchema), async (req, res) => {
+  const { username, password, confirmPassword, class: className, parentEmail, role = "student" } = req.body || {};
+
+  if (role !== "student") {
+    return res.status(403).json({ ...STUDENTS_ONLY, field: "role" });
+  }
+  if (String(password) !== String(confirmPassword)) {
+    return res.status(400).json({ error: "Parolele nu coincid.", field: "confirmPassword" });
   }
   const passwordError = validatePassword(password);
-  if (passwordError) {
-    return res.status(400).json({ error: passwordError, field: "password" });
-  }
-  if (role !== "student") {
-    return res.status(403).json({
-      ...STUDENTS_ONLY,
-      field: "role"
+  if (passwordError) return res.status(400).json({ error: passwordError, field: "password" });
+  if (!isValidEmail(parentEmail)) {
+    return res.status(400).json({
+      error: "Contul de elev cere emailul unui părinte sau tutore.",
+      field: "parentEmail"
     });
   }
-
-  // Un elev minor nu își poate deschide contul fără un adult de contact și
-  // fără consimțământ explicit. Părintele nu își face cont: primește emailuri.
-  if (role === "student") {
-    if (!isValidEmail(profile.parentEmail)) {
-      return res.status(400).json({
-        error: "Contul de elev cere emailul unui părinte sau tutore.",
-        field: "parentEmail"
-      });
-    }
-    if (normalizeEmail(profile.parentEmail) === normalizeEmail(email)) {
-      return res.status(400).json({
-        error: "Emailul părintelui trebuie să fie diferit de al elevului.",
-        field: "parentEmail"
-      });
-    }
-    if (parentalConsent !== true) {
-      return res.status(400).json({
-        error: "Contul de elev cere consimțământul parental.",
-        field: "parental_consent"
-      });
-    }
+  // TODO(T6): verificarea numelui de utilizator pe server, dincolo de unicitate.
+  if (findByUsername(username)) {
+    return res.status(409).json({ error: "Acest nume de utilizator este deja folosit.", field: "username" });
   }
 
-  const created = await createAccount({
-    email,
+  const created = await createStudentAccount({
+    username,
     password,
-    role,
-    profile: {
-      ...profile,
-      parentalConsentAt: role === "student" ? new Date().toISOString() : null,
-      privacyAcceptedAt: new Date().toISOString()
-    }
+    className,
+    parentEmail
   });
   if (!created.ok) {
-    if (created.reason === "email_taken") {
-      return res.status(409).json({ error: "Există deja un cont cu această adresă.", field: "email" });
+    if (created.reason === "username_taken") {
+      return res.status(409).json({ error: "Acest nume de utilizator este deja folosit.", field: "username" });
     }
     return res.status(400).json({ error: "Nu am putut crea contul." });
   }
 
-  // Contul de economie este ținut separat (monede, inventar, activitate) și
-  // este indexat pe același email.
   ensureUser(created.account.email, {
-    role: created.account.role,
+    role: "student",
     className: created.account.profile.class,
-    profileName: created.account.profile.name,
     username: created.account.profile.username
   });
 
-  const parentNotify = await notifyParent({
-    studentEmail: created.account.email,
-    type: "account_created",
-    note: "Contul a fost creat.",
-    meta: {
-      classLevel: created.account.profile.class,
-      subject: created.account.profile.subject
-    }
-  });
-
+  const confirmation = await sendConsentEmail(req, created.account);
   const { token, maxAge } = createSession(created.account.email);
   res.cookie(SESSION_COOKIE, token, sessionCookieOptions(maxAge));
   res.status(201).json({
     success: true,
     user: publicAccount(created.account),
-    parentNotified: !parentNotify.skipped
+    parentNotified: Boolean(confirmation.sent),
+    confirmationMessage: confirmation.message || ""
   });
 });
 
 router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) => {
   const { email, password } = req.body || {};
   if (!email || !password) {
-    return res.status(400).json({ error: "Emailul și parola sunt obligatorii." });
+    return res.status(400).json({ error: "Numele de utilizator și parola sunt obligatorii." });
   }
 
   const result = await authenticate({ email, password });
   if (!result.ok) {
     // Un singur mesaj pentru email inexistent și parolă greșită, ca să nu
     // confirmăm care adrese au cont.
-    return res.status(401).json({ error: "Email sau parolă incorecte." });
+    return res.status(401).json({ error: "Numele de utilizator sau parola nu sunt corecte." });
   }
 
   if (result.account.role !== "student") {
     return res.status(403).json(STUDENTS_ONLY);
+  }
+
+  if (!isConsentGranted(result.account)) {
+    const firstPending = !result.account.consent;
+    stripLegacyProfile(result.account);
+    markPending(result.account);
+    if (firstPending) await sendConsentEmail(req, result.account);
   }
 
   ensureUser(result.account.email, {
@@ -206,7 +225,7 @@ router.get("/me", authRequired, (req, res) => {
 // când contul există; mesajul către client rămâne același.
 router.post("/forgot-password", authLimiter, validateBody(forgotPasswordSchema), async (req, res) => {
   const { email } = req.body || {};
-  const account = isValidEmail(email) ? findAccount(email) : null;
+  const account = (isValidEmail(email) ? findAccount(email) : null) || findByUsername(email);
 
   if (account) {
     const token = issueResetToken(account.email);
@@ -218,23 +237,78 @@ router.post("/forgot-password", authLimiter, validateBody(forgotPasswordSchema),
       link,
       "Dacă nu ai fost tu, ignoră mesajul. După schimbare, sesiunile vechi se închid."
     ].join("\n");
-    const delivery = await deliverMessage({ to: account.email, subject, body, channel: "email" });
-    pushNotification(account.email, account.email, subject, body, "email", delivery);
     const parentEmail = account.profile && account.profile.parentEmail;
+    const who = account.profile.username || "copilul";
+    const parentBody = `Copilul ${who} a cerut o parolă nouă.\n${link}`;
+    pushNotification(account.email, parentEmail || account.email, subject, isInternalEmail(account.email) ? parentBody : body, "email", { mocked: !smtpConfigured() });
     if (parentEmail) {
       await deliverMessage({
         to: parentEmail,
         subject,
-        body: `Copilul cu adresa ${account.email} a cerut o parolă nouă.\n${link}`,
+        body: parentBody,
         channel: "email"
       });
+    }
+    if (!isInternalEmail(account.email)) {
+      await deliverMessage({ to: account.email, subject, body, channel: "email" });
     }
   }
 
   res.json({
     success: true,
     mocked: !smtpConfigured(),
-    message: "Dacă adresa are un cont, vei primi instrucțiuni de resetare."
+    message: "Dacă există un cont, am trimis un link părintelui tău."
+  });
+});
+
+router.get("/consent/:token", (req, res) => {
+  const info = peekConsent(req.params.token);
+  if (!info) return res.status(400).json({ error: "Linkul nu mai este valabil." });
+  res.json({ pending: info.status !== "granted", username: info.username, class: info.className });
+});
+
+router.post("/consent", validateBody(consentActionSchema), async (req, res) => {
+  const account = consumeConsent(req.body.token);
+  if (!account) return res.status(400).json({ error: "Linkul nu mai este valabil." });
+  if (req.body.action === "refuse") {
+    const { eraseAccount } = require("./account");
+    eraseAccount(account.email);
+    return res.json({ success: true, deleted: true });
+  }
+  const parentEmail = account.profile.parentEmail;
+  grantConsent(account, { policyVersion: POLICY_VERSION, parentEmail });
+  const parent = await ensureParentAccount(parentEmail);
+  if (parent) linkChildToParent(parent.email, account.email);
+  res.json({ success: true, consent: "granted" });
+});
+
+router.post("/consent/resend", authLimiter, async (req, res) => {
+  if (!req.auth || req.auth.role !== "student") {
+    return res.status(401).json({ error: "Autentificare necesară.", code: "unauthenticated" });
+  }
+  if (isConsentGranted(req.auth.account)) {
+    return res.json({ success: true, already: true });
+  }
+  const confirmation = await sendConsentEmail(req, req.auth.account, { resend: true });
+  if (confirmation.limited) {
+    return res.status(429).json({ error: confirmation.message, code: "consent_limited" });
+  }
+  res.json({ success: true, sent: Boolean(confirmation.sent) });
+});
+
+router.post("/consent/parent-email", authLimiter, validateBody(parentEmailSchema), async (req, res) => {
+  if (!req.auth || req.auth.role !== "student") {
+    return res.status(401).json({ error: "Autentificare necesară." });
+  }
+  if (isConsentGranted(req.auth.account)) {
+    return res.status(400).json({ error: "Acordul este deja confirmat." });
+  }
+  req.auth.account.profile.parentEmail = normalizeEmail(req.body.parentEmail);
+  const confirmation = await sendConsentEmail(req, req.auth.account);
+  res.json({
+    success: true,
+    user: publicAccount(req.auth.account),
+    confirmationMessage: confirmation.message || ""
   });
 });
 

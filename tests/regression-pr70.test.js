@@ -9,42 +9,36 @@ import {
   PREVIEW_COOKIE,
   previewToken
 } from '../backend/src/middleware/comingSoon.js';
+import { registerGranted, uniqueEmail } from './registerStudent.js';
 
 const nodeRequire = createRequire(import.meta.url);
 const persistence = nodeRequire('../backend/src/data/persistence.js');
 const config = nodeRequire('../backend/src/config.js');
 
-const PASSWORD = 'Testpass1!';
 const AI_KEYS = ['OPENAI_KEY', 'CLAUDE_KEY', 'GEMINI_KEY', 'WOLFRAM_KEY', 'MATHPIX_APP_ID', 'MATHPIX_APP_KEY'];
-
-function uniqueEmail(prefix) {
-  return `${prefix}.${Date.now()}.${Math.random().toString(16).slice(2)}@example.com`;
-}
 
 function hashToken(token) {
   return crypto.createHash('sha256').update(String(token)).digest('hex');
 }
 
 async function registerStudent(app, overrides = {}) {
-  const email = overrides.email || uniqueEmail('elev');
-  const parentEmail = overrides.parentEmail || uniqueEmail('parinte');
-  const username = overrides.username || `u${Math.random().toString(16).slice(2, 8)}`;
-  const agent = request.agent(app);
-  const res = await agent.post('/api/auth/register').send({
-    email,
-    password: PASSWORD,
-    role: 'student',
-    name: overrides.name || 'Ana Test',
-    username,
-    school: overrides.school || 'Școala Test',
+  const created = await registerGranted(app, {
+    username: overrides.username,
+    name: overrides.name,
     class: overrides.class || '6',
-    phone: overrides.phone || '0712345678',
-    parentEmail,
-    parental_consent: true,
-    privacy_accepted: true
+    school: overrides.school,
+    phone: overrides.phone,
+    parentEmail: overrides.parentEmail,
+    email: overrides.email
   });
-  expect(res.status).toBe(201);
-  return { agent, email, parentEmail, username };
+  expect(created.res.status).toBe(201);
+  expect(created.confirm.status).toBe(200);
+  return {
+    agent: created.agent,
+    email: created.username,
+    parentEmail: created.parentEmail,
+    username: created.username
+  };
 }
 
 describe('regresie PR #70', () => {
@@ -170,7 +164,8 @@ describe('regresie PR #70', () => {
       username: `ion${Date.now().toString(16).slice(-4)}`,
       school: 'Școala Stejar',
       class: '7',
-      phone: '0722000111'
+      phone: '0722000111',
+      email: 'ion.secret@example.com'
     });
     const ana = await registerStudent(app, { name: 'Ana Public', username: `ana${Date.now().toString(16).slice(-4)}` });
 
@@ -193,7 +188,7 @@ describe('regresie PR #70', () => {
     expect(card.email).toBeUndefined();
     expect(card.phone).toBeUndefined();
     expect(JSON.stringify(card)).not.toContain('Ion Privat');
-    expect(JSON.stringify(card)).not.toContain(ion.email);
+    expect(JSON.stringify(card)).not.toContain('ion.secret@example.com');
     expect(JSON.stringify(card)).not.toContain('Școala Stejar');
     expect(JSON.stringify(card)).not.toContain('0722000111');
 
@@ -202,7 +197,7 @@ describe('regresie PR #70', () => {
     expect(board.status).toBe(200);
     const packed = JSON.stringify(board.body);
     expect(packed).not.toContain(ion.username);
-    expect(packed).not.toContain(ion.email);
+    expect(packed).not.toContain('ion.secret@example.com');
     expect(packed).not.toContain('Ion Privat');
     expect(packed).not.toContain('Școala Stejar');
   });

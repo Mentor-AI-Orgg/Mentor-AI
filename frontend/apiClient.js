@@ -189,6 +189,133 @@ const MentorAPI = {
     }
   },
 
+  async peekConsent(token) {
+    try {
+      const data = await safeFetchJson(`/api/auth/consent/${encodeURIComponent(token || '')}`);
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async confirmConsent(payload) {
+    try {
+      const data = await safeFetchJson('/api/auth/consent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async resendConsent() {
+    try {
+      const data = await safeFetchJson('/api/auth/consent/resend', { method: 'POST' });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async setConsentParentEmail(payload) {
+    try {
+      const data = await safeFetchJson('/api/auth/consent/parent-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async parentMagic(payload) {
+    try {
+      const data = await safeFetchJson('/api/parent/magic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async parentConsume(payload) {
+    try {
+      const data = await safeFetchJson('/api/parent/magic/consume', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async parentMe() {
+    try {
+      const data = await safeFetchJson('/api/parent/me');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async parentExport(id) {
+    try {
+      const data = await safeFetchJson(`/api/parent/children/${encodeURIComponent(id)}/export`);
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async parentEmails(id, payload) {
+    try {
+      const data = await safeFetchJson(`/api/parent/children/${encodeURIComponent(id)}/emails`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async parentPrivacy(id) {
+    try {
+      const data = await safeFetchJson(`/api/parent/children/${encodeURIComponent(id)}/privacy`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profilePrivate: true })
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async parentDelete(id, payload) {
+    try {
+      const data = await safeFetchJson(`/api/parent/children/${encodeURIComponent(id)}/delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async forgotPassword(payload) {
     try {
       const data = await safeFetchJson('/api/auth/forgot-password', {

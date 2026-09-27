@@ -5,6 +5,7 @@ const { safetyCheck } = require("../safety/safetyCheck");
 const { SAFETY_REFUSAL_TEXT, DIRECT_ANSWER_GUARD_TEXT, CRISIS_HELP_TEXT } = require("../data/responseTemplates");
 const { normalizeGrade, normalizeSubject } = require("../data/gimnaziuGuide");
 const { answerFromLessons } = require("../mentor/localMentor");
+const { isConsentGranted } = require("../data/authStore");
 const memory = require("../memory/memoryStore");
 const { validateBody } = require("../middleware/validate");
 const { chatSchema } = require("../validation/schemas");
@@ -47,6 +48,10 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
       processing_time_ms: Date.now() - startTotal,
       conversation_id: requestedConversationId
     });
+  }
+
+  if (!isConsentGranted(req.auth.account)) {
+    return res.status(403).json({ error: "consent_pending" });
   }
 
   if (!safety.safe) {
