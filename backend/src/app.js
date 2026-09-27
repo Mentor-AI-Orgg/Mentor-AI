@@ -19,6 +19,7 @@ const { basicAuth } = require("./middleware/basicAuth");
 const { comingSoon } = require("./middleware/comingSoon");
 const { attachUser, authRequired, studentRequired, consentRequired } = require("./middleware/auth");
 const parentRoute = require("./routes/parent");
+const placementRoute = require("./routes/placement");
 const { startRetention } = require("./data/retentionJob");
 const { startDigestSchedule } = require("./notify/parentActivity");
 const { migrateLegacyProfiles } = require("./data/authStore");
@@ -92,6 +93,7 @@ function createApp(options = {}) {
 
     app.use(`${prefix}/auth`, authRoute);
     app.use(`${prefix}/parent`, parentRoute);
+    app.use(`${prefix}/placement`, authRequired, placementRoute);
     app.use(`${prefix}/health`, healthRoute);
     app.use(`${prefix}/leaderboard`, leaderboardRoute);
     app.use(`${prefix}/moderation`, moderationRoute);

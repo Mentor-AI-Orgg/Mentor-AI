@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { MentorAPI } from '../apiClient.js';
 import { formatRoDate } from '../userData.js';
 import { emitMascot } from '../mascot/mascotEvents.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -11,6 +12,10 @@ import Mascota from '../components/mascot/Mascota.jsx';
 
 const HomeScreen = ({ userData, onNavigate }) => {
   const { t, locale } = useI18n();
+  const [offer, setOffer] = useState(false);
+  const [quiz, setQuiz] = useState(null);
+  const [answers, setAnswers] = useState({});
+  const [result, setResult] = useState(null);
   const dateLabel = locale === 'en'
     ? new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date())
     : formatRoDate();
@@ -31,6 +36,16 @@ const HomeScreen = ({ userData, onNavigate }) => {
     const key = d.toISOString().slice(0, 10);
     return { key, on: streakDays.includes(key) };
   });
+
+  useEffect(() => {
+    MentorAPI.placement().then(pack => {
+      const row = pack.data?.placement;
+      if (!pack.success || row?.finished) return;
+      const skipped = Date.parse(row?.skippedAt || '');
+      const week = 7 * 24 * 60 * 60 * 1000;
+      if (!row?.skippedAt || (Number.isFinite(skipped) && Date.now() - skipped > week)) setOffer(true);
+    });
+  }, [userData.email]);
 
   useEffect(() => {
     const day = new Date().toISOString().slice(0, 10);
@@ -68,6 +83,47 @@ const HomeScreen = ({ userData, onNavigate }) => {
           {itemEmoji(userData.avatarId) || (icon ? <i className={`fas ${icon}`} /> : (userData.name || 'E').charAt(0).toUpperCase())}
         </button>
       </header>
+      {offer && !quiz && !result && (
+        <section className="focus-card">
+          <Mascota mood="explica" size="md" />
+          <p>Vrei să vedem de unde pornești? Sunt 10 întrebări scurte, cam 5 minute.</p>
+          <div className="focus-actions">
+            <button type="button" className="accent-button" onClick={async () => {
+              const pack = await MentorAPI.placementQuestions('ambele');
+              if (pack.success) setQuiz(pack.data.questions || []);
+            }}>Da, hai!</button>
+            <button type="button" className="ghost-button" onClick={async () => {
+              await MentorAPI.placementSkip();
+              setOffer(false);
+            }}>Nu acum</button>
+          </div>
+        </section>
+      )}
+      {quiz && !result && (
+        <section className="focus-card">
+          <p>Pas cu pas, fără grabă.</p>
+          {quiz.map(item => (
+            <label key={item.id} className="field-label">
+              {item.prompt}
+              <input className="field form-input" value={answers[item.id] || ''} onChange={event => setAnswers(prev => ({ ...prev, [item.id]: event.target.value }))} />
+            </label>
+          ))}
+          <button type="button" className="accent-button" onClick={async () => {
+            const pack = await MentorAPI.placementFinish({
+              subject: 'ambele',
+              answers: quiz.map(item => ({ id: item.id, given: answers[item.id] || '' }))
+            });
+            if (pack.success) setResult(pack.data);
+          }}>Gata</button>
+        </section>
+      )}
+      {result && (
+        <section className="focus-card">
+          <p>Îți recomand să începi cu {result.startWith?.join(', ') || 'lecția care îți place'}.</p>
+          {result.good?.length > 0 && <p>Merge deja bine la: {result.good.join(', ')}.</p>}
+          <p>Insignă: {result.badge}.</p>
+        </section>
+      )}
       <section className="focus-card">
         <div>
           <div className="eyebrow">Azi, concret</div>
