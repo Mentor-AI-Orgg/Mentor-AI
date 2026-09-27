@@ -47,7 +47,8 @@ function childCard(email) {
     class: account.profile.class || "",
     createdAt: account.createdAt,
     lessonsLast7Days: lessonsLast7Days(account.email),
-    emails: account.profile.parentEmails !== "off",
+    emails: account.profile.parentEmails || "weekly",
+    dailyLimit: Number(account.profile.dailyLimit) || 0,
     profilePrivate: getSettings(account.email).profilePrivate !== false
   };
 }
@@ -118,8 +119,11 @@ function foreignChild(id) {
 router.post("/children/:id/emails", parentRequired, (req, res) => {
   const child = ownedChild(req, req.params.id);
   if (!child) return res.status(404).json({ error: "Nu am găsit copilul." });
-  child.profile.parentEmails = req.body?.emails === false ? "off" : "daily";
-  res.json({ success: true, emails: child.profile.parentEmails !== "off" });
+  const cadence = ["weekly", "daily", "off"].includes(req.body?.cadence)
+    ? req.body.cadence
+    : (req.body?.emails === false ? "off" : "weekly");
+  child.profile.parentEmails = cadence;
+  res.json({ success: true, emails: cadence });
 });
 
 router.post("/children/:id/privacy", parentRequired, (req, res) => {
@@ -130,6 +134,39 @@ router.post("/children/:id/privacy", parentRequired, (req, res) => {
   }
   setSettings(child.email, { profilePrivate: true });
   res.json({ success: true, profilePrivate: true });
+});
+
+router.get("/children/:id/panel", parentRequired, (req, res) => {
+  const child = ownedChild(req, req.params.id);
+  if (!child) return res.status(404).json({ error: "Nu am găsit copilul." });
+  const { buildPanel } = require("../parent/panel");
+  res.json(buildPanel(child.email));
+});
+
+router.post("/children/:id/limit", parentRequired, (req, res) => {
+  const child = ownedChild(req, req.params.id);
+  if (!child) return res.status(404).json({ error: "Nu am găsit copilul." });
+  const minutes = [0, 30, 60, 90].includes(Number(req.body?.minutes)) ? Number(req.body.minutes) : 0;
+  child.profile.dailyLimit = String(minutes);
+  res.json({ success: true, dailyLimit: minutes });
+});
+
+router.post("/children/:id/friends", parentRequired, (req, res) => {
+  const child = ownedChild(req, req.params.id);
+  if (!child) return res.status(404).json({ error: "Nu am găsit copilul." });
+  const { setFriendAccess } = require("../parent/panel");
+  const { respondRequest } = require("../data/friendStore");
+  if (req.body?.remove) {
+    const { removeFriendship } = require("../data/friendStore");
+    const { findByUsername } = require("../data/authStore");
+    const other = findByUsername(req.body.remove);
+    if (other) removeFriendship(child.email, other.email);
+  }
+  if (req.body?.requestId && req.body?.action) {
+    respondRequest(child.email, req.body.requestId, req.body.action);
+  }
+  if (req.body?.enabled !== undefined) setFriendAccess(child.email, req.body.enabled);
+  res.json({ success: true });
 });
 
 router.get("/children/:id/export", parentRequired, (req, res) => {

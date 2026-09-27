@@ -82,6 +82,13 @@ function areFriends(a, b) {
   return friendList(a).includes(normalizeEmail(b));
 }
 
+function removeFriendship(a, b) {
+  const left = normalizeEmail(a);
+  const right = normalizeEmail(b);
+  FRIENDS.set(left, friendList(left).filter(item => item !== right));
+  FRIENDS.set(right, friendList(right).filter(item => item !== left));
+}
+
 function addFriendship(a, b) {
   const left = normalizeEmail(a);
   const right = normalizeEmail(b);
@@ -353,6 +360,7 @@ module.exports = {
   setSettings,
   publicCard,
   searchStudents,
+  removeFriendship,
   sendRequest,
   findByFriendCode,
   issuePrivatizeToken,

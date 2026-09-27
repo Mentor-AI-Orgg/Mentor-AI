@@ -52,6 +52,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
           <div className="eyebrow">{dateLabel}</div>
           <h1 className="display-font home-title">{t('home.hello', { name: userData.name || t('home.studentFallback') })}</h1>
           <p className="home-role-tag">{userData.titleName ? `${userData.titleName} · ` : ''}{t('home.roleStudent')} · {t('home.gradeOnly', { grade })}</p>
+          {userData.timeBlocked && <Mascota mood="somnoros" size="md" message="Ai lucrat mult azi, ne vedem mâine!" />}
           <div className="home-mascot">
             <Mascota mood="salut" size="md" message={t('mascot.hello')} />
           </div>

@@ -181,7 +181,7 @@ async function sendDueDigests(now = new Date(), { force = false } = {}) {
   const sent = [];
   for (const account of listAccounts()) {
     if (account.role !== "student" || !isConsentGranted(account)) continue;
-    const freq = account.profile.parentEmails || "daily";
+    const freq = account.profile.parentEmails || "weekly";
     if (freq === "off") continue;
     if (freq === "weekly" && clock.weekday !== "Sun" && !force) continue;
     const { getUser } = require("../data/economyStore");
@@ -202,7 +202,7 @@ async function sendDueDigests(now = new Date(), { force = false } = {}) {
       `Zona de părinte: ${base}/#/parinte`,
       `Fără emailuri: ${base}/#/emailuri/${token}`
     ].join("\n");
-    const subject = "Rezumatul zilei pe Sunt de 10";
+    const subject = freq === "daily" ? "Rezumatul zilei pe Sunt de 10" : "Rezumatul săptămânii pe Sunt de 10";
     const delivery = await require("./deliver").deliverMessage({
       to: parentEmail,
       subject,

@@ -73,7 +73,8 @@ function applyAccount(user, prev = {}) {
     theme: user.theme || prev.theme || '',
     textSize: user.textSize || prev.textSize || '',
     readableFont: user.readableFont || prev.readableFont || '',
-    motion: user.motion || prev.motion || ''
+    motion: user.motion || prev.motion || '',
+    timeBlocked: Boolean(user.timeBlocked)
   };
 }
 
