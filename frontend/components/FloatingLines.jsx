@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion.js';
 
@@ -214,7 +214,7 @@ function hexToVec3(hex) {
 }
 
 function FloatingLines({
-  linesGradient = ['#b9a7ff', '#6fd7ff', '#4c48a7'],
+  linesGradient = ['#44D6D7', '#08142A', '#93FC09'],
   enabledWaves = ['top', 'middle', 'bottom'],
   lineCount = [6, 7, 8],
   lineDistance = [5, 4, 3],
@@ -231,6 +231,17 @@ function FloatingLines({
   mixBlendMode = 'screen'
 }) {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const [motionOff, setMotionOff] = useState(() => (
+    typeof document !== 'undefined' && document.documentElement.dataset.motion === 'off'
+  ));
+  useEffect(() => {
+    if (typeof document === 'undefined' || typeof MutationObserver === 'undefined') return undefined;
+    const root = document.documentElement;
+    const read = () => setMotionOff(root.dataset.motion === 'off');
+    const observer = new MutationObserver(read);
+    observer.observe(root, { attributes: true, attributeFilter: ['data-motion'] });
+    return () => observer.disconnect();
+  }, []);
   const skipHeavy = (() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return true;
     const coarse = window.matchMedia('(pointer: coarse)').matches;
@@ -238,7 +249,7 @@ function FloatingLines({
     const saveData = Boolean(navigator.connection && navigator.connection.saveData);
     return coarse || narrow || saveData;
   })();
-  const skipWebGL = prefersReducedMotion || skipHeavy;
+  const skipWebGL = prefersReducedMotion || motionOff || skipHeavy;
   const containerRef = useRef(null);
   const targetMouseRef = useRef(new THREE.Vector2(-1000, -1000));
   const currentMouseRef = useRef(new THREE.Vector2(-1000, -1000));

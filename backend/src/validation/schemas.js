@@ -195,6 +195,10 @@ const profileSchema = z.object({
   parentEmail: optionalEmail,
   uiLanguage: z.string().max(8).optional(),
   language: z.string().max(8).optional(),
+  theme: z.enum(["dark", "light", "system"]).optional(),
+  textSize: z.enum(["normal", "large", "xlarge"]).optional(),
+  readableFont: z.enum(["0", "1"]).optional(),
+  motion: z.enum(["0", "1"]).optional(),
   hasCompletedOnboarding: z.boolean().optional()
 });
 

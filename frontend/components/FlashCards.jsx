@@ -191,14 +191,22 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
                   onClick={() => choose(optionIndex)}
                 >
                   <em>{letters[optionIndex]}</em>
-                  <span><MathText text={option} /></span>
+                  <span>
+                    <MathText text={option} />
+                    {state === 'is-correct' && <span className="quiz-state-label"><i className="fas fa-check" aria-hidden="true" /> Corect</span>}
+                    {state === 'is-wrong' && <span className="quiz-state-label"><i className="fas fa-xmark" aria-hidden="true" /> Greșit</span>}
+                  </span>
                 </button>
               );
             })}
           </div>
           {Number.isInteger(choices[card.id]) && (
             <p className={`quiz-feedback ${choices[card.id] === card.correct ? 'ok' : 'bad'}`}>
-              {choices[card.id] === card.correct ? 'Corect.' : 'Ai greșit.'} <MathText text={card.explain} />
+              {choices[card.id] === card.correct
+                ? <><i className="fas fa-check" aria-hidden="true" /> Corect.</>
+                : <><i className="fas fa-xmark" aria-hidden="true" /> Ai greșit.</>}
+              {' '}
+              <MathText text={card.explain} />
             </p>
           )}
           {Number.isInteger(choices[card.id]) && (
