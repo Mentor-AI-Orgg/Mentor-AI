@@ -77,9 +77,9 @@ const LoginScreen = ({ onBack, onLogin, onForgotPassword }) => {
         {t('login.forgot')}
       </button>
       <p className="auth-legal">
-        <a href="/privacy.html" target="_blank" rel="noopener noreferrer">{t('auth.privacy')}</a>
+        <a href="/confidentialitate" target="_blank" rel="noopener noreferrer">{t('auth.privacy')}</a>
         {' · '}
-        <a href="/terms.html" target="_blank" rel="noopener noreferrer">{t('auth.terms')}</a>
+        <a href="/termeni" target="_blank" rel="noopener noreferrer">{t('auth.terms')}</a>
       </p>
     </main>
   );

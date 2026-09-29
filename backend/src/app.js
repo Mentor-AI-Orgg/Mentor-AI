@@ -111,11 +111,17 @@ function createApp(options = {}) {
   mountApi("/api");
   mountApi("/api/v1");
 
-  app.get("/privacy.html", (req, res) => {
+  app.get("/confidentialitate", (req, res) => {
     res.type("html").send(privacyHtml());
   });
-  app.get("/terms.html", (req, res) => {
+  app.get("/termeni", (req, res) => {
     res.type("html").send(termsHtml());
+  });
+  app.get("/privacy.html", (req, res) => {
+    res.redirect(302, "/confidentialitate");
+  });
+  app.get("/terms.html", (req, res) => {
+    res.redirect(302, "/termeni");
   });
 
   const distDir = path.join(__dirname, "..", "..", "frontend", "dist");

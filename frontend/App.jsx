@@ -612,6 +612,12 @@ function AppShell({ userData, setUserData }) {
         {renderScreen()}
       </Suspense>
       {showNav && <BottomNav active={navScreen} onNavigate={handleNavigate} />}
+      {!showNav && screen !== 'splash' && (
+        <p className="legal-footer">
+          <a href="/confidentialitate">Confidențialitate</a>
+          <a href="/termeni">Termeni</a>
+        </p>
+      )}
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );

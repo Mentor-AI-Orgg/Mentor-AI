@@ -9,7 +9,7 @@ import { PASSWORD, registerGranted } from './registerStudent.js';
 describe('antete, cookie și jurnale', () => {
   it('pune CSP pe același site și nu publică integrările', async () => {
     const { app } = createApp({ autosave: false });
-    const privacy = await request(app).get('/privacy.html');
+    const privacy = await request(app).get('/confidentialitate');
     expect(privacy.status).toBe(200);
     const csp = privacy.headers['content-security-policy'];
     expect(csp).toMatch(/default-src 'self'/);

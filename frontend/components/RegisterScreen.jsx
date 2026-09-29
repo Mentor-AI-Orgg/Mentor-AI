@@ -157,7 +157,7 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
               className={`field form-input ${touched.parentEmail ? (fieldValid('parentEmail') ? 'field-valid' : 'field-invalid') : ''}`}
             />
           </label>
-          <small className="field-hint">Părintele tău va primi politica de confidențialitate. <a href="/privacy.html">Citește politica</a>.</small>
+          <small className="field-hint">Părintele tău va primi politica de confidențialitate. <a href="/confidentialitate">Citește politica</a>.</small>
         </div>
       </div>
 
