@@ -2,8 +2,9 @@
 
 function redact(value) {
   return String(value ?? "")
-    .replace(/(password|token|secret|authorization|cookie)(["']?\s*[:=]\s*)(["']?)[^\s"',&]+/gi, "$1$2$3[redactat]")
-    .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, "[email]");
+    .replace(/((?:parentEmail|fullName|password|token|secret|authorization|cookie|email|phone|message|text)|(?<![A-Za-z])name)(["']?\s*[:=]\s*)(?:"[^"]*"|'[^']*'|[^\s"',&]+)/gi, "$1$2[redactat]")
+    .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, "[email]")
+    .replace(/\b(?:\+40|0)\d{9}\b/g, "[telefon]");
 }
 
 function logError(entry) {

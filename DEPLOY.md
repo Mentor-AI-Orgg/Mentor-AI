@@ -130,7 +130,10 @@ poarta HTTP Basic, pune `ENABLE_STAGING_AUTH=1` plus `STAGING_AUTH_USER`
 Cât site-ul e închis, publicul vede „În curând”. Tu deschizi aplicația
 din formularul **Intrare creator**, cu `PREVIEW_PASSWORD` setată în
 DirectAdmin. Dacă parola lipsește, nimeni nu intră. Nu o pune în adresă.
-Cookie-ul se semnează cu `PREVIEW_COOKIE_SECRET`. Ca să vezi iar pagina
+Cookie-ul se semnează cu `PREVIEW_COOKIE_SECRET` (cel puțin 32 de caractere).
+`SESSION_SECRET` are tot cel puțin 32 de caractere; fără el aplicația nu pornește în producție.
+`HEALTH_TOKEN` deschide detaliile din `/api/health` (dacă emailul e configurat și cât de veche e copia). Fără token, ruta răspunde doar `{ ok, version }`.
+Ca să vezi iar pagina
 publică: `https://suntde10.ro/creator/iesire`.
 `BACKUP_KEY` cifrează copiile de rezervă ale fișierului de date. Pune un șir
 de cel puțin 16 caractere, altul decât parolele, și păstrează-l. Fără cheie,

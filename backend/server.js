@@ -2,6 +2,14 @@ const config = require("./src/config");
 const persistence = require("./src/data/persistence");
 const { createApp } = require("./src/app");
 
+if (process.env.NODE_ENV === "production") {
+  const missing = ["PREVIEW_COOKIE_SECRET", "SESSION_SECRET"].filter(key => String(process.env[key] || "").trim().length < 32);
+  if (missing.length) {
+    console.error(`[prelansare] lipsesc secretele: ${missing.join(", ")}`);
+    process.exit(1);
+  }
+}
+
 const { app, restored } = createApp();
 const { run: prelansare } = require("./src/ops/prelansare");
 for (const item of prelansare().items) {
@@ -14,9 +22,7 @@ const server = app.listen(config.PORT, () => {
   console.log(`${config.APP_NAME} backend listening on http://localhost:${config.PORT}`);
   const { isSiteClosed } = require("./src/middleware/comingSoon");
   console.log(`Site public: ${isSiteClosed() ? "ÎNCHIS (în curând)" : "deschis"}`);
-  console.log(`Staging auth: ${(config.STAGING_AUTH_USER && config.STAGING_AUTH_PASSWORD) ? "activă (site protejat prin parolă)" : "INACTIVĂ"}`);
-  console.log(`OpenAI:  ${config.OPENAI_KEY ? "real key detected" : "no OPENAI_KEY set -> photo review stays local"}`);
-  console.log(`Mathpix: ${(config.MATHPIX_APP_ID && config.MATHPIX_APP_KEY) ? "real keys detected" : "no MATHPIX keys set -> photo review stays local"}`);
+  console.log(`Staging auth: ${(config.STAGING_AUTH_USER && config.STAGING_AUTH_PASSWORD) ? "activă" : "inactivă"}`);
   console.log(restored.loaded
     ? `Date: restaurate din ${persistence.DATA_FILE} (salvate la ${restored.savedAt})`
     : `Date: pornire pe curat (${restored.reason}); voi salva în ${persistence.DATA_FILE}`);

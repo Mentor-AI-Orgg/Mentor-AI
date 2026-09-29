@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-const config = require("../config");
 const { findAccount, listAccounts, normalizeEmail } = require("../data/authStore");
 const { publicId, setSettings, getSettings } = require("../data/friendStore");
 const { getUser } = require("../data/economyStore");
@@ -25,7 +24,7 @@ function cookieOptions(maxAge) {
   return {
     httpOnly: true,
     sameSite: "lax",
-    secure: config.IS_PRODUCTION,
+    secure: process.env.NODE_ENV === "production",
     maxAge,
     path: "/"
   };

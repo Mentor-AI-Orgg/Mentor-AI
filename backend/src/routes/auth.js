@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-const config = require("../config");
 const {
   createStudentAccount,
   authenticate,
@@ -38,6 +37,27 @@ const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, 
 const { publicBaseUrl } = require("../publicUrl");
 const { ensureUser, pushNotification } = require("../data/economyStore");
 const { deliverMessage, smtpConfigured } = require("../notify/deliver");
+const {
+  loginState,
+  noteLoginFailure,
+  clearLoginFailures,
+  allowSignupIp,
+  allowSignupParent
+} = require("../safety/attemptGuard");
+
+function ignoreChildIdentity(req, _res, next) {
+  if (req.body && typeof req.body === "object" && !Array.isArray(req.body)) {
+    delete req.body.name;
+    delete req.body.fullName;
+    delete req.body.surname;
+    delete req.body.phone;
+    delete req.body.email;
+    delete req.body.school;
+  }
+  next();
+}
+
+const WAIT_MESSAGE = "Așteaptă puțin și încearcă din nou.";
 
 // Aceleași reguli pe care le arată RegisterScreen în interfață. Validarea din
 // browser e doar pentru UX; asta e cea care contează, pentru că un client
@@ -56,7 +76,7 @@ function sessionCookieOptions(maxAge) {
     sameSite: "lax",
     // Cookie-ul se trimite doar pe HTTPS în producție. În development pe
     // localhost (http) trebuie să rămână disponibil.
-    secure: config.IS_PRODUCTION,
+    secure: process.env.NODE_ENV === "production",
     maxAge,
     path: "/"
   };
@@ -107,7 +127,7 @@ async function maybeAskReconsent(req, account) {
   return confirmation;
 }
 
-router.post("/register", authLimiter, validateBody(registerSchema), async (req, res) => {
+router.post("/register", authLimiter, ignoreChildIdentity, validateBody(registerSchema), async (req, res) => {
   const { username, password, confirmPassword, class: className, parentEmail, role = "student" } = req.body || {};
 
   if (role !== "student") {
@@ -126,6 +146,18 @@ router.post("/register", authLimiter, validateBody(registerSchema), async (req, 
   }
   if (findByUsername(username)) {
     return res.status(409).json({ error: "Acest nume de utilizator este deja folosit.", field: "username" });
+  }
+  if (!allowSignupIp(req.ip)) {
+    return res.status(429).json({
+      error: "Încearcă din nou peste câteva minute.",
+      code: "rate_limited"
+    });
+  }
+  if (!allowSignupParent(parentEmail)) {
+    return res.status(429).json({
+      error: "Cu acest email de părinte s-au făcut deja 3 conturi astăzi. Încearcă mâine.",
+      code: "rate_limited"
+    });
   }
 
   const created = await createStudentAccount({
@@ -164,12 +196,32 @@ router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) =
     return res.status(400).json({ error: "Numele de utilizator și parola sunt obligatorii." });
   }
 
+  const waiting = loginState(email);
+  if (waiting.locked) {
+    return res.status(429).json({ error: WAIT_MESSAGE, code: "rate_limited", retryAfter: waiting.retryAfter });
+  }
+
   const result = await authenticate({ email, password });
   if (!result.ok) {
-    // Un singur mesaj pentru email inexistent și parolă greșită, ca să nu
-    // confirmăm care adrese au cont.
+    const failed = noteLoginFailure(email);
+    if (failed.alert) {
+      const account = findByUsername(email) || findAccount(email);
+      const parentEmail = account && account.profile && account.profile.parentEmail;
+      if (parentEmail) {
+        deliverMessage({
+          to: parentEmail,
+          subject: "Încercări de parolă pe Sunt de 10",
+          body: `Cineva a greșit parola de mai multe ori la contul ${account.profile.username}. Dacă nu a fost copilul tău, schimbă parola.`,
+          channel: "email"
+        }).catch(() => {});
+      }
+    }
+    if (failed.locked) {
+      return res.status(429).json({ error: WAIT_MESSAGE, code: "rate_limited", retryAfter: failed.retryAfter });
+    }
     return res.status(401).json({ error: "Numele de utilizator sau parola nu sunt corecte." });
   }
+  clearLoginFailures(email);
 
   if (result.account.role !== "student") {
     return res.status(403).json(STUDENTS_ONLY);

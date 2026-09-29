@@ -174,18 +174,23 @@ describe('acordul părintelui', () => {
 
     const parentEmail = uniqueEmail('aceeasi');
     const made = [];
-    for (let n = 0; n < 5; n += 1) {
+    for (let n = 0; n < 3; n += 1) {
       const one = await registerPending(app, { parentEmail });
       expect(one.res.status).toBe(201);
       expect(one.token).toBeTruthy();
       made.push(one);
     }
-    const sixth = await registerPending(app, { parentEmail });
-    expect(sixth.res.status).toBe(201);
-    expect(sixth.token).toBe('');
-    expect(sixth.res.body.parentNotified).toBe(false);
-    expect(sixth.res.body.confirmationMessage).toBe(LIMITED);
-    expect(made).toHaveLength(5);
+    const fourth = await registerPending(app, { parentEmail });
+    expect(fourth.res.status).toBe(429);
+    expect(made).toHaveLength(3);
+
+    const limitParent = uniqueEmail('emailuri');
+    const limitChild = 'u-limita@elev.invalid';
+    for (let n = 0; n < 5; n += 1) {
+      expect(consentStore.confirmationAllowed(limitChild, limitParent).ok).toBe(true);
+      consentStore.markConfirmationSent(limitChild, limitParent);
+    }
+    expect(consentStore.confirmationAllowed(limitChild, limitParent).ok).toBe(false);
   });
 
   it('refuză trimiterea către adresa internă a copilului', async () => {

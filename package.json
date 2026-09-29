@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "lint": "eslint backend frontend tests --ext .js,.jsx",
+    "prelansare": "node backend/src/ops/prelansare.js",
     "format": "prettier --write frontend tests vite.config.js",
     "format:check": "prettier --check frontend tests vite.config.js"
   },
