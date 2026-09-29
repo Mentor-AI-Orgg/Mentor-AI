@@ -178,6 +178,20 @@ function noteSmtpFailure() {
 }
 
 function latestBackupMs(dataFile) {
+  const dailyDir = path.join(path.dirname(dataFile), "..", "backups");
+  if (fs.existsSync(dailyDir)) {
+    let newest = 0;
+    for (const name of fs.readdirSync(dailyDir)) {
+      if (!name.endsWith(".json.gz.enc")) continue;
+      try {
+        const mtime = fs.statSync(path.join(dailyDir, name)).mtimeMs;
+        if (mtime > newest) newest = mtime;
+      } catch {
+        /* fișierul a dispărut între timp */
+      }
+    }
+    return newest;
+  }
   let newest = 0;
   [1, 2, 3].forEach(n => {
     [`${dataFile}.bak${n}.enc`, `${dataFile}.bak${n}`].forEach(file => {

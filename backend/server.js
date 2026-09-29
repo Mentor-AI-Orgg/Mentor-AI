@@ -17,6 +17,10 @@ for (const item of prelansare().items) {
   }
 }
 
+const { ensureRecentBackup } = require("./src/ops/backup");
+const freshBackup = ensureRecentBackup();
+if (!freshBackup.ok) console.error(`[backup] ${freshBackup.reason}`);
+
 const server = app.listen(config.PORT, () => {
   console.log(`${config.APP_NAME} backend listening on http://localhost:${config.PORT}`);
   const { isSiteClosed } = require("./src/middleware/comingSoon");
