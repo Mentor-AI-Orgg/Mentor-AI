@@ -3,7 +3,7 @@ import { MentorAPI } from './apiClient.js';
 import { STORAGE_KEY, defaultUserData, toStoredUser, cleanStoredUser } from './userData.js';
 import { applyProgress, applyTheme } from './appearance.js';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
-import { hashForRoute, parseAppHash } from './appRoutes.js';
+import { hashForRoute, parseAppHash, screenForLoggedOut } from './appRoutes.js';
 import AdaptiveContainer from './components/AdaptiveContainer.jsx';
 import FloatingLines from './components/FloatingLines.jsx';
 import BottomNav from './components/BottomNav.jsx';
@@ -166,8 +166,9 @@ function AppShell({ userData, setUserData }) {
     const session = await MentorAPI.me();
     if (!session.success) {
       setUserData(prev => ({ ...prev, isLoggedIn: false }));
-      setScreen('welcome');
-      writeHash('welcome', {}, 'replace');
+      const next = screenForLoggedOut(route);
+      setScreen(next);
+      if (next === 'welcome') writeHash('welcome', {}, 'replace');
       return;
     }
 
@@ -471,6 +472,7 @@ function AppShell({ userData, setUserData }) {
           <WelcomeScreen
             onConnect={() => { setScreen('login'); writeHash('login'); }}
             onRegister={() => { setScreen('register'); writeHash('register'); }}
+            onParent={() => { setScreen('parent'); writeHash('parent'); }}
           />
         );
       case 'reset': {

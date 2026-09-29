@@ -971,85 +971,191 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .geo-solid figcaption small { display: block; margin-top: 4px; color: var(--muted); font-weight: 600; }
 
 .welcome-page {
+  width: 100%;
+  max-width: 880px;
   min-height: 100vh;
-  padding: 48px 24px 36px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 16px 20px 48px;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  max-width: 440px;
-  margin: 0 auto;
+  gap: 28px;
 }
-.welcome-mark {
-  width: 58px;
-  height: 58px;
-  display: grid;
-  place-items: center;
+.welcome-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
   border-radius: 18px;
-  background: var(--lime);
-  color: #171633;
-  font: 800 28px 'Space Grotesk', sans-serif;
+  border: 1px solid var(--line);
+  background: var(--surface);
 }
-.welcome-slogan {
-  margin: 22px 0 8px;
+.welcome-logo {
+  margin: 0;
+  display: grid;
+  line-height: .85;
+}
+.welcome-logo-word {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .18em;
   color: var(--aqua);
-  font-weight: 800;
-  font-size: 15px;
-  line-height: 1.4;
 }
-.welcome-title { margin: 0; font-size: clamp(40px, 12vw, 52px); line-height: .95; }
-.welcome-lead { margin: 12px 0 0; color: var(--muted); font-size: 16px; line-height: 1.5; }
-.welcome-lead strong { color: var(--ink); font-weight: 800; }
-.welcome-succeed { color: var(--aqua) !important; }
-.welcome-pitch {
-  margin: 14px 0 0;
+.welcome-logo-ten {
+  font-size: 32px;
+  font-weight: 800;
   color: var(--ink);
+}
+.welcome-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.welcome-nav button {
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 12px;
   font-size: 15px;
+  font-weight: 800;
+}
+.welcome-nav-parent {
+  border: 0;
+  background: transparent;
+  color: var(--aqua);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.welcome-hero { display: grid; gap: 14px; }
+.welcome-title {
+  margin: 8px 0 0;
+  max-width: 18ch;
+  font-size: clamp(32px, 6vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.welcome-lead {
+  margin: 0;
+  max-width: 38rem;
+  color: var(--muted);
+  font-size: 18px;
   line-height: 1.5;
 }
-.welcome-steps {
-  margin: 22px 0 0;
+.welcome-mascot-slot {
+  width: min(100%, 220px);
+  min-height: 96px;
+  border-radius: 24px;
+  border: 1px dashed var(--line);
+}
+.welcome-start {
+  width: 100%;
+  max-width: 320px;
+  min-height: 54px;
+  border: 0;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 800;
+}
+.welcome-block h2 {
+  margin: 0 0 12px;
+  font-size: 22px;
+  line-height: 1.2;
+}
+.welcome-features {
+  margin: 0;
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
-.welcome-steps li {
-  display: grid;
-  grid-template-columns: 28px 1fr;
-  gap: 12px;
-  align-items: start;
-}
-.welcome-step-n {
-  width: 28px;
-  height: 28px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  background: var(--lime);
-  color: #171633;
-  font: 800 13px 'Space Grotesk', sans-serif;
-}
-.welcome-steps strong { display: block; font-size: 14px; }
-.welcome-steps small { color: var(--muted); font-size: 12px; line-height: 1.45; }
-.welcome-features { margin: 20px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
 .welcome-features li {
   display: grid;
   grid-template-columns: 36px 1fr;
   gap: 12px;
   align-items: start;
-  padding: 11px 14px;
+  padding: 14px;
   border-radius: 16px;
   border: 1px solid var(--line);
-  background: rgba(26, 26, 62, .72);
+  background: var(--surface);
 }
-.welcome-features i { color: var(--lime); margin-top: 4px; }
-.welcome-features strong { display: block; font-size: 14px; }
-.welcome-features small { color: var(--muted); font-size: 12px; line-height: 1.45; }
-.welcome-free, .welcome-parent {
-  margin: 14px 0 0;
+.welcome-features i { color: var(--lime); margin-top: 3px; font-size: 18px; }
+.welcome-features strong, .welcome-steps strong { display: block; font-size: 16px; }
+.welcome-features small, .welcome-steps small {
+  display: block;
+  margin-top: 4px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 15px;
   line-height: 1.45;
+}
+.welcome-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+.welcome-steps li {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.welcome-step-n {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--lime);
+  color: #171633;
+  font: 800 15px 'Space Grotesk', sans-serif;
+}
+.welcome-parents p {
+  margin: 0;
+  max-width: 40rem;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.welcome-legal-links, .welcome-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+.welcome-legal-links { margin-top: 12px; }
+.welcome-legal-links a, .welcome-footer-links a {
+  color: var(--aqua);
+  font-size: 15px;
+  font-weight: 700;
+}
+.welcome-faq { display: grid; gap: 8px; }
+.welcome-faq details {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.welcome-faq summary {
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 16px;
+}
+.welcome-faq p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.45;
+}
+.welcome-footer {
+  display: grid;
+  gap: 16px;
+  padding-top: 8px;
+}
+@media (min-width: 720px) {
+  .welcome-features { grid-template-columns: 1fr 1fr; }
+  .welcome-title { max-width: 16ch; }
 }
 .legal-footer {
   display: flex;
@@ -1059,16 +1165,6 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   font-size: 13px;
 }
 .legal-footer a { color: var(--muted); }
-.welcome-free { color: var(--aqua); font-weight: 700; }
-.welcome-connect { margin-top: 22px; width: 100%; min-height: 54px; }
-.welcome-register {
-  margin-top: 12px;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font-size: 14px;
-}
-.welcome-register strong { color: var(--ink); }
 .screen-fallback {
   min-height: 40vh;
   display: grid;
