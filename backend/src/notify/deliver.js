@@ -7,7 +7,7 @@ function smtpConfigured() {
   return Boolean(config.SMTP_HOST && config.SMTP_FROM);
 }
 
-async function sendEmail({ to, subject, body }) {
+async function sendEmail({ to, subject, body, html, attachments }) {
   if (!smtpConfigured() || !to) {
     return { mocked: true, delivered: false, channel: "email" };
   }
@@ -40,7 +40,9 @@ async function sendEmail({ to, subject, body }) {
       from: config.SMTP_FROM,
       to,
       subject,
-      text: body
+      text: body,
+      html: html || undefined,
+      attachments: attachments || undefined
     });
     require("../ops/errorMonitor").noteSmtpSuccess();
     return { mocked: false, delivered: true, channel: "email" };
@@ -61,11 +63,11 @@ function refusedAddress(to) {
   return String(to || "").trim().toLowerCase().endsWith("@elev.invalid");
 }
 
-async function deliverMessage({ to, phone = "", subject, body, channel = "email" }) {
+async function deliverMessage({ to, phone = "", subject, body, channel = "email", html, attachments }) {
   if (refusedAddress(to) || refusedAddress(phone) || channel === "none") {
     return { mocked: true, delivered: false, channel, refused: true, reason: "elev_invalid" };
   }
-  return sendEmail({ to, subject, body });
+  return sendEmail({ to, subject, body, html, attachments });
 }
 
 module.exports = {
