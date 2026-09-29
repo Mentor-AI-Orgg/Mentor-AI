@@ -245,7 +245,7 @@ router.post("/finish", async (req, res) => {
   const homework = weaknesses.slice(0, 3).map(point => ({
     point,
     task: isTest
-      ? `Temă scurtă: ia ideea „${point}” și rezolvă un exemplu nou, cu alte numere, pe caiet. Apoi spune mentorului primul pas, nu tot.`
+      ? `Temă scurtă: ia ideea „${point}” și rezolvă un exemplu nou, cu alte numere, pe caiet. Apoi spune tutorelui primul pas, nu tot.`
       : `Repetă mâine ideea „${point}”: o întrebare, apoi explică de ce varianta ta e bună.`
   }));
 

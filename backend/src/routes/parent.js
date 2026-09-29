@@ -130,7 +130,7 @@ router.get("/children/:id/export", parentRequired, (req, res) => {
     return res.status(404).json({ error: "Nu am găsit copilul." });
   }
   const { collectExport } = require("./account");
-  res.setHeader("Content-Disposition", "attachment; filename=\"sunt-de-10-date.json\"");
+  res.setHeader("Content-Disposition", "attachment; filename=\"suntde10-date.json\"");
   res.json(collectExport(child.email));
 });
 

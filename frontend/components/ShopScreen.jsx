@@ -375,11 +375,11 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         <div className="shop-section-head">
           <div>
             <div className="eyebrow">Părinte</div>
-            <h2 className="display-font">Spune-i că mentorul e gratuit.</h2>
+            <h2 className="display-font">Spune-i că Sunt de 10 e gratuită.</h2>
           </div>
           <span className="shop-chip"><i className="fas fa-envelope" /> {deliveryNote || 'un mesaj'}</span>
         </div>
-        <p className="shop-subtitle">Părintele salvat în cont primește fiecare activitate. De aici îi poți trimite o dată pe zi mesajul fix că mentorul este gratuit. Nu se poate scrie o adresă sau un text liber.</p>
+        <p className="shop-subtitle">Părintele salvat în cont primește fiecare activitate. De aici îi poți trimite o dată pe zi mesajul fix că Sunt de 10 este gratuită. Nu se poate scrie o adresă sau un text liber.</p>
         <div className="shop-parent-form">
           <button type="button" className="accent-button" onClick={sendParentReview} disabled={parentSending}>
             {parentSending ? 'Se trimite...' : 'Spune-i că este gratuit'}

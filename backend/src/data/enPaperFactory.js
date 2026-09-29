@@ -28,7 +28,7 @@ function examMs() {
 }
 
 const MATH_NOTE =
-  'Apasă „Începe test Evaluare Națională”. Ca la examen, stai cu lucrarea deschisă cel puțin o oră. Structura e cea clasică de EN (modele 2022): Subiectul I — 6 grile de numere (câte 5p); Subiectul II — 6 grile de geometrie, numerotate tot 1–6 (câte 5p); Subiectul III — 6 exerciții, fiecare cu a) 2p și b) 3p. La III scrii aici doar rezultatul; rezolvarea o faci pe caiet. După predare poți fotografia pagina (maximum 3 poze pe zi) ca mentorul să-ți dea feedback pe barem.';
+  'Apasă „Începe test Evaluare Națională”. Ca la examen, stai cu lucrarea deschisă cel puțin o oră. Structura e cea clasică de EN (modele 2022): Subiectul I — 6 grile de numere (câte 5p); Subiectul II — 6 grile de geometrie, numerotate tot 1–6 (câte 5p); Subiectul III — 6 exerciții, fiecare cu a) 2p și b) 3p. La III scrii aici doar rezultatul; rezolvarea o faci pe caiet. După predare poți fotografia pagina (maximum 3 poze pe zi) ca tutorele să-ți dea feedback pe barem.';
 
 const RO_NOTE =
   'Ca la EN 2026: două texte-suport (textul 1 poate fi versuri sau narațiune; textul 2 e nonliterar). Subiectul I A — 38p: notare, 3 grile, adevărat/fals (6 enunțuri), apoi itemii 6–9 se scriu aici (cu număr de cuvinte: 6 scurt, 7 min. 30, 8–9 câte 50–100). Subiectul I B — 32p: 4 grile + 4 răspunsuri scrise de gramatică. Subiectul II — 20p, compunerea pe caiet (min. 150 de cuvinte); după predare o poți fotografia (3 poze/zi). Baremul se deschide după predare.';

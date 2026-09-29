@@ -89,13 +89,13 @@ function privacyHtml() {
     ${operatorBlock()}
     <p>${escapeHtml(legal.product)} este gratuită, fără reclame și fără un serviciu de inteligență artificială plătit. Versiunea politicii: ${escapeHtml(legal.policyVersion)}.</p>
     <h3>Ce date păstrăm și de ce</h3>
-    <p>Temeiul este acordul părintelui, articolul 6 alineatul (1) litera (a) și articolul 8 din GDPR. Păstrăm numele de utilizator, clasa, progresul la lecții și teste, conversația cu mentorul, calendarul, prietenii după nume de utilizator, obiectele din magazin și emailul părintelui. Nu cerem emailul copilului, numele real, telefonul sau școala.</p>
+    <p>Temeiul este acordul părintelui, articolul 6 alineatul (1) litera (a) și articolul 8 din GDPR. Păstrăm numele de utilizator, clasa, progresul la lecții și teste, conversația cu tutorele, calendarul, prietenii după nume de utilizator, obiectele din magazin și emailul părintelui. Nu cerem emailul copilului, numele real, telefonul sau școala.</p>
     <p>Fără acord, elevul poate citi lecțiile și face exerciții. Prietenii, clasamentul și magazinul rămân închise. Contul fără acord se șterge după ${pending} zile.</p>
     <h3>Cât timp</h3>
     <ul>
       <li>fără acord: ${pending} zile;</li>
       <li>cont nefolosit: ${inactiveMonths} luni, cu un avertisment cu ${warning} zile înainte;</li>
-      <li>conversația cu mentorul: ${memoryMonths} luni;</li>
+      <li>conversația cu tutorele: ${memoryMonths} luni;</li>
       <li>jurnalul de activitate trimis părintelui: ${parentDays} zile;</li>
       <li>jurnalul de moderare: ${moderationMonths} luni;</li>
       <li>după ștergere: doar un cod care nu poate fi transformat înapoi în email, timp de ${deletionDays} zile;</li>

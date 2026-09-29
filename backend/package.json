@@ -2,7 +2,7 @@
   "name": "mentor-ai-backend",
   "version": "3.0.0",
   "private": true,
-  "description": "Backend API for Mentor AI: lessons, accounts, economy and a local calendar.",
+  "description": "API pentru Sunt de 10: lecții, conturi, economie și un calendar local.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

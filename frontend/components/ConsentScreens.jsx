@@ -125,7 +125,7 @@ const ParentScreen = ({ token = '' }) => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'sunt-de-10-date.json';
+    link.download = 'suntde10-date.json';
     link.click();
     URL.revokeObjectURL(url);
   };

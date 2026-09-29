@@ -266,7 +266,7 @@ function encouragementFor(grade) {
   if (grade >= 9) return 'Bravo. Ții calea, chiar și unde se îngroașă.';
   if (grade >= 7) return 'Bun ritm. Uită-te la cele greșite — acolo crești.';
   if (grade >= 5) return 'Ai prins o parte. Reia punctele slabe, apoi mai dai un test.';
-  return 'Nu e capăt. Lucrează pe foaie, cere mentorului pașii, apoi mai încerci.';
+  return 'Nu e capăt. Lucrează pe foaie, cere tutorelui pașii, apoi mai încerci.';
 }
 
 module.exports = {

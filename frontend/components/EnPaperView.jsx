@@ -507,7 +507,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                             )}
                             {scoredItem.photoFeedback ? (
                               <div className="en-photo-feedback">
-                                <strong>Mentorul, după poză</strong>
+                                <strong>Tutorele, după poză</strong>
                                 <p>{scoredItem.photoFeedback}</p>
                                 {scoredItem.photoTips?.length ? (
                                   <ul>

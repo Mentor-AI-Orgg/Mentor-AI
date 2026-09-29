@@ -3,7 +3,7 @@ const SLOGANS = [
   'Greșeala e antrenament, nu semnal de alarmă.',
   'Pe programă, cu barem. Nu e un chat care îți face tema.',
   'Poți da testul de zece ori. Capitolul nu fuge.',
-  'Întreabă mentorul de trei ori. A patra oară o să-ți sune cunoscut.',
+  'Întreabă tutorele de trei ori. A patra oară o să-ți sune cunoscut.',
   'Nu trebuie să știi tot. Trebuie să încerci următorul lucru.',
   'Ai bifat un pas? Ești deja mai departe decât ieri.',
   'Curiozitatea e superputerea ta de gimnaziu.',

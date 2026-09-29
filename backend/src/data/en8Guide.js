@@ -27,7 +27,7 @@ const EN_GUIDES = {
   matematica: {
     title: "Evaluare Națională · Matematică",
     howISeeIt:
-      "Proba de matematică reunește tot gimnaziul, nu doar clasa a VIII-a. Elevul recunoaște mulțimi și numere, calculează cu litere, citește un grafic, leagă rapoarte de date și vede o figură în plan sau în spațiu. Scriem pe foaie: enunț, calcule, răspuns subliniat. Mentorul antrenează metoda, nu toceala unei formule.",
+      "Proba de matematică reunește tot gimnaziul, nu doar clasa a VIII-a. Elevul recunoaște mulțimi și numere, calculează cu litere, citește un grafic, leagă rapoarte de date și vede o figură în plan sau în spațiu. Scriem pe foaie: enunț, calcule, răspuns subliniat. Tutorele antrenează metoda, nu toceala unei formule.",
     units: [
       {
         id: "proba",
