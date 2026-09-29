@@ -93,12 +93,27 @@ const ParentScreen = ({ token = '' }) => {
   const [email, setEmail] = useState('');
   const [note, setNote] = useState('');
   const [children, setChildren] = useState(null);
+  const [panels, setPanels] = useState({});
   const [confirm, setConfirm] = useState('');
 
   const load = useCallback(async () => {
     const result = await MentorAPI.parentMe();
-    if (result.success) setChildren(result.data.children || []);
+    if (!result.success) return;
+    const list = result.data.children || [];
+    setChildren(list);
+    const next = {};
+    for (const child of list) {
+      const panel = await MentorAPI.parentPanel(child.id);
+      if (panel.success) next[child.id] = panel.data;
+    }
+    setPanels(next);
   }, []);
+
+  useEffect(() => {
+    if (token) return undefined;
+    load();
+    return undefined;
+  }, [token, load]);
 
   useEffect(() => {
     if (!token) return undefined;
@@ -170,10 +185,41 @@ const ParentScreen = ({ token = '' }) => {
           <h2>{child.username}</h2>
           <p>Clasa {child.class}. Înscris la {child.createdAt ? new Date(child.createdAt).toLocaleDateString('ro-RO') : '—'}. Lecții în ultimele 7 zile: {child.lessonsLast7Days}.</p>
           <p>Profil privat: {child.profilePrivate ? 'da' : 'nu'}.</p>
+          {panels[child.id] && (
+            <>
+              <p>Ultimele 7 zile: {panels[child.id].days.map(day => `${day.day.slice(5)} ${day.lessons} lecții, ${day.minutes} min`).join(' · ') || 'încă nimic'}.</p>
+              {panels[child.id].chapters.length > 0 && <p>Capitole: {panels[child.id].chapters.map(item => item.title).join(', ')}.</p>}
+              {panels[child.id].mistakes.length > 0 && <p>Unde greșește des: {panels[child.id].mistakes.map(item => item.title).join(', ')}.</p>}
+              {panels[child.id].en.length > 0 && <p>Evaluare Națională: {panels[child.id].en.map(item => item.title).join(', ')}.</p>}
+              <p>Prieteni: {panels[child.id].friends.map(person => person.username).filter(Boolean).join(', ') || 'niciunul'}.</p>
+            </>
+          )}
           <div className="onboarding-actions">
             <button type="button" className="ghost-button" onClick={() => download(child)}>Descarcă datele</button>
-            <button type="button" className="ghost-button" onClick={() => MentorAPI.parentEmails(child.id, { emails: !child.emails }).then(load)}>
-              Emailuri: {child.emails ? 'da' : 'nu'}
+            {['weekly', 'daily', 'off'].map(cadence => (
+              <button
+                key={cadence}
+                type="button"
+                className={child.emails === cadence ? 'accent-button' : 'ghost-button'}
+                aria-pressed={child.emails === cadence}
+                onClick={() => MentorAPI.parentEmails(child.id, { cadence }).then(load)}
+              >
+                {cadence === 'weekly' ? 'Săptămânal' : cadence === 'daily' ? 'Zilnic' : 'Fără emailuri'}
+              </button>
+            ))}
+            {[0, 30, 60, 90].map(minutes => (
+              <button
+                key={minutes}
+                type="button"
+                className={Number(child.dailyLimit) === minutes ? 'accent-button' : 'ghost-button'}
+                aria-pressed={Number(child.dailyLimit) === minutes}
+                onClick={() => MentorAPI.parentLimit(child.id, minutes).then(load)}
+              >
+                {minutes ? `${minutes} min/zi` : 'Fără limită'}
+              </button>
+            ))}
+            <button type="button" className="ghost-button" onClick={() => MentorAPI.parentFriends(child.id, { enabled: panels[child.id]?.friendsEnabled === false }).then(load)}>
+              {panels[child.id]?.friendsEnabled === false ? 'Pornește prietenii' : 'Oprește prietenii'}
             </button>
             <button type="button" className="ghost-button" onClick={() => MentorAPI.parentPrivacy(child.id).then(load)}>Profil privat: da</button>
           </div>

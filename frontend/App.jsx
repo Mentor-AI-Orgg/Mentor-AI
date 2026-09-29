@@ -69,7 +69,8 @@ function applyAccount(user, prev = {}) {
     avatarId: user.avatarId !== undefined ? user.avatarId : prev.avatarId,
     themeId: user.themeId !== undefined ? user.themeId : prev.themeId,
     titleId: user.titleId !== undefined ? user.titleId : prev.titleId,
-    titleName: user.titleName !== undefined ? user.titleName : prev.titleName
+    titleName: user.titleName !== undefined ? user.titleName : prev.titleName,
+    timeBlocked: Boolean(user.timeBlocked)
   };
 }
 

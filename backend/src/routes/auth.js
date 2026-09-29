@@ -311,7 +311,9 @@ router.get("/me", authRequired, (req, res) => {
     res.clearCookie(SESSION_COOKIE, { path: "/" });
     return res.status(403).json(STUDENTS_ONLY);
   }
-  res.json({ user: publicAccount(req.auth.account) });
+  const user = publicAccount(req.auth.account);
+  user.timeBlocked = require("../parent/panel").timeBlocked(req.auth.account);
+  res.json({ user });
 });
 
 // Răspundem identic indiferent dacă adresa are cont, ca să nu permitem

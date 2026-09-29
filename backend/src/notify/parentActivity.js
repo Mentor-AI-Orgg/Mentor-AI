@@ -159,7 +159,7 @@ function notifyParentSoon() {
   return { skipped: true, reason: "not_emailed" };
 }
 
-function digestLine(events, username) {
+function digestLine(events, username, label = "Azi") {
   const lessons = events.filter(event => LESSON_TYPES.has(event.type)).length;
   const tests = events.filter(event => TEST_TYPES.has(event.type));
   const minutes = events.reduce((sum, event) => sum + (Number(event.minutes) || 0), 0);
@@ -170,7 +170,7 @@ function digestLine(events, username) {
   });
   const bits = [`${lessons} ${lessons === 1 ? "lecție" : "lecții"}`];
   if (tests.length) bits.push(`${tests.length} ${tests.length === 1 ? "test" : "teste"}${testBits.length ? ` (${testBits.join(", ")})` : ""}`);
-  return `Azi, ${username} a lucrat ${minutes} ${minutes === 1 ? "minut" : "minute"}: ${bits.join(", ")}.`;
+  return `${label}, ${username} a lucrat ${minutes} ${minutes === 1 ? "minut" : "minute"}: ${bits.join(", ")}.`;
 }
 
 async function sendDueDigests(now = new Date(), { force = false } = {}) {
@@ -181,7 +181,7 @@ async function sendDueDigests(now = new Date(), { force = false } = {}) {
   const sent = [];
   for (const account of listAccounts()) {
     if (account.role !== "student" || !isConsentGranted(account)) continue;
-    const freq = account.profile.parentEmails || "daily";
+    const freq = account.profile.parentEmails || "weekly";
     if (freq === "off") continue;
     if (freq === "weekly" && clock.weekday !== "Sun" && !force) continue;
     const { getUser } = require("../data/economyStore");
@@ -198,11 +198,11 @@ async function sendDueDigests(now = new Date(), { force = false } = {}) {
     const token = issueUnsubscribeToken(account.email);
     const base = publicBaseUrl({ headers: {}, protocol: "https" });
     const body = [
-      digestLine(events, username),
+      digestLine(events, username, freq === "daily" ? "Azi" : "Săptămâna asta"),
       `Zona de părinte: ${base}/#/parinte`,
       `Fără emailuri: ${base}/#/emailuri/${token}`
     ].join("\n");
-    const subject = "Rezumatul zilei pe Sunt de 10";
+    const subject = freq === "daily" ? "Rezumatul zilei pe Sunt de 10" : "Rezumatul săptămânii pe Sunt de 10";
     const delivery = await require("./deliver").deliverMessage({
       to: parentEmail,
       subject,
