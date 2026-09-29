@@ -556,7 +556,8 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
             <i className="fas fa-trash mr-2"></i>{t('profile.delete')}
           </button>
         )}
-        <a href="/privacy.html" target="_blank" rel="noopener noreferrer" className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">{t('profile.privacy')}</a>
+        <a href="/confidentialitate" target="_blank" rel="noopener noreferrer" className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">{t('profile.privacy')}</a>
+        <a href="/termeni" target="_blank" rel="noopener noreferrer" className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">{t('profile.terms')}</a>
         <button type="button" onClick={onLogout} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">
           <i className="fas fa-arrow-right-from-bracket mr-2"></i>{t('profile.logout')}
         </button>

@@ -5,6 +5,8 @@ const PREVIEW_COOKIE = "mentor_preview";
 const processPreviewSecret = crypto.randomBytes(32).toString("hex");
 
 const SKIP_PATHS = new Set([
+  "/confidentialitate",
+  "/termeni",
   "/privacy.html",
   "/terms.html",
   "/fonts/faces.css",

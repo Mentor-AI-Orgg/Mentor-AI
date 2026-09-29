@@ -1,8 +1,9 @@
-// Paginile legale citesc aceleași termene ca jobul de păstrare.
-// Dacă se schimbă un număr în retention.js, se schimbă și textul.
+// Paginile legale citesc aceleași termene ca jobul de păstrare
+// și datele operatorului din shared/legal.json.
 
 const retention = require("../config/retention");
-const legal = require("../data/legal.json");
+const legal = require("../../../shared/legal.json");
+const { PREVIEW_COOKIE } = require("../middleware/comingSoon");
 
 const DAY = retention.DAY_MS;
 
@@ -22,14 +23,6 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;");
 }
 
-function contactLine() {
-  const contact = String(process.env.LEGAL_CONTACT || "").trim();
-  if (!contact) {
-    return "Pentru întrebări despre date, operatorul publică adresa în variabila LEGAL_CONTACT.";
-  }
-  return `Pentru întrebări despre date, scrie la ${escapeHtml(contact)}.`;
-}
-
 function layout(title, body) {
   return `<!DOCTYPE html>
 <html lang="ro">
@@ -44,9 +37,10 @@ function layout(title, body) {
     body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 Nunito, "Segoe UI", sans-serif; }
     main { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
     a { color: var(--lime); }
-    h1, h2 { font-family: "Space Grotesk", Nunito, sans-serif; letter-spacing: -.02em; }
+    h1, h2, h3 { font-family: "Space Grotesk", Nunito, sans-serif; letter-spacing: -.02em; }
     h1 { font-size: clamp(32px, 6vw, 44px); line-height: 1.1; margin: 12px 0 8px; }
-    h2 { font-size: 20px; margin: 32px 0 10px; }
+    h2 { font-size: 22px; margin: 36px 0 10px; }
+    h3 { font-size: 18px; margin: 22px 0 8px; }
     p, li { color: #d5d8e4; }
     .eyebrow { color: var(--muted); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
     .back { color: var(--muted); text-decoration: none; font-size: 14px; }
@@ -57,12 +51,22 @@ function layout(title, body) {
 <body>
   <main>
     <a class="back" href="/">← Înapoi la ${escapeHtml(legal.product)}</a>
-    <p class="eyebrow">Document legal · versiunea ${escapeHtml(legal.version)}</p>
+    <p class="eyebrow">Document legal · versiunea ${escapeHtml(legal.policyVersion)}</p>
     <h1>${escapeHtml(title)}</h1>
     ${body}
   </main>
 </body>
 </html>`;
+}
+
+function operatorBlock() {
+  return `
+    <ul>
+      <li>Operator: ${escapeHtml(legal.operatorName)}</li>
+      <li>Adresă: ${escapeHtml(legal.operatorAddress)}</li>
+      <li>Email: ${escapeHtml(legal.contactEmail)}</li>
+      <li>Responsabil cu protecția datelor: ${escapeHtml(legal.dpo)}</li>
+    </ul>`;
 }
 
 function privacyHtml() {
@@ -72,71 +76,62 @@ function privacyHtml() {
   const memoryMonths = months(retention.TUTOR_MEMORY_MS);
   const parentDays = days(retention.PARENT_ACTIVITY_MS);
   const deletionDays = days(retention.DELETION_KEEP_MS);
+  const backupDays = days(retention.BACKUP_KEEP_MS);
+  const moderationMonths = months(retention.MODERATION_LOG_MS);
   return layout("Politica de confidențialitate", `
-    <p class="note">${escapeHtml(legal.product)} este o aplicație gratuită pentru elevi de gimnaziu, clasele 5–8, la română și matematică. Textul de mai jos urmărește ce face aplicația. Versiunea politicii: ${escapeHtml(legal.version)}.</p>
-    <h2>1. Cine suntem</h2>
-    <p>Aplicația îl ajută pe elev să învețe din lecțiile salvate. Nu vindem date și nu le folosim pentru publicitate. ${contactLine()}</p>
-    <h2>2. Ce date colectăm</h2>
-    <ul>
-      <li><strong>Cont de elev:</strong> nume de utilizator, clasa (5–8) și hash-ul parolei. Nu cerem emailul copilului, numele real, telefonul sau școala.</li>
-      <li><strong>Părinte:</strong> adresa de email, ca să confirme contul și să primească un rezumat. Părintele intră cu un link trimis pe email, fără parolă.</li>
-      <li><strong>Sesiune:</strong> cookie-ul httpOnly <code>s10_session</code>, 7 zile, și cookie-ul <code>s10_parent</code> pentru zona de părinte.</li>
-      <li><strong>Învățare:</strong> progresul la lecții, testele, conversația cu mentorul, calendarul, prietenii (după nume de utilizator) și obiectele din magazinul cu monede de studiu.</li>
-      <li><strong>Tehnic:</strong> adresa IP, doar ca să limităm încercările repetate.</li>
-    </ul>
-    <p>Nu colectăm date de plată. Pozele nu se încarcă. Mentorul nu trimite întrebarea către un serviciu de inteligență artificială plătit: răspunde din lecțiile din aplicație.</p>
-    <h2>3. De ce le folosim</h2>
-    <ul>
-      <li>ca să recunoaștem contul;</li>
-      <li>ca lecțiile să fie pe clasa elevului;</li>
-      <li>ca părintele să confirme contul și să primească un rezumat, nu textul scris de copil;</li>
-      <li>ca să oprim abuzul și să răspundem la un mesaj de criză cu numerele 116 111 și 112.</li>
-    </ul>
-    <p>Temeiul este acordul părintelui, versiunea ${escapeHtml(legal.version)}. Fără acord, elevul poate învăța, dar nu poate folosi prietenii, clasamentul sau magazinul. Contul fără acord se șterge după ${pending} zile.</p>
-    <h2>4. Emailurile către părinte</h2>
-    <p>Rezumatul pleacă cel mult o dată pe zi, după ora 19, ora României, și spune titlul lecției și scorul, nu ce a scris copilul. Se pot opri din zona de părinte. Schimbarea adresei se aplică doar după confirmarea pe link.</p>
-    <h2>5. Prieteni</h2>
-    <p>Căutarea găsește un elev doar după numele de utilizator scris exact. Profilul este privat până când copilul îl face public.</p>
-    <h2>6. Drepturile tale</h2>
-    <ul>
-      <li><strong>Acces:</strong> copilul descarcă datele din Profil. Părintele le poate descărca din zona lui.</li>
-      <li><strong>Ștergere:</strong> copilul scrie parola și ȘTERGE. Părintele poate șterge fără parola copilului. Ștergerea scoate datele din toate registrele.</li>
-    </ul>
-    <h2>7. Cât păstrăm</h2>
+    <h2>Pentru copii</h2>
+    <p>Știm numele tău de utilizator, clasa și ce lecții faci. Nu vrem numele tău real, școala sau telefonul.</p>
+    <p>Părintele vede progresul, nu mesajele tale către mentor. Profilul tău este privat de la început.</p>
+    <p>Îți poți șterge contul din Profil: scrii parola și cuvântul ȘTERGE. Dacă ceva nu e în regulă, spune-i unui adult sau scrie la ${escapeHtml(legal.contactEmail)}.</p>
+
+    <h2>Pentru părinți</h2>
+    <h3>Cine este operatorul</h3>
+    ${operatorBlock()}
+    <p>${escapeHtml(legal.product)} este gratuită, fără reclame și fără un serviciu de inteligență artificială plătit. Versiunea politicii: ${escapeHtml(legal.policyVersion)}.</p>
+    <h3>Ce date păstrăm și de ce</h3>
+    <p>Temeiul este acordul părintelui, articolul 6 alineatul (1) litera (a) și articolul 8 din GDPR. Păstrăm numele de utilizator, clasa, progresul la lecții și teste, conversația cu mentorul, calendarul, prietenii după nume de utilizator, obiectele din magazin și emailul părintelui. Nu cerem emailul copilului, numele real, telefonul sau școala.</p>
+    <p>Fără acord, elevul poate citi lecțiile și face exerciții. Prietenii, clasamentul și magazinul rămân închise. Contul fără acord se șterge după ${pending} zile.</p>
+    <h3>Cât timp</h3>
     <ul>
       <li>fără acord: ${pending} zile;</li>
       <li>cont nefolosit: ${inactiveMonths} luni, cu un avertisment cu ${warning} zile înainte;</li>
       <li>conversația cu mentorul: ${memoryMonths} luni;</li>
       <li>jurnalul de activitate trimis părintelui: ${parentDays} zile;</li>
-      <li>după ștergere: doar un cod care nu poate fi transformat înapoi în email, timp de ${deletionDays} zile.</li>
+      <li>jurnalul de moderare: ${moderationMonths} luni;</li>
+      <li>după ștergere: doar un cod care nu poate fi transformat înapoi în email, timp de ${deletionDays} zile;</li>
+      <li>copiile de siguranță: ${backupDays} zile, criptate.</li>
     </ul>
+    <h3>Cine le mai primește</h3>
+    <p>Firma de găzduire gazduire.net ține serverul. Serviciul de email SMTP trimite mesajele către părinte. Nimeni altcineva. Nu vindem date și nu le folosim pentru publicitate.</p>
+    <h3>Ce stă în browser</h3>
+    <ul>
+      <li><strong>s10_session</strong>: cookie httpOnly, 7 zile, recunoaște contul copilului.</li>
+      <li><strong>s10_parent</strong>: cookie httpOnly, 7 zile, recunoaște zona de părinte. Nu deschide contul copilului.</li>
+      <li><strong>${escapeHtml(PREVIEW_COOKIE)}</strong>: cookie httpOnly, doar cât site-ul este închis, pentru previzualizarea creatorului.</li>
+      <li><strong>mentor_ai_v3_data</strong> în localStorage: temă, clasă, starea lecțiilor și un flag că ești logat. Nu păstrăm acolo email, telefon, emailul părintelui, școala sau numele real.</li>
+    </ul>
+    <h3>Drepturile dumneavoastră</h3>
+    <p>Aveți dreptul de acces, rectificare, ștergere, portabilitate și de a retrage acordul. Puteți descărca sau șterge datele din zona de părinte, ori scrie la ${escapeHtml(legal.contactEmail)}. Puteți depune o plângere la ANSPDCP, www.dataprotection.ro.</p>
     <p>Contorul de mesaje de criză nu spune cine a scris și nu se șterge odată cu un cont.</p>
-    <h2>8. Cookie-uri</h2>
-    <p>Cookie-urile sunt httpOnly, SameSite=Lax și Secure în producție. Nu folosim cookie-uri de urmărire sau de publicitate.</p>
-    <p><a href="/terms.html">Citește și termenii de utilizare</a>.</p>
+    <p><a href="/termeni">Citește și termenii de utilizare</a>.</p>
   `);
 }
 
 function termsHtml() {
   const pending = days(retention.PENDING_MS);
   return layout("Termeni de utilizare", `
-    <p class="note">${escapeHtml(legal.product)} este gratuit pentru elevii din clasele 5–8. Versiunea termenilor: ${escapeHtml(legal.version)}.</p>
-    <h2>1. Ce este aplicația</h2>
-    <p>Un mentor care explică româna și matematica din lecțiile salvate în aplicație. Nu rezolvă tema în locul elevului și nu înlocuiește profesorul sau părintele.</p>
-    <h2>2. Contul</h2>
-    <ul>
-      <li>Înscrierea cere un nume de utilizator, o parolă și emailul părintelui. Nu cerem emailul copilului.</li>
-      <li>Părintele confirmă sau refuză din link. Refuzul șterge contul.</li>
-      <li>Fără acord, după ${pending} zile, contul și datele se șterg.</li>
-      <li>Prietenii, clasamentul și magazinul se deschid doar după acord.</li>
-    </ul>
-    <h2>3. Folosire corectă</h2>
-    <p>Nu folosi aplicația ca să hărțuiești pe cineva, să publici datele altui copil sau să ocolești limitele de securitate. Numele de utilizator nu poate fi o insultă.</p>
-    <h2>4. Gratuit</h2>
-    <p>Nu există abonament de cumpărat. Magazinul folosește monede câștigate din învățare. Pozele nu se trimit, ca să nu apară un cost.</p>
-    <h2>5. Închidere</h2>
-    <p>Copilul își poate șterge contul din Profil, cu parola și cuvântul ȘTERGE. Părintele poate șterge contul din zona lui. Putem închide un cont care încalcă acești termeni.</p>
-    <p><a href="/privacy.html">Citește și politica de confidențialitate</a>.</p>
+    <h2>Pentru copii</h2>
+    <p>Fii respectuos. Nu pune date personale în numele de utilizator. Nu folosi contul altcuiva. Aplicația este gratuită.</p>
+    <p>Dacă nu respecți regulile, un adult poate schimba numele, te poate ascunde din clasament, poate suspenda contul sau îl poate șterge, la cererea părintelui.</p>
+    <p>Îți poți șterge contul din Profil, cu parola și cuvântul ȘTERGE. Fără acord, după ${pending} zile, contul și datele se șterg.</p>
+
+    <h2>Pentru părinți</h2>
+    ${operatorBlock()}
+    <p>${escapeHtml(legal.product)} este un mentor gratuit pentru clasele 5–8, la română și matematică. Nu rezolvă tema în locul elevului și nu înlocuiește profesorul. Versiunea termenilor: ${escapeHtml(legal.policyVersion)}. Legea aplicabilă este legea României.</p>
+    <p>Înscrierea cere un nume de utilizator, o parolă, clasa și emailul părintelui. Părintele confirmă sau refuză din link. Refuzul șterge contul. Prietenii, clasamentul și magazinul se deschid doar după acord.</p>
+    <p>Nu există abonament. Magazinul folosește monede câștigate din învățare. Răspunderea pentru temele școlare rămâne a elevului și a adulților care îl îndrumă. Putem închide un cont care încalcă acești termeni.</p>
+    <p>Copilul își poate șterge contul din Profil, cu parola și cuvântul ȘTERGE. Părintele poate șterge contul din zona lui, fără parola copilului.</p>
+    <p><a href="/confidentialitate">Citește și politica de confidențialitate</a>.</p>
   `);
 }
 

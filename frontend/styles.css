@@ -1051,6 +1051,14 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   font-size: 12px;
   line-height: 1.45;
 }
+.legal-footer {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 8px 16px 28px;
+  font-size: 13px;
+}
+.legal-footer a { color: var(--muted); }
 .welcome-free { color: var(--aqua); font-weight: 700; }
 .welcome-connect { margin-top: 22px; width: 100%; min-height: 54px; }
 .welcome-register {

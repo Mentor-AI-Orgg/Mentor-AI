@@ -56,7 +56,13 @@ const WelcomeScreen = ({ onConnect, onRegister }) => (
     </ul>
 
     <p className="welcome-free">Fără abonament. Fără plăți. Magazinul folosește doar monede câștigate din învățare.</p>
-    <p className="welcome-parent">Pentru părinți: elevul își face cont. Voi primiți pe email nota și ce a răspuns — fără cont și fără pagină în aplicație.</p>
+    <p className="welcome-parent">
+      Pentru părinți: elevul își face cont. Primiți un rezumat al progresului, nu textele scrise de copil.
+      {' '}
+      <a href="/confidentialitate">Politica de confidențialitate</a>
+      {' · '}
+      <a href="/termeni">Termeni</a>
+    </p>
 
     <button type="button" className="accent-button welcome-connect" onClick={onConnect}>
       Am deja cont <i className="fas fa-arrow-right" />

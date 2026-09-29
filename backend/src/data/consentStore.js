@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const persistence = require("./persistence");
 const { findAccount, normalizeEmail } = require("./authStore");
 
-const { version: POLICY_VERSION } = require("./legal.json");
+const { policyVersion: POLICY_VERSION } = require("../../../shared/legal.json");
 const CONSENT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const MAGIC_TTL_MS = 15 * 60 * 1000;
 const PARENT_SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;

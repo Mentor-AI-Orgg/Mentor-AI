@@ -30,6 +30,7 @@ const {
   consumeConsent,
   consumeEmailChangeToken
 } = require("../data/consentStore");
+const legal = require("../../../shared/legal.json");
 const { SESSION_COOKIE, authRequired, STUDENTS_ONLY } = require("../middleware/auth");
 const { authLimiter } = require("../middleware/rateLimits");
 const { validateBody } = require("../middleware/validate");
@@ -69,7 +70,7 @@ function consentMail({ req, account, token }) {
     "Nu are reclame și nu folosește un serviciu de inteligență artificială plătit.",
     `Păstrăm numele de utilizator (${account.profile.username}), clasa (${account.profile.class}), progresul și emailul părintelui, ca să știm cine învață și cine a dat acordul.`,
     "Profilul este privat de la început.",
-    `Politica de confidențialitate: ${publicBaseUrl(req)}/#/confidentialitate`,
+    `Politica de confidențialitate: ${publicBaseUrl(req)}/confidentialitate`,
     "Deschide linkul și apasă un buton. Linkul nu confirmă singur.",
     link,
     "Dacă nu confirmați în 14 zile, contul și datele se șterg automat."
@@ -94,7 +95,16 @@ async function sendConsentEmail(req, account, { resend = false } = {}) {
     channel: "email"
   });
   markConfirmationSent(account.email, parentEmail, { resend });
-  return { sent: true, delivery, link: mail.link };
+  return { sent: true, delivery, link: mail.link, subject: mail.subject, body: mail.body };
+}
+
+async function maybeAskReconsent(req, account) {
+  if (!legal.requiresReconsent || !isConsentGranted(account)) return { sent: false };
+  if (account.consent.policyVersion === POLICY_VERSION) return { sent: false };
+  if (account.reconsentFor === POLICY_VERSION) return { sent: false };
+  const confirmation = await sendConsentEmail(req, account);
+  if (confirmation.sent) account.reconsentFor = POLICY_VERSION;
+  return confirmation;
 }
 
 router.post("/register", authLimiter, validateBody(registerSchema), async (req, res) => {
@@ -174,6 +184,8 @@ router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) =
     stripLegacyProfile(result.account);
     markPending(result.account);
     if (firstPending) await sendConsentEmail(req, result.account);
+  } else {
+    await maybeAskReconsent(req, result.account);
   }
 
   result.account.lastLoginAt = new Date().toISOString();
