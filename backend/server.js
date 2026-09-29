@@ -5,8 +5,7 @@ const { createApp } = require("./src/app");
 if (process.env.NODE_ENV === "production") {
   const missing = ["PREVIEW_COOKIE_SECRET", "SESSION_SECRET"].filter(key => String(process.env[key] || "").trim().length < 32);
   if (missing.length) {
-    console.error(`[prelansare] lipsesc secretele: ${missing.join(", ")}`);
-    process.exit(1);
+    console.error(`[prelansare] lipsesc secretele: ${missing.join(", ")}. Site-ul rămâne închis până le pui în DirectAdmin.`);
   }
 }
 
