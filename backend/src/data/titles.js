@@ -16,7 +16,8 @@ const TITLE_CATALOG = [
   { id: "campion", name: "Campion", emoji: "🏆", description: "Ajungi pe locul 1 în clasament, cu XP." },
   { id: "curs-incheiat", name: "Curs încheiat", emoji: "🏅", description: "Termină toate capitolele clasei tale." },
   // id-ul vechi rămâne, ca insignele deja primite să nu se piardă.
-  { id: "mentor-curios", name: "Tutore curios", emoji: "💬", description: "Întreabă tutorele de 10 ori." }
+  { id: "mentor-curios", name: "Tutore curios", emoji: "💬", description: "Întreabă tutorele de 10 ori." },
+  { id: "primul-pas", name: "Primul pas", emoji: "🐜", description: "Ai terminat testul de pornire." }
 ];
 
 function countAllDone(user) {
@@ -70,7 +71,8 @@ function unlockedTitleIds(user, helpers = {}) {
     ciocarlie: early >= 5,
     campion: champion,
     "curs-incheiat": gradeTotal > 0 && gradeDone >= gradeTotal,
-    "mentor-curios": mentorAsks(user) >= 10
+    "mentor-curios": mentorAsks(user) >= 10,
+    "primul-pas": Boolean(user.placement && user.placement.finished)
   };
 
   return TITLE_CATALOG.filter(item => checks[item.id]).map(item => item.id);

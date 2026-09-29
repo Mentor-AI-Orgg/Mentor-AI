@@ -245,6 +245,50 @@ const MentorAPI = {
     }
   },
 
+  async placement() {
+    try {
+      const data = await safeFetchJson('/api/placement');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async placementQuestions(subject) {
+    try {
+      const data = await safeFetchJson('/api/placement/questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject })
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async placementSkip() {
+    try {
+      const data = await safeFetchJson('/api/placement/skip', { method: 'POST' });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async placementFinish(payload) {
+    try {
+      const data = await safeFetchJson('/api/placement/finish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async parentMe() {
     try {
       const data = await safeFetchJson('/api/parent/me');
