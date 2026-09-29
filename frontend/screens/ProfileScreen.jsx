@@ -6,6 +6,7 @@ import { avatarIcon, itemEmoji } from '../appearance.js';
 import LevelBar from '../components/LevelBar.jsx';
 import ReportButton from '../components/ReportButton.jsx';
 import { passwordHint } from '../passwordHint.js';
+import { appearancePayload, readAppearance, saveAppearance } from '../themePrefs.js';
 
 const CLASSES = ['5', '6', '7', '8'];
 
@@ -38,6 +39,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
   const [peer, setPeer] = useState(null);
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [appearance, setAppearance] = useState(() => readAppearance());
   const [deleting, setDeleting] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
@@ -137,6 +139,14 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
     }
     setPasswords({ currentPassword: '', newPassword: '' });
     onToast?.('Parola a fost schimbată.', 'success');
+  };
+
+  const changeAppearance = async patch => {
+    const next = saveAppearance({ ...appearance, ...patch });
+    setAppearance(next);
+    if (!userData?.isLoggedIn) return;
+    const result = await MentorAPI.updateProfile(appearancePayload(next));
+    if (!result.success) onToast?.(result.error || 'Nu am putut salva aspectul.', 'warning');
   };
 
   const toggleSetting = async (key, value) => {
@@ -383,6 +393,64 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
+        <div className="eyebrow">Aspect</div>
+        <h3 className="display-font profile-tool-title">Cum arată aplicația.</h3>
+        <p className="aspect-note">Pentru lecții, tema luminoasă se citește mai ușor.</p>
+        <p className="aspect-note">Temă</p>
+        <div className="aspect-choices" role="group" aria-label="Temă">
+          {[
+            ['dark', 'Întunecată'],
+            ['light', 'Luminoasă'],
+            ['system', 'Ca telefonul']
+          ].map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              className={appearance.theme === id ? 'accent-button' : 'ghost-button'}
+              aria-pressed={appearance.theme === id}
+              onClick={() => changeAppearance({ theme: id })}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <p className="aspect-note">Mărimea textului</p>
+        <div className="aspect-choices" role="group" aria-label="Mărimea textului">
+          {[
+            ['normal', 'Normal'],
+            ['large', 'Mare'],
+            ['xlarge', 'Foarte mare']
+          ].map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              className={appearance.textSize === id ? 'accent-button' : 'ghost-button'}
+              aria-pressed={appearance.textSize === id}
+              onClick={() => changeAppearance({ textSize: id })}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <label className="settings-toggle">
+          <input
+            type="checkbox"
+            checked={appearance.readableFont}
+            onChange={event => changeAppearance({ readableFont: event.target.checked })}
+          />
+          <span>Font ușor de citit</span>
+        </label>
+        <label className="settings-toggle">
+          <input
+            type="checkbox"
+            checked={appearance.motion}
+            onChange={event => changeAppearance({ motion: event.target.checked })}
+          />
+          <span>Animații</span>
+        </label>
       </section>
 
       <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">

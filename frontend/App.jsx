@@ -4,6 +4,7 @@ import { STORAGE_KEY, defaultUserData, toStoredUser, cleanStoredUser } from './u
 import { applyProgress, applyTheme } from './appearance.js';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
 import { hashForRoute, parseAppHash, screenForLoggedOut } from './appRoutes.js';
+import { saveAppearance } from './themePrefs.js';
 import AdaptiveContainer from './components/AdaptiveContainer.jsx';
 import FloatingLines from './components/FloatingLines.jsx';
 import BottomNav from './components/BottomNav.jsx';
@@ -164,6 +165,9 @@ function AppShell({ userData, setUserData }) {
     }
 
     const session = await MentorAPI.me();
+    if (session.success && (session.user?.theme || session.user?.textSize)) {
+      saveAppearance(session.user);
+    }
     if (!session.success) {
       setUserData(prev => ({ ...prev, isLoggedIn: false }));
       const next = screenForLoggedOut(route);
@@ -256,6 +260,7 @@ function AppShell({ userData, setUserData }) {
 
     const user = result.data.user || {};
     setUserData(prev => applyAccount(user, prev));
+    if (user.theme || user.textSize) saveAppearance(user);
 
     if (user.mustRename) {
       setScreen('rename');
@@ -594,7 +599,6 @@ function AppShell({ userData, setUserData }) {
       <div className="app-background">
         <BackgroundSafe>
           <FloatingLines
-            linesGradient={['#b9a7ff', '#6fd7ff', '#5a4fcf', '#5353b8']}
             enabledWaves={['top', 'middle', 'bottom']}
             lineCount={[6, 8, 10]}
             lineDistance={[5, 4, 3]}

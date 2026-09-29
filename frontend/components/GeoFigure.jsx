@@ -1,7 +1,7 @@
 import GeoSolid from './GeoSolid.jsx';
 import MathText from './MathText.jsx';
 
-function SvgFraction({ x, y, num, den, fill = '#fff', label }) {
+function SvgFraction({ x, y, num, den, fill = 'currentColor', label }) {
   const cx = Number(x);
   const cy = Number(y);
   const half = Math.max(String(num).length, String(den).length) * 4.5 + 1.5;
@@ -18,12 +18,12 @@ function SvgFraction({ x, y, num, den, fill = '#fff', label }) {
 }
 
 const C = {
-  aqua: '#6fd7ff',
-  violet: '#b9a7ff',
-  pink: '#ff8fa3',
-  fillA: 'rgba(111,215,255,.12)',
-  fillV: 'rgba(185,167,255,.14)',
-  fillP: 'rgba(255,143,163,.1)'
+  aqua: '#44D6D7',
+  violet: '#44D6D7',
+  pink: '#FF6B6B',
+  fillA: 'rgba(68,214,215,.16)',
+  fillV: 'rgba(68,214,215,.12)',
+  fillP: 'rgba(255,107,107,.12)'
 };
 
 const FIGURES = {
@@ -36,13 +36,13 @@ const FIGURES = {
         <circle cx="70" cy="48" r="6" fill={C.violet} />
         <circle cx="190" cy="48" r="6" fill={C.violet} />
         <polygon points="258,48 246,42 246,54" fill="currentColor" />
-        <text x="62" y="32" fill="#fff" fontSize="14">A</text>
-        <text x="182" y="32" fill="#fff" fontSize="14">B</text>
+        <text x="62" y="32" fill="currentColor" fontSize="14">A</text>
+        <text x="182" y="32" fill="currentColor" fontSize="14">B</text>
         <text x="104" y="78" fill={C.aqua} fontSize="12">segmentul AB</text>
         <line x1="40" y1="100" x2="160" y2="100" stroke={C.pink} strokeWidth="3" />
         <circle cx="40" cy="100" r="5" fill={C.pink} />
         <polygon points="168,100 156,94 156,106" fill={C.pink} />
-        <text x="176" y="104" fill={C.pink} fontSize="11">semidreaptă</text>
+        <text x="176" y="104" fill={C.pink} fontSize="12">semidreaptă</text>
       </svg>
     )
   },
@@ -51,12 +51,12 @@ const FIGURES = {
     svg: (
       <svg viewBox="0 0 280 130" role="img" aria-label="Trei unghiuri: ascuțit, drept, obtuz">
         <polyline points="20,100 70,100 110,40" fill="none" stroke={C.aqua} strokeWidth="3" />
-        <text x="78" y="88" fill={C.aqua} fontSize="11">ascuțit</text>
+        <text x="78" y="88" fill={C.aqua} fontSize="12">ascuțit</text>
         <polyline points="130,100 180,100 180,40" fill="none" stroke={C.violet} strokeWidth="3" />
         <rect x="180" y="88" width="12" height="12" fill="none" stroke={C.violet} />
-        <text x="186" y="78" fill={C.violet} fontSize="11">90°</text>
+        <text x="186" y="78" fill={C.violet} fontSize="12">90°</text>
         <polyline points="210,80 250,100 210,40" fill="none" stroke={C.pink} strokeWidth="3" />
-        <text x="228" y="78" fill={C.pink} fontSize="11">obtuz</text>
+        <text x="228" y="78" fill={C.pink} fontSize="12">obtuz</text>
       </svg>
     )
   },
@@ -66,15 +66,15 @@ const FIGURES = {
       <svg viewBox="0 0 280 130" role="img" aria-label="Unghiuri complementare și suplementare">
         <polyline points="20,110 70,110 70,40" fill="none" stroke={C.aqua} strokeWidth="3" />
         <line x1="70" y1="110" x2="130" y2="55" stroke={C.violet} strokeWidth="3" />
-        <rect x="70" y="98" width="12" height="12" fill="none" stroke="#fff" />
-        <text x="28" y="96" fill={C.aqua} fontSize="11">α</text>
-        <text x="88" y="88" fill={C.violet} fontSize="11">β</text>
-        <text x="40" y="28" fill="#fff" fontSize="11">α+β=90°</text>
-        <line x1="160" y1="80" x2="260" y2="80" stroke="#fff" strokeWidth="2" />
+        <rect x="70" y="98" width="12" height="12" fill="none" stroke="currentColor" />
+        <text x="28" y="96" fill={C.aqua} fontSize="12">α</text>
+        <text x="88" y="88" fill={C.violet} fontSize="12">β</text>
+        <text x="40" y="28" fill="currentColor" fontSize="12">α+β=90°</text>
+        <line x1="160" y1="80" x2="260" y2="80" stroke="currentColor" strokeWidth="2" />
         <line x1="210" y1="80" x2="248" y2="28" stroke={C.pink} strokeWidth="3" />
-        <text x="176" y="70" fill={C.aqua} fontSize="11">γ</text>
-        <text x="222" y="70" fill={C.pink} fontSize="11">δ</text>
-        <text x="168" y="118" fill="#fff" fontSize="11">γ+δ=180°</text>
+        <text x="176" y="70" fill={C.aqua} fontSize="12">γ</text>
+        <text x="222" y="70" fill={C.pink} fontSize="12">δ</text>
+        <text x="168" y="118" fill="currentColor" fontSize="12">γ+δ=180°</text>
       </svg>
     )
   },
@@ -111,8 +111,8 @@ const FIGURES = {
         <rect x="50" y="30" width="120" height="120" fill={C.fillA} stroke={C.aqua} strokeWidth="3" />
         <line x1="50" y1="30" x2="170" y2="150" stroke={C.violet} strokeWidth="1.5" strokeDasharray="4 3" />
         <line x1="170" y1="30" x2="50" y2="150" stroke={C.pink} strokeWidth="1.5" strokeDasharray="4 3" />
-        <text x="100" y="22" fill="#fff" fontSize="13">a</text>
-        <text x="178" y="96" fill="#fff" fontSize="13">a</text>
+        <text x="100" y="22" fill="currentColor" fontSize="13">a</text>
+        <text x="178" y="96" fill="currentColor" fontSize="13">a</text>
         <text x="78" y="172" fill={C.aqua} fontSize="12">A = a × a</text>
       </svg>
     )
@@ -124,7 +124,7 @@ const FIGURES = {
         <rect x="40" y="30" width="180" height="80" fill={C.fillA} stroke={C.aqua} strokeWidth="3" />
         <text x="110" y="22" fill={C.aqua} fontSize="12">L</text>
         <text x="228" y="78" fill={C.violet} fontSize="12">l</text>
-        <text x="95" y="78" fill="#fff" fontSize="13">A = L × l</text>
+        <text x="95" y="78" fill="currentColor" fontSize="13">A = L × l</text>
       </svg>
     )
   },
@@ -137,7 +137,7 @@ const FIGURES = {
         <line x1="120" y1="18" x2="120" y2="152" stroke={C.pink} strokeWidth="2" strokeDasharray="4 3" />
         <text x="156" y="78" fill={C.aqua} fontSize="12">d₁</text>
         <text x="128" y="90" fill={C.pink} fontSize="12">d₂</text>
-        <text x="62" y="168" fill="#fff" fontSize="12">A = (d₁ × d₂) / 2</text>
+        <text x="62" y="168" fill="currentColor" fontSize="12">A = (d₁ × d₂) / 2</text>
       </svg>
     )
   },
@@ -147,7 +147,7 @@ const FIGURES = {
       <svg viewBox="0 0 260 150" role="img" aria-label="Paralelogram cu bază și înălțime">
         <polygon points="50,120 190,120 230,40 90,40" fill={C.fillA} stroke={C.aqua} strokeWidth="3" />
         <line x1="90" y1="40" x2="90" y2="120" stroke={C.pink} strokeWidth="2" strokeDasharray="3 3" />
-        <text x="128" y="136" fill="#fff" fontSize="12">bază</text>
+        <text x="128" y="136" fill="currentColor" fontSize="12">bază</text>
         <text x="58" y="84" fill={C.pink} fontSize="12">h</text>
       </svg>
     )
@@ -158,8 +158,8 @@ const FIGURES = {
       <svg viewBox="0 0 240 140" role="img" aria-label="Trapez cu bazele B și b">
         <polygon points="50,110 200,110 170,40 80,40" fill={C.fillA} stroke={C.aqua} strokeWidth="3" />
         <line x1="80" y1="40" x2="80" y2="110" stroke={C.pink} strokeWidth="2" strokeDasharray="3 3" />
-        <text x="108" y="34" fill="#fff" fontSize="12">b</text>
-        <text x="112" y="128" fill="#fff" fontSize="12">B</text>
+        <text x="108" y="34" fill="currentColor" fontSize="12">b</text>
+        <text x="112" y="128" fill="currentColor" fontSize="12">B</text>
         <text x="56" y="80" fill={C.pink} fontSize="12">h</text>
       </svg>
     )
@@ -171,8 +171,8 @@ const FIGURES = {
         <polygon points="40,115 200,115 160,40 80,40" fill={C.fillV} stroke={C.violet} strokeWidth="3" />
         <line x1="80" y1="40" x2="80" y2="115" stroke={C.pink} strokeWidth="1.5" strokeDasharray="3 3" />
         <line x1="160" y1="40" x2="160" y2="115" stroke={C.pink} strokeWidth="1.5" strokeDasharray="3 3" />
-        <text x="108" y="34" fill="#fff" fontSize="12">b</text>
-        <text x="110" y="132" fill="#fff" fontSize="12">B</text>
+        <text x="108" y="34" fill="currentColor" fontSize="12">b</text>
+        <text x="110" y="132" fill="currentColor" fontSize="12">B</text>
       </svg>
     )
   },
@@ -183,8 +183,8 @@ const FIGURES = {
         <polygon points="50,115 200,115 160,40 50,40" fill={C.fillA} stroke={C.aqua} strokeWidth="3" />
         <rect x="50" y="103" width="12" height="12" fill="none" stroke={C.pink} />
         <text x="20" y="82" fill={C.pink} fontSize="12">h</text>
-        <text x="92" y="34" fill="#fff" fontSize="12">b</text>
-        <text x="110" y="132" fill="#fff" fontSize="12">B</text>
+        <text x="92" y="34" fill="currentColor" fontSize="12">b</text>
+        <text x="110" y="132" fill="currentColor" fontSize="12">B</text>
       </svg>
     )
   },
@@ -193,9 +193,9 @@ const FIGURES = {
     svg: (
       <svg viewBox="0 0 240 150" role="img" aria-label="Triunghi cu unghiurile A B C">
         <polygon points="40,130 200,130 120,28" fill={C.fillV} stroke={C.violet} strokeWidth="3" />
-        <text x="28" y="148" fill="#fff" fontSize="13">A</text>
-        <text x="200" y="148" fill="#fff" fontSize="13">B</text>
-        <text x="114" y="20" fill="#fff" fontSize="13">C</text>
+        <text x="28" y="148" fill="currentColor" fontSize="13">A</text>
+        <text x="200" y="148" fill="currentColor" fontSize="13">B</text>
+        <text x="114" y="20" fill="currentColor" fontSize="13">C</text>
         <text x="78" y="88" fill={C.aqua} fontSize="12">A+B+C=180°</text>
       </svg>
     )
@@ -206,9 +206,9 @@ const FIGURES = {
       <svg viewBox="0 0 240 150" role="img" aria-label="Triunghi isoscel cu baza AB">
         <polygon points="40,130 200,130 120,24" fill={C.fillA} stroke={C.aqua} strokeWidth="3" />
         <line x1="120" y1="24" x2="120" y2="130" stroke={C.pink} strokeWidth="2" strokeDasharray="3 3" />
-        <text x="68" y="80" fill="#fff" fontSize="12">a</text>
-        <text x="156" y="80" fill="#fff" fontSize="12">a</text>
-        <text x="110" y="146" fill="#fff" fontSize="12">bază</text>
+        <text x="68" y="80" fill="currentColor" fontSize="12">a</text>
+        <text x="156" y="80" fill="currentColor" fontSize="12">a</text>
+        <text x="110" y="146" fill="currentColor" fontSize="12">bază</text>
       </svg>
     )
   },
@@ -217,9 +217,9 @@ const FIGURES = {
     svg: (
       <svg viewBox="0 0 240 150" role="img" aria-label="Triunghi echilateral">
         <polygon points="40,130 200,130 120,22" fill={C.fillV} stroke={C.violet} strokeWidth="3" />
-        <text x="68" y="84" fill="#fff" fontSize="12">a</text>
-        <text x="156" y="84" fill="#fff" fontSize="12">a</text>
-        <text x="112" y="144" fill="#fff" fontSize="12">a</text>
+        <text x="68" y="84" fill="currentColor" fontSize="12">a</text>
+        <text x="156" y="84" fill="currentColor" fontSize="12">a</text>
+        <text x="112" y="144" fill="currentColor" fontSize="12">a</text>
         <text x="108" y="88" fill={C.aqua} fontSize="12">60°</text>
       </svg>
     )
@@ -230,8 +230,8 @@ const FIGURES = {
       <svg viewBox="0 0 240 160" role="img" aria-label="Triunghi dreptunghic 3-4-5">
         <polygon points="40,140 160,140 40,40" fill={C.fillA} stroke={C.aqua} strokeWidth="3" />
         <rect x="40" y="128" width="12" height="12" fill="none" stroke={C.pink} />
-        <text x="88" y="156" fill="#fff" fontSize="12">a = 3</text>
-        <text x="8" y="96" fill="#fff" fontSize="12">b = 4</text>
+        <text x="88" y="156" fill="currentColor" fontSize="12">a = 3</text>
+        <text x="8" y="96" fill="currentColor" fontSize="12">b = 4</text>
         <text x="108" y="80" fill={C.violet} fontSize="12">c = 5</text>
       </svg>
     )
@@ -241,8 +241,8 @@ const FIGURES = {
     svg: (
       <svg viewBox="0 0 260 150" role="img" aria-label="Triunghi cu un unghi obtuz">
         <polygon points="40,50 230,120 70,120" fill={C.fillP} stroke={C.pink} strokeWidth="3" />
-        <text x="48" y="42" fill="#fff" fontSize="12">obtuz</text>
-        <text x="130" y="142" fill="#fff" fontSize="12">A+B+C=180°</text>
+        <text x="48" y="42" fill="currentColor" fontSize="12">obtuz</text>
+        <text x="130" y="142" fill="currentColor" fontSize="12">A+B+C=180°</text>
       </svg>
     )
   },
@@ -255,9 +255,9 @@ const FIGURES = {
         <line x1="130" y1="22" x2="130" y2="140" stroke="none" />
         <line x1="130" y1="22" x2="80" y2="140" stroke={C.aqua} strokeWidth="2" strokeDasharray="4 3" />
         <circle cx="80" cy="140" r="3" fill={C.aqua} />
-        <text x="136" y="90" fill={C.pink} fontSize="11">h</text>
-        <text x="86" y="88" fill={C.aqua} fontSize="11">mediană</text>
-        <text x="70" y="156" fill="#fff" fontSize="11">M = mijlocul laturii</text>
+        <text x="136" y="90" fill={C.pink} fontSize="12">h</text>
+        <text x="86" y="88" fill={C.aqua} fontSize="12">mediană</text>
+        <text x="70" y="156" fill="currentColor" fontSize="12">M = mijlocul laturii</text>
       </svg>
     )
   },
@@ -270,7 +270,7 @@ const FIGURES = {
         <line x1="100" y1="80" x2="154" y2="80" stroke={C.aqua} strokeWidth="3" />
         <line x1="46" y1="80" x2="154" y2="80" stroke={C.pink} strokeWidth="1.5" strokeDasharray="4 3" />
         <text x="118" y="74" fill={C.aqua} fontSize="12">r</text>
-        <text x="86" y="148" fill="#fff" fontSize="12">d = 2r</text>
+        <text x="86" y="148" fill="currentColor" fontSize="12">d = 2r</text>
       </svg>
     )
   },
@@ -279,10 +279,10 @@ const FIGURES = {
     svg: (
       <svg viewBox="0 0 200 170" role="img" aria-label="Cerc cu o coardă">
         <circle cx="100" cy="80" r="54" fill={C.fillA} stroke={C.aqua} strokeWidth="3" />
-        <circle cx="100" cy="80" r="3" fill="#fff" />
+        <circle cx="100" cy="80" r="3" fill="currentColor" />
         <line x1="58" y1="48" x2="150" y2="58" stroke={C.pink} strokeWidth="3" />
         <text x="88" y="44" fill={C.pink} fontSize="12">coardă</text>
-        <text x="72" y="160" fill="#fff" fontSize="11">diametrul e cea mai lungă</text>
+        <text x="72" y="160" fill="currentColor" fontSize="12">diametrul e cea mai lungă</text>
       </svg>
     )
   },
@@ -291,11 +291,11 @@ const FIGURES = {
     svg: (
       <svg viewBox="0 0 220 170" role="img" aria-label="Tangentă la cerc">
         <circle cx="90" cy="80" r="48" fill={C.fillV} stroke={C.violet} strokeWidth="3" />
-        <circle cx="90" cy="80" r="3" fill="#fff" />
+        <circle cx="90" cy="80" r="3" fill="currentColor" />
         <line x1="90" y1="80" x2="138" y2="80" stroke={C.aqua} strokeWidth="3" />
         <line x1="40" y1="28" x2="200" y2="132" stroke={C.pink} strokeWidth="3" />
         <circle cx="138" cy="80" r="4" fill={C.pink} />
-        <rect x="126" y="68" width="12" height="12" fill="none" stroke="#fff" />
+        <rect x="126" y="68" width="12" height="12" fill="none" stroke="currentColor" />
         <text x="100" y="72" fill={C.aqua} fontSize="12">r</text>
         <text x="150" y="50" fill={C.pink} fontSize="12">tangentă</text>
       </svg>
@@ -306,14 +306,14 @@ const FIGURES = {
     svg: (
       <svg viewBox="0 0 200 170" role="img" aria-label="Unghi la centru și unghi înscris pe același arc">
         <circle cx="100" cy="80" r="54" fill="none" stroke={C.violet} strokeWidth="3" />
-        <circle cx="100" cy="80" r="3" fill="#fff" />
+        <circle cx="100" cy="80" r="3" fill="currentColor" />
         <line x1="100" y1="80" x2="148" y2="52" stroke={C.aqua} strokeWidth="2" />
         <line x1="100" y1="80" x2="148" y2="108" stroke={C.aqua} strokeWidth="2" />
         <line x1="52" y1="100" x2="148" y2="52" stroke={C.pink} strokeWidth="2" />
         <line x1="52" y1="100" x2="148" y2="108" stroke={C.pink} strokeWidth="2" />
-        <text x="108" y="76" fill={C.aqua} fontSize="11">centru</text>
-        <text x="28" y="118" fill={C.pink} fontSize="11">înscris</text>
-        <text x="40" y="160" fill="#fff" fontSize="11">înscris = jumătate din arc</text>
+        <text x="108" y="76" fill={C.aqua} fontSize="12">centru</text>
+        <text x="28" y="118" fill={C.pink} fontSize="12">înscris</text>
+        <text x="40" y="160" fill="currentColor" fontSize="12">înscris = jumătate din arc</text>
       </svg>
     )
   },
@@ -323,8 +323,8 @@ const FIGURES = {
       <svg viewBox="0 0 200 170" role="img" aria-label="Sector de disc">
         <circle cx="100" cy="85" r="54" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
         <path d="M100,85 L154,85 A54,54 0 0 0 70,38 Z" fill={C.fillV} stroke={C.violet} strokeWidth="3" />
-        <text x="112" y="70" fill="#fff" fontSize="12">α</text>
-        <text x="48" y="160" fill="#fff" fontSize="11">felie: (α/360°)·πr²</text>
+        <text x="112" y="70" fill="currentColor" fontSize="12">α</text>
+        <text x="48" y="160" fill="currentColor" fontSize="12">felie: (α/360°)·πr²</text>
       </svg>
     )
   },
@@ -333,7 +333,7 @@ const FIGURES = {
     svg: (
       <svg viewBox="0 0 200 170" role="img" aria-label="Pentagon regulat">
         <polygon points="100,18 178,74 148,156 52,156 22,74" fill={C.fillV} stroke={C.violet} strokeWidth="3" />
-        <text x="92" y="96" fill="#fff" fontSize="12">108°</text>
+        <text x="92" y="96" fill="currentColor" fontSize="12">108°</text>
       </svg>
     )
   },
@@ -344,7 +344,7 @@ const FIGURES = {
         <polygon points="100,18 170,52 170,118 100,152 30,118 30,52" fill={C.fillA} stroke={C.aqua} strokeWidth="3" />
         <line x1="100" y1="18" x2="100" y2="152" stroke={C.violet} strokeWidth="1.5" strokeDasharray="3 3" />
         <line x1="30" y1="52" x2="170" y2="118" stroke={C.violet} strokeWidth="1.5" strokeDasharray="3 3" />
-        <text x="88" y="90" fill="#fff" fontSize="12">R = a</text>
+        <text x="88" y="90" fill="currentColor" fontSize="12">R = a</text>
       </svg>
     )
   },
@@ -354,9 +354,9 @@ const FIGURES = {
       <svg viewBox="0 0 240 150" role="img" aria-label="Unghi tăiat de o paralelă">
         <polyline points="30,140 120,20 210,140" fill="none" stroke={C.violet} strokeWidth="3" />
         <line x1="70" y1="90" x2="170" y2="90" stroke={C.aqua} strokeWidth="3" />
-        <text x="88" y="82" fill={C.aqua} fontSize="11">paralelă</text>
-        <text x="48" y="120" fill="#fff" fontSize="11">a</text>
-        <text x="78" y="68" fill="#fff" fontSize="11">a′</text>
+        <text x="88" y="82" fill={C.aqua} fontSize="12">paralelă</text>
+        <text x="48" y="120" fill="currentColor" fontSize="12">a</text>
+        <text x="78" y="68" fill="currentColor" fontSize="12">a′</text>
       </svg>
     )
   },
@@ -366,8 +366,8 @@ const FIGURES = {
       <svg viewBox="0 0 260 150" role="img" aria-label="Două triunghiuri asemenea">
         <polygon points="20,130 110,130 65,48" fill={C.fillA} stroke={C.aqua} strokeWidth="3" />
         <polygon points="140,130 250,130 195,28" fill={C.fillV} stroke={C.violet} strokeWidth="3" />
-        <text x="52" y="146" fill={C.aqua} fontSize="11">k = 1</text>
-        <text x="178" y="146" fill={C.violet} fontSize="11">scară k</text>
+        <text x="52" y="146" fill={C.aqua} fontSize="12">k = 1</text>
+        <text x="178" y="146" fill={C.violet} fontSize="12">scară k</text>
       </svg>
     )
   },
@@ -377,7 +377,7 @@ const FIGURES = {
       <svg viewBox="0 0 260 150" role="img" aria-label="Planul mesei și un creion paralel">
         <polygon points="30,110 170,110 230,50 90,50" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
         <line x1="50" y1="40" x2="200" y2="20" stroke={C.aqua} strokeWidth="4" strokeLinecap="round" />
-        <text x="70" y="138" fill="#fff" fontSize="12">plan (masa)</text>
+        <text x="70" y="138" fill="currentColor" fontSize="12">plan (masa)</text>
         <text x="150" y="16" fill={C.aqua} fontSize="12">dreaptă paralelă</text>
       </svg>
     )
@@ -392,7 +392,7 @@ const FIGURES = {
         <line x1="50" y1="140" x2="80" y2="112" stroke={C.violet} strokeDasharray="4 3" />
         <line x1="80" y1="112" x2="80" y2="22" stroke={C.violet} strokeDasharray="4 3" />
         <line x1="80" y1="112" x2="170" y2="112" stroke={C.violet} strokeDasharray="4 3" />
-        <text x="86" y="162" fill="#fff" fontSize="12">a × a × a</text>
+        <text x="86" y="162" fill="currentColor" fontSize="12">a × a × a</text>
       </svg>
     )
   },
@@ -406,7 +406,7 @@ const FIGURES = {
         <line x1="40" y1="140" x2="76" y2="108" stroke={C.violet} strokeDasharray="4 3" />
         <line x1="76" y1="108" x2="76" y2="28" stroke={C.violet} strokeDasharray="4 3" />
         <line x1="76" y1="108" x2="196" y2="108" stroke={C.violet} strokeDasharray="4 3" />
-        <text x="88" y="162" fill="#fff" fontSize="12">L × l × h</text>
+        <text x="88" y="162" fill="currentColor" fontSize="12">L × l × h</text>
       </svg>
     )
   },
@@ -417,7 +417,7 @@ const FIGURES = {
         <polygon points="40,60 160,60 196,28 76,28" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
         <polygon points="40,60 40,140 160,140 160,60" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
         <polygon points="160,60 196,28 196,108 160,140" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
-        <text x="70" y="162" fill="#fff" fontSize="12">V = A_bază × h</text>
+        <text x="70" y="162" fill="currentColor" fontSize="12">V = A_bază × h</text>
       </svg>
     )
   },
@@ -430,7 +430,7 @@ const FIGURES = {
         <line x1="50" y1="130" x2="70" y2="40" stroke={C.pink} strokeWidth="2" />
         <line x1="160" y1="140" x2="180" y2="50" stroke={C.pink} strokeWidth="2" />
         <line x1="120" y1="90" x2="140" y2="8" stroke={C.pink} strokeWidth="2" />
-        <text x="48" y="162" fill="#fff" fontSize="12">bază = triunghi</text>
+        <text x="48" y="162" fill="currentColor" fontSize="12">bază = triunghi</text>
       </svg>
     )
   },
@@ -443,7 +443,7 @@ const FIGURES = {
         <line x1="70" y1="120" x2="80" y2="48" stroke={C.pink} strokeWidth="2" />
         <line x1="150" y1="120" x2="160" y2="48" stroke={C.pink} strokeWidth="2" />
         <line x1="110" y1="132" x2="120" y2="60" stroke={C.pink} strokeWidth="2" />
-        <text x="52" y="162" fill="#fff" fontSize="12">bază = hexagon</text>
+        <text x="52" y="162" fill="currentColor" fontSize="12">bază = hexagon</text>
       </svg>
     )
   },
@@ -455,7 +455,7 @@ const FIGURES = {
         <polygon points="110,20 40,130 160,130" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
         <line x1="110" y1="20" x2="70" y2="100" stroke={C.violet} strokeDasharray="4 3" />
         <line x1="110" y1="20" x2="180" y2="100" stroke={C.violet} />
-        <text x="78" y="154" fill="#fff" fontSize="12">V = (A_bază × h) / 3</text>
+        <text x="78" y="154" fill="currentColor" fontSize="12">V = (A_bază × h) / 3</text>
       </svg>
     )
   },
@@ -466,7 +466,7 @@ const FIGURES = {
         <polygon points="40,130 180,130 130,100" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
         <polygon points="110,18 40,130 180,130" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
         <line x1="110" y1="18" x2="130" y2="100" stroke={C.violet} strokeDasharray="4 3" />
-        <text x="70" y="154" fill="#fff" fontSize="12">V = Ab × h / 3</text>
+        <text x="70" y="154" fill="currentColor" fontSize="12">V = Ab × h / 3</text>
       </svg>
     )
   },
@@ -478,7 +478,7 @@ const FIGURES = {
         <line x1="40" y1="130" x2="150" y2="145" stroke={C.aqua} strokeWidth="2" />
         <line x1="190" y1="120" x2="150" y2="145" stroke={C.aqua} strokeWidth="2" />
         <line x1="110" y1="18" x2="150" y2="145" stroke={C.pink} strokeDasharray="4 3" />
-        <text x="48" y="158" fill="#fff" fontSize="11">4 fețe echilaterale</text>
+        <text x="48" y="158" fill="currentColor" fontSize="12">4 fețe echilaterale</text>
       </svg>
     )
   },
@@ -490,7 +490,7 @@ const FIGURES = {
         <line x1="40" y1="36" x2="40" y2="130" stroke={C.aqua} strokeWidth="2" />
         <line x1="140" y1="36" x2="140" y2="130" stroke={C.aqua} strokeWidth="2" />
         <ellipse cx="90" cy="130" rx="50" ry="16" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
-        <text x="48" y="160" fill="#fff" fontSize="12">V = πr²h</text>
+        <text x="48" y="160" fill="currentColor" fontSize="12">V = πr²h</text>
       </svg>
     )
   },
@@ -501,7 +501,7 @@ const FIGURES = {
         <line x1="90" y1="20" x2="40" y2="130" stroke={C.violet} strokeWidth="2" />
         <line x1="90" y1="20" x2="140" y2="130" stroke={C.violet} strokeWidth="2" />
         <ellipse cx="90" cy="130" rx="50" ry="16" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
-        <text x="40" y="160" fill="#fff" fontSize="12">V = πr²h / 3</text>
+        <text x="40" y="160" fill="currentColor" fontSize="12">V = πr²h / 3</text>
       </svg>
     )
   },
@@ -513,7 +513,7 @@ const FIGURES = {
         <line x1="62" y1="40" x2="40" y2="130" stroke={C.aqua} strokeWidth="2" />
         <line x1="118" y1="40" x2="140" y2="130" stroke={C.aqua} strokeWidth="2" />
         <ellipse cx="90" cy="130" rx="50" ry="16" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
-        <text x="28" y="160" fill="#fff" fontSize="11">două baze, o centură</text>
+        <text x="28" y="160" fill="currentColor" fontSize="12">două baze, o centură</text>
       </svg>
     )
   },
@@ -526,7 +526,7 @@ const FIGURES = {
         <line x1="80" y1="40" x2="40" y2="130" stroke={C.pink} strokeWidth="2" />
         <line x1="140" y1="40" x2="180" y2="130" stroke={C.pink} strokeWidth="2" />
         <line x1="152" y1="28" x2="200" y2="100" stroke={C.pink} strokeWidth="2" />
-        <text x="48" y="160" fill="#fff" fontSize="11">baze asemenea</text>
+        <text x="48" y="160" fill="currentColor" fontSize="12">baze asemenea</text>
       </svg>
     )
   },
@@ -541,7 +541,7 @@ const FIGURES = {
           <g key={n}>
             <line x1={48 + n * 48} y1="50" x2={48 + n * 48} y2="66" stroke={C.aqua} strokeWidth="2" />
             <circle cx={48 + n * 48} cy="58" r="4" fill={n === 0 ? C.pink : C.violet} />
-            <text x={42 + n * 48} y="86" fill="#fff" fontSize="13">{n}</text>
+            <text x={42 + n * 48} y="86" fill="currentColor" fontSize="13">{n}</text>
           </g>
         ))}
         <text x="36" y="36" fill={C.pink} fontSize="13">O</text>
@@ -562,7 +562,7 @@ const FIGURES = {
         <text x="58" y="78" fill={C.aqua} fontSize="13">84</text>
         <text x="132" y="78" fill={C.violet} fontSize="13">408</text>
         <text x="212" y="78" fill={C.pink} fontSize="13">480</text>
-        <text x="250" y="28" fill="#fff" fontSize="12">mai mare →</text>
+        <text x="250" y="28" fill="currentColor" fontSize="12">mai mare →</text>
       </svg>
     )
   },
@@ -572,13 +572,13 @@ const FIGURES = {
       <svg viewBox="0 0 320 120" role="img" aria-label="Numărul 530957 împărțit în clasa miilor și clasa unităților">
         <rect x="16" y="28" width="140" height="56" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
         <rect x="164" y="28" width="140" height="56" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
-        <text x="28" y="20" fill={C.violet} fontSize="11">clasa miilor</text>
-        <text x="176" y="20" fill={C.aqua} fontSize="11">clasa unităților</text>
+        <text x="28" y="20" fill={C.violet} fontSize="12">clasa miilor</text>
+        <text x="176" y="20" fill={C.aqua} fontSize="12">clasa unităților</text>
         {['5', '3', '0', '9', '5', '7'].map((digit, index) => (
-          <text key={digit + index} x={32 + index * 46} y="62" fill="#fff" fontSize="22">{digit}</text>
+          <text key={digit + index} x={32 + index * 46} y="62" fill="currentColor" fontSize="22">{digit}</text>
         ))}
-        <text x="24" y="104" fill={C.violet} fontSize="10">sute mii · zeci mii · mii</text>
-        <text x="176" y="104" fill={C.aqua} fontSize="10">sute · zeci · unități</text>
+        <text x="24" y="104" fill={C.violet} fontSize="12">sute mii · zeci mii · mii</text>
+        <text x="176" y="104" fill={C.aqua} fontSize="12">sute · zeci · unități</text>
       </svg>
     )
   },
@@ -615,7 +615,7 @@ const FIGURES = {
         ))}
         <circle cx="250" cy="42" r="5" fill={C.pink} />
         <circle cx="266" cy="42" r="5" fill={C.pink} />
-        <text x="16" y="90" fill="#fff" fontSize="13">3 grupe de 5, rest 2</text>
+        <text x="16" y="90" fill="currentColor" fontSize="13">3 grupe de 5, rest 2</text>
       </svg>
     )
   },
@@ -626,7 +626,7 @@ const FIGURES = {
         {[0, 1, 2].map(row => [0, 1, 2].map(col => (
           <rect key={`${row}-${col}`} x={30 + col * 36} y={20 + row * 36} width="30" height="30" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
         )))}
-        <text x="150" y="70" fill="#fff" fontSize="16">3² = 9</text>
+        <text x="150" y="70" fill="currentColor" fontSize="16">3² = 9</text>
       </svg>
     )
   },
@@ -639,7 +639,7 @@ const FIGURES = {
         <line x1="30" y1="72" x2="230" y2="72" stroke={C.violet} strokeWidth="8" strokeLinecap="round" />
         <line x1="170" y1="64" x2="170" y2="80" stroke={C.pink} strokeWidth="2" />
         <text x="176" y="96" fill={C.pink} fontSize="12">diferență</text>
-        <text x="30" y="112" fill="#fff" fontSize="12">suma − diferența = de două ori numărul mic</text>
+        <text x="30" y="112" fill="currentColor" fontSize="12">suma − diferența = de două ori numărul mic</text>
       </svg>
     )
   },
@@ -655,7 +655,7 @@ const FIGURES = {
         <text x="66" y="54" fill={C.aqua} fontSize="12">4</text>
         <text x="118" y="34" fill={C.violet} fontSize="12">6</text>
         <text x="170" y="74" fill={C.pink} fontSize="12">2</text>
-        <text x="56" y="120" fill="#fff" fontSize="13">4 + 6 + 2 = 12</text>
+        <text x="56" y="120" fill="currentColor" fontSize="13">4 + 6 + 2 = 12</text>
       </svg>
     )
   },
@@ -663,11 +663,11 @@ const FIGURES = {
     label: '3 din 4 părți egale',
     svg: (
       <svg viewBox="0 0 280 132" role="img" aria-label="Dreptunghi tăiat în patru, cu trei părți colorate, etichetat 3 pe 4 din întreg">
-        <rect x="24" y="16" width="232" height="48" fill="none" stroke="#fff" strokeWidth="2" />
+        <rect x="24" y="16" width="232" height="48" fill="none" stroke="currentColor" strokeWidth="2" />
         <rect x="24" y="16" width="58" height="48" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
         <rect x="82" y="16" width="58" height="48" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
         <rect x="140" y="16" width="58" height="48" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
-        <rect x="198" y="16" width="58" height="48" fill="none" stroke="#fff" strokeWidth="2" />
+        <rect x="198" y="16" width="58" height="48" fill="none" stroke="currentColor" strokeWidth="2" />
         <SvgFraction x="98" y="96" num="3" den="4" label="din întreg" />
       </svg>
     )
@@ -677,12 +677,12 @@ const FIGURES = {
     svg: (
       <svg viewBox="0 0 280 120" role="img" aria-label="Două bare egale: jumătate și două sferturi">
         <rect x="24" y="16" width="100" height="36" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
-        <rect x="124" y="16" width="100" height="36" fill="none" stroke="#fff" strokeWidth="2" />
+        <rect x="124" y="16" width="100" height="36" fill="none" stroke="currentColor" strokeWidth="2" />
         <SvgFraction x="250" y="36" num="1" den="2" fill={C.aqua} />
         <rect x="24" y="68" width="50" height="36" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
         <rect x="74" y="68" width="50" height="36" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
-        <rect x="124" y="68" width="50" height="36" fill="none" stroke="#fff" strokeWidth="2" />
-        <rect x="174" y="68" width="50" height="36" fill="none" stroke="#fff" strokeWidth="2" />
+        <rect x="124" y="68" width="50" height="36" fill="none" stroke="currentColor" strokeWidth="2" />
+        <rect x="174" y="68" width="50" height="36" fill="none" stroke="currentColor" strokeWidth="2" />
         <SvgFraction x="250" y="88" num="2" den="4" fill={C.violet} />
       </svg>
     )
@@ -695,13 +695,13 @@ const FIGURES = {
         <polygon points="300,42 288,36 288,48" fill="currentColor" />
         {[40, 110, 180, 250].map((x, index) => (
           <g key={x}>
-            <line x1={x} y1="34" x2={x} y2="50" stroke="#fff" strokeWidth="2" />
+            <line x1={x} y1="34" x2={x} y2="50" stroke="currentColor" strokeWidth="2" />
             <circle cx={x} cy="42" r="5" fill={index === 1 ? C.pink : C.aqua} />
           </g>
         ))}
-        <text x="32" y="78" fill="#fff" fontSize="13">0</text>
+        <text x="32" y="78" fill="currentColor" fontSize="13">0</text>
         <SvgFraction x="110" y="78" num="1" den="2" fill={C.pink} />
-        <text x="174" y="78" fill="#fff" fontSize="13">1</text>
+        <text x="174" y="78" fill="currentColor" fontSize="13">1</text>
         <SvgFraction x="250" y="78" num="3" den="2" />
       </svg>
     )
@@ -713,8 +713,8 @@ const FIGURES = {
         <rect x="16" y="16" width="64" height="52" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
         <rect x="92" y="16" width="64" height="52" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
         <rect x="168" y="16" width="16" height="52" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
-        <rect x="184" y="16" width="48" height="52" fill="none" stroke="#fff" strokeWidth="2" />
-        <text x="16" y="100" fill="#fff" fontSize="13">2 întregi +</text>
+        <rect x="184" y="16" width="48" height="52" fill="none" stroke="currentColor" strokeWidth="2" />
+        <text x="16" y="100" fill="currentColor" fontSize="13">2 întregi +</text>
         <SvgFraction x="156" y="96" num="1" den="4" fill={C.pink} />
       </svg>
     )
@@ -728,7 +728,7 @@ const FIGURES = {
         <circle cx="110" cy="72" r="3" fill={C.pink} />
         <circle cx="65" cy="132" r="3" fill={C.violet} />
         <circle cx="155" cy="132" r="3" fill={C.violet} />
-        <text x="48" y="148" fill="#fff" fontSize="11">mijlocul rămâne gol</text>
+        <text x="48" y="148" fill="currentColor" fontSize="12">mijlocul rămâne gol</text>
       </svg>
     )
   },
@@ -737,15 +737,15 @@ const FIGURES = {
     svg: (
       <svg viewBox="0 0 320 110" role="img" aria-label="Numărul 3,25 cu unități, zecimi și sutimi">
         <rect x="16" y="24" width="70" height="48" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
-        <text x="40" y="54" fill="#fff" fontSize="22">3</text>
+        <text x="40" y="54" fill="currentColor" fontSize="22">3</text>
         <text x="96" y="54" fill={C.pink} fontSize="28">,</text>
         <rect x="118" y="24" width="70" height="48" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
-        <text x="142" y="54" fill="#fff" fontSize="22">2</text>
+        <text x="142" y="54" fill="currentColor" fontSize="22">2</text>
         <rect x="196" y="24" width="70" height="48" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
-        <text x="220" y="54" fill="#fff" fontSize="22">5</text>
-        <text x="22" y="92" fill={C.violet} fontSize="11">unități</text>
-        <text x="128" y="92" fill={C.aqua} fontSize="11">zecimi</text>
-        <text x="206" y="92" fill={C.pink} fontSize="11">sutimi</text>
+        <text x="220" y="54" fill="currentColor" fontSize="22">5</text>
+        <text x="22" y="92" fill={C.violet} fontSize="12">unități</text>
+        <text x="128" y="92" fill={C.aqua} fontSize="12">zecimi</text>
+        <text x="206" y="92" fill={C.pink} fontSize="12">sutimi</text>
       </svg>
     )
   },
@@ -755,14 +755,14 @@ const FIGURES = {
       <svg viewBox="0 0 320 100" role="img" aria-label="Axă cu 0, 1, 1,4 și 2">
         <line x1="20" y1="42" x2="300" y2="42" stroke="currentColor" strokeWidth="2" />
         <polygon points="300,42 288,36 288,48" fill="currentColor" />
-        <line x1="50" y1="34" x2="50" y2="50" stroke="#fff" />
-        <line x1="150" y1="34" x2="150" y2="50" stroke="#fff" />
-        <line x1="250" y1="34" x2="250" y2="50" stroke="#fff" />
+        <line x1="50" y1="34" x2="50" y2="50" stroke="currentColor" />
+        <line x1="150" y1="34" x2="150" y2="50" stroke="currentColor" />
+        <line x1="250" y1="34" x2="250" y2="50" stroke="currentColor" />
         <circle cx="190" cy="42" r="6" fill={C.pink} />
-        <text x="44" y="74" fill="#fff" fontSize="13">0</text>
-        <text x="144" y="74" fill="#fff" fontSize="13">1</text>
+        <text x="44" y="74" fill="currentColor" fontSize="13">0</text>
+        <text x="144" y="74" fill="currentColor" fontSize="13">1</text>
         <text x="176" y="24" fill={C.pink} fontSize="13">1,4</text>
-        <text x="244" y="74" fill="#fff" fontSize="13">2</text>
+        <text x="244" y="74" fill="currentColor" fontSize="13">2</text>
       </svg>
     )
   },
@@ -775,9 +775,9 @@ const FIGURES = {
         <circle cx="130" cy="70" r="5" fill={C.aqua} />
         <circle cx="200" cy="70" r="5" fill={C.aqua} />
         <circle cx="130" cy="28" r="5" fill={C.pink} />
-        <text x="52" y="92" fill="#fff" fontSize="13">A</text>
-        <text x="122" y="92" fill="#fff" fontSize="13">B</text>
-        <text x="192" y="92" fill="#fff" fontSize="13">C</text>
+        <text x="52" y="92" fill="currentColor" fontSize="13">A</text>
+        <text x="122" y="92" fill="currentColor" fontSize="13">B</text>
+        <text x="192" y="92" fill="currentColor" fontSize="13">C</text>
         <text x="138" y="24" fill={C.pink} fontSize="13">D</text>
       </svg>
     )
@@ -790,9 +790,9 @@ const FIGURES = {
         <circle cx="40" cy="48" r="6" fill={C.violet} />
         <circle cx="140" cy="48" r="6" fill={C.pink} />
         <circle cx="240" cy="48" r="6" fill={C.violet} />
-        <text x="32" y="78" fill="#fff" fontSize="14">A</text>
+        <text x="32" y="78" fill="currentColor" fontSize="14">A</text>
         <text x="132" y="78" fill={C.pink} fontSize="14">M</text>
-        <text x="232" y="78" fill="#fff" fontSize="14">B</text>
+        <text x="232" y="78" fill="currentColor" fontSize="14">B</text>
       </svg>
     )
   },
@@ -805,10 +805,10 @@ const FIGURES = {
         <circle cx="48" cy="70" r="6" fill={C.violet} />
         <circle cx="192" cy="70" r="6" fill={C.violet} />
         <circle cx="120" cy="70" r="5" fill={C.pink} />
-        <rect x="120" y="58" width="12" height="12" fill="none" stroke="#fff" />
-        <text x="36" y="96" fill="#fff" fontSize="13">M</text>
+        <rect x="120" y="58" width="12" height="12" fill="none" stroke="currentColor" />
+        <text x="36" y="96" fill="currentColor" fontSize="13">M</text>
         <text x="112" y="96" fill={C.pink} fontSize="13">P</text>
-        <text x="184" y="96" fill="#fff" fontSize="13">N</text>
+        <text x="184" y="96" fill="currentColor" fontSize="13">N</text>
         <text x="128" y="28" fill={C.aqua} fontSize="13">d</text>
       </svg>
     )
@@ -819,8 +819,8 @@ const FIGURES = {
       <svg viewBox="0 0 280 140" role="img" aria-label="Diagramă cu două cercuri care se taie, A și B">
         <circle cx="110" cy="72" r="48" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
         <circle cx="168" cy="72" r="48" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
-        <text x="78" y="68" fill="#fff" fontSize="16">A</text>
-        <text x="186" y="68" fill="#fff" fontSize="16">B</text>
+        <text x="78" y="68" fill="currentColor" fontSize="16">A</text>
+        <text x="186" y="68" fill="currentColor" fontSize="16">B</text>
         <text x="128" y="76" fill={C.pink} fontSize="13">∩</text>
       </svg>
     )
@@ -837,10 +837,10 @@ const FIGURES = {
         <circle cx="196" cy="48" r="5" fill={C.violet} />
         <line x1="196" y1="92" x2="196" y2="48" stroke={C.aqua} strokeDasharray="4 3" />
         <line x1="132" y1="48" x2="196" y2="48" stroke={C.aqua} strokeDasharray="4 3" />
-        <text x="238" y="84" fill="#fff" fontSize="13">x</text>
-        <text x="140" y="28" fill="#fff" fontSize="13">y</text>
+        <text x="238" y="84" fill="currentColor" fontSize="13">x</text>
+        <text x="140" y="28" fill="currentColor" fontSize="13">y</text>
         <text x="112" y="110" fill={C.pink} fontSize="12">O</text>
-        <text x="204" y="44" fill="#fff" fontSize="13">A</text>
+        <text x="204" y="44" fill="currentColor" fontSize="13">A</text>
       </svg>
     )
   },
@@ -866,7 +866,7 @@ const FIGURES = {
           <g key={n}>
             <line x1={48 + (n + 3) * 36} y1="40" x2={48 + (n + 3) * 36} y2="56" stroke={C.aqua} strokeWidth="2" />
             <circle cx={48 + (n + 3) * 36} cy="48" r="4" fill={n === 0 ? C.pink : C.violet} />
-            <text x={n < 0 ? 34 + (n + 3) * 36 : 40 + (n + 3) * 36} y="78" fill="#fff" fontSize="13">{n}</text>
+            <text x={n < 0 ? 34 + (n + 3) * 36 : 40 + (n + 3) * 36} y="78" fill="currentColor" fontSize="13">{n}</text>
           </g>
         ))}
       </svg>
@@ -883,11 +883,11 @@ const FIGURES = {
         <rect x="132" y="36" width="28" height="72" fill={C.fillP} stroke={C.pink} strokeWidth="2" />
         <rect x="172" y="60" width="28" height="48" fill={C.fillA} stroke={C.aqua} strokeWidth="2" />
         <rect x="212" y="84" width="28" height="24" fill={C.fillV} stroke={C.violet} strokeWidth="2" />
-        <text x="60" y="124" fill="#fff" fontSize="12">5</text>
-        <text x="100" y="124" fill="#fff" fontSize="12">7</text>
-        <text x="140" y="124" fill="#fff" fontSize="12">8</text>
-        <text x="180" y="124" fill="#fff" fontSize="12">9</text>
-        <text x="216" y="124" fill="#fff" fontSize="12">10</text>
+        <text x="60" y="124" fill="currentColor" fontSize="12">5</text>
+        <text x="100" y="124" fill="currentColor" fontSize="12">7</text>
+        <text x="140" y="124" fill="currentColor" fontSize="12">8</text>
+        <text x="180" y="124" fill="currentColor" fontSize="12">9</text>
+        <text x="216" y="124" fill="currentColor" fontSize="12">10</text>
       </svg>
     )
   },
@@ -899,7 +899,7 @@ const FIGURES = {
         <ellipse cx="90" cy="80" rx="54" ry="18" fill="none" stroke={C.aqua} strokeWidth="2" />
         <line x1="90" y1="80" x2="144" y2="80" stroke={C.pink} strokeWidth="2" />
         <text x="110" y="74" fill={C.pink} fontSize="12">R</text>
-        <text x="28" y="158" fill="#fff" fontSize="11">A=4πR² · V=(4/3)πR³</text>
+        <text x="28" y="158" fill="currentColor" fontSize="12">A=4πR² · V=(4/3)πR³</text>
       </svg>
     )
   }
