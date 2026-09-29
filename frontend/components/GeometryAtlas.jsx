@@ -52,7 +52,7 @@ const GeometryAtlas = ({ atlas }) => {
                 className="ghost-button result-action"
                 onClick={() => setSpinId(spinId === entry.id ? '' : entry.id)}
               >
-                {spinId === entry.id ? 'Desenul plat' : 'Învârte corpul 3D'}
+                {spinId === entry.id ? 'Desenul plat' : 'Învârte 3D'}
               </button>
             )}
           </article>

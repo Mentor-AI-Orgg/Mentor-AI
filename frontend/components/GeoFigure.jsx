@@ -1,5 +1,8 @@
-import GeoSolid from './GeoSolid.jsx';
+import { lazy, Suspense, useEffect, useId, useState } from 'react';
 import MathText from './MathText.jsx';
+import { shouldRender3D } from './geo/webglBudget.js';
+
+const GeoSolid = lazy(() => import('./GeoSolid.jsx'));
 
 function SvgFraction({ x, y, num, den, fill = 'currentColor', label }) {
   const cx = Number(x);
@@ -912,23 +915,79 @@ const SOLIDS = new Set([
   'sphere', 'planes'
 ]);
 
+function FlatDrawing({ figure, title, note }) {
+  return (
+    <figure className="geo-figure">
+      <div className="geo-figure-canvas">{figure.svg}</div>
+      <figcaption><MathText text={title} /></figcaption>
+      {note ? <p className="geo-figure-info">{note}</p> : null}
+    </figure>
+  );
+}
+
 const GeoFigure = ({ kind, caption, formulas, info, flat }) => {
+  const reactId = useId();
   const id = typeof kind === 'string' ? kind : kind && kind.kind;
   const figure = FIGURES[id];
+  const [spinning, setSpinning] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [lost, setLost] = useState(false);
+  const controlled = typeof flat === 'boolean';
+  const solid = Boolean(id && SOLIDS.has(id));
+  const wantsSpin = controlled ? flat === false : spinning;
+
+  useEffect(() => {
+    if (!solid) return undefined;
+    const node = document.getElementById(`geo-${String(reactId).replace(/:/g, '')}`);
+    if (!node || typeof IntersectionObserver === 'undefined') return undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      const near = Boolean(entry && entry.isIntersecting);
+      setVisible(near);
+      if (!near && !controlled) setSpinning(false);
+    }, { rootMargin: '150% 0px 150% 0px' });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [solid, reactId, controlled]);
+
   if (!figure) return null;
   const title = caption || figure.label;
-  const body = !flat && SOLIDS.has(id)
-    ? <GeoSolid kind={kind} caption={title} fallback={figure.svg} />
-    : (
-      <figure className="geo-figure">
-        <div className="geo-figure-canvas">{figure.svg}</div>
-        <figcaption><MathText text={title} /></figcaption>
-      </figure>
-    );
-  if ((!formulas || !formulas.length) && !info) return body;
+  const show3d = solid && shouldRender3D({ flat: false, spinning: wantsSpin && !lost, visible });
+  const flatBody = (
+    <FlatDrawing
+      figure={figure}
+      title={title}
+      note={lost ? 'Desenul 3D s-a oprit. Încearcă din nou.' : ''}
+    />
+  );
+  const body = show3d ? (
+    <Suspense fallback={flatBody}>
+      <GeoSolid
+        id={`${id}-${reactId}`}
+        kind={id}
+        caption={title}
+        fallback={figure.svg}
+        onLost={() => { setLost(true); setSpinning(false); }}
+        onEvict={() => { setSpinning(false); }}
+      />
+    </Suspense>
+  ) : flatBody;
+  const toggle = solid && !controlled ? (
+    <button
+      type="button"
+      className="ghost-button result-action"
+      aria-pressed={wantsSpin && !lost}
+      onClick={() => {
+        setLost(false);
+        setSpinning(value => !value);
+      }}
+    >
+      {lost ? 'Încearcă din nou' : (wantsSpin ? 'Desenul plat' : 'Învârte 3D')}
+    </button>
+  ) : null;
   return (
-    <div className="geo-figure-block">
+    <div className="geo-figure-block" id={`geo-${String(reactId).replace(/:/g, '')}`}>
       {body}
+      {toggle}
       {formulas?.length > 0 && (
         <ul className="geo-formulas">
           {formulas.map(row => <li key={row}><MathText text={row} /></li>)}
@@ -940,4 +999,4 @@ const GeoFigure = ({ kind, caption, formulas, info, flat }) => {
 };
 
 export default GeoFigure;
-export { FIGURES, SOLIDS };
+export { FIGURES, SOLIDS, shouldRender3D };

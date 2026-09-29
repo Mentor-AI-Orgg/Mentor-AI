@@ -6,7 +6,7 @@ import { I18nProvider, useI18n } from './i18n/index.jsx';
 import { hashForRoute, parseAppHash, screenForLoggedOut } from './appRoutes.js';
 import { saveAppearance } from './themePrefs.js';
 import AdaptiveContainer from './components/AdaptiveContainer.jsx';
-import FloatingLines from './components/FloatingLines.jsx';
+import AppBackground from './components/AppBackground.jsx';
 import BottomNav from './components/BottomNav.jsx';
 import Toast from './components/Toast.jsx';
 import SplashScreen from './components/SplashScreen.jsx';
@@ -600,7 +600,7 @@ function AppShell({ userData, setUserData }) {
       <AdaptiveContainer />
       <div className="app-background">
         <BackgroundSafe>
-          <FloatingLines
+          <AppBackground
             enabledWaves={['top', 'middle', 'bottom']}
             lineCount={[6, 8, 10]}
             lineDistance={[5, 4, 3]}
