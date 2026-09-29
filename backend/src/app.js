@@ -152,8 +152,20 @@ function createApp(options = {}) {
 
   const distDir = path.join(__dirname, "..", "..", "frontend", "dist");
   if (fs.existsSync(distDir)) {
-    app.use(express.static(distDir));
+    app.use(express.static(distDir, {
+      setHeaders(res, filePath) {
+        const rel = path.relative(distDir, filePath).split(path.sep).join("/");
+        if (rel === "sw.js" || rel === "manifest.webmanifest" || rel === "index.html") {
+          res.setHeader("Cache-Control", "no-cache");
+          return;
+        }
+        if (rel.startsWith("assets/")) {
+          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        }
+      }
+    }));
     app.get(/^\/(?!api\/).*/, (req, res) => {
+      res.setHeader("Cache-Control", "no-cache");
       res.sendFile(path.join(distDir, "index.html"));
     });
   } else {
