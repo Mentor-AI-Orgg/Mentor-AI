@@ -52,6 +52,14 @@ export function parseAppHash(hash) {
   return { kind: 'unknown', screen: 'home', navScreen: 'home' };
 }
 
+/** După splash, vizitatorul nelogat rămâne pe login sau pe crearea contului. */
+export function screenForLoggedOut(route) {
+  if (route?.kind === 'guest' && (route.screen === 'login' || route.screen === 'register')) {
+    return route.screen;
+  }
+  return 'welcome';
+}
+
 export function hashForRoute(screen, extras = {}) {
   switch (screen) {
     case 'welcome':

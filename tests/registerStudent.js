@@ -13,7 +13,7 @@ function uniqueUsername(prefix = 'e') {
 }
 
 async function registerPending(app, overrides = {}) {
-  const username = overrides.username || uniqueUsername();
+  let username = overrides.username || uniqueUsername();
   const parentEmail = overrides.parentEmail || uniqueEmail('parinte');
   const password = overrides.password || PASSWORD;
   const agent = overrides.agent || request.agent(app);
@@ -24,18 +24,23 @@ async function registerPending(app, overrides = {}) {
   };
   let res;
   try {
-    res = await agent.post('/api/auth/register').send({
-      username,
-      password,
-      confirmPassword: overrides.confirmPassword || password,
-      class: String(overrides.class || '5'),
-      parentEmail,
-      role: overrides.role || 'student',
-      name: overrides.name || '',
-      phone: overrides.phone || '',
-      email: overrides.email || '',
-      school: overrides.school || ''
-    });
+    for (let attempt = 0; attempt < 6; attempt += 1) {
+      res = await agent.post('/api/auth/register').send({
+        username,
+        password,
+        confirmPassword: overrides.confirmPassword || password,
+        class: String(overrides.class || '5'),
+        parentEmail,
+        role: overrides.role || 'student',
+        name: overrides.name || '',
+        phone: overrides.phone || '',
+        email: overrides.email || '',
+        school: overrides.school || ''
+      });
+      const nameRejected = res.status === 400 && res.body?.field === 'username' && !overrides.username;
+      if (!nameRejected) break;
+      username = uniqueUsername();
+    }
   } finally {
     console.log = original;
   }

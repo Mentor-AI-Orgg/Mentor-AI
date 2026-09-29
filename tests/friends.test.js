@@ -50,8 +50,8 @@ describe('friends and profile edit', () => {
   });
 
   it('finds a classmate only by exact username and hides the real name and school', async () => {
-    const ana = await registerStudent({ name: 'Ana Public', username: `pub${Date.now().toString(16).slice(-4)}` });
-    const ion = await registerStudent({ name: 'Ion Privat', username: `prv${Date.now().toString(16).slice(-4)}` });
+    const ana = await registerStudent({ name: 'Ana Public' });
+    const ion = await registerStudent({ name: 'Ion Privat' });
 
     const byName = await ana.agent.get('/api/friends/search').query({ q: 'Ion' });
     expect(byName.status).toBe(200);
@@ -69,17 +69,17 @@ describe('friends and profile edit', () => {
   });
 
   it('sends at most 10 friend requests per day', async () => {
-    const sender = await registerStudent({ name: 'Sender', username: `snd${Date.now().toString(16).slice(-4)}` });
+    const sender = await registerStudent({ name: 'Sender' });
     const ids = [];
     for (let i = 0; i < 10; i += 1) {
-      const peer = await registerStudent({ name: `Peer ${i}`, username: `p${i}${Date.now().toString(16).slice(-3)}` });
+      const peer = await registerStudent({ name: `Peer ${i}` });
       const search = await sender.agent.get('/api/friends/search').query({ q: peer.username });
       expect(search.body.results[0]?.id).toBeTruthy();
       ids.push(search.body.results[0].id);
       const sent = await sender.agent.post('/api/friends/request').send({ user_id: search.body.results[0].id });
       expect(sent.status).toBe(201);
     }
-    const extra = await registerStudent({ name: 'Peer Extra', username: `pex${Date.now().toString(16).slice(-4)}` });
+    const extra = await registerStudent({ name: 'Peer Extra' });
     const extraSearch = await sender.agent.get('/api/friends/search').query({ q: extra.username });
     const blocked = await sender.agent.post('/api/friends/request').send({ user_id: extraSearch.body.results[0].id });
     expect(blocked.status).toBe(429);
@@ -87,8 +87,8 @@ describe('friends and profile edit', () => {
   });
 
   it('accepts a request and becomes friends', async () => {
-    const left = await registerStudent({ name: 'Left', username: `lft${Date.now().toString(16).slice(-4)}` });
-    const right = await registerStudent({ name: 'Right', username: `rgt${Date.now().toString(16).slice(-4)}` });
+    const left = await registerStudent({ name: 'Left' });
+    const right = await registerStudent({ name: 'Right' });
     const search = await left.agent.get('/api/friends/search').query({ q: right.username });
     await left.agent.post('/api/friends/request').send({ user_id: search.body.results[0].id });
     const inbox = await right.agent.get('/api/friends/me');
@@ -103,9 +103,9 @@ describe('friends and profile edit', () => {
   });
 
   it('lists friends ordered by XP, highest first', async () => {
-    const me = await registerStudent({ name: 'Eu', username: `me${Date.now().toString(16).slice(-4)}` });
-    const low = await registerStudent({ name: 'Puține XP', username: `low${Date.now().toString(16).slice(-4)}` });
-    const high = await registerStudent({ name: 'Multe XP', username: `hi${Date.now().toString(16).slice(-4)}` });
+    const me = await registerStudent({ name: 'Eu' });
+    const low = await registerStudent({ name: 'Puține XP' });
+    const high = await registerStudent({ name: 'Multe XP' });
 
     const highEmail = authStore.findByUsername(high.username).email;
     economyStore.recordProgress({

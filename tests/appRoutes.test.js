@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hashForRoute, parseAppHash } from '../frontend/appRoutes.js';
+import { hashForRoute, parseAppHash, screenForLoggedOut } from '../frontend/appRoutes.js';
 
 describe('app hash routes', () => {
   it('round-trips the student screens a child actually uses', () => {
@@ -46,5 +46,13 @@ describe('app hash routes', () => {
   it('treats an empty hash as the welcome page', () => {
     expect(parseAppHash('')).toEqual({ kind: 'guest', screen: 'welcome' });
     expect(parseAppHash('#/')).toEqual({ kind: 'guest', screen: 'welcome' });
+  });
+
+  it('keeps login and register for a logged-out visitor', () => {
+    expect(screenForLoggedOut(parseAppHash('#/conectare'))).toBe('login');
+    expect(screenForLoggedOut(parseAppHash('#/cont'))).toBe('register');
+    expect(screenForLoggedOut(parseAppHash('#/start'))).toBe('welcome');
+    expect(screenForLoggedOut(parseAppHash(''))).toBe('welcome');
+    expect(screenForLoggedOut(parseAppHash('#/acasa'))).toBe('welcome');
   });
 });
