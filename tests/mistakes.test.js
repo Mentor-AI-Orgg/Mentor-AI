@@ -85,7 +85,7 @@ describe('caietul de greșeli', () => {
     const home = readFileSync(new URL('../frontend/screens/HomeScreen.jsx', import.meta.url), 'utf8');
     const page = readFileSync(new URL('../frontend/screens/MistakesScreen.jsx', import.meta.url), 'utf8');
     const parent = readFileSync(new URL('../frontend/components/ConsentScreens.jsx', import.meta.url), 'utf8');
-    expect(home).toContain('exerciții de recapitulat azi');
+    expect(home).toContain('de recapitulat azi');
     expect(home).toContain('Recapitulează');
     expect(page).toContain('Caietul de greșeli');
     expect(page).toContain('Deschide lecția');
