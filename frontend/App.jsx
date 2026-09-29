@@ -11,6 +11,7 @@ import BottomNav from './components/BottomNav.jsx';
 import Toast from './components/Toast.jsx';
 import SplashScreen from './components/SplashScreen.jsx';
 import WelcomeScreen from './components/WelcomeScreen.jsx';
+import Mascota from './components/mascot/Mascota.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
 import ResetPasswordScreen from './components/ResetPasswordScreen.jsx';
 import RegisterScreen from './components/RegisterScreen.jsx';
@@ -581,6 +582,7 @@ function AppShell({ userData, setUserData }) {
         return (
           <main className="screen-page animate-fadeIn">
             <header className="screen-header">
+              <Mascota mood="gandeste" size="md" />
               <div className="eyebrow">Pagină lipsă</div>
               <h1 className="display-font screen-title">Nu am găsit ecranul.</h1>
               <p>Sesiunea e în regulă. Întoarce-te acasă sau la lecții.</p>

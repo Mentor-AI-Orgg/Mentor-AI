@@ -4,6 +4,7 @@ import { avatarIcon, itemEmoji } from '../appearance.js';
 import { xpProgress } from '../xpProgress.js';
 import { dailySlogan } from '../slogans.js';
 import QuoteCard from '../components/QuoteCard.jsx';
+import Mascota from '../components/mascot/Mascota.jsx';
 import LevelBar from '../components/LevelBar.jsx';
 
 const HomeScreen = ({ userData, onNavigate }) => {
@@ -41,6 +42,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
           <h1 className="display-font home-title">{t('home.hello', { name: userData.name || t('home.studentFallback') })}</h1>
           <p className="home-role-tag">{userData.titleName ? `${userData.titleName} · ` : ''}{t('home.roleStudent')} · {t('home.gradeOnly', { grade })}</p>
           <p className="home-slogan">{dailySlogan()}</p>
+          <Mascota mood="salut" size="lg" message={t('home.hello', { name: userData.name || t('home.studentFallback') })} />
           <QuoteCard />
           {userData.nudge?.body && (
             <p className="nudge-banner home-nudge" role="status">

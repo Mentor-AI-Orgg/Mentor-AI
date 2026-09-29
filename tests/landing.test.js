@@ -34,13 +34,15 @@ describe('landing page', () => {
     expect(html.match(/Începe gratuit/g)).toHaveLength(2);
     expect(html).toContain('href="/confidentialitate"');
     expect(html).toContain('href="/termeni"');
-    expect(html).toContain('data-mascot-mood="salut"');
+    expect(html).toContain('data-mood="salut"');
     expect(html).toContain('alt="Sunt de 10"');
     expect(html).toContain('src="/emblema.png"');
   });
 
-  it('does not invent numbers or name the mascot', () => {
-    expect(html).not.toMatch(/Zecița|Mentor AI|utilizatori|recenzii|elevi activi/i);
+  it('does not invent numbers or write the mascot name by hand', () => {
+    const source = readFileSync(join(import.meta.dirname, '../frontend/components/WelcomeScreen.jsx'), 'utf8');
+    expect(source).not.toMatch(/Zecița/);
+    expect(html.replace(/aria-label="[^"]*"/g, '')).not.toMatch(/Zecița|Mentor AI|utilizatori|recenzii|elevi activi/i);
     expect(html).not.toMatch(/\d+\s*%/);
     expect(html).not.toContain('[DE COMPLETAT');
   });

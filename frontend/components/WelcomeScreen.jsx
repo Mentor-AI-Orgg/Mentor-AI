@@ -1,4 +1,5 @@
 import legal from '@shared/legal.json';
+import Mascota from './mascot/Mascota.jsx';
 
 /** Link de contact doar când operatorul a pus un email adevărat în shared/legal.json. */
 export function contactLink(email) {
@@ -74,8 +75,7 @@ const WelcomeScreen = ({ onConnect, onRegister, onParent }) => {
         <p className="welcome-lead">
           Lecții după programa școlară, exerciții și un tutore care te ajută pas cu pas. Gratuit.
         </p>
-        {/* Loc rezervat pentru furnicuță, starea salut. Etapa 2 o desenează aici. */}
-        <div className="welcome-mascot-slot" data-mascot-mood="salut" aria-hidden="true" />
+        <Mascota mood="salut" size="lg" />
         <button type="button" className="accent-button welcome-start" onClick={onRegister}>
           Începe gratuit
         </button>

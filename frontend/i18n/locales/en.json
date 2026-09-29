@@ -10,6 +10,9 @@
     "parent": "Parent",
     "teacher": "Teacher"
   },
+  "mascot": {
+    "aria": "{mascota}, the little ant who helps you"
+  },
   "splash": {
     "eyebrow": "For middle-school students",
     "subtitle": "Romanian and maths, grades 5–8. You work. The tutor helps when you get stuck.",
