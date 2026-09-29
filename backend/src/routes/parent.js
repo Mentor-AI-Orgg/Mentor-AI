@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { findAccount, listAccounts, normalizeEmail } = require("../data/authStore");
-const { publicId, setSettings, getSettings } = require("../data/friendStore");
+const { publicId, setSettings, getSettings, consumePrivatizeToken } = require("../data/friendStore");
 const { getUser } = require("../data/economyStore");
 const { deliverMessage } = require("../notify/deliver");
 const { publicBaseUrl } = require("../publicUrl");
@@ -50,6 +50,14 @@ function childCard(email) {
     profilePrivate: getSettings(account.email).profilePrivate !== false
   };
 }
+
+router.get("/make-private/:token", (req, res) => {
+  const email = consumePrivatizeToken(req.params.token);
+  const text = email
+    ? "Profilul copilului este din nou privat."
+    : "Linkul nu mai este valabil.";
+  res.type("html").send(`<!DOCTYPE html><html lang="ro"><meta charset="utf-8"><title>Sunt de 10</title><body><p>${text}</p></body></html>`);
+});
 
 router.post("/unsubscribe", (req, res) => {
   const { consumeUnsubscribeToken } = require("../data/consentStore");

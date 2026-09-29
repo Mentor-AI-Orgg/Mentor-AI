@@ -381,6 +381,19 @@ const MentorAPI = {
     }
   },
 
+  async sendFriendByCode(code) {
+    try {
+      const data = await safeFetchJson('/api/friends/request-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async sendFriendRequest(userId) {
     try {
       const data = await safeFetchJson('/api/friends/request', {

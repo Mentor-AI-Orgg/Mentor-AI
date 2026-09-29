@@ -178,8 +178,11 @@ describe('regresie PR #70', () => {
     expect(bySchool.body.results).toEqual([]);
 
     const found = await ana.agent.get('/api/friends/search').query({ q: ion.username });
-    expect(found.body.results).toHaveLength(1);
-    const card = found.body.results[0];
+    expect(found.body.results).toEqual([]);
+    await ion.agent.patch('/api/friends/settings').send({ profilePrivate: false, acceptFriendRequests: true });
+    const opened = await ana.agent.get('/api/friends/search').query({ q: ion.username });
+    expect(opened.body.results).toHaveLength(1);
+    const card = opened.body.results[0];
     expect(card.school ?? '').toBe('');
     expect(card.class ?? '').toBe('');
     expect(card.grade).toBeUndefined();

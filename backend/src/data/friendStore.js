@@ -15,20 +15,30 @@ const FRIENDS = new Map();
 const REQUESTS = [];
 const SENDS = new Map();
 const BLOCKS = new Set();
+const PRIVATIZE = new Map();
 
 const DAILY_REQUEST_LIMIT = 10;
+const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const PRIVATIZE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 const publicId = email =>
   crypto.createHash("sha256").update(normalizeEmail(email)).digest("hex").slice(0, 12);
 
 const todayKey = () => new Date().toISOString().slice(0, 10);
 
+function makeFriendCode() {
+  const bytes = crypto.randomBytes(6);
+  return [...bytes].map(byte => CODE_ALPHABET[byte % CODE_ALPHABET.length]).join("");
+}
+
 function getSettings(email) {
   const key = normalizeEmail(email);
   if (!SETTINGS.has(key)) {
-    SETTINGS.set(key, { profilePrivate: true, acceptFriendRequests: true });
+    SETTINGS.set(key, { profilePrivate: true, acceptFriendRequests: true, friendCode: makeFriendCode() });
   }
-  return SETTINGS.get(key);
+  const current = SETTINGS.get(key);
+  if (!current.friendCode) current.friendCode = makeFriendCode();
+  return current;
 }
 
 function setSettings(email, patch = {}) {
@@ -165,13 +175,38 @@ function searchStudents(query, viewerEmail) {
   const viewer = normalizeEmail(viewerEmail);
   return listAccounts()
     .filter(account => account.role === "student" && account.email !== viewer && !isBlocked(viewer, account.email))
+    .filter(account => getSettings(account.email).profilePrivate !== true)
     .filter(account => !account.mustRename && !usernameIssue(account.profile?.username || ""))
     .filter(account => String(account.profile?.username || "").toLowerCase() === q)
     .slice(0, 8)
     .map(account => publicCard(account, viewer));
 }
 
-function sendRequest(fromEmail, toPublicId) {
+function findByFriendCode(code) {
+  const needle = String(code || "").trim().toUpperCase();
+  if (!needle) return null;
+  return listAccounts().find(account => account.role === "student" && getSettings(account.email).friendCode === needle) || null;
+}
+
+function issuePrivatizeToken(email) {
+  const token = crypto.randomBytes(24).toString("hex");
+  PRIVATIZE.set(token, { email: normalizeEmail(email), expiresAt: Date.now() + PRIVATIZE_TTL_MS });
+  return token;
+}
+
+function consumePrivatizeToken(token) {
+  const key = String(token || "");
+  const row = PRIVATIZE.get(key);
+  if (!row || row.expiresAt < Date.now()) {
+    if (row) PRIVATIZE.delete(key);
+    return null;
+  }
+  PRIVATIZE.delete(key);
+  setSettings(row.email, { profilePrivate: true });
+  return row.email;
+}
+
+function sendRequest(fromEmail, toPublicId, options = {}) {
   const from = findAccount(fromEmail);
   const to = findByPublicId(toPublicId);
   if (!from || from.role !== "student") return { ok: false, error: "Doar elevii pot trimite cereri.", status: 403 };
@@ -181,6 +216,9 @@ function sendRequest(fromEmail, toPublicId) {
   if (areFriends(from.email, to.email)) return { ok: false, error: "Sunteți deja prieteni.", status: 400 };
 
   const settings = getSettings(to.email);
+  if (settings.profilePrivate && !options.viaCode) {
+    return { ok: false, error: "Pentru un profil privat folosește codul de prieten.", status: 403 };
+  }
   if (settings.acceptFriendRequests === false) {
     return { ok: false, error: "Elevul nu acceptă cereri de prietenie.", status: 403 };
   }
@@ -242,6 +280,7 @@ function inboxFor(email) {
     .sort((a, b) => (Number(b.xp) || 0) - (Number(a.xp) || 0) || String(a.name || '').localeCompare(String(b.name || ''), 'ro'));
   const quota = sendsToday(key);
   return {
+    id: publicId(key),
     settings: { ...getSettings(key) },
     friends,
     incoming,
@@ -289,6 +328,9 @@ function eraseFriendsFor(email) {
     if (REQUESTS[i].from === key || REQUESTS[i].to === key) REQUESTS.splice(i, 1);
   }
   SENDS.delete(key);
+  for (const [token, row] of [...PRIVATIZE.entries()]) {
+    if (row.email === key) PRIVATIZE.delete(token);
+  }
   for (const pair of [...BLOCKS]) {
     if (pair.split("|").includes(key)) BLOCKS.delete(pair);
   }
@@ -305,7 +347,8 @@ persistence.register("friends", {
     friends: persistence.mapToObject(FRIENDS),
     requests: REQUESTS.slice(),
     sends: persistence.mapToObject(SENDS),
-    blocks: [...BLOCKS]
+    blocks: [...BLOCKS],
+    privatize: persistence.mapToObject(PRIVATIZE)
   }),
   restore: data => {
     persistence.restoreMap(SETTINGS, data?.settings);
@@ -314,6 +357,12 @@ persistence.register("friends", {
     persistence.restoreMap(SENDS, data?.sends);
     BLOCKS.clear();
     (Array.isArray(data?.blocks) ? data.blocks : []).forEach(pair => BLOCKS.add(String(pair)));
+    PRIVATIZE.clear();
+    const saved = data?.privatize && typeof data.privatize === "object" ? data.privatize : {};
+    const now = Date.now();
+    Object.entries(saved).forEach(([token, row]) => {
+      if (row && row.email && Number(row.expiresAt) > now) PRIVATIZE.set(token, row);
+    });
   }
 });
 
@@ -325,6 +374,9 @@ module.exports = {
   publicCard,
   searchStudents,
   sendRequest,
+  findByFriendCode,
+  issuePrivatizeToken,
+  consumePrivatizeToken,
   respondRequest,
   inboxFor,
   findByPublicId,
