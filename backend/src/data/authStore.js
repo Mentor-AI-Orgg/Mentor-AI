@@ -115,7 +115,7 @@ async function createStudentAccount({ username, password, className, parentEmail
       uiLanguage: "",
       language: "",
       hasCompletedOnboarding: false,
-      parentEmails: "daily"
+      parentEmails: "weekly"
     },
     consent: { status: "pending", requestedAt: now },
     parentalConsentAt: null,

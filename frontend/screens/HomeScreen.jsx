@@ -53,6 +53,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
           <div className="eyebrow">{dateLabel}</div>
           <h1 className="display-font home-title">{t('home.hello', { name: userData.name || t('home.studentFallback') })}</h1>
           <p className="home-role-tag">{userData.titleName ? `${userData.titleName} · ` : ''}{t('home.roleStudent')} · {t('home.gradeOnly', { grade })}</p>
+          {userData.timeBlocked && <Mascota mood="somnoros" size="md" message="Ai lucrat mult azi, ne vedem mâine!" />}
           <p className="home-slogan">{dailySlogan()}</p>
           <Mascota mood="salut" size="lg" message={t('home.hello', { name: userData.name || t('home.studentFallback') })} />
           <QuoteCard />

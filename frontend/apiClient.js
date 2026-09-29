@@ -263,6 +263,41 @@ const MentorAPI = {
     }
   },
 
+  async parentPanel(id) {
+    try {
+      const data = await safeFetchJson(`/api/parent/children/${encodeURIComponent(id)}/panel`);
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async parentLimit(id, minutes) {
+    try {
+      const data = await safeFetchJson(`/api/parent/children/${encodeURIComponent(id)}/limit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ minutes })
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async parentFriends(id, payload) {
+    try {
+      const data = await safeFetchJson(`/api/parent/children/${encodeURIComponent(id)}/friends`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async parentEmails(id, payload) {
     try {
       const data = await safeFetchJson(`/api/parent/children/${encodeURIComponent(id)}/emails`, {
