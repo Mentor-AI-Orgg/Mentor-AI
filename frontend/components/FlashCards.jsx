@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { emitMascot } from '../mascot/mascotEvents.js';
 import { MentorAPI } from '../apiClient.js';
 import { formatScore, verdictClass, verdictLabel } from '../verdictCopy.js';
 import QuoteCard from './QuoteCard.jsx';
@@ -52,11 +53,28 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
     setLoading(false);
   };
 
+  const wrongStreak = useRef(0);
+  const rightStreak = useRef(0);
+
   const choose = optionIndex => {
     if (picked != null || !cards[index]) return;
     const card = cards[index];
     setPicked(optionIndex);
     setChoices(prev => ({ ...prev, [card.id]: optionIndex }));
+    const correct = optionIndex === card.correct;
+    if (correct && wrongStreak.current > 0) {
+      emitMascot('corect_dupa_greseala');
+      wrongStreak.current = 0;
+      rightStreak.current = 1;
+    } else if (correct) {
+      wrongStreak.current = 0;
+      rightStreak.current += 1;
+      emitMascot(rightStreak.current >= 3 ? 'serie_corecte' : 'raspuns_corect', { n: rightStreak.current });
+    } else {
+      rightStreak.current = 0;
+      wrongStreak.current += 1;
+      emitMascot('raspuns_gresit', { attempt: wrongStreak.current, hint: card.explain || '' });
+    }
     MentorAPI.markPracticeSeen({
       chapter_id: source?.id,
       subject,
@@ -101,6 +119,7 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
     });
     if (result.success) {
       setReport(result.data);
+      emitMascot('lectie_terminata', { capitol: source.title || '' });
       const hits = picks.filter((pick, pickIndex) => pick.chosen && pick.chosen === cards[pickIndex].options[cards[pickIndex].correct]).length;
       if (hits >= 5) {
         MentorAPI.recordProgress({
