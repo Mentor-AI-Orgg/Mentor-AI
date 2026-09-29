@@ -1,0 +1,29 @@
+{
+  "words": [
+    "prost", "tampit", "idiot", "cretin", "retard", "handicapat",
+    "curva", "tarfa", "pizda", "muie", "muist", "futut", "cacat",
+    "dracu", "nenorocit", "jegos", "bulangiu", "labagiu", "morti",
+    "porno", "porn", "sexual", "hitler", "nazist", "fascist",
+    "pula", "coaie", "pedofil", "incest", "anal", "sex", "anus",
+    "fuck", "shit", "bitch", "cunt", "dick", "cock", "asshole",
+    "whore", "slut", "bastard", "piss", "nigger", "nigga", "kike",
+    "chink", "faggot", "wetback", "kurwa", "kurva",
+    "cocaina", "heroina", "marijuana", "metanfetamina", "lsd",
+    "ucide"
+  ],
+  "exceptions": [
+    "analiza", "analize", "analizat", "analysis", "analog", "analogie",
+    "canal", "canale", "banal", "banala",
+    "manipula", "manipulare", "scapula",
+    "scunthorpe",
+    "essex", "sexta", "sextant", "middlesex", "unisex",
+    "dracula",
+    "cacatua",
+    "peacock", "cocktail",
+    "dickens",
+    "janus", "uranus",
+    "pornire", "pornit", "pornesc",
+    "retardare",
+    "amortit", "amortiti"
+  ]
+}

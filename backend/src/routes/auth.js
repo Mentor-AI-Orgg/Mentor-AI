@@ -31,9 +31,10 @@ const {
 } = require("../data/consentStore");
 const legal = require("../../../shared/legal.json");
 const { SESSION_COOKIE, authRequired, STUDENTS_ONLY } = require("../middleware/auth");
-const { authLimiter } = require("../middleware/rateLimits");
+const { authLimiter, usernameCheckLimiter } = require("../middleware/rateLimits");
 const { validateBody } = require("../middleware/validate");
-const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, consentActionSchema, parentEmailSchema, tokenSchema } = require("../validation/schemas");
+const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, consentActionSchema, parentEmailSchema, tokenSchema, usernameCheckSchema } = require("../validation/schemas");
+const { usernameIssue } = require("../safety/usernamePolicy");
 const { publicBaseUrl } = require("../publicUrl");
 const { ensureUser, pushNotification } = require("../data/economyStore");
 const { deliverMessage, smtpConfigured } = require("../notify/deliver");
@@ -127,6 +128,20 @@ async function maybeAskReconsent(req, account) {
   return confirmation;
 }
 
+router.post("/username-check", usernameCheckLimiter, validateBody(usernameCheckSchema), (req, res) => {
+  const issue = usernameIssue(req.body.username);
+  if (issue) return res.json({ ok: false, code: issue.code, error: issue.error });
+  const existing = findByUsername(req.body.username);
+  if (existing && (!req.auth || existing.email !== req.auth.email)) {
+    return res.json({
+      ok: false,
+      code: "username_taken",
+      error: "Acest nume de utilizator este deja folosit."
+    });
+  }
+  res.json({ ok: true });
+});
+
 router.post("/register", authLimiter, ignoreChildIdentity, validateBody(registerSchema), async (req, res) => {
   const { username, password, confirmPassword, class: className, parentEmail, role = "student" } = req.body || {};
 
@@ -145,7 +160,11 @@ router.post("/register", authLimiter, ignoreChildIdentity, validateBody(register
     });
   }
   if (findByUsername(username)) {
-    return res.status(409).json({ error: "Acest nume de utilizator este deja folosit.", field: "username" });
+    return res.status(409).json({
+      error: "Acest nume de utilizator este deja folosit.",
+      field: "username",
+      code: "username_taken"
+    });
   }
   if (!allowSignupIp(req.ip)) {
     return res.status(429).json({
@@ -168,7 +187,11 @@ router.post("/register", authLimiter, ignoreChildIdentity, validateBody(register
   });
   if (!created.ok) {
     if (created.reason === "username_taken") {
-      return res.status(409).json({ error: "Acest nume de utilizator este deja folosit.", field: "username" });
+      return res.status(409).json({
+        error: "Acest nume de utilizator este deja folosit.",
+        field: "username",
+        code: "username_taken"
+      });
     }
     return res.status(400).json({ error: "Nu am putut crea contul." });
   }
@@ -229,6 +252,10 @@ router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) =
 
   if (Date.parse(result.account.suspendedUntil || "") > Date.now()) {
     return res.status(403).json({ error: "Contul este suspendat temporar.", code: "suspended" });
+  }
+
+  if (usernameIssue(result.account.profile?.username || "")) {
+    result.account.mustRename = true;
   }
 
   if (!isConsentGranted(result.account)) {

@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import QuoteCard from './QuoteCard.jsx';
 import { passwordHint } from '../passwordHint.js';
+import { MentorAPI } from '../apiClient.js';
 const isValidEmail = value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || '');
-const isUsernameShape = value => /^[A-Za-zĂÂÎȘȚăâîșț0-9][A-Za-zĂÂÎȘȚăâîșț0-9_.-]{1,18}[A-Za-zĂÂÎȘȚăâîșț0-9]$/.test(String(value || '').trim());
+const USERNAME_HINT = 'Alege alt nume. Nu folosi numele tău real, cuvinte urâte sau date de contact.';
 
 const FieldStatus = ({ touched, valid }) => {
   if (!touched) return null;
@@ -18,26 +19,48 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
   const [touched, setTouched] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
+  const [usernameOk, setUsernameOk] = useState(false);
+  const [usernameMsg, setUsernameMsg] = useState('');
 
-  const setField = (key, value) => setForm(prev => ({ ...prev, [key]: value }));
+  const setField = (key, value) => {
+    setForm(prev => ({ ...prev, [key]: value }));
+    if (key === 'username') {
+      setUsernameOk(false);
+      setUsernameMsg('');
+    }
+  };
   const markTouched = key => setTouched(prev => ({ ...prev, [key]: true }));
 
+  const reviewUsername = async value => {
+    const name = String(value || '').trim();
+    if (name.length < 3) {
+      setUsernameOk(false);
+      setUsernameMsg(USERNAME_HINT);
+      return false;
+    }
+    const result = await MentorAPI.checkUsername(name);
+    const ok = Boolean(result.ok);
+    setUsernameOk(ok);
+    setUsernameMsg(ok ? '' : (result.error || USERNAME_HINT));
+    return ok;
+  };
+
   const validators = useMemo(() => ({
-    username: v => isUsernameShape(v),
+    username: () => usernameOk,
     password: v => passwordHint(v, form.username).ok,
     confirmPassword: v => v && v === form.password,
     class: v => ['5', '6', '7', '8'].includes(String(v)),
     parentEmail: v => isValidEmail(v)
-  }), [form.password, form.username]);
+  }), [form.password, form.username, usernameOk]);
 
   const fieldValid = key => (validators[key] ? validators[key](form[key]) : true);
   const requiredFields = ['username', 'password', 'confirmPassword', 'class', 'parentEmail'];
-  const allValid = requiredFields.every(fieldValid);
 
   const handleSubmit = async () => {
     setTouched(Object.fromEntries(requiredFields.map(key => [key, true])));
     setServerError('');
-    if (!allValid) {
+    const nameOk = await reviewUsername(form.username);
+    if (!nameOk || !requiredFields.filter(field => field !== 'username').every(fieldValid)) {
       const message = 'Verifică toate câmpurile marcate cu X înainte să continui.';
       if (onValidationError) onValidationError(message); else alert(message);
       return;
@@ -72,13 +95,13 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
               type="text"
               value={form.username}
               onChange={e => setField('username', e.target.value)}
-              onBlur={() => markTouched('username')}
+              onBlur={() => { markTouched('username'); reviewUsername(form.username); }}
               placeholder="Ex: andrei_p"
               autoComplete="off"
               className={`field form-input ${touched.username ? (fieldValid('username') ? 'field-valid' : 'field-invalid') : ''}`}
             />
           </label>
-          <small className="field-hint">Nu folosi numele tău real.</small>
+          <small className="field-hint">{usernameMsg || 'Nu folosi numele tău real.'}</small>
         </div>
 
         <div>

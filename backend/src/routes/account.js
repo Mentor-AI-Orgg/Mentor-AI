@@ -20,7 +20,7 @@ const {
 const { SESSION_COOKIE } = require("../middleware/auth");
 const economyStore = require("../data/economyStore");
 const registry = require("../data/userDataRegistry");
-const { usernameError } = require("../safety/usernamePolicy");
+const { usernameIssue } = require("../safety/usernamePolicy");
 const { passwordError } = require("../safety/passwordPolicy");
 
 const SECRET_KEY = /password|salt|token|secret|hash/i;
@@ -85,10 +85,14 @@ router.post("/rename", (req, res) => {
     return res.status(403).json({ error: "Nu ți s-a cerut un nume nou." });
   }
   const username = String(req.body?.username || "").trim();
-  const error = usernameError(username);
-  if (error) return res.status(400).json({ error });
+  const issue = usernameIssue(username);
+  if (issue) return res.status(400).json({ error: issue.error, field: "username", code: issue.code });
   if (usernameTaken(username, req.auth.email)) {
-    return res.status(409).json({ error: "Alege un alt nume de utilizator." });
+    return res.status(409).json({
+      error: "Acest nume de utilizator este deja folosit.",
+      field: "username",
+      code: "username_taken"
+    });
   }
   req.auth.account.profile.username = username;
   req.auth.account.mustRename = false;
@@ -141,12 +145,15 @@ router.patch("/profile", validateBody(profileSchema), async (req, res) => {
     }
   }
   if (patch.username) {
-    const { usernameError } = require("../safety/usernamePolicy");
-    const nameError = usernameError(patch.username);
-    if (nameError) return res.status(400).json({ error: nameError, field: "username" });
+    const nameIssue = usernameIssue(patch.username);
+    if (nameIssue) return res.status(400).json({ error: nameIssue.error, field: "username", code: nameIssue.code });
   }
   if (patch.username && usernameTaken(patch.username, req.auth.email)) {
-    return res.status(409).json({ error: "Username-ul este deja folosit.", field: "username" });
+    return res.status(409).json({
+      error: "Acest nume de utilizator este deja folosit.",
+      field: "username",
+      code: "username_taken"
+    });
   }
   if (patch.parentEmail && normalizeEmail(patch.parentEmail) === normalizeEmail(req.auth.email)) {
     return res.status(400).json({ error: "Emailul părintelui trebuie să fie diferit de al tău.", field: "parentEmail" });

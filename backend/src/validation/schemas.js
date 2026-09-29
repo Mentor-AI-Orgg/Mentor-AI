@@ -1,9 +1,14 @@
 const { z } = require("zod");
-const { usernameError } = require("../safety/usernamePolicy");
+const { usernameIssue } = require("../safety/usernamePolicy");
 
 const usernameField = z.string().trim().superRefine((value, ctx) => {
-  const error = usernameError(value);
-  if (error) ctx.addIssue({ code: z.ZodIssueCode.custom, message: error });
+  const issue = usernameIssue(value);
+  if (!issue) return;
+  ctx.addIssue({
+    code: z.ZodIssueCode.custom,
+    message: issue.error,
+    params: { code: issue.code }
+  });
 });
 
 const email = z
@@ -203,6 +208,10 @@ const friendSettingsSchema = z.object({
   acceptFriendRequests: z.boolean()
 });
 
+const usernameCheckSchema = z.object({
+  username: z.string().trim().min(1).max(40)
+}).strict();
+
 const friendRequestSchema = z.object({
   user_id: z.string().trim().min(4).max(40)
 });
@@ -220,6 +229,7 @@ const enPhotoSchema = z.object({
 
 module.exports = {
   registerSchema,
+  usernameCheckSchema,
   consentActionSchema,
   tokenSchema,
   parentEmailSchema,

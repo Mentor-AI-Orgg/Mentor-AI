@@ -38,7 +38,7 @@ describe('phase 6 product polish', () => {
 
   it('builds the leaderboard from activity using pseudonyms, ignoring spoofed query params', async () => {
     const agent = request.agent(app);
-    const { email } = await registerStudent(agent, { name: 'Ana Popescu', username: 'vulpe-albastra' });
+    const { email } = await registerStudent(agent, { name: 'Ana Popescu', username: 'vulpe_albastra' });
     const bonus = await agent.post('/api/economy/claim').send({ type: 'login_bonus' });
     expect(bonus.status).toBe(200);
 
@@ -52,14 +52,14 @@ describe('phase 6 product polish', () => {
     expect(spoofed.body.mocked).toBe(false);
 
     const names = (spoofed.body.leaderboard || []).map(entry => entry.name);
-    expect(names).toContain('vulpe-albastra');
+    expect(names).toContain('vulpe_albastra');
     expect(names.join(' ')).not.toMatch(/Ana Popescu/i);
     expect(names.join(' ')).not.toMatch(/Hacker Real/i);
     expect(JSON.stringify(spoofed.body)).not.toContain(email);
 
     const current = spoofed.body.leaderboard.find(entry => entry.isCurrentUser);
     expect(current).toBeTruthy();
-    expect(current.name).toBe('vulpe-albastra');
+    expect(current.name).toBe('vulpe_albastra');
     expect(current.xp).toBeGreaterThan(0);
     expect(current.xp).toBeLessThan(999999);
   });
@@ -93,7 +93,7 @@ describe('phase 6 product polish', () => {
     await registerStudent(agent);
     const patch = await agent.patch('/api/account/profile').send({
       name: 'Mara',
-      username: 'mara-focus',
+      username: 'mara_focus',
       class: '7',
       subject: 'matematica',
       profile: 'matematica',
@@ -103,12 +103,12 @@ describe('phase 6 product polish', () => {
     });
     expect(patch.status).toBe(200);
     expect(patch.body.user.hasCompletedOnboarding).toBe(true);
-    expect(patch.body.user.username).toBe('mara-focus');
+    expect(patch.body.user.username).toBe('mara_focus');
     expect(patch.body.user.class).toBe('7');
 
     const me = await agent.get('/api/auth/me');
     expect(me.body.user.hasCompletedOnboarding).toBe(true);
-    expect(me.body.user.username).toBe('mara-focus');
+    expect(me.body.user.username).toBe('mara_focus');
     expect(me.body.user.exam).toBe('evaluare');
   });
 });

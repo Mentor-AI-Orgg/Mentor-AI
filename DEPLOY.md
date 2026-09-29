@@ -213,6 +213,15 @@ Dacă fișierul se corupe, aplicația nu refuză să pornească: îl mută într
 `mentor-ai.json.corupt-<timestamp>` și pornește pe curat, ca site-ul să rămână
 funcțional.
 
+Numele de utilizator care nu mai trec de verificarea de pe server sunt
+marcate la pornire. Copilul, la următoarea intrare, își alege alt nume și
+până atunci nu apare la prieteni sau în clasament. Ca să vezi lista (doar în
+consolă, fără emailuri), din aplicația Node:
+
+```bash
+node backend/src/ops/auditUsernames.js
+```
+
 Un fișier JSON este suficient pentru volumul de acum și nu are nicio
 dependință, ceea ce conteaza pe shared hosting, unde `npm install` rulează pe
 server. Când numărul de utilizatori crește, locul de înlocuit este doar
