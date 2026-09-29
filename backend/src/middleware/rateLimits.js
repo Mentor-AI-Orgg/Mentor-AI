@@ -63,6 +63,13 @@ const accessCodeVerifyLimiter = rateLimit({
   handler: romanianHandler("Prea multe încercări de verificare a codului. Așteaptă înainte să reîncerci.")
 });
 
+const usernameCheckLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  ...common,
+  handler: romanianHandler("Prea multe verificări de nume. Încearcă din nou peste câteva minute.")
+});
+
 const clientErrorLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 30,
@@ -75,5 +82,6 @@ module.exports = {
   authLimiter,
   chatLimiter,
   clientErrorLimiter,
+  usernameCheckLimiter,
   accessCodeVerifyLimiter
 };

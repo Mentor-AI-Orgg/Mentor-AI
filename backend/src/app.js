@@ -21,7 +21,7 @@ const { attachUser, authRequired, studentRequired, consentRequired } = require("
 const parentRoute = require("./routes/parent");
 const { startRetention } = require("./data/retentionJob");
 const { startDigestSchedule } = require("./notify/parentActivity");
-const { migrateLegacyProfiles } = require("./data/authStore");
+const { migrateLegacyProfiles, flagRejectedUsernames } = require("./data/authStore");
 const { corsAllowlist, isAllowedOrigin } = require("./middleware/corsAllowlist");
 const { generalApiLimiter, chatLimiter } = require("./middleware/rateLimits");
 const { securityHeaders } = require("./middleware/security");
@@ -44,6 +44,7 @@ function createApp(options = {}) {
     if (!fs.existsSync(backup)) fs.copyFileSync(persistence.DATA_FILE, backup);
   }
   migrateLegacyProfiles();
+  flagRejectedUsernames();
   startRetention();
   startDigestSchedule();
 

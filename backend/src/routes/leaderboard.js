@@ -4,6 +4,7 @@ const { listLeaderboardEntries, lessonsThisWeek } = require("../data/leaderboard
 const { isPrivatePublicId, publicId, findByPublicId, isBlocked } = require("../data/friendStore");
 const { listAccounts, isConsentGranted } = require("../data/authStore");
 const { authRequired, consentRequired } = require("../middleware/auth");
+const { usernameIssue } = require("../safety/usernamePolicy");
 
 // GET /api/leaderboard?limit=10
 // Clasament all-time după XP. Profilurile private nu apar, în afară de tine.
@@ -17,6 +18,9 @@ router.get("/summary", (req, res) => {
 });
 
 router.get("/", authRequired, consentRequired, (req, res) => {
+  if (req.auth?.account?.mustRename) {
+    return res.status(409).json({ error: "Alege un alt nume de utilizator.", code: "username_required" });
+  }
   const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 10));
   const currentEmail = req.auth?.email || "";
   const raw = listLeaderboardEntries({ limit: 50, currentEmail });
@@ -24,7 +28,8 @@ router.get("/", authRequired, consentRequired, (req, res) => {
     .filter(entry => grantedEntry(entry) && (entry.isCurrentUser || !isPrivatePublicId(entry.id)))
     .filter(entry => {
       const account = findByPublicId(entry.id);
-      if (account?.hiddenFromLeaderboard) return false;
+      if (account?.hiddenFromLeaderboard || account?.mustRename) return false;
+      if (account && usernameIssue(account.profile?.username || "")) return false;
       if (currentEmail && account && isBlocked(currentEmail, account.email)) return false;
       return true;
     })

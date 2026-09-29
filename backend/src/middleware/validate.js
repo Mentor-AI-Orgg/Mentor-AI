@@ -10,7 +10,7 @@ function validateBody(schema) {
       return res.status(400).json({
         error: first?.message || "Date invalide.",
         field: field !== undefined ? String(field) : undefined,
-        code: "invalid_body"
+        code: first?.params?.code || "invalid_body"
       });
     }
     req.body = parsed.data;

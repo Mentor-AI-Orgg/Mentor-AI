@@ -290,7 +290,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         <label className="field-label">Nume de utilizator
           <input className="field form-input" value={form.username} onChange={e => setForm(prev => ({ ...prev, username: e.target.value }))} />
         </label>
-        <small className="field-hint">Nu folosi numele tău real.</small>
+        <small className="field-hint">Alege alt nume. Nu folosi numele tău real, cuvinte urâte sau date de contact.</small>
         <label className="field-label">Clasă
           <select className="field form-input" value={form.class} onChange={e => setForm(prev => ({ ...prev, class: e.target.value }))}>
             {CLASSES.map(item => <option key={item} value={item}>Clasa a {item}-a</option>)}

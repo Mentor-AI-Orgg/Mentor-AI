@@ -19,7 +19,7 @@ export default function RenameScreen({ onDone, onToast }) {
       <header className="screen-header">
         <div className="eyebrow">Nume de utilizator</div>
         <h1 className="display-font screen-title">Alege un alt nume.</h1>
-        <p>Un adult a cerut să schimbi numele înainte să continui.</p>
+        <p>Alege alt nume. Nu folosi numele tău real, cuvinte urâte sau date de contact.</p>
       </header>
       <form className="mx-5 grid gap-3" onSubmit={submit}>
         <input className="field form-input" value={username} onChange={event => setUsername(event.target.value)} placeholder="Nume nou" />

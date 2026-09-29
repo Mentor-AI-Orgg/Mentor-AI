@@ -7,6 +7,7 @@ const { findAccount, listAccounts, normalizeEmail } = require("./authStore");
 const { ensureUser, getUser } = require("./economyStore");
 const { levelFromXp } = require("./progressEngine");
 const { titleById } = require("./titles");
+const { usernameIssue } = require("../safety/usernamePolicy");
 const { shopItemById } = require("./shopCatalog");
 
 const SETTINGS = new Map();
@@ -104,12 +105,13 @@ function publicCard(account, viewerEmail = "") {
   if (viewer && !self && isBlocked(viewer, account.email)) return null;
   const friend = Boolean(viewer && areFriends(viewer, account.email));
   if (settings.profilePrivate && !self && !friend) {
-    const handle = account.profile.username || "Elev";
+    const hideName = !self && (Boolean(account.mustRename) || Boolean(usernameIssue(account.profile?.username || "")));
+    const handle = hideName ? "Elev" : (account.profile.username || "Elev");
     return {
       id: publicId(account.email),
       private: true,
       name: handle,
-      username: account.profile.username || "",
+      username: hideName ? "" : (account.profile.username || ""),
       class: "",
       school: "",
       level: 1,
@@ -130,14 +132,17 @@ function publicCard(account, viewerEmail = "") {
   const xp = Number(user.xp || 0);
   const pendingOut = REQUESTS.find(item => item.status === "pending" && item.from === viewer && item.to === account.email);
   const pendingIn = REQUESTS.find(item => item.status === "pending" && item.from === account.email && item.to === viewer);
-  const visibleName = self
-    ? (account.profile.name || account.profile.username || "Elev")
-    : (account.profile.username || "Elev");
+  const hideName = !self && (Boolean(account.mustRename) || Boolean(usernameIssue(account.profile?.username || "")));
+  const visibleName = hideName
+    ? "Elev"
+    : (self
+      ? (account.profile.name || account.profile.username || "Elev")
+      : (account.profile.username || "Elev"));
   return {
     id: publicId(account.email),
     private: false,
     name: visibleName,
-    username: account.profile.username || "",
+    username: hideName ? "" : (account.profile.username || ""),
     class: self ? (account.profile.class || "") : "",
     school: self ? (account.profile.school || "") : "",
     level: levelFromXp(xp).level,
@@ -160,6 +165,7 @@ function searchStudents(query, viewerEmail) {
   const viewer = normalizeEmail(viewerEmail);
   return listAccounts()
     .filter(account => account.role === "student" && account.email !== viewer && !isBlocked(viewer, account.email))
+    .filter(account => !account.mustRename && !usernameIssue(account.profile?.username || ""))
     .filter(account => String(account.profile?.username || "").toLowerCase() === q)
     .slice(0, 8)
     .map(account => publicCard(account, viewer));

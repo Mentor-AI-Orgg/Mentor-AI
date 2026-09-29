@@ -8,6 +8,7 @@
 
 const { getSession, findAccount, isConsentGranted, isSuspended } = require("../data/authStore");
 const { getParentSession } = require("../data/consentStore");
+const { usernameIssue } = require("../safety/usernamePolicy");
 
 const SESSION_COOKIE = "s10_session";
 const PARENT_COOKIE = "s10_parent";
@@ -38,6 +39,10 @@ function attachUser(req, res, next) {
 
   const account = findAccount(session.email);
   if (!account) return next(); // contul a dispărut (ex. restart de proces)
+
+  if (account.role === "student" && usernameIssue(account.profile?.username || "")) {
+    account.mustRename = true;
+  }
 
   req.auth = { email: account.email, role: account.role, account };
   req.sessionToken = token;

@@ -390,6 +390,20 @@ const PROFILE_STRING_FIELDS = [
   "language"
 ];
 
+function flagRejectedUsernames() {
+  const { usernameIssue } = require("../safety/usernamePolicy");
+  let flagged = 0;
+  for (const account of ACCOUNTS.values()) {
+    if (!account || account.role !== "student") continue;
+    if (!usernameIssue(account.profile?.username || "")) continue;
+    if (!account.mustRename) {
+      account.mustRename = true;
+      flagged += 1;
+    }
+  }
+  return flagged;
+}
+
 function markMustRename(email) {
   const account = findAccount(email);
   if (!account) return false;
@@ -478,6 +492,7 @@ module.exports = {
   markPending,
   stripLegacyProfile,
   migrateLegacyProfiles,
+  flagRejectedUsernames,
   isConsentGranted,
   isInternalEmail,
   findAccount,

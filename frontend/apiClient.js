@@ -103,6 +103,19 @@ const safeFetchJson = async (url, options, timeout) => {
 };
 
 const MentorAPI = {
+  async checkUsername(username) {
+    try {
+      const data = await safeFetchJson('/api/auth/username-check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username })
+      });
+      return { ok: Boolean(data.ok), error: data.error || '', code: data.code || '' };
+    } catch (error) {
+      return { ok: false, error: humanizeFetchError(error), code: error.payload?.code || '' };
+    }
+  },
+
   async register(payload) {
     try {
       const data = await safeFetchJson('/api/auth/register', {
