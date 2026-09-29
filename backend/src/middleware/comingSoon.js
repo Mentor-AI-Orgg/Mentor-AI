@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const { comingSoonPage, robotsTxt } = require("../comingSoonPage");
 
-const PREVIEW_COOKIE = "mentor_preview";
+const PREVIEW_COOKIE = "s10_preview";
 const processPreviewSecret = crypto.randomBytes(32).toString("hex");
 
 const SKIP_PATHS = new Set([

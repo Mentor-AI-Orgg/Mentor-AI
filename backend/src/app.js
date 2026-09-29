@@ -22,7 +22,7 @@ const parentRoute = require("./routes/parent");
 const { startRetention } = require("./data/retentionJob");
 const { startDigestSchedule } = require("./notify/parentActivity");
 const { migrateLegacyProfiles } = require("./data/authStore");
-const { corsAllowlist } = require("./middleware/corsAllowlist");
+const { corsAllowlist, isAllowedOrigin } = require("./middleware/corsAllowlist");
 const { generalApiLimiter, chatLimiter } = require("./middleware/rateLimits");
 const { securityHeaders } = require("./middleware/security");
 const { requestLog } = require("./logger");
@@ -53,7 +53,11 @@ function createApp(options = {}) {
   app.use(requestLog);
 
   // Formularul de intrare creator trimite parola prin POST, nu prin adresă.
-  app.use(express.urlencoded({ extended: false, limit: "2kb" }));
+  const parseCreatorForm = express.urlencoded({ extended: false, limit: "2kb" });
+  app.use((req, res, next) => {
+    if (req.method === "POST" && req.path === "/creator") return parseCreatorForm(req, res, next);
+    next();
+  });
   app.use(comingSoon());
 
   app.use(basicAuth({
@@ -69,11 +73,32 @@ function createApp(options = {}) {
 
   app.use(corsAllowlist);
 
-  app.use(express.json({ limit: "64kb" }));
+  app.use(express.json({ limit: "200kb" }));
+  app.use((req, res, next) => {
+    if (!["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) return next();
+    const origin = req.get("origin");
+    const referer = req.get("referer");
+    if (!origin && !referer) return next();
+    let candidate = origin;
+    if (!candidate) {
+      try {
+        candidate = new URL(referer).origin;
+      } catch {
+        candidate = "http://invalid.invalid";
+      }
+    }
+    if (!isAllowedOrigin(candidate, req)) {
+      return res.status(403).json({ error: "origin_rejected" });
+    }
+    next();
+  });
   app.use("/api", generalApiLimiter);
   app.use(attachUser);
   app.use("/api/client-error", clientErrorRoute);
   app.use("/api/v1/client-error", clientErrorRoute);
+  app.post("/api/csp-report", (req, res) => {
+    res.status(204).end();
+  });
 
   if (options.probeErrors) {
     app.post("/api/__boom", (req, res, next) => {

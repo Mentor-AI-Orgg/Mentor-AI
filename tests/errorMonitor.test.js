@@ -134,7 +134,8 @@ describe('jurnal de erori și deploy', () => {
     expect(ok.status).toBe(200);
     expect(ok.body.ok).toBe(true);
     const log = fs.readFileSync(path.join(dir, 'errors.log'), 'utf8');
-    expect(log).toContain('ecran gol');
+    expect(log).not.toContain('ecran gol');
+    expect(log).toContain('[redactat]');
     expect(log).toContain('App.jsx');
     expect(log).not.toContain('copil@example.com');
     expect(log).not.toContain('secret-token');

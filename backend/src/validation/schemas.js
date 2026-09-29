@@ -31,7 +31,7 @@ const registerSchema = z.object({
   class: z.enum(["5", "6", "7", "8"]),
   parentEmail: email,
   role: z.enum(["student", "parent", "teacher"]).optional().default("student")
-});
+}).strict();
 
 const consentActionSchema = z.object({
   token: z.string().trim().min(20).max(200),
@@ -49,7 +49,7 @@ const parentEmailSchema = z.object({
 const loginSchema = z.object({
   email: z.string().trim().min(1, "Numele de utilizator și parola sunt obligatorii.").max(254),
   password: z.string().min(1, "Numele de utilizator și parola sunt obligatorii.").max(200)
-});
+}).strict();
 
 const forgotPasswordSchema = z.object({
   email: z.string().trim().max(254).optional().default("")
@@ -65,14 +65,13 @@ const chatSchema = z.object({
     .string({ required_error: "Câmpul 'message' este obligatoriu." })
     .trim()
     .min(1, "Câmpul 'message' este obligatoriu.")
-    .max(8000, "Mesajul este prea lung."),
+    .max(2000, "Mesajul este prea lung."),
   subject: z.string().max(80).optional().default("matematica"),
   class_level: z.union([z.string(), z.number()]).optional().default(8),
   language: z.string().max(8).optional().default("ro"),
   plan_id: z.string().max(20).optional().default("free"),
-  conversation_id: z.string().max(80).optional(),
-  image_base64: z.string().max(4000).optional().default("")
-});
+  conversation_id: z.string().max(80).optional()
+}).strict();
 
 const detectSchema = z.object({
   text: z

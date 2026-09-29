@@ -12,7 +12,7 @@ const { chatSchema } = require("../validation/schemas");
 
 router.post("/", validateBody(chatSchema), async (req, res) => {
   const startTotal = Date.now();
-  const { message, language = "ro", image_base64 = "" } = req.body || {};
+  const { message, language = "ro" } = req.body || {};
   const subject = normalizeSubject(req.body.subject);
   const class_level = normalizeGrade(req.body.class_level);
 
@@ -76,9 +76,7 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
   const history = memory.get(conversationId);
   const local = answerFromLessons({ message, subject, grade: class_level });
   const result = {
-    response: image_base64
-      ? `${local.text}\n\nPozele nu se încarcă: citirea unei fotografii costa bani. Scrie întrebarea cu cuvinte.`
-      : local.text,
+    response: local.text,
     engine_used: "lectii",
     engine_mocked: false,
     fallback_path: ["lectii"]
