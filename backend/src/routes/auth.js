@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const router = express.Router();
 
 const {
@@ -38,6 +39,7 @@ const { usernameIssue } = require("../safety/usernamePolicy");
 const { publicBaseUrl } = require("../publicUrl");
 const { ensureUser, pushNotification } = require("../data/economyStore");
 const { deliverMessage, smtpConfigured } = require("../notify/deliver");
+const { MASCOT_NAME } = require("../config/mascot");
 const {
   loginState,
   noteLoginFailure,
@@ -96,7 +98,15 @@ function consentMail({ req, account, token }) {
     link,
     "Dacă nu confirmați în 14 zile, contul și datele se șterg automat."
   ].join("\n");
-  return { link, subject, body };
+  const escape = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const alt = escape(`${MASCOT_NAME}, furnicuța care te ajută`);
+  const html = `<p>${escape(body).replace(/\n/g, "</p><p>")}</p><img src="cid:mascot" alt="${alt}" width="96" height="96">`;
+  const attachments = [{
+    filename: "mascot-salut.png",
+    path: path.join(__dirname, "../notify/mascot-salut.png"),
+    cid: "mascot"
+  }];
+  return { link, subject, body, html, attachments };
 }
 
 async function sendConsentEmail(req, account, { resend = false } = {}) {
@@ -113,6 +123,8 @@ async function sendConsentEmail(req, account, { resend = false } = {}) {
     to: parentEmail,
     subject: mail.subject,
     body: mail.body,
+    html: mail.html,
+    attachments: mail.attachments,
     channel: "email"
   });
   markConfirmationSent(account.email, parentEmail, { resend });
