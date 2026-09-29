@@ -35,7 +35,8 @@ describe('landing page', () => {
     expect(html).toContain('href="/confidentialitate"');
     expect(html).toContain('href="/termeni"');
     expect(html).toContain('data-mascot-mood="salut"');
-    expect(html).toContain('aria-label="Sunt de 10"');
+    expect(html).toContain('alt="Sunt de 10"');
+    expect(html).toContain('src="/emblema.png"');
   });
 
   it('does not invent numbers or name the mascot', () => {

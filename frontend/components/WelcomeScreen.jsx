@@ -53,10 +53,7 @@ const WelcomeScreen = ({ onConnect, onRegister, onParent }) => {
   return (
     <main className="welcome-page animate-fadeIn">
       <header className="welcome-top">
-        <p className="welcome-logo display-font" aria-label="Sunt de 10">
-          <span className="welcome-logo-word">SUNT</span>
-          <span className="welcome-logo-ten">10</span>
-        </p>
+        <img className="app-emblem welcome-emblem" src="/emblema.png" alt="Sunt de 10" />
         <nav className="welcome-nav" aria-label="Cont">
           <button type="button" className="ghost-button welcome-nav-login" onClick={onConnect}>
             Intră în cont

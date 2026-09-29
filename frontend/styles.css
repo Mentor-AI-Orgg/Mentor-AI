@@ -65,17 +65,14 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   color: var(--muted);
   font-size: 14px;
 }
-.boot-fallback-mark {
-  display: grid;
-  place-items: center;
-  width: 58px;
-  height: 58px;
-  border-radius: 18px;
-  background: var(--lime);
-  color: #171633;
-  font: 700 28px 'Space Grotesk', sans-serif;
-  animation: splashPulse 1.6s ease-in-out infinite;
+.app-emblem {
+  display: block;
+  width: 88px;
+  height: 88px;
+  object-fit: cover;
+  border-radius: 50%;
 }
+.boot-emblem { animation: splashPulse 1.6s ease-in-out infinite; }
 .app-background {
   position: fixed;
   inset: 0;
@@ -186,9 +183,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .form-submit { margin-top: 26px; }
 .forgot-link { margin: 18px auto; font-size: 12px; }
 .splash-page { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 42px 28px; background: linear-gradient(145deg, #211d4d, #0f1028 62%); }
-.splash-mark { width: 82px; height: 82px; border-radius: 24px; display: grid; place-items: center; font: 700 44px 'Space Grotesk', sans-serif; margin-bottom: 34px; }
-.splash-title { margin-top: 12px; font-size: clamp(64px, 19vw, 92px); line-height: .82; letter-spacing: -3px; }
-.splash-title span { color: var(--aqua); }
+.splash-emblem { width: min(220px, 62vw); height: min(220px, 62vw); margin-bottom: 28px; }
+.form-emblem { width: 72px; height: 72px; margin-bottom: 22px; }
 .splash-rule { width: 100%; height: 1px; margin: 34px 0 18px; background: var(--line); }
 .splash-subtitle { max-width: 210px; color: var(--muted); font-size: 15px; line-height: 1.5; }
 .splash-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; color: var(--muted); font-size: 11px; }
@@ -912,8 +908,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .has-user-theme .focus-card {
   background: linear-gradient(145deg, var(--user-accent, #b9a7ff) 0%, #6fd7ff 100%);
 }
-.has-user-theme .home-avatar,
-.has-user-theme .boot-fallback-mark {
+.has-user-theme .home-avatar {
   color: #171633;
   background: var(--user-accent, #b9a7ff);
 }
@@ -992,22 +987,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   border: 1px solid var(--line);
   background: var(--surface);
 }
-.welcome-logo {
-  margin: 0;
-  display: grid;
-  line-height: .85;
-}
-.welcome-logo-word {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: .18em;
-  color: var(--aqua);
-}
-.welcome-logo-ten {
-  font-size: 32px;
-  font-weight: 800;
-  color: var(--ink);
-}
+.welcome-emblem { width: 72px; height: 72px; flex: 0 0 auto; }
 .welcome-nav {
   display: flex;
   flex-wrap: wrap;

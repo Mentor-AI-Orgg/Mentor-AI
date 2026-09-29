@@ -26,7 +26,7 @@ const LoginScreen = ({ onBack, onLogin, onForgotPassword }) => {
   return (
     <main className="form-page animate-fadeIn">
       <button onClick={onBack} className="back-link" type="button"><i className="fas fa-arrow-left"></i> {t('common.back')}</button>
-      <div className="brand-mark form-mark">10</div>
+      <img className="app-emblem form-emblem" src="/emblema.png" alt="Sunt de 10" />
       <div className="eyebrow">{t('login.eyebrow')}</div>
       <h1 className="display-font form-title">{t('login.title')}</h1>
       <p className="form-subtitle">{t('login.subtitle')}</p>

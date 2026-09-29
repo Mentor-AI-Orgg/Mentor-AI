@@ -78,7 +78,7 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
   return (
     <main className="form-page animate-fadeIn">
       <button onClick={onBack} className="back-link" type="button"><i className="fas fa-arrow-left"></i> Înapoi</button>
-      <div className="brand-mark form-mark">10</div>
+      <img className="app-emblem form-emblem" src="/emblema.png" alt="Sunt de 10" />
       <div className="eyebrow">Cont de elev</div>
       <h1 className="display-font form-title">Fă-ți un cont.</h1>
       <p className="form-subtitle">Îi trimitem un email părintelui tău. După ce confirmă, poți folosi tot ce e în aplicație. Până atunci poți citi lecțiile și face exerciții.</p>
