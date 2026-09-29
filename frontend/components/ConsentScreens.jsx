@@ -189,7 +189,14 @@ const ParentScreen = ({ token = '' }) => {
             <>
               <p>Ultimele 7 zile: {panels[child.id].days.map(day => `${day.day.slice(5)} ${day.lessons} lecții, ${day.minutes} min`).join(' · ') || 'încă nimic'}.</p>
               {panels[child.id].chapters.length > 0 && <p>Capitole: {panels[child.id].chapters.map(item => item.title).join(', ')}.</p>}
-              {panels[child.id].mistakes.length > 0 && <p>Unde greșește des: {panels[child.id].mistakes.map(item => item.title).join(', ')}.</p>}
+              {panels[child.id].mistakes.length > 0 && (
+                <p>
+                  Unde greșește des: {panels[child.id].mistakes.map(item => item.title).join(', ')}.
+                  {panels[child.id].mistakes.filter(item => item.lessonId).map(item => (
+                    <a key={`${item.lessonId}-${item.title}`} href={`#/lectii/${item.subject || 'matematica'}/${item.grade || '8'}/${item.lessonId}`}> Vezi lecția {item.title}.</a>
+                  ))}
+                </p>
+              )}
               {panels[child.id].en.length > 0 && <p>Evaluare Națională: {panels[child.id].en.map(item => item.title).join(', ')}.</p>}
               <p>Prieteni: {panels[child.id].friends.map(person => person.username).filter(Boolean).join(', ') || 'niciunul'}.</p>
             </>

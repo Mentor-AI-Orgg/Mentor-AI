@@ -22,6 +22,7 @@ import RenameScreen from './components/RenameScreen.jsx';
 import ModerationScreen from './screens/ModerationScreen.jsx';
 import { ProfessorScreen } from './components/StudyScreens.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
+import MistakesScreen from './screens/MistakesScreen.jsx';
 
 const LearnScreen = lazy(() => import('./screens/LearnScreen.jsx'));
 const ShopScreen = lazy(() => import('./components/ShopScreen.jsx'));
@@ -423,7 +424,7 @@ function AppShell({ userData, setUserData }) {
       chapter: extras.chapter || null,
       track: extras.track !== undefined ? extras.track : prev.track
     }));
-    setNavScreen(target === 'calendar' ? 'calendar' : target);
+    setNavScreen(target === 'calendar' ? 'calendar' : target === 'caiet' ? 'home' : target);
     setScreen(target);
     if (!historySilent.current) writeHash(target, extras, 'push');
     if (target === 'home' || target === 'shop' || target === 'profile') {
@@ -561,6 +562,8 @@ function AppShell({ userData, setUserData }) {
         );
       case 'home':
         return <HomeScreen userData={userData} onNavigate={handleNavigate} />;
+      case 'caiet':
+        return <MistakesScreen onNavigate={handleNavigate} />;
       case 'professor':
         return <ProfessorScreen userData={userData} studyFocus={studyFocus} onProgress={syncEconomy} />;
       case 'learn':
@@ -595,7 +598,7 @@ function AppShell({ userData, setUserData }) {
     }
   };
 
-  const showNav = ['home', 'professor', 'learn', 'shop', 'profile', 'calendar'].includes(screen);
+  const showNav = ['home', 'professor', 'learn', 'shop', 'profile', 'calendar', 'caiet'].includes(screen);
 
   return (
     <div className="app-shell">

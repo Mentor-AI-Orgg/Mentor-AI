@@ -41,18 +41,37 @@ function buildPanel(email) {
     subject: chapter.subject || "",
     percent: Math.min(100, Math.round(Number(chapter.percent || chapter.progress || 0)))
   }));
-  const misses = {};
-  for (const event of events) {
-    if (event.correct == null || event.total == null) continue;
-    const wrong = Number(event.total) - Number(event.correct);
-    if (wrong <= 0) continue;
-    const title = event.title || "Lecție";
-    misses[title] = (misses[title] || 0) + wrong;
+  const fromBook = {};
+  for (const card of Object.values(user.mistakeBoxes || {})) {
+    if (!card) continue;
+    const wrong = (Array.isArray(card.results) ? card.results : []).filter(row => row && row.correct === false).length || 1;
+    const title = card.lesson || "Lecție";
+    if (!fromBook[title]) {
+      fromBook[title] = {
+        title,
+        count: 0,
+        lessonId: card.lessonId || "",
+        subject: card.subject || "",
+        grade: card.grade || ""
+      };
+    }
+    fromBook[title].count += wrong;
   }
-  const mistakes = Object.entries(misses)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
-    .map(([title, count]) => ({ title, count }));
+  let mistakes = Object.values(fromBook).sort((a, b) => b.count - a.count).slice(0, 5);
+  if (!mistakes.length) {
+    const misses = {};
+    for (const event of events) {
+      if (event.correct == null || event.total == null) continue;
+      const wrong = Number(event.total) - Number(event.correct);
+      if (wrong <= 0) continue;
+      const title = event.title || "Lecție";
+      misses[title] = (misses[title] || 0) + wrong;
+    }
+    mistakes = Object.entries(misses)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([title, count]) => ({ title, count, lessonId: "", subject: "", grade: "" }));
+  }
   const done = log
     .filter(entry => entry.type === "session_complete" || entry.type === "chapter_test")
     .slice(-5)
