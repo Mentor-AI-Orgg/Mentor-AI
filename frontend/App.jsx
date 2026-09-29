@@ -12,6 +12,7 @@ import Toast from './components/Toast.jsx';
 import SplashScreen from './components/SplashScreen.jsx';
 import WelcomeScreen from './components/WelcomeScreen.jsx';
 import Mascota from './components/mascot/Mascota.jsx';
+import MascotLayer from './components/mascot/MascotLayer.jsx';
 import LoginScreen from './components/LoginScreen.jsx';
 import ResetPasswordScreen from './components/ResetPasswordScreen.jsx';
 import RegisterScreen from './components/RegisterScreen.jsx';
@@ -626,6 +627,7 @@ function AppShell({ userData, setUserData }) {
           <a href="/termeni">Termeni</a>
         </p>
       )}
+      <MascotLayer />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );

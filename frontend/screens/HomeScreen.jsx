@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { formatRoDate } from '../userData.js';
+import { emitMascot } from '../mascot/mascotEvents.js';
 import { useI18n } from '../i18n/index.jsx';
 import { avatarIcon, itemEmoji } from '../appearance.js';
 import { xpProgress } from '../xpProgress.js';
@@ -29,6 +31,16 @@ const HomeScreen = ({ userData, onNavigate }) => {
     const key = d.toISOString().slice(0, 10);
     return { key, on: streakDays.includes(key) };
   });
+
+  useEffect(() => {
+    const day = new Date().toISOString().slice(0, 10);
+    if (sessionStorage.getItem('s10-hello-day') === day) return undefined;
+    sessionStorage.setItem('s10-hello-day', day);
+    const nume = userData.name || userData.username || '';
+    if (new Date().getHours() >= 22) emitMascot('seara_tarziu');
+    else emitMascot('prima_intrare_azi', { nume });
+    return undefined;
+  }, [userData.name, userData.username]);
 
   const continueExtras = last?.chapterId
     ? { subject: last.subject, grade: last.grade || grade, chapter: last.chapterId, track: last.track || null }
