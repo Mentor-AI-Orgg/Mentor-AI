@@ -69,6 +69,17 @@ contului și ștergerea citesc doar registrul. Termenele de păstrare stau în
 `backend/src/config/retention.js`; pagina de confidențialitate trebuie să
 folosească aceleași numere.
 
+## Aplicația pe telefon
+
+Iconițele din `frontend/public/icons` sunt emblema (cercul „SUNT 10”).
+Service worker-ul `frontend/public/sw.js` ține în cache doar fișierele
+statice: `/assets/`, iconițele, fonturile locale, manifestul și pagina
+offline. Nu salvează `/api/`, `/parinte` sau `/creator`.
+
+Ca să oprești cache-ul, pune `const DISABLE = true` sus în `sw.js`, apoi
+build și deploy. La următoarea vizită worker-ul se dezînregistrează și
+șterge cache-urile. După aceea pune `false` înapoi.
+
 ## Structură
 
 - `backend/` — Express: autentificare, chat din lecții, economie, calendar, persistență JSON
