@@ -10,6 +10,7 @@ const { getSession, findAccount, isConsentGranted, isSuspended } = require("../d
 const { getParentSession } = require("../data/consentStore");
 const { usernameIssue } = require("../safety/usernamePolicy");
 
+// Numele tehnic al cookie-ului rămâne scurt. Nu e numele aplicației.
 const SESSION_COOKIE = "s10_session";
 const PARENT_COOKIE = "s10_parent";
 
@@ -57,7 +58,7 @@ function authRequired(req, res, next) {
 }
 
 const STUDENTS_ONLY = {
-  error: "Mentor AI este doar pentru elevi. Părinții primesc email cu activitatea copilului, fără cont.",
+  error: "Sunt de 10 este doar pentru elevi. Părinții primesc email cu activitatea copilului, fără cont.",
   code: "students_only"
 };
 

@@ -49,7 +49,7 @@ module.exports = {
   MATHPIX_APP_ID: process.env.MATHPIX_APP_ID || "",
   MATHPIX_APP_KEY: process.env.MATHPIX_APP_KEY || "",
 
-  APP_NAME: "Mentor AI v3.0",
+  APP_NAME: "Sunt de 10",
   APP_VERSION: "3.0.0",
 
   // URL public (fără slash final) pentru linkurile din email.

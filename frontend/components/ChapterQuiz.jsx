@@ -224,7 +224,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', onClose, onR
             ))}
           </ol>
           <div className="learning-actions">
-            <button type="button" className="ghost-button" onClick={() => onAskMentor?.(unit)}>Întreabă mentorul</button>
+            <button type="button" className="ghost-button" onClick={() => onAskMentor?.(unit)}>Întreabă tutorele</button>
             <button type="button" className="ghost-button" onClick={() => { setTargetNote(null); setReport(null); setCards([]); }}>Altă notă</button>
             <button type="button" className="accent-button" onClick={() => load(true)}>Alt test</button>
           </div>

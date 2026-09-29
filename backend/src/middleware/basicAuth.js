@@ -48,7 +48,7 @@ function basicAuth({ user, password, skipPaths = [], skipPrefixes = [] }) {
       return next();
     }
 
-    res.set("WWW-Authenticate", 'Basic realm="Mentor AI", charset="UTF-8"');
+    res.set("WWW-Authenticate", 'Basic realm="Sunt de 10", charset="UTF-8"');
     res.status(401).send("Acces restricționat.");
   };
 }

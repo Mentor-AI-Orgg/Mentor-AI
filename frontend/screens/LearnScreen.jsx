@@ -548,11 +548,11 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                       <small className="chapter-disclaimer">
                         {guide?.manual
                           ? 'Ordinea urmează temele din programă. Scena de care ai nevoie este scrisă în lecție. La școală repeți aceiași pași pe textul pe care îl ai deschis, chiar dacă titlul este altul.'
-                          : 'Ghid intern Mentor AI, nu manual. „Cum o văd eu”, după programă.'}
+                          : 'Ghid intern Sunt de 10, nu manual. „Cum o văd eu”, după programă.'}
                       </small>
                       <div className="learning-actions">
                         <button type="button" className="ghost-button result-action" onClick={() => askMentor(unit)}>
-                          Întreabă mentorul <i className="fas fa-comments" />
+                          Întreabă tutorele <i className="fas fa-comments" />
                         </button>
                         {!isEn && (
                           <button type="button" className="ghost-button result-action" onClick={() => setQuizUnit(unit)}>
@@ -616,7 +616,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                 Generează test <i className="fas fa-clipboard-check" />
               </button>
             )}
-            <button type="button" className="accent-button result-action" onClick={() => askMentor({ id: openChapter, title: session.title, inOwnWords: session.objective })}>Continuă cu mentorul</button>
+            <button type="button" className="accent-button result-action" onClick={() => askMentor({ id: openChapter, title: session.title, inOwnWords: session.objective })}>Continuă cu tutorele</button>
           </div>
         </section>
       )}

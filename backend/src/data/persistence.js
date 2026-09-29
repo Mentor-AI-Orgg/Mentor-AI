@@ -19,6 +19,7 @@ const fs = require("fs");
 const path = require("path");
 
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "..", "..", "..", "data");
+// Numele tehnic vechi al fișierului rămâne intenționat: o redenumire ar pierde datele.
 const DATA_FILE = path.join(DATA_DIR, "mentor-ai.json");
 const TEMP_FILE = `${DATA_FILE}.tmp`;
 const AUTOSAVE_MS = 5000;

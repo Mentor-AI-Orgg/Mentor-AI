@@ -15,7 +15,8 @@ const TITLE_CATALOG = [
   { id: "ciocarlie", name: "Ciocârlie", emoji: "🌅", description: "Învață înainte de ora 8, în 5 zile diferite." },
   { id: "campion", name: "Campion", emoji: "🏆", description: "Ajungi pe locul 1 în clasament, cu XP." },
   { id: "curs-incheiat", name: "Curs încheiat", emoji: "🏅", description: "Termină toate capitolele clasei tale." },
-  { id: "mentor-curios", name: "Mentor curios", emoji: "💬", description: "Întreabă mentorul de 10 ori." }
+  // id-ul vechi rămâne, ca insignele deja primite să nu se piardă.
+  { id: "mentor-curios", name: "Tutore curios", emoji: "💬", description: "Întreabă tutorele de 10 ori." }
 ];
 
 function countAllDone(user) {

@@ -1,4 +1,4 @@
-// Spec OpenAPI 3 pentru rutele publice ale Mentor AI.
+// Spec OpenAPI 3 pentru rutele publice ale aplicației.
 // Servit la GET /api/openapi.json și GET /api/v1/openapi.json.
 // Nu este un SDK: e contractul pe care îl poate citi un client sau un
 // generator, fără să depindă de Swagger UI.
@@ -11,7 +11,7 @@ const spec = {
     title: config.APP_NAME,
     version: config.APP_VERSION,
     description:
-      "API-ul Mentor AI pentru gimnaziu (clasele 5–8, română și matematică). " +
+      "API-ul Sunt de 10 pentru gimnaziu (clasele 5–8, română și matematică). " +
       "Autentificarea este pe cookie httpOnly (`s10_session`). " +
       "Prefixul `/api` rămâne valid; `/api/v1` este aliasul versiunii."
   },
@@ -71,7 +71,7 @@ const spec = {
       post: {
         tags: ["chat"],
         security: [{ cookieAuth: [] }],
-        summary: "Mesaj către mentorul AI",
+        summary: "Mesaj către tutore",
         description:
           "Răspunsul vine din lecțiile din aplicație (`engine_used: lectii`).",
         responses: { 200: { description: "OK" }, 401: { description: "Neautentificat" } }

@@ -106,7 +106,7 @@ router.post("/rename", (req, res) => {
 
 router.get("/export", (req, res) => {
   const payload = collectExport(req.auth.email);
-  res.setHeader("Content-Disposition", "attachment; filename=\"sunt-de-10-date.json\"");
+  res.setHeader("Content-Disposition", "attachment; filename=\"suntde10-date.json\"");
   res.json(payload);
 });
 
