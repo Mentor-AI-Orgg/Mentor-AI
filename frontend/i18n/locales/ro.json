@@ -10,6 +10,9 @@
     "parent": "Părinte",
     "teacher": "Profesor"
   },
+  "mascot": {
+    "aria": "{mascota}, furnicuța care te ajută"
+  },
   "splash": {
     "eyebrow": "Pentru elevi de gimnaziu",
     "subtitle": "Română și matematică, clasele 5–8. Înveți tu. Tutorele te ajută când te blochezi.",

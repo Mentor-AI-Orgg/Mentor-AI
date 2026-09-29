@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import Mascota from './mascot/Mascota.jsx';
 
 function frameOf(error) {
   const stack = String(error && error.stack || '');
@@ -32,7 +33,8 @@ class AppErrorBoundary extends Component {
     return (
       <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 24, textAlign: 'center' }}>
         <div>
-          <p>Ceva n-a mers. Reîncarcă pagina.</p>
+          <Mascota mood="trist-bland" size="md" />
+          <p>Ceva n-a mers de partea mea. Reîncarcă pagina.</p>
           <button type="button" onClick={() => window.location.reload()}>Reîncarcă</button>
         </div>
       </div>

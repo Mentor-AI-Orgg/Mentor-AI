@@ -5,6 +5,7 @@ import FlashCards from '../components/FlashCards.jsx';
 import ChapterQuiz from '../components/ChapterQuiz.jsx';
 import EnPaperView from '../components/EnPaperView.jsx';
 import QuoteCard from '../components/QuoteCard.jsx';
+import Mascota from '../components/mascot/Mascota.jsx';
 import GeoFigure from '../components/GeoFigure.jsx';
 import GeometryAtlas from '../components/GeometryAtlas.jsx';
 import { dailySlogan } from '../slogans.js';
@@ -264,6 +265,9 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
 
   return (
     <main className="screen-page learn-page animate-fadeIn">
+      <div className="learn-mascot">
+        <Mascota mood="explica" size="sm" />
+      </div>
       <header className="screen-header">
         <div className="learn-hero">
           <div className="eyebrow">{isEn ? 'EVALUARE NAȚIONALĂ · CLASA A VIII-A' : 'LECȚII DE GIMNAZIU'}</div>

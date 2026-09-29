@@ -1494,3 +1494,44 @@ html[data-motion="off"] *::after {
 .aspect-choices { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
 .aspect-choices button { min-height: 44px; padding: 0 14px; border-radius: 12px; font-weight: 800; }
 .aspect-note { margin: 0 0 12px; color: var(--text-muted); font-size: 1rem; line-height: 1.45; }
+.mascota-wrap { display: grid; justify-items: start; gap: 8px; }
+.mascota { display: block; overflow: visible; }
+.mascota-zece, .mascota-confetti, .mascota-cheie, .mascota-z, .mascota-ochi-inchis { display: none; }
+.is-sarbatoare .mascota-zece, .is-mandru .mascota-zece, .is-sarbatoare .mascota-confetti { display: block; }
+.is-trist-bland .mascota-cheie { display: block; }
+.is-somnoros .mascota-z { display: block; }
+.is-bucuros .mascota-ochi-inchis, .is-somnoros .mascota-ochi-inchis { display: inline; }
+.is-bucuros .mascota-pupil-stanga, .is-bucuros .mascota-pupil-dreapta,
+.is-somnoros .mascota-pupil-stanga, .is-somnoros .mascota-pupil-dreapta { display: none; }
+.is-salut [data-part="picior-1"] { transform: translate(-6px, -18px); }
+.is-sarbatoare [data-part="zece"] { transform: translate(0, -8px); }
+.is-gandeste [data-part="antena-dreapta"] { transform: rotate(18deg); transform-origin: 132px 44px; }
+.is-gandeste [data-part="picior-1"] { transform: translate(18px, 8px); }
+.is-incurajeaza [data-part="picior-4"] { transform: translate(8px, -22px); }
+.is-somnoros [data-part="antena-stanga"], .is-somnoros [data-part="antena-dreapta"] { transform: translate(0, 10px); }
+.is-trist-bland [data-part="antena-stanga"], .is-trist-bland [data-part="antena-dreapta"] { transform: translate(0, 6px); }
+.is-bucuros .mascota { animation: mascotaHop 360ms ease; }
+@keyframes mascotaHop {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.mascota-bubble {
+  max-width: 16rem;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.4;
+  text-align: left;
+}
+.learn-mascot {
+  position: sticky;
+  top: 12px;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 8px;
+}
