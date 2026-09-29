@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import QuoteCard from './QuoteCard.jsx';
+import Mascota from './mascot/Mascota.jsx';
 import { passwordHint } from '../passwordHint.js';
 import { MentorAPI } from '../apiClient.js';
 const isValidEmail = value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || '');
@@ -184,6 +185,9 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
         </div>
       </div>
 
+      {(Boolean(serverError && serverError.includes('nume de utilizator')) || (Boolean(touched.username) && !usernameOk && Boolean(usernameMsg))) && (
+        <Mascota mood="explica" size="sm" message="Alege alt nume. Nu folosi numele tău real." />
+      )}
       {serverError && <div className="form-error" role="alert"><i className="fas fa-circle-exclamation"></i> {serverError}</div>}
 
       <button onClick={handleSubmit} className="accent-button form-submit" type="button" disabled={submitting}>

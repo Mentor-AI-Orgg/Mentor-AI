@@ -7,7 +7,7 @@ const { authRequired, consentRequired } = require("../middleware/auth");
 const { usernameIssue } = require("../safety/usernamePolicy");
 
 // GET /api/leaderboard?limit=10
-// Clasament all-time după XP. Profilurile private nu apar, în afară de tine.
+// Clasament all-time după XP. Profilurile private rămân cu locul și punctajul, fără nume.
 function grantedEntry(entry) {
   const account = listAccounts().find(item => publicId(item.email) === entry.id);
   return Boolean(account && isConsentGranted(account));
@@ -24,16 +24,22 @@ router.get("/", authRequired, consentRequired, (req, res) => {
   const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 10));
   const currentEmail = req.auth?.email || "";
   const raw = listLeaderboardEntries({ limit: 50, currentEmail });
-  const board = raw
-    .filter(entry => grantedEntry(entry) && (entry.isCurrentUser || !isPrivatePublicId(entry.id)))
+  const visible = raw
+    .filter(entry => grantedEntry(entry))
     .filter(entry => {
       const account = findByPublicId(entry.id);
       if (account?.hiddenFromLeaderboard || account?.mustRename) return false;
       if (account && usernameIssue(account.profile?.username || "")) return false;
       if (currentEmail && account && isBlocked(currentEmail, account.email)) return false;
       return true;
-    })
-    .slice(0, limit);
+    });
+  const capped = visible.slice(0, limit);
+  const self = visible.find(entry => entry.isCurrentUser);
+  if (self && !capped.some(entry => entry.isCurrentUser)) capped.push(self);
+  const board = capped.map(entry => {
+    if (entry.isCurrentUser || !isPrivatePublicId(entry.id)) return entry;
+    return { rank: entry.rank, xp: entry.xp, private: true };
+  });
 
   res.json({
     leaderboard: board,
