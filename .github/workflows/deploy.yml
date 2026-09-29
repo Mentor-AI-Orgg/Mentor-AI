@@ -90,6 +90,8 @@ jobs:
             **/node_modules/**
             **/.env
             data/**
+            backups/**
+            *.pem
             *.md
             cod cu Claude*
             mentor_ai_v3*.html

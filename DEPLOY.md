@@ -135,9 +135,54 @@ Cookie-ul se semnează cu `PREVIEW_COOKIE_SECRET` (cel puțin 32 de caractere).
 `HEALTH_TOKEN` deschide detaliile din `/api/health` (dacă emailul e configurat și cât de veche e copia). Fără token, ruta răspunde doar `{ ok, version }`.
 Ca să vezi iar pagina
 publică: `https://suntde10.ro/creator/iesire`.
-`BACKUP_KEY` cifrează copiile de rezervă ale fișierului de date. Pune un șir
-de cel puțin 16 caractere, altul decât parolele, și păstrează-l. Fără cheie,
-copiile bak rămân în clar. Restaurare: `node backend/src/ops/restoreBackup.js`.
+`BACKUP_KEY` cifrează doar copiile rapide bak1–bak3, făcute la fiecare salvare.
+Pune un șir de cel puțin 16 caractere. `BACKUP_PUBLIC_KEY` este cheia publică
+RSA pentru copia zilnică. Cheia privată nu se pune pe server.
+
+## Copii de rezervă
+
+Copia zilnică stă în `backups/`, lângă `data/`, nu în site-ul public.
+Este gzip, apoi AES-256-GCM, iar cheia AES este înfășurată cu `BACKUP_PUBLIC_KEY`.
+Se păstrează 14 zile și 4 duminici. Fișierele `data/*.pre-*` mai vechi de 35 de zile se șterg odată cu rotația.
+
+Pe laptop, o singură dată:
+
+```bash
+node scripts/backup-keygen.mjs
+```
+
+`backup-public.pem` intră în DirectAdmin ca `BACKUP_PUBLIC_KEY`, sau ca fișier
+`backend/backup-public.pem`. `backup-private.pem` rămâne pe laptop și pe un stick.
+Nu o urca și nu o comite.
+
+Cron în DirectAdmin, în fiecare zi la 03:30, dacă ceasul serverului e pe ora României.
+Calea către `node` o copiezi din **Setup Node.js App** (linia „Enter to the virtual environment”):
+
+```bash
+30 3 * * * cd ~/domains/suntde10.ro/public_html/mentor-ai && /home/USER/nodevenv/domains/suntde10.ro/public_html/mentor-ai/18/bin/node backend/src/ops/backup.js
+```
+
+Înlocuiește `USER` și `18` cu userul și versiunea din panou. La pornire, dacă ultima copie are peste 26 de ore, se face una imediat. `/api/health` cu `HEALTH_TOKEN` arată data și mărimea, fără conținut.
+
+GitHub Actions (`.github/workflows/backup-pull.yml`) descarcă la 04:30 ora României, vara, cea mai nouă copie și o ține 35 de zile ca artifact. Dacă descărcarea pică sau copia are peste 26 de ore, workflow-ul pică. O dată pe săptămână, descarcă și tu cea mai nouă copie din File Manager, folderul `backups/`, pe laptop.
+
+### Restaurare
+
+1. Oprește aplicația Node din DirectAdmin.
+2. Copiază `data/mentor-ai.json` în `data/mentor-ai.json.inainte-de-restaurare`.
+3. Pe laptop, cu cheia privată:
+
+```bash
+node scripts/backup-restore.mjs --copie mentor-ai-AAAA-LL-ZZ.json.gz.enc --cheie backup-private.pem --curent mentor-ai.json --iesire mentor-ai.restaurat.json
+```
+
+`--curent` este fișierul de acum, ca să se aplice ștergerile făcute după data copiei.
+4. Urcă `mentor-ai.restaurat.json` peste `data/mentor-ai.json`.
+5. Pornește aplicația și verifică `/api/health`.
+
+### Exercițiu, înainte de lansare și apoi la 3 luni
+
+Pe un folder local, nu pe server: descarcă artifact-ul din GitHub → Actions, rulează comanda de restaurare, pornește aplicația cu `DATA_DIR` spre folderul restaurat și intră cu un cont de test.
 
 `ADMIN_EMAIL` primește alerta când aplicația înregistrează o eroare (prima
 de un tip într-o oră, maxim 10 pe zi), când ultima copie de siguranță are

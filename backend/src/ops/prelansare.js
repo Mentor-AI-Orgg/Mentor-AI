@@ -7,16 +7,20 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 const { smtpConfigured } = require("../notify/deliver");
 const { CSP_MODE } = require("../middleware/security");
-const persistence = require("../data/persistence");
 
 function value(env, key) {
   return String(env[key] || "").trim();
 }
 
-function backupFresh(now = Date.now()) {
-  const file = `${persistence.DATA_FILE}.bak1.enc`;
-  if (!fs.existsSync(file)) return false;
-  return now - fs.statSync(file).mtimeMs < 26 * 60 * 60 * 1000;
+function backupFresh() {
+  const { latestBackup, STALE_MS } = require("./backup");
+  const latest = latestBackup();
+  return Boolean(latest && latest.ageMs < STALE_MS);
+}
+
+function publicKeyReady(env) {
+  if (value(env, "BACKUP_PUBLIC_KEY").includes("BEGIN PUBLIC KEY")) return true;
+  return fs.existsSync(path.join(__dirname, "..", "..", "backup-public.pem"));
 }
 
 function legalComplete() {
@@ -41,7 +45,8 @@ function checklist(env = process.env) {
     { key: "PREVIEW_COOKIE_SECRET", ok: secretOk("PREVIEW_COOKIE_SECRET"), required: true },
     { key: "SESSION_SECRET", ok: secretOk("SESSION_SECRET"), required: true },
     { key: "LEGAL", ok: legalComplete(), required: true },
-    { key: "BACKUP_KEY", ok: value(env, "BACKUP_KEY").length >= 16, required: true },
+    { key: "BACKUP_KEY", ok: value(env, "BACKUP_KEY").length >= 16, required: false },
+    { key: "BACKUP_PUBLIC_KEY", ok: publicKeyReady(env), required: true },
     { key: "BACKUP_AGE", ok: backupFresh(), required: true },
     { key: "SMTP", ok: smtpConfigured(), required: true },
     { key: "CSP", ok: CSP_MODE === "enforce", required: true },

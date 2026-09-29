@@ -23,6 +23,11 @@ coverage/
 # Semnal de restart pentru Passenger (generat la fiecare deploy)
 tmp/
 
+# Chei și copii criptate. Cheia privată nu intră în git.
+*.pem
+*.enc
+/backups/
+
 # Datele aplicației (conturi, monede, calendar). Rămân doar pe server.
 # Slash-ul de la început ancorează regula la rădăcina repo-ului: fără el,
 # regula ar exclude și `backend/src/data/`, adică tot codul store-urilor.
