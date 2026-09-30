@@ -14,6 +14,7 @@ describe('panoul de ajutor', () => {
       'lectie',
       'caiet',
       'obiectiv',
+      'obiectiv-zi',
       'en',
       'telefon'
     ]));
@@ -21,6 +22,7 @@ describe('panoul de ajutor', () => {
 
   it('caută fără diacritice și filtrează categoria', () => {
     expect(searchHelp('evaluare').map(item => item.id)).toEqual(['en']);
+    expect(searchHelp('zilnic').map(item => item.id)).toEqual(['obiectiv-zi']);
     expect(searchHelp('CAIET', 'ritm').map(item => item.id)).toEqual(['caiet']);
     expect(searchHelp('caiet', 'examen')).toEqual([]);
     expect(searchHelp('').length).toBe(HELP_ARTICLES.length);

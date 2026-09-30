@@ -33,4 +33,12 @@ function weeklyGoalFrom(streakDays, now = new Date()) {
   };
 }
 
-export { WEEKLY_TARGET, weeklyGoalFrom };
+function dailyGoalFrom(streakDays, now = new Date()) {
+  const instant = now instanceof Date ? now : new Date(now);
+  const safe = Number.isNaN(instant.getTime()) ? new Date() : instant;
+  const day = utcDayKey(safe);
+  const done = Array.isArray(streakDays) && streakDays.includes(day);
+  return { day, done };
+}
+
+export { WEEKLY_TARGET, weeklyGoalFrom, dailyGoalFrom };
