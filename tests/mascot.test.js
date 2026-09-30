@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -11,19 +11,19 @@ function markup(props) {
 }
 
 describe('furnicuța', () => {
-  it('desenează corpul mare cu șase picioare și zece pe abdomen', () => {
+  it('folosește ilustrația potrivită pentru fiecare stare mare', () => {
     const html = markup({ mood: 'salut', size: 'lg' });
-    expect(html.match(/data-part="picior-/g)).toHaveLength(6);
-    expect(html.match(/data-part="antena-/g)).toHaveLength(2);
-    expect(html).toContain('data-part="cap"');
-    expect(html).toContain('data-part="torace"');
-    expect(html).toContain('data-part="abdomen"');
-    expect(html).toContain('data-part="ochelari"');
-    expect(html).toContain('>10<');
-    expect(html).toContain('#091C3C');
-    expect(html).toContain('#44D6D7');
-    expect(html).toContain('#93FC09');
-    expect(html).toContain(`aria-label="${MASCOT_NAME}, furnicuța care te ajută"`);
+    expect(html).toContain('src="/mascot/salut.png"');
+    expect(html).toContain('data-mood="salut"');
+    expect(html).toContain(`alt="${MASCOT_NAME}, furnicuța care te ajută"`);
+    expect(markup({ mood: 'mandru', size: 'lg' })).toContain('/mascot/mandru.png');
+    expect(markup({ mood: 'gandeste', size: 'md' })).toContain('/mascot/gandeste.png');
+    expect(markup({ mood: 'explica', size: 'lg' })).toContain('/mascot/explica.png');
+    expect(markup({ mood: 'bucuros', size: 'lg' })).toContain('/mascot/bucuros.png');
+    expect(markup({ mood: 'sarbatoare', size: 'lg' })).toContain('/mascot/bucuros.png');
+    for (const file of ['salut.png', 'mandru.png', 'gandeste.png', 'explica.png', 'bucuros.png', 'cap.png']) {
+      expect(existsSync(join(import.meta.dirname, '../frontend/public/mascot', file))).toBe(true);
+    }
   });
 
   it('randează fiecare stare fără numele scris direct în componentă', () => {
@@ -37,12 +37,10 @@ describe('furnicuța', () => {
     expect(source).not.toContain('Zecița');
   });
 
-  it('la 32px rămâne doar capul, cu ochelari și antene', () => {
+  it('la 32px rămâne doar capul', () => {
     const html = markup({ mood: 'salut', size: 'sm' });
-    expect(html).not.toContain('data-part="picior-1"');
-    expect(html).toContain('data-part="cap"');
-    expect(html).toContain('data-part="ochelari"');
-    expect(html).toContain('data-part="antena-stanga"');
+    expect(html).toContain('src="/mascot/cap.png"');
+    expect(html).not.toContain('/mascot/salut.png');
     expect(html).toContain('width="32"');
   });
 });

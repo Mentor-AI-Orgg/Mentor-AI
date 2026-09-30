@@ -112,7 +112,7 @@ function comingSoon() {
     if (!isSiteClosed()) return next();
 
     const path = normalizePath(req);
-    if (SKIP_PATHS.has(path) || path.startsWith("/fonts/")) return next();
+    if (SKIP_PATHS.has(path) || path.startsWith("/fonts/") || path.startsWith("/mascot/")) return next();
     if (path.startsWith("/api/parent/make-private") || path.startsWith("/api/v1/parent/make-private")) return next();
 
     if (path === "/robots.txt") {
