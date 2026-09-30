@@ -9,6 +9,8 @@ import Mascota from '../components/mascot/Mascota.jsx';
 import GeoFigure from '../components/GeoFigure.jsx';
 import GeometryAtlas from '../components/GeometryAtlas.jsx';
 import { dailySlogan } from '../slogans.js';
+import { emitMascot } from '../mascot/mascotEvents.js';
+import { MASCOT_MESSAGES } from '../i18n/mascotMessages.js';
 import { splitLessonParagraphs } from '../lessonParagraphs.js';
 import MathText from '../components/MathText.jsx';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
@@ -108,6 +110,18 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [paperError, setPaperError] = useState('');
   const isEn = track === 'en';
   const activeGrade = isEn ? 8 : grade;
+
+  useEffect(() => {
+    if (!isEn) return undefined;
+    try {
+      if (sessionStorage.getItem('s10-en-tip') === '1') return undefined;
+      sessionStorage.setItem('s10-en-tip', '1');
+    } catch {
+      return undefined;
+    }
+    emitMascot('mod_en');
+    return undefined;
+  }, [isEn]);
 
   useEffect(() => {
     if (studyFocus.track === 'en') {
@@ -326,6 +340,10 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           <small>Clasa a 8-a · română și matematică</small>
         </button>
       </section>
+
+      {isEn && (
+        <p className="nudge-banner" role="status">{MASCOT_MESSAGES.mod_en.lines.join(' ')}</p>
+      )}
 
       {isEn && (
         <section className="grade-chip-row" aria-label="Alege materia la Evaluarea Națională">

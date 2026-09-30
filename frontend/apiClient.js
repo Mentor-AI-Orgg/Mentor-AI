@@ -791,6 +791,15 @@ const MentorAPI = {
     }
   },
 
+  async creatorStatus() {
+    try {
+      const data = await safeFetchJson('/api/creator/status');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async moderationReports() {
     try {
       const data = await safeFetchJson('/api/moderation/reports');

@@ -1445,6 +1445,56 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   background: rgba(68, 214, 215, .08);
 }
 .en-full-solution strong { display: block; margin-bottom: 8px; color: var(--aqua); }
+.week-goal { margin-top: 14px; }
+.week-goal p { margin: 4px 0 8px; }
+.help-panel { margin: 0 20px 24px; }
+.help-cats { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+.help-article {
+  margin: 0 0 12px;
+  padding: 16px 18px;
+  border-radius: 18px;
+}
+.help-article h3 { margin: 0 0 8px; font-size: 1.2rem; }
+.help-article p { max-width: none; margin: 0; color: var(--text); }
+.creator-mascot { padding-bottom: 48px; }
+.theme-stage {
+  margin: 16px 20px;
+  padding: 16px;
+  border-radius: 20px;
+}
+.theme-stage[data-theme="dark"] {
+  background: #08142A;
+  color: #FFFFFF;
+  --bg: #08142A;
+  --surface: #091C3C;
+  --primary: #44D6D7;
+  --text: #FFFFFF;
+  --text-muted: #A9B8D0;
+}
+.theme-stage[data-theme="light"] {
+  background: #F7F9FC;
+  color: #1F2937;
+  --bg: #F7F9FC;
+  --surface: #FFFFFF;
+  --primary: #0C7C86;
+  --success: #3A8600;
+  --danger: #C63E3E;
+  --text: #1F2937;
+  --text-muted: #4B5563;
+}
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.mood-grid figure { margin: 0; text-align: center; }
+.mood-pair {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  min-height: 250px;
+}
 .nudge-banner, .home-nudge {
   margin: 12px 0 0;
   padding: 10px 12px;
