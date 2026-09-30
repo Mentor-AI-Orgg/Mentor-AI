@@ -675,7 +675,55 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .chapter-card-body { padding: 0 18px 18px; }
 .chapter-card-body p { margin: 0 0 14px; color: #e8eaf8; line-height: 1.65; }
 .lesson-platter-list { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 12px; }
+.lesson-platter-item { list-style: none; }
 .lesson-platter { padding: 14px 16px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--line); }
+.lesson-card > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  cursor: pointer;
+  font: 700 1rem 'Space Grotesk', sans-serif;
+  color: var(--text);
+  list-style: none;
+}
+.lesson-card > summary::-webkit-details-marker { display: none; }
+.lesson-card-title { flex: 1; }
+.lesson-card-time { color: var(--muted); font: 700 1rem 'Nunito', sans-serif; white-space: nowrap; }
+.lesson-card-body { margin-top: 8px; font-size: 1rem; }
+.lesson-card-body p,
+.lesson-fold p,
+.lesson-box { font-size: 1rem; line-height: 1.85; }
+.lesson-fold { margin: 0 0 10px; }
+.lesson-fold > summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.lesson-box {
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(68, 214, 215, 0.08);
+  border: 1px solid rgba(68, 214, 215, 0.35);
+}
+.lesson-box-atentie { background: rgba(255, 107, 107, 0.1); border-color: rgba(255, 107, 107, 0.4); }
+.lesson-box-formula { background: rgba(147, 252, 9, 0.08); border-color: rgba(147, 252, 9, 0.35); }
+.lesson-formula-list { margin: 6px 0 0; padding-left: 1.2em; }
+.lesson-keypoints ul { margin: 6px 0 10px; padding-left: 1.2em; }
+.lesson-keypoints li { margin: 0 0 6px; font-size: 1rem; line-height: 1.6; }
+.lesson-seealso a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--primary);
+  font-size: 1rem;
+}
 .lesson-platter h4 { margin: 0 0 8px; font: 700 1rem 'Space Grotesk', sans-serif; color: var(--text); }
 .lesson-platter p { margin: 0 0 10px; color: var(--text); line-height: 1.85; font-size: 1rem; }
 .math-signed { display: inline-flex; align-items: center; vertical-align: middle; margin: 0 0.08em; }

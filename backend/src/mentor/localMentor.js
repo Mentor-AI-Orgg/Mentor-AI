@@ -31,8 +31,18 @@ function tokens(text) {
   return fold(text).split(" ").filter(word => word.length >= 4 && !STOP.has(word));
 }
 
+function stripMarkers(text) {
+  return String(text || "").replace(/\*\*([^*]+)\*\*/g, "$1");
+}
+
+function lessonRecap(lesson) {
+  if (Array.isArray(lesson.keyPoints) && lesson.keyPoints.length) return lesson.keyPoints.join(" ");
+  return lesson.recap || "";
+}
+
 function sentencesOf(lesson) {
-  return [lesson.theory, lesson.example, lesson.recap]
+  return [lesson.theory, lesson.example, lessonRecap(lesson)]
+    .map(stripMarkers)
     .filter(Boolean)
     .join(" ")
     .split(/(?<=[.!?])\s+/)
@@ -42,7 +52,7 @@ function sentencesOf(lesson) {
 
 function scoreLesson(lesson, query) {
   const titleWords = new Set(tokens(lesson.title));
-  const bodyWords = tokens(`${lesson.title} ${lesson.theory || ""} ${lesson.example || ""} ${lesson.recap || ""}`);
+  const bodyWords = tokens(stripMarkers(`${lesson.title} ${lesson.theory || ""} ${lesson.example || ""} ${lessonRecap(lesson)}`));
   const bodySet = new Set(bodyWords);
   let score = 0;
   query.forEach(word => {
@@ -94,9 +104,9 @@ function answerFromLessons({ message, subject, grade }) {
   const picked = sentencesOf(best.lesson)
     .filter(sentence => query.some(word => fold(sentence).includes(word)))
     .slice(0, 3);
-  const body = picked.length
+  const body = stripMarkers(picked.length
     ? picked.join(" ")
-    : String(best.lesson.theory || best.lesson.example || "").slice(0, 700);
+    : String(best.lesson.theory || best.lesson.example || "").slice(0, 700));
 
   return {
     matched: true,
@@ -107,4 +117,4 @@ function answerFromLessons({ message, subject, grade }) {
   };
 }
 
-module.exports = { answerFromLessons, tokens, fold };
+module.exports = { answerFromLessons, tokens, fold, stripMarkers, lessonRecap };

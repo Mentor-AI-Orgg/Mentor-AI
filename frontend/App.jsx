@@ -440,6 +440,10 @@ function AppShell({ userData, setUserData }) {
     const onPop = () => {
       const route = parseAppHash(window.location.hash);
       historySilent.current = true;
+      if (route.kind === 'anchor') {
+        historySilent.current = false;
+        return;
+      }
       if (route.screen === 'reset' || route.screen === 'consent' || route.screen === 'parent') {
         setScreen(route.screen);
         historySilent.current = false;

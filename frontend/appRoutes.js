@@ -52,6 +52,10 @@ export function parseAppHash(hash) {
     };
   }
 
+  if (/^lectie-/.test(head) && parts.length === 1) {
+    return { kind: 'anchor', screen: null, lessonId: head.slice('lectie-'.length) };
+  }
+
   return { kind: 'unknown', screen: 'home', navScreen: 'home' };
 }
 
