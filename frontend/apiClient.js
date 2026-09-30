@@ -245,6 +245,28 @@ const MentorAPI = {
     }
   },
 
+  async mistakes() {
+    try {
+      const data = await safeFetchJson('/api/mistakes');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async reviewMistake(payload) {
+    try {
+      const data = await safeFetchJson('/api/mistakes/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async placement() {
     try {
       const data = await safeFetchJson('/api/placement');

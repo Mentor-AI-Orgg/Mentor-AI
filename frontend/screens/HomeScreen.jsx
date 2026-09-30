@@ -16,6 +16,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
   const [quiz, setQuiz] = useState(null);
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
+  const [dueMistakes, setDueMistakes] = useState(0);
   const dateLabel = locale === 'en'
     ? new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date())
     : formatRoDate();
@@ -39,6 +40,9 @@ const HomeScreen = ({ userData, onNavigate }) => {
 
   useEffect(() => {
     if (!userData?.isLoggedIn) return undefined;
+    MentorAPI.mistakes().then(pack => {
+      if (pack.success) setDueMistakes(pack.data.count || 0);
+    });
     MentorAPI.placement().then(pack => {
       const row = pack.data?.placement;
       if (!pack.success || row?.finished) return;
@@ -71,6 +75,12 @@ const HomeScreen = ({ userData, onNavigate }) => {
           <h1 className="display-font home-title">{t('home.hello', { name: userData.name || t('home.studentFallback') })}</h1>
           <p className="home-role-tag">{userData.titleName ? `${userData.titleName} · ` : ''}{t('home.roleStudent')} · {t('home.gradeOnly', { grade })}</p>
           {userData.timeBlocked && <Mascota mood="somnoros" size="md" message="Ai lucrat mult azi, ne vedem mâine!" />}
+          {dueMistakes > 0 && (
+            <p className="nudge-banner">
+              Ai {dueMistakes} {dueMistakes === 1 ? 'exercițiu' : 'exerciții'} de recapitulat azi.{' '}
+              <button type="button" className="ghost-button" onClick={() => onNavigate('caiet')}>Recapitulează</button>
+            </p>
+          )}
           <p className="home-slogan">{dailySlogan()}</p>
           <Mascota mood="salut" size="lg" message={t('home.hello', { name: userData.name || t('home.studentFallback') })} />
           <QuoteCard />

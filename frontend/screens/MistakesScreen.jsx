@@ -1,0 +1,104 @@
+import { useEffect, useState } from 'react';
+import { MentorAPI } from '../apiClient.js';
+import Mascota from '../components/mascot/Mascota.jsx';
+
+function when(stamp) {
+  const at = Number(stamp);
+  if (!Number.isFinite(at)) return '';
+  return new Date(at).toLocaleDateString('ro-RO');
+}
+
+const MistakesScreen = ({ onNavigate }) => {
+  const [book, setBook] = useState(null);
+  const [answer, setAnswer] = useState('');
+  const [note, setNote] = useState('');
+
+  const load = async () => {
+    const pack = await MentorAPI.mistakes();
+    if (pack.success) setBook(pack.data);
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const current = book?.due?.[0] || null;
+
+  const submit = async () => {
+    if (!current) return;
+    const pack = await MentorAPI.reviewMistake({ itemId: current.id, answer });
+    if (!pack.success) {
+      setNote(pack.error || 'Nu am putut verifica.');
+      return;
+    }
+    setAnswer('');
+    setBook(pack.data);
+    setNote(pack.data.message || (pack.data.correct ? 'Corect. Revine mai târziu.' : 'Încă nu. O ia de la început.'));
+  };
+
+  return (
+    <main className="home-page animate-fadeIn">
+      <header className="home-header">
+        <div>
+          <div className="eyebrow">Caietul de greșeli</div>
+          <h1 className="display-font home-title">Ce merită repetat</h1>
+          <p>Maximum 10 pe zi. Un exercițiu revine după 1, 3, 7 și apoi 21 de zile.</p>
+        </div>
+      </header>
+      {note && (
+        <section className="focus-card">
+          {book && note.includes('Bob cu bob') && <Mascota mood="mandru" size="md" message={note} />}
+          {!note.includes('Bob cu bob') && <p>{note}</p>}
+        </section>
+      )}
+      {current && (
+        <section className="focus-card">
+          <div className="eyebrow">{current.lesson}</div>
+          <p>{current.prompt || 'Deschide lecția și reia ideea.'}</p>
+          {current.prompt && (
+            <label className="field-label">
+              Răspunsul tău
+              <input className="field form-input" value={answer} onChange={event => setAnswer(event.target.value)} />
+            </label>
+          )}
+          <div className="focus-actions">
+            {current.prompt && <button type="button" className="accent-button" onClick={submit}>Verifică</button>}
+            {current.lessonId && (
+              <button type="button" className="ghost-button" onClick={() => onNavigate('learn', {
+                subject: current.subject || 'matematica',
+                grade: current.grade || '5',
+                chapter: current.lessonId
+              })}>Deschide lecția</button>
+            )}
+          </div>
+        </section>
+      )}
+      {!current && <p className="nudge-banner">Nimic de recapitulat azi.</p>}
+      {(book?.groups || []).map(group => (
+        <section key={group.lesson} className="focus-card">
+          <h2 className="display-font">{group.lesson}</h2>
+          <ul>
+            {group.items.map(item => (
+              <li key={item.id}>
+                {item.ready ? 'De recapitulat azi' : `Revine pe ${when(item.due)}`}
+                {item.lessonId && (
+                  <>
+                    {' · '}
+                    <button type="button" className="ghost-button" onClick={() => onNavigate('learn', {
+                      subject: group.subject || 'matematica',
+                      grade: group.grade || '5',
+                      chapter: item.lessonId
+                    })}>Deschide lecția</button>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      <button type="button" className="ghost-button" onClick={() => onNavigate('home')}>Înapoi acasă</button>
+    </main>
+  );
+};
+
+export default MistakesScreen;

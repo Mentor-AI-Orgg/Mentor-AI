@@ -12,6 +12,7 @@ describe('app hash routes', () => {
       ['shop', {}, '#/magazin'],
       ['profile', {}, '#/profil'],
       ['calendar', {}, '#/calendar'],
+      ['caiet', {}, '#/caiet'],
       ['learn', {}, '#/lectii'],
       ['learn', { subject: 'romana', grade: '6', chapter: 'fractii' }, '#/lectii/romana/6/fractii'],
       ['learn', { track: 'en', subject: 'matematica' }, '#/en/matematica'],
