@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { WEEKLY_TARGET, weeklyGoalFrom } from '../frontend/weeklyGoal.js';
+import { WEEKLY_TARGET, dailyGoalFrom, weeklyGoalFrom } from '../frontend/weeklyGoal.js';
 
 describe('obiectivul săptămânii', () => {
   const wednesday = new Date('2026-09-30T12:00:00Z');
@@ -20,6 +20,13 @@ describe('obiectivul săptămânii', () => {
       '2026-09-29',
       '2026-09-30'
     ]);
+  });
+
+  it('marchează ziua când lecția de azi e deja făcută', () => {
+    const now = new Date('2026-09-30T12:00:00Z');
+    expect(dailyGoalFrom(['2026-09-30'], now)).toEqual({ day: '2026-09-30', done: true });
+    expect(dailyGoalFrom(['2026-09-29'], now)).toEqual({ day: '2026-09-30', done: false });
+    expect(dailyGoalFrom(null, now).done).toBe(false);
   });
 
   it('marchează obiectivul atins la 4 zile', () => {

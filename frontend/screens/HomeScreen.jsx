@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import { formatRoDate } from '../userData.js';
 import { emitMascot } from '../mascot/mascotEvents.js';
-import { weeklyGoalFrom } from '../weeklyGoal.js';
+import { dailyGoalFrom, weeklyGoalFrom } from '../weeklyGoal.js';
 import { useI18n } from '../i18n/index.jsx';
 import { avatarIcon, itemEmoji } from '../appearance.js';
 import { xpProgress } from '../xpProgress.js';
@@ -32,6 +32,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
   ];
   const streakDays = userData.streakDays || [];
   const weekGoal = weeklyGoalFrom(streakDays);
+  const dayGoal = dailyGoalFrom(streakDays);
   const today = new Date();
   const boxes = Array.from({ length: 7 }, (_, index) => {
     const d = new Date(today);
@@ -67,6 +68,19 @@ const HomeScreen = ({ userData, onNavigate }) => {
     else emitMascot('prima_intrare_azi', { nume });
     return undefined;
   }, [userData.name, userData.username, userData.streak]);
+
+  useEffect(() => {
+    if (!dayGoal.done) return undefined;
+    const key = `s10-day-goal-${dayGoal.day}`;
+    try {
+      if (localStorage.getItem(key) === '1') return undefined;
+      localStorage.setItem(key, '1');
+    } catch {
+      return undefined;
+    }
+    emitMascot('obiectiv_zilnic');
+    return undefined;
+  }, [dayGoal.done, dayGoal.day]);
 
   useEffect(() => {
     if (!weekGoal.reached) return undefined;
@@ -158,9 +172,9 @@ const HomeScreen = ({ userData, onNavigate }) => {
       )}
       <section className="focus-card">
         <div>
-          <div className="eyebrow">Azi, concret</div>
-          <h2 className="display-font">Un capitol.<br />Un test.</h2>
-          <p>{last?.title ? `Continui „${last.title}”, apoi un test scurt pe aceeași idee.` : 'Deschide un capitol de la clasa ta, citește o lecție, apoi dă testul.'}</p>
+          <div className="eyebrow">Obiectivul zilei</div>
+          <h2 className="display-font">{dayGoal.done ? 'Gata pentru azi.' : 'O lecție.'}</h2>
+          <p>{dayGoal.done ? 'Mâine te aștept din nou. Dacă mai ai chef, misiunile de jos sunt în plus.' : (last?.title ? `Continui „${last.title}”. Atât e destul pentru azi.` : 'Deschide o lecție de la clasa ta. Atât e destul pentru azi.')}</p>
         </div>
         <div className="focus-actions">
           <button
@@ -168,7 +182,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
             onClick={() => onNavigate('learn', continueExtras)}
             className="accent-button focus-action"
           >
-            {last?.title ? `Continuă „${last.title}”` : 'Deschide lecțiile'} <i className="fas fa-play" />
+            {dayGoal.done ? 'Mai vreau o lecție' : (last?.title ? `Continuă „${last.title}”` : 'Deschide o lecție')} <i className="fas fa-play" />
           </button>
           <button type="button" onClick={() => onNavigate('learn', { subject: last?.subject || 'matematica', grade, chapter: last?.chapterId })} className="ghost-button focus-action">
             Testul de azi <i className="fas fa-clipboard-check" />
@@ -185,6 +199,10 @@ const HomeScreen = ({ userData, onNavigate }) => {
         </div>
         <div className="progress-track"><div style={{ width: `${Math.min(userData.score || 0, 100)}%` }}></div></div>
         <LevelBar userData={userData} />
+        <div className={`day-goal ${dayGoal.done ? 'is-done' : ''}`}>
+          <div className="eyebrow">Azi</div>
+          <p>{dayGoal.done ? 'Ziua e făcută.' : 'Încă nu e făcută.'}</p>
+        </div>
         <div className="week-goal">
           <div className="eyebrow">Obiectivul săptămânii</div>
           <p>{weekGoal.done} din {weekGoal.target} zile. Puțin, dar des.</p>
@@ -210,8 +228,9 @@ const HomeScreen = ({ userData, onNavigate }) => {
       <section className="home-quick">
         <div className="section-heading">
           <div>
-            <div className="eyebrow">Misiuni de azi</div>
-            <h2 className="display-font">Trei lucruri mici.</h2>
+            <div className="eyebrow">Dacă mai ai chef</div>
+            <h2 className="display-font">Trei lucruri în plus.</h2>
+            <p>Nu sunt obligatorii. Ziua e gata când ai deschis o lecție.</p>
           </div>
         </div>
         <ul className="mission-list">

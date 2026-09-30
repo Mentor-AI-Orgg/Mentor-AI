@@ -26,10 +26,16 @@ const HELP_ARTICLES = [
     body: 'Greșelile de la exerciții se strâng singure. Într-o zi primești cel mult 10 de repetat, la 1, 3, 7 și 21 de zile. Le găsești la Caiet, de pe prima pagină, când scrie că ai de recapitulat.'
   },
   {
+    id: 'obiectiv-zi',
+    category: 'ritm',
+    title: 'Obiectivul zilei',
+    body: 'Obiectivul zilnic e o lecție. Când ai deschis-o, ziua e gata. Cele trei misiuni de sub ea sunt în plus, dacă mai ai chef. Poți lipsi o zi: săptămâna cere 4 zile, nu șapte.'
+  },
+  {
     id: 'obiectiv',
     category: 'ritm',
     title: 'Obiectivul săptămânii',
-    body: 'Obiectivul este 4 zile cu lecții în aceeași săptămână, de luni până duminică. Nu trebuie să stai mult. Când ajungi la 4, furnicuța te felicită o singură dată în săptămâna aceea.'
+    body: 'Obiectivul este 4 zile cu lecții în aceeași săptămână, de luni până duminică. Nu trebuie să stai mult și nu trebuie să vii în fiecare zi. Când ajungi la 4, furnicuța te felicită o singură dată în săptămâna aceea.'
   },
   {
     id: 'en',

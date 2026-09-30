@@ -106,9 +106,9 @@ curent și fișierul de editat.
 
 Articolele pentru copil stau în `frontend/help/articles.js`.
 Ecranul e `#/ajutor`: căutare și categorii (lecții, ritm, examen, cont).
-Acoperă lecția, testul, caietul de greșeli, obiectivul săptămânii
-(4 zile, luni–duminică), Evaluarea Națională, părintele, profilul privat
-și instalarea pe telefon.
+Acoperă lecția, testul, caietul de greșeli, obiectivul zilei (o lecție),
+obiectivul săptămânii (4 zile, luni–duminică), Evaluarea Națională,
+părintele, profilul privat și instalarea pe telefon.
 
 ## Aplicația pe telefon
 

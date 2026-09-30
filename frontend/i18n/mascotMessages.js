@@ -88,6 +88,13 @@ const MASCOT_MESSAGES = {
       'Nivel nou! L-ai construit lecție cu lecție.'
     ]
   },
+  obiectiv_zilnic: {
+    mood: 'bucuros',
+    lines: [
+      'Gata pentru azi. Mâine te aștept din nou.',
+      'O lecție azi. Asta contează.'
+    ]
+  },
   obiectiv_saptamanal: {
     mood: 'mandru',
     big: true,
