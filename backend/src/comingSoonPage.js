@@ -84,17 +84,7 @@ function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
 <body>
   <main>
     <p class="pill">În curând</p>
-    <svg class="mascot" data-mood="salut" viewBox="70 8 100 110" width="120" height="120" role="img" aria-label="${escapeHtml(MASCOT_NAME)}, furnicuța care te ajută">
-      <circle data-part="cap" cx="120" cy="70" r="30" fill="#091C3C"></circle>
-      <ellipse cx="110" cy="58" rx="12" ry="8" fill="#44D6D7"></ellipse>
-      <path data-part="antena-stanga" d="M108 44 L92 24 L74 16" fill="none" stroke="#091C3C" stroke-width="5" stroke-linecap="round"></path>
-      <path data-part="antena-dreapta" d="M132 44 L148 24 L166 16" fill="none" stroke="#091C3C" stroke-width="5" stroke-linecap="round"></path>
-      <g data-part="ochelari">
-        <circle cx="110" cy="72" r="14" fill="none" stroke="#44D6D7" stroke-width="4"></circle>
-        <circle cx="130" cy="72" r="14" fill="none" stroke="#44D6D7" stroke-width="4"></circle>
-      </g>
-      <path d="M110 84 Q120 92 130 84" fill="none" stroke="#FFFFFF" stroke-width="2"></path>
-    </svg>
+    <img class="mascot" data-mood="salut" src="/mascot/salut.png" width="120" height="120" alt="${escapeHtml(MASCOT_NAME)}, furnicuța care te ajută" />
     <h1>Sunt de 10</h1>
     <section class="gate" aria-label="Intrare creator">
       <h2>Intrare creator</h2>

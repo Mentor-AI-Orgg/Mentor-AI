@@ -42,7 +42,7 @@ describe('landing page', () => {
   it('does not invent numbers or write the mascot name by hand', () => {
     const source = readFileSync(join(import.meta.dirname, '../frontend/components/WelcomeScreen.jsx'), 'utf8');
     expect(source).not.toMatch(/Zecița/);
-    expect(html.replace(/aria-label="[^"]*"/g, '')).not.toMatch(/Zecița|Mentor AI|utilizatori|recenzii|elevi activi/i);
+    expect(html.replace(/aria-label="[^"]*"/g, '').replace(/alt="[^"]*"/g, '')).not.toMatch(/Zecița|Mentor AI|utilizatori|recenzii|elevi activi/i);
     expect(html).not.toMatch(/\d+\s*%/);
     expect(html).not.toContain('[DE COMPLETAT');
   });

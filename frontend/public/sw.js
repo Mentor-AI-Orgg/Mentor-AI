@@ -7,6 +7,12 @@ const PRECACHE = [
   '/offline.html',
   '/manifest.webmanifest',
   '/emblema.png',
+  '/mascot/salut.png',
+  '/mascot/mandru.png',
+  '/mascot/gandeste.png',
+  '/mascot/bucuros.png',
+  '/mascot/explica.png',
+  '/mascot/cap.png',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/icons/icon-maskable-512.png',
@@ -21,6 +27,7 @@ function isStaticAsset(url) {
   if (path.startsWith('/assets/')) return true;
   if (path.startsWith('/icons/')) return true;
   if (path.startsWith('/fonts/')) return true;
+  if (path.startsWith('/mascot/')) return true;
   return path === '/manifest.webmanifest' || path === '/offline.html' || path === '/emblema.png';
 }
 
