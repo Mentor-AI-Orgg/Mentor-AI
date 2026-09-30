@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import { formatRoDate } from '../userData.js';
 import { emitMascot } from '../mascot/mascotEvents.js';
+import { weeklyGoalFrom } from '../weeklyGoal.js';
 import { useI18n } from '../i18n/index.jsx';
 import { avatarIcon, itemEmoji } from '../appearance.js';
 import { xpProgress } from '../xpProgress.js';
@@ -30,6 +31,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
     { id: 'test', label: 'Un test de capitol', done: false }
   ];
   const streakDays = userData.streakDays || [];
+  const weekGoal = weeklyGoalFrom(streakDays);
   const today = new Date();
   const boxes = Array.from({ length: 7 }, (_, index) => {
     const d = new Date(today);
@@ -58,10 +60,26 @@ const HomeScreen = ({ userData, onNavigate }) => {
     if (sessionStorage.getItem('s10-hello-day') === day) return undefined;
     sessionStorage.setItem('s10-hello-day', day);
     const nume = userData.name || userData.username || '';
+    const streak = Number(userData.streak || 0);
+    const milestones = [3, 7, 14, 21, 30];
     if (new Date().getHours() >= 22) emitMascot('seara_tarziu');
+    else if (milestones.includes(streak)) emitMascot('serie_zile', { n: streak });
     else emitMascot('prima_intrare_azi', { nume });
     return undefined;
-  }, [userData.name, userData.username]);
+  }, [userData.name, userData.username, userData.streak]);
+
+  useEffect(() => {
+    if (!weekGoal.reached) return undefined;
+    const key = `s10-week-goal-${weekGoal.week}`;
+    try {
+      if (localStorage.getItem(key) === '1') return undefined;
+      localStorage.setItem(key, '1');
+    } catch {
+      return undefined;
+    }
+    emitMascot('obiectiv_saptamanal');
+    return undefined;
+  }, [weekGoal.reached, weekGoal.week]);
 
   const continueExtras = last?.chapterId
     ? { subject: last.subject, grade: last.grade || grade, chapter: last.chapterId, track: last.track || null }
@@ -167,6 +185,16 @@ const HomeScreen = ({ userData, onNavigate }) => {
         </div>
         <div className="progress-track"><div style={{ width: `${Math.min(userData.score || 0, 100)}%` }}></div></div>
         <LevelBar userData={userData} />
+        <div className="week-goal">
+          <div className="eyebrow">Obiectivul săptămânii</div>
+          <p>{weekGoal.done} din {weekGoal.target} zile. Puțin, dar des.</p>
+          <div className="streak-week" aria-label="Zilele din săptămâna aceasta">
+            {weekGoal.days.map(day => (
+              <span key={day.key} className={`streak-box ${day.on ? 'on' : ''}`} title={day.key} />
+            ))}
+          </div>
+          <button type="button" className="ghost-button" onClick={() => onNavigate('ajutor')}>Ajutor</button>
+        </div>
         <div className="streak-week" aria-label="Zile la rând, ultimele 7">
           {boxes.map(box => (
             <span key={box.key} className={`streak-box ${box.on ? 'on' : ''}`} title={box.key} />

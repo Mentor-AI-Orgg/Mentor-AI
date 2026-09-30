@@ -69,12 +69,56 @@ contului și ștergerea citesc doar registrul. Termenele de păstrare stau în
 `backend/src/config/retention.js`; pagina de confidențialitate trebuie să
 folosească aceleași numere.
 
+## Culori
+
+Tema închisă, cea de bază:
+
+- fundal `#08142A`, suprafață `#091C3C`, suprafață ridicată `#0F2A52`
+- text `#FFFFFF`, text secundar `#A9B8D0`
+- accent `#44D6D7`, reușită `#93FC09`, greșeală `#FF6B6B`
+
+Tema deschisă, pe `html[data-theme="light"]`:
+
+- fundal `#F7F9FC`, suprafață `#FFFFFF`, suprafață ridicată `#E7EEF6`
+- text `#1F2937`, text secundar `#4B5563`
+- accent `#0C7C86`, reușită `#3A8600`, greșeală `#C63E3E`
+
+Turcoazul și lime-ul din tema deschisă sunt mai închise decât în logo,
+ca textul să treacă de 4.5:1.
+
+## Mascota
+
+Furnicuța se desenează în `frontend/components/mascot/Mascota.jsx`.
+Numele afișat stă doar în `shared/mascot.json` (`MASCOT_NAME`).
+Mesajele, starea și categoria stau în `frontend/i18n/mascotMessages.js`.
+
+Stările: `salut`, `bucuros`, `sarbatoare`, `gandeste`, `incurajeaza`,
+`explica`, `somnoros`, `mandru`, `trist-bland`.
+La 32 px se vede capul (`/mascot/cap.png`). La 120 și 240 px se vede
+desenul stării, din `frontend/public/mascot/`.
+
+Pagina `#/creator/mascota` e doar pentru creator (cookie-ul de pe
+`/creator`). Arată toate stările, ambele teme, 32 px și 240 px, câte un
+mesaj din fiecare categorie și panoul de ajutor. Acolo scrie și numele
+curent și fișierul de editat.
+
+## Ajutor
+
+Articolele pentru copil stau în `frontend/help/articles.js`.
+Ecranul e `#/ajutor`: căutare și categorii (lecții, ritm, examen, cont).
+Acoperă lecția, testul, caietul de greșeli, obiectivul săptămânii
+(4 zile, luni–duminică), Evaluarea Națională, părintele, profilul privat
+și instalarea pe telefon.
+
 ## Aplicația pe telefon
 
 Iconițele din `frontend/public/icons` sunt emblema (cercul „SUNT 10”).
+Din browser: pe iPhone, Distribuie apoi Adaugă pe ecranul de pornire;
+pe Android, meniul apoi Adaugă pe ecranul de pornire sau Instalează.
+
 Service worker-ul `frontend/public/sw.js` ține în cache doar fișierele
-statice: `/assets/`, iconițele, fonturile locale, manifestul și pagina
-offline. Nu salvează `/api/`, `/parinte` sau `/creator`.
+statice: `/assets/`, iconițele, desenele din `/mascot/`, fonturile locale,
+manifestul și pagina offline. Nu salvează `/api/`, `/parinte` sau `/creator`.
 
 Ca să oprești cache-ul, pune `const DISABLE = true` sus în `sw.js`, apoi
 build și deploy. La următoarea vizită worker-ul se dezînregistrează și

@@ -20,6 +20,8 @@ import { ConsentWaitScreen, ConsentScreen, ParentScreen } from './components/Con
 import OnboardingScreen from './components/OnboardingScreen.jsx';
 import RenameScreen from './components/RenameScreen.jsx';
 import ModerationScreen from './screens/ModerationScreen.jsx';
+import HelpScreen from './screens/HelpScreen.jsx';
+import CreatorMascotScreen from './screens/CreatorMascotScreen.jsx';
 import { ProfessorScreen } from './components/StudyScreens.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
 import MistakesScreen from './screens/MistakesScreen.jsx';
@@ -159,7 +161,7 @@ function AppShell({ userData, setUserData }) {
     });
   }, []);
 
-  const isParentLink = route => route.screen === 'reset' || route.screen === 'consent' || route.screen === 'parent' || route.screen === 'moderare';
+  const isParentLink = route => route.screen === 'reset' || route.screen === 'consent' || route.screen === 'parent' || route.screen === 'moderare' || route.screen === 'mascota';
 
   const handleSplashFinish = async () => {
     const route = parseAppHash(window.location.hash);
@@ -200,7 +202,7 @@ function AppShell({ userData, setUserData }) {
     }
 
     if (session.user.consent !== 'granted') {
-      if (route.kind === 'app' && ['learn', 'home', 'calendar'].includes(route.screen)) {
+      if (route.kind === 'app' && ['learn', 'home', 'calendar', 'ajutor'].includes(route.screen)) {
         if (route.extras) {
           setStudyFocus(prev => ({
             subject: route.extras.subject !== undefined ? route.extras.subject : prev.subject,
@@ -424,7 +426,7 @@ function AppShell({ userData, setUserData }) {
       chapter: extras.chapter || null,
       track: extras.track !== undefined ? extras.track : prev.track
     }));
-    setNavScreen(target === 'calendar' ? 'calendar' : target === 'caiet' ? 'home' : target);
+    setNavScreen(target === 'calendar' ? 'calendar' : (target === 'caiet' || target === 'ajutor') ? 'home' : target);
     setScreen(target);
     if (!historySilent.current) writeHash(target, extras, 'push');
     if (target === 'home' || target === 'shop' || target === 'profile') {
@@ -443,8 +445,8 @@ function AppShell({ userData, setUserData }) {
         historySilent.current = false;
         return;
       }
-      if (route.screen === 'moderare') {
-        setScreen('moderare');
+      if (route.screen === 'moderare' || route.screen === 'mascota') {
+        setScreen(route.screen);
         historySilent.current = false;
         return;
       }
@@ -503,6 +505,10 @@ function AppShell({ userData, setUserData }) {
       }
       case 'moderare':
         return <ModerationScreen />;
+      case 'mascota':
+        return <CreatorMascotScreen />;
+      case 'ajutor':
+        return <HelpScreen onBack={() => handleNavigate('home')} />;
       case 'rename':
         return (
           <RenameScreen
@@ -598,7 +604,7 @@ function AppShell({ userData, setUserData }) {
     }
   };
 
-  const showNav = ['home', 'professor', 'learn', 'shop', 'profile', 'calendar', 'caiet'].includes(screen);
+  const showNav = ['home', 'professor', 'learn', 'shop', 'profile', 'calendar', 'caiet', 'ajutor'].includes(screen);
 
   return (
     <div className="app-shell">

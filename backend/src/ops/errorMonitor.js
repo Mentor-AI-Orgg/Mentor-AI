@@ -208,7 +208,7 @@ function latestBackupMs(dataFile) {
 
 function checkBackupAge({ dataFile, now = Date.now() } = {}) {
   const newest = latestBackupMs(dataFile);
-  if (newest && now - newest <= BACKUP_STALE_MS) return { sent: false, reason: "fresh" };
+  if (newest && now - newest <= BACKUP_STALE_MS) return Promise.resolve({ sent: false, reason: "fresh" });
   return noteIncident({ type: "backup_stale", id: "backup", now });
 }
 

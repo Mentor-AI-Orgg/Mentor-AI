@@ -23,6 +23,8 @@ export function parseAppHash(hash) {
   if (head === 'parinte') return { kind: 'guest', screen: 'parent', extras: { token: a || '' } };
   if (head === 'asteptare') return { kind: 'app', screen: 'consent-wait', navScreen: 'home' };
   if (head === 'creator' && a === 'moderare') return { kind: 'guest', screen: 'moderare' };
+  if (head === 'creator' && a === 'mascota') return { kind: 'guest', screen: 'mascota' };
+  if (head === 'ajutor') return { kind: 'app', screen: 'ajutor', navScreen: 'home' };
   if (head === 'nume-nou') return { kind: 'app', screen: 'rename', navScreen: 'home' };
 
   if (head === 'acasa' || head === 'home') return { kind: 'app', screen: 'home', navScreen: 'home' };
@@ -82,6 +84,10 @@ export function hashForRoute(screen, extras = {}) {
       return '#/asteptare';
     case 'moderare':
       return '#/creator/moderare';
+    case 'mascota':
+      return '#/creator/mascota';
+    case 'ajutor':
+      return '#/ajutor';
     case 'rename':
       return '#/nume-nou';
     case 'home':
