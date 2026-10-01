@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import MascotPresence from './mascot/MascotPresence.jsx';
 import GeoFigure from './GeoFigure.jsx';
 import MathText from './MathText.jsx';
 import { splitLessonParagraphs } from '../lessonParagraphs.js';
@@ -183,6 +184,7 @@ export default function LessonCard({ entry, lessonIndex, initiallyOpen = false, 
           <span className="lesson-card-time">~{minutes} min</span>
         </summary>
         <div className="lesson-card-body">
+          {open ? <MascotPresence compact /> : null}
           <LessonFigures entry={entry} open={open} />
           <LessonBoxes entry={entry} />
           <FormulaBox entry={entry} />

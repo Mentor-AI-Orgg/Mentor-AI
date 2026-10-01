@@ -85,6 +85,7 @@ function AppShell({ userData, setUserData }) {
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [onboardingData, setOnboardingData] = useState({});
   const [studyFocus, setStudyFocus] = useState({ subject: null, grade: null, chapter: null, track: null });
+  const [screenExtras, setScreenExtras] = useState({});
   const historySilent = useRef(false);
   const loggedInRef = useRef(Boolean(userData.isLoggedIn));
   loggedInRef.current = Boolean(userData.isLoggedIn);
@@ -211,6 +212,7 @@ function AppShell({ userData, setUserData }) {
             track: route.extras.track !== undefined ? route.extras.track : prev.track
           }));
         }
+        setScreenExtras(route.extras || {});
         setNavScreen(route.navScreen || route.screen);
         setScreen(route.screen);
         return;
@@ -249,6 +251,7 @@ function AppShell({ userData, setUserData }) {
           track: route.extras.track !== undefined ? route.extras.track : prev.track
         }));
       }
+      setScreenExtras(route.extras || {});
       setNavScreen(route.navScreen || route.screen);
       setScreen(route.screen);
       return;
@@ -428,6 +431,7 @@ function AppShell({ userData, setUserData }) {
       writeHash('consent-wait');
       return;
     }
+    setScreenExtras(extras || {});
     setStudyFocus(prev => ({
       subject: extras.subject !== undefined ? extras.subject : prev.subject,
       grade: extras.grade || prev.grade,
@@ -520,7 +524,7 @@ function AppShell({ userData, setUserData }) {
       case 'mascota':
         return <CreatorMascotScreen />;
       case 'ajutor':
-        return <HelpScreen onBack={() => handleNavigate('home')} />;
+        return <HelpScreen onBack={() => handleNavigate('home')} onNavigate={handleNavigate} />;
       case 'rename':
         return (
           <RenameScreen
@@ -599,6 +603,7 @@ function AppShell({ userData, setUserData }) {
             onToast={showToast}
             onProfileSaved={user => setUserData(prev => applyAccount(user, prev))}
             onNavigate={handleNavigate}
+            section={screenExtras.section || ''}
           />
         );
       default:

@@ -17,6 +17,7 @@ const MOODS = [
 const SIZES = {
   sm: 32,
   md: 120,
+  bust: 176,
   lg: 240
 };
 
@@ -40,7 +41,7 @@ function mascotLabel(translate, name) {
   return text;
 }
 
-const Mascota = ({ mood = 'salut', size = 'md', message = '' }) => {
+const Mascota = ({ mood = 'salut', size = 'md', message = '', art = '', pulse = '' }) => {
   const { t } = useI18n();
   const safeMood = MOODS.includes(mood) ? mood : 'salut';
   const box = SIZES[size] || SIZES.md;
@@ -54,12 +55,15 @@ const Mascota = ({ mood = 'salut', size = 'md', message = '' }) => {
   }, [message]);
 
   const label = mascotLabel(t, MASCOT_NAME);
-  const src = size === 'sm' ? '/mascot/cap.png' : ART[safeMood];
+  const src = size === 'sm'
+    ? '/mascot/cap.png'
+    : (art === 'semnatura' ? '/mascot/explica.png' : ART[safeMood]);
+  const pulseClass = pulse === 'succes' ? ' is-succes' : pulse === 'gresit' ? ' is-gresit' : '';
 
   return (
     <div className={`mascota-wrap mascota-${size} is-${safeMood}`}>
       <img
-        className="mascota"
+        className={`mascota${pulseClass}`}
         data-mood={safeMood}
         data-size={size}
         src={src}

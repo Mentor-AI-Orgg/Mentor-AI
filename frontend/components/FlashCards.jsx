@@ -6,6 +6,7 @@ import QuoteCard from './QuoteCard.jsx';
 import GradeGoalPicker from './GradeGoalPicker.jsx';
 import MathText from './MathText.jsx';
 import { effortLine } from '../i18n/quizFeedback.js';
+import MascotPresence from './mascot/MascotPresence.jsx';
 
 const letters = ['A', 'B', 'C', 'D'];
 
@@ -151,6 +152,13 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
   return (
     <section className="flashcards-card surface">
       <div className="focus-timer-head">
+        {(card || report) ? (
+          <MascotPresence
+            compact
+            celebrate={report ? (Number(report.grade) >= 5 ? 'succes' : 'gresit') : ''}
+            message={report ? (Number(report.grade) >= 5 ? 'Gata setul. Bravo că l-ai dus până la capăt.' : 'Hai să vedem ce mai repetăm.') : ''}
+          />
+        ) : null}
         <div>
           <div className="eyebrow">Grile rapide</div>
           <h3 className="display-font">4 variante. Pe nota pe care o vrei.</h3>

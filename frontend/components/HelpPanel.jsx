@@ -1,17 +1,51 @@
 import { useMemo, useState } from 'react';
 import { HELP_CATEGORIES, searchHelp } from '../help/articles.js';
+import { askApp } from '../help/ask.js';
 
-const HelpPanel = ({ heading = 'Ajutor' }) => {
+const HelpPanel = ({ heading = 'Ajutor', onNavigate }) => {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('toate');
+  const [askText, setAskText] = useState('');
+  const [reply, setReply] = useState(null);
   const articles = useMemo(() => searchHelp(query, category), [query, category]);
+
+  const ask = event => {
+    event.preventDefault();
+    setReply(askApp(askText));
+  };
 
   return (
     <section className="help-panel" aria-label={heading}>
       <div className="eyebrow">Ajutor</div>
       <h2 className="display-font">{heading}</h2>
+      <form className="help-ask" onSubmit={ask}>
+        <label className="field-label">
+          Întreabă despre aplicație
+          <input
+            className="field form-input help-search"
+            value={askText}
+            onChange={event => setAskText(event.target.value)}
+            placeholder="De exemplu: unde sunt setările?"
+          />
+        </label>
+        <button type="submit" className="accent-button">Întreabă</button>
+      </form>
+      {reply && (
+        <div className="help-answer surface" role="status">
+          <p>{reply.answer}</p>
+          {reply.screen && onNavigate ? (
+            <button
+              type="button"
+              className="accent-button"
+              onClick={() => onNavigate(reply.screen, reply.extras || {})}
+            >
+              Du-mă acolo
+            </button>
+          ) : null}
+        </div>
+      )}
       <label className="field-label">
-        Caută
+        Caută în ghid
         <input
           className="field form-input help-search"
           value={query}

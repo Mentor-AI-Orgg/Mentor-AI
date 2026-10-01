@@ -7,7 +7,7 @@ import CardDeck from '../components/CardDeck.jsx';
 import StepProblem from '../components/StepProblem.jsx';
 import EnPaperView from '../components/EnPaperView.jsx';
 import QuoteCard from '../components/QuoteCard.jsx';
-import Mascota from '../components/mascot/Mascota.jsx';
+import MascotPresence from '../components/mascot/MascotPresence.jsx';
 import GeometryAtlas from '../components/GeometryAtlas.jsx';
 import LessonCard from '../components/LessonCard.jsx';
 import { dailySlogan } from '../slogans.js';
@@ -349,13 +349,15 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
 
   return (
     <main className="screen-page learn-page animate-fadeIn">
-      <div className="learn-mascot">
-        <Mascota mood="explica" size="sm" />
-      </div>
       <header className="screen-header">
+        <div className="learn-top-row">
+          <MascotPresence />
+          <div className="learn-hero">
+            <div className="eyebrow">{isEn ? 'EVALUARE NAȚIONALĂ · CLASA A VIII-A' : 'LECȚII DE GIMNAZIU'}</div>
+            <h1 className="display-font screen-title">{isEn ? 'Pregătire pentru Evaluarea Națională.' : 'Română și matematică, clasele 5–8.'}</h1>
+          </div>
+        </div>
         <div className="learn-hero">
-          <div className="eyebrow">{isEn ? 'EVALUARE NAȚIONALĂ · CLASA A VIII-A' : 'LECȚII DE GIMNAZIU'}</div>
-          <h1 className="display-font screen-title">{isEn ? 'Pregătire pentru Evaluarea Națională.' : 'Română și matematică, clasele 5–8.'}</h1>
           <p className="screen-subtitle">
             {isEn
               ? 'Secțiune separată față de capitolele pe clase. Lecțiile sunt rezumate originale, cu exemple lucrate, după programa de examen (OM 4.730/2022). Simularea EN se lucrează ca la examen: începi, stai minim o oră, apoi finalizezi. Antrenamentul scurt n-are ora de sală — predai când termini. Baremul și nota apar după predare; părintele le primește împreună cu durata.'

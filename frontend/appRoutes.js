@@ -1,5 +1,7 @@
 /** Rute hash: Back și Refresh păstrează ecranul, nu doar un `pushState` mort. */
 
+const PROFILE_SECTIONS = new Set(['setari', 'tema', 'clasament', 'prieteni', 'cont', 'parola', 'parinte']);
+
 function decodePart(value) {
   if (!value) return '';
   try {
@@ -30,7 +32,12 @@ export function parseAppHash(hash) {
   if (head === 'acasa' || head === 'home') return { kind: 'app', screen: 'home', navScreen: 'home' };
   if (head === 'mentor' || head === 'professor') return { kind: 'app', screen: 'professor', navScreen: 'professor' };
   if (head === 'magazin' || head === 'shop') return { kind: 'app', screen: 'shop', navScreen: 'shop' };
-  if (head === 'profil' || head === 'profile') return { kind: 'app', screen: 'profile', navScreen: 'profile' };
+  if (head === 'profil' || head === 'profile') {
+    const section = PROFILE_SECTIONS.has(a) ? a : '';
+    const route = { kind: 'app', screen: 'profile', navScreen: 'profile' };
+    if (section) route.extras = { section };
+    return route;
+  }
   if (head === 'calendar') return { kind: 'app', screen: 'calendar', navScreen: 'calendar' };
   if (head === 'caiet') return { kind: 'app', screen: 'caiet', navScreen: 'home' };
 
@@ -67,6 +74,8 @@ export function screenForLoggedOut(route) {
   return 'welcome';
 }
 
+export { PROFILE_SECTIONS };
+
 export function hashForRoute(screen, extras = {}) {
   switch (screen) {
     case 'welcome':
@@ -101,7 +110,7 @@ export function hashForRoute(screen, extras = {}) {
     case 'shop':
       return '#/magazin';
     case 'profile':
-      return '#/profil';
+      return PROFILE_SECTIONS.has(extras.section) ? `#/profil/${extras.section}` : '#/profil';
     case 'calendar':
       return '#/calendar';
     case 'caiet':

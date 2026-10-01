@@ -11,6 +11,8 @@ describe('app hash routes', () => {
       ['professor', {}, '#/mentor'],
       ['shop', {}, '#/magazin'],
       ['profile', {}, '#/profil'],
+      ['profile', { section: 'tema' }, '#/profil/tema'],
+      ['profile', { section: 'prieteni' }, '#/profil/prieteni'],
       ['calendar', {}, '#/calendar'],
       ['caiet', {}, '#/caiet'],
       ['ajutor', {}, '#/ajutor'],
@@ -67,5 +69,13 @@ describe('app hash routes', () => {
     expect(screenForLoggedOut(parseAppHash('#/start'))).toBe('welcome');
     expect(screenForLoggedOut(parseAppHash(''))).toBe('welcome');
     expect(screenForLoggedOut(parseAppHash('#/acasa'))).toBe('welcome');
+  });
+
+  it('deschide o secțiune reală din profil și ignoră una inventată', () => {
+    expect(parseAppHash('#/profil/clasament').extras).toEqual({ section: 'clasament' });
+    expect(parseAppHash('#/profil/setari').extras).toEqual({ section: 'setari' });
+    expect(parseAppHash('#/profil')).not.toHaveProperty('extras');
+    expect(hashForRoute('profile', { section: 'nu-exista' })).toBe('#/profil');
+    expect(parseAppHash('#/profil/nu-exista')).not.toHaveProperty('extras');
   });
 });

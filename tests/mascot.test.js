@@ -42,5 +42,15 @@ describe('furnicuța', () => {
     expect(html).toContain('src="/mascot/cap.png"');
     expect(html).not.toContain('/mascot/salut.png');
     expect(html).toContain('width="32"');
+    expect(markup({ mood: 'explica', size: 'sm', art: 'semnatura' })).toContain('src="/mascot/cap.png"');
+  });
+
+  it('bustul de semnătură arată ochelarii, 10 și creionul, cu animație scurtă', () => {
+    const html = markup({ mood: 'bucuros', size: 'bust', art: 'semnatura', pulse: 'succes' });
+    expect(html).toContain('src="/mascot/explica.png"');
+    expect(html).not.toContain('/mascot/bucuros.png');
+    expect(html).toContain('width="176"');
+    expect(html).toContain('is-succes');
+    expect(markup({ mood: 'explica', size: 'bust', pulse: 'gresit' })).toContain('is-gresit');
   });
 });

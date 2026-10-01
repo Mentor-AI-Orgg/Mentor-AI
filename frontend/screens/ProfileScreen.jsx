@@ -30,7 +30,17 @@ const FriendCard = ({ person, rank, actionLabel, onAction, disabled, onToast }) 
   </article>
 );
 
-const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, onNavigate }) => {
+const PROFILE_ANCHORS = {
+  cont: 'profil-cont',
+  parola: 'profil-cont',
+  tema: 'profil-tema',
+  setari: 'profil-setari',
+  prieteni: 'profil-prieteni',
+  clasament: 'profil-clasament',
+  parinte: 'profil-parinte'
+};
+
+const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, onNavigate, section = '' }) => {
   const { t } = useI18n();
   const [inbox, setInbox] = useState([]);
   const [skills, setSkills] = useState({ log: [], strengths: [], weaknesses: [] });
@@ -57,6 +67,15 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
   const [understood, setUnderstood] = useState(false);
   const [friendCode, setFriendCode] = useState('');
   const friendsListRef = useRef(null);
+
+  useEffect(() => {
+    const id = PROFILE_ANCHORS[section];
+    if (!id) return undefined;
+    const timer = setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 60);
+    return () => clearTimeout(timer);
+  }, [section]);
   const rankedFriends = [...(friends.friends || [])].sort((a, b) => (
     (Number(b.xp) || 0) - (Number(a.xp) || 0) || String(a.name || '').localeCompare(String(b.name || ''), 'ro')
   ));
@@ -315,7 +334,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         </div>
       </div>
 
-      <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
+      <section id="profil-cont" className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
         <div className="eyebrow">Editează</div>
         <h3 className="display-font profile-tool-title">Datele tale de elev.</h3>
         <label className="field-label">Nume de utilizator
@@ -416,7 +435,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         </div>
       </section>
 
-      <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
+      <section id="profil-tema" className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
         <div className="eyebrow">Aspect</div>
         <h3 className="display-font profile-tool-title">Cum arată aplicația.</h3>
         <p className="aspect-note">Pentru lecții, tema luminoasă se citește mai ușor.</p>
@@ -474,7 +493,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         </label>
       </section>
 
-      <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
+      <section id="profil-setari" className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
         <div className="eyebrow">Setări</div>
         <h3 className="display-font profile-tool-title">Cine te poate găsi.</h3>
         <label className="settings-toggle">
@@ -542,7 +561,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         )}
       </section>
 
-      <section className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
+      <section id="profil-prieteni" className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
         <div className="eyebrow">Prieteni</div>
         <h3 className="display-font profile-tool-title">Caută un nume sau un username.</h3>
         <p className="profile-empty-note">Poți trimite {friends.dailyLimit} cereri pe zi. Mai ai {friends.remainingToday} azi. Fără mesaje între voi — doar prietenie.</p>
@@ -620,7 +639,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
           )}
         </section>
 
-        <section className="surface rounded-3xl p-5 profile-tool-card">
+        <section id="profil-parinte" className="surface rounded-3xl p-5 profile-tool-card">
           <div className="eyebrow">{t('profile.parentEyebrow')}</div>
           <h3 className="display-font profile-tool-title">{t('profile.parentTitle')}</h3>
           <p className="detector-demo-note">{t('profile.parentNote', { email: userData.parentEmail || t('profile.parentEmailMissing') })}</p>
@@ -639,7 +658,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         </section>
       </div>
 
-      <div className="mx-5 mt-5">
+      <div id="profil-clasament" className="mx-5 mt-5">
         <Leaderboard />
       </div>
       <div className="mx-5 mt-5 grid gap-3">

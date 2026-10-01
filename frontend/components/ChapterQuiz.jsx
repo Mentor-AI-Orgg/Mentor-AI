@@ -5,6 +5,7 @@ import QuoteCard from './QuoteCard.jsx';
 import GradeGoalPicker from './GradeGoalPicker.jsx';
 import MathText from './MathText.jsx';
 import { effortLine } from '../i18n/quizFeedback.js';
+import MascotPresence from './mascot/MascotPresence.jsx';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -109,6 +110,11 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
   return (
     <section className="chapter-quiz surface animate-fadeIn" aria-label={`Test: ${unit.title}`}>
       <div className="chapter-quiz-head">
+        <MascotPresence
+          compact
+          celebrate={report ? (Number(report.grade) >= 5 ? 'succes' : 'gresit') : ''}
+          message={report ? (Number(report.grade) >= 5 ? 'Ai dus testul până la capăt.' : 'Hai să vedem ce mai repetăm.') : ''}
+        />
         <div>
           <div className="eyebrow">{onLesson ? `Test pe lecție · ${lesson.title}` : (track === 'en' ? 'Antrenament EN' : 'Test de capitol')} · {onLesson ? 'până la 5 exerciții' : '10 exerciții, fără repetare'}</div>
           <h3 className="display-font">{onLesson ? lesson.title : unit.title}</h3>

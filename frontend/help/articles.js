@@ -86,4 +86,4 @@ function searchHelp(query = '', category = 'toate') {
   });
 }
 
-export { HELP_ARTICLES, HELP_CATEGORIES, searchHelp };
+export { HELP_ARTICLES, HELP_CATEGORIES, fold, searchHelp };

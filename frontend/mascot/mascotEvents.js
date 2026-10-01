@@ -1,17 +1,41 @@
 import { EXERCISE_EVENTS, MASCOT_MESSAGES, fillMessage } from '../i18n/mascotMessages.js';
 
 const listeners = new Set();
-const state = { text: '', at: 0, cursor: {} };
+const stageListeners = new Set();
+const state = { text: '', at: 0, cursor: {}, stages: 0 };
 
 function resetMascotFeed() {
   state.text = '';
   state.at = 0;
   state.cursor = {};
+  state.stages = 0;
 }
 
 function subscribeMascot(listener) {
   listeners.add(listener);
   return () => listeners.delete(listener);
+}
+
+function notifyStages() {
+  stageListeners.forEach(listener => listener(state.stages));
+}
+
+function holdMascotStage() {
+  state.stages += 1;
+  notifyStages();
+  return () => {
+    state.stages = Math.max(0, state.stages - 1);
+    notifyStages();
+  };
+}
+
+function mascotStageOpen() {
+  return state.stages > 0;
+}
+
+function subscribeMascotStage(listener) {
+  stageListeners.add(listener);
+  return () => stageListeners.delete(listener);
 }
 
 function pickLine(event, vars) {
@@ -48,4 +72,12 @@ function emitMascot(event, vars) {
   return reaction;
 }
 
-export { emitMascot, reactTo, resetMascotFeed, subscribeMascot };
+export {
+  emitMascot,
+  holdMascotStage,
+  mascotStageOpen,
+  reactTo,
+  resetMascotFeed,
+  subscribeMascot,
+  subscribeMascotStage
+};
