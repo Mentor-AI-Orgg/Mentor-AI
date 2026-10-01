@@ -1,85 +1,393 @@
-module.exports = {
-  "lessons": [
-    {
-      "id": "deschidere-sentimente",
-      "title": "Harta emoțiilor",
-      "platter": "Unitatea Tărâmul sentimentelor începe cu harta. Vei citi text liric și vei deosebi emoția scurtă de sentimentul care ține mai mult. Vei lucra versul, strofa, rima și figurile de stil. Vei cunoaște, ca fapte, poezia Atât de fragedă, de Mihai Eminescu, și balada Nunta Zamfirei, de George Coșbuc, fără să copiezi strofele. La oral vei schimba intonația ca să transmiți o emoție și vei descrie obiectiv, apoi subiectiv. La redactare vei așeza textul după situația de comunicare. La gramatică vei relua substantivul, cele cinci cazuri, prepoziția și adjectivul, cu gradele, topica și felul în care se combină. La interculturalitate vei afla ce sunt Sânzienele, pe 24 iunie. La final faci proiectul Lada cu sentimente și tradiții românești. Competențele de pe hartă sunt douăsprezece: 1.2, 1.4, 2.1, 2.3, 2.4, 2.5, 3.1, 3.3, 4.1, 4.4, 4.5 și 5.1. Grila de puncte și fișa de observare nu sunt lecții. La școală, poezia de pe bancă poate avea alt titlu. Pașii rămân aceiași.\n\nExemplu lucrat: Harta anunță textul liric, rima, figurile, intonația, descrierea, substantivul, adjectivul și Sânzienele. Competențele sunt douăsprezece. Nunta Zamfirei este numele unei balade, nu un text de copiat.\n\nScrie trei propoziții. În prima spune că tema este emoția și că azi lucrezi textul liric. În a doua numește competențele 1.2, 1.4, 2.1, 2.3, 2.4, 2.5, 3.1, 3.3, 4.1, 4.4, 4.5 și 5.1 și spune că sunt douăsprezece. În a treia spune că grila de puncte nu este lecție și că strofele nu se copiază.\n\nHarta unității anunță textul liric, versificația, figurile, balada de nuntă, intonația, descrierea, așezarea în pagină, substantivul, cazurile, prepoziția, adjectivul și Sânzienele. Competențele sunt douăsprezece. Grila de puncte nu este lecție.",
-      "theory": "Unitatea Tărâmul sentimentelor începe cu harta. Vei citi text liric și vei deosebi emoția scurtă de sentimentul care ține mai mult. Vei lucra versul, strofa, rima și figurile de stil. Vei cunoaște, ca fapte, poezia Atât de fragedă, de Mihai Eminescu, și balada Nunta Zamfirei, de George Coșbuc, fără să copiezi strofele. La oral vei schimba intonația ca să transmiți o emoție și vei descrie obiectiv, apoi subiectiv. La redactare vei așeza textul după situația de comunicare. La gramatică vei relua substantivul, cele cinci cazuri, prepoziția și adjectivul, cu gradele, topica și felul în care se combină. La interculturalitate vei afla ce sunt Sânzienele, pe 24 iunie. La final faci proiectul Lada cu sentimente și tradiții românești. Competențele de pe hartă sunt douăsprezece: 1.2, 1.4, 2.1, 2.3, 2.4, 2.5, 3.1, 3.3, 4.1, 4.4, 4.5 și 5.1. Grila de puncte și fișa de observare nu sunt lecții. La școală, poezia de pe bancă poate avea alt titlu. Pașii rămân aceiași.",
-      "example": "Harta anunță textul liric, rima, figurile, intonația, descrierea, substantivul, adjectivul și Sânzienele. Competențele sunt douăsprezece. Nunta Zamfirei este numele unei balade, nu un text de copiat.",
-      "tryThis": "Scrie trei propoziții. În prima spune că tema este emoția și că azi lucrezi textul liric. În a doua numește competențele 1.2, 1.4, 2.1, 2.3, 2.4, 2.5, 3.1, 3.3, 4.1, 4.4, 4.5 și 5.1 și spune că sunt douăsprezece. În a treia spune că grila de puncte nu este lecție și că strofele nu se copiază.",
-      "recap": "Harta unității anunță textul liric, versificația, figurile, balada de nuntă, intonația, descrierea, așezarea în pagină, substantivul, cazurile, prepoziția, adjectivul și Sânzienele. Competențele sunt douăsprezece. Grila de puncte nu este lecție."
-    },
-    {
-      "id": "text-liric",
-      "title": "Vocea care simte nu este autorul",
-      "platter": "Textul liric este textul literar în care autorul transmite, dintr-o perspectivă subiectivă, emoții, sentimente, gânduri, idei și aspirații. Subiectivitatea se vede la persoana I, singular sau plural, cu un ton de confesiune, și la persoana a II-a. Universul este ficțional, rodul imaginației scriitorului. Vocea care vorbește este vocea ficțională. Poate fi îndrăgostitul, contemplatorul naturii, călătorul, copilul sau omul de geniu. Vocea nu se confundă cu autorul. Ea există doar în lumea textului. Emoțiile sunt trăiri scurte, de intensitate schimbătoare: frica, bucuria, furia, tristețea, dezgustul, surpriza. Sentimentele țin mai mult: dragostea, afecțiunea, fericirea, ura, durerea. Mihai Eminescu a trăit între 1850 și 1889. A fost poet, prozator și jurnalist. A debutat la 16 ani, cu poezia La mormântul lui Aron Pumnul. Mai târziu, în revista Familia, condusă de Iosif Vulcan, i-a apărut poezia De-aș avea. În timpul vieții a publicat un singur volum, Poesii. Cea mai mare parte a operei a rămas în manuscris și a fost scoasă la lumină mai târziu de criticul George Călinescu. Temelor lui li se pot spune numele, fără strofe: timpul, natura, iubirea, folclorul, istoria, cosmosul, filozofia. Atât de fragedă este o poezie de iubire. Vocea este a îndrăgostitului, nu a autorului. Persoana care se vede în ea este persoana I, iar ființa iubită este chemată la persoana a II-a. Nu cerem versurile. Pe pagina din manual stă și pictura Dans la țară, de Auguste Renoir. O descrii doar dacă o ai în față. Nu inventăm chipurile. Creștet înseamnă vârful capului. Din creștet până în tălpi înseamnă de sus până jos, peste tot trupul. A spăși înseamnă a suferi din cauza unei greșeli. Varianta este a ispăși. Pururi înseamnă totdeauna, veșnic. Portretul pe care îl scrii este al tău, nu o copie. Scena noastră ține locul poeziei. Duminică seara, la fereastră, eu văd o fată cu rochie albă. Lumina lămpii este caldă. Eu spun că îmi este drag de liniștea ei. Emoția scurtă este bucuria. Sentimentul care ține este dragostea. Vocea sunt eu, îndrăgostitul din text, nu autorul lecției. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că. Howard Gardner a descris opt tipuri de inteligență, iar clasa le poate împărți pe echipe: lingvistică, logico-matematică, naturalistă, vizual-spațială, corporal-chinestezică, muzical-ritmică, intrapersonală și interpersonală. Echipele lucrează aceeași poezie pe căi diferite. Nu sunt opt lecții separate.\n\nExemplu lucrat: Ce scrie: Duminică seara, la fereastră, văd o fată cu rochie albă și spun că îmi este drag de liniștea ei. Ce vezi: O văd la fereastră, în rochie albă. Eu aș lăsa lampa aprinsă, pentru că lumina este caldă și fata stă la fereastră. Vocea este a îndrăgostitului. Eminescu a trăit între 1850 și 1889. Emoția este scurtă. Sentimentul ține mai mult.\n\nPe scena de la fereastră, scrie ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Spune persoana, ipostaza vocii și de ce vocea nu este autorul. Deosebește emoția de sentiment cu câte un exemplu din listă. Scrie trei fapte despre Eminescu: anii, volumul din timpul vieții și o temă. Mai scrie un portret de 30–50 de cuvinte al unei persoane dragi, cu o floare, un gest și un simbol alese de tine. Numeste cele opt inteligențe ale lui Gardner, fără să le transformi în opt teme.\n\nTextul liric spune emoții și sentimente dintr-o perspectivă subiectivă, la persoana I sau a II-a. Vocea ficțională nu este autorul. Emoția este scurtă. Sentimentul ține mai mult. Eminescu a trăit între 1850 și 1889 și a publicat în timpul vieții volumul Poesii.",
-      "theory": "Textul liric este textul literar în care autorul transmite, dintr-o perspectivă subiectivă, emoții, sentimente, gânduri, idei și aspirații. Subiectivitatea se vede la persoana I, singular sau plural, cu un ton de confesiune, și la persoana a II-a. Universul este ficțional, rodul imaginației scriitorului. Vocea care vorbește este vocea ficțională. Poate fi îndrăgostitul, contemplatorul naturii, călătorul, copilul sau omul de geniu. Vocea nu se confundă cu autorul. Ea există doar în lumea textului. Emoțiile sunt trăiri scurte, de intensitate schimbătoare: frica, bucuria, furia, tristețea, dezgustul, surpriza. Sentimentele țin mai mult: dragostea, afecțiunea, fericirea, ura, durerea. Mihai Eminescu a trăit între 1850 și 1889. A fost poet, prozator și jurnalist. A debutat la 16 ani, cu poezia La mormântul lui Aron Pumnul. Mai târziu, în revista Familia, condusă de Iosif Vulcan, i-a apărut poezia De-aș avea. În timpul vieții a publicat un singur volum, Poesii. Cea mai mare parte a operei a rămas în manuscris și a fost scoasă la lumină mai târziu de criticul George Călinescu. Temelor lui li se pot spune numele, fără strofe: timpul, natura, iubirea, folclorul, istoria, cosmosul, filozofia. Atât de fragedă este o poezie de iubire. Vocea este a îndrăgostitului, nu a autorului. Persoana care se vede în ea este persoana I, iar ființa iubită este chemată la persoana a II-a. Nu cerem versurile. Pe pagina din manual stă și pictura Dans la țară, de Auguste Renoir. O descrii doar dacă o ai în față. Nu inventăm chipurile. Creștet înseamnă vârful capului. Din creștet până în tălpi înseamnă de sus până jos, peste tot trupul. A spăși înseamnă a suferi din cauza unei greșeli. Varianta este a ispăși. Pururi înseamnă totdeauna, veșnic. Portretul pe care îl scrii este al tău, nu o copie. Scena noastră ține locul poeziei. Duminică seara, la fereastră, eu văd o fată cu rochie albă. Lumina lămpii este caldă. Eu spun că îmi este drag de liniștea ei. Emoția scurtă este bucuria. Sentimentul care ține este dragostea. Vocea sunt eu, îndrăgostitul din text, nu autorul lecției. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că. Howard Gardner a descris opt tipuri de inteligență, iar clasa le poate împărți pe echipe: lingvistică, logico-matematică, naturalistă, vizual-spațială, corporal-chinestezică, muzical-ritmică, intrapersonală și interpersonală. Echipele lucrează aceeași poezie pe căi diferite. Nu sunt opt lecții separate.",
-      "example": "Ce scrie: Duminică seara, la fereastră, văd o fată cu rochie albă și spun că îmi este drag de liniștea ei. Ce vezi: O văd la fereastră, în rochie albă. Eu aș lăsa lampa aprinsă, pentru că lumina este caldă și fata stă la fereastră. Vocea este a îndrăgostitului. Eminescu a trăit între 1850 și 1889. Emoția este scurtă. Sentimentul ține mai mult.",
-      "tryThis": "Pe scena de la fereastră, scrie ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Spune persoana, ipostaza vocii și de ce vocea nu este autorul. Deosebește emoția de sentiment cu câte un exemplu din listă. Scrie trei fapte despre Eminescu: anii, volumul din timpul vieții și o temă. Mai scrie un portret de 30–50 de cuvinte al unei persoane dragi, cu o floare, un gest și un simbol alese de tine. Numeste cele opt inteligențe ale lui Gardner, fără să le transformi în opt teme.",
-      "recap": "Textul liric spune emoții și sentimente dintr-o perspectivă subiectivă, la persoana I sau a II-a. Vocea ficțională nu este autorul. Emoția este scurtă. Sentimentul ține mai mult. Eminescu a trăit între 1850 și 1889 și a publicat în timpul vieții volumul Poesii."
-    },
-    {
-      "id": "versificatie",
-      "title": "Versul, măsura, strofa și rima",
-      "platter": "Versificația, numită și prozodie, este tehnica de alcătuire a versurilor. Muzicalitatea vine din vers, măsură, strofă, rimă și ritm. Versul este un rând din poezie. Măsura este numărul de silabe. Măsura scurtă are 5–6 sau 7–8 silabe. Măsura medie are 9–11. Măsura lungă are 12–18. Strofa grupează două sau mai multe versuri. Între strofe se lasă un rând alb, numit blanc. Distihul are 2 versuri, terțina are 3, catrenul are 4, cvintetul are 5, sextina are 6. Rima este potrivirea sunetelor de la sfârșitul versurilor, începând cu ultima vocală accentuată. Rima încrucișată este abab: primul cu al treilea, al doilea cu al patrulea. Rima împerecheată este aabb. Monorima este aaaa. Rima îmbrățișată este abba. Rima imperfectă păstrează vocalele accentuate, dar schimbă consoanele. Semirima combină versuri cu rimă și versuri fără rimă, în tiparul abcb. Ritmul este succesiunea regulată a silabelor accentuate și neaccentuate. Versurile albe nu rimează și nu au ritm regulat. Modelul nostru, numărat, este un catren cu măsură scurtă, de 8 silabe, și cu rimă încrucișată. Frunza cade pe fereastră are 8 silabe: frun-za, ca-de, pe, fe-reas-tră. Vântul bate lin pe vale are 8: vân-tul, ba-te, lin, pe, va-le. Ploaia urcă pe fereastră are 8: ploa-ia, ur-că, pe, fe-reas-tră. Apa curge lin pe vale are 8: a-pa, cur-ge, lin, pe, va-le. Rima este abab, pentru că fereastră rimează cu fereastră, iar vale cu vale. La școală numeri versul deschis la fel. Fără să copiezi strofele, reții tipurile cerute pe pagină. Fragmentul din Rochia, de Magda Isanos, este un catren. Fragmentul din Mărțișor, de Ion Pillat, este un catren. Fragmentul din Terține, de George Topîrceanu, este o terțină. Strofa din Atât de fragedă, de Mihai Eminescu, cu finalurile care se potrivesc din două în două, are rimă încrucișată. Strofa din Trecut-au anii are rimă îmbrățișată. Revedere are rimă împerecheată. Nu fixăm aici numărul de silabe al unui vers pe care nu îl numărăm în lecție. Îl numeri pe pagina deschisă, cu aceeași regulă ca la Frunza cade pe fereastră.\n\nExemplu lucrat: Frunza cade pe fereastră are 8 silabe, măsură scurtă. Catrenul cu fereastră și vale are rima abab, încrucișată. Rochia și Mărțișor sunt catrene. Terține este o terțină. Trecut-au anii are rimă îmbrățișată. Revedere are rimă împerecheată. Versurile albe nu rimează.\n\nNumără silabele din Frunza cade pe fereastră și spune că măsura este scurtă. Spune tipul de strofă pentru distih, terțină, catren, cvintet și sextină. Spune ce înseamnă abab, aabb, aaaa și abba. Scrie un catren al tău, de câte 8 silabe, cu rimă împerecheată, pe o temă de toamnă. Nu folosi versuri din cărți. Mai scrie, ca fapte, că Rochia și Mărțișor sunt catrene, că Terține este o terțină, că strofa din Atât de fragedă are rimă încrucișată, că Trecut-au anii are rimă îmbrățișată și că Revedere are rimă împerecheată.\n\nVersul este un rând. Măsura este numărul de silabe: scurtă până la 8, medie între 9 și 11, lungă între 12 și 18. Catrenul are 4 versuri. Rima încrucișată este abab, împerecheată este aabb, îmbrățișată este abba. Frunza cade pe fereastră are 8 silabe.",
-      "theory": "Versificația, numită și prozodie, este tehnica de alcătuire a versurilor. Muzicalitatea vine din vers, măsură, strofă, rimă și ritm. Versul este un rând din poezie. Măsura este numărul de silabe. Măsura scurtă are 5–6 sau 7–8 silabe. Măsura medie are 9–11. Măsura lungă are 12–18. Strofa grupează două sau mai multe versuri. Între strofe se lasă un rând alb, numit blanc. Distihul are 2 versuri, terțina are 3, catrenul are 4, cvintetul are 5, sextina are 6. Rima este potrivirea sunetelor de la sfârșitul versurilor, începând cu ultima vocală accentuată. Rima încrucișată este abab: primul cu al treilea, al doilea cu al patrulea. Rima împerecheată este aabb. Monorima este aaaa. Rima îmbrățișată este abba. Rima imperfectă păstrează vocalele accentuate, dar schimbă consoanele. Semirima combină versuri cu rimă și versuri fără rimă, în tiparul abcb. Ritmul este succesiunea regulată a silabelor accentuate și neaccentuate. Versurile albe nu rimează și nu au ritm regulat. Modelul nostru, numărat, este un catren cu măsură scurtă, de 8 silabe, și cu rimă încrucișată. Frunza cade pe fereastră are 8 silabe: frun-za, ca-de, pe, fe-reas-tră. Vântul bate lin pe vale are 8: vân-tul, ba-te, lin, pe, va-le. Ploaia urcă pe fereastră are 8: ploa-ia, ur-că, pe, fe-reas-tră. Apa curge lin pe vale are 8: a-pa, cur-ge, lin, pe, va-le. Rima este abab, pentru că fereastră rimează cu fereastră, iar vale cu vale. La școală numeri versul deschis la fel. Fără să copiezi strofele, reții tipurile cerute pe pagină. Fragmentul din Rochia, de Magda Isanos, este un catren. Fragmentul din Mărțișor, de Ion Pillat, este un catren. Fragmentul din Terține, de George Topîrceanu, este o terțină. Strofa din Atât de fragedă, de Mihai Eminescu, cu finalurile care se potrivesc din două în două, are rimă încrucișată. Strofa din Trecut-au anii are rimă îmbrățișată. Revedere are rimă împerecheată. Nu fixăm aici numărul de silabe al unui vers pe care nu îl numărăm în lecție. Îl numeri pe pagina deschisă, cu aceeași regulă ca la Frunza cade pe fereastră.",
-      "example": "Frunza cade pe fereastră are 8 silabe, măsură scurtă. Catrenul cu fereastră și vale are rima abab, încrucișată. Rochia și Mărțișor sunt catrene. Terține este o terțină. Trecut-au anii are rimă îmbrățișată. Revedere are rimă împerecheată. Versurile albe nu rimează.",
-      "tryThis": "Numără silabele din Frunza cade pe fereastră și spune că măsura este scurtă. Spune tipul de strofă pentru distih, terțină, catren, cvintet și sextină. Spune ce înseamnă abab, aabb, aaaa și abba. Scrie un catren al tău, de câte 8 silabe, cu rimă împerecheată, pe o temă de toamnă. Nu folosi versuri din cărți. Mai scrie, ca fapte, că Rochia și Mărțișor sunt catrene, că Terține este o terțină, că strofa din Atât de fragedă are rimă încrucișată, că Trecut-au anii are rimă îmbrățișată și că Revedere are rimă împerecheată.",
-      "recap": "Versul este un rând. Măsura este numărul de silabe: scurtă până la 8, medie între 9 și 11, lungă între 12 și 18. Catrenul are 4 versuri. Rima încrucișată este abab, împerecheată este aabb, îmbrățișată este abba. Frunza cade pe fereastră are 8 silabe."
-    },
-    {
-      "id": "figuri-stil",
-      "title": "Epitetul, comparația, personificarea",
-      "platter": "Figurile de stil schimbă înțelesul propriu al unui cuvânt, ca să facă imaginea mai puternică. Imaginile pot fi vizuale, auditive sau olfactive. Epitetul determină un substantiv sau un verb cu o însușire scoasă în față: rochia albă, în scena noastră, scoate în față culoarea. Comparația alătură doi termeni pe baza unei asemănări: rochia este albă ca lampa. Personificarea dă însușiri omenești unui lucru sau unui fenomen: lampa păzește fereastra. Enumerația înșiră termeni despre același lucru: liniște, lumină, căldură. Repetiția reia un cuvânt, un grup sau un enunț, ca să accentueze o idee sau un sentiment. În modelul nostru, rămâi se poate relua: Rămâi, rămâi la fereastră. Scopul este stăruința, nu o informație nouă. Figurile se pot combina. Un epitet personificator este lampa veghetoare: veghetoare dă lămpii o însușire de om și, totodată, o determină. Nu cerem versurile din manual. Le recunoști pe pagina deschisă cu aceleași definiții. Ca să interpretezi o figură, faci cinci pași. Citești și stabilești tema și cuvintele-cheie. Găsești figura și spui sensul cuvintelor din ea. Spui ce numește, ce emoție sau ce atmosferă creează. Spui tipul imaginii: vizuală, auditivă sau olfactivă. Apoi explici semnificația, cu elementele de dinainte. Pe scena noastră, tema este liniștea de duminică. Cuvântul-cheie este lampa. Lampa păzește fereastra este personificare și imagine vizuală. Înseamnă că lumina stă de veghe lângă fată. Pictura Peisaj de toamnă cu un cârd de curcani, de Jean-François Millet, se descrie doar dacă o ai în față. Nu inventăm culorile.\n\nExemplu lucrat: Rochia albă este epitet. Albă ca lampa este comparație. Lampa păzește fereastra este personificare și imagine vizuală. Liniște, lumină, căldură este enumerație. Rămâi, rămâi este repetiție și accentuează stăruința. Lampa veghetoare este epitet personificator.\n\nPe scena cu lampa, scrie câte un exemplu propriu de epitet, comparație, personificare, enumerație și repetiție. Spune ce imagine este lampa păzește fereastra și ce emoție creează. Interpreteaz-o în cinci pași: temă, figură, ce numește, tipul imaginii, semnificație. Mai scrie două versuri ale tale în care un copac plânge, și spune că figura este personificare. Nu copia versuri din cărți.\n\nEpitetul scoate în față o însușire. Comparația alătură doi termeni. Personificarea dă însușiri omenești unui lucru. Enumerația înșiră. Repetiția accentuează. Interpretarea spune tema, figura, emoția, tipul imaginii și sensul.",
-      "theory": "Figurile de stil schimbă înțelesul propriu al unui cuvânt, ca să facă imaginea mai puternică. Imaginile pot fi vizuale, auditive sau olfactive. Epitetul determină un substantiv sau un verb cu o însușire scoasă în față: rochia albă, în scena noastră, scoate în față culoarea. Comparația alătură doi termeni pe baza unei asemănări: rochia este albă ca lampa. Personificarea dă însușiri omenești unui lucru sau unui fenomen: lampa păzește fereastra. Enumerația înșiră termeni despre același lucru: liniște, lumină, căldură. Repetiția reia un cuvânt, un grup sau un enunț, ca să accentueze o idee sau un sentiment. În modelul nostru, rămâi se poate relua: Rămâi, rămâi la fereastră. Scopul este stăruința, nu o informație nouă. Figurile se pot combina. Un epitet personificator este lampa veghetoare: veghetoare dă lămpii o însușire de om și, totodată, o determină. Nu cerem versurile din manual. Le recunoști pe pagina deschisă cu aceleași definiții. Ca să interpretezi o figură, faci cinci pași. Citești și stabilești tema și cuvintele-cheie. Găsești figura și spui sensul cuvintelor din ea. Spui ce numește, ce emoție sau ce atmosferă creează. Spui tipul imaginii: vizuală, auditivă sau olfactivă. Apoi explici semnificația, cu elementele de dinainte. Pe scena noastră, tema este liniștea de duminică. Cuvântul-cheie este lampa. Lampa păzește fereastra este personificare și imagine vizuală. Înseamnă că lumina stă de veghe lângă fată. Pictura Peisaj de toamnă cu un cârd de curcani, de Jean-François Millet, se descrie doar dacă o ai în față. Nu inventăm culorile.",
-      "example": "Rochia albă este epitet. Albă ca lampa este comparație. Lampa păzește fereastra este personificare și imagine vizuală. Liniște, lumină, căldură este enumerație. Rămâi, rămâi este repetiție și accentuează stăruința. Lampa veghetoare este epitet personificator.",
-      "tryThis": "Pe scena cu lampa, scrie câte un exemplu propriu de epitet, comparație, personificare, enumerație și repetiție. Spune ce imagine este lampa păzește fereastra și ce emoție creează. Interpreteaz-o în cinci pași: temă, figură, ce numește, tipul imaginii, semnificație. Mai scrie două versuri ale tale în care un copac plânge, și spune că figura este personificare. Nu copia versuri din cărți.",
-      "recap": "Epitetul scoate în față o însușire. Comparația alătură doi termeni. Personificarea dă însușiri omenești unui lucru. Enumerația înșiră. Repetiția accentuează. Interpretarea spune tema, figura, emoția, tipul imaginii și sensul."
-    },
-    {
-      "id": "nunta-zamfirei",
-      "title": "O nuntă de baladă, spusă cu faptele ei",
-      "platter": "Nunta Zamfirei este o baladă de George Coșbuc. Nu copiem strofele. Faptele pe care le poți spune sunt acestea. Evenimentul este o nuntă. Mirii sunt Zamfira și Viorel. Numele lor sunt nume de poveste românească, potrivite unul cu altul, nu nume de cancelarie. Etapele, în ordinea povestirii, sunt acestea: vestea pornește și ajunge departe, nuntașii vin în zori, alaiul apare spre amiază, iar după cununie lumea joacă hora. Obiceiul de pe pagină este hora: oamenii se prind de mâini, fac trei pași la stânga și trei la dreapta, se adună în cerc și bat pământul în tact. Jocul după tilinci este, cum spune pagina, un dans din zona Năsăudului. În planul realității sociale stau opincile, portul de sat, vătaful care conduce alaiul, starostele care spune orațiile, muzicanții și drumul plin de lume. În planul basmului stau oaspeții din foarte multe țări, regii și soarele care pare că se oprește ca să vadă jocul. Versul de deschidere nu dă o hartă măsurată și nu fixează ora. El lasă spațiul și timpul largi, fără precizie. Litera potrivită, dintre indicație precisă, timp, mărimea Pământului și imprecizie, este ultima. Roșeața și zăpăceala din dragoste arată emoția mirilor, nu haina și nu frumusețea dansului. Prima strofă este o sextină. Rima ei este de tipul în care două versuri se potrivesc la început, trei la mijloc și ultimul se întoarce la primul sunet. Ultimul vers este mai scurt decât cele dinainte. La școală numeri silabele pe strofa deschisă. Semnificația imaginii cu soarele, spusă în cuvinte de-ale tale, este că bucuria jocului este atât de mare, încât și soarele pare că se oprește să privească. Identitatea națională, în fragment, stă în hora, în portul de sat, în opinci, în vătaf, în staroste și în dansul din zona Năsăudului. Cuvintele de pe pagină, pe care le poți folosi corect, sunt acestea. A peți înseamnă a cere o fată în căsătorie. Crăime înseamnă țara unui crai sau mulțimea de crai. Purpura este culoarea roșie-închisă și, totodată, stofa scumpă de culoarea aceasta. Rădvanul este o trăsură de lux, închisă, trasă de cai. A starosti înseamnă a conduce ceremonia nunții și a rosti orațiile. Treascul este un tun mic, de petrecere. Iatacul este camera de culcare. Vătaful conduce alaiul nunții. Picturile de pe pagină se numesc, ca fapte: Hora la Aninoasa, de Theodor Aman, și Mireasa, de Abraham Solomon. Le descrii doar dacă le ai în față. Nu inventăm pensulația. Poți descrie o horă pe care o știi: oameni în cerc, de mâini, în curtea unui sat.\n\nExemplu lucrat: Mirii sunt Zamfira și Viorel. Hora are trei pași la stânga și trei la dreapta. Jocul după tilinci este din zona Năsăudului. Planul social are opinci și vătaf. Planul basmului are oaspeți din multe țări. Versul de deschidere lasă spațiul larg. Emoția este roșeața din dragoste. A peți înseamnă a cere mâna. Rădvanul este o trăsură de lux.\n\nSpune tema, mirii și două etape ale nunții. Deosebește un element din planul social de unul din planul basmului. Spune de ce versul de deschidere nu este o hartă și ce emoție arată roșeața din dragoste. Scrie că prima strofă este o sextină și că ultimul vers este mai scurt. Explică, în 30–50 de cuvinte, de ce soarele pare că se oprește. Numeste patru elemente de identitate națională din fragment. Dă sensul pentru a peți, rădvan, a starosti și vătaf. Apoi scrie 120–150 de cuvinte în care ești la nuntă: atmosfera, oamenii și o secvență de întâmplare. Nu copia strofe.\n\nNunta Zamfirei este o baladă de George Coșbuc. Mirii sunt Zamfira și Viorel. Hora, opincile, vătaful și jocul după tilinci, din zona Năsăudului, țin de identitatea națională. Planul basmului adaugă oaspeți din multe țări. Strofele nu se copiază.",
-      "theory": "Nunta Zamfirei este o baladă de George Coșbuc. Nu copiem strofele. Faptele pe care le poți spune sunt acestea. Evenimentul este o nuntă. Mirii sunt Zamfira și Viorel. Numele lor sunt nume de poveste românească, potrivite unul cu altul, nu nume de cancelarie. Etapele, în ordinea povestirii, sunt acestea: vestea pornește și ajunge departe, nuntașii vin în zori, alaiul apare spre amiază, iar după cununie lumea joacă hora. Obiceiul de pe pagină este hora: oamenii se prind de mâini, fac trei pași la stânga și trei la dreapta, se adună în cerc și bat pământul în tact. Jocul după tilinci este, cum spune pagina, un dans din zona Năsăudului. În planul realității sociale stau opincile, portul de sat, vătaful care conduce alaiul, starostele care spune orațiile, muzicanții și drumul plin de lume. În planul basmului stau oaspeții din foarte multe țări, regii și soarele care pare că se oprește ca să vadă jocul. Versul de deschidere nu dă o hartă măsurată și nu fixează ora. El lasă spațiul și timpul largi, fără precizie. Litera potrivită, dintre indicație precisă, timp, mărimea Pământului și imprecizie, este ultima. Roșeața și zăpăceala din dragoste arată emoția mirilor, nu haina și nu frumusețea dansului. Prima strofă este o sextină. Rima ei este de tipul în care două versuri se potrivesc la început, trei la mijloc și ultimul se întoarce la primul sunet. Ultimul vers este mai scurt decât cele dinainte. La școală numeri silabele pe strofa deschisă. Semnificația imaginii cu soarele, spusă în cuvinte de-ale tale, este că bucuria jocului este atât de mare, încât și soarele pare că se oprește să privească. Identitatea națională, în fragment, stă în hora, în portul de sat, în opinci, în vătaf, în staroste și în dansul din zona Năsăudului. Cuvintele de pe pagină, pe care le poți folosi corect, sunt acestea. A peți înseamnă a cere o fată în căsătorie. Crăime înseamnă țara unui crai sau mulțimea de crai. Purpura este culoarea roșie-închisă și, totodată, stofa scumpă de culoarea aceasta. Rădvanul este o trăsură de lux, închisă, trasă de cai. A starosti înseamnă a conduce ceremonia nunții și a rosti orațiile. Treascul este un tun mic, de petrecere. Iatacul este camera de culcare. Vătaful conduce alaiul nunții. Picturile de pe pagină se numesc, ca fapte: Hora la Aninoasa, de Theodor Aman, și Mireasa, de Abraham Solomon. Le descrii doar dacă le ai în față. Nu inventăm pensulația. Poți descrie o horă pe care o știi: oameni în cerc, de mâini, în curtea unui sat.",
-      "example": "Mirii sunt Zamfira și Viorel. Hora are trei pași la stânga și trei la dreapta. Jocul după tilinci este din zona Năsăudului. Planul social are opinci și vătaf. Planul basmului are oaspeți din multe țări. Versul de deschidere lasă spațiul larg. Emoția este roșeața din dragoste. A peți înseamnă a cere mâna. Rădvanul este o trăsură de lux.",
-      "tryThis": "Spune tema, mirii și două etape ale nunții. Deosebește un element din planul social de unul din planul basmului. Spune de ce versul de deschidere nu este o hartă și ce emoție arată roșeața din dragoste. Scrie că prima strofă este o sextină și că ultimul vers este mai scurt. Explică, în 30–50 de cuvinte, de ce soarele pare că se oprește. Numeste patru elemente de identitate națională din fragment. Dă sensul pentru a peți, rădvan, a starosti și vătaf. Apoi scrie 120–150 de cuvinte în care ești la nuntă: atmosfera, oamenii și o secvență de întâmplare. Nu copia strofe.",
-      "recap": "Nunta Zamfirei este o baladă de George Coșbuc. Mirii sunt Zamfira și Viorel. Hora, opincile, vătaful și jocul după tilinci, din zona Năsăudului, țin de identitatea națională. Planul basmului adaugă oaspeți din multe țări. Strofele nu se copiază."
-    },
-    {
-      "id": "intonatie",
-      "title": "Aceeași propoziție, altă emoție",
-      "platter": "Emoțiile se comunică verbal, nonverbal și paraverbal. Nonverbal înseamnă gest, poziția corpului și mimică. Paraverbal înseamnă intonația, adică melodia și tăria vocii. Măsura, rima și ritmul pot și ele purta o emoție, când textul este o poezie. Într-un dialog, emoția se recunoaște și după situație, și după starea fizică a celui care vorbește. Semnul de la final schimbă conturul. Pleci în tabără la munte, cu punct, este o constatare. Cu semnul întrebării, este o întrebare. Cu semnul exclamării, este o mirare sau o bucurie tare. Propoziția Vântul bate foarte puternic poate spune tristețe, dacă vocea coboară și încetinește. Poate spune dezamăgire, dacă insiști pe foarte și lași o pauză. Poate spune uimire, dacă urci la final, ca la o întrebare. Poate spune resemnare, dacă o spui încet, fără accent tare. Gestul ajută: umerii lăsați pentru tristețe, sprâncenele ridicate pentru uimire. Nu inventăm emoticoanele de pe pagină. Le mimezi în clasă, cu un context pe care îl spui tu.\n\nExemplu lucrat: Pleci în tabără la munte, cu punct, constată. Cu semnul întrebării, întreabă. Cu semnul exclamării, miră. Vântul bate foarte puternic, spus încet și cu umerii lăsați, poate fi tristețe. Urcat la final, poate fi uimire. Intonația este paraverbală. Mimica este nonverbală.\n\nScrie propoziția Pleci în tabără la munte de trei ori, cu punct, cu semnul întrebării și cu semnul exclamării, și spune ce face fiecare. Pentru Vântul bate foarte puternic, scrie cum îi schimbi vocea ca să iasă tristețe, dezamăgire, uimire și resemnare. Adaugă un gest la fiecare. Apoi scrie un dialog de opt replici între Mara și Nora, la fereastră, în care una este bucuroasă și alta este îngrijorată. Marchează două locuri în care vocea urcă și două în care coboară.\n\nPunctul constată, semnul întrebării întreabă, semnul exclamării miră sau bucură tare. Intonația este paraverbală. Gestul și mimica sunt nonverbale. Aceeași propoziție poate spune tristețe, dezamăgire, uimire sau resemnare, dacă schimbi melodia și pauza.",
-      "theory": "Emoțiile se comunică verbal, nonverbal și paraverbal. Nonverbal înseamnă gest, poziția corpului și mimică. Paraverbal înseamnă intonația, adică melodia și tăria vocii. Măsura, rima și ritmul pot și ele purta o emoție, când textul este o poezie. Într-un dialog, emoția se recunoaște și după situație, și după starea fizică a celui care vorbește. Semnul de la final schimbă conturul. Pleci în tabără la munte, cu punct, este o constatare. Cu semnul întrebării, este o întrebare. Cu semnul exclamării, este o mirare sau o bucurie tare. Propoziția Vântul bate foarte puternic poate spune tristețe, dacă vocea coboară și încetinește. Poate spune dezamăgire, dacă insiști pe foarte și lași o pauză. Poate spune uimire, dacă urci la final, ca la o întrebare. Poate spune resemnare, dacă o spui încet, fără accent tare. Gestul ajută: umerii lăsați pentru tristețe, sprâncenele ridicate pentru uimire. Nu inventăm emoticoanele de pe pagină. Le mimezi în clasă, cu un context pe care îl spui tu.",
-      "example": "Pleci în tabără la munte, cu punct, constată. Cu semnul întrebării, întreabă. Cu semnul exclamării, miră. Vântul bate foarte puternic, spus încet și cu umerii lăsați, poate fi tristețe. Urcat la final, poate fi uimire. Intonația este paraverbală. Mimica este nonverbală.",
-      "tryThis": "Scrie propoziția Pleci în tabără la munte de trei ori, cu punct, cu semnul întrebării și cu semnul exclamării, și spune ce face fiecare. Pentru Vântul bate foarte puternic, scrie cum îi schimbi vocea ca să iasă tristețe, dezamăgire, uimire și resemnare. Adaugă un gest la fiecare. Apoi scrie un dialog de opt replici între Mara și Nora, la fereastră, în care una este bucuroasă și alta este îngrijorată. Marchează două locuri în care vocea urcă și două în care coboară.",
-      "recap": "Punctul constată, semnul întrebării întreabă, semnul exclamării miră sau bucură tare. Intonația este paraverbală. Gestul și mimica sunt nonverbale. Aceeași propoziție poate spune tristețe, dezamăgire, uimire sau resemnare, dacă schimbi melodia și pauza."
-    },
-    {
-      "id": "descriere",
-      "title": "Obiectiv, apoi subiectiv",
-      "platter": "Descrierea prezintă caracteristicile unei ființe, ale unui obiect sau ale unui peisaj. Descrierea obiectivă dă informații reale, cu limbaj neutru, fără figuri de stil, numai la persoana a III-a. Descrierea subiectivă cuprinde impresiile tale, emoții și sentimente, cu limbaj expresiv, mai ales la persoana I. Portretul unei persoane poate nota ochii, gura, nasul, sprâncenele, obrajii, expresia feței, haina, poziția capului și emoția transmisă. Pictura Țărancă din Muscel, de Nicolae Grigorescu, se descrie doar dacă o ai în față. Nu inventăm trăsăturile de pe pânză. Personajul dintr-o imagine de carte se descrie tot după imaginea pe care o vezi, nu după o închipuire. Portretul nostru are toate datele în lecție. Nora are părul negru, prins, ochi albaștri, nasul drept și obrajii liniștiți. Stă pe scaun, cu capul puțin aplecat. Poartă un șorț alb. Expresia este calmă. Asta este descrierea obiectivă, la persoana a III-a, fără figură de stil. Descrierea subiectivă, a aceluiași chip, poate spune: mie îmi pare că liniștea ei seamănă cu lampa de duminică și mă bucur când o văd. Emoția o generează cel care descrie. La școală, pe versurile deschise, cauți elementele de portret și figura de stil cu aceleași întrebări. Aici le cauți în portretul Norei.\n\nExemplu lucrat: Obiectiv: Nora are păr negru, ochi albaștri și șorț alb și stă cu capul aplecat. Nu există comparație. Subiectiv: liniștea ei seamănă cu lampa și eu mă bucur. Persoana I și comparația fac descrierea subiectivă. Emoția vine de la cel care descrie.\n\nScrie mai întâi descrierea obiectivă a Norei, numai cu faptele din lecție, la persoana a III-a, fără figuri. Apoi scrie descrierea subiectivă, la persoana I, cu o emoție și o comparație. Spune cine generează emoția. Mai descrie obiectiv, în opt rânduri, o persoană dragă pe care o vezi în fața ta: ochi, gură, haină, poziția capului. Dacă nu o ai lângă tine, descrie-ți propriul chip din oglindă și spune că este descriere obiectivă.\n\nDescrierea obiectivă este la persoana a III-a, cu fapte și fără figuri de stil. Descrierea subiectivă este mai ales la persoana I și cuprinde emoția celui care descrie. Portretul notează chipul, haina, poziția și expresia.",
-      "theory": "Descrierea prezintă caracteristicile unei ființe, ale unui obiect sau ale unui peisaj. Descrierea obiectivă dă informații reale, cu limbaj neutru, fără figuri de stil, numai la persoana a III-a. Descrierea subiectivă cuprinde impresiile tale, emoții și sentimente, cu limbaj expresiv, mai ales la persoana I. Portretul unei persoane poate nota ochii, gura, nasul, sprâncenele, obrajii, expresia feței, haina, poziția capului și emoția transmisă. Pictura Țărancă din Muscel, de Nicolae Grigorescu, se descrie doar dacă o ai în față. Nu inventăm trăsăturile de pe pânză. Personajul dintr-o imagine de carte se descrie tot după imaginea pe care o vezi, nu după o închipuire. Portretul nostru are toate datele în lecție. Nora are părul negru, prins, ochi albaștri, nasul drept și obrajii liniștiți. Stă pe scaun, cu capul puțin aplecat. Poartă un șorț alb. Expresia este calmă. Asta este descrierea obiectivă, la persoana a III-a, fără figură de stil. Descrierea subiectivă, a aceluiași chip, poate spune: mie îmi pare că liniștea ei seamănă cu lampa de duminică și mă bucur când o văd. Emoția o generează cel care descrie. La școală, pe versurile deschise, cauți elementele de portret și figura de stil cu aceleași întrebări. Aici le cauți în portretul Norei.",
-      "example": "Obiectiv: Nora are păr negru, ochi albaștri și șorț alb și stă cu capul aplecat. Nu există comparație. Subiectiv: liniștea ei seamănă cu lampa și eu mă bucur. Persoana I și comparația fac descrierea subiectivă. Emoția vine de la cel care descrie.",
-      "tryThis": "Scrie mai întâi descrierea obiectivă a Norei, numai cu faptele din lecție, la persoana a III-a, fără figuri. Apoi scrie descrierea subiectivă, la persoana I, cu o emoție și o comparație. Spune cine generează emoția. Mai descrie obiectiv, în opt rânduri, o persoană dragă pe care o vezi în fața ta: ochi, gură, haină, poziția capului. Dacă nu o ai lângă tine, descrie-ți propriul chip din oglindă și spune că este descriere obiectivă.",
-      "recap": "Descrierea obiectivă este la persoana a III-a, cu fapte și fără figuri de stil. Descrierea subiectivă este mai ales la persoana I și cuprinde emoția celui care descrie. Portretul notează chipul, haina, poziția și expresia."
-    },
-    {
-      "id": "asezare-text",
-      "title": "Pagina se așază după situație",
-      "platter": "În scris, textul se organizează după situația de comunicare. Un text narativ sau descriptiv trece prin cinci etape: pregătirea, ciorna, revizuirea, editarea și publicarea. Limbajul se potrivește cu tema și cu tipul de text. Compunerea are introducere, cuprins și încheiere. Un blog are un scop, o temă, impresii personale și o recomandare pentru cititor. Ca să faci textul cunoscut, poți folosi diagrame, grafice, tabele, laptop, tabletă, tablă interactivă, un editor de text, un program de prezentări sau un navigator de internet. Informația devine mai ușor de urmărit când o poți căuta și când o poți arăta. Două prezentări ale aceleiași zone se pot citi ca fapte, nu ca pagini de copiat. Țara Oașului este o microregiune în nord-vestul țării, o depresiune. Relieful are munți împăduriți, cu fag, paltin, stejar și arțar, apoi dealuri și câmpie. Ținutul a fost locuit din vremuri vechi de dacii liberi. Se poate intra dinspre Satu Mare sau dinspre Sighetu Marmației. Dinspre Maramureș, pe la Huta Certeze, se coboară de la aproximativ 600 de metri la 200 de metri. Originalitatea zonei stă în port, cântec, dans, datini și în oamenii gospodari. Textul care insistă pe relief, pe altitudine și pe arbori are scopul de a informa un turist despre loc. Textul care insistă pe port, pe cântec și pe gazde are scopul de a arăta ce este unic. Asemănarea este tema: aceeași zonă, același nord-vest. Deosebirea este accentul. Sursele sunt o pagină de ghid turistic și o notiță de călătorie. Nu copiem paragrafele. Planul unei tabere de creație, de două zile, poate folosi aceste fapte: prima zi, o drumeție și vizită la un meșteșugar. A doua zi, un atelier de port sau de cântec. Participanții sunt elevi. Nu inventa ore și prețuri care nu sunt în sursă.\n\nExemplu lucrat: Țara Oașului este în nord-vest. De la Huta Certeze se coboară de la aproximativ 600 de metri la 200. Textul despre relief informează. Textul despre port arată unicitatea. Blogul are impresie și recomandare. Etapele scrierii sunt pregătirea, ciorna, revizuirea, editarea și publicarea.\n\nCompletează un tabel cu zona, așezarea, relieful, un element de originalitate și o impresie, numai cu faptele din lecție. Spune scopul textului despre relief și scopul textului despre port. Scrie planul primelor două zile ale unei tabere în Țara Oașului: program, participanți, o drumeție și un atelier. Apoi scrie 100–150 de cuvinte, o descriere a unui loc care te-a impresionat, cu introducere, cuprins și încheiere. La final, notează că ai verificat un semn de punctuație. Spune două mijloace noi, dintre diagramă, editor de text și program de prezentări, prin care ai arăta un text liric: titlu, autor, idee, o imagine.\n\nTextul se așază după situație. Narațiunea și descrierea au cinci etape și trei părți. Blogul adaugă o impresie și o recomandare. Țara Oașului este în nord-vest. Un text poate informa despre relief, altul poate arăta portul și datinile. Orele care nu sunt în sursă nu se inventează.",
-      "theory": "În scris, textul se organizează după situația de comunicare. Un text narativ sau descriptiv trece prin cinci etape: pregătirea, ciorna, revizuirea, editarea și publicarea. Limbajul se potrivește cu tema și cu tipul de text. Compunerea are introducere, cuprins și încheiere. Un blog are un scop, o temă, impresii personale și o recomandare pentru cititor. Ca să faci textul cunoscut, poți folosi diagrame, grafice, tabele, laptop, tabletă, tablă interactivă, un editor de text, un program de prezentări sau un navigator de internet. Informația devine mai ușor de urmărit când o poți căuta și când o poți arăta. Două prezentări ale aceleiași zone se pot citi ca fapte, nu ca pagini de copiat. Țara Oașului este o microregiune în nord-vestul țării, o depresiune. Relieful are munți împăduriți, cu fag, paltin, stejar și arțar, apoi dealuri și câmpie. Ținutul a fost locuit din vremuri vechi de dacii liberi. Se poate intra dinspre Satu Mare sau dinspre Sighetu Marmației. Dinspre Maramureș, pe la Huta Certeze, se coboară de la aproximativ 600 de metri la 200 de metri. Originalitatea zonei stă în port, cântec, dans, datini și în oamenii gospodari. Textul care insistă pe relief, pe altitudine și pe arbori are scopul de a informa un turist despre loc. Textul care insistă pe port, pe cântec și pe gazde are scopul de a arăta ce este unic. Asemănarea este tema: aceeași zonă, același nord-vest. Deosebirea este accentul. Sursele sunt o pagină de ghid turistic și o notiță de călătorie. Nu copiem paragrafele. Planul unei tabere de creație, de două zile, poate folosi aceste fapte: prima zi, o drumeție și vizită la un meșteșugar. A doua zi, un atelier de port sau de cântec. Participanții sunt elevi. Nu inventa ore și prețuri care nu sunt în sursă.",
-      "example": "Țara Oașului este în nord-vest. De la Huta Certeze se coboară de la aproximativ 600 de metri la 200. Textul despre relief informează. Textul despre port arată unicitatea. Blogul are impresie și recomandare. Etapele scrierii sunt pregătirea, ciorna, revizuirea, editarea și publicarea.",
-      "tryThis": "Completează un tabel cu zona, așezarea, relieful, un element de originalitate și o impresie, numai cu faptele din lecție. Spune scopul textului despre relief și scopul textului despre port. Scrie planul primelor două zile ale unei tabere în Țara Oașului: program, participanți, o drumeție și un atelier. Apoi scrie 100–150 de cuvinte, o descriere a unui loc care te-a impresionat, cu introducere, cuprins și încheiere. La final, notează că ai verificat un semn de punctuație. Spune două mijloace noi, dintre diagramă, editor de text și program de prezentări, prin care ai arăta un text liric: titlu, autor, idee, o imagine.",
-      "recap": "Textul se așază după situație. Narațiunea și descrierea au cinci etape și trei părți. Blogul adaugă o impresie și o recomandare. Țara Oașului este în nord-vest. Un text poate informa despre relief, altul poate arăta portul și datinile. Orele care nu sunt în sursă nu se inventează."
-    },
-    {
-      "id": "substantiv",
-      "title": "Comun, propriu, colectiv",
-      "platter": "Substantivul este partea de vorbire flexibilă care numește ființe, lucruri, fenomene, sentimente și stări. Substantivele comune numesc o clasă: floare, masă. Cele proprii numesc individual: Nora. În enunțul Nora a pus floarea pe masă, Nora este propriu, floarea și masa sunt comune. După alcătuire, sunt simple, ca în casă, pom, copil, sau compuse, ca în gura-leului și floare-de-colț. Genurile sunt masculin, feminin și neutru. La ființe, genul poate veni din cuvinte diferite, ca tată și mamă, sau din sufixe moționale: rață și rățoi, gâscă și gâscan, împărat și împărăteasă. Unele substantive au o singură formă pentru masculin sau pentru feminin: fluture, elefant, girafă, albină, zebră, vultur, părinte. Numărul este singular sau plural. Defective de plural, singularia tantum, sunt aur, curaj, lapte, miere. Defective de singular, pluralia tantum, sunt aplauze și câlți. Colectivele au formă de singular și înțeles de plural: roi, armată, cârd, cireadă, brădet, aluniș, școlărime, flotă, echipă, stol. Nu sunt colective tinerei, pădurar, părinți și colegi. Din lista câine-lup, bloc, floarea-soarelui, sentimentele, emoție, bunăstare, bunăvoință, răufăcătorul, steaua, articulate hotărât sunt floarea-soarelui, sentimentele, răufăcătorul și steaua. Celelalte, așa cum sunt scrise, nu au articol hotărât. Perechile cu sufix moțional: gâscă dă gâscan, rață dă rățoi, țăran dă țărancă, bunic dă bunică, urs dă ursoaică, prinț dă prințesă. Colectivele cerute, prin derivare cu sufix: tânăr dă tineret, muncitor dă muncitorime, școlar dă școlărime, brad dă brădet, alun dă aluniș. Tinerețe numește vârsta, nu grupul. Femininele și masculinele cerute: croitor dă croitoreasă, pictor dă pictoriță, lup dă lupoaică, român dă româncă, bucătar dă bucătăreasă, țăran dă țărancă, oltean dă olteancă, curcă dă curcan, duce dă ducesă. Iubire este feminin singular. Vis este neutru singular. Marinar este masculin singular. Nebunie este derivat, din nebun cu sufixul -ie. New York este nume propriu compus, împrumutat. Locuțiunea substantivală este un grup cu rol de substantiv. Băgare de seamă înseamnă atenție. Strângere în brațe înseamnă îmbrățișare. Aduceri-aminte înseamnă amintiri. Ținere de minte înseamnă memorie. Tragere de inimă înseamnă plăcere. Părere de rău înseamnă regret. Din locuțiuni verbale se fac locuțiuni substantivale: facere de bine, luare de cuvânt, dare de seamă, învățare de minte, scăpare din vedere, luare la rost. Ortografia, după DOOM, se hotărăște așa. Sunt scrise corect bloc-turn, Târgu-Neamț, ex-premier și design. Se corectează workshop-uri în workshopuri, non-violență în nonviolență, Baia-Mare în Baia Mare, post scriptum în post-scriptum, week-end în weekend și lung metraj în lungmetraj.\n\nExemplu lucrat: Nora este propriu. Floarea este comun. Miere nu are plural. Stol este colectiv. Părinți nu este colectiv. Iubire este feminin singular. Tineret este colectivul lui tânăr. Aduceri-aminte înseamnă amintiri. Baia Mare se scrie fără cratimă. Weekend se scrie într-un cuvânt.\n\nÎn Nora a pus floarea pe masă, spune care substantiv este propriu și care sunt comune. Spune genul și numărul pentru iubire, vis și marinar. Formează perechea pentru gâscă, rață, țăran, bunic, urs și prinț. Formează colectivul pentru tânăr, muncitor, școlar, brad și alun. Din lista cu brădet, tinerei, flotă, pădurar, școlărime, părinți, echipă și colegi, scrie numai colectivele. Dintre câine-lup, floarea-soarelui, emoție și steaua, scrie articulatele hotărât. Dă sinonimul pentru băgare de seamă, aduceri-aminte și părere de rău. Transformă a face bine, a lua cuvântul și a scăpa din vedere în locuțiuni substantivale. Corectează Baia-Mare, week-end, lung metraj, workshop-uri, non-violență și post scriptum.\n\nSubstantivul numește. Poate fi comun sau propriu, simplu sau compus. Colectivul are formă de singular și înțeles de plural: stol, tineret, brădet. Miere nu are plural. Aduceri-aminte înseamnă amintiri. Baia Mare, weekend, lungmetraj, workshopuri, nonviolență și post-scriptum sunt formele corecte.",
-      "theory": "Substantivul este partea de vorbire flexibilă care numește ființe, lucruri, fenomene, sentimente și stări. Substantivele comune numesc o clasă: floare, masă. Cele proprii numesc individual: Nora. În enunțul Nora a pus floarea pe masă, Nora este propriu, floarea și masa sunt comune. După alcătuire, sunt simple, ca în casă, pom, copil, sau compuse, ca în gura-leului și floare-de-colț. Genurile sunt masculin, feminin și neutru. La ființe, genul poate veni din cuvinte diferite, ca tată și mamă, sau din sufixe moționale: rață și rățoi, gâscă și gâscan, împărat și împărăteasă. Unele substantive au o singură formă pentru masculin sau pentru feminin: fluture, elefant, girafă, albină, zebră, vultur, părinte. Numărul este singular sau plural. Defective de plural, singularia tantum, sunt aur, curaj, lapte, miere. Defective de singular, pluralia tantum, sunt aplauze și câlți. Colectivele au formă de singular și înțeles de plural: roi, armată, cârd, cireadă, brădet, aluniș, școlărime, flotă, echipă, stol. Nu sunt colective tinerei, pădurar, părinți și colegi. Din lista câine-lup, bloc, floarea-soarelui, sentimentele, emoție, bunăstare, bunăvoință, răufăcătorul, steaua, articulate hotărât sunt floarea-soarelui, sentimentele, răufăcătorul și steaua. Celelalte, așa cum sunt scrise, nu au articol hotărât. Perechile cu sufix moțional: gâscă dă gâscan, rață dă rățoi, țăran dă țărancă, bunic dă bunică, urs dă ursoaică, prinț dă prințesă. Colectivele cerute, prin derivare cu sufix: tânăr dă tineret, muncitor dă muncitorime, școlar dă școlărime, brad dă brădet, alun dă aluniș. Tinerețe numește vârsta, nu grupul. Femininele și masculinele cerute: croitor dă croitoreasă, pictor dă pictoriță, lup dă lupoaică, român dă româncă, bucătar dă bucătăreasă, țăran dă țărancă, oltean dă olteancă, curcă dă curcan, duce dă ducesă. Iubire este feminin singular. Vis este neutru singular. Marinar este masculin singular. Nebunie este derivat, din nebun cu sufixul -ie. New York este nume propriu compus, împrumutat. Locuțiunea substantivală este un grup cu rol de substantiv. Băgare de seamă înseamnă atenție. Strângere în brațe înseamnă îmbrățișare. Aduceri-aminte înseamnă amintiri. Ținere de minte înseamnă memorie. Tragere de inimă înseamnă plăcere. Părere de rău înseamnă regret. Din locuțiuni verbale se fac locuțiuni substantivale: facere de bine, luare de cuvânt, dare de seamă, învățare de minte, scăpare din vedere, luare la rost. Ortografia, după DOOM, se hotărăște așa. Sunt scrise corect bloc-turn, Târgu-Neamț, ex-premier și design. Se corectează workshop-uri în workshopuri, non-violență în nonviolență, Baia-Mare în Baia Mare, post scriptum în post-scriptum, week-end în weekend și lung metraj în lungmetraj.",
-      "example": "Nora este propriu. Floarea este comun. Miere nu are plural. Stol este colectiv. Părinți nu este colectiv. Iubire este feminin singular. Tineret este colectivul lui tânăr. Aduceri-aminte înseamnă amintiri. Baia Mare se scrie fără cratimă. Weekend se scrie într-un cuvânt.",
-      "tryThis": "În Nora a pus floarea pe masă, spune care substantiv este propriu și care sunt comune. Spune genul și numărul pentru iubire, vis și marinar. Formează perechea pentru gâscă, rață, țăran, bunic, urs și prinț. Formează colectivul pentru tânăr, muncitor, școlar, brad și alun. Din lista cu brădet, tinerei, flotă, pădurar, școlărime, părinți, echipă și colegi, scrie numai colectivele. Dintre câine-lup, floarea-soarelui, emoție și steaua, scrie articulatele hotărât. Dă sinonimul pentru băgare de seamă, aduceri-aminte și părere de rău. Transformă a face bine, a lua cuvântul și a scăpa din vedere în locuțiuni substantivale. Corectează Baia-Mare, week-end, lung metraj, workshop-uri, non-violență și post scriptum.",
-      "recap": "Substantivul numește. Poate fi comun sau propriu, simplu sau compus. Colectivul are formă de singular și înțeles de plural: stol, tineret, brădet. Miere nu are plural. Aduceri-aminte înseamnă amintiri. Baia Mare, weekend, lungmetraj, workshopuri, nonviolență și post-scriptum sunt formele corecte."
-    }
-  ]
-};
+'use strict';
+const { romanaLesson } = require('../lessonBuilder');
+function lesson(f){return romanaLesson(f);}
+module.exports = { lessons: [
+  lesson({
+    id: 'deschidere-sentimente',
+    title: 'Harta emoțiilor',
+    kind: 'comunicare',
+    boxes: [{
+      type: 'definitie',
+      title: 'Harta unității',
+      text: 'Drumul pornește de la emoție și ajunge la o tradiție. Codurile de pe hartă sunt douăsprezece. Grila cu puncte nu predă în locul lecției.'
+    }],
+    theory: [
+      'Unitatea Tărâmul sentimentelor se deschide cu o hartă de lucru. Citești text liric și separi emoția care trece repede de sentimentul care durează.',
+      'Apoi vin versul, strofa, rima și figurile de stil. Ca fapte, reții poezia Atât de fragedă, a lui Mihai Eminescu, și balada Nunta Zamfirei, a lui George Coșbuc.',
+      'Strofele rămân în carte. La oral schimbi intonația, ca să se audă o emoție. Descrii întâi obiectiv, apoi subiectiv.',
+      'La scris, textul se așază după situația de comunicare. Limbajul, părțile și scopul se potrivesc cu cine citește.',
+      'Gramatica reia substantivul, cele cinci cazuri, prepoziția și adjectivul. La adjectiv urmărești gradele, topica și felul combinării.',
+      'La interculturalitate afli ce sunt Sânzienele, ținute pe 24 iunie. Închiderea este lucrarea Lada cu sentimente și tradiții românești.',
+      'Codurile sunt douăsprezece. Primele șase sunt 1.2, 1.4, 2.1, 2.3, 2.4 și 2.5. Următoarele șase sunt 3.1, 3.3, 4.1, 4.4, 4.5 și 5.1.',
+      'Nici grila cu puncte, nici fișa de observare nu țin loc de lecție. Ele măsoară munca, nu predau conținutul.',
+      'La clasă, poemul de pe bancă poate purta alt titlu. Ordinea de lucru nu se schimbă: citești, spui faptele, lași strofa netranscrisă.',
+      'Harta nu îți dă un comentariu gata făcut. Îți arată unde stă fiecare temă, ca să o recunoști când apare într-un exercițiu.',
+      'Atât de fragedă se reține ca poezie de iubire, cu vocea îndrăgostitului. Nunta Zamfirei se reține ca baladă de nuntă. În ambele spui autorul și tema.',
+      'Când un exercițiu cere o competență, cauți codul și legi sarcina de el. Nu adăuga o a treisprezecea, fiindcă harta are douăsprezece.',
+      'Lucrarea de la final leagă un sentiment de o tradiție românească. Sânzienele pot fi tradiția aleasă, dacă folosești data de 24 iunie și faptele pe care le ai.'
+    ].join('\n\n'),
+    example: [
+      'Harta adună liricul, rima, figurile, tonul, descrierea, substantivul, adjectivul și sărbătoarea din 24 iunie.',
+      'Sunt douăsprezece coduri, de la 1.2 până la 5.1. Balada lui Coșbuc se spune prin fapte, nu prin versuri copiate.'
+    ].join('\n\n'),
+    extraExamples: [{
+      title: 'Încă un exemplu',
+      text: 'Dacă pe bancă stă alt titlu de poezie, pașii nu se schimbă: spui tema, vocea și o figură, fără să copiezi rândurile.'
+    }],
+    tryThis: [
+      'Alcătuiește trei propoziții. Prima arată tema, emoția, și faptul că azi lucrezi un text liric.',
+      'A doua enumeră codurile 1.2, 1.4, 2.1, 2.3, 2.4, 2.5, apoi 3.1, 3.3, 4.1, 4.4, 4.5 și 5.1, și spune că totalul este douăsprezece.',
+      'A treia arată că grila cu puncte nu ține loc de lecție și că strofele rămân netranscrise.'
+    ].join('\n\n'),
+    keyPoints: [
+      'Harta leagă liricul, versificația, figurile, balada, tonul, descrierea și gramatica.',
+      'Codurile sunt douăsprezece, iar grila cu puncte nu predă.',
+      'Strofele din Atât de fragedă și din Nunta Zamfirei nu se transcriu.'
+    ]
+  }),
+  lesson({
+    id: 'text-liric',
+    title: 'Vocea care simte nu este autorul',
+    kind: 'lectura',
+    boxes: [{
+      type: 'definitie',
+      title: 'Text liric',
+      text: 'Spune emoții, sentimente, gânduri, idei și aspirații dintr-o privire subiectivă. Vocea din text este ficțională și nu se confundă cu autorul.'
+    }],
+    theory: [
+      'Privirea subiectivă stă la persoana întâi, una sau mai multe, când tonul este de mărturisire, și la persoana a doua. Lumea textului este inventată, ieșită din imaginația scriitorului.',
+      'Poate vorbi îndrăgostitul, cel care contemplă natura, călătorul, copilul sau omul de geniu. Vocea există numai înăuntrul textului, nu în biografia autorului.',
+      'O emoție ține puțin și își schimbă tăria. Lista: frica și bucuria, furia, tristețea, dezgustul, surpriza. Un sentiment rămâne: dragostea, afecțiunea, fericirea, ura, durerea.',
+      'Anii lui Mihai Eminescu sunt 1850–1889. A scris poezie, proză și jurnalism. Debutul, la 16 ani, este poemul La mormântul lui Aron Pumnul.',
+      'Revista Familia, sub Iosif Vulcan, i-a tipărit apoi De-aș avea. Cât a trăit, a scos doar volumul Poesii.',
+      'Restul operei a stat în manuscris, până când criticul George Călinescu a scos-o la iveală. Temele, fără strofă, sunt istoria, cosmosul, filozofia, timpul, natura, iubirea și folclorul.',
+      'Poemul Atât de fragedă ține de iubire. Vorbește îndrăgostitul, nu autorul. Se aude persoana întâi, iar ființa iubită este strigată la persoana a doua.',
+      'Creștet numește vârful capului. Sintagma din creștet până în tălpi acoperă trupul întreg, de sus în jos. A spăși, forma de azi a ispăși, înseamnă suferința pentru o greșeală. Pururi înseamnă veșnic, totdeauna.',
+      'Portretul scris de tine îți aparține. Nu este o copie. Tabloul Dans la țară, semnat de Auguste Renoir, se descrie numai când îl vezi. Nu născoci fețele.',
+      'Scena de lucru înlocuiește poemul. Într-o seară de duminică stau la geam și o privesc pe o fată îmbrăcată în alb. Lampa dă lumină caldă. Mărturisesc că liniștea ei îmi este dragă.',
+      'Bucuria este emoția scurtă. Dragostea este sentimentul care rămâne. Eu sunt vocea, îndrăgostitul din text, nu autorul lecției.',
+      'Trei pași ies din scenă: ce este scris, ce observi, ce ai face tu, legate cu pentru că. Rândul cu ce observi începe prin O văd.',
+      'Howard Gardner a descris opt feluri de inteligență. Clasa poate face echipe care lucrează același poem pe drumuri diferite. Nu devin opt lecții aparte.',
+      'Întâi: lingvistică, logico-matematică, naturalistă, vizual-spațială. Apoi: corporal-chinestezică, muzical-ritmică, intrapersonală, interpersonală.'
+    ].join('\n\n'),
+    example: [
+      'Ce scrie: seară de duminică, la geam, o fată în alb, iar eu spun că liniștea ei îmi este dragă. Ce vezi: O văd la geam, cu rochie albă.',
+      'Aș ține lampa aprinsă, pentru că lumina e caldă și ea rămâne la geam. Vocea este a îndrăgostitului. Anii sunt 1850–1889.'
+    ].join('\n\n'),
+    extraExamples: [{
+      title: 'Încă un exemplu',
+      text: 'Bucuria se stinge repede, ca o lumină aprinsă o clipă. Dragostea rămâne. Una este emoție, cealaltă este sentiment.'
+    }],
+    tryThis: [
+      'Pe scena serii, fă trei rânduri: ce stă scris, ce observi și ce ai face, cu pentru că. Rândul din mijloc începe cu O văd.',
+      'Arată persoana și ipostaza vocii, apoi de ce nu este autorul. Pune o emoție lângă un sentiment.',
+      'Notează anii lui Eminescu, volumul din viață și o temă. Schițează, în 30–50 de cuvinte, un portret în care pui floarea, gestul și simbolul pe care le alegi. Enumeră cele opt inteligențe, fără să le prefaci în opt teme.'
+    ].join('\n\n'),
+    keyPoints: [
+      'Liricul spune trăiri dintr-o privire subiectivă, iar vocea din text nu este autorul.',
+      'Emoția trece. Sentimentul rămâne. Eminescu, între 1850 și 1889, a tipărit în viață doar Poesii.',
+      'Cele opt inteligențe ale lui Gardner sunt căi pe același poem, nu opt lecții.'
+    ]
+  }),
+  lesson({
+    id: 'versificatie',
+    title: 'Versul, măsura, strofa și rima',
+    kind: 'lectura',
+    boxes: [{
+      type: 'regula',
+      title: 'Numără, nu copia',
+      text: 'Versul înseamnă un rând de poezie. Măsura numără silabele. Strofa le grupează. Rima apropie sunetele finale, de la ultima vocală accentuată.'
+    }],
+    theory: [
+      'Versificația, zisă și prozodie, este meșteșugul prin care se construiesc versurile. Muzica lor iese din rând, din numărul de silabe, din strofă, din rimă și din ritm.',
+      'Măsura scurtă înseamnă 5–6 silabe sau 7–8. Medie: 9–11. Lungă: 12–18. Între strofe rămâne un rând gol, numit blanc.',
+      'Două rânduri fac un distih, trei o terțină, patru un catren, cinci un cvintet, șase o sextină.',
+      'Tiparul abab este rimă încrucișată: rândul 1 cu 3, rândul 2 cu 4. Tiparul aabb este împerecheată. Tiparul aaaa este monorimă. Tiparul abba este îmbrățișată.',
+      'Rima imperfectă ține vocalele accentuate și schimbă consoanele. Semirima, cu tiparul abcb, amestecă rânduri rimante și rânduri fără rimă.',
+      'Ritmul înseamnă o succesiune regulată de silabe accentuate și neaccentuate. Versurile albe nu au nici rimă, nici ritm regulat.',
+      'Modelul numărat aici este o propoziție de exercițiu, nu un citat. Roua urcă pe o frunză are opt silabe: rou-a, ur-că, pe, o, frun-ză. Măsura este scurtă.',
+      'Într-un catren cu aceeași măsură și cu abab, finalul primului rând se aude cu al treilea, iar al doilea cu al patrulea. La clasă numeri rândul deschis după aceeași regulă.',
+      'Nu stabilim aici silabele unui rând care nu este numărat în lecția aceasta. Bucata din Rochia, de Magda Isanos, este catren. Bucata din Mărțișor, de Ion Pillat, este și ea catren.',
+      'Bucata din Terține, de George Topîrceanu, este terțină. La Atât de fragedă, Mihai Eminescu folosește rimă încrucișată: finalurile se aud din două în două.',
+      'La Trecut-au anii, rima îmbrățișează. La Revedere, rima se împerechează. Aceste fapte se spun fără a transcrie strofele.'
+    ].join('\n\n'),
+    example: [
+      'Roua urcă pe o frunză are 8 silabe, deci măsură scurtă. Un catren abab înseamnă rimă încrucișată.',
+      'Rochia, ca și Mărțișor, este catren. Terține este terțină. La Trecut-au anii rima îmbrățișează. La Revedere rima se împerechează. Versurile albe rămân fără rimă.'
+    ].join('\n\n'),
+    extraExamples: [{
+      title: 'Încă un exemplu',
+      text: 'Dacă două finaluri se aseamănă doar prin vocala accentuată, iar consoanele diferă, rima este imperfectă. Tiparul abcb este semirimă.'
+    }],
+    tryThis: [
+      'Numără silabele din Roua urcă pe o frunză și arată că măsura este scurtă. Spune câte rânduri au distihul, terțina, catrenul, cvintetul și sextina.',
+      'Lămurește tiparele abab, aabb, aaaa și abba. Compune un catren al tău, câte 8 silabe pe rând, cu rimă împerecheată, despre toamnă. Nu lua versuri din cărți.',
+      'Ca fapte: Rochia este catren, Mărțișor este catren, Terține este terțină, Atât de fragedă încrucișează, Trecut-au anii îmbrățișează, Revedere împerechează.'
+    ].join('\n\n'),
+    keyPoints: [
+      'Până la 8 silabe măsura este scurtă, între 9 și 11 este medie, între 12 și 18 este lungă.',
+      'Catrenul are patru rânduri. abab încrucișează, aabb împerechează, abba îmbrățișează.',
+      'Și Rochia, și Mărțișor sunt catrene. Terține este terțină. Versurile albe rămân nerimate.'
+    ]
+  }),
+  lesson({
+    id: 'figuri-stil',
+    title: 'Epitetul, comparația, personificarea',
+    kind: 'lectura',
+    boxes: [{
+      type: 'definitie',
+      title: 'Figură de stil',
+      text: 'Mută înțelesul de bază al unui cuvânt, ca imaginea să lovească mai tare. Imaginea poate fi de văz, de auz sau de miros.'
+    }],
+    theory: [
+      'Epitetul aduce în față o însușire, la substantiv sau la verb. Comparația așază doi termeni unul lângă altul, pe o asemănare.',
+      'Personificarea dă unui lucru, sau unui fenomen, trăsături omenești. Enumerația pune în șir termeni despre același obiect.',
+      'Repetiția ia din nou un cuvânt, un grup ori un enunț, ca să apese pe o idee sau pe un sentiment. Nu aduce o știre nouă. Stăruie.',
+      'Figurile se pot uni. Epitetul personificator și determină, și împrumută o trăsătură de om. Exemplu făcut aici: fereastra veghetoare.',
+      'Pe scena noastră, fără strofă din carte: fereastra tăcută este epitet. Seara e lină ca o apă este comparație. Seara îmbrățișează fereastra este personificare.',
+      'Lampă, geam, tăcere este enumerație. Stai, stai lângă geam este repetiție și apasă pe stăruință.',
+      'Interpretarea are cinci pași. Întâi citești și fixezi tema, plus cuvintele-cheie. Apoi găsești figura și spui ce spun cuvintele ei.',
+      'Arăți ce numește și ce emoție, sau ce atmosferă, se naște. Alegi tipul imaginii: văz, auz sau miros. La urmă legi semnificația de pașii dinainte.',
+      'Tema scenei este liniștea de duminică. Cuvântul-cheie este lampa. Seara îmbrățișează fereastra este personificare și imagine de văz. Înseamnă că seara veghează lângă geam.',
+      'Strofele din volume nu se transcriu. Le recunoști pe textul deschis cu aceleași definiții. Tabloul Peisaj de toamnă cu un cârd de curcani, semnat de Jean-François Millet, se descrie numai când îl vezi. Nu născoci culorile.'
+    ].join('\n\n'),
+    example: [
+      'Fereastra tăcută este epitet. Lină ca o apă este comparație. Seara îmbrățișează fereastra este personificare de văz.',
+      'Lampă, geam, tăcere este enumerație. Stai, stai este repetiție. Fereastra veghetoare este epitet personificator.'
+    ].join('\n\n'),
+    extraExamples: [{
+      title: 'Încă un exemplu',
+      text: 'Copacul plânge frunze este o personificare inventată pentru exercițiu. Imaginea este de văz, iar emoția este o tristețe liniștită.'
+    }],
+    tryThis: [
+      'Pe scena cu lampa, inventează pe rând un epitet, o comparație, o personificare, o enumerație și o repetiție.',
+      'Ce imagine dă Seara îmbrățișează fereastra și ce emoție lasă? Parcurge cinci pași: tema, figura, obiectul numit, felul imaginii, sensul.',
+      'Compune două rânduri noi, cu un copac care plânge, și numește figura personificare. Nu lua versuri din cărți.'
+    ].join('\n\n'),
+    keyPoints: [
+      'Epitetul scoate o însușire, comparația apropie doi termeni, personificarea dă trăsături de om.',
+      'Enumerația înșiră, repetiția stăruie, iar epitetul personificator le poate face pe amândouă.',
+      'Cei cinci pași ai interpretării sunt tema, figura, emoția, tipul imaginii și sensul.'
+    ]
+  }),
+  lesson({
+    id: 'nunta-zamfirei',
+    title: 'O nuntă de baladă, spusă cu faptele ei',
+    kind: 'lectura',
+    boxes: [{
+      type: 'regula',
+      title: 'Baladă, nu strofă',
+      text: 'George Coșbuc a scris balada Nunta Zamfirei. Reții nunta, mirii, hora și cele două planuri. Versurile nu se lipesc.'
+    }],
+    theory: [
+      'Faptul central este o nuntă. Mireasa este Zamfira, mirele este Viorel. Numele sună a poveste românească și se potrivesc între ele, nu sunt nume de cancelarie.',
+      'Ordinea întâmplării: vestea pleacă până hăt departe. Nuntașii sosesc în zori. Alaiul se ivește către amiază. După cununie se joacă hora.',
+      'La horă, lumea se prinde de mâini, face câte trei pași într-o parte și în cealaltă, se adună în cerc și lovește pământul în tact.',
+      'Jocul după tilinci este un dans din zona Năsăudului. Planul social cuprinde opincile, portul de sat, vătaful care duce alaiul, starostele care rostește orațiile, muzicanții și drumul plin.',
+      'Planul de basm cuprinde musafiri veniți din foarte multe țări, regi și soarele, care lasă impresia că se oprește ca să privească jocul.',
+      'Rândul cu care începe balada nu măsoară o hartă și nu spune ora. Spațiul și timpul rămân largi, fără cifre. Variantele sunt o indicație cu cifre, un timp fix, mărimea Pământului sau lipsa de precizie. Buna este ultima.',
+      'Roșeața și zăpăceala născute din dragoste arată ce simt mirii, nu haina și nu frumusețea jocului. Strofa dintâi este o sextină, iar ultimul ei rând este mai scurt.',
+      'Rima acestei sextine unește două rânduri la început și trei la mijloc, apoi ultimul rând se întoarce la sunetul dintâi. Silabele se numără la clasă, pe strofa deschisă.',
+      'Imaginea soarelui, spusă cu vorbele tale: bucuria jocului e așa de mare, încât și soarele pare un privitor oprit.',
+      'În fragment, identitatea națională adună hora, opincile, vătaful, starostele, portul de sat și dansul din zona Năsăudului.',
+      'A peți înseamnă a cere mâna unei fete. Crăime numește fie țara unui crai, fie o mulțime de crai. Purpura este roșul închis și, odată cu el, stofa scumpă de acea culoare.',
+      'Rădvanul este trăsura închisă, de lux, pe care o trag caii. A starosti înseamnă a ține nunta și a rosti orațiile. Treascul este un mic tun de sărbătoare. Iatacul este odaia unde se doarme. Vătaful duce alaiul.',
+      'Două tablouri: Hora la Aninoasa, pictată de Theodor Aman, și Mireasa, pictată de Abraham Solomon. Le privești la vedere.'
+    ].join('\n\n'),
+    example: [
+      'Mirii sunt Zamfira și Viorel. Hora merge în cerc, cu pași într-o parte și în cealaltă. Jocul după tilinci vine din zona Năsăudului.',
+      'În planul social stau opincile și vătaful. În planul de basm stau musafiri din multe țări. Începutul lasă locul larg. Roșeața din dragoste este emoția mirilor. A peți înseamnă a cere mâna.'
+    ].join('\n\n'),
+    extraExamples: [{
+      title: 'Încă un exemplu',
+      text: 'Rădvanul este trăsura închisă, de lux. Iatacul este odaia de dormit. Vătaful duce alaiul, starostele spune orațiile. Niciun termen nu cere un vers copiat.'
+    }],
+    tryThis: [
+      'Notează tema, mirii și două etape. Desparte un element social de unul de basm. Arată de ce începutul nu este o hartă și ce emoție poartă roșeața din dragoste.',
+      'Scrie că strofa întâi este sextină și că rândul din urmă este mai scurt. În 30–50 de cuvinte, lămurește de ce soarele pare oprit.',
+      'Dă patru semne de identitate națională și sensul pentru a peți, rădvan, a starosti, vătaf. Apoi povestește, în 120–150 de cuvinte, că ești la nuntă: aerul, oamenii, o întâmplare. Fără strofe.'
+    ].join('\n\n'),
+    keyPoints: [
+      'Balada lui Coșbuc urmărește nunta Zamfirei cu Viorel, de la veste până la horă.',
+      'Lumea satului aduce opinci, port, vătaf și staroste. Lumea basmului aduce musafiri de departe și soarele oprit în privire.',
+      'Hora, opincile și dansul cu tilincă, din ținutul Năsăudului, arată identitatea. Versurile rămân în carte.'
+    ]
+  }),
+  lesson({
+    id: 'intonatie',
+    title: 'Aceeași propoziție, altă emoție',
+    kind: 'comunicare',
+    boxes: [{
+      type: 'definitie',
+      title: 'Trei canale',
+      text: 'Emoția trece prin cuvinte, prin corp și prin voce. Cuvântul este verbal. Gestul și mimica sunt nonverbale. Melodia și tăria vocii sunt paraverbale.'
+    }],
+    theory: [
+      'Când textul este o poezie, și măsura, rima și ritmul pot duce o emoție. În dialog, o recunoști după împrejurare și după starea trupului celui care vorbește.',
+      'Semnul de la capăt schimbă desenul frazei. Pleci în tabără la munte, închisă cu punct, constată un fapt. Cu semnul întrebării, aceeași frază întreabă. Cu semnul exclamării, miră sau arată bucurie puternică.',
+      'Enunțul Vântul bate foarte puternic poate purta tristețe când glasul coboară și se rărește. Poate purta dezamăgire când apeși pe foarte și lași o pauză.',
+      'Urcată la final, ca o întrebare, poate purta uimire. Spusă încet, fără un accent tare, poate purta resemnare.',
+      'Gestul completează. Umeri lăsați stau lângă tristețe. Sprâncene ridicate stau lângă uimire. Nu desena fețe din imaginație. Le joci în clasă, după un context spus de tine.',
+      'Două persoane pot rosti aceeași frază, una cu bucurie și alta cu îngrijorare. Hotărăsc melodia, pauza și corpul, nu doar vorbele.',
+      'Într-un dialog notat, marchezi unde glasul urcă și unde coboară. Urcarea seamănă cu întrebarea. Coborârea seamănă cu oboseala sau cu tristețea.',
+      'Contextul se spune înainte de gest. Dacă furtuna amână drumul la munte, exclamarea nu mai este bucurie, ci mirare amestecată cu necaz.',
+      'În scris, intonația nu înlocuiește punctuația. Semnul îți arată conturul, iar vocea îl umple cu emoția aleasă.'
+    ].join('\n\n'),
+    example: [
+      'Fraza despre tabăra la munte constată cu punct, întreabă cu semnul întrebării și miră cu semnul exclamării.',
+      'Spus rar, cu umerii jos, Vântul bate foarte puternic poate fi tristețe. Cu glasul urcat la final, poate fi uimire. Vocea ține de paraverbal. Fața ține de nonverbal.'
+    ].join('\n\n'),
+    extraExamples: [{
+      title: 'Încă un exemplu',
+      text: 'Dacă apeși foarte și apoi taci o clipă, Vântul bate foarte puternic sună a dezamăgire. Aproape în șoaptă, fără accent, sună a resemnare.'
+    }],
+    tryThis: [
+      'Scrie de trei ori fraza despre tabăra la munte: o dată cu punct, o dată întrebând, o dată cu exclamație. Spune rolul fiecărui semn.',
+      'Pentru Vântul bate foarte puternic, arată vocea de tristețe, de dezamăgire, de uimire și de resemnare. Lângă fiecare, un gest.',
+      'Scrie opt replici între Mara și Nora, la geam: una bucuroasă, alta îngrijorată. Marchează două urcări de voce și două coborâri.'
+    ].join('\n\n'),
+    keyPoints: [
+      'Punctul constată, întrebarea întreabă, exclamarea miră sau bucură tare.',
+      'Melodia vocii este paraverbală. Gestul și mimica sunt nonverbale.',
+      'Schimbând melodia și pauza, aceeași frază poate fi tristețe, dezamăgire, uimire sau resemnare.'
+    ]
+  }),
+  lesson({
+    id: 'descriere',
+    title: 'Obiectiv, apoi subiectiv',
+    kind: 'redactare',
+    boxes: [{
+      type: 'regula',
+      title: 'Două descrieri',
+      text: 'Varianta obiectivă dă fapte, la persoana a treia, fără figuri. Varianta subiectivă adaugă impresia și emoția, mai ales la persoana întâi.'
+    }],
+    theory: [
+      'Descrierea arată cum este o ființă, un obiect sau un peisaj. Cea obiectivă rămâne la date reale și la un limbaj neutru.',
+      'Cea subiectivă aduce impresiile tale, emoții și sentimente, într-un limbaj expresiv. Emoția o produce cel care descrie, nu lucrul singur.',
+      'Un portret poate cuprinde ochii, gura, nasul, apoi sprâncenele și obrajii, expresia, haina, felul în care stă capul și emoția chipului.',
+      'Tabloul Țărancă din Muscel, lucrare a lui Nicolae Grigorescu, se privește numai când îl ai dinainte. Nu născoci ce este pe pânză. Un personaj dintr-o imagine de carte se ia din imaginea văzută, nu din închipuire.',
+      'Portretul de lucru are datele aici. Nora are păr negru, prins, ochi albaștri, nas drept și obraji liniștiți. Șade pe scaun, cu capul ușor aplecat, și poartă șorț alb.',
+      'Expresia este calmă. Aceasta este varianta obiectivă, la persoana a treia, fără figură. În aceste fapte nu există comparație.',
+      'Aceeași față, spusă subiectiv: liniștea Norei îmi amintește de lampa de duminică, iar când o privesc mă bucur. Persoana întâi și comparația schimbă tipul.',
+      'La clasă, pe rândurile deschise, cauți piesele de portret și figura cu aceleași întrebări. Aici le cauți la Nora.',
+      'Dacă descrii obiectiv o persoană dragă pe care o vezi, rămâi la ochi, gură, haină și poziția capului. Dacă nu este lângă tine, îți iei chipul din oglindă și spui că textul este obiectiv.',
+      'Nu amesteca tipurile în același rând: un fapt neutru lângă o comparație cu eu. Le scrii separat, întâi obiectiv, apoi subiectiv.'
+    ].join('\n\n'),
+    example: [
+      'Obiectiv: Nora are păr negru, ochi albaștri, șorț alb și capul aplecat. Comparația lipsește.',
+      'Subiectiv: liniștea ei îmi amintește de lampă și mă bucur. Persoana întâi plus comparația fac textul subiectiv. Emoția vine de la cel care scrie.'
+    ].join('\n\n'),
+    extraExamples: [{
+      title: 'Încă un exemplu',
+      text: 'Obiectiv: șorțul este alb, scaunul este simplu, capul stă ușor aplecat. Subiectiv: albul șorțului mi se pare lin ca lumina de duminică. Doar a doua frază are emoție.'
+    }],
+    tryThis: [
+      'Scrie întâi portretul obiectiv al Norei, numai cu datele din lecție, la persoana a treia, fără figuri.',
+      'Apoi scrie varianta subiectivă, la persoana întâi: o emoție plus o comparație. Arată cine produce emoția.',
+      'Mai fă, obiectiv, opt rânduri despre o persoană dragă din fața ta: ochi, gură, haină, cap. Dacă lipsește, ia-ți fața din oglindă și numește lucrarea descriere obiectivă.'
+    ].join('\n\n'),
+    keyPoints: [
+      'Textul obiectiv stă la persoana a treia, cu fapte și fără figuri.',
+      'Textul subiectiv stă mai ales la persoana întâi și poartă emoția celui care descrie.',
+      'La Nora reții părul, ochii, nasul, șorțul alb, capul aplecat și calmul.'
+    ]
+  }),
+  lesson({
+    id: 'asezare-text',
+    title: 'Pagina se așază după situație',
+    kind: 'comunicare',
+    boxes: [{
+      type: 'regula',
+      title: 'După situație',
+      text: 'Textul scris se organizează după cine citește și de ce. O narațiune sau o descriere are introducere, cuprins și încheiere.'
+    }],
+    theory: [
+      'Drumul scrierii are cinci opriri: te pregătești, faci ciorna, revizuiești, editezi, publici. Limbajul se potrivește și cu tema, și cu felul textului.',
+      'Un blog cere scop, temă, impresii ale tale și o recomandare către cititor. Ca să arăți textul, poți folosi o diagramă, un grafic sau un tabel.',
+      'Mai ai la îndemână laptopul, tableta, tabla interactivă, un editor, un program de slide-uri sau un navigator. Informația se urmărește mai ușor dacă o poți căuta și dacă o poți pune în față.',
+      'Două texte despre aceeași zonă se citesc ca fapte, nu ca bucăți de copiat. Țara Oașului stă în nord-vest, este microregiune și este depresiune.',
+      'Relieful urcă în munți cu păduri de fag, de paltin, de stejar și de arțar, apoi coboară spre dealuri și câmpie. Din vremuri vechi au trăit aici dacii liberi.',
+      'Se intră dinspre Satu Mare sau dinspre Sighetu Marmației. Venind din Maramureș, pe la Huta Certeze, cobori de la circa 600 de metri până pe la 200.',
+      'Ce ține de loc: portul, cântecul, dansul, datinile, oamenii gospodari. Un text sprijinit pe relief, pe înălțime și pe arbori vrea să informeze un turist.',
+      'Un text sprijinit pe port, pe cântec și pe gazde vrea să arate ce nu se repetă. Tema este aceeași, nord-vestul. Accentul diferă.',
+      'Sursele sunt un ghid de drum și o notiță de călător. Nu se copiază paragrafele. Un plan de tabără de creație, pe două zile, poate folosi doar aceste fapte.',
+      'Ziua întâi: drumeție și vizită la un meșteșugar. Ziua a doua: atelier de port sau de cântec. Vin elevi. Nu pune ore sau prețuri care nu stau în sursă.',
+      'O descriere a unui loc care te-a mișcat cere cele trei părți. La sfârșit notezi că ai controlat un semn de punctuație.',
+      'Un text liric se poate arăta prin diagramă, prin editor sau prin slide-uri, cu autorul, titlul, o idee și o imagine. Alegi două mijloace și spui ce pui în ele.'
+    ].join('\n\n'),
+    example: [
+      'Țara Oașului stă în nord-vest. Pe la Huta Certeze cobori de la circa 600 de metri la 200. Textul de relief informează. Textul de port arată ce e unic.',
+      'Blogul adaugă o impresie și o recomandare. Scrierea trece prin pregătire, ciornă, revizuire, editare și publicare.'
+    ].join('\n\n'),
+    extraExamples: [{
+      title: 'Încă un exemplu',
+      text: 'Două slide-uri despre aceeași zonă: unul cu munți, fag și cei 600 de metri, altul cu port și cântec. Tema e comună. Accentul diferă. Orele lipsă nu se scriu.'
+    }],
+    tryThis: [
+      'Fă un tabel cu zona, așezarea, relieful, un semn de originalitate și o impresie, numai din faptele lecției. Spune scopul textului de relief și scopul textului de port.',
+      'Schițează primele două zile de tabără în Țara Oașului: program, cine vine, o drumeție, un atelier.',
+      'Scrie 100–150 de cuvinte despre un loc care te-a mișcat, cu trei părți. La final, arată că ai verificat un semn. Alege două mijloace, dintre diagramă, editor și slide-uri, ca să arăți un text liric, cu autorul, titlul, o idee și o imagine.'
+    ].join('\n\n'),
+    keyPoints: [
+      'Textul se așază după situație. Are cinci etape de lucru și trei părți. Blogul mai cere impresie și recomandare.',
+      'Microregiunea Țara Oașului stă în nord-vest. Coborârea de la Huta Certeze duce de la circa 600 de metri spre 200.',
+      'Relieful poate fi spus ca informație. Portul și datinile pot fi spuse ca unicitate. Orele absente nu se născocesc.'
+    ]
+  }),
+  lesson({
+    id: 'substantiv',
+    title: 'Comun, propriu, colectiv',
+    kind: 'limba',
+    boxes: [{
+      type: 'definitie',
+      title: 'Substantivul',
+      text: 'Este flexibil și pune nume pe ființe, lucruri, fenomene, sentimente și stări. Poate numi o clasă sau un singur exemplar, simplu ori compus.'
+    }],
+    theory: [
+      'Floare și masă sunt comune. Nora este propriu. Propoziția de lucru este Nora a pus floarea pe masă: doar Nora este propriu. Floarea și masa rămân comune.',
+      'Simple sunt casă, pom, copil. Compuse sunt gura-leului și floare-de-colț. Genurile: masculin, feminin, neutru.',
+      'La ființe, genul poate veni din două cuvinte, cum sunt tată și mamă, sau dintr-un sufix moțional. Perechi: gâscă cu gâscan, rață cu rățoi, țăran cu țărancă, bunic cu bunică, urs cu ursoaică, prinț cu prințesă.',
+      'Alte perechi cerute: croitor cu croitoreasă, pictor cu pictoriță, lup cu lupoaică, român cu româncă, bucătar cu bucătăreasă, oltean cu olteancă, curcă cu curcan, duce cu ducesă.',
+      'Numărul este singular ori plural.',
+      'Nu au plural, sunt singularia tantum: aur, curaj, lapte, miere. Nu au singular, sunt pluralia tantum: aplauze și câlți.',
+      'Colectivul arată un grup, deși forma este de singular: roi, armată, cârd, cireadă, apoi brădet, aluniș, școlărime, flotă, echipă, stol.',
+      'Nu intra aici tinerei, pădurar, părinți, colegi. Tinerețe numește o vârstă, nu un grup. Derivări: de la tânăr iese tineret, de la școlar iese școlărime, de la brad iese brădet, de la alun iese aluniș, de la muncitor iese muncitorime.',
+      'Iubire: feminin, singular. Vis: neutru, singular. Marinar: masculin, singular. Nebunie se trage din nebun plus sufixul -ie.',
+      'Cu articol hotărât, din lista dată, stau floarea-soarelui, sentimentele, răufăcătorul și steaua. Fără acest articol, scrise așa: câine-lup, bloc, emoție, bunăstare, bunăvoință.',
+      'O locuțiune substantivală este un grup care lucrează ca un substantiv. Părere de rău înseamnă regret. Tragere de inimă înseamnă plăcere. Ținere de minte înseamnă memorie.',
+      'Aduceri-aminte înseamnă amintiri. Strângere în brațe înseamnă îmbrățișare. Băgare de seamă înseamnă atenție. Din verbe ies luare la rost și scăpare din vedere. Mai ies învățare de minte, dare de seamă, luare de cuvânt și facere de bine.',
+      'Se îndreaptă workshop-uri spre workshopuri și non-violență spre nonviolență.',
+      'Baia-Mare se scrie Baia Mare. Post scriptum se scrie post-scriptum. Week-end se scrie weekend. Lung metraj se scrie lungmetraj.'
+    ].join('\n\n'),
+    example: [
+      'Nora este nume propriu, floarea este nume comun. Miere stă fără plural. Stol este colectiv, părinți nu. Iubire este feminin, singular. De la tânăr iese tineret.',
+      'Aduceri-aminte înseamnă amintiri. Baia Mare nu ia cratimă. Weekend stă într-un cuvânt. Post-scriptum ia cratimă.'
+    ].join('\n\n'),
+    extraExamples: [{
+      title: 'Încă un exemplu',
+      text: 'Din a face bine iese facere de bine. Rămân scrise bine bloc-turn, Târgu-Neamț, ex-premier și design.'
+    }],
+    practice: [
+      '1) În Nora a pus floarea pe masă, numește propriul și cele comune.',
+      '2) Ce gen și ce număr au iubire, apoi vis și marinar?',
+      '3) Ce colectiv formezi de la tânăr, școlar și brad, și de ce părinți nu este colectiv?',
+      '4) Cum se scriu corect Baia-Mare, week-end și post scriptum?'
+    ].join('\n\n'),
+    answers: [
+      'Propriu: Nora. Comune: floarea și masa.',
+      'Feminin singular, neutru singular, masculin singular.',
+      'Tineret, școlărime, brădet. Părinți numește mai multe persoane, nu un grup într-o formă de singular.',
+      'Baia Mare, weekend, post-scriptum.'
+    ],
+    mistakes: 'Tinerețe nu numește un grup, ci o vârstă. Părinți și colegi nu sunt colective. Miere nu primește plural. Baia Mare nu ia cratimă.',
+    tryThis: [
+      'Fă perechea moțională: gâscă, rață, țăran, bunic, urs, prinț.',
+      'Păstrează colectivele din brădet, tinerei, flotă, pădurar, școlărime, părinți, echipă, colegi. Dintre câine-lup, floarea-soarelui, emoție și steaua, scrie formele cu articol hotărât. Dă sensul lui băgare de seamă, al lui aduceri-aminte și al expresiei părere de rău.'
+    ].join('\n\n'),
+    keyPoints: [
+      'Substantivul numește o clasă sau un exemplar și poate fi simplu ori compus.',
+      'Colectivul are chip de singular și înțeles de plural, ca stol, tineret și brădet. Miere stă numai la singular.',
+      'Se scriu bine Baia Mare și weekend, apoi lungmetraj, workshopuri, nonviolență, post-scriptum.'
+    ]
+  })
+]};

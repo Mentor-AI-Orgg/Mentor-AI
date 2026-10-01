@@ -1,85 +1,412 @@
+'use strict';
+
+const { romanaLesson } = require('../lessonBuilder');
+
+function lesson(f) {
+  return romanaLesson(f);
+}
+
 module.exports = {
-  "lessons": [
-    {
-      "id": "stil",
-      "title": "Firească, scurtă, armonioasă",
-      "platter": "Stilul, de la cuvântul grecesc stylos, este felul de a scrie și de a vorbi. Este un mod anume de a te exprima, cu mijloacele limbii. Felul în care stau ideile face ca o operă să fie citită cu plăcere. Trei calități le știi deja. Adecvarea la temă înseamnă cuvintele potrivite și potrivirea dintre conținut, intenție și efectul asupra cititorului. Proprietatea termenilor înseamnă că un cuvânt spune exact ideea. Puritatea și adecvarea situațională înseamnă limba standard, limbajul potrivit și forma corectă. Alte cinci calități stau pe pagina aceasta. Originalitatea este felul nou în care sunt arătate ideile și creativitatea autorului. Varietatea este un limbaj schimbat și nuanțat, nu aceeași vorbă mereu. Naturalețea este exprimarea firească și armonioasă. Eufonia este armonia care vine din combinarea sunetelor și a cuvintelor. Ca să o păstrezi, eviți repetiția supărătoare, pleonasmul, cacofonia și dezacordul. Concizia este vorba scurtă: numai termenii de care ai nevoie, fără abatere de la temă. Trei texte ale noastre arată calitățile, ca să nu cerem fragmentele. Textul A: Toamna, copacii îngălbenesc. Este natural și concis. Textul B: Zâna toamnă pune pe copaci o mantie ruginie, apoi pleacă cu frunzele. Este original, pentru că toamna devine persoană, și are varietate. Textul C: Panoul de pe fațadă repetă un motiv de păun. Propoziția informează, este concisă și naturală. Eufonia se vede când sunetele nu se lovesc: îngălbenesc stă bine. Cacofonia ar fi o repetare de sunete ca ca, pe care o eviți. La școală, aceleași întrebări se pun pe trei fragmente deschise: o poezie despre un vultur, o proză despre un vultur și un text despre panourile stilului neoromânesc. Nu cerem rândurile. Poezia și proza pot trezi emoție, pentru că au imagine. Textul despre panouri informează. Faptele din fragmentul despre strada bucureșteană, din Enigma Otiliei, de George Călinescu, sunt acestea, spuse pe scurt. Casele nu sunt înalte și aproape niciuna nu are cat deasupra. Varietatea vine, de obicei, de la zidari italieni. Ferestrele sunt mari față de clădirile scunde. Se amestecă frontoane grecești și ogive, făcute din var și din lemn vopsit. Umezeala cojește varul. Uscăciunea umflă lemnul. Strada pare o caricatură, în moloz, a unei străzi italiene. Casa din fragment are un singur cat, pe un parter scund. Geamurile pătrate sunt acoperite cu hârtie translucidă, care imită un vitraliu de catedrală. Sursa de inspirație este arhitectura italiană. Dezghioca înseamnă a coji. Ciubucăria este ornamentul în relief de pe zid. Frontonul este partea triunghiulară de deasupra unei intrări. Vitraliul este geamul colorat. Autorul alege acești termeni pentru că spun exact piesa de arhitectură. Asta este proprietatea termenilor.\n\nExemplu lucrat: Toamna, copacii îngălbenesc este natural și concis. Zâna toamnă este originală. Eufonia cere armonie și ocolește cacofonia. Casa din Enigma Otiliei are un singur cat, pe un parter scund, iar geamurile sunt acoperite cu hârtie. Inspirația străzii este italiană. Dezghioca înseamnă a coji.\n\nDefinește originalitatea, naturalețea, eufonia, varietatea și concizia. Pentru textele A, B și C din lecție, spune câte două calități și arată structura pe care te sprijini. Spune trei elemente ale străzii din Enigma Otiliei, sursa de inspirație și prin ce se deosebește casa. Dă sensul pentru dezghioca, ciubucărie, fronton și vitraliu. Apoi scrie zece rânduri despre o călătorie, în stilul tău, cu o propoziție concisă și una în care un anotimp devine persoană. La final, taie o repetare dacă ai pus-o.\n\nStilul este felul de a scrie. Originalitatea arată ideea într-un fel nou. Naturalețea este firească. Eufonia este armonia sunetelor. Varietatea schimbă vorba. Concizia spune numai ce trebuie. Casa din fragmentul despre București are un singur cat, iar geamurile imită vitraliul cu hârtie.",
-      "theory": "Stilul, de la cuvântul grecesc stylos, este felul de a scrie și de a vorbi. Este un mod anume de a te exprima, cu mijloacele limbii. Felul în care stau ideile face ca o operă să fie citită cu plăcere. Trei calități le știi deja. Adecvarea la temă înseamnă cuvintele potrivite și potrivirea dintre conținut, intenție și efectul asupra cititorului. Proprietatea termenilor înseamnă că un cuvânt spune exact ideea. Puritatea și adecvarea situațională înseamnă limba standard, limbajul potrivit și forma corectă. Alte cinci calități stau pe pagina aceasta. Originalitatea este felul nou în care sunt arătate ideile și creativitatea autorului. Varietatea este un limbaj schimbat și nuanțat, nu aceeași vorbă mereu. Naturalețea este exprimarea firească și armonioasă. Eufonia este armonia care vine din combinarea sunetelor și a cuvintelor. Ca să o păstrezi, eviți repetiția supărătoare, pleonasmul, cacofonia și dezacordul. Concizia este vorba scurtă: numai termenii de care ai nevoie, fără abatere de la temă. Trei texte ale noastre arată calitățile, ca să nu cerem fragmentele. Textul A: Toamna, copacii îngălbenesc. Este natural și concis. Textul B: Zâna toamnă pune pe copaci o mantie ruginie, apoi pleacă cu frunzele. Este original, pentru că toamna devine persoană, și are varietate. Textul C: Panoul de pe fațadă repetă un motiv de păun. Propoziția informează, este concisă și naturală. Eufonia se vede când sunetele nu se lovesc: îngălbenesc stă bine. Cacofonia ar fi o repetare de sunete ca ca, pe care o eviți. La școală, aceleași întrebări se pun pe trei fragmente deschise: o poezie despre un vultur, o proză despre un vultur și un text despre panourile stilului neoromânesc. Nu cerem rândurile. Poezia și proza pot trezi emoție, pentru că au imagine. Textul despre panouri informează. Faptele din fragmentul despre strada bucureșteană, din Enigma Otiliei, de George Călinescu, sunt acestea, spuse pe scurt. Casele nu sunt înalte și aproape niciuna nu are cat deasupra. Varietatea vine, de obicei, de la zidari italieni. Ferestrele sunt mari față de clădirile scunde. Se amestecă frontoane grecești și ogive, făcute din var și din lemn vopsit. Umezeala cojește varul. Uscăciunea umflă lemnul. Strada pare o caricatură, în moloz, a unei străzi italiene. Casa din fragment are un singur cat, pe un parter scund. Geamurile pătrate sunt acoperite cu hârtie translucidă, care imită un vitraliu de catedrală. Sursa de inspirație este arhitectura italiană. Dezghioca înseamnă a coji. Ciubucăria este ornamentul în relief de pe zid. Frontonul este partea triunghiulară de deasupra unei intrări. Vitraliul este geamul colorat. Autorul alege acești termeni pentru că spun exact piesa de arhitectură. Asta este proprietatea termenilor.",
-      "example": "Toamna, copacii îngălbenesc este natural și concis. Zâna toamnă este originală. Eufonia cere armonie și ocolește cacofonia. Casa din Enigma Otiliei are un singur cat, pe un parter scund, iar geamurile sunt acoperite cu hârtie. Inspirația străzii este italiană. Dezghioca înseamnă a coji.",
-      "tryThis": "Definește originalitatea, naturalețea, eufonia, varietatea și concizia. Pentru textele A, B și C din lecție, spune câte două calități și arată structura pe care te sprijini. Spune trei elemente ale străzii din Enigma Otiliei, sursa de inspirație și prin ce se deosebește casa. Dă sensul pentru dezghioca, ciubucărie, fronton și vitraliu. Apoi scrie zece rânduri despre o călătorie, în stilul tău, cu o propoziție concisă și una în care un anotimp devine persoană. La final, taie o repetare dacă ai pus-o.",
-      "recap": "Stilul este felul de a scrie. Originalitatea arată ideea într-un fel nou. Naturalețea este firească. Eufonia este armonia sunetelor. Varietatea schimbă vorba. Concizia spune numai ce trebuie. Casa din fragmentul despre București are un singur cat, iar geamurile imită vitraliul cu hârtie."
-    },
-    {
-      "id": "secvente",
-      "title": "Narațiune, explicație, descriere, dialog",
-      "platter": "Textul este făcut din enunțuri legate logic, un întreg. În el pot sta secvențe narative, explicative, descriptive și dialogate. Secvența narativă prezintă, la persoana I sau a III-a, întâmplări în timp și în spațiu, într-o ordine. Întrebările ei sunt cine, ce face, când, unde. Secvența explicativă dă informații și lămuriri. Întrebările ei sunt ce se explică, de cine, de ce. Secvența descriptivă arată cadrul sau trăsăturile unui personaj, ale unui obiect sau ale unui peisaj. Întrebările ei sunt ce, cum, de către cine. Secvența dialogată redă discuția. Întrebările ei sunt cine, despre cine, despre ce. Le poți uni într-o poveste de călătorie. Faptele din fragmentul Pe drumuri de munte, de Calistrat Hogaș, sunt acestea. Naratorul este călătorul, la persoana I. Pentru că era iarmaroc de Duminica Mare, îl roagă pe Tasache Crăcăuanu, geambaș vestit, să-i găsească un cal pe măsura pungii. Geambașul vinde cai sau mijlocește vânzarea. Hipologul este specialistul în anatomia și în fiziologia calului. Pagina îl numește pe Tasache și hipolog, și geambaș. Spre seara acelei duminici, Tasache intră în ogradă cu o iapă mică și slabă, pe care naratorul o botează Pisicuța, pentru că arăta ca o mâță. La început merge la gebea, un mers lin, fără salturi, și este mică și slabă. Tasache spune că, pusă pe grăunțe și pe săceală, adică pe țesală, în două săptămâni nu o mai cunoști, și că este de rasă. După două săptămâni, Pisicuța este castanie, cu botul mic, nările largi, capul fin, ochii negri, mari și vioi, coama bogată, gâtul puternic, pieptul lat și trupul sprinten. Dârlogul este cureaua frâului. O odisee este o călătorie lungă, plină de peripeții. În fragment stau narațiunea, descrierea și dialogul. Lipsește secvența explicativă. O poți adăuga tu: de ce un cal slab, hrănit două săptămâni, prinde formă. Nu cerem frazele.\n\nExemplu lucrat: Naratorul din fragmentul lui Hogaș este la persoana I. Iapa vine în seara de Duminica Mare și se numește Pisicuța, pentru că era mică și slabă. La început merge la gebea. După două săptămâni este castanie, cu ochi negri. În text stau narațiunea, descrierea și dialogul. Lipsește explicația.\n\nSpune întrebările unei secvențe narative, ale uneia explicative, ale uneia descriptive și ale uneia dialogate. Pentru fragmentul lui Hogaș, răspunde: cine este naratorul, unde se petrece primirea iepei, când o primește, de ce o numește Pisicuța și cum arăta la început. Spune ce secvență lipsește și scrie tu o explicație de patru rânduri: de ce grăunțele și țesala schimbă iapa. Apoi unește, într-un text de 150 de cuvinte, o narațiune, o descriere, un dialog de cel puțin șase replici și o explicație, despre o călătorie cu balonul. Pune un titlu. Marchează fiecare secvență cu un cuvânt la început: narațiune, descriere, dialog, explicație.\n\nSecvența narativă spune cine, ce face, când și unde. Explicația spune de ce. Descrierea spune cum arată. Dialogul redă discuția. În fragmentul lui Hogaș, naratorul primește iapa Pisicuța în seara de Duminica Mare. La început este mică și slabă. Lipsesc lămuririle, nu narațiunea.",
-      "theory": "Textul este făcut din enunțuri legate logic, un întreg. În el pot sta secvențe narative, explicative, descriptive și dialogate. Secvența narativă prezintă, la persoana I sau a III-a, întâmplări în timp și în spațiu, într-o ordine. Întrebările ei sunt cine, ce face, când, unde. Secvența explicativă dă informații și lămuriri. Întrebările ei sunt ce se explică, de cine, de ce. Secvența descriptivă arată cadrul sau trăsăturile unui personaj, ale unui obiect sau ale unui peisaj. Întrebările ei sunt ce, cum, de către cine. Secvența dialogată redă discuția. Întrebările ei sunt cine, despre cine, despre ce. Le poți uni într-o poveste de călătorie. Faptele din fragmentul Pe drumuri de munte, de Calistrat Hogaș, sunt acestea. Naratorul este călătorul, la persoana I. Pentru că era iarmaroc de Duminica Mare, îl roagă pe Tasache Crăcăuanu, geambaș vestit, să-i găsească un cal pe măsura pungii. Geambașul vinde cai sau mijlocește vânzarea. Hipologul este specialistul în anatomia și în fiziologia calului. Pagina îl numește pe Tasache și hipolog, și geambaș. Spre seara acelei duminici, Tasache intră în ogradă cu o iapă mică și slabă, pe care naratorul o botează Pisicuța, pentru că arăta ca o mâță. La început merge la gebea, un mers lin, fără salturi, și este mică și slabă. Tasache spune că, pusă pe grăunțe și pe săceală, adică pe țesală, în două săptămâni nu o mai cunoști, și că este de rasă. După două săptămâni, Pisicuța este castanie, cu botul mic, nările largi, capul fin, ochii negri, mari și vioi, coama bogată, gâtul puternic, pieptul lat și trupul sprinten. Dârlogul este cureaua frâului. O odisee este o călătorie lungă, plină de peripeții. În fragment stau narațiunea, descrierea și dialogul. Lipsește secvența explicativă. O poți adăuga tu: de ce un cal slab, hrănit două săptămâni, prinde formă. Nu cerem frazele.",
-      "example": "Naratorul din fragmentul lui Hogaș este la persoana I. Iapa vine în seara de Duminica Mare și se numește Pisicuța, pentru că era mică și slabă. La început merge la gebea. După două săptămâni este castanie, cu ochi negri. În text stau narațiunea, descrierea și dialogul. Lipsește explicația.",
-      "tryThis": "Spune întrebările unei secvențe narative, ale uneia explicative, ale uneia descriptive și ale uneia dialogate. Pentru fragmentul lui Hogaș, răspunde: cine este naratorul, unde se petrece primirea iepei, când o primește, de ce o numește Pisicuța și cum arăta la început. Spune ce secvență lipsește și scrie tu o explicație de patru rânduri: de ce grăunțele și țesala schimbă iapa. Apoi unește, într-un text de 150 de cuvinte, o narațiune, o descriere, un dialog de cel puțin șase replici și o explicație, despre o călătorie cu balonul. Pune un titlu. Marchează fiecare secvență cu un cuvânt la început: narațiune, descriere, dialog, explicație.",
-      "recap": "Secvența narativă spune cine, ce face, când și unde. Explicația spune de ce. Descrierea spune cum arată. Dialogul redă discuția. În fragmentul lui Hogaș, naratorul primește iapa Pisicuța în seara de Duminica Mare. La început este mică și slabă. Lipsesc lămuririle, nu narațiunea."
-    },
-    {
-      "id": "adverb",
-      "title": "Loc, timp, mod și semnele din față",
-      "platter": "Adverbul este partea de vorbire neflexibilă. Arată caracteristica unei acțiuni, a unei stări sau a unei însușiri și împrejurarea în care se petrece o acțiune. După formă, este simplu: acasă, bine, destul, azi, mâine, ieri, aici, acolo. Sau compus: azi-noapte, astă-vară, după-amiază. După înțeles, adverbul de loc arată locul: aici, acolo, dincolo, departe, aproape, sus, jos. Adverbul de timp arată timpul: atunci, astăzi, acum, ieri, mâine, târziu, devreme, odată, totdeauna. Adverbul de mod arată felul: așa, bine, ușor, încet, alene, repede. Semiadverbele sunt adverbe fără funcție sintactică: numai, doar, chiar, mai, tot, decât, prea, cam. Stau, de obicei, înaintea verbului: O să tot mergi. S-au cam supărat. Te mai gândești. Unele adverbe au devenit mărci gramaticale. Nu intră în forma negativă a verbului sau neagă o parte de propoziție. Mai, puțin și foarte fac gradele de comparație. Nu, ba da și ba nu pot fi, singure, un enunț într-un dialog. În dialogul cu filmul sunt cinci enunțuri. Vei pleca în drumeție cu colegii este întrebarea. Nu este un enunț. Atunci, poate, vrei să mergi cu mine la film este alt enunț. Da este un enunț. Voi merge este un enunț. Formarea: bineînțeles este compus. Românește este format cu sufixul -ește. Fatalmente este format cu sufixul -mente. Altfel este compus. Astă-vară este compus. Chiorâș este format cu sufixul -âș. Deodată este adverbul scris împreună, cu sensul dintr-odată, pe neașteptate. Ușurel este format cu un sufix diminutival. Sinonimele: de-a pururi înseamnă totdeauna. De jur împrejur înseamnă pretutindeni. Cu de-a sila înseamnă forțat. Pe neașteptate înseamnă deodată. Sinonimele sunt tot adverbe sau locuțiuni adverbiale. Valorile cerute: în Exercițiul ușor a fost rezolvat repede, ușor este adjectiv, iar repede este adverb de mod. În Alunecă ușor pe panta abruptă, ușor este adverb de mod. În Toamna este preferata mea, toamna este substantiv, subiect. În Viile se culeg toamna, toamna este adverb de timp. În M-am așezat pe un buștean, buștean este substantiv. În dormea buștean, buștean este adverb de mod și înseamnă dus, nemișcat. Ortografia: o dată, în două cuvinte, este numeralul, o singură ocurență. Odată, într-un cuvânt, înseamnă cândva sau de mult. Demult, împreună, înseamnă cu mult timp în urmă. De mult stă în grupul de mult timp. Defel, împreună, înseamnă deloc, în propoziție negativă. De fel înseamnă din fire, după felul cuiva. Altădată, împreună, înseamnă în alt timp. Altă dată înseamnă o altă zi, un alt termen. Bineînțeles, deloc, totuna și întruna se scriu și ele împreună.\n\nExemplu lucrat: Azi-noapte este adverb compus. Cam, în S-au cam supărat, este semiadverb, fără funcție. Dialogul cu filmul are cinci enunțuri. Ușor lângă exercițiu este adjectiv. Ușor lângă alunecă este adverb. Toamna lângă viile se culeg este adverb de timp. Dormea buștean are adverb de mod. Odată înseamnă cândva. O dată înseamnă o singură ocurență.\n\nÎmparte în simple și compuse: acasă, azi-noapte, bine, astă-vară. Spune felul pentru aici, ieri și repede. Arată că numai și cam nu au funcție, cu câte un enunț. Numără enunțurile din dialogul cu filmul și spune ce sunt Nu și Da. Formează sau recunoaște bineînțeles, românește, fatalmente, chiorâș și ușurel. Dă sinonimul pentru de-a pururi și pe neașteptate. În cele patru enunțuri cu ușor, toamna și buștean, spune valoarea fiecărui cuvânt cerut. Scrie câte un enunț cu o dată, odată, demult, defel, altădată și altă dată.\n\nAdverbul este neflexibil și arată locul, timpul sau felul. Cele compuse se scriu cu cratimă, ca azi-noapte și astă-vară. Semiadverbele, ca doar, chiar și cam, nu au funcție. Odată înseamnă cândva. O dată numără o singură ocurență. Dormea buștean are adverb de mod. Toamna, lângă un verb de cules, este adverb de timp.",
-      "theory": "Adverbul este partea de vorbire neflexibilă. Arată caracteristica unei acțiuni, a unei stări sau a unei însușiri și împrejurarea în care se petrece o acțiune. După formă, este simplu: acasă, bine, destul, azi, mâine, ieri, aici, acolo. Sau compus: azi-noapte, astă-vară, după-amiază. După înțeles, adverbul de loc arată locul: aici, acolo, dincolo, departe, aproape, sus, jos. Adverbul de timp arată timpul: atunci, astăzi, acum, ieri, mâine, târziu, devreme, odată, totdeauna. Adverbul de mod arată felul: așa, bine, ușor, încet, alene, repede. Semiadverbele sunt adverbe fără funcție sintactică: numai, doar, chiar, mai, tot, decât, prea, cam. Stau, de obicei, înaintea verbului: O să tot mergi. S-au cam supărat. Te mai gândești. Unele adverbe au devenit mărci gramaticale. Nu intră în forma negativă a verbului sau neagă o parte de propoziție. Mai, puțin și foarte fac gradele de comparație. Nu, ba da și ba nu pot fi, singure, un enunț într-un dialog. În dialogul cu filmul sunt cinci enunțuri. Vei pleca în drumeție cu colegii este întrebarea. Nu este un enunț. Atunci, poate, vrei să mergi cu mine la film este alt enunț. Da este un enunț. Voi merge este un enunț. Formarea: bineînțeles este compus. Românește este format cu sufixul -ește. Fatalmente este format cu sufixul -mente. Altfel este compus. Astă-vară este compus. Chiorâș este format cu sufixul -âș. Deodată este adverbul scris împreună, cu sensul dintr-odată, pe neașteptate. Ușurel este format cu un sufix diminutival. Sinonimele: de-a pururi înseamnă totdeauna. De jur împrejur înseamnă pretutindeni. Cu de-a sila înseamnă forțat. Pe neașteptate înseamnă deodată. Sinonimele sunt tot adverbe sau locuțiuni adverbiale. Valorile cerute: în Exercițiul ușor a fost rezolvat repede, ușor este adjectiv, iar repede este adverb de mod. În Alunecă ușor pe panta abruptă, ușor este adverb de mod. În Toamna este preferata mea, toamna este substantiv, subiect. În Viile se culeg toamna, toamna este adverb de timp. În M-am așezat pe un buștean, buștean este substantiv. În dormea buștean, buștean este adverb de mod și înseamnă dus, nemișcat. Ortografia: o dată, în două cuvinte, este numeralul, o singură ocurență. Odată, într-un cuvânt, înseamnă cândva sau de mult. Demult, împreună, înseamnă cu mult timp în urmă. De mult stă în grupul de mult timp. Defel, împreună, înseamnă deloc, în propoziție negativă. De fel înseamnă din fire, după felul cuiva. Altădată, împreună, înseamnă în alt timp. Altă dată înseamnă o altă zi, un alt termen. Bineînțeles, deloc, totuna și întruna se scriu și ele împreună.",
-      "example": "Azi-noapte este adverb compus. Cam, în S-au cam supărat, este semiadverb, fără funcție. Dialogul cu filmul are cinci enunțuri. Ușor lângă exercițiu este adjectiv. Ușor lângă alunecă este adverb. Toamna lângă viile se culeg este adverb de timp. Dormea buștean are adverb de mod. Odată înseamnă cândva. O dată înseamnă o singură ocurență.",
-      "tryThis": "Împarte în simple și compuse: acasă, azi-noapte, bine, astă-vară. Spune felul pentru aici, ieri și repede. Arată că numai și cam nu au funcție, cu câte un enunț. Numără enunțurile din dialogul cu filmul și spune ce sunt Nu și Da. Formează sau recunoaște bineînțeles, românește, fatalmente, chiorâș și ușurel. Dă sinonimul pentru de-a pururi și pe neașteptate. În cele patru enunțuri cu ușor, toamna și buștean, spune valoarea fiecărui cuvânt cerut. Scrie câte un enunț cu o dată, odată, demult, defel, altădată și altă dată.",
-      "recap": "Adverbul este neflexibil și arată locul, timpul sau felul. Cele compuse se scriu cu cratimă, ca azi-noapte și astă-vară. Semiadverbele, ca doar, chiar și cam, nu au funcție. Odată înseamnă cândva. O dată numără o singură ocurență. Dormea buștean are adverb de mod. Toamna, lângă un verb de cules, este adverb de timp."
-    },
-    {
-      "id": "grade-adverb",
-      "title": "Mai repede, foarte repede, pentru mâine",
-      "platter": "Nu toate adverbele au grade de comparație. Cele de mod au, și unele de loc care se pot măsura. Pozitiv: repede. Comparativ de superioritate: mai repede. De egalitate: la fel de repede, tot așa de repede, tot atât de repede. De inferioritate: mai puțin repede. Superlativ relativ de superioritate: cel mai repede. De inferioritate: cel mai puțin repede. Superlativ absolut de superioritate: foarte repede. De inferioritate: foarte puțin repede. În El strigă tare, tare, tare este la pozitiv, iar repetarea întărește intensitatea. Nu este un grad nou. În I-a certat la fel de mult, la fel de mult este comparativ de egalitate. În A lovit foarte tare mingea, foarte tare este superlativ absolut de superioritate. În Andrei aleargă mai încet, mai încet este comparativ de superioritate. Ușor la toate gradele: ușor, mai ușor, la fel de ușor, mai puțin ușor, cel mai ușor, cel mai puțin ușor, foarte ușor, foarte puțin ușor. Din lista mâine, departe, bine, dimineața, acasă, greu, frumos, acum, rar, prietenește, jos, au grade bine, greu, frumos, rar, prietenește, departe și jos, pentru că poți spune mai bine, mai greu, mai departe, mai jos. Nu au grade mâine, dimineața, acasă și acum, pentru că numesc un timp sau un loc fix. Adverbul poate fi circumstanțial de loc: Acolo este un parc. Circumstanțial de timp: Mâine vom merge la școală. Circumstanțial de mod: Desenează foarte frumos. Nume predicativ: Tema este pentru mâine. Atribut adverbial: Cartea de azi a fost interesantă. Casa din stânga este a noastră. Poate determina un verb: A ajuns acasă. Un adjectiv: Sara era destul de tristă, unde destul de stă pe tristă. Un adverb: A mers destul de încet, unde destul de stă pe încet. Funcțiile din lista de aplicare sunt acestea. Foarte des: des este adverb de timp, circumstanțial de timp, iar foarte este marca superlativului absolut. Agale este adverb de mod, circumstanțial de mod. Pentru totdeauna, în Amintirile sunt pentru totdeauna, este nume predicativ. Pentru totdeauna, în A rămas pentru totdeauna, este circumstanțial de timp. În jur este circumstanțial de loc. Mai demult este circumstanțial de timp. De azi, în Lecția de azi, este atribut adverbial. Pentru mâine, în Tema aceasta este pentru mâine, este nume predicativ. Din stânga, în Casa din stânga, este atribut adverbial. Încetișor este adverb de mod, circumstanțial de mod. Repetarea din repede, repede întărește, nu schimbă gradul.\n\nExemplu lucrat: Mai încet este comparativ de superioritate. Foarte tare este superlativ absolut de superioritate. La fel de mult este comparativ de egalitate. Tare, tare rămâne pozitiv și întărește. Mâine nu are grade. Bine are grade. Tema este pentru mâine are nume predicativ. Cartea de azi are atribut adverbial. Destul de tristă: adverbul determină un adjectiv.\n\nScrie ușor la pozitiv, la comparativ de superioritate, de egalitate și de inferioritate, la superlativ relativ și la superlativ absolut. Spune gradul pentru tare, tare, la fel de mult, foarte tare și mai încet. Din lista cu mâine, bine, acasă, rar, acum și departe, desparte adverbele cu grade de cele fără grade. În A ajuns acasă, Sara era destul de tristă și A mers destul de încet, spune ce determină adverbul. Dă funcția pentru agale, pentru totdeauna din Amintirile sunt pentru totdeauna, Lecția de azi și încetișor. Construiește cinci enunțuri: un adverb de loc la comparativ de superioritate, ca atribut; un adverb de timp la superlativ absolut de inferioritate, ca circumstanțial de timp; un adverb de mod, nume predicativ; un adverb de timp, atribut; un adverb de mod la superlativ relativ de inferioritate, ca circumstanțial de mod.\n\nGradele adverbului sunt pozitiv, comparativ și superlativ. Mai încet este comparativ de superioritate. Foarte tare este superlativ absolut. Mâine, acasă și acum nu au grade. Bine, rar și departe au. Adverbul poate fi circumstanțial, nume predicativ sau atribut. Repetarea, ca în tare, tare, întărește pozitivul.",
-      "theory": "Nu toate adverbele au grade de comparație. Cele de mod au, și unele de loc care se pot măsura. Pozitiv: repede. Comparativ de superioritate: mai repede. De egalitate: la fel de repede, tot așa de repede, tot atât de repede. De inferioritate: mai puțin repede. Superlativ relativ de superioritate: cel mai repede. De inferioritate: cel mai puțin repede. Superlativ absolut de superioritate: foarte repede. De inferioritate: foarte puțin repede. În El strigă tare, tare, tare este la pozitiv, iar repetarea întărește intensitatea. Nu este un grad nou. În I-a certat la fel de mult, la fel de mult este comparativ de egalitate. În A lovit foarte tare mingea, foarte tare este superlativ absolut de superioritate. În Andrei aleargă mai încet, mai încet este comparativ de superioritate. Ușor la toate gradele: ușor, mai ușor, la fel de ușor, mai puțin ușor, cel mai ușor, cel mai puțin ușor, foarte ușor, foarte puțin ușor. Din lista mâine, departe, bine, dimineața, acasă, greu, frumos, acum, rar, prietenește, jos, au grade bine, greu, frumos, rar, prietenește, departe și jos, pentru că poți spune mai bine, mai greu, mai departe, mai jos. Nu au grade mâine, dimineața, acasă și acum, pentru că numesc un timp sau un loc fix. Adverbul poate fi circumstanțial de loc: Acolo este un parc. Circumstanțial de timp: Mâine vom merge la școală. Circumstanțial de mod: Desenează foarte frumos. Nume predicativ: Tema este pentru mâine. Atribut adverbial: Cartea de azi a fost interesantă. Casa din stânga este a noastră. Poate determina un verb: A ajuns acasă. Un adjectiv: Sara era destul de tristă, unde destul de stă pe tristă. Un adverb: A mers destul de încet, unde destul de stă pe încet. Funcțiile din lista de aplicare sunt acestea. Foarte des: des este adverb de timp, circumstanțial de timp, iar foarte este marca superlativului absolut. Agale este adverb de mod, circumstanțial de mod. Pentru totdeauna, în Amintirile sunt pentru totdeauna, este nume predicativ. Pentru totdeauna, în A rămas pentru totdeauna, este circumstanțial de timp. În jur este circumstanțial de loc. Mai demult este circumstanțial de timp. De azi, în Lecția de azi, este atribut adverbial. Pentru mâine, în Tema aceasta este pentru mâine, este nume predicativ. Din stânga, în Casa din stânga, este atribut adverbial. Încetișor este adverb de mod, circumstanțial de mod. Repetarea din repede, repede întărește, nu schimbă gradul.",
-      "example": "Mai încet este comparativ de superioritate. Foarte tare este superlativ absolut de superioritate. La fel de mult este comparativ de egalitate. Tare, tare rămâne pozitiv și întărește. Mâine nu are grade. Bine are grade. Tema este pentru mâine are nume predicativ. Cartea de azi are atribut adverbial. Destul de tristă: adverbul determină un adjectiv.",
-      "tryThis": "Scrie ușor la pozitiv, la comparativ de superioritate, de egalitate și de inferioritate, la superlativ relativ și la superlativ absolut. Spune gradul pentru tare, tare, la fel de mult, foarte tare și mai încet. Din lista cu mâine, bine, acasă, rar, acum și departe, desparte adverbele cu grade de cele fără grade. În A ajuns acasă, Sara era destul de tristă și A mers destul de încet, spune ce determină adverbul. Dă funcția pentru agale, pentru totdeauna din Amintirile sunt pentru totdeauna, Lecția de azi și încetișor. Construiește cinci enunțuri: un adverb de loc la comparativ de superioritate, ca atribut; un adverb de timp la superlativ absolut de inferioritate, ca circumstanțial de timp; un adverb de mod, nume predicativ; un adverb de timp, atribut; un adverb de mod la superlativ relativ de inferioritate, ca circumstanțial de mod.",
-      "recap": "Gradele adverbului sunt pozitiv, comparativ și superlativ. Mai încet este comparativ de superioritate. Foarte tare este superlativ absolut. Mâine, acasă și acum nu au grade. Bine, rar și departe au. Adverbul poate fi circumstanțial, nume predicativ sau atribut. Repetarea, ca în tare, tare, întărește pozitivul."
-    },
-    {
-      "id": "interjectie",
-      "title": "Of, hai și cucurigu",
-      "platter": "Interjecția este partea de vorbire neflexibilă. Exprimă stări sufletești, îndemnuri sau imită sunete și zgomote din natură. Aceste imitații se numesc onomatopee. După interjecție se pune virgulă sau semnul exclamării. După formă, interjecțiile simple au un singur corp: ah, vai, hai, of, piu-piu se învață pe pagină între exemple, iar simplele clare din tabel sunt stop, of, marș, măi, oh, poc și tralala. Cele compuse au două corpuri legate: hodoronc-tronc, cip-cirip, țop-țop, cioca-boca, hei-rup, tic-tac, pâș-pâș, mac-mac. După înțeles, interjecțiile propriu-zise sunt de patru feluri. Stări sufletești: of, vai, ah, ura. Senzații: brr, hapciu, au. Adresare: bă, mă, bre. Atragerea atenției: uite, iată. Onomatopeele reproduc sunete: cioc-cioc, miau, zvârr, pic-pic, trosc, pleosc, fâș-fâș, cucurigu. Ce exprimă fiecare: ah și of și vai exprimă o stare. Bre și măi sunt de adresare. Uite atrage atenția. Trosc-pleosc este onomatopee. Brr este senzație. În tabel, simple sunt stop, of, marș, măi, oh, poc, tralala. Compuse sunt țop-țop, cioca-boca, hei-rup, tic-tac, pâș-pâș, hodoronc-tronc, mac-mac. La o întâlnire cu un animal, varianta politicoasă este o interjecție de adresare sau o scuză. Varianta Na, urmată de un obiect, dă ceva. Varianta cu numele animalului și cu hai este un îndemn. Nu alegem desenul în locul tău. Spui rolul: scuză, oferire sau îndemn.\n\nExemplu lucrat: Of exprimă o stare. Bre este de adresare. Uite atrage atenția. Trosc-pleosc este onomatopee. Brr este senzație. Țop-țop și mac-mac sunt compuse. Stop, of și măi sunt simple. După interjecție stă virgula sau semnul exclamării.\n\nSpune ce exprimă ah, of, bre, măi, uite, trosc-pleosc, brr și vai. Împarte în simple și compuse lista stop, of, țop-țop, marș, cioca-boca, măi, oh, hei-rup, poc, tic-tac, pâș-pâș, hodoronc-tronc, tralala, mac-mac. Scrie câte o onomatopee pentru un ciocănit, pentru o pisică și pentru ploaie. Apoi scrie trei replici de întâlnire cu un animal: una de scuză, una care oferă ceva, cu na, și una de îndemn, cu hai. Pune semnul exclamării după fiecare interjecție.\n\nInterjecția este neflexibilă. Poate spune o stare, o senzație, o adresare, o atenționare sau un sunet. Onomatopeea imită zgomotul. Cele simple au un corp, ca of și măi. Cele compuse au două, ca țop-țop și hodoronc-tronc. După ea stă virgula sau semnul exclamării.",
-      "theory": "Interjecția este partea de vorbire neflexibilă. Exprimă stări sufletești, îndemnuri sau imită sunete și zgomote din natură. Aceste imitații se numesc onomatopee. După interjecție se pune virgulă sau semnul exclamării. După formă, interjecțiile simple au un singur corp: ah, vai, hai, of, piu-piu se învață pe pagină între exemple, iar simplele clare din tabel sunt stop, of, marș, măi, oh, poc și tralala. Cele compuse au două corpuri legate: hodoronc-tronc, cip-cirip, țop-țop, cioca-boca, hei-rup, tic-tac, pâș-pâș, mac-mac. După înțeles, interjecțiile propriu-zise sunt de patru feluri. Stări sufletești: of, vai, ah, ura. Senzații: brr, hapciu, au. Adresare: bă, mă, bre. Atragerea atenției: uite, iată. Onomatopeele reproduc sunete: cioc-cioc, miau, zvârr, pic-pic, trosc, pleosc, fâș-fâș, cucurigu. Ce exprimă fiecare: ah și of și vai exprimă o stare. Bre și măi sunt de adresare. Uite atrage atenția. Trosc-pleosc este onomatopee. Brr este senzație. În tabel, simple sunt stop, of, marș, măi, oh, poc, tralala. Compuse sunt țop-țop, cioca-boca, hei-rup, tic-tac, pâș-pâș, hodoronc-tronc, mac-mac. La o întâlnire cu un animal, varianta politicoasă este o interjecție de adresare sau o scuză. Varianta Na, urmată de un obiect, dă ceva. Varianta cu numele animalului și cu hai este un îndemn. Nu alegem desenul în locul tău. Spui rolul: scuză, oferire sau îndemn.",
-      "example": "Of exprimă o stare. Bre este de adresare. Uite atrage atenția. Trosc-pleosc este onomatopee. Brr este senzație. Țop-țop și mac-mac sunt compuse. Stop, of și măi sunt simple. După interjecție stă virgula sau semnul exclamării.",
-      "tryThis": "Spune ce exprimă ah, of, bre, măi, uite, trosc-pleosc, brr și vai. Împarte în simple și compuse lista stop, of, țop-țop, marș, cioca-boca, măi, oh, hei-rup, poc, tic-tac, pâș-pâș, hodoronc-tronc, tralala, mac-mac. Scrie câte o onomatopee pentru un ciocănit, pentru o pisică și pentru ploaie. Apoi scrie trei replici de întâlnire cu un animal: una de scuză, una care oferă ceva, cu na, și una de îndemn, cu hai. Pune semnul exclamării după fiecare interjecție.",
-      "recap": "Interjecția este neflexibilă. Poate spune o stare, o senzație, o adresare, o atenționare sau un sunet. Onomatopeea imită zgomotul. Cele simple au un corp, ca of și măi. Cele compuse au două, ca țop-țop și hodoronc-tronc. După ea stă virgula sau semnul exclamării."
-    },
-    {
-      "id": "interjectie-predicativa",
-      "title": "Hai, buf și stop",
-      "platter": "Unele interjecții se poartă ca un verb. Se numesc interjecții predicative și au funcția de predicat verbal. Hai la film. Uite-l pe Ionel. Pisica țuști pe lângă noi. În enunțurile cerute: Haide cu noi în parc este predicativă, predicat verbal, îndemn. Na un măr din livada mea este predicativă, predicat verbal, oferire. Uite ce frumos a desenat este predicativă, predicat verbal. Șoricelul chiț-chiț din gaura de după sobă: chiț-chiț este onomatopee predicativă, predicat verbal. Cartea buf de pe birou: buf este onomatopee predicativă, predicat verbal. Noi toți țuști cu săniuțele pe pârtie: țuști este onomatopee predicativă, predicat verbal. În locul verbelor poți pune interjecția și păstrezi funcția de predicat. Oița behăie devine Oița bee. Bunicul bocăne devine Bunicul boc-boc. Găinile cotcodăcesc devine Găinile cotcodac. Păsările zboară devine Păsările zbrr. De la interjecții se formează verbe cu sufixe: fâș dă a fâșâi, ham dă a hămăi, mac dă a măcăi, vâj dă a vâjâi, pleosc dă a pleoscăi, boc dă a bocăni, bâzz dă a bâzâi, tic-tac dă a ticăi. Valorile cerute: în Mașina nu a oprit la stop, stop este substantiv. În Stop, nu puteți trece, stop este interjecție predicativă. În Rochia de mătase este roșie, de este prepoziție. În De, nu toți sunt ajutați ca tine, de este interjecție și arată resemnare. În O, ce carte interesantă, o este interjecție. În Am văzut-o pe Maria, o este pronume personal. În Am citit o carte despre călătorii, o este articol nehotărât. În piesa Înșir-te, mărgărite, de Victor Eftimiu, strigătele de veghe sunt onomatopee, iar hai și măi sunt interjecții de adresare sau de îndemn. Nu cerem replicile. Le cauți pe pagina deschisă cu aceleași nume: onomatopee și îndemn.\n\nExemplu lucrat: Hai la film este predicat verbal. Buf și țuști sunt onomatopee predicative. Oița bee ține locul verbului și rămâne predicat. La stop, stop este substantiv. Stop, nu puteți trece: stop este interjecție. O, ce carte: o este interjecție. Am văzut-o: o este pronume. Am citit o carte: o este articol. De, nu toți: de este interjecție.\n\nPentru Haide, Na, Uite, chiț-chiț, buf și țuști, spune felul și funcția. Înlocuiește behăie, bocăne, cotcodăcesc și zboară cu interjecții și spune că funcția rămâne predicat verbal. Formează verbele de la fâș, ham, mac, vâj, pleosc, boc, bâzz și tic-tac. Spune valoarea lui stop în cele două enunțuri, a lui de în rochia de mătase și în De, nu toți, și a lui o în O, ce carte, în Am văzut-o și în Am citit o carte. Scrie cinci replici: două interjecții predicative, două onomatopee și una de stare.\n\nInterjecția predicativă ține locul verbului și este predicat verbal: hai, na, uite, buf, țuști. Onomatopeea poate fi și ea predicat. Stop lângă la este substantiv. Stop singur, cu semnul exclamării, este interjecție. O poate fi interjecție, pronume sau articol, după enunț.",
-      "theory": "Unele interjecții se poartă ca un verb. Se numesc interjecții predicative și au funcția de predicat verbal. Hai la film. Uite-l pe Ionel. Pisica țuști pe lângă noi. În enunțurile cerute: Haide cu noi în parc este predicativă, predicat verbal, îndemn. Na un măr din livada mea este predicativă, predicat verbal, oferire. Uite ce frumos a desenat este predicativă, predicat verbal. Șoricelul chiț-chiț din gaura de după sobă: chiț-chiț este onomatopee predicativă, predicat verbal. Cartea buf de pe birou: buf este onomatopee predicativă, predicat verbal. Noi toți țuști cu săniuțele pe pârtie: țuști este onomatopee predicativă, predicat verbal. În locul verbelor poți pune interjecția și păstrezi funcția de predicat. Oița behăie devine Oița bee. Bunicul bocăne devine Bunicul boc-boc. Găinile cotcodăcesc devine Găinile cotcodac. Păsările zboară devine Păsările zbrr. De la interjecții se formează verbe cu sufixe: fâș dă a fâșâi, ham dă a hămăi, mac dă a măcăi, vâj dă a vâjâi, pleosc dă a pleoscăi, boc dă a bocăni, bâzz dă a bâzâi, tic-tac dă a ticăi. Valorile cerute: în Mașina nu a oprit la stop, stop este substantiv. În Stop, nu puteți trece, stop este interjecție predicativă. În Rochia de mătase este roșie, de este prepoziție. În De, nu toți sunt ajutați ca tine, de este interjecție și arată resemnare. În O, ce carte interesantă, o este interjecție. În Am văzut-o pe Maria, o este pronume personal. În Am citit o carte despre călătorii, o este articol nehotărât. În piesa Înșir-te, mărgărite, de Victor Eftimiu, strigătele de veghe sunt onomatopee, iar hai și măi sunt interjecții de adresare sau de îndemn. Nu cerem replicile. Le cauți pe pagina deschisă cu aceleași nume: onomatopee și îndemn.",
-      "example": "Hai la film este predicat verbal. Buf și țuști sunt onomatopee predicative. Oița bee ține locul verbului și rămâne predicat. La stop, stop este substantiv. Stop, nu puteți trece: stop este interjecție. O, ce carte: o este interjecție. Am văzut-o: o este pronume. Am citit o carte: o este articol. De, nu toți: de este interjecție.",
-      "tryThis": "Pentru Haide, Na, Uite, chiț-chiț, buf și țuști, spune felul și funcția. Înlocuiește behăie, bocăne, cotcodăcesc și zboară cu interjecții și spune că funcția rămâne predicat verbal. Formează verbele de la fâș, ham, mac, vâj, pleosc, boc, bâzz și tic-tac. Spune valoarea lui stop în cele două enunțuri, a lui de în rochia de mătase și în De, nu toți, și a lui o în O, ce carte, în Am văzut-o și în Am citit o carte. Scrie cinci replici: două interjecții predicative, două onomatopee și una de stare.",
-      "recap": "Interjecția predicativă ține locul verbului și este predicat verbal: hai, na, uite, buf, țuști. Onomatopeea poate fi și ea predicat. Stop lângă la este substantiv. Stop singur, cu semnul exclamării, este interjecție. O poate fi interjecție, pronume sau articol, după enunț."
-    },
-    {
-      "id": "vecini-cultura",
-      "title": "Cinci cărți de vizită",
-      "platter": "Pagina despre cultura vecinilor pornește de la ideea că oamenii se aseamănă înăuntru, iar cultura face deosebirea. Tu poți fi de acord sau nu, dar aduci un exemplu cultural, nu o vorbă goală. Cartea de vizită a fiecărei țări, așa cum stă pe pagină, este aceasta. Ungaria: te întâmpină cu Jo napot, capitala este Budapesta, culorile sunt roșu, alb și verde, limba este maghiara, personalitatea numită este Franz Liszt, iar bucatele sunt gulașul și kürtőskalács. Ucraina: Dobrii deni, capitala Kiev, culorile albastru și galben, limba ucraineana, personalitatea este Taras Șevcenko, scris pe pagină Șevcenco, iar bucata este vareniki. Bulgaria: Dobăr den, capitala Sofia, culorile alb, verde și roșu, limba bulgara, personalitatea este Țvetan Todorov, iar bucata este lutenița. Serbia: Dobar dan, capitala Belgrad, culorile roșu, albastru și alb, limba sârba, personalitatea este Nikola Tesla, scris pe pagină Nicola Tesla, iar bucata este ajvarul. Republica Moldova: Bună ziua, capitala Chișinău, culorile roșu, galben și albastru, limba româna, personalitatea este Eugen Doga, iar bucata este sarmale cu mămăligă. România, pe care o completezi tu după același model, are capitala București, culorile albastru, galben și roșu și limba româna. Asemănări pe care le poți verifica din cărți: Moldova și România folosesc limba română și o formulă de salut românească. Culorile roșu, galben și albastru stau și la Moldova. Ucraina și Bulgaria își încep salutul cu o urare de zi bună, fiecare în limba ei. Nu inventa o tradiție pe care nu ai citit-o. Dacă știi una, o spui cu sursa. Dacă nu, scrii că o cauți.\n\nExemplu lucrat: Ungaria are capitala la Budapesta și salutul Jo napot. Ucraina are capitala la Kiev. Bulgaria are capitala la Sofia. Serbia are capitala la Belgrad și îl numește pe Nikola Tesla. Republica Moldova are capitala la Chișinău, limba română și pe Eugen Doga. România are capitala la București.\n\nFă câte o carte de vizită, în trei rânduri, pentru Ungaria, Ucraina, Bulgaria, Serbia și Republica Moldova: salut, capitală, limbă, o personalitate și o bucată, numai din lecție. Spune o asemănare între România și Republica Moldova. Completează cartea României cu capitala, culorile și limba. Apoi spune un domeniu în care vecinii se pot influența, de pildă bucătăria sau muzica, și dă un exemplu care este deja în lecție, nu unul inventat. Dacă nu cunoști o tradiție a vecinilor, scrie că o cauți.\n\nCărțile de vizită de pe pagină sunt Ungaria cu Budapesta, Ucraina cu Kiev, Bulgaria cu Sofia, Serbia cu Belgrad și Republica Moldova cu Chișinău. În Moldova se vorbește româna. Eugen Doga este personalitatea numită acolo. Nikola Tesla este personalitatea numită la Serbia. România are capitala la București.",
-      "theory": "Pagina despre cultura vecinilor pornește de la ideea că oamenii se aseamănă înăuntru, iar cultura face deosebirea. Tu poți fi de acord sau nu, dar aduci un exemplu cultural, nu o vorbă goală. Cartea de vizită a fiecărei țări, așa cum stă pe pagină, este aceasta. Ungaria: te întâmpină cu Jo napot, capitala este Budapesta, culorile sunt roșu, alb și verde, limba este maghiara, personalitatea numită este Franz Liszt, iar bucatele sunt gulașul și kürtőskalács. Ucraina: Dobrii deni, capitala Kiev, culorile albastru și galben, limba ucraineana, personalitatea este Taras Șevcenko, scris pe pagină Șevcenco, iar bucata este vareniki. Bulgaria: Dobăr den, capitala Sofia, culorile alb, verde și roșu, limba bulgara, personalitatea este Țvetan Todorov, iar bucata este lutenița. Serbia: Dobar dan, capitala Belgrad, culorile roșu, albastru și alb, limba sârba, personalitatea este Nikola Tesla, scris pe pagină Nicola Tesla, iar bucata este ajvarul. Republica Moldova: Bună ziua, capitala Chișinău, culorile roșu, galben și albastru, limba româna, personalitatea este Eugen Doga, iar bucata este sarmale cu mămăligă. România, pe care o completezi tu după același model, are capitala București, culorile albastru, galben și roșu și limba româna. Asemănări pe care le poți verifica din cărți: Moldova și România folosesc limba română și o formulă de salut românească. Culorile roșu, galben și albastru stau și la Moldova. Ucraina și Bulgaria își încep salutul cu o urare de zi bună, fiecare în limba ei. Nu inventa o tradiție pe care nu ai citit-o. Dacă știi una, o spui cu sursa. Dacă nu, scrii că o cauți.",
-      "example": "Ungaria are capitala la Budapesta și salutul Jo napot. Ucraina are capitala la Kiev. Bulgaria are capitala la Sofia. Serbia are capitala la Belgrad și îl numește pe Nikola Tesla. Republica Moldova are capitala la Chișinău, limba română și pe Eugen Doga. România are capitala la București.",
-      "tryThis": "Fă câte o carte de vizită, în trei rânduri, pentru Ungaria, Ucraina, Bulgaria, Serbia și Republica Moldova: salut, capitală, limbă, o personalitate și o bucată, numai din lecție. Spune o asemănare între România și Republica Moldova. Completează cartea României cu capitala, culorile și limba. Apoi spune un domeniu în care vecinii se pot influența, de pildă bucătăria sau muzica, și dă un exemplu care este deja în lecție, nu unul inventat. Dacă nu cunoști o tradiție a vecinilor, scrie că o cauți.",
-      "recap": "Cărțile de vizită de pe pagină sunt Ungaria cu Budapesta, Ucraina cu Kiev, Bulgaria cu Sofia, Serbia cu Belgrad și Republica Moldova cu Chișinău. În Moldova se vorbește româna. Eugen Doga este personalitatea numită acolo. Nikola Tesla este personalitatea numită la Serbia. România are capitala la București."
-    },
-    {
-      "id": "proiect-ghid",
-      "title": "Ghidul unei țări, în grup",
-      "platter": "Proiectul se numește Călătorie multiculturală. Grupa are patru sau cinci elevi. Faceți un ghid turistic despre țara și cultura trase la sorți. Pe bilet pot sta România, Bulgaria, Grecia, Italia, Franța, Spania, Portugalia și Ungaria. În ghid intră localizarea, cu întrebarea cum ajungi, cuvinte și expresii uzuale, locuri de cazare, obiective, tradiții, personalități și mâncăruri. Etapele sunt șase, iar grila cu inimi nu este lecția. Întâi stabiliți obiectivele. Apoi planificați: cine ce face, ce surse citiți, ce formă are ghidul, ce materiale vă trebuie. Faceți cercetarea. Îmbinați produsul. Îl susțineți în fața colegilor. La urmă ascultați părerile. Un plan gata de verificat, pentru Ungaria, folosește numai faptele din lecție: Budapesta, Jo napot, limba maghiară, Franz Liszt, gulaș. Dacă un obiectiv sau o adresă de cazare nu este într-o sursă pe care ați citit-o, nu o scrieți. Spuneți că o căutați.\n\nExemplu lucrat: Grupa are patru sau cinci elevi. Țările de pe bilete sunt România, Bulgaria, Grecia, Italia, Franța, Spania, Portugalia și Ungaria. Ghidul are loc, salut, obiective, tradiții și bucate. Grila cu inimi nu este lecția. Pentru Ungaria, capitala din lecție este Budapesta.\n\nTrage, în scris, o țară din lista lecției. Împarte rolurile într-un grup de patru: cine caută locul, cine caută salutul și limba, cine caută o personalitate, cine caută o bucată. Parcurge etapele: obiectiv, plan, cercetare, îmbinare, susținere, părerile colegilor. Scrie cinci rubrici ale ghidului. Dacă țara este Ungaria, Moldova sau alta din cărțile de vizită, folosește faptele deja spuse. Dacă nu ai o sursă pentru cazare, scrie că o cauți. Spune că grila cu inimi nu ține loc de ghid.\n\nProiectul este un ghid turistic, făcut în grup de patru sau cinci. Țara vine de pe un bilet. În ghid intră drumul, salutul, obiectivele, tradițiile și bucatele. Etapele merg de la obiective până la părerile colegilor. Ce nu este într-o sursă nu se inventează. Grila cu inimi nu este lecția.",
-      "theory": "Proiectul se numește Călătorie multiculturală. Grupa are patru sau cinci elevi. Faceți un ghid turistic despre țara și cultura trase la sorți. Pe bilet pot sta România, Bulgaria, Grecia, Italia, Franța, Spania, Portugalia și Ungaria. În ghid intră localizarea, cu întrebarea cum ajungi, cuvinte și expresii uzuale, locuri de cazare, obiective, tradiții, personalități și mâncăruri. Etapele sunt șase, iar grila cu inimi nu este lecția. Întâi stabiliți obiectivele. Apoi planificați: cine ce face, ce surse citiți, ce formă are ghidul, ce materiale vă trebuie. Faceți cercetarea. Îmbinați produsul. Îl susțineți în fața colegilor. La urmă ascultați părerile. Un plan gata de verificat, pentru Ungaria, folosește numai faptele din lecție: Budapesta, Jo napot, limba maghiară, Franz Liszt, gulaș. Dacă un obiectiv sau o adresă de cazare nu este într-o sursă pe care ați citit-o, nu o scrieți. Spuneți că o căutați.",
-      "example": "Grupa are patru sau cinci elevi. Țările de pe bilete sunt România, Bulgaria, Grecia, Italia, Franța, Spania, Portugalia și Ungaria. Ghidul are loc, salut, obiective, tradiții și bucate. Grila cu inimi nu este lecția. Pentru Ungaria, capitala din lecție este Budapesta.",
-      "tryThis": "Trage, în scris, o țară din lista lecției. Împarte rolurile într-un grup de patru: cine caută locul, cine caută salutul și limba, cine caută o personalitate, cine caută o bucată. Parcurge etapele: obiectiv, plan, cercetare, îmbinare, susținere, părerile colegilor. Scrie cinci rubrici ale ghidului. Dacă țara este Ungaria, Moldova sau alta din cărțile de vizită, folosește faptele deja spuse. Dacă nu ai o sursă pentru cazare, scrie că o cauți. Spune că grila cu inimi nu ține loc de ghid.",
-      "recap": "Proiectul este un ghid turistic, făcut în grup de patru sau cinci. Țara vine de pe un bilet. În ghid intră drumul, salutul, obiectivele, tradițiile și bucatele. Etapele merg de la obiective până la părerile colegilor. Ce nu este într-o sursă nu se inventează. Grila cu inimi nu este lecția."
-    },
-    {
-      "id": "recap-calator",
-      "title": "Fesul, hamalii și o barcă pe lac",
-      "platter": "Recapitularea nu este foaia cu puncte. La școală, textul deschis poate fi Tartarin din Tarascon, de Alphonse Daudet, sau un fragment cu un tânăr Sherlock, din Gheața neagră, de Andrew Lane. Nu cerem frazele. Faptele lui Tartarin, spuse aici, sunt acestea. Timp de trei zile, pachebotul Le Zouave merge din Franța în Algeria. Naratorul vorbește către cititori și spune faptele lui Tartarin la persoana a III-a. Obiectul urmărit trei zile este fesul roșu. La plecare stă semeț. La ieșirea din port, când vasul începe să salte, fesul pare mirat. În după-amiaza zilei a treia, clopotul sună, marinarul aleargă, căpitanul Barbassou strigă sala mașinilor înainte, înapoi, apoi stop. Tartarin crede că se scufundă, iese pe punte cu armele și vede că nu se scufundă: intră în rada Algerului. Orașul alb stă pe o colină, deasupra unei ape adânci și liniștite. Când vede oameni smulgând prelata de pe bagaje, crede că sunt pirați și strigă la arme. Barbassou îi spune că pirații nu mai sunt de mult și că oamenii sunt hamali, cărăuși care duc bagajele pe uscat. Tartarin rămâne doar pe jumătate liniștit și ține mâna pe pumnal. Personajele: Tartarin este lăudăros și sperios. Barbassou este calm și practic. Indici de timp: trei zile, după-amiaza zilei a treia. Indici de spațiu: puntea, drumul din Franța spre Algeria, rada, Algerul pe colină. Momentul tensionat este strigătul că se scufundă și apoi năvala asupra hamalilor. Ține de punctul culminant. Rezolvarea este lămurirea căpitanului. Obiectul care îl reprezintă în deschiderea acestui episod este fesul. Litera este b. Pumnalul arată frica de la sfârșit, nu semnul urmărit trei zile. Secvențele: narațiunea drumului, descrierea Algerului, dialogul cu căpitanul. Adverbele albastre și verzi se citesc pe pagina tipărită, unde culoarea se vede. În scena noastră le marchez eu. Duminică dimineața, pe lac, Mara stă în barcă. Unchiul pescuiește agale. Apa este foarte liniștită. Stop, strigă unchiul, când barca se apropie de stuf. O rață mac-mac trece pe lângă ei. Tema este pentru mâine, spune Mara, dar lecția de azi se face aici. Agale este adverb de mod, circumstanțial de mod. Foarte este marca superlativului absolut. Dimineața și aici sunt adverbe, de timp și de loc. Pentru mâine este nume predicativ. De azi este atribut. Stop este interjecție predicativă, predicat verbal. Mac-mac este onomatopee predicativă. O, dacă stă singură înaintea unei mirări, este interjecție. În scena asta o nu stă ca articol. Repetarea repede, repede întărește. Un enunț în care stop este substantiv: Barca nu a oprit la stop. Jurnalul pe care îl scrii este la persoana I, cu o descriere de cel puțin 20 de cuvinte. Foaia cu 60 de puncte și fișa de observare nu sunt lecția. Din scena bărcii faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.\n\nExemplu lucrat: Ce scrie: Duminică dimineața, pe lac, unchiul pescuiește agale și strigă stop lângă stuf. Ce vezi: Îi văd în barcă, cu rața care trece mac-mac. Eu aș ține barca departe de stuf, pentru că unchiul a strigat stop când s-au apropiat. Fesul lui Tartarin este litera b. Hamalii duc bagajele. Agale este circumstanțial de mod. Stop este predicat verbal.\n\nPe scena bărcii, scrie ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu Îi văd. Spune funcția lui agale, a lui pentru mâine și a lui de azi. Spune că stop este predicat și scrie un enunț în care stop este substantiv. Pentru Tartarin, spune trei zile, numele vaporului, obiectul care îl reprezintă și litera b, de ce crede că se scufundă și cine sunt, de fapt, oamenii de pe bagaje. Spune persoana la care sunt spuse faptele lui și că momentul cu pirații este punctul culminant. Apoi scrie o pagină de jurnal, la persoana I, despre o călătorie la pescuit, de 100 până la 150 de cuvinte, cu o secvență explicativă de cel puțin 20 de cuvinte. Nu copia fragmentul de pe foaia cu puncte.\n\nRecapitularea stă pe scenă, nu pe grila de puncte. Tartarin traversează în trei zile, pe Le Zouave, și crede că hamalii sunt pirați. Obiectul urmărit este fesul, litera b. În barcă, agale este adverb de mod, stop este interjecție predicativă, iar mac-mac este onomatopee. Pentru mâine poate fi nume predicativ.",
-      "theory": "Recapitularea nu este foaia cu puncte. La școală, textul deschis poate fi Tartarin din Tarascon, de Alphonse Daudet, sau un fragment cu un tânăr Sherlock, din Gheața neagră, de Andrew Lane. Nu cerem frazele. Faptele lui Tartarin, spuse aici, sunt acestea. Timp de trei zile, pachebotul Le Zouave merge din Franța în Algeria. Naratorul vorbește către cititori și spune faptele lui Tartarin la persoana a III-a. Obiectul urmărit trei zile este fesul roșu. La plecare stă semeț. La ieșirea din port, când vasul începe să salte, fesul pare mirat. În după-amiaza zilei a treia, clopotul sună, marinarul aleargă, căpitanul Barbassou strigă sala mașinilor înainte, înapoi, apoi stop. Tartarin crede că se scufundă, iese pe punte cu armele și vede că nu se scufundă: intră în rada Algerului. Orașul alb stă pe o colină, deasupra unei ape adânci și liniștite. Când vede oameni smulgând prelata de pe bagaje, crede că sunt pirați și strigă la arme. Barbassou îi spune că pirații nu mai sunt de mult și că oamenii sunt hamali, cărăuși care duc bagajele pe uscat. Tartarin rămâne doar pe jumătate liniștit și ține mâna pe pumnal. Personajele: Tartarin este lăudăros și sperios. Barbassou este calm și practic. Indici de timp: trei zile, după-amiaza zilei a treia. Indici de spațiu: puntea, drumul din Franța spre Algeria, rada, Algerul pe colină. Momentul tensionat este strigătul că se scufundă și apoi năvala asupra hamalilor. Ține de punctul culminant. Rezolvarea este lămurirea căpitanului. Obiectul care îl reprezintă în deschiderea acestui episod este fesul. Litera este b. Pumnalul arată frica de la sfârșit, nu semnul urmărit trei zile. Secvențele: narațiunea drumului, descrierea Algerului, dialogul cu căpitanul. Adverbele albastre și verzi se citesc pe pagina tipărită, unde culoarea se vede. În scena noastră le marchez eu. Duminică dimineața, pe lac, Mara stă în barcă. Unchiul pescuiește agale. Apa este foarte liniștită. Stop, strigă unchiul, când barca se apropie de stuf. O rață mac-mac trece pe lângă ei. Tema este pentru mâine, spune Mara, dar lecția de azi se face aici. Agale este adverb de mod, circumstanțial de mod. Foarte este marca superlativului absolut. Dimineața și aici sunt adverbe, de timp și de loc. Pentru mâine este nume predicativ. De azi este atribut. Stop este interjecție predicativă, predicat verbal. Mac-mac este onomatopee predicativă. O, dacă stă singură înaintea unei mirări, este interjecție. În scena asta o nu stă ca articol. Repetarea repede, repede întărește. Un enunț în care stop este substantiv: Barca nu a oprit la stop. Jurnalul pe care îl scrii este la persoana I, cu o descriere de cel puțin 20 de cuvinte. Foaia cu 60 de puncte și fișa de observare nu sunt lecția. Din scena bărcii faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.",
-      "example": "Ce scrie: Duminică dimineața, pe lac, unchiul pescuiește agale și strigă stop lângă stuf. Ce vezi: Îi văd în barcă, cu rața care trece mac-mac. Eu aș ține barca departe de stuf, pentru că unchiul a strigat stop când s-au apropiat. Fesul lui Tartarin este litera b. Hamalii duc bagajele. Agale este circumstanțial de mod. Stop este predicat verbal.",
-      "tryThis": "Pe scena bărcii, scrie ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu Îi văd. Spune funcția lui agale, a lui pentru mâine și a lui de azi. Spune că stop este predicat și scrie un enunț în care stop este substantiv. Pentru Tartarin, spune trei zile, numele vaporului, obiectul care îl reprezintă și litera b, de ce crede că se scufundă și cine sunt, de fapt, oamenii de pe bagaje. Spune persoana la care sunt spuse faptele lui și că momentul cu pirații este punctul culminant. Apoi scrie o pagină de jurnal, la persoana I, despre o călătorie la pescuit, de 100 până la 150 de cuvinte, cu o secvență explicativă de cel puțin 20 de cuvinte. Nu copia fragmentul de pe foaia cu puncte.",
-      "recap": "Recapitularea stă pe scenă, nu pe grila de puncte. Tartarin traversează în trei zile, pe Le Zouave, și crede că hamalii sunt pirați. Obiectul urmărit este fesul, litera b. În barcă, agale este adverb de mod, stop este interjecție predicativă, iar mac-mac este onomatopee. Pentru mâine poate fi nume predicativ."
-    }
+  lessons: [
+    lesson({
+      id: 'stil',
+      title: 'Firească, scurtă, armonioasă',
+      kind: 'redactare',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Stylos',
+          text: 'Stilul vine de la grecescul stylos. E felul în care scrii și vorbești. Când ideile stau bine, textul se citește cu plăcere.'
+        }
+      ],
+      theory: [
+        'Stilul e un chip anume de a te rosti, cu uneltele limbii. Trei calități le ai deja. Adecvarea: vorbele se potrivesc cu tema, cu intenția și cu efectul asupra cititorului.',
+        'Proprietatea: un cuvânt spune exact ideea. Puritatea, împreună cu potrivirea la situație, cere limba standard, registrul bun și forma corectă. Fără ele, fraza sună străin de locul în care stă.',
+        'Mai sunt cinci. Originalitatea arată ideea într-un chip nou și ține de creativitatea autorului. Varietatea schimbă vorba, ca să nu repeți mereu același cuvânt. Naturalețea sună firesc și armonios.',
+        'Eufonia e armonia sunetelor puse laolaltă. Ca s-o păstrezi, ocolești repetarea supărătoare, pleonasmul, cacofonia și dezacordul. Concizia lasă numai termenii de care ai nevoie și nu iese din temă.',
+        'Trei texte de-ale noastre. A: Toamna, copacii îngălbenesc. Sună natural și e scurt. B: Zâna toamnă așază pe copaci o mantie ruginie, apoi pleacă împreună cu frunzele. E original, fiindcă anotimpul devine persoană, și are varietate.',
+        'C: Pe fațadă, panoul repetă motivul cu păun. Informează, e scurt și natural. Eufonia se vede când sunetele nu se ciocnesc: îngălbenesc stă bine. Cacofonia ar fi o ciocnire de tipul ca ca, pe care o eviți.',
+        'La clasă, aceleași întrebări cad pe trei fragmente: o poezie cu un vultur, o proză cu un vultur și un text despre panouri neoromânești. Poezia și proza pot mișca, fiindcă au imagine. Textul despre panouri doar informează.',
+        'Fapte din strada bucureșteană, în Enigma Otiliei, de George Călinescu. Casele sunt scunde. Aproape niciuna nu are un cat peste parter. Varietatea o aduc, de obicei, zidari veniți din Italia. Ferestrele par mari față de clădirile joase.',
+        'Frontoanele amintesc de Grecia, ogivele sunt din var ori din lemn dat cu vopsea. Umezeala desprinde varul. Lemnul se umflă când se usucă. Strada imită, strâmb, una italiană. Casa are un cat, iar parterul e scund.',
+        'Geamurile, pătrate, stau acoperite cu o hârtie care lasă lumina și imită vitraliul unei catedrale. Inspirația e arhitectura italiană. Dezghioca înseamnă a coji. Ciubucăria e ornamentul în relief de pe zid.',
+        'Frontonul e triunghiul de deasupra unei intrări. Vitraliul e geamul colorat. Autorul alege termenii aceștia fiindcă numesc piesa exact. Asta e proprietatea. Podoabă, în loc de ciubucărie, pierde piesa. La textul tău, tai o repetare dacă ai pus-o.'
+      ].join('\n\n'),
+      example: [
+        'Toamna, copacii îngălbenesc e natural și scurt. Zâna toamnă e originală. Eufonia cere armonie și ocolește ciocnirea de sunete.',
+        'În Enigma Otiliei, casa are un cat, iar parterul e scund. Geamurile stau sub hârtie. Strada se inspiră din Italia. A dezghioca înseamnă a coji.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Pleonasmul ar fi a coborî în jos. Cacofonia ar fi ca calul. Concizia taie vorba de prisos. Originalitatea face din toamnă o persoană, nu doar un anotimp.'
+        }
+      ],
+      tryThis: 'Dă definiția pentru originalitate, naturalețe, eufonie, varietate și concizie. La textele A, B și C, numește câte două calități. Spune trei piese ale străzii din Enigma Otiliei și sensul lui dezghioca, al ciubucăriei, al frontonului și al vitraliului.',
+      keyPoints: [
+        'Originalitatea arată ideea într-un chip nou. Naturalețea sună firesc. Concizia lasă numai ce trebuie.',
+        'Eufonia e armonia sunetelor. Varietatea schimbă vorba, ca să nu repeți același cuvânt.',
+        'Casa din fragmentul bucureștean are un cat, iar geamurile imită vitraliul prin hârtie.'
+      ]
+    }),
+    lesson({
+      id: 'secvente',
+      title: 'Narațiune, explicație, descriere, dialog',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Patru întrebări',
+          text: 'Narativ: cine, ce face, când, unde. Explicativ: ce se lămurește și de ce. Descriptiv: ce și cum. Dialogat: cine discută și despre ce.'
+        }
+      ],
+      theory: [
+        'Textul e un întreg: enunțuri prinse logic. În el pot intra bucăți narative, explicative, descriptive și dialogate. Le poți uni într-o poveste de drum, fiecare cu întrebările ei.',
+        'Bucata narativă spune, la persoana I sau a III-a, întâmplări așezate în timp și în spațiu. Întrebi cine, ce face, când, unde. Bucata explicativă dă lămuriri. Întrebi ce se explică, de cine și din ce pricină.',
+        'Bucata descriptivă arată cadrul ori trăsăturile unui om, ale unui lucru sau ale unui peisaj. Întrebi ce, cum și cine descrie. Bucata dialogată redă discuția. Întrebi cine vorbește, despre cine și despre ce.',
+        'În Pe drumuri de munte, Calistrat Hogaș pune un călător la persoana I. E iarmaroc de Duminica Mare. Călătorul cere ajutorul lui Tasache Crăcăuanu, geambaș cu renume. Treaba: un cal potrivit cu punga.',
+        'Geambașul vinde cai ori mijlocește tocmeala. Hipologul cunoaște anatomia calului și fiziologia lui. Lecția îi dă lui Tasache ambele nume. În seara acelei duminici, aduce în ogradă o iapă mică, slabă.',
+        'Călătorul îi spune Pisicuța, pentru că aducea a mâță. Mersul de la început e gebea: lin, fără sărituri. Tasache promite că grăunțele și săceala, adică țesala, o schimbă în două săptămâni. Mai spune că e de rasă.',
+        'Peste două săptămâni, iapa e castanie: nări largi, bot mic, cap fin, ochi negri și vii, coamă deasă, gât tare, piept lat, trup iute. Dârlogul e cureaua frâului. Odisee înseamnă drum lung, cu peripeții.',
+        'Fragmentul are narațiune, are descriere și are dialog. Lămurirea nu e acolo. O scrii tu: din ce pricină hrana și țesala, în paisprezece zile, îndreaptă un cal firav. Grăunțele dau putere. Țesala curăță părul. Nu copia frazele fragmentului.'
+      ].join('\n\n'),
+      example: [
+        'Naratorul lui Hogaș stă la persoana I. Iapa sosește în seara de Duminica Mare. Numele Pisicuța vine din faptul că era mică și slabă.',
+        'Mersul dintâi e gebea. Peste paisprezece zile e castanie și are ochi negri. Stau trei feluri de text, iar lămurirea nu e printre ele.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Lămurire de adăugat: un cal slab, hrănit și țesălat două săptămâni, prinde mușchi și luciu. Narațiunea spune cine o primește. Descrierea spune cum arată după aceea. Dialogul e vorba lui Tasache despre rasă.'
+        }
+      ],
+      tryThis: 'Spune întrebările celor patru bucăți. Pentru Hogaș: cine e naratorul, când primește iapa, de ce o numește Pisicuța și ce bucată lipsește. Scrie o lămurire de patru rânduri despre grăunțe și țesală.',
+      keyPoints: [
+        'Narativul spune cine, ce face, când și unde. Lămurirea spune de ce. Descrierea spune cum.',
+        'Dialogul redă discuția. Cele patru se pot uni într-un singur text de drum.',
+        'La Hogaș, iapa Pisicuța vine în seara de Duminica Mare. Lămuririle lipsesc, nu narațiunea.'
+      ]
+    }),
+    lesson({
+      id: 'adverb',
+      title: 'Loc, timp, mod și semnele din față',
+      kind: 'limba',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Neflexibil',
+          text: 'Adverbul nu-și schimbă forma. Spune cum e o acțiune, o stare sau o însușire și în ce împrejurare se petrece fapta.'
+        }
+      ],
+      theory: [
+        'Unele adverbe sunt dintr-o bucată: acasă ori bine, apoi destul. Tot simple: azi și mâine, ieri, aici sau acolo. Altele se scriu cu cratimă: azi-noapte, astă-vară, după-amiază.',
+        'Locul îl dau aici, acolo și dincolo, apoi departe, aproape, sus, jos. Timpul se spune cu atunci și cu astăzi, cu acum sau cu ieri. Mai intră mâine, târziu, devreme, odată, totdeauna.',
+        'Felul îl arată așa, bine și ușor, apoi încet, alene, repede. Fără funcție stau numai și doar, chiar, mai. Tot așa decât, prea și cam. Se numesc semiadverbe.',
+        'Stau, de obicei, înaintea verbului. În O să tot mergi, tot e semiadverb. La fel cam, în S-au cam supărat, și mai, în Te mai gândești. Unele au devenit mărci. Nu, ba da ori ba nu pot sta singure, ca enunț.',
+        'Dialogul cu filmul are cinci enunțuri. Întâi întrebarea despre drumeția cu colegii. Apoi Nu. Apoi propunerea de film. Apoi Da. La urmă Voi merge. Fiecare bucată, chiar de un cuvânt, e enunț.',
+        'Formare. Bineînțeles e compus. Românește poartă sufixul -ește. Fatalmente poartă sufixul -mente. Altfel e compus, ca și astă-vară. Chiorâș poartă sufixul -âș. Deodată se scrie împreună și înseamnă pe neașteptate. Ușurel e diminutiv.',
+        'De-a pururi are ca pereche totdeauna. De jur împrejur are ca pereche pretutindeni. Locuțiunea cu de-a sila numește o faptă silită. Cealaltă, pe neașteptate, se schimbă cu deodată. Rămân adverbe sau locuțiuni.',
+        'În enunțul cu exercițiul rezolvat repede, ușor e adjectiv, iar repede e adverb de mod. Lângă alunecă, pe panta abruptă, ușor e adverb de mod. Când toamna e preferata mea, cuvântul e substantiv, subiect.',
+        'Când viile se culeg toamna, toamna e adverb de timp. Pe un buștean, cuvântul e substantiv. În dormea buștean, e adverb de mod și înseamnă dus, nemișcat.',
+        'O dată, două cuvinte, numără o singură ocurență. Odată, un cuvânt, înseamnă cândva. Demult, legat, trimite departe în trecut. Defel, legat, înseamnă deloc și cere propoziție negativă. De fel ține de firea cuiva. Altădată numește un alt timp. Altă dată numește o altă zi. Bineînțeles, deloc, totuna și întruna se scriu legate.',
+      ].join('\n\n'),
+      example: [
+        'Azi-noapte e compus. Cam, lângă supărat, stă fără rol sintactic. În vorbirea despre film numeri cinci bucăți, fiecare un enunț.',
+        'Lângă exercițiu, ușor e adjectiv. Lângă alunecă, ușor e adverb. Lângă cules, toamna ține de timp. În dormea buștean, buștean ține de mod. Odată înseamnă cândva. O dată numără.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'De-a pururi se schimbă cu totdeauna. Pe neașteptate se schimbă cu deodată. Românește are sufixul -ește. Chiorâș are sufixul -âș. Ușurel e diminutiv.'
+        }
+      ],
+      practice: [
+        '1) Desparte simplele de compuse în șirul acasă, bine, azi-noapte, astă-vară.',
+        '2) Spune felul pentru aici, ieri și repede.',
+        '3) În cele două enunțuri cu ușor, spune valoarea lui ușor și a lui repede.',
+        '4) Scrie sensul pentru o dată și pentru odată.'
+      ].join('\n\n'),
+      answers: [
+        'Simple: acasă, bine. Compuse: azi-noapte, astă-vară.',
+        'Aici e de loc. Ieri e de timp. Repede e de mod.',
+        'Lângă exercițiu, ușor e adjectiv, iar repede e adverb de mod. Lângă alunecă, ușor e adverb de mod.',
+        'O dată înseamnă o singură ocurență. Odată înseamnă cândva sau de mult.'
+      ],
+      mistakes: 'Odată nu se desparte când înseamnă cândva. O dată, în două cuvinte, numără. Semiadverbele, ca doar și cam, nu primesc funcție de circumstanțial.',
+      tryThis: 'Cu câte un enunț, arată că numai și cam stau fără funcție. Câte enunțuri are dialogul despre film? Dă o pereche pentru de-a pururi și una pentru pe neașteptate. Ce valoare are toamna lângă cules și buștean în dormea buștean?',
+      keyPoints: [
+        'Nu se schimbă și spune loc, timp sau fel. Compusele poartă cratimă.',
+        'Semiadverbele, precum doar, chiar și cam, nu au funcție sintactică.',
+        'Odată înseamnă cândva. O dată numără. Dormea buștean are adverb de mod.'
+      ]
+    }),
+    lesson({
+      id: 'grade-adverb',
+      title: 'Mai repede, foarte repede, pentru mâine',
+      kind: 'limba',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Cine are grade',
+          text: 'Gradele stau la adverbele de mod și la unele de loc, dacă se pot măsura. Mâine, dimineața, acasă și acum rămân fără grade: numesc un timp sau un loc fix.'
+        }
+      ],
+      theory: [
+        'Nu orice adverb are grade. Pozitivul e repede. Superioritatea se spune mai repede. Egalitatea are trei formule, spuse separat: la fel de, apoi tot așa de, apoi tot atât de, fiecare cu repede. Inferioritatea: mai puțin repede.',
+        'Relativul de vârf e cel mai repede. Relativul de jos e cel mai puțin repede. Absolutul de vârf e foarte repede. Absolutul de jos e foarte puțin repede. La ușor, urcarea e mai ușor, iar foarte ușor e absolut.',
+        'În El strigă tare, tare, forma rămâne la pozitiv, iar dublarea doar îngroașă. La fel de mult, în dojana aceea, ține de egalitate. Foarte tare, lângă mingea lovită, e absolut de superioritate. Mai încet, când Andrei aleargă, urcă un grad.',
+        'Se măsoară bine, greu, frumos, rar și prietenește, plus departe și jos. Poți urca bine, departe sau jos punând mai în față. Rămân fixe mâine, dimineața, acasă și acum.',
+        'Ca loc: Acolo este un parc. Ca timp: Mâine vom merge la școală. Ca mod: Desenează foarte frumos. Ca nume predicativ: Tema este pentru mâine. Ca atribut: Cartea de azi a fost interesantă. La fel, Casa din stânga este a noastră.',
+        'Poate sta pe verb, ca în A ajuns acasă. Pe adjectiv: în Sara era destul de tristă, destul de apasă pe tristă. Pe adverb: în A mers destul de încet, destul de apasă pe încet.',
+        'Foarte des: des e de timp, foarte e marca absolutului. Agale e de mod. Amintirile sunt pentru totdeauna: nume predicativ. A rămas pentru totdeauna: timp. În jur: loc. Mai demult: tot timp.',
+        'În Lecția de azi, grupul de azi e atribut. Când tema e pentru mâine, grupul e nume predicativ. Din stânga, la casa aceea, e atribut. Încetișor e de mod. Dublarea repede, repede îngroașă și lasă pozitivul pe loc.'
+      ].join('\n\n'),
+      example: [
+        'Mai încet urcă, deci e comparativ de superioritate. Foarte tare e absolut. La fel de mult ține de egalitate. Dublarea tare, tare nu schimbă pozitivul, doar îl îngroașă.',
+        'Mâine rămâne fără grade. Bine are. În Tema este pentru mâine, grupul e nume predicativ. În Cartea de azi, de azi e atribut. Destul de, lângă tristă, stă pe adjectiv.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Cel mai puțin repede e superlativ relativ de inferioritate. Foarte puțin repede e superlativ absolut de inferioritate. Departe are grade. Acum nu are, fiindcă e un timp fix.'
+        }
+      ],
+      practice: [
+        '1) Dă pozitivul lui ușor, apoi comparativul de superioritate și absolutul de superioritate.',
+        '2) Spune gradul pentru tare, tare, pentru la fel de mult și pentru mai încet.',
+        '3) Care dintre mâine, bine, acasă, rar, acum, departe primesc grade și care nu?',
+        '4) Dă funcția lui agale și a lui pentru mâine din Tema este pentru mâine.'
+      ].join('\n\n'),
+      answers: [
+        'Ușor. Mai ușor. Foarte ușor.',
+        'Tare, tare e pozitiv, cu intensitate întărită. La fel de mult e comparativ de egalitate. Mai încet e comparativ de superioritate.',
+        'Cu grade: bine, rar, departe. Fără grade: mâine, acasă, acum.',
+        'Agale e circumstanțial de mod. Pentru mâine, în Tema este pentru mâine, e nume predicativ.'
+      ],
+      mistakes: 'Repetarea tare, tare nu urcă adverbul la superlativ. Rămâne pozitiv. Mâine, acasă și acum nu primesc mai sau foarte, fiindcă nu se măsoară.',
+      tryThis: 'Arată pe ce stă adverbul în A ajuns acasă, apoi în Sara era destul de tristă, apoi în A mers destul de încet. Ce funcție au de azi, în Lecția de azi, și încetișor? Construiește un mod la superlativ relativ de inferioritate.',
+      keyPoints: [
+        'Gradele sunt pozitiv, comparativ și superlativ. Mai încet e comparativ de superioritate.',
+        'Foarte tare e absolut. Dublarea tare nu urcă gradul.',
+        'Fără grade: mâine, acasă, acum. Cu grade: bine, rar, departe. Poate fi și nume predicativ.',
+      ]
+    }),
+    lesson({
+      id: 'interjectie',
+      title: 'Of, hai și cucurigu',
+      kind: 'limba',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Neflexibilă',
+          text: 'Interjecția nu se schimbă. Spune stări, îndemnuri sau imită sunete. Imitațiile se numesc onomatopee. După ea stă virgula sau semnul exclamării.'
+        }
+      ],
+      theory: [
+        'Cele simple au un singur corp. Din tabel: stop și of, marș și măi, apoi oh, poc, tralala. Piu-piu se învață între exemple, ca sunet. Cele cu două corpuri legate sunt compuse.',
+        'Compuse, tot din tabel: hodoronc-tronc și cip-cirip, apoi țop-țop, cioca-boca. Mai sunt hei-rup, tic-tac, pâș-pâș și mac-mac. Cratima și cele două bucăți le dau de gol. Un singur corp, fără cratimă, rămâne simplu.',
+        'După sens, propriu-zisele sunt de patru feluri. Pentru stare: of și vai, ah, ura. Pentru senzație: brr și hapciu, au. Pentru adresare: bă și mă, bre. Pentru atenție: uite și iată. Onomatopeele imită ciocănitul, pisica, ploaia: cioc-cioc, miau, pic-pic. Mai sunt zvârr, trosc, pleosc, fâș-fâș, cucurigu.',
+        'Ah, of și vai țin de stare. Bre, la fel ca măi, se adresează cuiva. Uite cere atenție. Trosc-pleosc copiază un zgomot. Brr ține de senzație. Din tabel reții stop și of, apoi marș cu măi, apoi oh și poc. Tralala închide șirul. Compusele se învață pe perechi: țop-țop cu cioca-boca, hei-rup cu tic-tac, apoi pâș-pâș, hodoronc-tronc și mac-mac.',
+        'Când întâlnești un animal, varianta politicoasă e o adresare sau o scuză. Na, urmat de un obiect, oferă ceva. Numele animalului plus hai e un îndemn. Desenul rămâne al tău. Tu spui dacă replica e o scuză, o oferire ori un îndemn.',
+        'Semnul de după interjecție e virgula, când fraza continuă, sau semnul exclamării, când exclamația se închide. Of, ce drum lung, și Of! sunt ambele corecte, după cât de tare se rupe vorba. Pentru ciocănit: cioc-cioc. Pentru pisică: miau. Pentru ploaie: pic-pic.'
+      ].join('\n\n'),
+      example: [
+        'Of ține de stare. Bre se adresează. Uite cere atenție. Trosc-pleosc copiază zgomotul. Brr ține de senzație.',
+        'Două corpuri au țop-țop și mac-mac. Unul singur au stop, apoi of, apoi măi. Semnul următor poate fi virgulă sau exclamație.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Na, un măr: oferire. Hai, pisico: îndemn. Măi, iartă-mă: adresare și scuză. Cucurigu imită cocoșul. Hodoronc-tronc are două corpuri, deci e compusă.'
+        }
+      ],
+      practice: [
+        '1) Grupează ah, of și vai, apoi bre cu măi, apoi uite, apoi trosc-pleosc, apoi brr, după ce exprimă fiecare.',
+        '2) Împarte în simple și compuse: stop, of, țop-țop, măi, mac-mac, hodoronc-tronc.',
+        '3) Imită, cu câte un cuvânt, ciocănitul, pisica și ploaia.',
+        '4) Spune ce semn poate sta după of și de ce.'
+      ].join('\n\n'),
+      answers: [
+        'Ah, of și vai: stare. Bre și măi: adresare. Uite: atenție. Trosc-pleosc: onomatopee. Brr: senzație.',
+        'Simple: stop, of, măi. Compuse: țop-țop, mac-mac, hodoronc-tronc.',
+        'Cioc-cioc, miau, pic-pic.',
+        'Virgula, dacă fraza continuă, sau semnul exclamării, dacă exclamația se închide.'
+      ],
+      mistakes: 'O interjecție compusă nu se scrie ca două simple despărțite de spațiu. Țop-țop ține cratima. Onomatopeea imită un sunet, nu numește o stare.',
+      tryThis: 'Compune trei vorbe către un animal. Prima cere iertare. A doua dă ceva, cu na. A treia îndeamnă, cu hai. Pune exclamația după fiecare. Notează rolul fiecărei replici.',
+      keyPoints: [
+        'Nu-și schimbă forma. Poate ține de o stare, de o senzație, de o chemare, de atenție ori de un zgomot.',
+        'Un singur corp, ca of sau măi, e simplă. Două corpuri, ca țop-țop ori hodoronc-tronc, sunt compuse.',
+        'Onomatopeea copiază un zgomot. După ea poate sta virgula, dacă fraza merge mai departe, sau exclamația.'
+      ]
+    }),
+    lesson({
+      id: 'interjectie-predicativa',
+      title: 'Hai, buf și stop',
+      kind: 'limba',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Ține loc de verb',
+          text: 'Interjecția predicativă are funcția de predicat verbal. Exemplu: Hai la film. Altul: Pisica țuști pe lângă noi. Onomatopeea poate fi și ea predicat.'
+        }
+      ],
+      theory: [
+        'Unele interjecții se poartă ca un verb. Li se spune predicative. Haide cu noi în parc e predicat verbal și îndemn. Na un măr din livada mea e predicat verbal și oferire.',
+        'Uite ce frumos a desenat e tot predicat verbal. La șoricel, chiț-chiț din gaura de după sobă e onomatopee predicativă și predicat. Cartea buf de pe birou: buf e la fel, predicat.',
+        'Pe pârtie, noi toți țuști cu săniuțele. Aici țuști e onomatopee predicativă și predicat verbal. Poți înlocui verbul și păstra funcția. Behăitul oii devine bee: Oița bee. Bocănitul bunicului devine boc-boc.',
+        'Cotcodăcitul găinilor devine cotcodac. Zborul păsărilor devine zbrr. Funcția rămâne predicat verbal. Din interjecții se fac verbe, prin sufixe. De la fâș iese a fâșâi. De la ham iese a hămăi. De la mac iese a măcăi. De la vâj iese a vâjâi.',
+        'De la pleosc iese a pleoscăi. De la boc iese a bocăni. De la bâzz iese a bâzâi. De la tic-tac iese a ticăi. Interjecția, singură, poate rămâne predicat, fără să devină verb.',
+        'Stop își schimbă clasa. După la, în enunțul despre mașina care nu a oprit, e substantiv. Când deschide Stop, nu puteți trece, e interjecție predicativă.',
+        'De își schimbă clasa. În rochia de mătase, de leagă și e prepoziție. Când deschide De, nu toți sunt ajutați ca tine, arată resemnarea.',
+        'O își schimbă clasa. În exclamația O, ce carte interesantă, e interjecție. În Am văzut-o pe Maria, e pronume. Abia în Am citit o carte despre călătorii devine articol nehotărât.',
+        'Piesa se cheamă Înșir-te, mărgărite. Autorul e Victor Eftimiu. Acolo, strigătele de veghe sunt onomatopee. Hai și măi sunt de adresare sau de îndemn. Replicile nu se copiază.'
+      ].join('\n\n'),
+      example: [
+        'Hai la film e predicat verbal. Buf, la fel ca țuști, e onomatopee predicativă. La oiță, bee ține locul verbului și tot e predicat.',
+        'După la, stop e substantiv. La început de frază, în Stop, nu puteți trece, e interjecție. O din exclamație e interjecție, din Am văzut-o e pronume, din Am citit o carte e articol.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Găinile cotcodac păstrează predicatul, fără verbul cotcodăcesc. A hămăi vine de la ham. A ticăi vine de la tic-tac. Stop după la rămâne substantiv, ca numele unui semn rutier.'
+        }
+      ],
+      practice: [
+        '1) Pentru Haide, Na, buf și țuști, spune felul și funcția.',
+        '2) Înlocuiește behăie și zboară cu interjecții și spune ce funcție rămâne.',
+        '3) Spune valoarea lui stop în Mașina nu a oprit la stop și în Stop, nu puteți trece.',
+        '4) Ce e o când stă în O, ce carte? Ce e în Am văzut-o pe Maria? Ce e în Am citit o carte?'
+      ].join('\n\n'),
+      answers: [
+        'Haide și Na sunt interjecții predicative, cu rol de predicat. Buf, ca și țuști, e onomatopee predicativă și tot predicat.',
+        'Oița bee. Păsările zbrr. Funcția rămâne predicat verbal.',
+        'După la, stop e substantiv. Singur, cu semnul exclamării, stop e interjecție predicativă.',
+        'O din exclamația despre carte e interjecție. O din Am văzut-o e pronume. O din Am citit o carte e articol nehotărât.'
+      ],
+      mistakes: 'Stop de după la nu e predicat. E substantiv. O din Am citit o carte nu e interjecție. E articol. Funcția se judecă în enunț, nu după literă.',
+      tryThis: 'Fă verbul de la fâș, apoi de la ham și de la mac. Continuă cu vâj, cu pleosc, cu boc, cu bâzz și cu tic-tac. Ce e de în rochia de mătase? Ce e în De, nu toți? Scrie două interjecții predicative și una de stare.',
+      keyPoints: [
+        'Interjecția predicativă ține locul verbului și e predicat: hai, na, uite, buf, țuști.',
+        'Stop lângă la e substantiv. Stop singur, cu semnul exclamării, e interjecție.',
+        'Litera o își schimbă rolul: exclamație, pronume ori articol, după fraza din jur.'
+      ]
+    }),
+    lesson({
+      id: 'vecini-cultura',
+      title: 'Cinci cărți de vizită',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'atentie',
+          title: 'Fără datină născocită',
+          text: 'Cartea de vizită se umple numai cu fapte din lecție. Dacă nu cunoști o datină a vecinilor, scrii că o cauți. Nu inventezi un obicei.'
+        }
+      ],
+      theory: [
+        'Oamenii seamănă la fire. Cultura îi desparte. Poți încuviința ori te poți îndoi, însă aduci un fapt cultural, nu o vorbă goală. Mai jos stă cartea de vizită a fiecărei țări.',
+        'La Ungaria, salutul e Jo napot. Capitala se cheamă Budapesta. Drapelul are roșu, alb și verde. Se vorbește maghiara. Numele de reținut: Franz Liszt. La masă: gulaș și kürtőskalács.',
+        'La Ucraina, salutul e Dobrii deni. Capitala se cheamă Kiev. Culorile sunt albastru și galben. Limba e ucraineana. Numele: Taras Șevcenko. Unele grafii scriu Șevcenco. Bucata: vareniki.',
+        'La Bulgaria, salutul e Dobăr den. Capitala se cheamă Sofia. Culorile: alb, apoi verde și roșu. Limba e bulgara. Numele: Țvetan Todorov. Bucata: lutenița.',
+        'La Serbia, salutul e Dobar dan. Capitala se cheamă Belgrad. Culorile: roșu, apoi albastru și alb. Limba e sârba. Numele: Nikola Tesla. Unele grafii scriu Nicola. Forma din lecție rămâne Nikola Tesla. Bucata: ajvarul.',
+        'La Republica Moldova, salutul e Bună ziua. Capitala se cheamă Chișinău. Culorile: roșu, galben, albastru. Limba e româna. Numele: Eugen Doga. Bucata: sarmale cu mămăligă. România, pe același tipar, are capitala la București, drapel albastru cu galben și roșu, limba română.',
+        'Asemănări de verificat. Moldova și România folosesc limba română și un salut românesc. Culorile roșu, galben, albastru apar și la Chișinău. Ucraina, ca și Bulgaria, începe salutul printr-o urare, dar fiecare o spune în graiul ei.',
+        'Nu născoci o datină necitită. Când o cunoști, o legi de locul unde ai citit-o. Când n-o cunoști, notezi că urmează s-o cauți. Un domeniu de influență, deja aici, e bucătăria: gulaș, vareniki, luteniță, ajvar, sarmale. Muzica stă lângă Liszt și lângă Doga, tot din lecție.'
+      ].join('\n\n'),
+      example: [
+        'Ungaria: Budapesta și Jo napot. Ucraina: Kiev. Bulgaria: Sofia.',
+        'Serbia: Belgrad și Nikola Tesla. Republica Moldova: Chișinău, limba română, Eugen Doga. România: București.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'România și Republica Moldova se întâlnesc la limba română și la salutul Bună ziua. Culorile roșu, galben și albastru apar la amândouă. Nu adăuga un dans pe care nu l-ai citit.'
+        }
+      ],
+      tryThis: 'Pentru fiecare dintre cele cinci țări vecine, trei rânduri: salut, capitală, limbă, un nume și o mâncare. Adaugă o asemănare cu România. Completează capitala, culorile și limba României.',
+      keyPoints: [
+        'Capitalele de reținut: Budapesta, Kiev, Sofia, Belgrad și Chișinău, fiecare la țara ei.',
+        'La Chișinău se vorbește româna, iar numele de reținut e Eugen Doga. La Belgrad, numele e Nikola Tesla.',
+        'România are capitala la București. O datină necunoscută se caută, nu se inventează.'
+      ]
+    }),
+    lesson({
+      id: 'proiect-ghid',
+      title: 'Ghidul unei țări, în grup',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'atentie',
+          title: 'Șase etape',
+          text: 'Obiective, plan, cercetare, îmbinare, susținere, părerile colegilor. Grila cu inimi nu înlocuiește ghidul. Ce nu e într-o sursă citită nu se scrie.'
+        }
+      ],
+      theory: [
+        'Proiectul poartă numele Călătorie multiculturală. Grupul are patru membri, iar câteodată un al cincilea. Produsul e un ghid de turism pentru țara scoasă la sorți, împreună cu cultura ei.',
+        'Biletele pot aduce România ori Bulgaria. Apoi vin Grecia și Italia. Lista mai cuprinde Franța, Spania, Portugalia, la urmă Ungaria. Nu adăuga o țară din afara listei.',
+        'Ghidul spune cum ajungi, dă cuvinte uzuale, cazare, obiective, datini, oameni cunoscuți și bucate. Pașii de lucru sunt șase. Grila cu inimi nu e lecția.',
+        'Întâi fixați ținta. Apoi împărțiți sarcinile, sursele, forma ghidului și materialele. Cercetați. Uniți produsul. Îl spuneți colegilor. La capăt ascultați ce părere au.',
+        'Planul de Ungaria ia doar fapte deja spuse. Capitala e Budapesta. Salutul e Jo napot. Limba e maghiara. Numele e Franz Liszt. Bucata e gulașul. Dacă o adresă de cazare nu e într-o sursă citită, nu o scrieți. Spuneți că o căutați.',
+        'Rolurile, la patru, se pot împărți așa. Unul caută locul. Altul caută salutul și limba. Altul caută o personalitate. Altul caută o bucată. Al cincilea, dacă există, leagă rubricile și pregătește susținerea.',
+        'Cinci rubrici: drumul, salutul, un obiectiv, o tradiție, o bucată. Pentru Ungaria, Moldova sau altă țară din cărțile de vizită, folosești faptele deja spuse. Pentru Grecia, Italia, Franța, Spania sau Portugalia, scrii doar ce ai citit.',
+        'Susținerea nu înlocuiește cercetarea. Părerile colegilor vin la urmă și pot cere o corectură, dacă o rubrică n-are sursă. Grila cu inimi rămâne o fișă de observare, nu textul ghidului.'
+      ].join('\n\n'),
+      example: [
+        'Grupul numără patru persoane, iar uneori cinci. Biletele pot fi România sau Bulgaria, apoi Grecia, apoi Italia. Mai departe: Franța ori Spania. La capăt, Portugalia ori Ungaria.',
+        'În produs intră drumul, urarea, locurile de văzut, datinile și mâncarea. Fișa cu inimi nu ține loc de text. Pentru Ungaria, capitala din lecție e Budapesta, iar salutul e Jo napot.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Plan de Ungaria, numai din lecție: capitala Budapesta, salutul Jo napot, limba maghiară, personalitatea Franz Liszt, bucata gulaș. La cazare scrii că o cauți, dacă n-ai citit o adresă.'
+        }
+      ],
+      tryThis: 'Alege în scris o țară de pe lista dată. Împarte munca la patru. Parcurge cei șase pași și scrie cinci rubrici. Fără adresă citită, la cazare notezi că o vei căuta. Fișa cu inimi nu ține loc de ghid.',
+      keyPoints: [
+        'Lucrați câte patru, uneori câte cinci, la un ghid de turism. Țara se trage dintr-un bilet.',
+        'Rubricile acoperă drumul, urarea, locurile, datinile și masa. Pașii se încheie cu părerile colegilor.',
+        'Un fapt necitit nu se născocește. Fișa cu inimi rămâne în afara textului.'
+      ]
+    }),
+    lesson({
+      id: 'recap-calator',
+      title: 'Fesul, hamalii și o barcă pe lac',
+      kind: 'recapitulare',
+      boxes: [
+        {
+          type: 'atentie',
+          title: 'Nu e grila',
+          text: 'Recapitularea stă pe scenă și pe fapte. Grila notată cu 60 de puncte nu e lecția. Nici fișa de observare. Litera pentru fes e b.'
+        }
+      ],
+      theory: [
+        'La clasă poți avea Tartarin din Tarascon. Autorul e Alphonse Daudet. Alt text posibil: un Sherlock tânăr, în Gheața neagră, scrisă de Andrew Lane. Frazele nu se copiază. Mai jos stau faptele lui Tartarin.',
+        'Traversarea ține trei zile. Vaporul se numește Le Zouave și merge din Franța spre Algeria. Naratorul vorbește cititorilor, iar faptele lui Tartarin stau la persoana a III-a. Trei zile e urmărit fesul roșu. La plecare pare semeț. Când vasul saltă, fesul pare mirat.',
+        'După-amiaza zilei a treia: sună clopotul, marinarul aleargă. Barbassou, căpitanul, comandă sala mașinilor înainte, apoi înapoi, apoi stop. Tartarin crede într-o scufundare, iese înarmat pe punte și vede rada Algerului, nu un naufragiu.',
+        'Orașul alb e pe colină, deasupra unei ape adânci, liniștite. Oamenii smulg prelata de pe bagaje. El îi crede pirați și cheamă la arme. Căpitanul îl lămurește: pirații au dispărut. Sunt hamali, cărăuși de bagaje pe uscat.',
+        'El se liniștește doar pe jumătate. Mâna îi stă pe pumnal. E lăudăros și sperios. Barbassou e calm și practic.',
+        'Punctul culminant e spaima de scufundare, urmată de fuga spre cărăuși. Deznodământul e vorba căpitanului. Semnul din deschidere e fesul, litera b. Pumnalul arată teama de la capăt. Nu e obiectul privit trei zile.',
+        'Secvențe: narațiunea drumului, descrierea Algerului, dialogul cu căpitanul. Scenă a noastră, pentru adverb și interjecție. Duminică, în zori, Mara stă în barcă pe lac. Unchiul pescuiește agale. Apa e foarte liniștită. Lângă trestie strigă stop. O rață trece mac-mac.',
+        'Mara spune că tema este pentru mâine. Lecția de azi se face aici. Agale e de mod și circumstanțial. Foarte marchează absolutul. Dimineața e de timp, aici e de loc. Pentru mâine e nume predicativ. De azi e atribut.',
+        'Stop e interjecție predicativă, deci predicat verbal. Mac-mac e onomatopee predicativă. O, singură înaintea unei mirări, e interjecție, nu articol, în scena asta. Dublarea repede, repede doar îngroașă.',
+        'Proba cu stop substantiv: Barca nu a oprit la stop. Pagina ta vine după: o scrii la persoana I și pui o descriere, măcar douăzeci de cuvinte. Din barcă faci trei pași, ce e scris, ce vezi, ce ai face, cu pentru că.'
+      ].join('\n\n'),
+      example: [
+        'Ce e scris: duminică, pe lac, unchiul pescuiește agale. Lângă trestie strigă stop. Ce vezi: îi văd în barcă. Pe lângă ei trece o rață, mac-mac. Eu aș opri barca mai devreme, pentru că a strigat stop.',
+        'Fesul lui Tartarin e litera b. Hamalii duc bagajele. Agale e circumstanțial de mod. Stop e predicat verbal. Pentru mâine poate fi nume predicativ. Vaporul se numește Le Zouave și ține trei zile.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Barca nu a oprit la stop: aici stop e substantiv. Stop, strigă unchiul: aici stop e predicat. Mac-mac e onomatopee predicativă. Foarte, lângă liniștită, marchează superlativul absolut.'
+        }
+      ],
+      tryThis: 'Din scena bărcii, fă cei trei pași. Rândul cu ce vezi pornește de la Îi văd. Dă rolul lui agale, apoi al grupului pentru mâine, apoi al grupului de azi. La Tartarin: durata, vaporul, fesul, litera b și cine cară bagajele.',
+      keyPoints: [
+        'În trei zile, pe Le Zouave, Tartarin ajunge la Alger și ia cărăușii drept pirați. Fesul poartă litera b.',
+        'În barcă, agale e adverb de mod, stop e interjecție predicativă, iar mac-mac e onomatopee.',
+        'Pentru mâine poate fi nume predicativ. Foaia cu puncte nu ține loc de recapitulare.'
+      ]
+    })
   ]
 };
