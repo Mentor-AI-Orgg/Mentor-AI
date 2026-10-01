@@ -47,7 +47,14 @@ describe('lesson builder', () => {
         theory: lesson.theory,
         example: lesson.example,
         tryThis: lesson.tryThis,
-        recap: lesson.recap
+        recap: lesson.recap,
+        kind: lesson.kind,
+        boxes: lesson.boxes,
+        extraExamples: lesson.extraExamples,
+        practice: lesson.practice,
+        answers: lesson.answers,
+        mistakes: lesson.mistakes,
+        keyPoints: lesson.keyPoints
       });
       expect(built.platter).toBe(lesson.platter);
     });
