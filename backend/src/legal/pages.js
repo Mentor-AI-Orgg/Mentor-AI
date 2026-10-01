@@ -108,8 +108,8 @@ function privacyHtml() {
     ${operatorBlock()}
     <p>${escapeHtml(legal.product)} este gratuită, fără reclame și fără un serviciu de inteligență artificială plătit. Versiunea politicii: ${escapeHtml(legal.policyVersion)}.</p>
     <h3>Ce date păstrăm și de ce</h3>
-    <p>Temeiul este acordul părintelui, articolul 6 alineatul (1) litera (a) și articolul 8 din GDPR. Păstrăm numele de utilizator, clasa, progresul la lecții și teste, conversația cu tutorele, calendarul, prietenii după nume de utilizator, obiectele din magazin și emailul părintelui. Nu cerem emailul copilului, numele real, telefonul sau școala.</p>
-    <p>Fără acord, elevul poate citi lecțiile și face exerciții. Prietenii, clasamentul și magazinul rămân închise. Contul fără acord se șterge după ${pending} zile.</p>
+    <p>Păstrăm numele de utilizator, clasa, progresul la lecții și teste, conversația cu tutorele, calendarul, prietenii după nume de utilizator, obiectele din magazin și emailul părintelui. Emailul este ca părintele să vadă rezumatul. Nu cerem emailul copilului, numele real, telefonul sau școala.</p>
+    <p>Emailul părintelui se salvează la înscriere. Contul se deschide imediat, fără un buton de da sau nu. Părintele vede un rezumat în zona lui și primește același fel de rezumat pe email: lecții, minute, teste. Nu primește mesajele către tutore. Un cont vechi rămas fără acest email se șterge după ${pending} zile.</p>
     <h3>Cât timp</h3>
     <ul>
       <li>fără acord: ${pending} zile;</li>
@@ -147,7 +147,7 @@ function termsHtml() {
     <h2>Pentru părinți</h2>
     ${operatorBlock()}
     <p>${escapeHtml(legal.product)} este un mentor gratuit pentru clasele 5–8, la română și matematică. Nu rezolvă tema în locul elevului și nu înlocuiește profesorul. Versiunea termenilor: ${escapeHtml(legal.policyVersion)}. Legea aplicabilă este legea României.</p>
-    <p>Înscrierea cere un nume de utilizator, o parolă, clasa și emailul părintelui. Părintele confirmă sau refuză din link. Refuzul șterge contul. Prietenii, clasamentul și magazinul se deschid doar după acord.</p>
+    <p>Înscrierea cere un nume de utilizator, o parolă, clasa și emailul părintelui. Contul se deschide imediat. Părintele primește rezumatul activității pe email și îl vede în zona de părinte. Poate opri emailurile sau poate șterge contul de acolo.</p>
     <p>Nu există abonament. Magazinul folosește monede câștigate din învățare. Răspunderea pentru temele școlare rămâne a elevului și a adulților care îl îndrumă. Putem închide un cont care încalcă acești termeni.</p>
     <p>Copilul își poate șterge contul din Profil, cu parola și cuvântul ȘTERGE. Părintele poate șterge contul din zona lui, fără parola copilului.</p>
     <p><a href="/confidentialitate">Citește și politica de confidențialitate</a>.</p>

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { STUDENTS_ONLY } = require('../middleware/auth');
-const { isConsentGranted } = require('../data/authStore');
+const { accountIsOpen } = require('../data/authStore');
 const { validateBody } = require('../middleware/validate');
 const { claimSchema, buySchema, equipSchema, progressSchema } = require('../validation/schemas');
 const {
@@ -86,7 +86,7 @@ router.post('/claim', validateBody(claimSchema), async (req, res) => {
 });
 
 function blockPending(req, res) {
-  if (!isConsentGranted(req.auth.account)) {
+  if (!accountIsOpen(req.auth.account)) {
     res.status(403).json({ error: 'consent_pending' });
     return true;
   }

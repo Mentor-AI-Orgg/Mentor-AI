@@ -50,7 +50,11 @@ async function registerPending(app, overrides = {}) {
 
 async function registerGranted(app, overrides = {}) {
   const pending = await registerPending(app, overrides);
-  if (pending.res.status !== 201 || !pending.token) return pending;
+  if (pending.res.status !== 201) return pending;
+  if (pending.res.body?.user?.consent === 'notified' || pending.res.body?.user?.consent === 'granted') {
+    return { ...pending, confirm: { status: 200, body: { consent: pending.res.body.user.consent } } };
+  }
+  if (!pending.token) return pending;
   const confirm = await request(app).post('/api/auth/consent').send({
     token: pending.token,
     action: 'grant'

@@ -15,7 +15,9 @@ const {
   consumeResetToken,
   isInternalEmail,
   isConsentGranted,
+  accountIsOpen,
   markPending,
+  markNotified,
   ensureParentAccount,
   linkChildToParent,
   grantConsent,
@@ -215,14 +217,15 @@ router.post("/register", authLimiter, ignoreChildIdentity, validateBody(register
     username: created.account.profile.username
   });
 
-  const confirmation = await sendConsentEmail(req, created.account);
+  const parent = await ensureParentAccount(created.account.profile.parentEmail);
+  if (parent) linkChildToParent(parent.email, created.account.email);
+
   const { token, maxAge } = createSession(created.account.email);
   res.cookie(SESSION_COOKIE, token, sessionCookieOptions(maxAge));
   res.status(201).json({
     success: true,
     user: publicAccount(created.account),
-    parentNotified: Boolean(confirmation.sent),
-    confirmationMessage: confirmation.message || ""
+    parentNotified: false
   });
 });
 
@@ -271,12 +274,16 @@ router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) =
     result.account.mustRename = true;
   }
 
-  if (!isConsentGranted(result.account)) {
-    const firstPending = !result.account.consent;
+  if (!accountIsOpen(result.account)) {
     stripLegacyProfile(result.account);
-    markPending(result.account);
-    if (firstPending) await sendConsentEmail(req, result.account);
-  } else {
+    if (result.account.profile?.parentEmail) {
+      markNotified(result.account);
+      const parent = await ensureParentAccount(result.account.profile.parentEmail);
+      if (parent) linkChildToParent(parent.email, result.account.email);
+    } else {
+      markPending(result.account);
+    }
+  } else if (isConsentGranted(result.account)) {
     await maybeAskReconsent(req, result.account);
   }
 
@@ -383,7 +390,7 @@ router.post("/consent/resend", authLimiter, async (req, res) => {
   if (!req.auth || req.auth.role !== "student") {
     return res.status(401).json({ error: "Autentificare necesară.", code: "unauthenticated" });
   }
-  if (isConsentGranted(req.auth.account)) {
+  if (accountIsOpen(req.auth.account)) {
     return res.json({ success: true, already: true });
   }
   const confirmation = await sendConsentEmail(req, req.auth.account, { resend: true });
@@ -400,7 +407,18 @@ router.post("/consent/parent-email", authLimiter, validateBody(parentEmailSchema
   if (isConsentGranted(req.auth.account)) {
     return res.status(400).json({ error: "Acordul este deja confirmat." });
   }
-  req.auth.account.profile.parentEmail = normalizeEmail(req.body.parentEmail);
+  const nextEmail = normalizeEmail(req.body.parentEmail);
+  const previous = req.auth.account.profile.parentEmail;
+  req.auth.account.profile.parentEmail = nextEmail;
+  if (accountIsOpen(req.auth.account)) {
+    const previousParent = findAccount(previous);
+    if (previousParent && Array.isArray(previousParent.children)) {
+      previousParent.children = previousParent.children.filter(email => normalizeEmail(email) !== req.auth.account.email);
+    }
+    const parent = await ensureParentAccount(nextEmail);
+    if (parent) linkChildToParent(parent.email, req.auth.account.email);
+    return res.json({ success: true, user: publicAccount(req.auth.account) });
+  }
   const confirmation = await sendConsentEmail(req, req.auth.account);
   res.json({
     success: true,

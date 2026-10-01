@@ -16,7 +16,8 @@ function runPendingCleanup(now = Date.now()) {
   const removed = [];
   for (const account of listAccounts()) {
     if (account.role !== "student") continue;
-    if (account.consent && account.consent.status === "granted") continue;
+    const status = account.consent?.status;
+    if (status === "granted" || status === "notified") continue;
     if (now - pendingSince(account) <= PENDING_MS) continue;
     removed.push(account.email);
     eraseAccount(account.email);

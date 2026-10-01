@@ -45,11 +45,11 @@ async function warnOnce(account) {
 
 async function runRetention(now = Date.now()) {
   const pending = runPendingCleanup(now);
-  const granted = listAccounts().filter(account => (
-    account.role === "student" && account.consent?.status === "granted"
+  const openStudents = listAccounts().filter(account => (
+    account.role === "student" && (account.consent?.status === "granted" || account.consent?.status === "notified")
   ));
   const removedInactive = [];
-  for (const account of granted) {
+  for (const account of openStudents) {
     if (!listAccounts().some(row => row.email === account.email)) continue;
     const idle = now - idleSince(account);
     if (idle >= INACTIVE_MS) {

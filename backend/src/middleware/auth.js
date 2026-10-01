@@ -6,7 +6,7 @@
 // exclusiv din cookie-ul de sesiune, semnat server-side și imposibil de
 // falsificat din browser.
 
-const { getSession, findAccount, isConsentGranted, isSuspended } = require("../data/authStore");
+const { getSession, findAccount, accountIsOpen, isSuspended } = require("../data/authStore");
 const { getParentSession } = require("../data/consentStore");
 const { usernameIssue } = require("../safety/usernamePolicy");
 
@@ -66,7 +66,7 @@ function consentRequired(req, res, next) {
   if (!req.auth) {
     return res.status(401).json({ error: "Autentificare necesară.", code: "unauthenticated" });
   }
-  if (!isConsentGranted(req.auth.account)) {
+  if (!accountIsOpen(req.auth.account)) {
     return res.status(403).json({ error: "consent_pending" });
   }
   next();

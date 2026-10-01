@@ -201,7 +201,7 @@ function AppShell({ userData, setUserData }) {
       return;
     }
 
-    if (session.user.consent !== 'granted') {
+    if (session.user.consent !== 'granted' && session.user.consent !== 'notified') {
       if (route.kind === 'app' && ['learn', 'home', 'calendar', 'ajutor'].includes(route.screen)) {
         if (route.extras) {
           setStudyFocus(prev => ({
@@ -275,7 +275,7 @@ function AppShell({ userData, setUserData }) {
       return { success: true };
     }
 
-    if (user.consent !== 'granted') {
+    if (user.consent !== 'granted' && user.consent !== 'notified') {
       setScreen('consent-wait');
       writeHash('consent-wait', {}, 'replace');
       showToast(t('toast.welcome'), 'success');
@@ -340,9 +340,17 @@ function AppShell({ userData, setUserData }) {
     }
 
     const user = registration.data?.user || {};
-    setUserData(prev => applyAccount({ ...user, consent: user.consent || 'pending', parentEmail: formData.parentEmail }, prev));
-    setScreen('consent-wait');
-    writeHash('consent-wait', {}, 'replace');
+    setUserData(prev => applyAccount({ ...user, consent: user.consent || 'notified', parentEmail: formData.parentEmail }, prev));
+    if (!user.hasCompletedOnboarding) {
+      setOnboardingData(prev => ({ ...prev, name: user.name || prev.name, class: formData.class || prev.class }));
+      setOnboardingStep(2);
+      setScreen('onboarding');
+      writeHash('onboarding', {}, 'replace');
+      return { success: true };
+    }
+    setScreen('home');
+    setNavScreen('home');
+    writeHash('home', {}, 'replace');
     return { success: true };
   };
 
@@ -415,7 +423,7 @@ function AppShell({ userData, setUserData }) {
   };
 
   const handleNavigate = (target, extras = {}) => {
-    if (userData.consent !== 'granted' && ['professor', 'shop', 'profile'].includes(target)) {
+    if (userData.consent !== 'granted' && userData.consent !== 'notified' && ['professor', 'shop', 'profile'].includes(target)) {
       setScreen('consent-wait');
       writeHash('consent-wait');
       return;

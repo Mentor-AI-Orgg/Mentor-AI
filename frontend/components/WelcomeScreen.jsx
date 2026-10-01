@@ -33,18 +33,18 @@ const FEATURES = [
 
 const STEPS = [
   { n: '1', title: 'Îți faci cont', text: 'Cu un nume de utilizator. Fără emailul tău.' },
-  { n: '2', title: 'Părintele confirmă', text: 'Primește un email și confirmă contul.' },
+  { n: '2', title: 'Emailul părintelui', text: 'Îl scrii la cont. Primește vești, fără un da sau nu.' },
   { n: '3', title: 'Înveți pas cu pas', text: 'În ritmul tău, lecție cu lecție.' }
 ];
 
 const FAQ = [
   { q: 'E gratuit?', a: 'Da. Nu cerem bani și nu punem reclame.' },
-  { q: 'De ce trebuie emailul părintelui?', a: 'Ca să confirme contul. Tu nu îți pui adresa de email.' },
+  { q: 'De ce trebuie emailul părintelui?', a: 'Ca să vadă ce înveți: un rezumat pe email și în zona de părinte. Tu nu îți pui adresa de email.' },
   { q: 'Merge pe telefon?', a: 'Da. Poți învăța de pe telefon sau de pe calculator.' },
   { q: 'Ce clase acoperă?', a: 'Matematică și română, pentru clasele V–VIII.' },
   {
     q: 'Cine îmi poate șterge datele?',
-    a: 'Părintele confirmă contul și poate cere oricând ștergerea datelor.'
+    a: 'Tu, din Profil, sau părintele, din zona lui. Ștergerea ia și datele.'
   }
 ];
 
@@ -115,7 +115,7 @@ const WelcomeScreen = ({ onConnect, onRegister, onParent }) => {
         <h2 id="welcome-parents-title">Pentru părinți</h2>
         <p>
           Gratuit, fără reclame. Nu vindem datele. Profilurile sunt private din start.
-          Părintele confirmă contul și poate cere oricând ștergerea datelor.
+          Părintele vede rezumatul și poate cere oricând ștergerea datelor.
         </p>
         <p className="welcome-legal-links">
           <a href="/confidentialitate">Politica de confidențialitate</a>

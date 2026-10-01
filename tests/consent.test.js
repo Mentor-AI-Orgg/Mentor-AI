@@ -40,7 +40,9 @@ describe('acordul părintelui', () => {
     };
     const created = await registerPending(app, planted);
     expect(created.res.status).toBe(201);
-    expect(created.res.body.user.consent).toBe('pending');
+    expect(created.res.body.user.consent).toBe('notified');
+    expect(created.res.body.user.parentEmail).toBe(created.parentEmail);
+    expect(authStore.findAccount(created.parentEmail).role).toBe('parent');
     expect(created.res.body.user.email).toBe('');
     expect(created.res.body.user.username).toBe(created.username);
 
@@ -62,20 +64,16 @@ describe('acordul părintelui', () => {
     const { agent } = created;
 
     const friends = await agent.get('/api/friends/me');
-    expect(friends.status).toBe(403);
-    expect(friends.body.error).toBe('consent_pending');
+    expect(friends.status).toBe(200);
 
     const board = await agent.get('/api/leaderboard');
-    expect(board.status).toBe(403);
-    expect(board.body.error).toBe('consent_pending');
+    expect(board.status).toBe(200);
 
     const chat = await agent.post('/api/chat').send({ message: 'Ce este o fracție?' });
-    expect(chat.status).toBe(403);
-    expect(chat.body.error).toBe('consent_pending');
+    expect(chat.status).toBe(200);
 
     const photos = await agent.get('/api/curriculum/en/photo-quota');
-    expect(photos.status).toBe(403);
-    expect(photos.body.error).toBe('consent_pending');
+    expect(photos.status).toBe(200);
 
     const lessons = await agent.get('/api/curriculum').query({ subject: 'matematica', class_level: 5 });
     expect(lessons.status).toBe(200);
@@ -98,20 +96,23 @@ describe('acordul părintelui', () => {
     expect(crisis.body.response).toContain('112');
   });
 
-  it('confirmă doar prin POST, păstrează tokenul ca hash și refuzul șterge contul', async () => {
+  it('nu trimite link de da sau nu la înscriere; un link vechi încă se confirmă prin POST', async () => {
     const { app } = createApp({ autosave: false });
     const created = await registerPending(app);
+    expect(created.token).toBe('');
+    expect(created.logs.join('\n')).not.toMatch(/#\/acord\//);
     const account = authStore.findByUsername(created.username);
+    const token = consentStore.issueConsentToken(account.email);
     const raw = savedText();
-    expect(raw).not.toContain(created.token);
-    expect(raw).toContain(hashToken(created.token));
+    expect(raw).not.toContain(token);
+    expect(raw).toContain(hashToken(token));
 
-    const peek = await request(app).get(`/api/auth/consent/${created.token}`);
+    const peek = await request(app).get(`/api/auth/consent/${token}`);
     expect(peek.status).toBe(200);
-    expect(authStore.findAccount(account.email).consent.status).toBe('pending');
+    expect(authStore.findAccount(account.email).consent.status).toBe('notified');
 
     const grant = await request(app).post('/api/auth/consent').send({
-      token: created.token,
+      token,
       action: 'grant'
     });
     expect(grant.status).toBe(200);
@@ -125,15 +126,16 @@ describe('acordul părintelui', () => {
     expect(authStore.findAccount(created.parentEmail).role).toBe('parent');
 
     const again = await request(app).post('/api/auth/consent').send({
-      token: created.token,
+      token,
       action: 'grant'
     });
     expect(again.status).toBe(400);
 
     const refused = await registerPending(app);
     const refusedAccount = authStore.findByUsername(refused.username);
+    const refusedToken = consentStore.issueConsentToken(refusedAccount.email);
     const refusal = await request(app).post('/api/auth/consent').send({
-      token: refused.token,
+      token: refusedToken,
       action: 'refuse'
     });
     expect(refusal.status).toBe(200);
@@ -149,35 +151,32 @@ describe('acordul părintelui', () => {
   it('respinge linkul de confirmare după 7 zile', async () => {
     const { app } = createApp({ autosave: false });
     const created = await registerPending(app);
+    const account = authStore.findByUsername(created.username);
+    const token = consentStore.issueConsentToken(account.email);
     const start = Date.now();
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(start + 7 * DAY + 1000);
     const late = await request(app).post('/api/auth/consent').send({
-      token: created.token,
+      token,
       action: 'grant'
     });
     expect(late.status).toBe(400);
-    expect(authStore.findByUsername(created.username).consent.status).toBe('pending');
+    expect(authStore.findByUsername(created.username).consent.status).toBe('notified');
   });
 
   it('limitează retrimiterile la 3 pe cont și la 5 pe adresă', async () => {
     const { app } = createApp({ autosave: false });
     const created = await registerPending(app);
-    for (let n = 0; n < 3; n += 1) {
-      const resend = await created.agent.post('/api/auth/consent/resend');
-      expect(resend.status).toBe(200);
-      expect(resend.body.sent).toBe(true);
-    }
-    const blocked = await created.agent.post('/api/auth/consent/resend');
-    expect(blocked.status).toBe(429);
-    expect(blocked.body.error).toBe(LIMITED);
+    const resend = await created.agent.post('/api/auth/consent/resend');
+    expect(resend.status).toBe(200);
+    expect(resend.body.already).toBe(true);
 
     const parentEmail = uniqueEmail('aceeasi');
     const made = [];
     for (let n = 0; n < 3; n += 1) {
       const one = await registerPending(app, { parentEmail });
       expect(one.res.status).toBe(201);
-      expect(one.token).toBeTruthy();
+      expect(one.token).toBe('');
       made.push(one);
     }
     const fourth = await registerPending(app, { parentEmail });
@@ -307,7 +306,8 @@ describe('acordul părintelui', () => {
       password: PASSWORD
     });
     expect(login.status).toBe(200);
-    expect(login.body.user.consent).toBe('pending');
+    expect(login.body.user.consent).toBe('notified');
+    expect(authStore.findAccount(parentEmail).role).toBe('parent');
     const after = authStore.findAccount(legacy.account.email);
     expect(after.profile.name).toBe('');
     expect(after.profile.phone).toBe('');
@@ -323,8 +323,8 @@ describe('acordul părintelui', () => {
     const staleAccount = authStore.findByUsername(stale.username);
     const freshAccount = authStore.findByUsername(fresh.username);
     const keptAccount = authStore.findByUsername(kept.username);
-    staleAccount.consent.requestedAt = new Date(Date.now() - 15 * DAY).toISOString();
-    keptAccount.consent.requestedAt = new Date(Date.now() - 40 * DAY).toISOString();
+    staleAccount.consent = { status: 'pending', requestedAt: new Date(Date.now() - 15 * DAY).toISOString() };
+    keptAccount.consent = { status: 'granted', at: keptAccount.consent.at, requestedAt: new Date(Date.now() - 40 * DAY).toISOString() };
 
     const removed = pendingCleanup.runPendingCleanup();
     expect(removed).toContain(staleAccount.email);

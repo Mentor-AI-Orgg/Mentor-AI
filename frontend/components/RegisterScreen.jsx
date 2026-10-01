@@ -82,7 +82,7 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
       <img className="app-emblem form-emblem" src="/emblema.png" alt="Sunt de 10" />
       <div className="eyebrow">Cont de elev</div>
       <h1 className="display-font form-title">Fă-ți un cont.</h1>
-      <p className="form-subtitle">Îi trimitem un email părintelui tău. După ce confirmă, poți folosi tot ce e în aplicație. Până atunci poți citi lecțiile și face exerciții.</p>
+      <p className="form-subtitle">Pui emailul părintelui. Contul se deschide imediat. Părintele primește vești când înveți, fără să confirme contul.</p>
       <QuoteCard />
 
       <div className="form-fields">
@@ -181,7 +181,7 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
               className={`field form-input ${touched.parentEmail ? (fieldValid('parentEmail') ? 'field-valid' : 'field-invalid') : ''}`}
             />
           </label>
-          <small className="field-hint">Părintele tău va primi politica de confidențialitate. <a href="/confidentialitate">Citește politica</a>.</small>
+          <small className="field-hint">Aici vin rezumatul de pe email și intrarea în zona de părinte. <a href="/confidentialitate">Citește politica</a>.</small>
         </div>
       </div>
 

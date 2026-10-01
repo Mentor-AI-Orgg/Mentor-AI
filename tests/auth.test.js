@@ -76,10 +76,12 @@ describe('auth', () => {
     }
   });
 
-  it('emails the parent when the student account is created', async () => {
+  it('stores the parent email at signup and does not ask them to accept the account', async () => {
     const created = await registerGranted(app, { username: 'ionel_test' });
     expect(created.res.status).toBe(201);
-    expect(created.res.body.parentNotified).toBe(true);
+    expect(created.res.body.parentNotified).toBe(false);
+    expect(created.res.body.user.consent).toBe('notified');
+    expect(created.res.body.user.parentEmail).toBe(created.parentEmail);
   });
 
   it('does not email the parent when the student logs in', async () => {

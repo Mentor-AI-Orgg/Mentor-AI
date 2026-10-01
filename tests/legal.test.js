@@ -134,7 +134,7 @@ describe('pagini legale', () => {
     expect(index).toContain('Sunt de 10');
   });
 
-  it('cere din nou acordul când versiunea politicii o cere', async () => {
+  it('nu cere acordul părintelui la prima logare', async () => {
     legal.requiresReconsent = true;
     const { app } = createApp({ autosave: false });
     const created = await registerGranted(app);
@@ -156,20 +156,8 @@ describe('pagini legale', () => {
       console.log = original;
     }
     expect(login.status).toBe(200);
-    expect(logs.join('\n')).toMatch(/\[DEV\] .+\/#\/acord\/[a-f0-9]+/);
-    expect(account.reconsentFor).toBe(legal.policyVersion);
-
-    console.log = (...args) => {
-      logs.push(`again ${args.map(item => String(item)).join(' ')}`);
-    };
-    try {
-      await request(app).post('/api/auth/login').send({
-        email: created.username,
-        password: PASSWORD
-      });
-    } finally {
-      console.log = original;
-    }
-    expect(logs.some(line => line.startsWith('again '))).toBe(false);
+    expect(logs.join('\n')).not.toMatch(/#\/acord\//);
+    expect(account.consent.status).toBe('notified');
+    expect(account.reconsentFor).toBeUndefined();
   });
 });

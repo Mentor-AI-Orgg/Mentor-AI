@@ -77,6 +77,11 @@ function isConsentGranted(account) {
   return Boolean(account && account.consent && account.consent.status === "granted");
 }
 
+function accountIsOpen(account) {
+  const status = account?.consent?.status;
+  return status === "granted" || status === "notified";
+}
+
 async function changePassword(email, currentPassword, nextPassword) {
   const account = findAccount(email);
   if (!account) return { ok: false, reason: "missing" };
@@ -117,7 +122,7 @@ async function createStudentAccount({ username, password, className, parentEmail
       hasCompletedOnboarding: false,
       parentEmails: "weekly"
     },
-    consent: { status: "pending", requestedAt: now },
+    consent: { status: "notified", at: now, method: "email-on-file" },
     parentalConsentAt: null,
     privacyAcceptedAt: null,
     createdAt: now
@@ -179,6 +184,17 @@ function grantConsent(account, { policyVersion, parentEmail }) {
     parentEmailHash: crypto.createHash("sha256").update(normalizeEmail(parentEmail)).digest("hex")
   };
   account.parentalConsentAt = account.consent.at;
+}
+
+function markNotified(account) {
+  if (!account || isConsentGranted(account)) return account;
+  const now = new Date().toISOString();
+  account.consent = {
+    status: "notified",
+    at: account.consent?.at || now,
+    method: "email-on-file"
+  };
+  return account;
 }
 
 function markPending(account) {
@@ -503,6 +519,8 @@ module.exports = {
   migrateLegacyProfiles,
   flagRejectedUsernames,
   isConsentGranted,
+  accountIsOpen,
+  markNotified,
   isInternalEmail,
   findAccount,
   findByUsername,

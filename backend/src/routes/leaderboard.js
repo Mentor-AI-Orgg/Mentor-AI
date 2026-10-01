@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { listLeaderboardEntries, lessonsThisWeek } = require("../data/leaderboard");
 const { isPrivatePublicId, publicId, findByPublicId, isBlocked } = require("../data/friendStore");
-const { listAccounts, isConsentGranted } = require("../data/authStore");
+const { listAccounts, accountIsOpen } = require("../data/authStore");
 const { authRequired, consentRequired } = require("../middleware/auth");
 const { usernameIssue } = require("../safety/usernamePolicy");
 
@@ -10,7 +10,7 @@ const { usernameIssue } = require("../safety/usernamePolicy");
 // Clasament all-time după XP. Profilurile private rămân cu locul și punctajul, fără nume.
 function grantedEntry(entry) {
   const account = listAccounts().find(item => publicId(item.email) === entry.id);
-  return Boolean(account && isConsentGranted(account));
+  return Boolean(account && accountIsOpen(account));
 }
 
 router.get("/summary", (req, res) => {

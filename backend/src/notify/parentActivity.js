@@ -1,7 +1,7 @@
 // Activitatea copilului se adună și pleacă cel mult un rezumat pe zi.
 // Nu copiem mesaje, răspunsuri sau câmpul note trimis de browser.
 
-const { findAccount, isConsentGranted, listAccounts } = require("../data/authStore");
+const { findAccount, accountIsOpen, listAccounts } = require("../data/authStore");
 const { getGuide } = require("../data/gimnaziuGuide");
 const { publicPaperById } = require("../data/enPaperFactory");
 
@@ -127,7 +127,7 @@ async function notifyParent({ studentEmail, type, meta = {} }) {
   const account = findAccount(studentEmail);
   if (!account || account.role !== "student") return { skipped: true, reason: "not_student" };
   if (type === "crisis_help") return { skipped: true, reason: "crisis_no_email" };
-  if (!isConsentGranted(account)) return { skipped: true, reason: "consent_pending" };
+  if (!accountIsOpen(account)) return { skipped: true, reason: "consent_pending" };
   if (!account.profile?.parentEmail) return { skipped: true, reason: "no_parent" };
   if (!ALLOWED_TYPES.has(type)) return { skipped: true, reason: "unknown_type" };
   if (QUIET.has(type)) return { skipped: true, reason: "not_emailed" };
@@ -180,7 +180,7 @@ async function sendDueDigests(now = new Date(), { force = false } = {}) {
   const { publicBaseUrl } = require("../publicUrl");
   const sent = [];
   for (const account of listAccounts()) {
-    if (account.role !== "student" || !isConsentGranted(account)) continue;
+    if (account.role !== "student" || !accountIsOpen(account)) continue;
     const freq = account.profile.parentEmails || "weekly";
     if (freq === "off") continue;
     if (freq === "weekly" && clock.weekday !== "Sun" && !force) continue;

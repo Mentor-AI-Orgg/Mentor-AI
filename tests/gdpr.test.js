@@ -198,6 +198,7 @@ describe('export, ștergere și păstrare', () => {
     const granted = await registerGranted(app);
     const pendingAccount = authStore.findByUsername(pending.username);
     const grantedAccount = authStore.findByUsername(granted.username);
+    pendingAccount.consent = { status: 'pending', requestedAt: new Date(start).toISOString() };
 
     vi.setSystemTime(start + 15 * DAY);
     await runRetention();
