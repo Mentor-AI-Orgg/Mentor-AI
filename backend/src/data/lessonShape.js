@@ -1,5 +1,29 @@
-// Lecțiile rămân originale (platter). Le așezăm în 4 rafturi ca să se
+// Lecțiile rămân originale (platter). Le așezăm în rafturi ca să se
 // citească ca o lecție: teorie, exemplu, încearcă tu, recap.
+//
+// Câmpurile de mai jos sunt opționale. Lecțiile vechi nu le au, iar
+// `splitPlatter` nu inventează `answers` sau `keyPoints`.
+//
+// @typedef {Object} Lesson
+// @property {string} id
+// @property {string} title
+// @property {string} platter Textul integral, inclusiv pliabilele, fără `**`.
+// @property {string} [theory]
+// @property {string} [example]
+// @property {string} [practice] Doar itemii numerotați, fără „Răspunsuri:”.
+// @property {string} [mistakes]
+// @property {string} [tryThis]
+// @property {string} [recap] Calculat din `keyPoints` unite cu spațiu, când există.
+// @property {string} [figure]
+// @property {string[]} [formulas]
+// @property {'limba'|'lectura'|'comunicare'|'redactare'|'recapitulare'} [kind] Doar română.
+// @property {{type:'definitie'|'formula'|'regula'|'atentie', title?:string, text:string}[]} [boxes]
+// @property {{title:string, text:string}[]} [extraExamples]
+// @property {string[]} [answers] Răspunsurile de la practice, în ordine. Lungimea e egală cu numărul de itemi.
+// @property {string[]} [keyPoints] 2–3 puncte „De reținut”.
+// @property {{title:string, text:string}[]} [more]
+// @property {string[]} [figures] Desene în plus. `figure` rămâne primul.
+// @property {{key:string, lesson:string}[]} [seeAlso] Doar fișele EN8.
 
 function splitPlatter(platter) {
   return String(platter || '')
@@ -12,6 +36,24 @@ function defaultTryThis(title) {
   return `Încearcă tu: închide ecranul douăzeci de secunde și spune cu voce tare ideea din „${title}”, apoi scrie un exemplu al tău, nu pe cel din lecție.`;
 }
 
+// Separă „Răspunsuri:” doar când sunt numerotate cu 1). Altfel nu ghicim.
+function takeNumberedAnswers(practice) {
+  const text = String(practice || '');
+  const match = text.match(/(?:^|\n\n)Răspunsuri:\s*([\s\S]*)$/i);
+  if (!match) return null;
+  const body = match[1].trim();
+  if (!body.startsWith('1)')) return null;
+  const chunks = body.split(/\s*;\s*(?=\d+\))/);
+  const answers = [];
+  for (let index = 0; index < chunks.length; index += 1) {
+    const part = chunks[index].match(/^(\d+)\)\s*([\s\S]*)$/);
+    if (!part || Number(part[1]) !== index + 1) return null;
+    answers.push(part[2].trim());
+  }
+  if (!answers.length) return null;
+  return { practice: text.slice(0, match.index).trim(), answers };
+}
+
 function shapeLesson(lesson) {
   if (!lesson || typeof lesson !== 'object') return lesson;
   const parts = splitPlatter(lesson.platter);
@@ -21,12 +63,25 @@ function shapeLesson(lesson) {
   const example = lesson.example
     || (exampleIdx >= 0 ? parts[exampleIdx] : (parts[1] || parts[0] || ''));
   const after = exampleIdx >= 0 ? parts.slice(exampleIdx + 1) : parts.slice(2);
+  const fromPoints = Array.isArray(lesson.keyPoints) && lesson.keyPoints.length
+    ? lesson.keyPoints.join(' ')
+    : '';
   const recap = lesson.recap
+    || fromPoints
     || after[after.length - 1]
     || 'Recap: spune ideea în două propoziții, cu cuvintele tale, fără să te uiți în text.';
   const middle = after.filter(part => part !== recap);
   const tryThis = lesson.tryThis || middle[0] || defaultTryThis(lesson.title || 'lecția');
-  return {
+  let practice = lesson.practice;
+  let answers = lesson.answers;
+  if (!Array.isArray(answers) && practice) {
+    const split = takeNumberedAnswers(practice);
+    if (split) {
+      practice = split.practice;
+      answers = split.answers;
+    }
+  }
+  const shaped = {
     ...lesson,
     theory,
     example,
@@ -34,6 +89,9 @@ function shapeLesson(lesson) {
     recap,
     glossary: Array.isArray(lesson.glossary) ? lesson.glossary : []
   };
+  if (practice !== undefined) shaped.practice = practice;
+  if (Array.isArray(answers)) shaped.answers = answers;
+  return shaped;
 }
 
 function shapeUnit(unit) {
@@ -53,4 +111,4 @@ function collectGlossary(unit) {
   return words.slice(0, 8);
 }
 
-module.exports = { shapeLesson, shapeUnit, splitPlatter };
+module.exports = { shapeLesson, shapeUnit, splitPlatter, takeNumberedAnswers };

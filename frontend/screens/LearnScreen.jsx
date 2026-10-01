@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import FocusTimer from '../components/FocusTimer.jsx';
 import FlashCards from '../components/FlashCards.jsx';
@@ -6,29 +6,13 @@ import ChapterQuiz from '../components/ChapterQuiz.jsx';
 import EnPaperView from '../components/EnPaperView.jsx';
 import QuoteCard from '../components/QuoteCard.jsx';
 import Mascota from '../components/mascot/Mascota.jsx';
-import GeoFigure from '../components/GeoFigure.jsx';
 import GeometryAtlas from '../components/GeometryAtlas.jsx';
+import LessonCard from '../components/LessonCard.jsx';
 import { dailySlogan } from '../slogans.js';
 import { emitMascot } from '../mascot/mascotEvents.js';
 import { MASCOT_MESSAGES } from '../i18n/mascotMessages.js';
-import { splitLessonParagraphs } from '../lessonParagraphs.js';
-import MathText from '../components/MathText.jsx';
+import { lessonIdFromHash, resolveAnchorId } from '../lessonText.js';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
-
-function LessonProse({ label, text, className }) {
-  const parts = splitLessonParagraphs(text);
-  if (!parts.length) return null;
-  return (
-    <div className={className || undefined}>
-      {parts.map((part, index) => (
-        <p key={`${label}-${index}`}>
-          {index === 0 ? <strong>{label} </strong> : null}
-          <MathText text={part} />
-        </p>
-      ))}
-    </div>
-  );
-}
 
 const makeConversationId = prefix => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 const SESSION_STEPS = [
@@ -166,8 +150,36 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     return () => { cancelled = true; };
   }, [subject, grade, isEn]);
 
-  const units = guide?.units || [];
+  const units = useMemo(() => guide?.units || [], [guide]);
   const savedSessions = userData.savedSessions || [];
+  const [anchorId, setAnchorId] = useState('');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const apply = () => {
+      const raw = lessonIdFromHash(window.location.hash);
+      if (!raw) {
+        setAnchorId('');
+        return;
+      }
+      const unit = units.find(item => resolveAnchorId(item.lessons, item.lessonAliases, raw));
+      if (!unit) return;
+      setAnchorId(resolveAnchorId(unit.lessons, unit.lessonAliases, raw));
+      setOpenChapter(unit.id);
+    };
+    apply();
+    window.addEventListener('hashchange', apply);
+    return () => window.removeEventListener('hashchange', apply);
+  }, [units]);
+
+  useEffect(() => {
+    if (!anchorId || typeof document === 'undefined') return undefined;
+    const node = document.getElementById(`lectie-${anchorId}`);
+    if (!node) return undefined;
+    if (node.tagName === 'DETAILS') node.open = true;
+    node.scrollIntoView({ block: 'start' });
+    return undefined;
+  }, [anchorId, openChapter, guide]);
 
   const applyResult = result => {
     const summary = result?.data?.summary;
@@ -544,21 +556,13 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                       {(unit.lessons || []).length > 0 && (
                         <ol className="lesson-platter-list">
                           {unit.lessons.map((entry, lessonIndex) => (
-                            <li key={entry.id} className="lesson-platter">
-                              <h4>Lecția {lessonIndex + 1}. {entry.title}</h4>
-                              {entry.figure && (
-                                <GeoFigure kind={entry.figure} formulas={entry.formulas} />
-                              )}
-                              <LessonProse label="Teorie." text={entry.theory} />
-                              <LessonProse label="Exemplu." text={entry.example} />
-                              {entry.practice ? <LessonProse label="Exersează." text={entry.practice} className="lesson-practice" /> : null}
-                              {entry.mistakes ? <LessonProse label="Greșeli frecvente." text={entry.mistakes} className="lesson-mistakes" /> : null}
-                              <LessonProse label={entry.practice || entry.mistakes ? 'Învață și tu.' : 'Încearcă tu.'} text={entry.tryThis} className="lesson-try" />
-                              <LessonProse label={entry.practice || entry.mistakes ? 'Recapitulare.' : 'Recap.'} text={entry.recap} />
-                              {!entry.theory && (entry.platter || '').split(/\n\n+/).map((para, paraIndex) => (
-                                <p key={`${entry.id}-${paraIndex}`}>{para}</p>
-                              ))}
-                            </li>
+                            <LessonCard
+                              key={entry.id}
+                              entry={entry}
+                              lessonIndex={lessonIndex}
+                              initiallyOpen={lessonIndex === 0}
+                              forceOpen={anchorId === entry.id}
+                            />
                           ))}
                         </ol>
                       )}

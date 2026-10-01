@@ -44,6 +44,16 @@ describe('app hash routes', () => {
       screen: 'learn',
       extras: { subject: 'matematica', grade: '7', track: null }
     });
+    expect(parseAppHash('#/lectii/matematica/8/algebric/lectie-ecuatie-grad2')).toMatchObject({
+      kind: 'app',
+      screen: 'learn',
+      extras: { subject: 'matematica', grade: '8', chapter: 'algebric', track: null }
+    });
+    expect(parseAppHash('#lectie-ecuatie-grad2')).toEqual({
+      kind: 'anchor',
+      screen: null,
+      lessonId: 'ecuatie-grad2'
+    });
   });
 
   it('treats an empty hash as the welcome page', () => {
