@@ -51,13 +51,13 @@ Starea din tabel este cea de dinainte de rescriere (cuvinte din `platter`). ⬜ 
 | `romana:7:lumea-teatrului` | `romana-lectii/r7-lumea-teatrului.js` | 19 | 9015 | ⬜ |
 | `romana:7:calator-prin-lume` | `romana-lectii/r7-calator-prin-lume.js` | 16 | 8763 | ⬜ |
 | `romana:7:privind-catre-mine` | `romana-lectii/r7-privind-catre-mine.js` | 12 | 6545 | ⬜ |
-| `romana:8:recapitulare-examen` | `romana-lectii/r8-recapitulare-examen.js` | 7 | 3138 | ⬜ |
-| `romana:8:calatoria` | `romana-lectii/r8-calatoria.js` | 11 | 4136 | ⬜ |
-| `romana:8:lume-sentimente` | `romana-lectii/r8-lume-sentimente.js` | 10 | 4004 | ⬜ |
-| `romana:8:valori-ascultare` | `romana-lectii/r8-valori-ascultare.js` | 11 | 5355 | ⬜ |
-| `romana:8:traditie-inovatie` | `romana-lectii/r8-traditie-inovatie.js` | 11 | 5527 | ⬜ |
-| `romana:8:modele-antimodele` | `romana-lectii/r8-modele-antimodele.js` | 13 | 6540 | ⬜ |
-| `romana:8:familia-comunitate` | `romana-lectii/r8-familia-comunitate.js` | 12 | 8043 | ⬜ |
+| `romana:8:recapitulare-examen` | `romana-lectii/r8-recapitulare-examen.js` | 7 | 3138 | ✅ |
+| `romana:8:calatoria` | `romana-lectii/r8-calatoria.js` | 11 | 4136 | ✅ |
+| `romana:8:lume-sentimente` | `romana-lectii/r8-lume-sentimente.js` | 10 | 4004 | ✅ |
+| `romana:8:valori-ascultare` | `romana-lectii/r8-valori-ascultare.js` | 11 | 5355 | ✅ |
+| `romana:8:traditie-inovatie` | `romana-lectii/r8-traditie-inovatie.js` | 11 | 5527 | ✅ |
+| `romana:8:modele-antimodele` | `romana-lectii/r8-modele-antimodele.js` | 13 | 6540 | ✅ |
+| `romana:8:familia-comunitate` | `romana-lectii/r8-familia-comunitate.js` | 12 | 8043 | ✅ |
 
 Tabelul de mai sus este starea „înainte”, în cuvinte din `platter`. `node scripts/lesson-stats.js` retipărește lecțiile, cuvintele vizibile și cele ascunse. `RESTRUCTURED` din `lessons/restructured.js` rămâne goală până la etapa capitolului. Unitățile care treceau singure de 90 000 de caractere sunt tăiate în `-1` și `-2`, după lecții.
 
