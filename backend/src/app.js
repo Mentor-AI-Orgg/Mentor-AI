@@ -8,6 +8,7 @@ const healthRoute = require("./routes/health");
 const leaderboardRoute = require("./routes/leaderboard");
 const calendarRoute = require("./routes/calendar");
 const flashcardsRoute = require("./routes/flashcards");
+const cardsRoute = require("./routes/cards");
 const diagnosticsRoute = require("./routes/diagnostics");
 const economyRoute = require("./routes/economy");
 const authRoute = require("./routes/auth");
@@ -133,6 +134,7 @@ function createApp(options = {}) {
 
     app.use(`${prefix}/chat`, ...studentOnly, chatLimiter, chatRoute);
     app.use(`${prefix}/flashcards`, ...studentOnly, flashcardsRoute);
+    app.use(`${prefix}/cards`, ...studentOnly, cardsRoute);
     app.use(`${prefix}/diagnostics`, ...studentOnly, diagnosticsRoute);
     app.use(`${prefix}/calendar`, ...studentOnly, calendarRoute);
     app.use(`${prefix}/economy`, ...studentOnly, economyRoute);

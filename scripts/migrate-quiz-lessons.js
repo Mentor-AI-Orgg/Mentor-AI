@@ -7,6 +7,7 @@ const path = require('path');
 const { LESSON_ID_MAP, resolveLessonKey } = require('../backend/src/data/lessonIdMap');
 
 const QUIZ_DIR = path.join(__dirname, '..', 'backend', 'src', 'data', 'quiz');
+const CARDS_DIR = path.join(__dirname, '..', 'backend', 'src', 'data', 'cards');
 
 function sourcesFor(id, map) {
   return Object.keys(map).filter(key => key.endsWith(`:${id}`));
@@ -51,9 +52,9 @@ function walk(dir, files = []) {
   return files;
 }
 
-function migrateQuizLessons(root = QUIZ_DIR, map = LESSON_ID_MAP) {
+function migrateQuizLessons(root = QUIZ_DIR, map = LESSON_ID_MAP, label = 'Quiz-ul') {
   if (!fs.existsSync(root)) {
-    console.log('Nu există backend/src/data/quiz/. Nimic de migrat.');
+    console.log(`Nu există ${root}. Nimic de migrat.`);
     return { changed: 0, report: [] };
   }
   const report = [];
@@ -70,10 +71,16 @@ function migrateQuizLessons(root = QUIZ_DIR, map = LESSON_ID_MAP) {
     fileReport.forEach(line => report.push(`${path.relative(root, file)}: ${line}`));
   });
   report.forEach(line => console.log(line));
-  console.log(changed ? `Am rescris ${changed} fișiere.` : 'Quiz-ul era deja aliniat cu harta.');
+  console.log(changed ? `Am rescris ${changed} fișiere.` : `${label} era deja aliniat cu harta.`);
   return { changed, report };
 }
 
-if (require.main === module) migrateQuizLessons();
+function migrateLessonBanks(map = LESSON_ID_MAP) {
+  const quiz = migrateQuizLessons(QUIZ_DIR, map, 'Quiz-ul');
+  const cards = migrateQuizLessons(CARDS_DIR, map, 'Cardurile');
+  return { quiz, cards };
+}
 
-module.exports = { migrateQuizLessons, planReplacement };
+if (require.main === module) migrateLessonBanks();
+
+module.exports = { migrateQuizLessons, migrateLessonBanks, planReplacement };
