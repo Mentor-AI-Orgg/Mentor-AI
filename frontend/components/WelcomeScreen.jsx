@@ -1,7 +1,7 @@
 import legal from '@shared/legal.json';
 import Mascota from './mascot/Mascota.jsx';
 
-/** Link de contact doar când operatorul a pus un email adevărat în shared/legal.json. */
+/** Link de contact doar când shared/legal.json are un email real. Pagina /confidentialitate citește LEGAL_CONTACT de pe server. */
 export function contactLink(email) {
   const value = String(email || '').trim();
   if (!value.includes('@') || value.startsWith('[')) return null;

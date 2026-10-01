@@ -132,10 +132,29 @@ function textRejected(value) {
   return "";
 }
 
+// Insulte ușoare rămân blocate la username, nu în fraze de lecție
+// („sunt prost la fracții”, „analiză”). Aici prinzi doar cuvintele vădit nepotrivite.
+const MILD = new Set([
+  "prost", "tampit", "idiot", "cretin", "cacat", "dracu", "nenorocit", "jegos"
+]);
+
+function obviouslyInappropriate(value) {
+  const tokens = String(value || "").split(/[^A-Za-zĂÂÎȘȚăâîșț0-9]+/);
+  for (const token of tokens) {
+    const folded = fold(token);
+    if (!folded || folded.length < 3) continue;
+    if (MILD.has(folded)) continue;
+    if (LISTS.exceptions.some(item => fold(item) === folded)) continue;
+    if (LISTS.words.some(word => fold(word) === folded)) return FRIENDLY;
+  }
+  return "";
+}
+
 module.exports = {
   FRIENDLY,
   usernameIssue,
   usernameError,
   textRejected,
+  obviouslyInappropriate,
   fold
 };

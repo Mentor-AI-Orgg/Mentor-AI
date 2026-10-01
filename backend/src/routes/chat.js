@@ -9,6 +9,7 @@ const { isConsentGranted } = require("../data/authStore");
 const memory = require("../memory/memoryStore");
 const { validateBody } = require("../middleware/validate");
 const { chatSchema } = require("../validation/schemas");
+const { obviouslyInappropriate } = require("../safety/usernamePolicy");
 
 router.post("/", validateBody(chatSchema), async (req, res) => {
   const startTotal = Date.now();
@@ -47,6 +48,18 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
 
   if (!isConsentGranted(req.auth.account)) {
     return res.status(403).json({ error: "consent_pending" });
+  }
+
+  if (obviouslyInappropriate(message)) {
+    return res.json({
+      response: SAFETY_REFUSAL_TEXT[lang] || SAFETY_REFUSAL_TEXT.ro,
+      engine_used: "safety_filter",
+      subject, class_level,
+      scaffolding_level: 0,
+      safety_flags: ["inappropriate_content"],
+      processing_time_ms: Date.now() - startTotal,
+      conversation_id: requestedConversationId
+    });
   }
 
   if (!safety.safe) {

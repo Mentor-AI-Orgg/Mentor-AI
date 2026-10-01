@@ -133,6 +133,14 @@ build și deploy. La următoarea vizită worker-ul se dezînregistrează și
 Fără SMTP aplicația pornește, iar emailurile rămân în inbox. Variabilele sunt în
 [backend/.env.example](backend/.env.example).
 
+Acordul părintelui se dă doar din linkul primit pe email. Dacă mesajul
+ajunge în Spam, părintele nu confirmă și contul se șterge după 14 zile.
+SPF, DKIM și DMARC se setează în DirectAdmin înainte de orice deschidere
+publică. Pașii sunt în [DEPLOY.md](DEPLOY.md). `SITE_PUBLIC` rămâne gol
+până trec și checklist-ul `npm run prelansare` (numele, adresa și emailul
+operatorului, SMTP, copia de siguranță). Nu completa în repo un CIF sau
+o adresă.
+
 Note vechi, mutate, nu mai descriu codul de acum:
 [docs/arhiva/IMPLEMENTARE.md](docs/arhiva/IMPLEMENTARE.md),
 [docs/arhiva/plan-imbunatatiri.md](docs/arhiva/plan-imbunatatiri.md).

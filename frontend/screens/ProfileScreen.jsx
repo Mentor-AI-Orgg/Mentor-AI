@@ -584,7 +584,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
             ) : (
               <>
                 <strong>{peer.name}</strong>
-                <span>@{peer.username || 'fără username'} · clasa {peer.class || '—'} · {peer.school || 'școală nespusă'}</span>
+                <span>@{peer.username || 'fără username'}{peer.class ? ` · clasa ${peer.class}` : ''}</span>
                 <span>Nivel {peer.level} · {peer.xp} XP</span>
                 {peer.friends ? <em>Sunteți prieteni.</em> : peer.outgoing ? <em>Cerere trimisă.</em> : peer.incoming ? (
                   <button type="button" className="accent-button" onClick={() => respond(peer.incomingRequestId, 'accept')}>Acceptă cererea</button>

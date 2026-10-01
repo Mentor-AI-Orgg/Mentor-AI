@@ -93,8 +93,10 @@ FTP ar dura foarte mult.
 ## Pasul 4 - Instalează dependințele pe server
 
 O singură dată, după primul deploy: în **Setup Node.js App**, apasă
-**Run NPM Install**. Aplicația are câteva dependințe JS pure (`express`,
-`cors`, `dotenv`, `express-rate-limit`, `zod`, `nodemailer`), deci durează câteva secunde.
+**Run NPM Install**. Application root este folderul care are `package.json`
+din rădăcina repo-ului. Dacă instalezi din `backend/`, acolo sunt aceleași
+pachete de server (`express`, `helmet`, `nodemailer`, `zod`). Durează
+câteva secunde.
 
 Repetă pasul doar când se schimbă `backend/package.json` sau `package.json`
 din rădăcină.
@@ -192,8 +194,20 @@ erorile rămân doar în `logs/errors.log` pe server (în afara site-ului public
 nu se urcă în git). Sentry nu este pornit.
 
 Pagina de confidențialitate rămâne deschisă și cât site-ul e închis.
-Adresa de contact de pe ea este `LEGAL_CONTACT`. Dacă lipsește, pagina
-spune că operatorul încă nu a publicat-o.
+Numele, adresa și emailul operatorului vin din variabile, nu din repo:
+
+```
+LEGAL_OPERATOR_NAME=
+LEGAL_OPERATOR_ADDRESS=
+LEGAL_CONTACT=
+LEGAL_CUI=
+LEGAL_DPO=
+```
+
+`LEGAL_CUI` rămâne gol dacă operatorul este persoană fizică. `LEGAL_DPO`
+rămâne gol dacă nu există un responsabil cu protecția datelor. Dacă
+numele, adresa sau emailul lipsesc, pagina arată un TODO, iar
+`npm run prelansare` iese cu cod 1. Nu pune un CIF sau o adresă inventată.
 
 Tutorele răspunde din lecții, fără chei de AI. Emailul către părinte
 are nevoie de SMTP. Calendarul stă în aplicație, fără Google sau Notion.
@@ -204,8 +218,41 @@ Pentru linkurile din email:
 ```
 APP_BASE_URL=https://suntde10.ro
 SMTP_HOST=
+SMTP_PORT=587
+SMTP_USER=
+SMTP_PASS=
 SMTP_FROM=
 ```
+
+`SMTP_FROM` trebuie să fie o adresă de pe domeniul site-ului, de exemplu
+`nu-raspunde@suntde10.ro`. Linkul de acord pleacă doar pe email. Dacă
+mesajul cade în Spam, părintele nu confirmă, iar după 14 zile contul se
+șterge. Nu deschide site-ul (`SITE_PUBLIC` rămâne gol) până nu primești
+un email de probă în inbox, nu în Spam.
+
+## SPF, DKIM și DMARC
+
+În DirectAdmin, la domeniul `suntde10.ro`:
+
+1. **DNS Management**. Adaugă sau corectează o înregistrare TXT pentru SPF.
+   Dacă trimiți doar prin serverul de mail al aceluiași cont, forma minimă
+   este `v=spf1 a mx -all`. Dacă SMTP-ul este alt serviciu, pune include-ul
+   lui în loc de `a mx` și lasă un singur SPF. Două înregistrări SPF se
+   anulează una pe alta.
+2. **Account Manager → Email Accounts**, sau **DNS Management → DKIM**.
+   Activează DKIM pentru domeniu. DirectAdmin scrie singur înregistrarea
+   TXT cu selectorul lui. Nu o șterge la un deploy.
+3. Adaugă DMARC, tot TXT, pe numele `_dmarc`:
+   `v=DMARC1; p=none; rua=mailto:LEGAL_CONTACT`.
+   `p=none` doar la început, ca să vezi rapoartele. După ce SPF și DKIM
+   trec la un email de probă, poți trece la `p=quarantine`.
+4. Trimite un email de acord către o căsuță pe care o deschizi tu
+   (Gmail și Yahoo, dacă poți). În mesajul original trebuie să vezi
+   `spf=pass` și `dkim=pass`. Dacă vezi `fail` sau mesajul e în Spam,
+   nu conta pe fluxul de acord și nu pune `SITE_PUBLIC=1`.
+
+Aplicația nu poate verifica DNS-ul din Node. Avertismentul de mai sus
+este condiția de lansare pentru linkurile de acord.
 
 Dacă frontend-ul și API-ul sunt pe același domeniu, nu trebuie să setezi
 `CORS_ORIGINS`. Completeaz-o doar dacă apeți API-ul de pe un alt origin

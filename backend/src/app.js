@@ -34,6 +34,8 @@ const { requestLog } = require("./logger");
 const clientErrorRoute = require("./routes/clientError");
 const { newId, reportError, watchOperations } = require("./ops/errorMonitor");
 const persistence = require("./data/persistence");
+const { assertRegistered } = require("./data/loadUserStores");
+assertRegistered();
 const curriculumRoute = require("./routes/curriculum");
 const { privacyHtml, termsHtml } = require("./legal/pages");
 

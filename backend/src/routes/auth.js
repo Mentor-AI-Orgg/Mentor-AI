@@ -95,6 +95,7 @@ function consentMail({ req, account, token }) {
     "Profilul este privat de la început.",
     `Politica de confidențialitate: ${publicBaseUrl(req)}/confidentialitate`,
     "Deschide linkul și apasă un buton. Linkul nu confirmă singur.",
+    "Dacă mesajul nu e în inbox, uită-te în Spam. Fără el, acordul nu se poate da.",
     link,
     "Dacă nu confirmați în 14 zile, contul și datele se șterg automat."
   ].join("\n");

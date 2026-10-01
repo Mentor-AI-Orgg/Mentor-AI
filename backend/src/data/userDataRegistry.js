@@ -9,8 +9,26 @@ const { DELETION_KEEP_MS } = require("../config/retention");
 const handlers = new Map();
 const DELETIONS = [];
 
+// Store-urile din loadUserStores.js trebuie să acopere lista asta.
+const EXPECTED = Object.freeze([
+  "auth",
+  "friends",
+  "calendar",
+  "memory",
+  "consent",
+  "economy",
+  "evaluare",
+  "fotografii",
+  "moderare",
+  "emailuri"
+]);
+
 function normalize(email) {
   return String(email || "").trim().toLowerCase();
+}
+
+function missingExpected() {
+  return EXPECTED.filter(name => !handlers.has(name));
 }
 
 function userIdHash(email) {
@@ -75,5 +93,7 @@ module.exports = {
   recordDeletion,
   listDeletions,
   purgeDeletions,
-  userIdHash
+  userIdHash,
+  missingExpected,
+  EXPECTED
 };

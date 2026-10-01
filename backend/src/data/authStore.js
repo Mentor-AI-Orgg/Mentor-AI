@@ -351,6 +351,11 @@ function exportAccountFor(email) {
 
 function deleteAccount(email) {
   const key = normalizeEmail(email);
+  const account = findAccount(key);
+  const username = account?.profile?.username || "";
+  const { clearLoginFailures } = require("../safety/attemptGuard");
+  clearLoginFailures(key);
+  if (username) clearLoginFailures(username);
   destroySessionsForEmail(key);
   for (const [token, row] of RESETS.entries()) {
     if (row?.email === key) RESETS.delete(token);

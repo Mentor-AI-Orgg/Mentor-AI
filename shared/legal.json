@@ -2,8 +2,9 @@
   "policyVersion": "2026-10-01",
   "requiresReconsent": false,
   "product": "Sunt de 10",
-  "operatorName": "[DE COMPLETAT: numele operatorului]",
-  "operatorAddress": "[DE COMPLETAT: adresa]",
-  "contactEmail": "[DE COMPLETAT: emailul de contact]",
-  "dpo": "[DE COMPLETAT: responsabilul cu protecția datelor, dacă există]"
+  "operatorName": "",
+  "operatorAddress": "",
+  "contactEmail": "",
+  "dpo": "",
+  "cui": ""
 }

@@ -4,6 +4,7 @@ const store = require("../data/calendarStore");
 const { validateBody } = require("../middleware/validate");
 const { calendarEventSchema, calendarPatchSchema } = require("../validation/schemas");
 const { notifyParent } = require("../notify/parentActivity");
+const { obviouslyInappropriate } = require("../safety/usernamePolicy");
 
 // Montat în spatele `authRequired`, deci `req.auth` există mereu. Înainte,
 // user_id venea din query/body, deci oricine putea citi sau șterge
@@ -30,6 +31,8 @@ router.get("/events", (req, res) => {
 router.post("/events", validateBody(calendarEventSchema), async (req, res) => {
   const userId = resolveUserId(req);
   const { date, title, type, time, endTime, weekday, important, subject } = req.body || {};
+  const rejected = obviouslyInappropriate(title);
+  if (rejected) return res.status(400).json({ error: rejected });
   const event = store.addEvent(userId, { date, title, type, time, endTime, weekday, important, subject });
   await notifyParent({
     studentEmail: userId,
@@ -42,6 +45,8 @@ router.post("/events", validateBody(calendarEventSchema), async (req, res) => {
 
 router.patch("/events/:eventId", validateBody(calendarPatchSchema), (req, res) => {
   const userId = resolveUserId(req);
+  const rejected = obviouslyInappropriate(req.body?.title);
+  if (rejected) return res.status(400).json({ error: rejected });
   const event = store.updateEvent(userId, req.params.eventId, req.body || {});
   if (!event) return res.status(404).json({ error: "Evenimentul nu există." });
   res.json({ success: true, event });

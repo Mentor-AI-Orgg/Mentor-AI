@@ -1232,7 +1232,8 @@ function exportEconomyFor(email) {
     activitate: (Array.isArray(user.activityLog) ? user.activityLog : []).map(entry => ({
       tip: entry.type,
       la: entry.createdAt,
-      cantitate: entry.amount
+      cantitate: entry.amount,
+      nota: entry.note || ""
     })),
     cumparaturi: cumparaturi.filter(Boolean),
     greseli: require("./mistakeBook").exportRows(user),

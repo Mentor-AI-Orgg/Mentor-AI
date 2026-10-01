@@ -30,7 +30,7 @@ const ConsentWaitScreen = ({ parentEmail = '', onOpenLessons }) => {
       <Mascota mood="explica" size="md" />
       <div className="eyebrow">Aproape gata</div>
       <h1 className="display-font form-title">Contul tău așteaptă confirmarea părintelui</h1>
-      <p className="form-subtitle">Am trimis un email părintelui tău. Până confirmă, poți citi lecțiile și face exerciții.</p>
+      <p className="form-subtitle">Am trimis un email părintelui tău. Până confirmă, poți citi lecțiile și face exerciții. Dacă nu apare în inbox, să se uite și în Spam. Fără acel link, contul nu se confirmă.</p>
       {parentEmail ? <p className="field-hint">Emailul părintelui: {parentEmail}</p> : null}
       <label className="field-label">
         Alt email de părinte

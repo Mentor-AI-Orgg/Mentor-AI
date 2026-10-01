@@ -88,6 +88,9 @@ describe('antete, cookie și jurnale', () => {
         PREVIEW_PASSWORD: '',
         PREVIEW_COOKIE_SECRET: '',
         SESSION_SECRET: '',
+        LEGAL_OPERATOR_NAME: '',
+        LEGAL_OPERATOR_ADDRESS: '',
+        LEGAL_CONTACT: '',
         PRELANSARE_SKIP_AUDIT: '1'
       },
       encoding: 'utf8'

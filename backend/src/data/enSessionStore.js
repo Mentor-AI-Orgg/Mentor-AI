@@ -165,6 +165,30 @@ const openPaper = previewPaper;
 const { getUser } = require('./economyStore');
 const registry = require('./userDataRegistry');
 
+function plainValue(value, key) {
+  if (/image|photo|base64|dataurl|buffer/i.test(key)) return undefined;
+  if (typeof value === "string") {
+    if (value.length > 4000 || value.startsWith("data:")) return undefined;
+    return value;
+  }
+  if (typeof value === "number" || typeof value === "boolean") return value;
+  if (Array.isArray(value)) {
+    return value.map(item => (item && typeof item === "object" ? plainRow(item) : item)).filter(item => item != null);
+  }
+  if (value && typeof value === "object") return plainRow(value);
+  return undefined;
+}
+
+function plainRow(row) {
+  if (!row || typeof row !== "object") return null;
+  const out = {};
+  for (const [key, value] of Object.entries(row)) {
+    const next = plainValue(value, key);
+    if (next !== undefined) out[key] = next;
+  }
+  return out;
+}
+
 registry.register('evaluare', {
   exportFor(email) {
     const user = getUser(email);
@@ -172,8 +196,11 @@ registry.register('evaluare', {
     return {
       lucrari: Object.entries(papers).map(([id, state]) => ({
         id,
-        punctaj: state?.score ?? null,
-        deschisLa: state?.openedAt || 0
+        punctaj: state?.score?.points ?? null,
+        barem: state?.score ? plainRow(state.score) : null,
+        deschisLa: state?.openedAt || 0,
+        raspunsuri: Array.isArray(state?.answers) ? state.answers.map(plainRow).filter(Boolean) : [],
+        recenzii: Array.isArray(state?.photoReviews) ? state.photoReviews.map(plainRow).filter(Boolean) : []
       }))
     };
   },

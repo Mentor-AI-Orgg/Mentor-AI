@@ -47,6 +47,10 @@ describe('pagini legale', () => {
     NODE_ENV: process.env.NODE_ENV,
     SITE_PUBLIC: process.env.SITE_PUBLIC,
     LEGAL_CONTACT: process.env.LEGAL_CONTACT,
+    LEGAL_OPERATOR_NAME: process.env.LEGAL_OPERATOR_NAME,
+    LEGAL_OPERATOR_ADDRESS: process.env.LEGAL_OPERATOR_ADDRESS,
+    LEGAL_CUI: process.env.LEGAL_CUI,
+    LEGAL_DPO: process.env.LEGAL_DPO,
     requiresReconsent: legal.requiresReconsent
   };
 
@@ -54,8 +58,10 @@ describe('pagini legale', () => {
     process.env.NODE_ENV = previous.NODE_ENV;
     if (previous.SITE_PUBLIC === undefined) delete process.env.SITE_PUBLIC;
     else process.env.SITE_PUBLIC = previous.SITE_PUBLIC;
-    if (previous.LEGAL_CONTACT === undefined) delete process.env.LEGAL_CONTACT;
-    else process.env.LEGAL_CONTACT = previous.LEGAL_CONTACT;
+    for (const key of ['LEGAL_CONTACT', 'LEGAL_OPERATOR_NAME', 'LEGAL_OPERATOR_ADDRESS', 'LEGAL_CUI', 'LEGAL_DPO']) {
+      if (previous[key] === undefined) delete process.env[key];
+      else process.env[key] = previous[key];
+    }
     legal.requiresReconsent = previous.requiresReconsent;
   });
 
@@ -69,7 +75,17 @@ describe('pagini legale', () => {
     expect(privacy.text).toContain('ANSPDCP');
     expect(privacy.text).toContain(legal.product);
     expect(privacy.text).toContain(legal.policyVersion);
-    expect(privacy.text).toContain(legal.operatorName);
+    delete process.env.LEGAL_OPERATOR_NAME;
+    delete process.env.LEGAL_OPERATOR_ADDRESS;
+    delete process.env.LEGAL_CONTACT;
+    delete process.env.LEGAL_CUI;
+    delete process.env.LEGAL_DPO;
+    const open = await request(app).get('/confidentialitate');
+    expect(open.text).toContain('TODO');
+    expect(open.text).toContain('LEGAL_OPERATOR_NAME');
+    expect(open.text).toContain('LEGAL_OPERATOR_ADDRESS');
+    expect(open.text).toContain('LEGAL_CONTACT');
+    expect(open.text).not.toContain('[DE COMPLETAT');
     expect(privacy.text).toContain(`${days(retention.PENDING_MS)} zile`);
     expect(privacy.text).toContain(`${months(retention.INACTIVE_MS)} luni`);
     expect(privacy.text).toContain(`${days(retention.WARNING_BEFORE_MS)} zile`);

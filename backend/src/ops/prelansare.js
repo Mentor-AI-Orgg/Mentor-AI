@@ -23,10 +23,12 @@ function publicKeyReady(env) {
   return fs.existsSync(path.join(__dirname, "..", "..", "backup-public.pem"));
 }
 
-function legalComplete() {
+function legalComplete(env = process.env) {
   const file = path.join(__dirname, "..", "..", "..", "shared", "legal.json");
   if (!fs.existsSync(file)) return false;
-  return !fs.readFileSync(file, "utf8").includes("[DE COMPLETAT");
+  if (fs.readFileSync(file, "utf8").includes("[DE COMPLETAT")) return false;
+  const { operatorFromEnv } = require("../legal/operator");
+  return operatorFromEnv(env).complete;
 }
 
 function auditClean() {
@@ -44,7 +46,7 @@ function checklist(env = process.env) {
     { key: "PREVIEW_PASSWORD", ok: Boolean(value(env, "PREVIEW_PASSWORD")), required: true },
     { key: "PREVIEW_COOKIE_SECRET", ok: secretOk("PREVIEW_COOKIE_SECRET"), required: true },
     { key: "SESSION_SECRET", ok: secretOk("SESSION_SECRET"), required: true },
-    { key: "LEGAL", ok: legalComplete(), required: true },
+    { key: "LEGAL", ok: legalComplete(env), required: true },
     { key: "BACKUP_KEY", ok: value(env, "BACKUP_KEY").length >= 16, required: false },
     { key: "BACKUP_PUBLIC_KEY", ok: publicKeyReady(env), required: true },
     { key: "BACKUP_AGE", ok: backupFresh(), required: true },
