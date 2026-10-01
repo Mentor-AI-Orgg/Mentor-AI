@@ -1,4 +1,4 @@
-// Modele EN mate: structura clasică 2022 / e3.ro (I 6 grile numere, II 6 grile
+// Modele EN mate: structura EN 2025–2026 (I 6 grile numere, II 6 grile
 // geometrie 1–6, III 6 exerciții a 2p + b 3p, oficiu 10). Răspunsurile NU pleacă
 // odată cu testul. Cronometrul pornește la „Începe test”. Predare anticipată
 // după 60 minute DOAR la simularea completă; antrenamentul scurt (mode=drill)
@@ -28,10 +28,10 @@ function examMs() {
 }
 
 const MATH_NOTE =
-  'Apasă „Începe test Evaluare Națională”. Ca la examen, stai cu lucrarea deschisă cel puțin o oră. Structura e cea clasică de EN (modele 2022): Subiectul I — 6 grile de numere (câte 5p); Subiectul II — 6 grile de geometrie, numerotate tot 1–6 (câte 5p); Subiectul III — 6 exerciții, fiecare cu a) 2p și b) 3p. La III scrii aici doar rezultatul; rezolvarea o faci pe caiet. După predare poți fotografia pagina (maximum 3 poze pe zi) ca tutorele să-ți dea feedback pe barem.';
+  'Apasă „Începe test Evaluare Națională”. Ca la examen, stai cu lucrarea deschisă cel puțin o oră. Structura e cea a probei EN 2025–2026: Subiectul I — 6 grile de numere (câte 5p); Subiectul II — 6 grile de geometrie, numerotate tot 1–6 (câte 5p); Subiectul III — 6 exerciții, fiecare cu a) 2p și b) 3p. La III scrii aici doar rezultatul; rezolvarea o faci pe caiet. După predare vezi rezolvarea-model și baremul pe pași și îți autoevaluezi foaia.';
 
 const RO_NOTE =
-  'Ca la EN 2026: două texte-suport (textul 1 poate fi versuri sau narațiune; textul 2 e nonliterar). Subiectul I A — 38p: notare, 3 grile, adevărat/fals (6 enunțuri), apoi itemii 6–9 se scriu aici (cu număr de cuvinte: 6 scurt, 7 min. 30, 8–9 câte 50–100). Subiectul I B — 32p: 4 grile + 4 răspunsuri scrise de gramatică. Subiectul II — 20p, compunerea pe caiet (min. 150 de cuvinte); după predare o poți fotografia (3 poze/zi). Baremul se deschide după predare.';
+  'Ca la EN 2026: două texte-suport (textul 1 poate fi versuri sau narațiune; textul 2 e nonliterar). Subiectul I A — 38p: notare, 3 grile, adevărat/fals (6 enunțuri), apoi itemii 6–9 se scriu aici (cu număr de cuvinte: 6 scurt, 7 min. 30, 8–9 câte 50–100). Subiectul I B — 32p: 4 grile + 4 răspunsuri scrise de gramatică. Subiectul II — 20p, compunerea pe caiet (min. 150 de cuvinte). După predare vezi baremul. Baremul se deschide după predare.';
 
 function publicItem(n, points, prompt, extra = {}) {
   const row = { n, points, prompt, kind: extra.kind || (extra.choices ? 'mcq' : extra.parts ? 'en-parts' : 'short') };
@@ -59,8 +59,25 @@ function publicItem(n, points, prompt, extra = {}) {
   return row;
 }
 
+function fitStepBarem(partId, steps, target) {
+  const lines = (Array.isArray(steps) && steps.length ? steps : ['Rezolvare']).map(line => String(line));
+  while (lines.length < target) lines.push(lines[lines.length - 1]);
+  if (lines.length > target) {
+    const head = lines.slice(0, target - 1);
+    const tail = lines.slice(target - 1).join('. ');
+    lines.splice(0, lines.length, ...head, tail);
+  }
+  return lines.map((barem, index) => ({
+    id: `${partId}${index + 1}`,
+    part: partId,
+    points: 1,
+    barem
+  }));
+}
+
 function partsBarem(rows) {
   const parts = {};
+  const stepBarem = [];
   Object.entries(rows).forEach(([id, row]) => {
     parts[id] = {
       answer: row.answer,
@@ -69,12 +86,15 @@ function partsBarem(rows) {
       steps: row.steps || [],
       solution: row.solution || ''
     };
+    const target = id === 'a' ? 2 : id === 'b' ? 3 : Math.max(1, (row.steps || []).length || 1);
+    fitStepBarem(id, row.steps, target).forEach(step => stepBarem.push(step));
   });
   return {
     parts,
     explain: Object.values(parts).map(part => part.explain).filter(Boolean).join(' '),
     steps: Object.values(parts).flatMap(part => part.steps || []),
-    solution: Object.values(parts).map(part => part.solution).filter(Boolean).join('\n\n')
+    solution: Object.values(parts).map(part => part.solution).filter(Boolean).join('\n\n'),
+    stepBarem
   };
 }
 
@@ -230,7 +250,7 @@ function itemKey(blockLabel, n) {
 // ——— Matematică: modele recomandate + generator (structură EN 2022 / e3.ro) ———
 
 const III_INTRO =
-  '6 exerciții, fiecare cu a) 2 puncte și b) 3 puncte. Pe caiet scrii rezolvarea. Aici scrii doar rezultatul. Rezolvarea completă apare după predare.';
+  '6 exerciții, fiecare cu a) 2 puncte și b) 3 puncte. Pe caiet scrii rezolvarea. Aici scrii doar rezultatul. După predare vezi rezolvarea-model și baremul pe pași și îți autoevaluezi foaia.';
 const II_INTRO = 'Geometrie. 6 grile, numerotate 1–6. 4 variante. Calculele rămân pe foaie.';
 const I_INTRO = 'Itemi scurți din numere, rapoarte și date. 6 grile, 4 variante. Pe foaie încercuiești litera.';
 
@@ -733,8 +753,8 @@ function mathRecommendedC() {
   };
 }
 
-function generateMathPaper(rand, seed) {
-  const content = generateMathContent(rand);
+function generateMathPaper(rand, seed, options = {}) {
+  const content = generateMathContent(rand, options);
   const barem = {};
   const toMcq = (label, list) => list.map((row, idx) => {
     const n = idx + 1;
@@ -742,7 +762,10 @@ function generateMathPaper(rand, seed) {
     return publicItem(n, 5, row.prompt, { choices: row.choices, figure: row.figure || undefined });
   });
   const toPartsItem = (n, row) => {
-    barem[itemKey('Subiectul III', n)] = partsBarem(row.parts);
+    const rowBarem = partsBarem(row.parts);
+    if (row.problemId) rowBarem.problemId = row.problemId;
+    if (Array.isArray(row.stepBarem) && row.stepBarem.length) rowBarem.stepBarem = row.stepBarem;
+    barem[itemKey('Subiectul III', n)] = rowBarem;
     return publicItem(n, 5, row.prompt, {
       kind: 'en-parts',
       figure: row.figure || undefined,
@@ -815,14 +838,14 @@ function generatePaper(subject, excludeIds = [], options = {}) {
     const id = mode === 'drill' ? `en:g:${sid}:${seed}:drill` : `en:g:${sid}:${seed}`;
     if (excluded.has(id) || excluded.has(`en:g:${sid}:${seed}`)) continue;
     const rand = rng(seedFromHex(seed));
-    let bundle = sid === 'romana' ? generateRoPaper(rand, seed) : generateMathPaper(rand, seed);
+    let bundle = sid === 'romana' ? generateRoPaper(rand, seed) : generateMathPaper(rand, seed, options);
     if (mode === 'drill') bundle = asDrill(bundle, sid);
     GENERATED.set(bundle.public.id, bundle);
     return stripSecrets(bundle.public);
   }
   const seed = newSeed();
   const rand = rng(seedFromHex(seed));
-  let bundle = sid === 'romana' ? generateRoPaper(rand, seed) : generateMathPaper(rand, seed);
+  let bundle = sid === 'romana' ? generateRoPaper(rand, seed) : generateMathPaper(rand, seed, options);
   if (mode === 'drill') bundle = asDrill(bundle, sid);
   GENERATED.set(bundle.public.id, bundle);
   return stripSecrets(bundle.public);
@@ -853,7 +876,9 @@ function getBaremItem(paperId, blockLabel, n) {
     steps: row.steps || [],
     ideas: row.ideas || [],
     solution: row.solution || '',
-    parts: row.parts || undefined
+    parts: row.parts || undefined,
+    problemId: row.problemId || '',
+    stepBarem: row.stepBarem || []
   };
 }
 
@@ -875,7 +900,9 @@ function listBarem(paperId) {
         steps: row.steps || [],
         ideas: row.ideas || [],
         solution: row.solution || '',
-        parts: row.parts || undefined
+        parts: row.parts || undefined,
+        problemId: row.problemId || '',
+        stepBarem: row.stepBarem || []
       });
     });
   });
@@ -958,7 +985,9 @@ function scoreAttempt(paperId, answers = []) {
           explain: partReview.map(part => part.teacher).join(' '),
           barem: barem.explain || '',
           steps: barem.steps || [],
-          solution: barem.solution || ''
+          solution: barem.solution || '',
+          stepBarem: barem.stepBarem || [],
+          problemId: barem.problemId || ''
         });
         earned += partPoints;
         return;
@@ -1138,6 +1167,28 @@ function scoreAttempt(paperId, answers = []) {
   };
 }
 
+function selfGradeFor(score, overrides = {}) {
+  if (!score) return null;
+  const oficiu = Number(score.oficiu) || 10;
+  let points = oficiu;
+  (score.items || []).forEach(item => {
+    const key = `${item.block}:${item.n}`;
+    if (item.block === 'Subiectul III' && Object.prototype.hasOwnProperty.call(overrides, key)) {
+      const cap = Number(item.maxPoints) || 0;
+      const given = Number(overrides[key]);
+      points += Math.max(0, Math.min(cap, Number.isFinite(given) ? given : 0));
+    } else {
+      points += Number(item.points) || 0;
+    }
+  });
+  const max = Number(score.max) || 100;
+  const capped = Math.max(0, Math.min(max, points));
+  return {
+    selfPoints: capped,
+    selfGrade: ((capped / max) * 10).toFixed(2)
+  };
+}
+
 module.exports = {
   minStayMs,
   examMs,
@@ -1149,6 +1200,7 @@ module.exports = {
   getBaremItem,
   listBarem,
   scoreAttempt,
+  selfGradeFor,
   getBundle,
   stripSecrets,
   itemKey

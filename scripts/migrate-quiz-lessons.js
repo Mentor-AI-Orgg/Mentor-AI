@@ -8,6 +8,7 @@ const { LESSON_ID_MAP, resolveLessonKey } = require('../backend/src/data/lessonI
 
 const QUIZ_DIR = path.join(__dirname, '..', 'backend', 'src', 'data', 'quiz');
 const CARDS_DIR = path.join(__dirname, '..', 'backend', 'src', 'data', 'cards');
+const PROBLEMS_DIR = path.join(__dirname, '..', 'backend', 'src', 'data', 'problems');
 
 function sourcesFor(id, map) {
   return Object.keys(map).filter(key => key.endsWith(`:${id}`));
@@ -78,7 +79,8 @@ function migrateQuizLessons(root = QUIZ_DIR, map = LESSON_ID_MAP, label = 'Quiz-
 function migrateLessonBanks(map = LESSON_ID_MAP) {
   const quiz = migrateQuizLessons(QUIZ_DIR, map, 'Quiz-ul');
   const cards = migrateQuizLessons(CARDS_DIR, map, 'Cardurile');
-  return { quiz, cards };
+  const problems = migrateQuizLessons(PROBLEMS_DIR, map, 'Problemele');
+  return { quiz, cards, problems };
 }
 
 if (require.main === module) migrateLessonBanks();

@@ -3,7 +3,7 @@ const router = express.Router();
 const { getGuide, listCatalog } = require("../data/gimnaziuGuide");
 const { getEnGuide, listEnCatalog, enCounts } = require("../data/en8Guide");
 const { recommendedList, generatePaper, publicPaperById, getBaremItem, listBarem, scoreAttempt } = require("../data/enPaperFactory");
-const { previewPaper, startPaper, canFinish, finishPaper, isFinished } = require("../data/enSessionStore");
+const { previewPaper, startPaper, canFinish, finishPaper, isFinished, saveSelfScore } = require("../data/enSessionStore");
 const { photoStatus, PHOTO_DAILY_LIMIT } = require("../data/enPhotoQuota");
 const { authRequired, studentRequired, consentRequired } = require("../middleware/auth");
 const { notifyParent } = require("../notify/parentActivity");
@@ -184,6 +184,40 @@ router.post("/en/barem", authRequired, studentRequired, (req, res) => {
   res.json({
     ...item,
     hint: "Baremul apare după finalizare, nu în timpul probei."
+  });
+});
+
+router.post("/en/papers/self-score", authRequired, studentRequired, (req, res) => {
+  const paperId = String(req.body?.paper_id || "");
+  const block = String(req.body?.block || "");
+  const n = Number(req.body?.n);
+  const ticked = Array.isArray(req.body?.ticked) ? req.body.ticked.map(String) : [];
+  if (!paperId || !block || !Number.isFinite(n)) {
+    return res.status(400).json({ error: "Trimite paper_id, block și n." });
+  }
+  if (!isFinished(req.auth.email, paperId)) {
+    return res.status(403).json({ error: "Autoevaluarea se deschide după ce predai lucrarea." });
+  }
+  const item = getBaremItem(paperId, block, n);
+  if (!item) return res.status(404).json({ error: "Nu există barem pentru acest item." });
+  const steps = Array.isArray(item.stepBarem) ? item.stepBarem : [];
+  const seen = new Set();
+  let points = 0;
+  ticked.forEach(id => {
+    if (seen.has(id)) return;
+    const step = steps.find(row => row.id === id);
+    if (!step) return;
+    seen.add(id);
+    points += Number(step.points) || 0;
+  });
+  const max = steps.reduce((sum, step) => sum + (Number(step.points) || 0), 0) || 5;
+  points = Math.max(0, Math.min(max, points));
+  const session = saveSelfScore(req.auth.email, paperId, block, n, points);
+  res.json({
+    points,
+    max,
+    selfPoints: session?.result?.selfPoints,
+    selfGrade: session?.result?.selfGrade
   });
 });
 

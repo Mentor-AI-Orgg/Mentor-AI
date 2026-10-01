@@ -1274,6 +1274,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .study-card-back { display: grid; gap: 12px; }
 .study-rates { display: grid; gap: 8px; }
 .study-rate { width: 100%; min-height: 44px; font-size: 1rem; }
+.en-self-row { display: flex; gap: 10px; align-items: flex-start; min-height: 44px; font-size: 1rem; }
+.en-self-score { display: grid; gap: 8px; margin-top: 8px; }
 .study-card.is-flipped .study-card-face { display: none; }
 .quiz-option {
   display: grid;

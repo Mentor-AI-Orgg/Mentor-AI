@@ -1,5 +1,5 @@
 /**
- * Itemi originali EN Matematică pe structura clasică (EN 2022 / e3.ro):
+ * Itemi originali EN Matematică pe structura EN 2025–2026:
  * I  6 grile × 5p (numere, rapoarte, date)
  * II 6 grile × 5p (geometrie, numerotate 1–6)
  * III 6 exerciții × 5p, fiecare a) 2p + b) 3p
@@ -7,6 +7,7 @@
  */
 
 const { int, pick, shuffle, gcd, lcm, uniqueOptions } = require('./itemRng');
+const { problemsForEnSlot, iiiFromProblem } = require('./problemBank');
 
 function mcq(rand, prompt, correct, wrongs, explain, steps) {
   const filled = uniqueOptions(rand, correct, wrongs) || [String(correct), ...wrongs.map(String)];
@@ -246,7 +247,14 @@ function makeII(rand) {
   return [s1, s2, s3, s4, s5, s6];
 }
 
-function makeIII(rand) {
+function bankIII(slot, rand, options = {}) {
+  const excluded = new Set(options.excludeProblemIds || []);
+  const pool = problemsForEnSlot(slot, options.problems).filter(problem => !excluded.has(problem.id));
+  if (!pool.length) return null;
+  return iiiFromProblem(pool[Math.floor(rand() * pool.length)]);
+}
+
+function makeIII(rand, options = {}) {
   const u = int(rand, 8, 18);
   const z = int(rand, 3, 8);
   const n = int(rand, 4, 9);
@@ -510,7 +518,7 @@ function makeIII(rand) {
     };
   }
 
-  return [iii1, iii2, iii3, iii4, iii5, iii6];
+  return [iii1, iii2, iii3, iii4, iii5, iii6].map((row, index) => bankIII(index + 1, rand, options) || row);
 }
 
 function irEven(rand, min, max) {
@@ -520,11 +528,11 @@ function irEven(rand, min, max) {
   return Math.max(min, v);
 }
 
-function generateMathContent(rand) {
+function generateMathContent(rand, options = {}) {
   return {
     I: makeI(rand),
     II: makeII(rand),
-    III: makeIII(rand)
+    III: makeIII(rand, options)
   };
 }
 

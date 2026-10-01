@@ -77,6 +77,7 @@ function createDefaultUser(userId) {
     savedSessions: [],
     flashKnown: {},
     cardBoxes: {},
+    problemLog: [],
     mentorAwards: {},
     focusAwards: {},
     sessionAwards: {},
@@ -115,6 +116,7 @@ function ensureUser(userId, patch = {}) {
   if (!current.enPhotoDay || typeof current.enPhotoDay !== 'object') current.enPhotoDay = { date: '', used: 0 };
   if (!current.mistakeBoxes || typeof current.mistakeBoxes !== 'object') current.mistakeBoxes = {};
   if (!current.cardBoxes || typeof current.cardBoxes !== 'object') current.cardBoxes = {};
+  if (!Array.isArray(current.problemLog)) current.problemLog = [];
   if (!Array.isArray(current.streakDays)) current.streakDays = [];
   if (!current.lastAnalogy) current.lastAnalogy = {};
   if (!Array.isArray(current.skillLog)) current.skillLog = [];
@@ -1276,7 +1278,8 @@ function exportUser(email) {
     ...buildSummary(user),
     activityLog: Array.isArray(user.activityLog) ? user.activityLog.slice() : [],
     notifications: getNotifications(email).inbox,
-    cardBoxes: { ...(user.cardBoxes || {}) }
+    cardBoxes: { ...(user.cardBoxes || {}) },
+    problemLog: Array.isArray(user.problemLog) ? user.problemLog.slice() : []
   };
 }
 

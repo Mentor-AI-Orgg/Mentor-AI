@@ -83,7 +83,7 @@ const EN_GUIDES = {
         id: "proba-ro",
         title: "Cum arată proba de română",
         inOwnWords:
-          "Două ore, 90 de puncte plus 10 din oficiu. Subiectul I (70p): două texte-suport — textul 1 poate fi versuri sau narațiune, textul 2 e nonliterar. Partea A (38p): notare, 3 grile, adevărat/fals (6 enunțuri), apoi itemii 6–9 se scriu (6 scurt; 7 min. 30 de cuvinte; 8–9 câte 50–100). Partea B (32p): 4 grile + 4 răspunsuri scrise de gramatică. Subiectul II (20p): compunere pe caiet, min. 150 de cuvinte; după predare o poți fotografia (3 poze pe zi)."
+          "Două ore, 90 de puncte plus 10 din oficiu. Subiectul I (70p): două texte-suport — textul 1 poate fi versuri sau narațiune, textul 2 e nonliterar. Partea A (38p): notare, 3 grile, adevărat/fals (6 enunțuri), apoi itemii 6–9 se scriu (6 scurt; 7 min. 30 de cuvinte; 8–9 câte 50–100). Partea B (32p): 4 grile + 4 răspunsuri scrise de gramatică. Subiectul II (20p): compunere pe caiet, min. 150 de cuvinte. După predare vezi rezolvarea-model și baremul pe pași și îți autoevaluezi foaia."
       },
       {
         id: "receptare",
@@ -119,7 +119,7 @@ const EN_GUIDES = {
         id: "strategie",
         title: "Timp, plan și greșeli de evitat",
         inOwnWords:
-          "Citești cele două texte, subliniezi cerința, răspunzi la I A și la gramatica din I B, apoi scrii compunerea pe caiet. La final, o recitire pentru acord. Nu lăsa redactarea pe ultimele zece minute. În aplicație, la II nu tastezi: poți fotografia pagina după predare (3 poze pe zi)."
+          "Citești cele două texte, subliniezi cerința, răspunzi la I A și la gramatica din I B, apoi scrii compunerea pe caiet. La final, o recitire pentru acord. Nu lăsa redactarea pe ultimele zece minute. În aplicație, la II scrii în casetă. După predare vezi rezolvarea-model și baremul pe pași și îți autoevaluezi foaia."
       }
     ]
   }
@@ -146,7 +146,7 @@ function getEnGuide(subject) {
     trainingAvailable: true,
     quote: formatQuote(dailyQuote()),
     papersNote:
-      "Modelele A–C sunt originale. La mate, structura clasică de EN (ca în 2022): I 6 grile de numere, II 6 grile de geometrie, III 6 exerciții cu a) 2p și b) 3p. La română, foaia EN 2026: două texte (textul 1 poate fi versuri), I A 38p (notare, 3 grile, A/F, apoi 6–9 scrise aici cu număr de cuvinte), I B 32p (4 grile + 4 scrise), II 20p pe caiet. „Alt model” dă o simulare nouă, fără capăt. „Antrenament scurt” taie geometria / taie 8–9 și compunerea la română, fără ora de sală. Maximum 3 poze pe zi. Antrenamentul de capitol (10 exerciții) e separat.",
+      "Modelele A–C sunt originale. La mate, structura clasică de EN (ca în 2022): I 6 grile de numere, II 6 grile de geometrie, III 6 exerciții cu a) 2p și b) 3p. La română, foaia EN 2026: două texte (textul 1 poate fi versuri), I A 38p (notare, 3 grile, A/F, apoi 6–9 scrise aici cu număr de cuvinte), I B 32p (4 grile + 4 scrise), II 20p pe caiet. „Alt model” dă o simulare nouă, fără capăt. „Antrenament scurt” taie geometria / taie 8–9 și compunerea la română, fără ora de sală. După predare vezi rezolvarea-model și baremul pe pași și îți autoevaluezi foaia. Antrenamentul de capitol (10 exerciții) e separat.",
     units: (entry.units || []).map(unit => shapeUnit({
       ...unit,
       lessons: lessonsForEn(sid, unit.id),
