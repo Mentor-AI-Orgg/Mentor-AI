@@ -1,5 +1,7 @@
 const persistence = require('./persistence');
 const crypto = require('crypto');
+const { LESSON_ID_MAP_VERSION, LESSON_ID_MAP } = require('./lessonIdMap');
+const { needsMigration, migrateUserLessonIds, migrateNotificationList } = require('./lessonMigration');
 const { getGuide } = require('./gimnaziuGuide');
 const { levelFromXp, touchStudy, AWARDS } = require('./progressEngine');
 const { TITLE_CATALOG, unlockedTitleIds, titleById, noteEarlyBird } = require('./titles');
@@ -85,6 +87,7 @@ function createDefaultUser(userId) {
     lastAnalogy: {},
     skillLog: [],
     skillPoints: {},
+    lessonMapVersion: LESSON_ID_MAP_VERSION,
     parentNotify: { studyDate: null, loginDate: null },
     coinsEarned: 0,
     coinsSpent: 0,
@@ -133,7 +136,24 @@ function ensureUser(userId, patch = {}) {
     if (typeof patch.hoursToday === 'number') current.metrics.hoursToday = patch.hoursToday;
   }
   current.metrics.lastTouch = new Date().toISOString();
+  migrateStoredUser(current);
   return current;
+}
+
+function migrateStoredUser(user) {
+  if (!needsMigration(user, LESSON_ID_MAP_VERSION)) return false;
+  persistence.lessonMapBackup(LESSON_ID_MAP_VERSION);
+  return migrateUserLessonIds(user, { map: LESSON_ID_MAP, version: LESSON_ID_MAP_VERSION });
+}
+
+function migrateStoredUsers() {
+  const pending = [];
+  USERS.forEach(user => {
+    if (needsMigration(user, LESSON_ID_MAP_VERSION)) pending.push(user);
+  });
+  if (pending.length) persistence.lessonMapBackup(LESSON_ID_MAP_VERSION);
+  pending.forEach(user => migrateUserLessonIds(user, { map: LESSON_ID_MAP, version: LESSON_ID_MAP_VERSION }));
+  migrateNotificationList(NOTIFICATIONS, LESSON_ID_MAP);
 }
 
 function getUser(userId) {
@@ -1313,6 +1333,7 @@ persistence.register('economy', {
     persistence.restoreMap(PURCHASES, data?.purchases);
     purgeExpiredNotifications();
     purgeExpiredAccessCodes();
+    migrateStoredUsers();
   }
 });
 
@@ -1337,6 +1358,7 @@ module.exports = {
   sendParentReview,
   listLeaderboardEntries,
   lessonsThisWeek,
+  migrateStoredUser,
   getDeterministicJackpotDay,
   getMonthKey,
   getTodayKey,

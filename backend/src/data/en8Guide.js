@@ -7,6 +7,7 @@
 const { lessonsForEn } = require('./en8Lessons');
 const { recommendedList } = require('./enPaperFactory');
 const { shapeUnit } = require('./lessonShape');
+const { aliasesFor } = require('./lessonIdMap');
 const { glossaryFor } = require('./chapterGlossary');
 const { dailyQuote, formatQuote } = require('./quotes');
 const { listGeometryAtlas } = require('./geometryAtlas');
@@ -149,7 +150,8 @@ function getEnGuide(subject) {
     units: (entry.units || []).map(unit => shapeUnit({
       ...unit,
       lessons: lessonsForEn(sid, unit.id),
-      glossary: glossaryFor(sid, 8, unit.id, 'en')
+      glossary: glossaryFor(sid, 8, unit.id, 'en'),
+      lessonAliases: aliasesFor('en', sid, unit.id)
     })),
     papers: recommendedList(sid),
     atlas: sid === 'matematica' ? listGeometryAtlas(8) : null
