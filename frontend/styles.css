@@ -1274,8 +1274,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .study-card-back { display: grid; gap: 12px; }
 .study-rates { display: grid; gap: 8px; }
 .study-rate { width: 100%; min-height: 44px; font-size: 1rem; }
-.study-card:not(.is-still) .study-card-face { transition: opacity .2s ease; }
-.study-card.is-flipped:not(.is-still) .study-card-face { opacity: .72; }
+.study-card.is-flipped .study-card-face { display: none; }
 .quiz-option {
   display: grid;
   grid-template-columns: 28px 1fr;
