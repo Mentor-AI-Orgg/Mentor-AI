@@ -8,6 +8,7 @@ import { lessonsFor } from '../backend/src/data/gimnaziuLessons.js';
 import { LESSON_ID_MAP } from '../backend/src/data/lessonIdMap.js';
 import { BY_KEY } from '../backend/src/data/quiz/matematica/index.js';
 import { BY_KEY as CARD_KEYS, allCardKeys } from '../backend/src/data/cardBank.js';
+import { allProblems } from '../backend/src/data/problemBank.js';
 import { pickPractice } from '../backend/src/data/practicePicker.js';
 import { generateOne, fromGeneratedId } from '../backend/src/data/itemGenerator.js';
 
@@ -138,7 +139,8 @@ describe('acoperirea testelor de matematică', () => {
       ...Object.values(BANK).flat().map(item => item.id),
       ...Object.values(EXTRAS).flat().map(item => item.id),
       ...Object.values(BY_KEY).flatMap(pack => [...pack.flashcards, ...pack.tests].map(item => item.id)),
-      ...Object.values(CARD_KEYS).flatMap(pack => (pack.cards || []).map(card => card.id))
+      ...Object.values(CARD_KEYS).flatMap(pack => (pack.cards || []).map(card => card.id)),
+      ...allProblems().map(problem => problem.id)
     ];
     expect(new Set(ids).size).toBe(ids.length);
     expect(allExerciseKeys()).toHaveLength(16);

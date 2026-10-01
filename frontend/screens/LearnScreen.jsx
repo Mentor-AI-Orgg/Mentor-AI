@@ -4,6 +4,7 @@ import FocusTimer from '../components/FocusTimer.jsx';
 import FlashCards from '../components/FlashCards.jsx';
 import ChapterQuiz from '../components/ChapterQuiz.jsx';
 import CardDeck from '../components/CardDeck.jsx';
+import StepProblem from '../components/StepProblem.jsx';
 import EnPaperView from '../components/EnPaperView.jsx';
 import QuoteCard from '../components/QuoteCard.jsx';
 import Mascota from '../components/mascot/Mascota.jsx';
@@ -94,6 +95,9 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [quizLesson, setQuizLesson] = useState(null);
   const [cardSession, setCardSession] = useState(null);
   const [cardSummary, setCardSummary] = useState({ lessons: [], nextDue: null, total: 0, due: 0, unseen: 0 });
+  const [problemList, setProblemList] = useState([]);
+  const [problemSession, setProblemSession] = useState(null);
+  const problemAnchor = useRef(null);
   const quizAnchor = useRef(null);
   const cardAnchor = useRef(null);
   const [openPaper, setOpenPaper] = useState(null);
@@ -120,6 +124,12 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   }, [cardSession]);
 
   useEffect(() => {
+    if (!problemSession || !problemAnchor.current) return undefined;
+    problemAnchor.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return undefined;
+  }, [problemSession]);
+
+  useEffect(() => {
     if (!openChapter || isEn || !subject) {
       setCardSummary({ lessons: [], nextDue: null, total: 0, due: 0, unseen: 0 });
       return undefined;
@@ -130,6 +140,18 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     });
     return () => { cancel = true; };
   }, [openChapter, isEn, subject, activeGrade, cardSession]);
+
+  useEffect(() => {
+    if (!openChapter || isEn || !subject) {
+      setProblemList([]);
+      return undefined;
+    }
+    let cancel = false;
+    MentorAPI.listProblems({ subject, class_level: activeGrade, chapter_id: openChapter }).then(result => {
+      if (!cancel && result.success && result.data) setProblemList(result.data.problems || []);
+    });
+    return () => { cancel = true; };
+  }, [openChapter, isEn, subject, activeGrade]);
 
   useEffect(() => {
     if (!isEn) return undefined;
@@ -600,6 +622,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                               forceOpen={anchorId === entry.id}
                               onQuiz={isEn ? null : () => {
                                 setCardSession(null);
+                                setProblemSession(null);
                                 setQuizUnit(unit);
                                 setQuizLesson({ id: entry.id, title: entry.title });
                               }}
@@ -607,7 +630,18 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                               onCards={isEn ? null : () => {
                                 setQuizUnit(null);
                                 setQuizLesson(null);
+                                setProblemSession(null);
                                 setCardSession({ unit, lesson: { id: entry.id, title: entry.title }, mode: 'lesson' });
+                              }}
+                              onProblem={isEn || !problemList.some(row => row.lesson === entry.id) ? null : () => {
+                                setQuizUnit(null);
+                                setQuizLesson(null);
+                                setCardSession(null);
+                                setProblemSession({
+                                  unit,
+                                  lesson: { id: entry.id, title: entry.title },
+                                  problems: problemList.filter(row => row.lesson === entry.id)
+                                });
                               }}
                             />
                           ))}
@@ -636,8 +670,13 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                           <p className="quiz-coverage">Ai repetat tot pentru azi. Următoarea repetare: {sayDay(cardSummary.nextDue) || 'curând'}.</p>
                         )}
                         {!isEn && cardSummary.total > 0 && (cardSummary.due > 0 || cardSummary.unseen > 0) && (
-                          <button type="button" className="ghost-button result-action" onClick={() => { setQuizUnit(null); setQuizLesson(null); setCardSession({ unit, lesson: null, mode: 'chapter' }); }}>
+                          <button type="button" className="ghost-button result-action" onClick={() => { setQuizUnit(null); setQuizLesson(null); setProblemSession(null); setCardSession({ unit, lesson: null, mode: 'chapter' }); }}>
                             Flashcard-uri din tot capitolul <i className="fas fa-clone" />
+                          </button>
+                        )}
+                        {!isEn && problemList.length > 0 && (
+                          <button type="button" className="ghost-button result-action" onClick={() => { setQuizUnit(null); setQuizLesson(null); setCardSession(null); setProblemSession({ unit, lesson: null, problems: problemList }); }}>
+                            Probleme de Subiectul III
                           </button>
                         )}
                         {!isEn && cardSummary.total > 0 && cardSummary.due === 0 && cardSummary.unseen === 0 && (
@@ -747,6 +786,16 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             subject={subject}
             grade={grade}
             onClose={() => setCardSession(null)}
+          />
+        </div>
+      )}
+
+      {problemSession && !isEn && (
+        <div ref={problemAnchor}>
+          <StepProblem
+            problems={problemSession.problems}
+            lesson={problemSession.lesson}
+            onClose={() => setProblemSession(null)}
           />
         </div>
       )}

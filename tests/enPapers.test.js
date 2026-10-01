@@ -2,6 +2,8 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
 import { registerGranted } from './registerStudent.js';
+import fs from 'node:fs';
+import path from 'node:path';
 import { recommendedList, generatePaper, getBaremItem, getBundle, scoreAttempt, timingForPaper } from '../backend/src/data/enPaperFactory.js';
 
 describe('EN papers and barem', () => {
@@ -431,5 +433,93 @@ describe('EN papers and barem', () => {
     expect(finish.status).toBe(200);
     expect(finish.body.session.finished).toBe(true);
     expect(finish.body.result.grade).toMatch(/^\d+\.\d{2}$/);
+  });
+
+  it('pune la Subiectul III problemele dintr-o bancă-fixture și păstrează 100 de puncte', () => {
+    const problems = [1, 2, 3, 4, 5, 6].map(slot => ({
+      id: `fixture-slot-${slot}`,
+      lesson: 'comparare',
+      level: 6,
+      enSlot: slot,
+      statement: `Problemă de loc ${slot}, cu numere originale.`,
+      parts: [
+        { id: 'a', points: 2, prompt: 'Arată rezultatul de la a.' },
+        { id: 'b', points: 3, prompt: 'Calculează rezultatul de la b.' }
+      ],
+      steps: [
+        { id: 'a1', part: 'a', points: 1, ask: 'Primul pas?', answers: ['1'], hint: 'h', solution: 's', barem: '1' },
+        { id: 'a2', part: 'a', points: 1, ask: 'Al doilea pas?', answers: [String(20 + slot)], hint: 'h', solution: 's', barem: String(20 + slot) },
+        { id: 'b1', part: 'b', points: 1, ask: 'Pasul b1?', answers: ['3'], hint: 'h', solution: 's', barem: '3' },
+        { id: 'b2', part: 'b', points: 1, ask: 'Pasul b2?', answers: ['4'], hint: 'h', solution: 's', barem: '4' },
+        { id: 'b3', part: 'b', points: 1, ask: 'Pasul b3?', answers: ['5'], hint: 'h', solution: 's', barem: '5' }
+      ],
+      model: 'a) rezultat\n\nb) rezultat'
+    }));
+    const paper = generatePaper('matematica', [], { problems });
+    const third = paper.blocks.find(block => block.label === 'Subiectul III');
+    expect(third.items).toHaveLength(6);
+    expect(getBaremItem(paper.id, 'Subiectul III', 1).problemId).toBe('fixture-slot-1');
+    expect(getBaremItem(paper.id, 'Subiectul III', 6).stepBarem.map(step => step.id)).toEqual(['a1', 'a2', 'b1', 'b2', 'b3']);
+    const bundle = getBundle(paper.id);
+    const answers = [];
+    paper.blocks.forEach(block => {
+      block.items.filter(item => item.n > 0).forEach(item => {
+        const row = bundle.barem[`${block.label}:${item.n}`];
+        if (item.parts) {
+          const parts = {};
+          Object.entries(row.parts).forEach(([id, part]) => { parts[id] = part.answer; });
+          answers.push({ block: block.label, n: item.n, parts });
+          return;
+        }
+        answers.push({ block: block.label, n: item.n, letter: row.letter });
+      });
+    });
+    expect(scoreAttempt(paper.id, answers).points).toBe(100);
+    expect(JSON.stringify(paper)).not.toMatch(/fixture-slot/);
+  });
+
+  it('refuză autoevaluarea înainte de predare și o salvează după', async () => {
+    const agent = request.agent(app);
+    const register = await registerGranted(app, { agent, class: '8' });
+    expect(register.res.status).toBe(201);
+    const early = await agent.post('/api/curriculum/en/papers/self-score').send({
+      paper_id: 'en-mate-a',
+      block: 'Subiectul III',
+      n: 1,
+      ticked: ['a1']
+    });
+    expect(early.status).toBe(403);
+    await agent.post('/api/curriculum/en/papers/start').send({ paper_id: 'en-mate-a' });
+    await new Promise(resolve => setTimeout(resolve, 120));
+    const finish = await agent.post('/api/curriculum/en/papers/finish').send({
+      paper_id: 'en-mate-a',
+      answers: [{ block: 'Subiectul I', n: 1, letter: 'B' }]
+    });
+    expect(finish.status).toBe(200);
+    const barem = getBaremItem('en-mate-a', 'Subiectul III', 1);
+    expect(barem.stepBarem.length).toBeGreaterThanOrEqual(5);
+    const saved = await agent.post('/api/curriculum/en/papers/self-score').send({
+      paper_id: 'en-mate-a',
+      block: 'Subiectul III',
+      n: 1,
+      ticked: ['a1', 'nu-exista']
+    });
+    expect(saved.status).toBe(200);
+    expect(saved.body.points).toBe(1);
+    expect(saved.body.selfGrade).toMatch(/^\d+\.\d{2}$/);
+    expect(saved.body.selfPoints).toBeGreaterThanOrEqual(finish.body.result.points - 5);
+  });
+
+  it('nu mai promite fotografii ale caietului', () => {
+    const files = [
+      'backend/src/data/enPaperFactory.js',
+      'backend/src/data/en8Guide.js',
+      'frontend/components/EnPaperView.jsx'
+    ];
+    files.forEach(file => {
+      const text = fs.readFileSync(path.join(process.cwd(), file), 'utf8');
+      expect(text, file).not.toMatch(/poze pe zi/);
+      expect(text, file).not.toMatch(/fotografia/);
+    });
   });
 });

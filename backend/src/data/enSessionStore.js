@@ -1,5 +1,5 @@
 const { ensureUser } = require('./economyStore');
-const { timingForPaper, publicPaperById } = require('./enPaperFactory');
+const { timingForPaper, publicPaperById, selfGradeFor } = require('./enPaperFactory');
 
 function clocks(paperId) {
   return timingForPaper(publicPaperById(paperId));
@@ -41,8 +41,15 @@ function sessionView(state, paperId) {
     canFinish: started && !finished && stayLeft === 0,
     waitMs: stayLeft,
     examLeftMs: examLeft,
-    result: finished && state.score ? state.score : null
+    result: finished && state.score ? withSelf(state) : null
   };
+}
+
+function withSelf(state) {
+  const score = state.score;
+  if (!state.selfScores) return score;
+  const extra = selfGradeFor(score, state.selfScores);
+  return extra ? { ...score, ...extra } : score;
 }
 
 function previewPaper(userId, paperId) {
@@ -135,6 +142,18 @@ function applyPhotoReview(userId, paperId, patch) {
   return sessionView(state, paperId);
 }
 
+function saveSelfScore(userId, paperId, block, n, points) {
+  const user = ensureUser(userId);
+  const state = paperState(user, paperId);
+  if (!state.finishedAt || !state.score) return null;
+  if (!state.selfScores || typeof state.selfScores !== 'object') state.selfScores = {};
+  state.selfScores[`${block}:${Number(n)}`] = points;
+  const extra = selfGradeFor(state.score, state.selfScores);
+  state.selfPoints = extra.selfPoints;
+  state.selfGrade = extra.selfGrade;
+  return sessionView(state, paperId);
+}
+
 function isFinished(userId, paperId) {
   const user = ensureUser(userId);
   return Boolean(paperState(user, paperId).finishedAt);
@@ -170,6 +189,7 @@ module.exports = {
   startPaper,
   canFinish,
   finishPaper,
+  saveSelfScore,
   isFinished,
   applyPhotoReview,
   paperState,

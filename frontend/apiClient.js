@@ -964,6 +964,19 @@ const MentorAPI = {
     }
   },
 
+  async selfScoreEnPaper(payload) {
+    try {
+      const data = await safeFetchJson('/api/curriculum/en/papers/self-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: true, error: error.message };
+    }
+  },
+
   async reviewEnPhoto(payload) {
     try {
       const data = await safeFetchJson('/api/curriculum/en/photo-review', {
@@ -1011,6 +1024,60 @@ const MentorAPI = {
         chapter_id: chapterId || ''
       });
       const data = await safeFetchJson(`/api/cards/summary?${params.toString()}`);
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async listProblems({ subject, class_level: classLevel, chapter_id: chapterId, lesson_id: lessonId }) {
+    try {
+      const params = new URLSearchParams({
+        subject: subject || 'matematica',
+        class_level: String(classLevel || ''),
+        chapter_id: chapterId || ''
+      });
+      if (lessonId) params.set('lesson_id', lessonId);
+      const data = await safeFetchJson(`/api/problems?${params.toString()}`);
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async checkProblemStep(payload) {
+    try {
+      const data = await safeFetchJson('/api/problems/check-step', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async revealProblem(payload) {
+    try {
+      const data = await safeFetchJson('/api/problems/reveal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async selfScoreProblem(payload) {
+    try {
+      const data = await safeFetchJson('/api/problems/self-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
       return { success: true, data };
     } catch (error) {
       return { success: false, error: error.message };

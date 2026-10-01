@@ -84,6 +84,8 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
   const [error, setError] = useState('');
   const [now, setNow] = useState(Date.now());
   const [result, setResult] = useState(initialSession?.result || null);
+  const [sheetTicks, setSheetTicks] = useState({});
+  const [sheetNote, setSheetNote] = useState('');
 
   useEffect(() => {
     if (!paper?.id) return undefined;
@@ -265,7 +267,10 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
 
       {finished && result && (
         <div className="en-result-banner">
-          <p className="display-font">Nota {result.grade} · {result.points}/{result.max} puncte</p>
+          <p className="display-font">Nota după rezultate: {result.grade} · {result.points}/{result.max} puncte</p>
+          {result.selfGrade ? (
+            <p className="display-font">Nota cu rezolvările de pe foaie: {result.selfGrade} · {result.selfPoints}/{result.max} puncte</p>
+          ) : null}
           <QuoteCard grade={result.grade} seed={result.grade} className="quote-inline" />
           <p>Timp de lucru: {clock(session?.durationMs || elapsed)}. Baremul e mai jos, după predare. Părintele primește nota, durata și ce ai răspuns.</p>
         </div>
@@ -312,7 +317,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                                       onChange={event => setAnswer(block.label, entry.n, {
                                         parts: { ...(draft.parts || {}), [part.id]: event.target.value }
                                       })}
-                                      placeholder="Scrie doar rezultatul (ex: 15 cm, 60°). Rezolvarea completă e pe caiet; o poți fotografia după predare."
+                                      placeholder="Scrie doar rezultatul (ex: 15 cm, 60°). Rezolvarea completă e pe caiet. După predare vezi rezolvarea-model și baremul pe pași și îți autoevaluezi foaia."
                                       aria-label={`Rezultat subpunctul ${part.id}`}
                                     />
                                   ) : !session?.started && !finished ? (
@@ -488,6 +493,52 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                                 {String(scoredItem.solution).split(/\n\n+/).map((para, paraIndex) => (
                                   <p key={`${key}-sol-${paraIndex}`}>{para}</p>
                                 ))}
+                              </div>
+                            ) : null}
+                            {scoredItem.kind === 'en-parts' && scoredItem.stepBarem?.length ? (
+                              <div className="en-self-score">
+                                <p>Orice metodă corectă primește punctele pasului, ca la examen. Bifează doar ce ai scris tu.</p>
+                                {scoredItem.stepBarem.map(step => (
+                                  <label key={step.id} className="en-self-row">
+                                    <input
+                                      type="checkbox"
+                                      checked={Boolean(sheetTicks[`${key}:${step.id}`])}
+                                      onChange={() => setSheetTicks(prev => ({
+                                        ...prev,
+                                        [`${key}:${step.id}`]: !prev[`${key}:${step.id}`]
+                                      }))}
+                                    />
+                                    <span>Am scris asta corect pe foaie: {step.barem} · {step.points} p</span>
+                                  </label>
+                                ))}
+                                <button
+                                  type="button"
+                                  className="ghost-button study-rate"
+                                  onClick={async () => {
+                                    const ticked = scoredItem.stepBarem
+                                      .filter(step => sheetTicks[`${key}:${step.id}`])
+                                      .map(step => step.id);
+                                    const response = await MentorAPI.selfScoreEnPaper({
+                                      paper_id: paper.id,
+                                      block: block.label,
+                                      n: entry.n,
+                                      ticked
+                                    });
+                                    if (!response.success) {
+                                      setSheetNote(response.error || 'Nu am putut salva autoevaluarea.');
+                                      return;
+                                    }
+                                    setResult(prev => ({
+                                      ...(prev || {}),
+                                      selfPoints: response.data.selfPoints,
+                                      selfGrade: response.data.selfGrade
+                                    }));
+                                    setSheetNote(`${response.data.points} din ${response.data.max} puncte la problema asta.`);
+                                  }}
+                                >
+                                  Salvează autoevaluarea
+                                </button>
+                                {sheetNote ? <p className="quiz-explain">{sheetNote}</p> : null}
                               </div>
                             ) : null}
                             {scoredItem.steps?.length > 0 && (
