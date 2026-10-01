@@ -977,6 +977,46 @@ const MentorAPI = {
     }
   },
 
+  async getCardDeck(payload) {
+    try {
+      const data = await safeFetchJson('/api/cards/deck', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async rateCard(payload) {
+    try {
+      const data = await safeFetchJson('/api/cards/rate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async getCardSummary({ subject, class_level: classLevel, chapter_id: chapterId }) {
+    try {
+      const params = new URLSearchParams({
+        subject: subject || 'matematica',
+        class_level: String(classLevel || ''),
+        chapter_id: chapterId || ''
+      });
+      const data = await safeFetchJson(`/api/cards/summary?${params.toString()}`);
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async generateFlashcards(payload) {
     try {
       const data = await safeFetchJson('/api/flashcards/generate', {

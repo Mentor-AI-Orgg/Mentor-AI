@@ -76,6 +76,7 @@ function createDefaultUser(userId) {
     chapters: {},
     savedSessions: [],
     flashKnown: {},
+    cardBoxes: {},
     mentorAwards: {},
     focusAwards: {},
     sessionAwards: {},
@@ -1274,7 +1275,8 @@ function exportUser(email) {
   return {
     ...buildSummary(user),
     activityLog: Array.isArray(user.activityLog) ? user.activityLog.slice() : [],
-    notifications: getNotifications(email).inbox
+    notifications: getNotifications(email).inbox,
+    cardBoxes: { ...(user.cardBoxes || {}) }
   };
 }
 

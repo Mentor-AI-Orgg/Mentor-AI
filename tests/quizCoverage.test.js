@@ -7,6 +7,7 @@ import { EXTRAS } from '../backend/src/data/exerciseExtras.js';
 import { lessonsFor } from '../backend/src/data/gimnaziuLessons.js';
 import { LESSON_ID_MAP } from '../backend/src/data/lessonIdMap.js';
 import { BY_KEY } from '../backend/src/data/quiz/matematica/index.js';
+import { BY_KEY as CARD_KEYS, allCardKeys } from '../backend/src/data/cardBank.js';
 import { pickPractice } from '../backend/src/data/practicePicker.js';
 import { generateOne, fromGeneratedId } from '../backend/src/data/itemGenerator.js';
 
@@ -136,10 +137,13 @@ describe('acoperirea testelor de matematică', () => {
     const ids = [
       ...Object.values(BANK).flat().map(item => item.id),
       ...Object.values(EXTRAS).flat().map(item => item.id),
-      ...Object.values(BY_KEY).flatMap(pack => [...pack.flashcards, ...pack.tests].map(item => item.id))
+      ...Object.values(BY_KEY).flatMap(pack => [...pack.flashcards, ...pack.tests].map(item => item.id)),
+      ...Object.values(CARD_KEYS).flatMap(pack => (pack.cards || []).map(card => card.id))
     ];
     expect(new Set(ids).size).toBe(ids.length);
     expect(allExerciseKeys()).toHaveLength(16);
+    expect(allCardKeys('matematica')).toHaveLength(15);
+    expect(allCardKeys('romana')).toHaveLength(0);
     expect(findQuestion('m5n1').lesson).toBe('comparare');
   });
 
@@ -187,5 +191,45 @@ describe('acoperirea testelor de matematică', () => {
     expect(item.id).toMatch(/^g:t:matematica:5:naturale:8:[0-9a-f]+$/);
     expect(item.id.includes(':9:')).toBe(false);
     expect(fromGeneratedId(item.id)?.prompt || fromGeneratedId(item.id)?.question).toBeTruthy();
+  });
+
+  it('verifică cardurile față-verso care există deja', () => {
+    const types = new Set(['termen', 'formula', 'regula', 'intrebare', 'capcana']);
+    const byLesson = new Map();
+    Object.entries(CARD_KEYS).forEach(([key, pack]) => {
+      const [subject, grade, chapterId] = key.split(':');
+      const lessons = new Set((lessonsFor(subject, Number(grade), chapterId) || []).map(lesson => lesson.id));
+      (pack.cards || []).forEach(card => {
+        expect(lessons.has(card.lesson), card.id).toBe(true);
+        expect(LESSON_ID_MAP[`${key}:${card.lesson}`], card.id).toBeUndefined();
+        expect(types.has(card.type), card.id).toBe(true);
+        expect(card.front.length).toBeGreaterThan(0);
+        expect(card.front.length).toBeLessThanOrEqual(110);
+        expect(card.back.length).toBeGreaterThan(0);
+        expect(card.back.length).toBeLessThanOrEqual(140);
+        expect(card.why.length).toBeGreaterThan(0);
+        expect(card.why.length).toBeLessThanOrEqual(140);
+        expect(card.why.includes('\n'), card.id).toBe(false);
+        expect(`${card.front}\n${card.back}\n${card.why}`).not.toMatch(SEDILA);
+        expect(`${card.front} ${card.back} ${card.why}`).not.toMatch(BAD_MARKUP);
+        expect(String(card.id).includes(':')).toBe(false);
+        expect(String(card.id).startsWith('g:')).toBe(false);
+        const bucket = byLesson.get(`${key}:${card.lesson}`) || new Set();
+        bucket.add(card.type);
+        byLesson.set(`${key}:${card.lesson}`, bucket);
+      });
+    });
+    PENDING_CHAPTERS.forEach(key => {
+      if (PENDING_CHAPTERS.includes(key)) return;
+      const lessons = lessonsFor(...key.split(':').map((part, index) => (index === 1 ? Number(part) : part)));
+      (lessons || []).forEach(lesson => {
+        const rows = (CARD_KEYS[key].cards || []).filter(card => card.lesson === lesson.id);
+        expect(rows.length, lesson.id).toBeGreaterThanOrEqual(5);
+        expect(new Set(rows.map(card => card.type)).size, lesson.id).toBeGreaterThanOrEqual(2);
+      });
+    });
+    expect(byLesson.get('matematica:5:naturale:comparare').size).toBeGreaterThanOrEqual(2);
+    expect(byLesson.get('matematica:5:naturale:adunare').has('formula')).toBe(true);
+    expect(byLesson.get('matematica:5:naturale:adunare').has('capcana')).toBe(true);
   });
 });

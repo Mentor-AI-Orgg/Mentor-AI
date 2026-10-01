@@ -152,12 +152,12 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
     <section className="flashcards-card surface">
       <div className="focus-timer-head">
         <div>
-          <div className="eyebrow">Flashcarduri de teorie</div>
+          <div className="eyebrow">Grile rapide</div>
           <h3 className="display-font">4 variante. Pe nota pe care o vrei.</h3>
         </div>
         {reviewed > 0 && !report && <span className="learn-chip"><i className="fas fa-check" /> {hits}/{reviewed}</span>}
       </div>
-      <p className="flashcards-empty">{subject ? 'Alege capitolul, apoi nota pe care ți-ai dori-o. Cardurile se potrivesc și nu se repetă.' : 'Alege mai întâi materia (română sau matematică), apoi un capitol. Nu cad implicit pe mate.'}</p>
+      <p className="flashcards-empty">{subject ? 'Alege capitolul, apoi nota pe care ți-ai dori-o. Grilele se potrivesc și nu se repetă.' : 'Alege mai întâi materia (română sau matematică), apoi un capitol. Nu cad implicit pe mate.'}</p>
 
       {chapters.length > 0 && (
         <div className="flashcards-presets">

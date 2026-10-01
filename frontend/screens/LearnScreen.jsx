@@ -3,6 +3,7 @@ import { MentorAPI } from '../apiClient.js';
 import FocusTimer from '../components/FocusTimer.jsx';
 import FlashCards from '../components/FlashCards.jsx';
 import ChapterQuiz from '../components/ChapterQuiz.jsx';
+import CardDeck from '../components/CardDeck.jsx';
 import EnPaperView from '../components/EnPaperView.jsx';
 import QuoteCard from '../components/QuoteCard.jsx';
 import Mascota from '../components/mascot/Mascota.jsx';
@@ -14,6 +15,12 @@ import { MASCOT_MESSAGES } from '../i18n/mascotMessages.js';
 import { lessonIdFromHash, resolveAnchorId } from '../lessonText.js';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
 
+const MONTHS = ['ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie'];
+const sayDay = iso => {
+  const [year, month, day] = String(iso || '').split('-').map(Number);
+  if (!year || !month || !day) return '';
+  return `${day} ${MONTHS[month - 1]} ${year}`;
+};
 const makeConversationId = prefix => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 const SESSION_STEPS = [
   { key: 'objective', label: 'Obiectiv' },
@@ -85,7 +92,10 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [sessionDone, setSessionDone] = useState(false);
   const [quizUnit, setQuizUnit] = useState(null);
   const [quizLesson, setQuizLesson] = useState(null);
+  const [cardSession, setCardSession] = useState(null);
+  const [cardSummary, setCardSummary] = useState({ lessons: [], nextDue: null, total: 0, due: 0, unseen: 0 });
   const quizAnchor = useRef(null);
+  const cardAnchor = useRef(null);
   const [openPaper, setOpenPaper] = useState(null);
   const [paperSession, setPaperSession] = useState(null);
   const [seenPapers, setSeenPapers] = useState([]);
@@ -102,6 +112,24 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     quizAnchor.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     return undefined;
   }, [quizUnit, quizLesson]);
+
+  useEffect(() => {
+    if (!cardSession || !cardAnchor.current) return undefined;
+    cardAnchor.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return undefined;
+  }, [cardSession]);
+
+  useEffect(() => {
+    if (!openChapter || isEn || !subject) {
+      setCardSummary({ lessons: [], nextDue: null, total: 0, due: 0, unseen: 0 });
+      return undefined;
+    }
+    let cancel = false;
+    MentorAPI.getCardSummary({ subject, class_level: activeGrade, chapter_id: openChapter }).then(result => {
+      if (!cancel && result.success && result.data) setCardSummary(result.data);
+    });
+    return () => { cancel = true; };
+  }, [openChapter, isEn, subject, activeGrade, cardSession]);
 
   useEffect(() => {
     if (!isEn) return undefined;
@@ -309,7 +337,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           <p className="screen-subtitle">
             {isEn
               ? 'Secțiune separată față de capitolele pe clase. Lecțiile sunt rezumate originale, cu exemple lucrate, după programa de examen (OM 4.730/2022). Simularea EN se lucrează ca la examen: începi, stai minim o oră, apoi finalizezi. Antrenamentul scurt n-are ora de sală — predai când termini. Baremul și nota apar după predare; părintele le primește împreună cu durata.'
-              : 'Alege materia, apoi clasa. În fiecare capitol ai lecțiile pe tavă — cu exemple lucrate, nu copiate din manual. Testele și flashcardurile urcă de la foarte ușor la greu. La test scrii doar răspunsul final; nota și pașii vin după finalizare. După banca de capitol apar variante noi, generate pe programă.'}
+              : 'Alege materia, apoi clasa. În fiecare capitol ai lecțiile pe tavă — cu exemple lucrate, nu copiate din manual. Testele și grilele rapide urcă de la foarte ușor la greu. La test scrii doar răspunsul final; nota și pașii vin după finalizare. După banca de capitol apar variante noi, generate pe programă.'}
           </p>
           <p className="learn-slogan">{dailySlogan()}</p>
           <QuoteCard />
@@ -558,7 +586,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                           {' · '}
                           {userData.chapterMaps[`${subject}:${activeGrade}:${unit.id}`].tested ? 'testat' : 'netestat'}
                           {' · '}
-                          {userData.chapterMaps[`${subject}:${activeGrade}:${unit.id}`].flash || 0} flashcarduri
+                          {userData.chapterMaps[`${subject}:${activeGrade}:${unit.id}`].flash || 0} grile rapide
                         </p>
                       )}
                       {(unit.lessons || []).length > 0 && (
@@ -571,8 +599,15 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                               initiallyOpen={lessonIndex === 0}
                               forceOpen={anchorId === entry.id}
                               onQuiz={isEn ? null : () => {
+                                setCardSession(null);
                                 setQuizUnit(unit);
                                 setQuizLesson({ id: entry.id, title: entry.title });
+                              }}
+                              cardsDue={(cardSummary.lessons || []).find(row => row.lesson === entry.id)?.due || 0}
+                              onCards={isEn ? null : () => {
+                                setQuizUnit(null);
+                                setQuizLesson(null);
+                                setCardSession({ unit, lesson: { id: entry.id, title: entry.title }, mode: 'lesson' });
                               }}
                             />
                           ))}
@@ -581,7 +616,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                       <p className="lesson-practice-hint">
                         {isEn
                           ? 'Lecția e aici. Deasupra: simularea EN (minim 60 de minute în sală) și antrenamentul scurt (fără ora de sală, predai când termini). Antrenamentul de capitol e separat, 10 exerciții.'
-                          : 'Înainte de test sau flashcarduri spui ce notă ți-ai dori. Itemii se potrivesc. Scrii răspunsul la test; la flashcarduri alegi A–D. Nu se repetă.'}
+                          : 'Înainte de test sau grile rapide spui ce notă ți-ai dori. Itemii se potrivesc. Scrii răspunsul la test; la grilele rapide alegi A–D. Nu se repetă.'}
                       </p>
                       <small className="chapter-disclaimer">
                         {guide?.manual
@@ -593,8 +628,21 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                           Întreabă tutorele <i className="fas fa-comments" />
                         </button>
                         {!isEn && (
-                          <button type="button" className="ghost-button result-action" onClick={() => { setQuizLesson(null); setQuizUnit(unit); }}>
+                          <button type="button" className="ghost-button result-action" onClick={() => { setCardSession(null); setQuizLesson(null); setQuizUnit(unit); }}>
                             Generează test <i className="fas fa-clipboard-check" />
+                          </button>
+                        )}
+                        {!isEn && cardSummary.total > 0 && cardSummary.due === 0 && cardSummary.unseen === 0 && (
+                          <p className="quiz-coverage">Ai repetat tot pentru azi. Următoarea repetare: {sayDay(cardSummary.nextDue) || 'curând'}.</p>
+                        )}
+                        {!isEn && cardSummary.total > 0 && (cardSummary.due > 0 || cardSummary.unseen > 0) && (
+                          <button type="button" className="ghost-button result-action" onClick={() => { setQuizUnit(null); setQuizLesson(null); setCardSession({ unit, lesson: null, mode: 'chapter' }); }}>
+                            Flashcard-uri din tot capitolul <i className="fas fa-clone" />
+                          </button>
+                        )}
+                        {!isEn && cardSummary.total > 0 && cardSummary.due === 0 && cardSummary.unseen === 0 && (
+                          <button type="button" className="ghost-button result-action" onClick={() => { setQuizUnit(null); setQuizLesson(null); setCardSession({ unit, lesson: null, mode: 'extra' }); }}>
+                            Repetă oricum
                           </button>
                         )}
                         {isEn && (
@@ -687,6 +735,19 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             askMentor(unit);
           }}
         />
+        </div>
+      )}
+
+      {cardSession && !isEn && (
+        <div ref={cardAnchor}>
+          <CardDeck
+            unit={cardSession.unit}
+            lesson={cardSession.lesson}
+            mode={cardSession.mode}
+            subject={subject}
+            grade={grade}
+            onClose={() => setCardSession(null)}
+          />
         </div>
       )}
 

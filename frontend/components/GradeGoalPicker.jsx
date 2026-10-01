@@ -3,7 +3,7 @@ import { TARGET_NOTES, readSavedTargetNote, saveTargetNote } from '../targetGrad
 
 const GradeGoalPicker = ({ kind = 'test', onPick, onCancel }) => {
   const [chosen, setChosen] = useState(() => readSavedTargetNote() || 8);
-  const label = kind === 'flashcards' ? 'flashcardurile' : 'testul';
+  const label = kind === 'flashcards' ? 'grilele rapide' : 'testul';
 
   return (
     <div className="grade-goal animate-fadeIn">
