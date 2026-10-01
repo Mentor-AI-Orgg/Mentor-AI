@@ -16,7 +16,15 @@ const RESTRUCTURED = [
   'romana:7:taramul-sentimentelor',
   'romana:7:lumea-teatrului',
   'romana:7:calator-prin-lume',
-  'romana:7:privind-catre-mine'
+  'romana:7:privind-catre-mine',
+  'romana:6:recapitulare-initiala',
+  'romana:6:lumea-de-acasa',
+  'romana:6:taramul-prieteniei',
+  'romana:6:intelepciunea-lumii',
+  'romana:6:tablouri-de-poveste',
+  'romana:6:calatorii-literare',
+  'romana:6:ferestre-spre-viitor',
+  'romana:6:incheierea-anului'
 ];
 
 const LENGTH_ALLOWLIST = {};

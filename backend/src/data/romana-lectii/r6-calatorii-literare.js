@@ -1,133 +1,524 @@
+'use strict';
+
+const { romanaLesson } = require('../lessonBuilder');
+
+function lesson(f) {
+  return romanaLesson(f);
+}
+
 module.exports = {
-  "id": "calatorii-literare",
-  "title": "Călătorii literare",
-  "inOwnWords": "Unitatea 5 lucrează proza narativă, timpul și spațiul, personajul care spune eu, recenzia, actul de limbaj, tiparul narativ-descriptiv, adverbul, complementul și circumstanțialele de loc, de timp și de mod. Apoi vine limba română în Europa și jurnalul de cititor. Scenele sunt în lecții. În unele manuale textul de deschidere se numește Fascinații, de George Șovu. La școală titlul poate fi altul. Grilele de punctaj nu sunt lecții.",
-  "toc": [
-    "Harta unității",
-    "Timpul și spațiul narațiunii",
-    "Recenzia și atitudinea față de lectură",
-    "Actul de limbaj",
-    "Tiparul narativ-descriptiv",
-    "Adverbul",
-    "Complementul",
-    "Circumstanțialele",
-    "Limba română în Europa",
-    "Jurnalul de cititor",
-    "Recapitularea unității"
+  id: 'calatorii-literare',
+  title: 'Călătorii literare',
+  inOwnWords: 'Unitatea 5 urmărește proza care povestește, clipa faptei față de clipa relatării, locul întâmplării față de locul povestitorului și personajul la persoana întâi. Mai intră recenzia, actul de limbaj și compunerea care unește narațiunea cu descrierea. Gramatica aduce adverbul, complementul și circumstanțialul de loc, pe cel de timp și pe cel de mod. La final stau româna între limbile Europei și jurnalul de cititor. Scenele sunt scrise în lecții. La clasă, textul de pornire poate purta alt titlu. Grilele de punctaj nu țin loc de lecție.',
+  toc: [
+    'Harta unității',
+    'Timpul și spațiul narațiunii',
+    'Recenzia și atitudinea față de lectură',
+    'Actul de limbaj',
+    'Tiparul narativ-descriptiv',
+    'Adverbul',
+    'Complementul',
+    'Circumstanțialele',
+    'Limba română în Europa',
+    'Jurnalul de cititor',
+    'Recapitularea unității'
   ],
-  "glossary": [
+  glossary: [
     {
-      "term": "rememorare",
-      "meaning": "Aducere aminte: povestirea începe din prezent și se întoarce la o întâmplare din trecut."
+      term: 'rememorare',
+      meaning: 'Aducere aminte: povestirea începe din prezent și se întoarce la o întâmplare din trecut.'
     },
     {
-      "term": "adverb",
-      "meaning": "Parte de vorbire neflexibilă, care arată locul, timpul sau felul unei acțiuni."
+      term: 'adverb',
+      meaning: 'Parte de vorbire neflexibilă, care arată locul, timpul sau felul unei acțiuni.'
     },
     {
-      "term": "recenzie",
-      "meaning": "Prezentare scurtă a unei cărți, cu o idee și cu o părere."
+      term: 'recenzie',
+      meaning: 'Prezentare scurtă a unei cărți, cu o idee și cu o părere.'
     }
   ],
-  "lessons": [
-    {
-      "id": "deschidere-calatorii",
-      "title": "Ce vei lucra despre călătorii",
-      "platter": "Unitatea Călătorii literare începe cu harta. Vei citi proză narativă și vei deosebi timpul întâmplării de timpul povestirii, iar locul faptei de locul în care se povestește. Vei recunoaște personajul care spune eu. Vei spune ce este o recenzie și ce atitudine are cineva față de lectură. La comunicare vei lega forma unei propoziții de intenție și de efect. La redactare vei scrie o narațiune cu o secvență descriptivă. La gramatică vei lucra adverbul, cu felurile și gradele lui, apoi complementul direct, prepozițional și indirect, apoi circumstanțialele de loc, de timp și de mod. La interculturalitate vei afla unde stă limba română între limbile Europei. La final faci un jurnal de cititor. Competențele acestei unități sunt treisprezece: 1.1, 1.2, 1.3, 1.4, 2.3, 2.4, 3.1, 3.3, 3.4, 4.2, 4.3, 4.4 și 5.2. La școală textul de pe bancă poate avea alt titlu. Pașii rămân aceiași.\n\nExemplu lucrat: Harta anunță narațiunea, recenzia, actul de limbaj, adverbul, complementul, circumstanțialul și jurnalul de cititor. Cele treisprezece competențe sunt ținta unității, nu o lecție gata făcută.\n\nScrie două propoziții. În prima spune că tema este călătoria prin lectură și că azi lucrezi timpul și spațiul unei narațiuni. În a doua numește competențele 1.1, 1.2, 1.3, 1.4, 2.3, 2.4, 3.1, 3.3, 3.4, 4.2, 4.3, 4.4 și 5.2 și spune că sunt treisprezece.\n\nHarta unității anunță proza narativă, recenzia, actul de limbaj, adverbul, complementul, circumstanțialul, limba română și jurnalul de cititor. Competențele sunt 1.1, 1.2, 1.3, 1.4, 2.3, 2.4, 3.1, 3.3, 3.4, 4.2, 4.3, 4.4 și 5.2.",
-      "theory": "Unitatea Călătorii literare începe cu harta. Vei citi proză narativă și vei deosebi timpul întâmplării de timpul povestirii, iar locul faptei de locul în care se povestește. Vei recunoaște personajul care spune eu. Vei spune ce este o recenzie și ce atitudine are cineva față de lectură. La comunicare vei lega forma unei propoziții de intenție și de efect. La redactare vei scrie o narațiune cu o secvență descriptivă. La gramatică vei lucra adverbul, cu felurile și gradele lui, apoi complementul direct, prepozițional și indirect, apoi circumstanțialele de loc, de timp și de mod. La interculturalitate vei afla unde stă limba română între limbile Europei. La final faci un jurnal de cititor. Competențele acestei unități sunt treisprezece: 1.1, 1.2, 1.3, 1.4, 2.3, 2.4, 3.1, 3.3, 3.4, 4.2, 4.3, 4.4 și 5.2. La școală textul de pe bancă poate avea alt titlu. Pașii rămân aceiași.",
-      "example": "Harta anunță narațiunea, recenzia, actul de limbaj, adverbul, complementul, circumstanțialul și jurnalul de cititor. Cele treisprezece competențe sunt ținta unității, nu o lecție gata făcută.",
-      "tryThis": "Scrie două propoziții. În prima spune că tema este călătoria prin lectură și că azi lucrezi timpul și spațiul unei narațiuni. În a doua numește competențele 1.1, 1.2, 1.3, 1.4, 2.3, 2.4, 3.1, 3.3, 3.4, 4.2, 4.3, 4.4 și 5.2 și spune că sunt treisprezece.",
-      "recap": "Harta unității anunță proza narativă, recenzia, actul de limbaj, adverbul, complementul, circumstanțialul, limba română și jurnalul de cititor. Competențele sunt 1.1, 1.2, 1.3, 1.4, 2.3, 2.4, 3.1, 3.3, 3.4, 4.2, 4.3, 4.4 și 5.2."
-    },
-    {
-      "id": "narativ-timp",
-      "title": "Când se întâmplă și unde se povestește",
-      "platter": "Într-un text narativ, întâmplările pot fi redate în ordine, de la prima la ultima, sau prin rememorare, adică prin aducere aminte. Rememorarea pornește din clipa în care cineva își amintește și abia apoi coboară în trecut. Timpul ficțiunii este cât durează fapta: câteva minute, o oră sau câțiva ani. Timpul narativ este cât durează povestirea: un minut de vorbire poate cuprinde luni întregi. Spațiul faptelor poate fi altul decât spațiul în care se povestește. Cel care spune eu și își amintește este narator la persoana I și personaj principal. Trăsăturile se văd din fapte, nu dintr-o etichetă goală. În unele manuale textul de deschidere se numește Fascinații și este scris de George Șovu, care a trăit între 1931 și 2016. A fost romancier, autor de proză scurtă, scenarist, inspector școlar și autor de manuale. A scris scenariile pentru seria de filme Liceenii. Acolo cineva își amintește cum a citit. Amfitrion înseamnă gazdă. Tihnă înseamnă liniște deplină. Patimă, în vorbirea despre lectură, înseamnă o dorință foarte puternică. Strădanie înseamnă efort stăruitor. Formidabil înseamnă ieșit din comun. Nu cerem fragmentul. Scena noastră este alta. Duminică seara, în camera mea, eu, Mara, îmi amintesc vara. Atunci, la bibliotecă, am citit o carte într-o oră. Povestirea aceasta durează un minut, dar vara a ținut două luni. Camera de acum nu este biblioteca de atunci. Lângă mine stătea Doru. El mi-a arătat cum să întorc pagina mai repede. Eu i-am mulțumit. În vremea amintită eu sunt elevă, nu profesoară. Pasiunea comună este lectura. Recunoștința mea se vede din mulțumire. Dărnicia lui Doru se vede din faptul că a arătat metoda. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.\n\nExemplu lucrat: Ce scrie: Duminică seara, în camera ei, Mara își amintește că vara, la bibliotecă, a citit o carte într-o oră, iar Doru i-a arătat cum să întoarcă pagina mai repede. Ce vezi: O văd pe Mara în cameră, duminică seara, și, în amintire, la bibliotecă, lângă Doru. Eu aș fi cerut o a doua carte, pentru că Mara a citit una într-o oră și Doru era lângă ea. Timpul ficțiunii al verii este de două luni, al lecturii este de o oră, iar timpul narativ este de un minut. Spațiul povestirii este camera. Spațiul faptei este biblioteca. Felul este rememorare, pentru că seara vine înaintea verii.\n\nPe scena Marei, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Spune cât ține vara, cât ține lectura și cât ține povestirea. Numește cele două spații. Spune de ce textul este rememorare, cine este naratorul și ce trăsătură are Doru. Mai scrie că George Șovu a trăit între 1931 și 2016 și că amfitrion înseamnă gazdă.\n\nRememorarea pornește din prezent și se întoarce la faptă. Timpul ficțiunii este durata întâmplării, timpul narativ este durata povestirii, iar cele două spații pot fi diferite. Cine spune eu este narator și personaj, iar trăsătura se vede din faptă.",
-      "theory": "Într-un text narativ, întâmplările pot fi redate în ordine, de la prima la ultima, sau prin rememorare, adică prin aducere aminte. Rememorarea pornește din clipa în care cineva își amintește și abia apoi coboară în trecut. Timpul ficțiunii este cât durează fapta: câteva minute, o oră sau câțiva ani. Timpul narativ este cât durează povestirea: un minut de vorbire poate cuprinde luni întregi. Spațiul faptelor poate fi altul decât spațiul în care se povestește. Cel care spune eu și își amintește este narator la persoana I și personaj principal. Trăsăturile se văd din fapte, nu dintr-o etichetă goală. În unele manuale textul de deschidere se numește Fascinații și este scris de George Șovu, care a trăit între 1931 și 2016. A fost romancier, autor de proză scurtă, scenarist, inspector școlar și autor de manuale. A scris scenariile pentru seria de filme Liceenii. Acolo cineva își amintește cum a citit. Amfitrion înseamnă gazdă. Tihnă înseamnă liniște deplină. Patimă, în vorbirea despre lectură, înseamnă o dorință foarte puternică. Strădanie înseamnă efort stăruitor. Formidabil înseamnă ieșit din comun. Nu cerem fragmentul. Scena noastră este alta. Duminică seara, în camera mea, eu, Mara, îmi amintesc vara. Atunci, la bibliotecă, am citit o carte într-o oră. Povestirea aceasta durează un minut, dar vara a ținut două luni. Camera de acum nu este biblioteca de atunci. Lângă mine stătea Doru. El mi-a arătat cum să întorc pagina mai repede. Eu i-am mulțumit. În vremea amintită eu sunt elevă, nu profesoară. Pasiunea comună este lectura. Recunoștința mea se vede din mulțumire. Dărnicia lui Doru se vede din faptul că a arătat metoda. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.",
-      "example": "Ce scrie: Duminică seara, în camera ei, Mara își amintește că vara, la bibliotecă, a citit o carte într-o oră, iar Doru i-a arătat cum să întoarcă pagina mai repede. Ce vezi: O văd pe Mara în cameră, duminică seara, și, în amintire, la bibliotecă, lângă Doru. Eu aș fi cerut o a doua carte, pentru că Mara a citit una într-o oră și Doru era lângă ea. Timpul ficțiunii al verii este de două luni, al lecturii este de o oră, iar timpul narativ este de un minut. Spațiul povestirii este camera. Spațiul faptei este biblioteca. Felul este rememorare, pentru că seara vine înaintea verii.",
-      "tryThis": "Pe scena Marei, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Spune cât ține vara, cât ține lectura și cât ține povestirea. Numește cele două spații. Spune de ce textul este rememorare, cine este naratorul și ce trăsătură are Doru. Mai scrie că George Șovu a trăit între 1931 și 2016 și că amfitrion înseamnă gazdă.",
-      "recap": "Rememorarea pornește din prezent și se întoarce la faptă. Timpul ficțiunii este durata întâmplării, timpul narativ este durata povestirii, iar cele două spații pot fi diferite. Cine spune eu este narator și personaj, iar trăsătura se vede din faptă."
-    },
-    {
-      "id": "recenzia",
-      "title": "O carte și părerea despre ea",
-      "platter": "Recenzia este prezentarea scurtă a unei opere, cu comentarii și cu o apreciere. Spune titlul, autorul, o idee și atitudinea față de lectură: dacă cititul dă curaj, dacă apropie oamenii sau dacă o carte scurtă poate rămâne în minte. Nu copiem frazele altcuiva. Rui Barreira Zink s-a născut la Lisabona, în Portugalia, la 16 iunie 1961. Este profesor de literatură la Universitatea Nouă din Lisabona. A scris romane, nuvele, eseuri, piese de teatru și cărți pentru copii și a realizat prima carte electronică în limba portugheză. Unul dintre romanele lui cunoscute este Cititorul din peșteră. O recenzie de școală spune că volumul are aproximativ 120 de pagini și trei părți, iar prima parte se numește Călătoria. Personajul Anibalector iubește cărțile. Două idei, spuse cu vorbele noastre, sunt acestea: te duci spre o carte ca să o descoperi, iar lectura îți lasă libertatea să alegi ce păstrezi. Nu cerem textul recenziei. Scena noastră este alta. Marți, la ora de română, Lia a citit cu voce tare o recenzie de opt rânduri. A scris că romanul pe care l-a terminat are 90 de pagini și un băiat care caută o hartă. A spus că lectura i-a dat curaj. Atitudinea ei este că o carte scurtă poate rămâne în minte. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că. La școală, recenzia deschisă poate fi despre altă carte. Pașii rămân aceiași.\n\nExemplu lucrat: Ce scrie: Marți, la ora de română, Lia a citit o recenzie de opt rânduri despre un roman de 90 de pagini, cu un băiat care caută o hartă, și a spus că lectura i-a dat curaj. Ce vezi: O văd pe Lia în clasă, cu foaia în mână. Eu aș fi întrebat-o cum se numește romanul, pentru că a scris că are 90 de pagini și că lectura i-a dat curaj. Recenzia are o idee și o atitudine. Rui Zink s-a născut la 16 iunie 1961.\n\nPe scena Liei, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Spune ce este o recenzie, câți ani are data nașterii lui Rui Zink și câte părți are, după recenzia de școală, Cititorul din peșteră. Numește pasiunea lui Anibalector. Apoi scrie opt până la zece rânduri despre o carte pe care ai citit-o tu: titlul, autorul, o idee și ce ți-a lăsat lectura. Dacă nu ai terminat încă un roman, folosește scena Marei de la bibliotecă și spune asta.\n\nRecenzia prezintă scurt o carte și spune o părere despre lectură. Cititorul din peșteră este un roman al lui Rui Zink, născut la 16 iunie 1961, iar în recenzia de școală Anibalector iubește cărțile. Pagina ta folosește o carte pe care ai citit-o.",
-      "theory": "Recenzia este prezentarea scurtă a unei opere, cu comentarii și cu o apreciere. Spune titlul, autorul, o idee și atitudinea față de lectură: dacă cititul dă curaj, dacă apropie oamenii sau dacă o carte scurtă poate rămâne în minte. Nu copiem frazele altcuiva. Rui Barreira Zink s-a născut la Lisabona, în Portugalia, la 16 iunie 1961. Este profesor de literatură la Universitatea Nouă din Lisabona. A scris romane, nuvele, eseuri, piese de teatru și cărți pentru copii și a realizat prima carte electronică în limba portugheză. Unul dintre romanele lui cunoscute este Cititorul din peșteră. O recenzie de școală spune că volumul are aproximativ 120 de pagini și trei părți, iar prima parte se numește Călătoria. Personajul Anibalector iubește cărțile. Două idei, spuse cu vorbele noastre, sunt acestea: te duci spre o carte ca să o descoperi, iar lectura îți lasă libertatea să alegi ce păstrezi. Nu cerem textul recenziei. Scena noastră este alta. Marți, la ora de română, Lia a citit cu voce tare o recenzie de opt rânduri. A scris că romanul pe care l-a terminat are 90 de pagini și un băiat care caută o hartă. A spus că lectura i-a dat curaj. Atitudinea ei este că o carte scurtă poate rămâne în minte. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că. La școală, recenzia deschisă poate fi despre altă carte. Pașii rămân aceiași.",
-      "example": "Ce scrie: Marți, la ora de română, Lia a citit o recenzie de opt rânduri despre un roman de 90 de pagini, cu un băiat care caută o hartă, și a spus că lectura i-a dat curaj. Ce vezi: O văd pe Lia în clasă, cu foaia în mână. Eu aș fi întrebat-o cum se numește romanul, pentru că a scris că are 90 de pagini și că lectura i-a dat curaj. Recenzia are o idee și o atitudine. Rui Zink s-a născut la 16 iunie 1961.",
-      "tryThis": "Pe scena Liei, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Spune ce este o recenzie, câți ani are data nașterii lui Rui Zink și câte părți are, după recenzia de școală, Cititorul din peșteră. Numește pasiunea lui Anibalector. Apoi scrie opt până la zece rânduri despre o carte pe care ai citit-o tu: titlul, autorul, o idee și ce ți-a lăsat lectura. Dacă nu ai terminat încă un roman, folosește scena Marei de la bibliotecă și spune asta.",
-      "recap": "Recenzia prezintă scurt o carte și spune o părere despre lectură. Cititorul din peșteră este un roman al lui Rui Zink, născut la 16 iunie 1961, iar în recenzia de școală Anibalector iubește cărțile. Pagina ta folosește o carte pe care ai citit-o."
-    },
-    {
-      "id": "act-limbaj",
-      "title": "Ce vrei să se întâmple din vorbă",
-      "platter": "Actul de limbaj este unitatea cea mai mică dintr-o situație de comunicare. Are un context, o intenție și un efect asupra celuilalt. Intenția poate fi să informezi, să atragi atenția, să reproșezi sau să ceri ceva. O arăți prin verbe ca întreb, afirm, cer, mulțumesc, promit și doresc, prin imperativ, prin gest, prin mimică, prin intonație și prin volum. Același enunț poate fi declarație, promisiune, amenințare sau rugăminte, după intenție și după context. Mesajul trece prin patru canale, iar ascultătorul îl poate lua prin patru urechi. Urechea faptelor prinde informația concretă. Urechea cerințelor prinde dorința ca celălalt să facă ceva. Urechea relației privește legătura dintre cei doi. Urechea autodezvăluirii prinde starea celui care vorbește. Efectul poate să supere, să pună pe cineva în mișcare, să îl lase pasiv sau să îi aducă neliniște. Corespondențele pe care le înveți sunt acestea. Încep să citesc este declarație. Începi să citești este constatare. Începe imediat să citești este îndemn. Promit să încep să citesc este promisiune. Te rog să începi să citești este rugăminte. Virgula schimbă actul. Hai să mâncăm bunica sună ca și cum bunica ar fi mâncarea. Hai să mâncăm, bunica i se adresează bunicii: bunica este vocativ. Propoziția Vom reuși cu siguranță poate fi declarație, promisiune, amenințare sau rugăminte, după cine o spune și cu ce ton. Pe enunțul Ai lăsat cartea pe bancă, fapta este că cartea stă pe bancă, cerința este să o iei, relația este că îți atrag atenția ca între colegi, iar autodezvăluirea este că mă deranjează dezordinea. Când profesorul spune în clasă că se apropie evaluarea de la finalul clasei a VI-a, intenția este să atragă atenția, iar efectul poate fi neliniștea.\n\nExemplu lucrat: Încep să citesc este declarație. Începi să citești este constatare. Începe imediat să citești este îndemn. Promit să încep să citesc este promisiune. Te rog să începi să citești este rugăminte. Hai să mâncăm, bunica este chemare, pentru că virgula îl face pe bunica vocativ. În clasă, Ana îi spune lui Radu: Avem mult de scris. Dacă vrea doar să îl anunțe, actul este informare și Radu poate deschide caietul. Dacă tonul este aspru, aceeași propoziție devine reproș și îl poate supăra.\n\nScrie cele cinci corespondențe: declarație, constatare, îndemn, promisiune, rugăminte, fiecare cu propoziția ei din lecție. Spune ce schimbă virgula în Hai să mâncăm, bunica. Alege două intenții diferite pentru Vom reuși cu siguranță și scrie, pentru fiecare, contextul și efectul. Apoi scrie patru replici între doi colegi, în parc, și spune la ultima replică intenția și efectul.\n\nActul de limbaj are context, intenție și efect. Aceeași propoziție își schimbă rostul după ton și după relație. Încep să citesc este declarație, Te rog să începi să citești este rugăminte, iar virgula din Hai să mâncăm, bunica arată că bunica este persoana strigată.",
-      "theory": "Actul de limbaj este unitatea cea mai mică dintr-o situație de comunicare. Are un context, o intenție și un efect asupra celuilalt. Intenția poate fi să informezi, să atragi atenția, să reproșezi sau să ceri ceva. O arăți prin verbe ca întreb, afirm, cer, mulțumesc, promit și doresc, prin imperativ, prin gest, prin mimică, prin intonație și prin volum. Același enunț poate fi declarație, promisiune, amenințare sau rugăminte, după intenție și după context. Mesajul trece prin patru canale, iar ascultătorul îl poate lua prin patru urechi. Urechea faptelor prinde informația concretă. Urechea cerințelor prinde dorința ca celălalt să facă ceva. Urechea relației privește legătura dintre cei doi. Urechea autodezvăluirii prinde starea celui care vorbește. Efectul poate să supere, să pună pe cineva în mișcare, să îl lase pasiv sau să îi aducă neliniște. Corespondențele pe care le înveți sunt acestea. Încep să citesc este declarație. Începi să citești este constatare. Începe imediat să citești este îndemn. Promit să încep să citesc este promisiune. Te rog să începi să citești este rugăminte. Virgula schimbă actul. Hai să mâncăm bunica sună ca și cum bunica ar fi mâncarea. Hai să mâncăm, bunica i se adresează bunicii: bunica este vocativ. Propoziția Vom reuși cu siguranță poate fi declarație, promisiune, amenințare sau rugăminte, după cine o spune și cu ce ton. Pe enunțul Ai lăsat cartea pe bancă, fapta este că cartea stă pe bancă, cerința este să o iei, relația este că îți atrag atenția ca între colegi, iar autodezvăluirea este că mă deranjează dezordinea. Când profesorul spune în clasă că se apropie evaluarea de la finalul clasei a VI-a, intenția este să atragă atenția, iar efectul poate fi neliniștea.",
-      "example": "Încep să citesc este declarație. Începi să citești este constatare. Începe imediat să citești este îndemn. Promit să încep să citesc este promisiune. Te rog să începi să citești este rugăminte. Hai să mâncăm, bunica este chemare, pentru că virgula îl face pe bunica vocativ. În clasă, Ana îi spune lui Radu: Avem mult de scris. Dacă vrea doar să îl anunțe, actul este informare și Radu poate deschide caietul. Dacă tonul este aspru, aceeași propoziție devine reproș și îl poate supăra.",
-      "tryThis": "Scrie cele cinci corespondențe: declarație, constatare, îndemn, promisiune, rugăminte, fiecare cu propoziția ei din lecție. Spune ce schimbă virgula în Hai să mâncăm, bunica. Alege două intenții diferite pentru Vom reuși cu siguranță și scrie, pentru fiecare, contextul și efectul. Apoi scrie patru replici între doi colegi, în parc, și spune la ultima replică intenția și efectul.",
-      "recap": "Actul de limbaj are context, intenție și efect. Aceeași propoziție își schimbă rostul după ton și după relație. Încep să citesc este declarație, Te rog să începi să citești este rugăminte, iar virgula din Hai să mâncăm, bunica arată că bunica este persoana strigată."
-    },
-    {
-      "id": "narativ-descriptiv",
-      "title": "Povestești și te oprești să arăți",
-      "platter": "O compunere are introducere, cuprins și încheiere. Tiparul narativ are personaje, întâmplări și indici de timp și de spațiu. Tiparul descriptiv are trăsături, o persoană, detalii, un obiect, perechi de substantiv cu adjectiv sau un tablou de natură. Înăuntrul unei narațiuni, secvența descriptivă încetinește fapta. Pusă în introducere, fixează timpul și spațiul. Pusă în cuprins, înfățișează un personaj, un loc sau un obiect. Modelul de mai jos este scurt, ca să vezi rostul fiecărei bucăți. Introducere, cu indice de timp și de spațiu: Joi după-amiază am intrat în biblioteca școlii. Secvență descriptivă de cadru: Sala era liniștită, cu rafturi înalte de lemn și cu o lampă galbenă pe masa din fund. Cuprins narativ: Am ales un volum subțire și am citit până a sunat clopoțelul. Secvență descriptivă de obiect: Coperta era albastră și moale, cu litere argintii. Încheiere: Am pus cartea la loc și am plecat bucuroasă. Joi după-amiază este indice de timp. Biblioteca școlii este indice de spațiu. Lampă galbenă și copertă albastră sunt perechi de substantiv cu adjectiv. La școală, textul deschis poate fi altul. Pașii rămân: găsești narațiunea, găsești descrierea, spui unde stă descrierea.\n\nExemplu lucrat: În model, introducerea este intrarea în bibliotecă, joi după-amiază. Descrierea sălii încetinește fapta și fixează spațiul. Alegerea volumului și cititul până la clopoțel sunt narațiune. Coperta albastră este descriere de obiect, în cuprins. Plecarea bucuroasă este încheierea.\n\nScrie o narațiune la persoana I, între 100 și 120 de cuvinte, despre o experiență de lectură a ta. Pune introducere, cuprins și încheiere. Include o secvență descriptivă de cel puțin douăzeci de cuvinte, un indice de timp și un indice de spațiu. Nu copia modelul cu lampa galbenă: schimbă locul și cartea. La sfârșit, subliniază în minte descrierea și spune dacă stă în introducere sau în cuprins.\n\nNarațiunea spune ce se întâmplă, cu personaje, timp și spațiu. Descrierea arată un loc, o persoană sau un obiect și încetinește fapta. Compunerea are introducere, cuprins și încheiere.",
-      "theory": "O compunere are introducere, cuprins și încheiere. Tiparul narativ are personaje, întâmplări și indici de timp și de spațiu. Tiparul descriptiv are trăsături, o persoană, detalii, un obiect, perechi de substantiv cu adjectiv sau un tablou de natură. Înăuntrul unei narațiuni, secvența descriptivă încetinește fapta. Pusă în introducere, fixează timpul și spațiul. Pusă în cuprins, înfățișează un personaj, un loc sau un obiect. Modelul de mai jos este scurt, ca să vezi rostul fiecărei bucăți. Introducere, cu indice de timp și de spațiu: Joi după-amiază am intrat în biblioteca școlii. Secvență descriptivă de cadru: Sala era liniștită, cu rafturi înalte de lemn și cu o lampă galbenă pe masa din fund. Cuprins narativ: Am ales un volum subțire și am citit până a sunat clopoțelul. Secvență descriptivă de obiect: Coperta era albastră și moale, cu litere argintii. Încheiere: Am pus cartea la loc și am plecat bucuroasă. Joi după-amiază este indice de timp. Biblioteca școlii este indice de spațiu. Lampă galbenă și copertă albastră sunt perechi de substantiv cu adjectiv. La școală, textul deschis poate fi altul. Pașii rămân: găsești narațiunea, găsești descrierea, spui unde stă descrierea.",
-      "example": "În model, introducerea este intrarea în bibliotecă, joi după-amiază. Descrierea sălii încetinește fapta și fixează spațiul. Alegerea volumului și cititul până la clopoțel sunt narațiune. Coperta albastră este descriere de obiect, în cuprins. Plecarea bucuroasă este încheierea.",
-      "tryThis": "Scrie o narațiune la persoana I, între 100 și 120 de cuvinte, despre o experiență de lectură a ta. Pune introducere, cuprins și încheiere. Include o secvență descriptivă de cel puțin douăzeci de cuvinte, un indice de timp și un indice de spațiu. Nu copia modelul cu lampa galbenă: schimbă locul și cartea. La sfârșit, subliniază în minte descrierea și spune dacă stă în introducere sau în cuprins.",
-      "recap": "Narațiunea spune ce se întâmplă, cu personaje, timp și spațiu. Descrierea arată un loc, o persoană sau un obiect și încetinește fapta. Compunerea are introducere, cuprins și încheiere."
-    },
-    {
-      "id": "adverbul",
-      "title": "Loc, timp, fel și grade",
-      "platter": "Adverbul este partea de vorbire neflexibilă care arată caracteristica unei acțiuni, a unei stări sau a unei însușiri și împrejurarea în care se petrece o acțiune. Are aceeași formă în orice context. Poate determina un verb, ca în Bătrânul se plimbă agale și A ajuns devreme acasă. După înțeles, adverbele de loc sunt aici, acolo, dincolo, departe, aproape, sus, jos, ici-colo, acasă, colea și împrejur. Adverbele de timp sunt atunci, astăzi, acum, ieri, mâine, târziu, devreme, odată, totdeauna, vreodată, imediat și niciodată. Adverbele de mod sunt așa, bine, ușor, încet, alene, repede, rar și tare. Gradele sunt aceleași ca la adjectiv, dar nu toate adverbele au grade. Pozitiv: repede. Comparativ de superioritate: mai repede. De egalitate: la fel de repede, tot așa de repede sau tot atât de repede. De inferioritate: mai puțin repede. Superlativ relativ de superioritate: cel mai repede. De inferioritate: cel mai puțin repede. Superlativ absolut de superioritate: foarte repede. De inferioritate: foarte puțin repede. Pentru aproape, șirul este aproape, mai aproape, la fel de aproape, mai puțin aproape, cel mai aproape, cel mai puțin aproape, foarte aproape, foarte puțin aproape. La sortarea din caiet, comparativul cuprinde mai sus, tot atât de repede, mai puțin devreme și la fel de rar. Superlativul cuprinde prea târziu, foarte încet, cel mai puțin bine, cel mai aproape și foarte puțin departe. Prea, când stă înaintea unui adverb și îi mărește tăria, ca în prea târziu, marchează superlativul absolut. Semiaderbele nu au funcție sintactică și stau de obicei înaintea verbului: numai, doar, chiar, mai, tot, decât, prea și cam. Exemple: O să tot vină. S-a cam supărat. Te mai întâlnești cu el la bibliotecă. Decât se folosește în construcții negative: Nu am decât două exerciții. Excepția este când înseamnă în loc să: Decât să desenez, mai bine citesc. Doar se folosește în construcții afirmative: Doar el a venit devreme. Ortografia pe care o alegi este aceasta. Locuia odată un bătrân: odată, un cuvânt, înseamnă cândva. O dată pe săptămână: o dată, două cuvinte, înseamnă o singură dată. Bineînțeles se scrie împreună. Deloc se scrie împreună. Demult s-a întâmplat: demult, un cuvânt, înseamnă cu mult timp în urmă. De mult timp păstrează două cuvinte când vrei cantitatea mare de timp. Mi-e totuna se scrie într-un cuvânt la totuna. Întruna înseamnă neîncetat și se scrie întruna, nu într-una. Unele adverbe de mod sunt figurate: doarme covrig înseamnă ghemuit, a răcit cobză înseamnă rău, doarme tun înseamnă adânc, a țâșnit glonț înseamnă foarte repede, iar supărat foc înseamnă foarte supărat.\n\nExemplu lucrat: Ici-colo, departe, acasă, colea, împrejur și aproape sunt de loc. Târziu, devreme, vreodată, acum, imediat și niciodată sunt de timp. Rar, repede, bine, așa, ușor și tare sunt de mod. Mai sus este comparativ de superioritate. Tot atât de repede și la fel de rar sunt comparativ de egalitate. Mai puțin devreme este comparativ de inferioritate. Foarte încet și prea târziu sunt superlativ absolut. Cel mai puțin bine este superlativ relativ de inferioritate. Cel mai aproape este superlativ relativ de superioritate. Foarte puțin departe este superlativ absolut de inferioritate. Forma bună este odată în Locuia odată un bătrân, Bineînțeles, deloc, Demult, totuna și întruna. Doar el a venit devreme este afirmativ. Nu am decât două exerciții este negativ.\n\nÎmparte lista în trei coloane, de loc, de timp și de mod: târziu, rar, ici-colo, devreme, vreodată, departe, repede, acasă, bine, colea, așa, acum, împrejur, ușor, aproape, tare, imediat, niciodată. Pune la comparativ sau la superlativ: mai sus, foarte încet, cel mai puțin bine, tot atât de repede, cel mai aproape, mai puțin devreme, foarte puțin departe, la fel de rar, prea târziu. Scrie aproape la comparativ de superioritate și la superlativ absolut. Alege forma bună în fiecare pereche: odată sau o dată în Locuia odată un bătrân, Bineînțeles sau Bine înțeles, deloc sau de loc, Demult sau De mult în Demult s-a întâmplat, totuna sau tot una, întruna sau într-una. Spune ce înseamnă doarme tun și a țâșnit glonț. Scrie un enunț cu decât în propoziție negativă și unul cu doar în propoziție afirmativă.\n\nAdverbul nu își schimbă forma. Arată locul, timpul sau felul. Gradele lui sunt pozitiv, comparativ și superlativ, iar prea târziu ține de superlativul absolut. Odată, când înseamnă cândva, se scrie într-un cuvânt. Bineînțeles, deloc, demult, totuna și întruna se scriu împreună.",
-      "theory": "Adverbul este partea de vorbire neflexibilă care arată caracteristica unei acțiuni, a unei stări sau a unei însușiri și împrejurarea în care se petrece o acțiune. Are aceeași formă în orice context. Poate determina un verb, ca în Bătrânul se plimbă agale și A ajuns devreme acasă. După înțeles, adverbele de loc sunt aici, acolo, dincolo, departe, aproape, sus, jos, ici-colo, acasă, colea și împrejur. Adverbele de timp sunt atunci, astăzi, acum, ieri, mâine, târziu, devreme, odată, totdeauna, vreodată, imediat și niciodată. Adverbele de mod sunt așa, bine, ușor, încet, alene, repede, rar și tare. Gradele sunt aceleași ca la adjectiv, dar nu toate adverbele au grade. Pozitiv: repede. Comparativ de superioritate: mai repede. De egalitate: la fel de repede, tot așa de repede sau tot atât de repede. De inferioritate: mai puțin repede. Superlativ relativ de superioritate: cel mai repede. De inferioritate: cel mai puțin repede. Superlativ absolut de superioritate: foarte repede. De inferioritate: foarte puțin repede. Pentru aproape, șirul este aproape, mai aproape, la fel de aproape, mai puțin aproape, cel mai aproape, cel mai puțin aproape, foarte aproape, foarte puțin aproape. La sortarea din caiet, comparativul cuprinde mai sus, tot atât de repede, mai puțin devreme și la fel de rar. Superlativul cuprinde prea târziu, foarte încet, cel mai puțin bine, cel mai aproape și foarte puțin departe. Prea, când stă înaintea unui adverb și îi mărește tăria, ca în prea târziu, marchează superlativul absolut. Semiaderbele nu au funcție sintactică și stau de obicei înaintea verbului: numai, doar, chiar, mai, tot, decât, prea și cam. Exemple: O să tot vină. S-a cam supărat. Te mai întâlnești cu el la bibliotecă. Decât se folosește în construcții negative: Nu am decât două exerciții. Excepția este când înseamnă în loc să: Decât să desenez, mai bine citesc. Doar se folosește în construcții afirmative: Doar el a venit devreme. Ortografia pe care o alegi este aceasta. Locuia odată un bătrân: odată, un cuvânt, înseamnă cândva. O dată pe săptămână: o dată, două cuvinte, înseamnă o singură dată. Bineînțeles se scrie împreună. Deloc se scrie împreună. Demult s-a întâmplat: demult, un cuvânt, înseamnă cu mult timp în urmă. De mult timp păstrează două cuvinte când vrei cantitatea mare de timp. Mi-e totuna se scrie într-un cuvânt la totuna. Întruna înseamnă neîncetat și se scrie întruna, nu într-una. Unele adverbe de mod sunt figurate: doarme covrig înseamnă ghemuit, a răcit cobză înseamnă rău, doarme tun înseamnă adânc, a țâșnit glonț înseamnă foarte repede, iar supărat foc înseamnă foarte supărat.",
-      "example": "Ici-colo, departe, acasă, colea, împrejur și aproape sunt de loc. Târziu, devreme, vreodată, acum, imediat și niciodată sunt de timp. Rar, repede, bine, așa, ușor și tare sunt de mod. Mai sus este comparativ de superioritate. Tot atât de repede și la fel de rar sunt comparativ de egalitate. Mai puțin devreme este comparativ de inferioritate. Foarte încet și prea târziu sunt superlativ absolut. Cel mai puțin bine este superlativ relativ de inferioritate. Cel mai aproape este superlativ relativ de superioritate. Foarte puțin departe este superlativ absolut de inferioritate. Forma bună este odată în Locuia odată un bătrân, Bineînțeles, deloc, Demult, totuna și întruna. Doar el a venit devreme este afirmativ. Nu am decât două exerciții este negativ.",
-      "tryThis": "Împarte lista în trei coloane, de loc, de timp și de mod: târziu, rar, ici-colo, devreme, vreodată, departe, repede, acasă, bine, colea, așa, acum, împrejur, ușor, aproape, tare, imediat, niciodată. Pune la comparativ sau la superlativ: mai sus, foarte încet, cel mai puțin bine, tot atât de repede, cel mai aproape, mai puțin devreme, foarte puțin departe, la fel de rar, prea târziu. Scrie aproape la comparativ de superioritate și la superlativ absolut. Alege forma bună în fiecare pereche: odată sau o dată în Locuia odată un bătrân, Bineînțeles sau Bine înțeles, deloc sau de loc, Demult sau De mult în Demult s-a întâmplat, totuna sau tot una, întruna sau într-una. Spune ce înseamnă doarme tun și a țâșnit glonț. Scrie un enunț cu decât în propoziție negativă și unul cu doar în propoziție afirmativă.",
-      "recap": "Adverbul nu își schimbă forma. Arată locul, timpul sau felul. Gradele lui sunt pozitiv, comparativ și superlativ, iar prea târziu ține de superlativul absolut. Odată, când înseamnă cândva, se scrie într-un cuvânt. Bineînțeles, deloc, demult, totuna și întruna se scriu împreună."
-    },
-    {
-      "id": "complemente",
-      "title": "Pe cine, despre cine, cui",
-      "platter": "Complementul este partea secundară de propoziție care determină, în general, un verb. Complementul direct arată obiectul asupra căruia se exercită direct acțiunea. Întrebările sunt pe cine și ce. Stă în acuzativ. Poate fi dublat de un clitic în acuzativ: anticipare în L-am întrebat pe Ionel, reluare în Pe Ana a certat-o. Se exprimă prin substantiv comun sau propriu: Citește o carte. L-am văzut pe Andrei. Prin pronume personal, de politețe sau reflexiv: L-am chemat pe el. Pe dumneavoastră vă așteptam. Mă curăț de praf. Prin numeral cardinal sau ordinal: I-am supărat pe cei doi. Pe al treilea l-au premiat. Complementul prepozițional arată obiectul la care se referă acțiunea, tot în acuzativ, dar cu prepoziție. Întrebările sunt despre cine, despre ce, cu cine, cu ce, pentru cine, pentru ce. Vorbim despre lucruri importante. Votează pentru ei. Discută despre colegi. Mergem cu Andrei. Se gândește la el. Mă întreabă despre dumnealui. Ne spune despre sine. Cu cei doi m-am întâlnit să vorbim despre al treilea. Complementul indirect arată beneficiarul. Întrebarea este cui. Stă în dativ și poate sta după verb sau înaintea lui: I-am explicat Ioanei exercițiul și Ioanei i-am explicat exercițiul. Îi spun colegului vestea. I-a dat fetei o floare. Îi spun Mariei adevărul. Celor doi le este foame. Celui de-al treilea i-am oferit scuze. Lui îi este frică. Dumnealui i-am cerut un sfat. Sieși își reproșează. Cliticele i- și le- dublează complementul indirect. Formele bune de dativ sunt Mariei, nu la Maria, Cristinei, nu lui Cristina, lui Gabi, nu Gabiei, pentru că Gabi este tratat aici ca nume masculin, și Alexandrei, nu Lui Alexandra.\n\nExemplu lucrat: În Am citit o poezie, o poezie este complement direct, întrebarea ce, substantiv comun. În L-am întrebat pe Ionel, pe Ionel este complement direct anticipat de L-. În Pe Ana a certat-o, pe Ana este complement direct reluat. În Vorbim despre lucruri importante, despre lucruri importante este complement prepozițional. În Mergem cu Andrei, cu Andrei este complement prepozițional. În Îi spun Mariei adevărul, Mariei este complement indirect, iar adevărul este complement direct. Ioanei i-am explicat exercițiul păstrează același indirect, pus înaintea verbului. Formele bune sunt Mariei, Cristinei, lui Gabi și Alexandrei.\n\nÎn propozițiile Citește o carte, L-am văzut pe Andrei, Pe dumneavoastră vă așteptam și Pe al treilea l-au premiat, spune care este complementul direct și prin ce parte de vorbire este exprimat. În Discută despre colegi, Votează pentru ei și Se gândește la el, spune care este complementul prepozițional. În I-a dat fetei o floare și Celor doi le este foame, spune care este complementul indirect. Alege forma bună: Mariei sau la Maria, Cristinei sau lui Cristina, lui Gabi sau Gabiei, Alexandrei sau Lui Alexandra. Scrie un enunț în care indirectul stă înaintea verbului, pe modelul Ioanei i-am explicat exercițiul.\n\nComplementul direct răspunde la pe cine și ce și stă în acuzativ. Complementul prepozițional are prepoziție și rămâne în acuzativ. Complementul indirect răspunde la cui și stă în dativ. Formele bune sunt Mariei, Cristinei, lui Gabi și Alexandrei.",
-      "theory": "Complementul este partea secundară de propoziție care determină, în general, un verb. Complementul direct arată obiectul asupra căruia se exercită direct acțiunea. Întrebările sunt pe cine și ce. Stă în acuzativ. Poate fi dublat de un clitic în acuzativ: anticipare în L-am întrebat pe Ionel, reluare în Pe Ana a certat-o. Se exprimă prin substantiv comun sau propriu: Citește o carte. L-am văzut pe Andrei. Prin pronume personal, de politețe sau reflexiv: L-am chemat pe el. Pe dumneavoastră vă așteptam. Mă curăț de praf. Prin numeral cardinal sau ordinal: I-am supărat pe cei doi. Pe al treilea l-au premiat. Complementul prepozițional arată obiectul la care se referă acțiunea, tot în acuzativ, dar cu prepoziție. Întrebările sunt despre cine, despre ce, cu cine, cu ce, pentru cine, pentru ce. Vorbim despre lucruri importante. Votează pentru ei. Discută despre colegi. Mergem cu Andrei. Se gândește la el. Mă întreabă despre dumnealui. Ne spune despre sine. Cu cei doi m-am întâlnit să vorbim despre al treilea. Complementul indirect arată beneficiarul. Întrebarea este cui. Stă în dativ și poate sta după verb sau înaintea lui: I-am explicat Ioanei exercițiul și Ioanei i-am explicat exercițiul. Îi spun colegului vestea. I-a dat fetei o floare. Îi spun Mariei adevărul. Celor doi le este foame. Celui de-al treilea i-am oferit scuze. Lui îi este frică. Dumnealui i-am cerut un sfat. Sieși își reproșează. Cliticele i- și le- dublează complementul indirect. Formele bune de dativ sunt Mariei, nu la Maria, Cristinei, nu lui Cristina, lui Gabi, nu Gabiei, pentru că Gabi este tratat aici ca nume masculin, și Alexandrei, nu Lui Alexandra.",
-      "example": "În Am citit o poezie, o poezie este complement direct, întrebarea ce, substantiv comun. În L-am întrebat pe Ionel, pe Ionel este complement direct anticipat de L-. În Pe Ana a certat-o, pe Ana este complement direct reluat. În Vorbim despre lucruri importante, despre lucruri importante este complement prepozițional. În Mergem cu Andrei, cu Andrei este complement prepozițional. În Îi spun Mariei adevărul, Mariei este complement indirect, iar adevărul este complement direct. Ioanei i-am explicat exercițiul păstrează același indirect, pus înaintea verbului. Formele bune sunt Mariei, Cristinei, lui Gabi și Alexandrei.",
-      "tryThis": "În propozițiile Citește o carte, L-am văzut pe Andrei, Pe dumneavoastră vă așteptam și Pe al treilea l-au premiat, spune care este complementul direct și prin ce parte de vorbire este exprimat. În Discută despre colegi, Votează pentru ei și Se gândește la el, spune care este complementul prepozițional. În I-a dat fetei o floare și Celor doi le este foame, spune care este complementul indirect. Alege forma bună: Mariei sau la Maria, Cristinei sau lui Cristina, lui Gabi sau Gabiei, Alexandrei sau Lui Alexandra. Scrie un enunț în care indirectul stă înaintea verbului, pe modelul Ioanei i-am explicat exercițiul.",
-      "recap": "Complementul direct răspunde la pe cine și ce și stă în acuzativ. Complementul prepozițional are prepoziție și rămâne în acuzativ. Complementul indirect răspunde la cui și stă în dativ. Formele bune sunt Mariei, Cristinei, lui Gabi și Alexandrei."
-    },
-    {
-      "id": "circumstantiale",
-      "title": "Unde, când și cum",
-      "platter": "Circumstanțialul de loc arată unde se petrece acțiunea, punctul de plecare, direcția, limita sau drumul. Substantivul, pronumele sau numeralul stă în acuzativ cu prepoziție. Poate fi și un adverb de loc. Întrebările sunt unde, de unde, până unde, încotro și pe unde. În parc s-au adunat mulți copii. Ne întoarcem de la stadion. Mergeau în București. A ajuns până la marginea pădurii. Ei aleargă pe pistă. Se îndreaptă spre ea. Merge până la cei doi. Plecăm acasă. Circumstanțialul de timp arată timpul, durata, limita sau frecvența. Întrebările sunt când, de când, până când și cât timp. Se exprimă prin substantiv, ca în După Mihai au sosit ei, prin pronume, ca în Vom sosi înaintea lui, prin numeral, ca în După cei trei a intrat și el, sau prin adverb, ca în Astăzi vom merge în excursie. Deosebești funcția după rol, nu după cuvântul gol. Noaptea este un sfetnic bun: noaptea este subiect, în nominativ. Am ajuns noaptea: noaptea este circumstanțial de timp. Anotimpul meu preferat este toamna: toamna este nume predicativ. Toamna începe școala: toamna este circumstanțial de timp. Ziua de luni va fi însorită: ziua este subiect. Luni vom merge în parc: luni este circumstanțial de timp. Circumstanțialul de mod arată felul acțiunii sau felul în care se înfățișează o însușire. Întrebările sunt cum, în ce fel, în ce mod și cât. Desenează ca sora lui. Este mai cuminte decât mine. Ionel este puțin mai înalt decât cel de-al treilea. Bunica merge alene. Se uită țintă. Merg în liniște. Se comportă precum cei trei. Citește cu atenție. Destul de repede a dispărut. Am intrat și noi precum el. Se poartă ca dumneavoastră.\n\nExemplu lucrat: În parc răspunde la unde și este circumstanțial de loc, exprimat prin substantiv cu prepoziție. Acasă, în Plecăm acasă, este adverb de loc. Astăzi, în Astăzi vom merge în excursie, este circumstanțial de timp, adverb. În Noaptea este un sfetnic bun, noaptea este subiect. În Am ajuns noaptea, noaptea este circumstanțial de timp. În Toamna începe școala, toamna este circumstanțial de timp. În Anotimpul meu preferat este toamna, toamna este nume predicativ. Alene, în Bunica merge alene, este circumstanțial de mod, adverb. Ca sora lui este circumstanțial de mod, substantiv cu prepoziție.\n\nSpune întrebarea și partea de vorbire pentru: În parc s-au adunat mulți copii, Ne întoarcem de la stadion, Plecăm acasă, Astăzi vom merge în excursie, După Mihai au sosit ei și Bunica merge alene. La cele șase propoziții cu noaptea, toamna și luni, spune funcția: subiect, nume predicativ sau circumstanțial de timp. Scrie trei enunțuri, unul cu circumstanțial de loc, unul de timp și unul de mod, despre o plimbare până la bibliotecă.\n\nCircumstanțialul de loc răspunde la unde și la încotro. Cel de timp răspunde la când. Cel de mod răspunde la cum. Noaptea este subiect în Noaptea este un sfetnic bun și circumstanțial de timp în Am ajuns noaptea. Toamna este nume predicativ după este și circumstanțial de timp în Toamna începe școala.",
-      "theory": "Circumstanțialul de loc arată unde se petrece acțiunea, punctul de plecare, direcția, limita sau drumul. Substantivul, pronumele sau numeralul stă în acuzativ cu prepoziție. Poate fi și un adverb de loc. Întrebările sunt unde, de unde, până unde, încotro și pe unde. În parc s-au adunat mulți copii. Ne întoarcem de la stadion. Mergeau în București. A ajuns până la marginea pădurii. Ei aleargă pe pistă. Se îndreaptă spre ea. Merge până la cei doi. Plecăm acasă. Circumstanțialul de timp arată timpul, durata, limita sau frecvența. Întrebările sunt când, de când, până când și cât timp. Se exprimă prin substantiv, ca în După Mihai au sosit ei, prin pronume, ca în Vom sosi înaintea lui, prin numeral, ca în După cei trei a intrat și el, sau prin adverb, ca în Astăzi vom merge în excursie. Deosebești funcția după rol, nu după cuvântul gol. Noaptea este un sfetnic bun: noaptea este subiect, în nominativ. Am ajuns noaptea: noaptea este circumstanțial de timp. Anotimpul meu preferat este toamna: toamna este nume predicativ. Toamna începe școala: toamna este circumstanțial de timp. Ziua de luni va fi însorită: ziua este subiect. Luni vom merge în parc: luni este circumstanțial de timp. Circumstanțialul de mod arată felul acțiunii sau felul în care se înfățișează o însușire. Întrebările sunt cum, în ce fel, în ce mod și cât. Desenează ca sora lui. Este mai cuminte decât mine. Ionel este puțin mai înalt decât cel de-al treilea. Bunica merge alene. Se uită țintă. Merg în liniște. Se comportă precum cei trei. Citește cu atenție. Destul de repede a dispărut. Am intrat și noi precum el. Se poartă ca dumneavoastră.",
-      "example": "În parc răspunde la unde și este circumstanțial de loc, exprimat prin substantiv cu prepoziție. Acasă, în Plecăm acasă, este adverb de loc. Astăzi, în Astăzi vom merge în excursie, este circumstanțial de timp, adverb. În Noaptea este un sfetnic bun, noaptea este subiect. În Am ajuns noaptea, noaptea este circumstanțial de timp. În Toamna începe școala, toamna este circumstanțial de timp. În Anotimpul meu preferat este toamna, toamna este nume predicativ. Alene, în Bunica merge alene, este circumstanțial de mod, adverb. Ca sora lui este circumstanțial de mod, substantiv cu prepoziție.",
-      "tryThis": "Spune întrebarea și partea de vorbire pentru: În parc s-au adunat mulți copii, Ne întoarcem de la stadion, Plecăm acasă, Astăzi vom merge în excursie, După Mihai au sosit ei și Bunica merge alene. La cele șase propoziții cu noaptea, toamna și luni, spune funcția: subiect, nume predicativ sau circumstanțial de timp. Scrie trei enunțuri, unul cu circumstanțial de loc, unul de timp și unul de mod, despre o plimbare până la bibliotecă.",
-      "recap": "Circumstanțialul de loc răspunde la unde și la încotro. Cel de timp răspunde la când. Cel de mod răspunde la cum. Noaptea este subiect în Noaptea este un sfetnic bun și circumstanțial de timp în Am ajuns noaptea. Toamna este nume predicativ după este și circumstanțial de timp în Toamna începe școala."
-    },
-    {
-      "id": "limba-romana",
-      "title": "Limba română între limbile Europei",
-      "platter": "România stă în sud-estul Europei Centrale, pe cursul inferior al Dunării, la nord de Peninsula Balcanică și la țărmul de nord-vest al Mării Negre. Dacia a devenit provincie romană după cucerirea de către Traian a teritoriilor de la nord de Dunăre, iar amestecul celor două popoare este originea învățată aici. Limba română este limbă romanică, a cincea după numărul de vorbitori, după spaniolă, portugheză, franceză și italiană. O vorbesc aproximativ 28 de milioane de persoane. Dintre ele, aproximativ 24 de milioane o au ca limbă maternă. Aproximativ 17 milioane dintre vorbitori se află în România, unde româna este limbă oficială și limbă maternă pentru mai mult de 90 la sută din populație. A evoluat din latina vulgară a cuceritorilor romani și din limba dacilor, cu influențe de mai târziu, și s-a despărțit de limbile romanice din vest între secolele al V-lea și al VIII-lea. Lingvistica comparată o numește daco-română, ca să o deosebească de aromână, de meglenoromână și de istroromână. Oamenii își spuneau rumâni sau români, iar limbii îi spuneau rumână sau românească, înainte de statul român modern. Pierre Lescalopier nota în 1574 că cei din Moldova, din Valahia și mulți din Transilvania se socoteau urmași ai romanilor și își numeau limba românește. Cel mai vechi document păstrat în limba română este Scrisoarea lui Neacșu din Câmpulung, din 1521, scrisă cu litere chirilice. Chirilica a rămas în uz până în secolul al XIX-lea. Miron Costin, în De neamul moldovenilor, din 1687, și Dimitrie Cantemir, în Descriptio Moldaviae, din 1714, au notat aceeași origine pentru moldoveni, pentru valahi și pentru cei din regatul Ungariei. Un dicționar internațional de termeni literari, făcut sub UNESCO, cuprinde trei cuvinte românești greu de tradus exact: dor, doină și colindă. Ziua Limbii Române este 31 august, proclamată prin Legea 53/2013. La aceeași dată, în Republica Moldova, din 1990, se sărbătorește o zi asemănătoare, sub numele Limba noastră. Nichita Stănescu a numit limba română o patrie minunată. Nu cerem oda. Vasile Alecsandri a vorbit despre limbă ca despre o moștenire lăsată de părinți copiilor. Nu cerem fraza lui. La școală, grupul poate face o carte scurtă. Aici scrii pagina ta.\n\nExemplu lucrat: Româna este a cincea limbă romanică, după spaniolă, portugheză, franceză și italiană. Aproximativ 28 de milioane de oameni o vorbesc, aproximativ 24 de milioane o au ca limbă maternă, iar aproximativ 17 milioane dintre vorbitori se află în România. Scrisoarea lui Neacșu este din 1521. Ziua Limbii Române este 31 august, prin Legea 53/2013. Trei cuvinte greu de tradus exact sunt dor, doină și colindă.\n\nScrie opt până la zece rânduri, cu vorbele tale, în care să apară data de 31 august, anul legii 2013, cele patru limbi surori, cele trei numere de vorbitori, scrisoarea din 1521 și unul dintre cuvintele dor, doină sau colindă. Spune și cum se numește sărbătoarea din Republica Moldova. Nu copia o odă și nu copia o frază de poet.\n\nRomâna este limbă romanică, a cincea după numărul de vorbitori, cu surorile spaniola, portugheza, franceza și italiana. Ziua ei este 31 august, prin Legea 53/2013. Cel mai vechi document păstrat este Scrisoarea lui Neacșu, din 1521, iar dor, doină și colindă sunt trei cuvinte greu de tradus exact.",
-      "theory": "România stă în sud-estul Europei Centrale, pe cursul inferior al Dunării, la nord de Peninsula Balcanică și la țărmul de nord-vest al Mării Negre. Dacia a devenit provincie romană după cucerirea de către Traian a teritoriilor de la nord de Dunăre, iar amestecul celor două popoare este originea învățată aici. Limba română este limbă romanică, a cincea după numărul de vorbitori, după spaniolă, portugheză, franceză și italiană. O vorbesc aproximativ 28 de milioane de persoane. Dintre ele, aproximativ 24 de milioane o au ca limbă maternă. Aproximativ 17 milioane dintre vorbitori se află în România, unde româna este limbă oficială și limbă maternă pentru mai mult de 90 la sută din populație. A evoluat din latina vulgară a cuceritorilor romani și din limba dacilor, cu influențe de mai târziu, și s-a despărțit de limbile romanice din vest între secolele al V-lea și al VIII-lea. Lingvistica comparată o numește daco-română, ca să o deosebească de aromână, de meglenoromână și de istroromână. Oamenii își spuneau rumâni sau români, iar limbii îi spuneau rumână sau românească, înainte de statul român modern. Pierre Lescalopier nota în 1574 că cei din Moldova, din Valahia și mulți din Transilvania se socoteau urmași ai romanilor și își numeau limba românește. Cel mai vechi document păstrat în limba română este Scrisoarea lui Neacșu din Câmpulung, din 1521, scrisă cu litere chirilice. Chirilica a rămas în uz până în secolul al XIX-lea. Miron Costin, în De neamul moldovenilor, din 1687, și Dimitrie Cantemir, în Descriptio Moldaviae, din 1714, au notat aceeași origine pentru moldoveni, pentru valahi și pentru cei din regatul Ungariei. Un dicționar internațional de termeni literari, făcut sub UNESCO, cuprinde trei cuvinte românești greu de tradus exact: dor, doină și colindă. Ziua Limbii Române este 31 august, proclamată prin Legea 53/2013. La aceeași dată, în Republica Moldova, din 1990, se sărbătorește o zi asemănătoare, sub numele Limba noastră. Nichita Stănescu a numit limba română o patrie minunată. Nu cerem oda. Vasile Alecsandri a vorbit despre limbă ca despre o moștenire lăsată de părinți copiilor. Nu cerem fraza lui. La școală, grupul poate face o carte scurtă. Aici scrii pagina ta.",
-      "example": "Româna este a cincea limbă romanică, după spaniolă, portugheză, franceză și italiană. Aproximativ 28 de milioane de oameni o vorbesc, aproximativ 24 de milioane o au ca limbă maternă, iar aproximativ 17 milioane dintre vorbitori se află în România. Scrisoarea lui Neacșu este din 1521. Ziua Limbii Române este 31 august, prin Legea 53/2013. Trei cuvinte greu de tradus exact sunt dor, doină și colindă.",
-      "tryThis": "Scrie opt până la zece rânduri, cu vorbele tale, în care să apară data de 31 august, anul legii 2013, cele patru limbi surori, cele trei numere de vorbitori, scrisoarea din 1521 și unul dintre cuvintele dor, doină sau colindă. Spune și cum se numește sărbătoarea din Republica Moldova. Nu copia o odă și nu copia o frază de poet.",
-      "recap": "Româna este limbă romanică, a cincea după numărul de vorbitori, cu surorile spaniola, portugheza, franceza și italiana. Ziua ei este 31 august, prin Legea 53/2013. Cel mai vechi document păstrat este Scrisoarea lui Neacșu, din 1521, iar dor, doină și colindă sunt trei cuvinte greu de tradus exact."
-    },
-    {
-      "id": "proiect-cititor",
-      "title": "Jurnalul meu de cititor",
-      "platter": "Proiectul se face în grup de patru sau cinci. Fiecare alege un titlu din meniul de mai jos. Dacă nu l-ai citit încă, îl treci ca lectură viitoare și jurnalul îl scrii despre o carte pe care ai terminat-o, chiar dacă nu este pe listă. La școală repeți jurnalul pe cartea deschisă. Meniul, spus ca listă de lectură, nu ca temă pe o carte nevăzută, este acesta. La familie: Singur pe lume, de Hector Malot, Dumbrava minunată, de Mihail Sadoveanu, și La Medeleni, de Ionel Teodoreanu. La prietenie: Fram, ursul polar, de Cezar Petrescu, Micul prinț, de Antoine de Saint-Exupéry, și Heidi, fetița munților, de Johanna Spyri. La aventură: Cireșarii, de Constantin Chiriță, Toate pânzele sus, de Radu Tudoran, și Aventurile lui Tom Sawyer, de Mark Twain. La lectură: Cititorul din peșteră, de Rui Zink, Lămâi, cărți și prieteni, de Jo Cotterill, și Hoțul de cărți, de Markus Zusak. Alegeți trei metode dintre acestea șase: schelet de recenzie, oglinda cărții, fișe de lectură, harta textului, jurnal de cititor și hartă mentală. Apoi faceți o prezentare originală. Un secretar notează reflecția grupului: de ce ați ales cartea, cui ați cerut ajutor, cum v-ați împărțit sarcinile, ce ați învățat și cum veți prezenta. Nu copiați citate de pe copertă.\n\nExemplu lucrat: Grupul are cinci membri. Ana alege Fram, ursul polar, ca lectură viitoare, dar jurnalul ei de azi este despre o carte citită vara, la bibliotecă. Metodele alese sunt jurnal de cititor, fișă de lectură și hartă mentală. Vlad este secretar și scrie de ce au ales tema prieteniei, cine a ajutat și cum își împart prezentarea.\n\nAlege un titlu din cele patru grupuri și trei metode din cele șase. Scrie opt până la zece rânduri de jurnal de cititor, la persoana I, despre o carte pe care ai citit-o: un loc în care ai citit și o emoție. Dacă titlul ales nu este încă citit, spune asta și folosește cartea pe care o cunoști. La sfârșit, scrie patru rânduri ca secretar: de ce cartea, cine ajută, cum se împart sarcinile și cum prezentați.\n\nJurnalul de cititor se face în grup de patru sau cinci, cu un titlu din meniu și cu trei metode alese de voi. Pagina spune, la persoana I, unde ai citit și ce ai simțit. Secretarul adună reflecția grupului.",
-      "theory": "Proiectul se face în grup de patru sau cinci. Fiecare alege un titlu din meniul de mai jos. Dacă nu l-ai citit încă, îl treci ca lectură viitoare și jurnalul îl scrii despre o carte pe care ai terminat-o, chiar dacă nu este pe listă. La școală repeți jurnalul pe cartea deschisă. Meniul, spus ca listă de lectură, nu ca temă pe o carte nevăzută, este acesta. La familie: Singur pe lume, de Hector Malot, Dumbrava minunată, de Mihail Sadoveanu, și La Medeleni, de Ionel Teodoreanu. La prietenie: Fram, ursul polar, de Cezar Petrescu, Micul prinț, de Antoine de Saint-Exupéry, și Heidi, fetița munților, de Johanna Spyri. La aventură: Cireșarii, de Constantin Chiriță, Toate pânzele sus, de Radu Tudoran, și Aventurile lui Tom Sawyer, de Mark Twain. La lectură: Cititorul din peșteră, de Rui Zink, Lămâi, cărți și prieteni, de Jo Cotterill, și Hoțul de cărți, de Markus Zusak. Alegeți trei metode dintre acestea șase: schelet de recenzie, oglinda cărții, fișe de lectură, harta textului, jurnal de cititor și hartă mentală. Apoi faceți o prezentare originală. Un secretar notează reflecția grupului: de ce ați ales cartea, cui ați cerut ajutor, cum v-ați împărțit sarcinile, ce ați învățat și cum veți prezenta. Nu copiați citate de pe copertă.",
-      "example": "Grupul are cinci membri. Ana alege Fram, ursul polar, ca lectură viitoare, dar jurnalul ei de azi este despre o carte citită vara, la bibliotecă. Metodele alese sunt jurnal de cititor, fișă de lectură și hartă mentală. Vlad este secretar și scrie de ce au ales tema prieteniei, cine a ajutat și cum își împart prezentarea.",
-      "tryThis": "Alege un titlu din cele patru grupuri și trei metode din cele șase. Scrie opt până la zece rânduri de jurnal de cititor, la persoana I, despre o carte pe care ai citit-o: un loc în care ai citit și o emoție. Dacă titlul ales nu este încă citit, spune asta și folosește cartea pe care o cunoști. La sfârșit, scrie patru rânduri ca secretar: de ce cartea, cine ajută, cum se împart sarcinile și cum prezentați.",
-      "recap": "Jurnalul de cititor se face în grup de patru sau cinci, cu un titlu din meniu și cu trei metode alese de voi. Pagina spune, la persoana I, unde ai citit și ce ai simțit. Secretarul adună reflecția grupului."
-    },
-    {
-      "id": "recap-calatorii",
-      "title": "Încheierea despre călătorii",
-      "platter": "Închei unitatea pe o scenă scrisă aici. Sâmbătă seara, acasă, Irina a deschis jurnalul și a scris că ieri, la bibliotecă, a citit repede o carte despre corăbii. Sâmbătă seara este circumstanțial de timp al scrisului. Acasă este adverb de loc. Ieri este adverb de timp. Repede este adverb de mod. Jurnalul este complement direct la a deschis. O carte este complement direct la a citit. Despre corăbii este complement prepozițional. La bibliotecă este circumstanțial de loc al lecturii. Povestirea se face sâmbătă seara, iar lectura a fost ieri, deci este rememorare. O amintire cunoscută, În Nirvana, de Ion Luca Caragiale, datată 18 iunie 1889, spune că la 17 ani, în București, l-a cunoscut pe Mihai Eminescu, după ce un actor îl găsise la Giurgiu citind. Nu cerem portretul. Scena pe care o lucrezi este a Irinei. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.\n\nExemplu lucrat: Ce scrie: Sâmbătă seara, acasă, Irina a deschis jurnalul și a scris că ieri, la bibliotecă, a citit repede o carte despre corăbii. Ce vezi: O văd pe Irina acasă, seara, cu jurnalul deschis. Eu aș fi notat și titlul cărții, pentru că a citit repede o carte despre corăbii și jurnalul era deschis. Ieri este adverb de timp, acasă este adverb de loc, repede este adverb de mod, o carte este complement direct, iar despre corăbii este complement prepozițional.\n\nPe scena Irinei, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Numește un adverb de timp, un adverb de loc, complementul direct și complementul prepozițional. Spune de ce textul este rememorare. Apoi scrie șase până la opt rânduri narativ-descriptive, la persoana I, despre aceeași seară: un indice de timp, un indice de spațiu și o secvență descriptivă de cel puțin douăzeci de cuvinte.\n\nRecapitularea unește o rememorare, un adverb de timp, un adverb de loc, un complement direct și un complement prepozițional. Irina scrie sâmbătă seara, acasă, despre cartea citită ieri, la bibliotecă. Portretul din amintirea despre Eminescu nu este temă de copiat.",
-      "theory": "Închei unitatea pe o scenă scrisă aici. Sâmbătă seara, acasă, Irina a deschis jurnalul și a scris că ieri, la bibliotecă, a citit repede o carte despre corăbii. Sâmbătă seara este circumstanțial de timp al scrisului. Acasă este adverb de loc. Ieri este adverb de timp. Repede este adverb de mod. Jurnalul este complement direct la a deschis. O carte este complement direct la a citit. Despre corăbii este complement prepozițional. La bibliotecă este circumstanțial de loc al lecturii. Povestirea se face sâmbătă seara, iar lectura a fost ieri, deci este rememorare. O amintire cunoscută, În Nirvana, de Ion Luca Caragiale, datată 18 iunie 1889, spune că la 17 ani, în București, l-a cunoscut pe Mihai Eminescu, după ce un actor îl găsise la Giurgiu citind. Nu cerem portretul. Scena pe care o lucrezi este a Irinei. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.",
-      "example": "Ce scrie: Sâmbătă seara, acasă, Irina a deschis jurnalul și a scris că ieri, la bibliotecă, a citit repede o carte despre corăbii. Ce vezi: O văd pe Irina acasă, seara, cu jurnalul deschis. Eu aș fi notat și titlul cărții, pentru că a citit repede o carte despre corăbii și jurnalul era deschis. Ieri este adverb de timp, acasă este adverb de loc, repede este adverb de mod, o carte este complement direct, iar despre corăbii este complement prepozițional.",
-      "tryThis": "Pe scena Irinei, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Numește un adverb de timp, un adverb de loc, complementul direct și complementul prepozițional. Spune de ce textul este rememorare. Apoi scrie șase până la opt rânduri narativ-descriptive, la persoana I, despre aceeași seară: un indice de timp, un indice de spațiu și o secvență descriptivă de cel puțin douăzeci de cuvinte.",
-      "recap": "Recapitularea unește o rememorare, un adverb de timp, un adverb de loc, un complement direct și un complement prepozițional. Irina scrie sâmbătă seara, acasă, despre cartea citită ieri, la bibliotecă. Portretul din amintirea despre Eminescu nu este temă de copiat."
-    }
+  lessons: [
+    lesson({
+      id: 'deschidere-calatorii',
+      title: 'Ce vei lucra despre călătorii',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Harta',
+          text: 'Parcurgi citirea, recenzia, vorbirea, redactarea, gramatica, limba și jurnalul. Titlul de la clasă poate diferi. Pașii nu se schimbă.'
+        }
+      ],
+      theory: [
+        'Harta deschide unitatea Călătorii literare. Citești proză care povestește o întâmplare. Separi momentul faptei de momentul în care cineva o spune. Locul unde s-a petrecut fapta poate fi altul decât locul din care se vorbește.',
+        'Recunoști personajul care spune eu. Înveți ce cuprinde o recenzie: titlu, autor, o idee și o părere despre lectură. Atitudinea poate fi curajul, apropierea dintre oameni sau amintirea lăsată de o carte subțire.',
+        'La comunicare legi forma unei propoziții de intenția vorbitorului și de efectul asupra celuilalt. Aceeași vorbă poate anunța, îndemna, promite sau ruga, după context și după ton.',
+        'La redactare scrii o întâmplare și oprești fapta ca să arăți un loc, o persoană sau un obiect. Introducerea, cuprinsul și încheierea rămân vizibile în compunere.',
+        'Gramatica are trei opriri. Prima este adverbul, cu felurile lui și cu gradele. A doua este complementul direct, cel cu prepoziție și cel indirect. A treia este circumstanțialul: locul, timpul și modul.',
+        'Apoi cauți locul românei între limbile Europei: familie, număr de vorbitori, un document vechi și o zi a limbii. La încheiere lucrezi, în grup, un jurnal de cititor.',
+        'Ținta are treisprezece competențe. Înțelegerea aduce 1.1, 1.2, 1.3 și 1.4. Comunicarea aduce 2.3 și 2.4. Urmează 3.1, apoi 3.3 și 3.4.',
+        'Redactarea aduce 4.2, 4.3 și 4.4. Competența 5.2 leagă cultura ta de altele. Codurile arată unde vrei să ajungi. Nu înlocuiesc lecția de azi. La clasă, titlul de pe bancă poate fi altul.'
+      ].join('\n\n'),
+      example: [
+        'Pe hartă stau narațiunea, recenzia, vorbirea cu intenție, adverbul, complementul, circumstanțialul și jurnalul.',
+        'Cele treisprezece coduri sunt ținta unității. Lecția de azi ia doar timpul și spațiul unei întâmplări. Restul hărții rămâne pentru zilele următoare.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Dacă pe bancă textul poartă alt titlu, tot separi clipa faptei de clipa relatării. Codul 1.1 ține de înțelegerea textului citit, nu de o fișă gata scrisă.'
+        }
+      ],
+      tryThis: 'Scrie două propoziții. În prima spui că tema este drumul prin lectură și că azi separi când s-a petrecut fapta de când se povestește. În a doua spui că sunt treisprezece competențe și le grupezi ca în lecție.',
+      keyPoints: [
+        'Harta anunță citirea, recenzia, intenția, gramatica și jurnalul.',
+        'Clipa faptei și clipa relatării se țin separat, la fel și locurile.',
+        'Codurile de competență sunt treisprezece și nu înlocuiesc lecția.'
+      ]
+    }),
+    lesson({
+      id: 'narativ-timp',
+      title: 'Când se întâmplă și unde se povestește',
+      kind: 'lectura',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Două măsuri',
+          text: 'Timpul întâmplării măsoară fapta. Timpul povestirii măsoară vorbirea. Cele două locuri pot fi diferite.'
+        }
+      ],
+      theory: [
+        'Proza care povestește poate înșira faptele de la prima la ultima sau le poate aduce din memorie. Rememorarea nu pornește de la fapta veche. Pornește de la omul care, acum, își aduce aminte.',
+        'Cât a ținut fapta este timpul întâmplării: minute, o oră, ani. Cât ține vorbirea este timpul povestirii. Într-un minut de vorbă pot încăpea luni. Sala faptei poate să nu fie camera din care se vorbește.',
+        'Naratorul la persoana întâi spune eu și este, totodată, personajul principal, atunci când își amintește propria întâmplare. Trăsătura nu se lipește ca o etichetă. Se vede din ce face omul.',
+        'La clasă, textul de pornire poate purta titlul Fascinații. L-a scris George Șovu, trăit din 1931 până în 2016. A publicat romane și proză scurtă, a lucrat ca scenarist și ca inspector școlar și a întocmit cărți pentru școală.',
+        'Scenariile seriei de filme Liceenii sunt ale lui. Acolo cineva își amintește o lectură. Fragmentul acela nu se transcrie. Scena pe care o lucrezi este a Marei.',
+        'Câteva cuvinte din jurul cititului: amfitrion înseamnă gazdă. Tihna este liniște deplină. Patima, când e vorba de cărți, este o dorință foarte puternică. Strădania este efort stăruitor. Formidabil înseamnă ieșit din comun.',
+        'Duminică, pe înserat, Mara stă în odaia ei și își aduce aminte vara. Atunci, între rafturi, a terminat un volum într-o oră. Vorba despre asta ține un minut. Vara a ținut două luni. Odaia de acum nu este sala de atunci.',
+        'Lângă ea era Doru. I-a arătat un gest: pagina se întoarce mai iute. Mara a spus mulțumesc. În amintire este elevă, nu profesoară. Pe amândoi îi leagă lectura. Mulțumirea arată recunoștința. Metoda arătată arată dărnicia lui Doru.',
+        'Seara stă în text înaintea verii, deci felul este rememorare. Trei pași ajung: ce este scris, ce vezi, ce ai face tu. Ce vezi pornește de la o văd. Fapta ta se leagă prin pentru că.'
+      ].join('\n\n'),
+      example: [
+        'Scrisul spune că, seara, în odaie, Mara se întoarce la vara petrecută între rafturi, unde a terminat un volum într-o oră. Doru, de lângă ea, i-a arătat cum se întoarce pagina mai iute.',
+        'Ce vezi: o văd pe Mara în odaie și, în amintire, lângă Doru, între rafturi. Eu aș fi cerut încă un volum, pentru că ora a ajuns și Doru era alături.',
+        'Vara ține două luni, lectura o oră, povestirea un minut. Odaia este locul vorbirii. Sala cu rafturi este locul faptei.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Mara narează, fiindcă spune eu. Doru nu povestește. Trăsătura lui iese din gestul cu pagina, nu dintr-un adjectiv gol. Dacă ar apărea amfitrion, cuvântul ar numi gazda.'
+        }
+      ],
+      tryThis: 'Pe scena Marei scrie trei propoziții: ce este scris, ce vezi și ce ai face, cu pentru că. Ce vezi pornește de la o văd. Spune durata verii, a lecturii și a povestirii, cele două locuri, de ce este aducere aminte, cine narează și ce trăsătură are Doru. Adaugă anii 1931 și 2016 și sensul lui amfitrion.',
+      keyPoints: [
+        'Rememorarea pleacă de la omul care își amintește acum.',
+        'Fapta și vorbirea se măsoară cu două durate, iar locurile pot fi două.',
+        'Persoana întâi îl face pe povestitor și personaj. Trăsătura stă în gest.'
+      ]
+    }),
+    lesson({
+      id: 'recenzia',
+      title: 'O carte și părerea despre ea',
+      kind: 'redactare',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Patru date',
+          text: 'Recenzia are titlu, autor, o idee și o atitudine față de lectură. Frazele altcuiva nu se copiază.'
+        }
+      ],
+      theory: [
+        'O recenzie înfățișează pe scurt o operă. Are și comentarii, și o apreciere. Poți spune că cititul ți-a dat curaj, că te-a apropiat de oameni sau că un volum subțire ți-a rămas în minte.',
+        'Rui Barreira Zink a venit pe lume la Lisabona, în Portugalia, în ziua de 16 iunie 1961. Predă literatură la Universitatea Nouă din Lisabona. A publicat romane, nuvele, eseuri, teatru și cărți pentru copii. În portugheză, a făcut întâia carte electronică.',
+        'Un roman al lui poartă titlul Cititorul din peșteră. Prezentarea folosită la școală spune că volumul are cam 120 de pagini și stă în trei părți. Cea dintâi se cheamă Călătoria. Personajul Anibalector ține la cărți.',
+        'Două idei, cu vorbele noastre: te duci la un volum ca să îl descoperi. Cititul îți lasă libertatea de a alege ce păstrezi. Fraza altcuiva nu se copiază.',
+        'Scena Liei este alta. Într-o marți, chiar la română, ea a rostit tare opt rânduri. Romanul pe care l-a terminat are nouăzeci de pagini. În el, un băiat caută o hartă. Ea a spus că cititul i-a dat curaj.',
+        'Părerea ei este că și un volum subțire poate sta mult în amintire. Are, așadar, o idee și o atitudine. La clasă, cartea deschisă poate fi alta. Pașii nu se schimbă.',
+        'Când scrii tu, pui numele cărții, pe autor, o idee și urma lăsată de citit. Dacă romanul nu este gata, o spui și folosești scena Marei, de la rafturi.',
+        'Pe scena Liei faci trei pași: ce este scris, ce vezi, ce ai face tu. Ce vezi pornește de la o văd. Legătura se face prin pentru că.'
+      ].join('\n\n'),
+      example: [
+        'Lia, marți, la română, a citit cu voce tare o foaie de opt rânduri. Romanul are 90 de pagini. Un băiat caută o hartă. Curajul este ce i-a lăsat cititul.',
+        'O văd în clasă, foaia în mână. Eu aș întreba titlul, pentru că a notat 90 de pagini și a vorbit despre curaj.',
+        'Data de naștere a lui Rui Zink este 16 iunie 1961. Anibalector ține la cărți. În prezentarea de școală, partea întâi se cheamă Călătoria.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Opt rânduri ajung dacă au titlul, autorul, ideea cu băiatul și harta și părerea că cititul a dat curaj. Nu e nevoie de fraza altcuiva.'
+        }
+      ],
+      tryThis: 'Pentru Lia, scrie ce este scris, ce vezi și ce ai face, legate prin pentru că. Propoziția cu ce vezi pornește de la o văd. Spune ce este o recenzie, data de naștere a lui Rui Zink, câte părți are romanul în prezentarea de școală și ce iubește Anibalector.\n\nApoi scrie cam zece rânduri despre o carte citită de tine: titlu, autor, o idee, ce ți-a rămas după lectură. Dacă romanul nu e gata, o spui și folosești scena Marei.',
+      keyPoints: [
+        'În recenzie intră titlul, autorul, o idee și o părere.',
+        'Zink s-a născut în 1961. Anibalector ține la cărți.',
+        'Tu scrii despre o carte pe care ai dus-o până la capăt.'
+      ]
+    }),
+    lesson({
+      id: 'act-limbaj',
+      title: 'Ce vrei să se întâmple din vorbă',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Trei piese',
+          text: 'Un act de limbaj stă pe context, pe intenție și pe efect. Tonul și relația pot muta rostul aceleiași propoziții.'
+        }
+      ],
+      theory: [
+        'Actul de limbaj este bucata cea mai mică dintr-o discuție. Ca să existe, îi trebuie situația, ce vrea vorbitorul și ce se întâmplă la celălalt.',
+        'Poți anunța o veste, poți atrage atenția, poți mustra sau poți cere un lucru. Semnele stau în verbe: întreb, afirm, cer, mulțumesc, promit, doresc. Mai stau în imperativ, în gest, în mimică, în ton și în volum.',
+        'Un singur enunț trece prin declarație, prin promisiune, prin amenințare sau prin rugăminte. Nu decid doar cuvintele. Decid intenția și contextul.',
+        'Vorbirea trece prin patru canale, iar ascultătorul o poate prinde cu patru urechi. Urechea faptelor ține datele concrete. Urechea cerințelor ține dorința ca celălalt să facă ceva.',
+        'Legătura dintre cei doi ține de urechea relației. Starea celui care vorbește ține de urechea autodezvăluirii. La capăt, celălalt se poate supăra, se poate pune în mișcare, poate rămâne pasiv sau poate simți neliniște.',
+        'Declarația sună Încep să citesc. Constatarea sună Începi să citești. Îndemnul sună Începe imediat să citești. Promisiunea este Promit să încep să citesc. Rugămintea este Te rog să începi să citești.',
+        'Virgula mută actul. Fără ea, Hai să mâncăm bunica pare că bunica este mâncarea. Cu virgulă, Hai să mâncăm, bunica, o strigi pe ea. Atunci bunica este vocativ.',
+        'Enunțul Vom reuși cu siguranță își schimbă actul după cine îl spune și după glas. Poate fi declarație, promisiune, amenințare sau rugăminte.',
+        'La Ai lăsat cartea pe bancă, fapta este cartea rămasă acolo. Cerința este s-o iei. Între colegi, asta este o atenționare. Autodezvăluirea: dezordinea te deranjează.',
+        'În clasă, profesorul anunță că se apropie evaluarea de la capătul clasei a VI-a. Intenția lui este o atenționare. Efectul poate fi neliniștea.'
+      ].join('\n\n'),
+      example: [
+        'Lui Radu, Ana îi spune în clasă propoziția Avem mult de scris. Dacă doar îl anunță, el poate deschide caietul. Actul este informare.',
+        'Când glasul se face aspru, vorbele acelea devin reproș. Radu se poate supăra, deși propoziția nu s-a schimbat.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Înainte de concurs, un coleg spune Vom reuși cu siguranță și dă curaj: e promisiune. Același enunț, strigat de un adversar, poate suna a amenințare.'
+        }
+      ],
+      tryThis: 'Notează cele cinci acte, fiecare cu propoziția lui: declarație, constatare, îndemn, promisiune, rugăminte. Arată ce face virgula în chemarea Hai să mâncăm, bunica.\n\nPentru Vom reuși cu siguranță alege două intenții și scrie, la fiecare, contextul și efectul. Încheie cu un dialog de patru replici, doi colegi în parc. La replica din urmă spui ce se vrea și ce urmează.',
+      keyPoints: [
+        'Contextul, intenția și efectul țin un act de limbaj.',
+        'Glasul poate muta o veste simplă într-un reproș.',
+        'Virgula arată că bunica este chemată, nu pusă în farfurie.'
+      ]
+    }),
+    lesson({
+      id: 'narativ-descriptiv',
+      title: 'Povestești și te oprești să arăți',
+      kind: 'lectura',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Două viteze',
+          text: 'Narațiunea duce fapta înainte. Descrierea o încetinește: vezi locul, persoana sau lucrul.'
+        }
+      ],
+      theory: [
+        'Compunerea se sprijină pe trei bucăți: introducere, cuprins, încheiere. În tiparul narativ cauți personaje, întâmplări și repere de timp și de spațiu.',
+        'Tiparul descriptiv strânge trăsături. Poate fi o persoană, detalii, un obiect, adjectivul lângă substantiv ori un peisaj.',
+        'Când descrierea intră într-o povestire, fapta încetinește. Dacă stă la început, așază timpul și spațiul. Dacă stă în cuprins, arată un om, un loc sau un lucru.',
+        'Exemplul care urmează este scurt. Din el vezi la ce folosește fiecare bucată. După-amiaza de joi m-a găsit intrând în biblioteca școlii. Aceasta este introducerea.',
+        'Sala stătea liniștită. Rafturile, înalte, erau din lemn. În fund, pe masă, ardea o lampă galbenă. Descrierea de cadru așază spațiul și oprește fapta.',
+        'Am luat un volum subțire. Am citit până când a sunat clopoțelul. Aici întâmplarea înaintează: este cuprinsul narativ.',
+        'Coperta, albastră și moale, avea litere argintii. Obiectul este descris în cuprins. Apoi am așezat cartea la loc. Am ieșit bucuroasă. Asta închide textul.',
+        'Reperul de timp este după-amiaza de joi. Reperul de spațiu este biblioteca din școală. Galben, lângă lampă, și albastru, lângă copertă, sunt adjective lângă substantive.',
+        'Când citești, marchezi în minte descrierea. Spui dacă ea deschide textul sau apare după o faptă. Verbul de acțiune, ca am citit, ține de narațiune. La clasă, textul poate fi altul. Pașii rămân aceiași.'
+      ].join('\n\n'),
+      example: [
+        'Intrarea din biblioteca școlii, joi după-amiază, deschide modelul. Sala descrisă oprește mersul și așază locul.',
+        'Volumul ales și cititul până la clopoțel țin de narațiune. Coperta albastră arată obiectul, în cuprins. Ieșirea bucuroasă închide pagina.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Dacă descrierea stă înainte de prima faptă, ea fixează cadrul. Dacă apare după ce personajul a ales cartea, ea arată obiectul. În ambele locuri, fapta încetinește.'
+        }
+      ],
+      tryThis: 'Scrie, la persoana întâi, o întâmplare de lectură, cam o sută de cuvinte, până pe la o sută douăzeci. Pune început, mijloc și încheiere.\n\nDescrierea să aibă măcar douăzeci de cuvinte. Pune un reper de timp și unul de spațiu. Schimbă locul și cartea față de lampa galbenă. La sfârșit spune unde stă descrierea: la început sau în cuprins.',
+      keyPoints: [
+        'Povestirea înaintează prin personaje, fapte, timp și spațiu.',
+        'Oprirea descriptivă poate deschide textul sau poate sta în cuprins.',
+        'Începutul, mijlocul și încheierea rămân vizibile în compunere.'
+      ]
+    }),
+    lesson({
+      id: 'adverbul',
+      title: 'Loc, timp, fel și grade',
+      kind: 'limba',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Fără flexiune',
+          text: 'Adverbul păstrează o singură formă. Spune locul, timpul sau felul unei fapte, al unei stări ori al unei însușiri.'
+        }
+      ],
+      theory: [
+        'Adverbul nu se schimbă după gen, număr sau persoană. El spune cum, unde sau când se petrece o acțiune, o stare ori o însușire și în ce împrejurare stă ea.',
+        'Poate sta lângă un verb. În Bătrânul se plimbă agale, agale spune felul. În A ajuns devreme acasă, devreme spune timpul.',
+        'De loc, în altă ordine decât lista obișnuită: sus, jos, acasă, aici, acolo. Mai ții dincolo, departe, aproape, ici-colo, colea și împrejur.',
+        'De timp: niciodată, imediat, ieri, mâine, acum. Mai sunt atunci, astăzi, târziu, devreme, odată, totdeauna și vreodată.',
+        'De mod: tare, rar, repede, alene, încet, ușor, bine și așa. Nu orice adverb are grade. Cele care au urmează tiparul adjectivului.',
+        'Pozitivul este forma simplă, repede. Mai dă comparativul de superioritate. La fel de, tot așa de și tot atât de dau egalitatea. Mai puțin dă inferioritatea.',
+        'Cel mai dă superlativul relativ de superioritate, cel mai puțin pe cel de inferioritate. Foarte dă absolutul de superioritate, foarte puțin pe cel de inferioritate. Prea, ca în prea târziu, dă tot absolutul.',
+        'Semiaderbele nu au funcție și stau de obicei înaintea verbului. Începutul listei: numai și doar. Urmează chiar și mai. La final: tot, decât, prea, cam.',
+        'O să tot vină arată că fapta se repetă. În S-a cam supărat, cam micșorează. Decât cere, de obicei, o propoziție cu negație. Modelul este Nu am decât două exerciții.',
+        'Când decât înseamnă în loc să, poate sta și fără negația obișnuită. Spui atunci Decât să desenez, mai bine citesc. Doar cere afirmație. Modelul este Doar el a venit devreme.',
+        'Odată, scris legat, înseamnă cândva, ca în Locuia odată un bătrân. Scris despărțit, o dată numește o singură ocurență, ca în O dată pe săptămână.',
+        'Bineînțeles se scrie legat. Deloc se scrie legat. Demult, într-un singur cuvânt, trimite la un trecut îndepărtat, ca în Demult s-a întâmplat. Când numeri timp mult, lași două cuvinte: de mult timp.',
+        'Totuna și întruna se scriu legate. Întruna înseamnă neîncetat. Sensuri figurate: covrig înseamnă ghemuit, cobză înseamnă rău, tun înseamnă adânc, glonț înseamnă foarte iute, foc înseamnă foarte supărat.'
+      ].join('\n\n'),
+      example: [
+        'Mai puțin devreme este inferioritate. La fel de rar este egalitate. Foarte încet și prea târziu sunt absolut. Cel mai puțin bine este relativ de inferioritate. Cel mai aproape este relativ de superioritate.',
+        'Pentru bătrânul care locuia cândva, scrii odată. Legat mai stau bineînțeles, deloc, demult, totuna și întruna.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'În Te mai întâlnești cu el la bibliotecă, mai este semiadverb: stă înaintea verbului și nu are funcție. Negația cu decât și afirmația cu doar nu se amestecă.'
+        }
+      ],
+      practice: [
+        '1) Împarte pe loc, timp și mod, în ordinea aceasta: acasă, târziu, bine, ici-colo, rar, devreme, colea, vreodată, departe, repede.',
+        '2) Spune gradul, în ordinea aceasta: tot atât de repede, mai sus, cel mai puțin bine, foarte încet.',
+        '3) Alege forma legată sau despărțită: odată pentru cândva, bineînțeles, deloc, întruna.',
+        '4) Ce sens au doarme tun și grupul a țâșnit glonț?'
+      ].join('\n\n'),
+      answers: [
+        'loc: acasă, ici-colo, colea, departe; timp: târziu, devreme, vreodată; mod: bine, rar, repede',
+        'egalitate; comparativ de superioritate; superlativ relativ de inferioritate; superlativ absolut',
+        'odată; bineînțeles; deloc; întruna',
+        'adânc; foarte repede'
+      ],
+      mistakes: 'Prea târziu nu se pune la comparativ. Prea, așezat înainte, dă superlativ absolut. Două cuvinte, o dată, înseamnă o singură dată, nu cândva.',
+      tryThis: 'Scrie aproape cu mai și cu foarte. Construiește o negație în care apare decât și o afirmație în care apare doar. Spune sensul din doarme covrig și din supărat foc.',
+      keyPoints: [
+        'Forma adverbului nu se schimbă. El spune locul, timpul sau felul.',
+        'Pozitivul, comparativul și superlativul sunt gradele lui.',
+        'Când înseamnă cândva, odată se scrie legat.'
+      ]
+    }),
+    lesson({
+      id: 'complemente',
+      title: 'Pe cine, despre cine, cui',
+      kind: 'limba',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Trei întrebări',
+          text: 'Directul răspunde la pe cine și la ce. Cel cu prepoziție rămâne în acuzativ. Indirectul răspunde la cui.'
+        }
+      ],
+      theory: [
+        'Complementul este o parte secundară și, de obicei, lămurește un verb. Felurile de aici sunt direct, prepozițional și indirect.',
+        'Directul arată lucrul sau ființa atinse de acțiune, fără o prepoziție obligatorie. Întrebi pe cine și ce. Cazul este acuzativul.',
+        'Un clitic de acuzativ îl poate dubla. Înaintea complementului, cliticul anticipează: L-am întrebat pe Ionel. După complement, cliticul reia: Pe Ana a certat-o.',
+        'Comun: Citește o carte. Propriu: L-am văzut pe Andrei. Personal: L-am chemat pe el. Politețe: Pe dumneavoastră vă așteptam. Reflexiv: Mă curăț de praf.',
+        'Numeralul cardinal stă în I-am supărat pe cei doi. Numeralul ordinal stă în Pe al treilea l-au premiat.',
+        'Cel prepozițional spune la ce se leagă fapta. Cazul rămâne acuzativul, însă apare o prepoziție. Întrebi despre cine ori despre ce, cu cine ori cu ce, pentru cine ori pentru ce.',
+        'Model despre: Vorbim despre lucruri importante. Model pentru: Votează pentru ei. Separat: Discută despre colegi. Apoi: Mergem cu Andrei. Apoi: Se gândește la el.',
+        'Cu politețe: Mă întreabă despre dumnealui. Cu reflexiv: Ne spune despre sine. Prima bucată este Cu cei doi m-am întâlnit. A doua este să vorbim despre al treilea.',
+        'Indirectul arată cui îi este destinată fapta. Întrebarea este cui. Cazul este dativul. Poate urma verbului sau îl poate preceda.',
+        'După verb: I-am explicat Ioanei exercițiul. Înaintea verbului: Ioanei i-am explicat exercițiul. Un dativ: Îi spun colegului vestea. Altul: I-a dat fetei o floare. Altul: Îi spun Mariei adevărul.',
+        'La numeral: Celor doi le este foame. La ordinal: Celui de-al treilea i-am oferit scuze. La pronume: Lui îi este frică. Alt pronume: Dumnealui i-am cerut un sfat. Reflexiv: Sieși își reproșează.',
+        'Dublarea indirectului folosește i- și le-. La nume, dativul bun este Mariei, iar nu construcția la Maria. Cristina face Cristinei, nu lui Cristina.',
+        'Gabi, tratat aici ca nume de băiat, face lui Gabi, nu Gabiei. Alexandra face Alexandrei. Forma Lui Alexandra nu este cea bună.'
+      ].join('\n\n'),
+      example: [
+        'În Am citit o poezie, grupul o poezie răspunde la ce. Este direct, prin substantiv comun.',
+        'În Vorbim despre lucruri importante, grupul cu despre este prepozițional. În Îi spun Mariei adevărul, Mariei răspunde la cui, iar adevărul răspunde la ce.',
+        'Ioanei i-am explicat exercițiul mută indirectul înaintea verbului, fără să îi schimbe rolul. Dativele de ținut minte: Mariei, Cristinei, lui Gabi, Alexandrei.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Pe Ionel, în L-am întrebat pe Ionel, este direct anticipat de L-. Pe Ana, în Pe Ana a certat-o, este direct reluat. Cu Andrei, în Mergem cu Andrei, este prepozițional.'
+        }
+      ],
+      practice: [
+        '1) Numește directul și partea de vorbire în Citește o carte, apoi în L-am văzut pe Andrei.',
+        '2) Numește grupul prepozițional din Discută despre colegi și din Votează pentru ei.',
+        '3) În I-a dat fetei o floare, ce este fetei și ce este o floare?',
+        '4) Alege dativul, în ordinea aceasta: Alexandrei sau Lui Alexandra; lui Gabi sau Gabiei; Cristinei sau lui Cristina; Mariei sau la Maria.'
+      ].join('\n\n'),
+      answers: [
+        'o carte, substantiv comun; pe Andrei, substantiv propriu',
+        'despre colegi; pentru ei',
+        'fetei este indirect, o floare este direct',
+        'Alexandrei; lui Gabi; Cristinei; Mariei'
+      ],
+      mistakes: 'Construcția la Maria nu ține loc de dativ. Lui Cristina și Lui Alexandra nu sunt formele bune. La un Gabi băiat nu scrii Gabiei, scrii lui Gabi.',
+      tryThis: 'Spune directul și partea de vorbire din Pe dumneavoastră vă așteptam și din Pe al treilea l-au premiat. Scrie o propoziție în care indirectul stă înaintea verbului, pe tiparul cu Ioana și exercițiul.',
+      keyPoints: [
+        'Directul stă în acuzativ și răspunde la pe cine sau la ce.',
+        'Prepoziția nu mută cazul: prepoziționalul rămâne în acuzativ.',
+        'Indirectul stă în dativ și răspunde la cui.'
+      ]
+    }),
+    lesson({
+      id: 'circumstantiale',
+      title: 'Unde, când și cum',
+      kind: 'limba',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Rolul, nu cuvântul',
+          text: 'Același cuvânt poate fi subiect, nume predicativ sau circumstanțial. Hotărăște rolul din propoziție, nu forma goală.'
+        }
+      ],
+      theory: [
+        'Circumstanțialul de loc spune unde se petrece fapta, de unde pleacă, încotro merge, până unde și pe ce drum. Substantivul, pronumele și numeralul stau în acuzativ, cu prepoziție. Uneori locul este spus de un adverb.',
+        'Întrebi unde, de unde, până unde, încotro, pe unde. Unde: În parc s-au adunat mulți copii. De unde: Ne întoarcem de la stadion. Direcție: Mergeau în București.',
+        'Limită: A ajuns până la marginea pădurii. Drum: Ei aleargă pe pistă. Spre: Se îndreaptă spre ea. Până la numeral: Merge până la cei doi. Adverb: Plecăm acasă.',
+        'Circumstanțialul de timp spune când, cât durează, până când și cât de des. Întrebările sunt când, de când, până când, cât timp. Se poate exprima prin substantiv, prin pronume, prin numeral sau prin adverb.',
+        'Substantiv: După Mihai au sosit ei. Pronume: Vom sosi înaintea lui. Numeral: După cei trei a intrat și el. Adverb: Astăzi vom merge în excursie.',
+        'Rolul se citește din propoziție. În Noaptea este un sfetnic bun, noaptea face acțiunea: este subiect, la nominativ. În Am ajuns noaptea, noaptea spune când: este circumstanțial de timp.',
+        'Când spui că anotimpul preferat este toamna, rolul ei este de nume predicativ. În Toamna începe școala, toamna spune când. În propoziția despre luni însorită, ziua face acțiunea, deci e subiect. În Luni vom merge în parc, luni spune când.',
+        'Circumstanțialul de mod spune felul unei acțiuni sau felul unei însușiri. Întrebi cum. Mai întrebi în ce fel, apoi în ce mod, apoi cât.',
+        'Cu prepoziție: Desenează ca sora lui. Comparație: Este mai cuminte decât mine. Ionel, față de cel de-al treilea, este puțin mai înalt. Adverb: Bunica merge alene.',
+        'Țintă: Se uită țintă. Liniște: Merg în liniște. Grup: Se comportă precum cei trei. Grijă: Citește cu atenție. Iuțeală: Destul de repede a dispărut. Intrare: Am intrat și noi precum el. Politețe: Se poartă ca dumneavoastră.'
+      ].join('\n\n'),
+      example: [
+        'Grupul în parc răspunde la unde. Este loc, prin substantiv cu prepoziție. În Plecăm acasă, acasă este adverb de loc.',
+        'În Astăzi vom merge în excursie, astăzi spune când și este adverb. În Bunica merge alene, alene spune cum.',
+        'Noaptea este subiect când răspunde la cine. Devine circumstanțial de timp când răspunde la când. Toamna de după este este nume predicativ.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Ca sora lui răspunde la cum: mod, prin substantiv cu prepoziție. Ziua, în propoziția despre ziua de luni însorită, este subiect. Luni, când spuneți că mergeți în parc, spune când.'
+        }
+      ],
+      practice: [
+        '1) Ce întrebare pui și prin ce se exprimă locul în În parc s-au adunat mulți copii? Dar în Plecăm acasă?',
+        '2) Ce funcție are noaptea în Noaptea este un sfetnic bun și ce funcție are în Am ajuns noaptea?',
+        '3) Spune rolul lui toamna după este și în Toamna începe școala, apoi rolul lui ziua și al lui luni.',
+        '4) Ce întrebare și ce parte de vorbire ai în Bunica merge alene și în Desenează ca sora lui?'
+      ].join('\n\n'),
+      answers: [
+        'unde, substantiv cu prepoziție; unde, adverb de loc',
+        'subiect la nominativ; circumstanțial de timp',
+        'nume predicativ; circumstanțial de timp; subiect; circumstanțial de timp',
+        'cum, adverb; cum, substantiv cu prepoziție'
+      ],
+      mistakes: 'Nu pune noaptea mereu la complement. Când deschide propoziția Noaptea este un sfetnic bun, ea este subiect. După este, toamna poate fi nume predicativ.',
+      tryThis: 'Spune întrebarea pentru întoarcerea de la stadion și pentru excursia de astăzi. Scrie trei propoziții despre drumul până la bibliotecă: loc, timp și mod.',
+      keyPoints: [
+        'Locul se întreabă cu unde și cu încotro, timpul cu când, modul cu cum.',
+        'Noaptea este subiect când face acțiunea și circumstanțial când marchează momentul.',
+        'După este, toamna poate fi nume predicativ, nu complement de timp.'
+      ]
+    }),
+    lesson({
+      id: 'limba-romana',
+      title: 'Limba română între limbile Europei',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'A cincea',
+          text: 'Româna ține de familia romanică. După numărul de vorbitori vine a cincea, în urma spaniolei, a portughezei, a francezei și a italienei.'
+        }
+      ],
+      theory: [
+        'Țara stă în sud-estul Europei Centrale. O străbate Dunărea pe cursul ei de jos. La sud este Peninsula Balcanică. Spre mare, țărmul este cel de nord-vest al Mării Negre.',
+        'După cucerirea lui Traian, ținuturile de la nord de Dunăre au intrat în Imperiu, iar Dacia a devenit provincie romană. Originea învățată aici este amestecul celor două popoare.',
+        'Româna este limbă romanică. La numărul de vorbitori stă pe locul cinci, după spaniolă, portugheză, franceză și italiană. Cam 28 de milioane de oameni o vorbesc.',
+        'Cam 24 de milioane o au de la mama. În România sunt cam 17 milioane dintre vorbitori. Aici este limbă oficială și, pentru peste 90 la sută din locuitori, limbă maternă.',
+        'A crescut din latina de toate zilele a romanilor și din limba dacilor, cu influențe venite mai târziu. De limbile romanice din apus s-a despărțit între veacurile al V-lea și al VIII-lea.',
+        'Ca să o despartă de aromână, de meglenoromână și de istroromână, lingvistica comparată îi spune daco-română. Înainte de statul modern, oamenii își ziceau rumâni sau români. Limbii îi ziceau rumână sau românească.',
+        'O notiță din 1574, lăsată de Pierre Lescalopier, spune că moldovenii, valahii și mulți transilvăneni se vedeau urmași ai romanilor. Limbii îi spuneau românește.',
+        'Din 1521 ne-a rămas, de la Câmpulung, Scrisoarea lui Neacșu. Este cel mai vechi text românesc păstrat. Literele sunt chirilice. Alfabetul chirilic s-a mai folosit până în veacul al XIX-lea.',
+        'În 1687, Miron Costin nota o origine comună în De neamul moldovenilor. În 1714, Dimitrie Cantemir făcea la fel în Descriptio Moldaviae: moldoveni, valahi și oameni din regatul Ungariei.',
+        'Sub UNESCO s-a alcătuit un dicționar internațional de termeni literari. Intră acolo dor, doină și colindă, trei cuvinte românești greu de tradus exact. Legea 53/2013 a fixat Ziua Limbii Române la 31 august.',
+        'În Republica Moldova, din 1990, aceeași zi poartă numele Limba noastră. La clasă puteți alcătui împreună o cărticică. Textul tău se scrie aici, fără vers copiat.'
+      ].join('\n\n'),
+      example: [
+        'Locul cinci, între limbile romanice, vine după spaniolă, portugheză, franceză și italiană. Ții minte trei numere, în milioane: 28, 24 și 17.',
+        'Neacșu a scris în 1521. Ziua limbii cade în 31 august, prin legea din 2013. Dor, doină și colindă se traduc greu, fără echivalent exact.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Sărbătoarea din Republica Moldova, începută în 1990, se numește Limba noastră și cade tot la 31 august. Legea nu este aceeași, ziua da.'
+        }
+      ],
+      tryThis: 'În cam zece rânduri, cu vorbele tale, pune 31 august și legea din 2013. Adaugă cele patru limbi din familia romanică, numerele 28, 24 și 17, scrisoarea din 1521 și fie dor, fie doină, fie colindă. Spune și numele sărbătorii din Republica Moldova.',
+      keyPoints: [
+        'După numărul de vorbitori, româna este a cincea limbă romanică.',
+        'Legea 53/2013 a pus ziua limbii la 31 august.',
+        'Textul cel mai vechi păstrat este scrisoarea din 1521.'
+      ]
+    }),
+    lesson({
+      id: 'proiect-cititor',
+      title: 'Jurnalul meu de cititor',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Grupul',
+          text: 'Lucrați patru sau cinci. Alegeți un titlu și trei metode. Secretarul notează reflecția. De pe copertă nu se iau citate.'
+        }
+      ],
+      theory: [
+        'Proiectul se face cu patru sau cu cinci colegi. Fiecare își alege un titlu din meniu. Dacă nu l-ai citit încă, îl treci la lecturi viitoare. Jurnalul de azi se scrie despre o carte terminată, chiar dacă nu este pe listă.',
+        'La clasă repeți jurnalul pe cartea deschisă acolo. Meniul este o listă de lectură, nu o temă pe o carte nevăzută.',
+        'La familie, trei autori. Hector Malot a scris Singur pe lume. Mihail Sadoveanu a scris Dumbrava minunată. Ionel Teodoreanu a scris La Medeleni.',
+        'La prietenie, alți trei. Cezar Petrescu a scris Fram, ursul polar. Antoine de Saint-Exupéry a scris Micul prinț. Johanna Spyri a scris Heidi, fetița munților.',
+        'La aventură: Constantin Chiriță a scris Cireșarii. Radu Tudoran a scris Toate pânzele sus. Mark Twain a scris Aventurile lui Tom Sawyer.',
+        'La lectură: Rui Zink a scris Cititorul din peșteră. Jo Cotterill a scris Lămâi, cărți și prieteni. Markus Zusak a scris Hoțul de cărți.',
+        'Din șase metode luați trei. Puteți lua scheletul de recenzie ori oglinda cărții. Mai sunt fișele de lectură și harta textului. Rămân jurnalul de cititor și harta mentală.',
+        'Apoi faceți o prezentare gândită de voi. Secretarul strânge reflecția: de ce ați ales cartea, de la cine ați cerut sprijin, cum ați împărțit sarcinile, ce ați învățat și cum prezentați.',
+        'Citatele de pe copertă nu se copiază. Jurnalul, la persoana întâi, spune unde ai citit și ce ai simțit. Titlul necittit se anunță limpede.'
+      ].join('\n\n'),
+      example: [
+        'Cinci elevi lucrează împreună. Ana își pune Fram, ursul polar, la lecturi viitoare. Jurnalul de azi îl scrie despre o carte citită vara, între rafturi.',
+        'Alege jurnalul de cititor, fișa de lectură și harta mentală. Vlad, ca secretar, notează de ce prietenia este tema, cine a dat ajutor și cum se face prezentarea.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Dacă grupul alege Cireșarii, dar nimeni nu a terminat volumul, jurnalul de azi rămâne pe o carte citită. Cireșarii se notează ca lectură viitoare, nu ca text inventat.'
+        }
+      ],
+      tryThis: 'Alege un titlu din cele patru grupe și trei metode din cele șase. Scrie cam zece rânduri de jurnal, la persoana întâi: locul lecturii și o emoție.\n\nDacă volumul ales nu l-ai terminat, o spui și treci pe cartea cunoscută. La urmă, ca secretar: motivul cărții, ajutorul, împărțirea sarcinilor, felul prezentării.',
+      keyPoints: [
+        'Grupul are patru sau cinci membri și un titlu din meniu.',
+        'Trei metode, dintre șase, pregătesc prezentarea.',
+        'Însemnarea la persoana întâi spune locul lecturii și emoția.'
+      ]
+    }),
+    lesson({
+      id: 'recap-calatorii',
+      title: 'Încheierea despre călătorii',
+      kind: 'recapitulare',
+      boxes: [
+        {
+          type: 'atentie',
+          title: 'O singură scenă',
+          text: 'Recapitularea se face pe scena Irinei. Amintirea despre Eminescu rămâne fapt istoric, nu text de copiat.'
+        }
+      ],
+      theory: [
+        'Unitatea se închide pe o scenă scrisă aici. Irina, sâmbătă seara, stă acasă și deschide jurnalul. Notează lectura de ieri. A citit la bibliotecă, repede. Volumul era o carte despre corăbii.',
+        'Timpul scrisului, sâmbătă seara, este circumstanțial. Locul acasă este adverb. Ieri, tot adverb, ține de timpul lecturii. Repede, adverb, ține de mod.',
+        'La a deschis, jurnalul este complement direct. La a citit, o carte este tot complement direct. Despre corăbii este complement prepozițional. Locul lecturii, la bibliotecă, este circumstanțial.',
+        'Scrisul se petrece sâmbătă seara, lectura a fost ieri. Pentru că clipa de acum stă înaintea faptei, textul este rememorare.',
+        'Există o amintire din 18 iunie 1889, intitulată În Nirvana, scrisă de Ion Luca Caragiale. La 17 ani, în București, a făcut cunoștință cu Mihai Eminescu.',
+        'La Giurgiu, un actor îl găsise citind. Portretul acela nu se copiază. Lucrezi scena Irinei. Pașii sunt cei știuți: ce este scris, ce vezi, ce ai face tu, legate prin pentru că.',
+        'Ce vezi pornește de la o văd. Mai recunoști un adverb de timp, unul de loc, complementul direct și complementul prepozițional.',
+        'La final scrii, la persoana întâi, șase până la opt rânduri despre aceeași seară. Pui un reper de timp, un reper de spațiu și o descriere de măcar douăzeci de cuvinte. Descrierea încetinește fapta, cum ai văzut la tiparul narativ-descriptiv.'
+      ].join('\n\n'),
+      example: [
+        'Scrisul spune că Irina, sâmbătă seara, acasă, deschide jurnalul. Acolo notează că ieri a citit repede, la bibliotecă, o carte despre corăbii.',
+        'O văd seara, la ea acasă, jurnalul stând deschis. Aș fi adăugat titlul, pentru că volumul era despre corăbii.',
+        'Ieri spune când, acasă spune unde, repede spune cum. O carte este direct. Despre corăbii este prepozițional.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Dacă descrii jurnalul, cu coperte groase și o panglică roșie, fapta se oprește. Reperul de timp rămâne sâmbătă seara. Reperul de spațiu rămâne acasă.'
+        }
+      ],
+      tryThis: 'Pentru Irina, scrie ce este scris, ce vezi și ce ai face, cu pentru că. Ce vezi pornește de la o văd. Numește un adverb de timp, unul de loc, directul și prepoziționalul. Spune de ce textul este rememorare.\n\nApoi, la persoana întâi, scrie șase până la opt rânduri despre aceeași seară, cu narațiune și descriere. Pune un reper de timp, unul de spațiu și o descriere de măcar douăzeci de cuvinte.',
+      keyPoints: [
+        'Irina scrie acasă, sâmbătă seara, despre lectura de ieri.',
+        'În aceeași scenă stau rememorarea, adverbul și complementul.',
+        'Portretul din amintirea despre Eminescu nu se transcrie.'
+      ]
+    })
   ]
 };

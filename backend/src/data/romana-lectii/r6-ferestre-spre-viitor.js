@@ -1,133 +1,563 @@
+'use strict';
+
+const { romanaLesson } = require('../lessonBuilder');
+
+function lesson(f) {
+  return romanaLesson(f);
+}
+
 module.exports = {
-  "id": "ferestre-spre-viitor",
-  "title": "Ferestre spre viitor",
-  "inOwnWords": "Unitatea 6 lucrează textul argumentativ, textul auxiliar, atitudinile din grup, inteligența emoțională, stilul și sintaxa propoziției. Apoi vin personalitățile din diaspora și proiectul despre o descoperire. Scenele sunt în lecții. În unele manuale textul de deschidere pleacă de la Jules Verne. La școală titlul poate fi altul. Grilele de punctaj nu sunt lecții.",
-  "toc": [
-    "Harta unității",
-    "Textul argumentativ",
-    "Textul auxiliar",
-    "Atitudini și emoții",
-    "Stilul",
-    "Drumeția, trei texte",
-    "Subiectul și predicatul",
-    "Atributul și complementele",
-    "Diaspora",
-    "Descoperiri care au schimbat lumea",
-    "Recapitularea unității"
+  id: 'ferestre-spre-viitor',
+  title: 'Ferestre spre viitor',
+  inOwnWords: 'Unitatea 6 lucrează textul argumentativ, textul auxiliar, atitudinile din grup, inteligența emoțională, stilul și sintaxa propoziției. Apoi vin personalitățile din diaspora și proiectul despre o descoperire. Scenele sunt în lecții. Deschiderea poate pleca de la Jules Verne. La școală titlul poate fi altul. Grilele de punctaj nu sunt lecții.',
+  toc: [
+    'Harta unității',
+    'Textul argumentativ',
+    'Textul auxiliar',
+    'Atitudini și emoții',
+    'Stilul',
+    'Drumeția, trei texte',
+    'Subiectul și predicatul',
+    'Atributul și complementele',
+    'Diaspora',
+    'Descoperiri care au schimbat lumea',
+    'Recapitularea unității'
   ],
-  "glossary": [
+  glossary: [
     {
-      "term": "text argumentativ",
-      "meaning": "Text în care o părere este susținută cu argumente, ca să convingă."
+      term: 'text argumentativ',
+      meaning: 'Text în care o părere este susținută cu argumente, ca să convingă.'
     },
     {
-      "term": "diaspora",
-      "meaning": "Un grup etnic aflat în afara granițelor țării de origine."
+      term: 'diaspora',
+      meaning: 'Un grup etnic aflat în afara granițelor țării de origine.'
     },
     {
-      "term": "inteligență emoțională",
-      "meaning": "Capacitatea de a înțelege emoțiile tale și pe ale celorlalți și de a le spune potrivit."
+      term: 'inteligență emoțională',
+      meaning: 'Capacitatea de a înțelege emoțiile tale și pe ale celorlalți și de a le spune potrivit.'
     }
   ],
-  "lessons": [
-    {
-      "id": "deschidere-ferestre",
-      "title": "Ce vei lucra despre viitor",
-      "platter": "Unitatea Ferestre spre viitor începe cu harta. Vei recunoaște un text argumentativ și un text auxiliar. Vei exersa interesul, curiozitatea, implicarea și cooperarea, apoi vei spune o emoție pe nume. La redactare vei potrivi cuvintele cu tema și cu situația. La gramatică vei relua sintaxa propoziției: subiect, predicat, atribut, complement și circumstanțiale. La interculturalitate vei lega limba română de personalități românești din diaspora. La final faci un proiect despre o descoperire. Competențele acestei unități sunt zece: 1.3, 1.4, 2.1, 2.4, 2.5, 3.1, 3.3, 4.1, 4.5 și 5.2. La școală textul de pe bancă poate avea alt titlu. Pașii rămân aceiași.\n\nExemplu lucrat: Harta anunță argumentarea, emoția, stilul, sintaxa, diaspora și proiectul despre descoperiri. Cele zece competențe sunt ținta unității, nu o lecție gata făcută.\n\nScrie două propoziții. În prima spune că tema este o fereastră spre viitor și că azi lucrezi textul argumentativ. În a doua numește competențele 1.3, 1.4, 2.1, 2.4, 2.5, 3.1, 3.3, 4.1, 4.5 și 5.2 și spune că sunt zece.\n\nHarta unității anunță textul argumentativ, atitudinile, stilul, sintaxa propoziției, diaspora și proiectul. Competențele sunt 1.3, 1.4, 2.1, 2.4, 2.5, 3.1, 3.3, 4.1, 4.5 și 5.2.",
-      "theory": "Unitatea Ferestre spre viitor începe cu harta. Vei recunoaște un text argumentativ și un text auxiliar. Vei exersa interesul, curiozitatea, implicarea și cooperarea, apoi vei spune o emoție pe nume. La redactare vei potrivi cuvintele cu tema și cu situația. La gramatică vei relua sintaxa propoziției: subiect, predicat, atribut, complement și circumstanțiale. La interculturalitate vei lega limba română de personalități românești din diaspora. La final faci un proiect despre o descoperire. Competențele acestei unități sunt zece: 1.3, 1.4, 2.1, 2.4, 2.5, 3.1, 3.3, 4.1, 4.5 și 5.2. La școală textul de pe bancă poate avea alt titlu. Pașii rămân aceiași.",
-      "example": "Harta anunță argumentarea, emoția, stilul, sintaxa, diaspora și proiectul despre descoperiri. Cele zece competențe sunt ținta unității, nu o lecție gata făcută.",
-      "tryThis": "Scrie două propoziții. În prima spune că tema este o fereastră spre viitor și că azi lucrezi textul argumentativ. În a doua numește competențele 1.3, 1.4, 2.1, 2.4, 2.5, 3.1, 3.3, 4.1, 4.5 și 5.2 și spune că sunt zece.",
-      "recap": "Harta unității anunță textul argumentativ, atitudinile, stilul, sintaxa propoziției, diaspora și proiectul. Competențele sunt 1.3, 1.4, 2.1, 2.4, 2.5, 3.1, 3.3, 4.1, 4.5 și 5.2."
-    },
-    {
-      "id": "text-argumentativ",
-      "title": "O părere și dovezile ei",
-      "platter": "Textul argumentativ prezintă opinii despre fapte, oameni sau întâmplări și le susține cu argumente și dovezi, ca să demonstreze ceva sau să convingă pe cineva. Are trei părți. Introducerea cuprinde ipoteza, adică părerea, și poate începe cu părerea mea este că, în opinia mea sau din punctul meu de vedere. Cuprinsul aduce argumente pro sau contra, cu în primul rând, în al doilea rând, mai întâi și apoi. Încheierea reia părerea, ținând cont de argumente, și folosește în concluzie, deci sau așadar. Jules Verne a trăit între 1828 și 1905. A fost un scriitor francez și un precursor al literaturii științifico-fantastice. În 1863 a publicat Cinci săptămâni în balon, iar succesul a dus la un contract pe douăzeci de ani pentru seria Călătorii extraordinare. Unele romane privesc tehnica vremii lui: Copiii căpitanului Grant, 1868, Ocolul Pământului în optzeci de zile, 1873, Mihail Strogoff, 1876, Steaua Sudului, 1884, Vulcanul de aur, 1899. Altele imaginează lumi: De la Pământ la Lună, 1865, Douăzeci de mii de leghe sub mări, 1870, Robur Cuceritorul, 1886. Un articol de școală spune că, în romanul din 1865, calculele lui Verne se apropie de zborul real din jurul Lunii. Frank Borman a comandat prima navă care a zburat în jurul Lunii. În articol, capsula are aproximativ 9000 de kilograme, este din aluminiu și are 4 metri înălțime. Decolarea este la aproximativ 100 de mile de locul imaginat de Verne, iar amerizarea este la aproximativ două mile și jumătate de zona din Oceanul Pacific aleasă în roman. Procedeul modern de fabricare a aluminiului a apărut la aproximativ 20 de ani după roman. Verne și-a închipuit proiectile trimise de tunuri uriașe, ca să învingă gravitația. Mai târziu, NASA a folosit module lunare prinse de rachete. Enunțul Nu poate fi o coincidență este o părere. Două dovezi sunt materialul, aluminiul, și locul revenirii, foarte aproape de zona din roman. Cuvântul care închide argumentarea în articol este așadar. Nu cerem scrisoarea și nu cerem articolul. Scena noastră este alta. Luni, la ora de română, Mara a spus: Părerea mea este că o poveste poate merge înaintea unei invenții. În primul rând, Jules Verne a scris în 1865 despre un drum spre Lună. În al doilea rând, oamenii au zburat mai târziu cu adevărat. Așadar, imaginația poate deschide o fereastră spre viitor. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.\n\nExemplu lucrat: Ce scrie: Luni, la ora de română, Mara și-a spus părerea, a dat două argumente și a încheiat cu așadar. Ce vezi: O văd pe Mara în clasă, luni, spunându-și părerea despre povești și invenții. Eu aș fi adăugat anul 1870, pentru că în acel an a apărut Douăzeci de mii de leghe sub mări, iar Mara vorbise doar despre romanul din 1865. Ipoteza este părerea mea este că. Argumentele stau la în primul rând și în al doilea rând. Concluzia este așadar. Părerea din articolul de școală este că asemănarea nu este o coincidență, iar două dovezi sunt aluminiul și locul revenirii.\n\nPe scena Marei, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Spune care este ipoteza, care sunt cele două argumente și care este concluzia. Mai scrie anul romanului De la Pământ la Lună, din ce material este capsula din articol și la câți metri înălțime. Apoi scrie un text argumentativ, între 100 și 120 de cuvinte, despre o invenție care te ajută. Pune o ipoteză, două argumente și o concluzie, cu cel puțin doi conectori din lecție. Folosește în text anul 1865 sau anul 1870.\n\nTextul argumentativ are ipoteză, argumente și concluzie. Conectorii de început sunt părerea mea este că, în opinia mea și din punctul meu de vedere. Conectorii de cuprins sunt în primul rând și în al doilea rând. Conectorii de încheiere sunt în concluzie, deci și așadar.",
-      "theory": "Textul argumentativ prezintă opinii despre fapte, oameni sau întâmplări și le susține cu argumente și dovezi, ca să demonstreze ceva sau să convingă pe cineva. Are trei părți. Introducerea cuprinde ipoteza, adică părerea, și poate începe cu părerea mea este că, în opinia mea sau din punctul meu de vedere. Cuprinsul aduce argumente pro sau contra, cu în primul rând, în al doilea rând, mai întâi și apoi. Încheierea reia părerea, ținând cont de argumente, și folosește în concluzie, deci sau așadar. Jules Verne a trăit între 1828 și 1905. A fost un scriitor francez și un precursor al literaturii științifico-fantastice. În 1863 a publicat Cinci săptămâni în balon, iar succesul a dus la un contract pe douăzeci de ani pentru seria Călătorii extraordinare. Unele romane privesc tehnica vremii lui: Copiii căpitanului Grant, 1868, Ocolul Pământului în optzeci de zile, 1873, Mihail Strogoff, 1876, Steaua Sudului, 1884, Vulcanul de aur, 1899. Altele imaginează lumi: De la Pământ la Lună, 1865, Douăzeci de mii de leghe sub mări, 1870, Robur Cuceritorul, 1886. Un articol de școală spune că, în romanul din 1865, calculele lui Verne se apropie de zborul real din jurul Lunii. Frank Borman a comandat prima navă care a zburat în jurul Lunii. În articol, capsula are aproximativ 9000 de kilograme, este din aluminiu și are 4 metri înălțime. Decolarea este la aproximativ 100 de mile de locul imaginat de Verne, iar amerizarea este la aproximativ două mile și jumătate de zona din Oceanul Pacific aleasă în roman. Procedeul modern de fabricare a aluminiului a apărut la aproximativ 20 de ani după roman. Verne și-a închipuit proiectile trimise de tunuri uriașe, ca să învingă gravitația. Mai târziu, NASA a folosit module lunare prinse de rachete. Enunțul Nu poate fi o coincidență este o părere. Două dovezi sunt materialul, aluminiul, și locul revenirii, foarte aproape de zona din roman. Cuvântul care închide argumentarea în articol este așadar. Nu cerem scrisoarea și nu cerem articolul. Scena noastră este alta. Luni, la ora de română, Mara a spus: Părerea mea este că o poveste poate merge înaintea unei invenții. În primul rând, Jules Verne a scris în 1865 despre un drum spre Lună. În al doilea rând, oamenii au zburat mai târziu cu adevărat. Așadar, imaginația poate deschide o fereastră spre viitor. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.",
-      "example": "Ce scrie: Luni, la ora de română, Mara și-a spus părerea, a dat două argumente și a încheiat cu așadar. Ce vezi: O văd pe Mara în clasă, luni, spunându-și părerea despre povești și invenții. Eu aș fi adăugat anul 1870, pentru că în acel an a apărut Douăzeci de mii de leghe sub mări, iar Mara vorbise doar despre romanul din 1865. Ipoteza este părerea mea este că. Argumentele stau la în primul rând și în al doilea rând. Concluzia este așadar. Părerea din articolul de școală este că asemănarea nu este o coincidență, iar două dovezi sunt aluminiul și locul revenirii.",
-      "tryThis": "Pe scena Marei, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Spune care este ipoteza, care sunt cele două argumente și care este concluzia. Mai scrie anul romanului De la Pământ la Lună, din ce material este capsula din articol și la câți metri înălțime. Apoi scrie un text argumentativ, între 100 și 120 de cuvinte, despre o invenție care te ajută. Pune o ipoteză, două argumente și o concluzie, cu cel puțin doi conectori din lecție. Folosește în text anul 1865 sau anul 1870.",
-      "recap": "Textul argumentativ are ipoteză, argumente și concluzie. Conectorii de început sunt părerea mea este că, în opinia mea și din punctul meu de vedere. Conectorii de cuprins sunt în primul rând și în al doilea rând. Conectorii de încheiere sunt în concluzie, deci și așadar."
-    },
-    {
-      "id": "text-auxiliar",
-      "title": "Textul care stă lângă textul mare",
-      "platter": "Textul auxiliar stă lângă textul principal și te ajută să îl înțelegi: o notiță, o casetă, un fragment care ilustrează. În manual, articolul despre Jules Verne este textul principal. Lângă el stau o notiță despre un submarin și o trimitere la romanul Douăzeci de mii de leghe sub mări, din 1870. În roman, căpitanul Nemo are pe submarinul Nautilus o bibliotecă, iar naratorul este profesorul Aronnax. Nemo spune că volumul bibliotecii este de douăsprezece mii de cărți. Cărțile sunt de știință, de morală și de literatură, în multe limbi, amestecate, fără să fie așezate pe limbi. Cărțile de știință sunt mai numeroase. Aronnax găsește Fondatorii astronomiei, de Joseph Bertrand, carte apărută în 1865, și de aici deduce că Nautilus nu a fost construit înainte de anul acela și că viața submarină a lui Nemo ține de cel mult trei ani. Nu cerem descrierea sălii. Cuvintele pe care le fixezi sunt acestea. Palisandru înseamnă un lemn exotic, tare, de culoare închisă. Divan înseamnă o canapea joasă, pe care te poți întinde. Capodoperă înseamnă o operă de vârf. Balistică înseamnă știința care studiază traiectoria unui proiectil. Nautilus, cu indicativul SSN-571, a fost primul submarin operațional cu propulsie nucleară și primul care a traversat scufundat Polul Nord, la 3 august 1958. Comandantul de la început a fost Eugene Parks Wilkinson. Cuvântul grecesc nautilus l-a inspirat pe Jules Verne în 1870 și, mai târziu, pe cei care au numit și alte nave USS Nautilus. Scena noastră este alta. Joi, în biblioteca școlii, Radu a ales de pe raft o carte despre Lună. Lângă carte stătea un ziar vechi. I-a spus Irinei: O iau pentru că vreau să văd cum și-a închipuit cineva zborul, înainte să existe racheta. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.\n\nExemplu lucrat: Ce scrie: Joi, în biblioteca școlii, Radu a ales o carte despre Lună, lângă un ziar vechi, și i-a spus Irinei de ce o ia. Ce vezi: Îl văd pe Radu în bibliotecă, cu cartea în mână și cu ziarul vechi lângă ea. Eu aș fi deschis ziarul, pentru că stătea lângă carte, iar Radu alesese deja volumul despre Lună. Textul auxiliar explică textul principal. În roman sunt douăsprezece mii de volume. Cartea lui Bertrand este din 1865. Traversarea Polului Nord este la 3 august 1958.\n\nPe scena lui Radu, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu Îl văd. Spune ce este un text auxiliar, câți volumi spune Nemo că are și din ce an este cartea lui Bertrand. Definește palisandru, divan, capodoperă și balistică. Mai scrie data traversării Polului Nord și numele comandantului. Apoi fă un inventar de opt rânduri: o sală pentru elevi pe un vas, cu patru obiecte, fiecare cu la ce folosește, așezate de la cel mai important la cel mai puțin important.\n\nTextul auxiliar stă lângă textul principal și îl lămurește. În romanul din 1870, Nemo vorbește despre douăsprezece mii de volume, iar cartea lui Bertrand, din 1865, fixează epoca submarinului. Nautilus SSN-571 a trecut scufundat pe la Polul Nord la 3 august 1958.",
-      "theory": "Textul auxiliar stă lângă textul principal și te ajută să îl înțelegi: o notiță, o casetă, un fragment care ilustrează. În manual, articolul despre Jules Verne este textul principal. Lângă el stau o notiță despre un submarin și o trimitere la romanul Douăzeci de mii de leghe sub mări, din 1870. În roman, căpitanul Nemo are pe submarinul Nautilus o bibliotecă, iar naratorul este profesorul Aronnax. Nemo spune că volumul bibliotecii este de douăsprezece mii de cărți. Cărțile sunt de știință, de morală și de literatură, în multe limbi, amestecate, fără să fie așezate pe limbi. Cărțile de știință sunt mai numeroase. Aronnax găsește Fondatorii astronomiei, de Joseph Bertrand, carte apărută în 1865, și de aici deduce că Nautilus nu a fost construit înainte de anul acela și că viața submarină a lui Nemo ține de cel mult trei ani. Nu cerem descrierea sălii. Cuvintele pe care le fixezi sunt acestea. Palisandru înseamnă un lemn exotic, tare, de culoare închisă. Divan înseamnă o canapea joasă, pe care te poți întinde. Capodoperă înseamnă o operă de vârf. Balistică înseamnă știința care studiază traiectoria unui proiectil. Nautilus, cu indicativul SSN-571, a fost primul submarin operațional cu propulsie nucleară și primul care a traversat scufundat Polul Nord, la 3 august 1958. Comandantul de la început a fost Eugene Parks Wilkinson. Cuvântul grecesc nautilus l-a inspirat pe Jules Verne în 1870 și, mai târziu, pe cei care au numit și alte nave USS Nautilus. Scena noastră este alta. Joi, în biblioteca școlii, Radu a ales de pe raft o carte despre Lună. Lângă carte stătea un ziar vechi. I-a spus Irinei: O iau pentru că vreau să văd cum și-a închipuit cineva zborul, înainte să existe racheta. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.",
-      "example": "Ce scrie: Joi, în biblioteca școlii, Radu a ales o carte despre Lună, lângă un ziar vechi, și i-a spus Irinei de ce o ia. Ce vezi: Îl văd pe Radu în bibliotecă, cu cartea în mână și cu ziarul vechi lângă ea. Eu aș fi deschis ziarul, pentru că stătea lângă carte, iar Radu alesese deja volumul despre Lună. Textul auxiliar explică textul principal. În roman sunt douăsprezece mii de volume. Cartea lui Bertrand este din 1865. Traversarea Polului Nord este la 3 august 1958.",
-      "tryThis": "Pe scena lui Radu, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu Îl văd. Spune ce este un text auxiliar, câți volumi spune Nemo că are și din ce an este cartea lui Bertrand. Definește palisandru, divan, capodoperă și balistică. Mai scrie data traversării Polului Nord și numele comandantului. Apoi fă un inventar de opt rânduri: o sală pentru elevi pe un vas, cu patru obiecte, fiecare cu la ce folosește, așezate de la cel mai important la cel mai puțin important.",
-      "recap": "Textul auxiliar stă lângă textul principal și îl lămurește. În romanul din 1870, Nemo vorbește despre douăsprezece mii de volume, iar cartea lui Bertrand, din 1865, fixează epoca submarinului. Nautilus SSN-571 a trecut scufundat pe la Polul Nord la 3 august 1958."
-    },
-    {
-      "id": "atitudini-emotii",
-      "title": "Interes, cooperare și emoția pe nume",
-      "platter": "Când comunică, oamenii au atitudini diferite. Într-un grup arăți interes pentru părerile celorlalți, atenție, implicare și cooperare. Interesul te oprește la o temă. Curiozitatea pune o întrebare. Implicarea te face să intri în faptă. Cooperarea împarte treaba. Inteligența emoțională este capacitatea de a înțelege și de a gestiona emoțiile tale și pe ale celorlalți. Ea cuprinde autocunoașterea, adică îți știi sentimentele, autostăpânirea, adică îți ții în frâu un sentiment care te-ar răni pe tine sau pe altul, empatia, adică înțelegi ce simte celălalt, motivația, colaborarea și lucrul în echipă. Emoțiile sunt trăiri de intensitate mijlocie și de durată relativ scurtă. Pot fi pozitive sau negative. Printre ele sunt tristețea, supărarea, disprețul, bucuria, furia, dezgustul, teama, surprinderea, rușinea și durerea. În pauză, la avizier, Lia a văzut afișul concursului Școala viitorului. A întrebat: Când este proba de machete? Radu a răspuns: Sâmbătă, și putem lucra împreună. Lia a spus: Vin și eu și aduc cartonul. Întrebarea este curiozitate. Oprirea la afiș este interes. Vin și eu este implicare. Lucrul împreună este cooperare. Seara, în bucătărie, mama i-a spus lui Vlad că mâine tabăra pleacă fără el, pentru că locurile s-au terminat. Vlad a simțit teamă și tristețe. A spus: Vreau să rămân cu voi. Mama l-a îmbrățișat. Îmbrățișarea este empatie. A doua zi, Vlad îl felicită pe colegul care a primit locul. Felicitarea, după tristețe, este autostăpânire. Dacă pierzi un concurs la care ai muncit mult, atitudinea care arată inteligență emoțională este să rămâi, să spui că îți pare rău și să îl feliciți pe câștigător. Plecarea în tăcere și refuzul podiumului lasă emoția nespusă. În unele manuale apare un dialog din Singur pe lume, de Hector Malot, despre un copil care se teme să fie dus de acasă. Nu cerem replicile. Scenele tale sunt Lia și Vlad.\n\nExemplu lucrat: La avizier, interesul este că Lia se oprește la afiș, curiozitatea este întrebarea despre sâmbătă, implicarea este vin și eu, cooperarea este lucrul împreună. În bucătărie, Vlad simte teamă și tristețe, mama arată empatie prin îmbrățișare, iar felicitarea de a doua zi este autostăpânire. La un concurs pierdut, spui tristețea și îl feliciți pe câștigător.\n\nScrie patru enunțuri despre concursul Școala viitorului: unul de interes, unul de curiozitate, unul de implicare și unul de cooperare. Pe scena lui Vlad, numește două emoții și spune ce faptă arată empatia mamei. Apoi alege atitudinea de după un concurs pierdut și susține-o cu două argumente. Argumentele pleacă din lecție: ai muncit mult, iar locul al doilea rămâne un loc.\n\nInteresul, curiozitatea, implicarea și cooperarea sunt atitudini de grup. Inteligența emoțională înseamnă să îți cunoști emoția, să o stăpânești și să înțelegi emoția celuilalt. După o înfrângere, spui ce simți și îl feliciți pe câștigător.",
-      "theory": "Când comunică, oamenii au atitudini diferite. Într-un grup arăți interes pentru părerile celorlalți, atenție, implicare și cooperare. Interesul te oprește la o temă. Curiozitatea pune o întrebare. Implicarea te face să intri în faptă. Cooperarea împarte treaba. Inteligența emoțională este capacitatea de a înțelege și de a gestiona emoțiile tale și pe ale celorlalți. Ea cuprinde autocunoașterea, adică îți știi sentimentele, autostăpânirea, adică îți ții în frâu un sentiment care te-ar răni pe tine sau pe altul, empatia, adică înțelegi ce simte celălalt, motivația, colaborarea și lucrul în echipă. Emoțiile sunt trăiri de intensitate mijlocie și de durată relativ scurtă. Pot fi pozitive sau negative. Printre ele sunt tristețea, supărarea, disprețul, bucuria, furia, dezgustul, teama, surprinderea, rușinea și durerea. În pauză, la avizier, Lia a văzut afișul concursului Școala viitorului. A întrebat: Când este proba de machete? Radu a răspuns: Sâmbătă, și putem lucra împreună. Lia a spus: Vin și eu și aduc cartonul. Întrebarea este curiozitate. Oprirea la afiș este interes. Vin și eu este implicare. Lucrul împreună este cooperare. Seara, în bucătărie, mama i-a spus lui Vlad că mâine tabăra pleacă fără el, pentru că locurile s-au terminat. Vlad a simțit teamă și tristețe. A spus: Vreau să rămân cu voi. Mama l-a îmbrățișat. Îmbrățișarea este empatie. A doua zi, Vlad îl felicită pe colegul care a primit locul. Felicitarea, după tristețe, este autostăpânire. Dacă pierzi un concurs la care ai muncit mult, atitudinea care arată inteligență emoțională este să rămâi, să spui că îți pare rău și să îl feliciți pe câștigător. Plecarea în tăcere și refuzul podiumului lasă emoția nespusă. În unele manuale apare un dialog din Singur pe lume, de Hector Malot, despre un copil care se teme să fie dus de acasă. Nu cerem replicile. Scenele tale sunt Lia și Vlad.",
-      "example": "La avizier, interesul este că Lia se oprește la afiș, curiozitatea este întrebarea despre sâmbătă, implicarea este vin și eu, cooperarea este lucrul împreună. În bucătărie, Vlad simte teamă și tristețe, mama arată empatie prin îmbrățișare, iar felicitarea de a doua zi este autostăpânire. La un concurs pierdut, spui tristețea și îl feliciți pe câștigător.",
-      "tryThis": "Scrie patru enunțuri despre concursul Școala viitorului: unul de interes, unul de curiozitate, unul de implicare și unul de cooperare. Pe scena lui Vlad, numește două emoții și spune ce faptă arată empatia mamei. Apoi alege atitudinea de după un concurs pierdut și susține-o cu două argumente. Argumentele pleacă din lecție: ai muncit mult, iar locul al doilea rămâne un loc.",
-      "recap": "Interesul, curiozitatea, implicarea și cooperarea sunt atitudini de grup. Inteligența emoțională înseamnă să îți cunoști emoția, să o stăpânești și să înțelegi emoția celuilalt. După o înfrângere, spui ce simți și îl feliciți pe câștigător."
-    },
-    {
-      "id": "stilul",
-      "title": "Cuvântul potrivit locului",
-      "platter": "Stilul este un mod specific de a te exprima, cu mijloacele limbii. Adecvarea la temă înseamnă că folosești cuvintele-cheie ale temei și că există potrivire între ce scrii, ce vrei să obții și efectul asupra cititorului. Proprietatea termenilor înseamnă că fiecare cuvânt redă exact ideea. Puritatea și adecvarea situațională înseamnă limba standard, un limbaj potrivit situației și o exprimare corectă. Originalitatea înseamnă că ideea este a ta, spusă în felul tău, nu o frază luată de-a gata. Forma bună pentru haina de marinar este marinar. Marinel, marinal și mariner nu sunt forma din limba standard. Procopsit înseamnă învățat, cu carte. Dacă este spus zâmbind către cineva care tot amestecă un cuvânt, sensul din context este ironic: lauda este doar de formă. La școală spui îi stă bine. Îi șade bine este o formă din vorbirea veche sau populară. Mamițo este o alintare. În clasă spui mamă. Într-o schiță cunoscută, personajele amestecă tocmai aceste forme. Nu cerem dialogul. Pentru o expoziție de invenții, afișul are titlul, locul, ziua, ora și un slogan al tău. Cuvintele sunt exacte: invenție, machetă, expoziție. Nu înlocui tema cu o vorbă vagă.\n\nExemplu lucrat: Tema expoziției este invenția, deci afișul spune expoziție de invenții, nu doar o petrecere. Cuvântul exact este marinar. Procopsit, spus în ironie, nu laudă de-adevărat. Îi stă bine este forma potrivită la școală. Sloganul Un obiect, o întrebare este original dacă l-ai făcut tu pentru expoziția din curte, vineri, la ora 11.\n\nScrie forma bună pentru haina de marinar și spune ce înseamnă procopsit când este ironic. Alege între îi stă bine și îi șade bine pentru o propoziție de la școală. Apoi fă afișul expoziției de invenții: titlu, loc, zi, oră și un slogan al tău. În două rânduri, arată că textul este adecvat temei și că un termen este exact.\n\nStilul potrivește cuvântul cu tema și cu situația. Forma bună este marinar, iar la școală spui îi stă bine și mamă. Originalitatea este sloganul tău, nu o frază copiată.",
-      "theory": "Stilul este un mod specific de a te exprima, cu mijloacele limbii. Adecvarea la temă înseamnă că folosești cuvintele-cheie ale temei și că există potrivire între ce scrii, ce vrei să obții și efectul asupra cititorului. Proprietatea termenilor înseamnă că fiecare cuvânt redă exact ideea. Puritatea și adecvarea situațională înseamnă limba standard, un limbaj potrivit situației și o exprimare corectă. Originalitatea înseamnă că ideea este a ta, spusă în felul tău, nu o frază luată de-a gata. Forma bună pentru haina de marinar este marinar. Marinel, marinal și mariner nu sunt forma din limba standard. Procopsit înseamnă învățat, cu carte. Dacă este spus zâmbind către cineva care tot amestecă un cuvânt, sensul din context este ironic: lauda este doar de formă. La școală spui îi stă bine. Îi șade bine este o formă din vorbirea veche sau populară. Mamițo este o alintare. În clasă spui mamă. Într-o schiță cunoscută, personajele amestecă tocmai aceste forme. Nu cerem dialogul. Pentru o expoziție de invenții, afișul are titlul, locul, ziua, ora și un slogan al tău. Cuvintele sunt exacte: invenție, machetă, expoziție. Nu înlocui tema cu o vorbă vagă.",
-      "example": "Tema expoziției este invenția, deci afișul spune expoziție de invenții, nu doar o petrecere. Cuvântul exact este marinar. Procopsit, spus în ironie, nu laudă de-adevărat. Îi stă bine este forma potrivită la școală. Sloganul Un obiect, o întrebare este original dacă l-ai făcut tu pentru expoziția din curte, vineri, la ora 11.",
-      "tryThis": "Scrie forma bună pentru haina de marinar și spune ce înseamnă procopsit când este ironic. Alege între îi stă bine și îi șade bine pentru o propoziție de la școală. Apoi fă afișul expoziției de invenții: titlu, loc, zi, oră și un slogan al tău. În două rânduri, arată că textul este adecvat temei și că un termen este exact.",
-      "recap": "Stilul potrivește cuvântul cu tema și cu situația. Forma bună este marinar, iar la școală spui îi stă bine și mamă. Originalitatea este sloganul tău, nu o frază copiată."
-    },
-    {
-      "id": "drumetie",
-      "title": "Trei popasuri de scris",
-      "platter": "O drumeție de redactare îți cere trei tipare pe care le știi deja. La primul popas scrii un text narativ de cel mult 100 de cuvinte: personaje, o întâmplare, un indice de timp și unul de spațiu. La al doilea popas scrii o descriere de 70 până la 90 de cuvinte: un loc, detalii, perechi de substantiv cu adjectiv. La al treilea popas scrii un text explicativ despre fulger, cu pași, o cauză și o concluzie. Pașii fulgerului sunt aceștia. Norul se încarcă electric. Apoi sare o descărcare, între nori sau între nor și pământ: acesta este fulgerul. Lumina ajunge aproape imediat la ochi. Sunetul ajunge mai târziu: acesta este tunetul. De aceea vezi fulgerul înainte să auzi tunetul. Concluzia este că lumina este mai rapidă decât sunetul. Poți uni cele trei bucăți într-o poveste de 100 până la 150 de cuvinte, cu titlu. Nu copia un peisaj din manual. Locul tău poate fi poteca dintre școală și pădure.\n\nExemplu lucrat: Sâmbătă, la ora 8, am plecat din curtea școlii spre pădure. Este narațiune: are timp, spațiu și o plecare. Luminișul are iarbă verde și un fag înalt. Este descriere. Fulgerul se vede înaintea tunetului, pentru că lumina ajunge mai repede decât sunetul. Este explicație, cu cauză și concluzie.\n\nScrie cele trei popasuri, pe rând. Narațiunea are cel mult 100 de cuvinte, pleacă sâmbătă la ora 8 din curtea școlii și ajunge la pădure. Descrierea luminișului are între 70 și 90 de cuvinte și două epitete. Textul despre fulger are șase până la opt rânduri și folosește cei patru pași din lecție, plus concluzia că lumina ajunge înaintea sunetului. Pune un titlu.\n\nDrumeția de scris unește o narațiune, o descriere și o explicație. Fulgerul este descărcarea, tunetul este sunetul de după, iar lumina ajunge înaintea sunetului.",
-      "theory": "O drumeție de redactare îți cere trei tipare pe care le știi deja. La primul popas scrii un text narativ de cel mult 100 de cuvinte: personaje, o întâmplare, un indice de timp și unul de spațiu. La al doilea popas scrii o descriere de 70 până la 90 de cuvinte: un loc, detalii, perechi de substantiv cu adjectiv. La al treilea popas scrii un text explicativ despre fulger, cu pași, o cauză și o concluzie. Pașii fulgerului sunt aceștia. Norul se încarcă electric. Apoi sare o descărcare, între nori sau între nor și pământ: acesta este fulgerul. Lumina ajunge aproape imediat la ochi. Sunetul ajunge mai târziu: acesta este tunetul. De aceea vezi fulgerul înainte să auzi tunetul. Concluzia este că lumina este mai rapidă decât sunetul. Poți uni cele trei bucăți într-o poveste de 100 până la 150 de cuvinte, cu titlu. Nu copia un peisaj din manual. Locul tău poate fi poteca dintre școală și pădure.",
-      "example": "Sâmbătă, la ora 8, am plecat din curtea școlii spre pădure. Este narațiune: are timp, spațiu și o plecare. Luminișul are iarbă verde și un fag înalt. Este descriere. Fulgerul se vede înaintea tunetului, pentru că lumina ajunge mai repede decât sunetul. Este explicație, cu cauză și concluzie.",
-      "tryThis": "Scrie cele trei popasuri, pe rând. Narațiunea are cel mult 100 de cuvinte, pleacă sâmbătă la ora 8 din curtea școlii și ajunge la pădure. Descrierea luminișului are între 70 și 90 de cuvinte și două epitete. Textul despre fulger are șase până la opt rânduri și folosește cei patru pași din lecție, plus concluzia că lumina ajunge înaintea sunetului. Pune un titlu.",
-      "recap": "Drumeția de scris unește o narațiune, o descriere și o explicație. Fulgerul este descărcarea, tunetul este sunetul de după, iar lumina ajunge înaintea sunetului."
-    },
-    {
-      "id": "sintaxa-principale",
-      "title": "Subiectul și predicatul, din nou",
-      "platter": "Părțile principale de propoziție sunt subiectul și predicatul. Între ele este relație de interdependență: se cer unul pe altul. Subiectul poate fi exprimat prin substantiv, pronume sau numeral, sau poate fi neexprimat, inclus în terminația verbului ori subînțeles din context. Predicatul verbal este un verb predicativ. Predicatul nominal este verbul copulativ a fi plus numele predicativ. Între substantiv și atributul lui este subordonare. Între verb și complementul sau circumstanțialul lui este tot subordonare. Lucrezi fragmentul acesta. Irina s-a trezit dis-de-dimineață. Plouă. Fetița stă la fereastră și admiră stropii rebeli. Seamănă cu niște lacrimi de nori. Ea știe cum se formează ploaia, dar vrea să își imagineze altceva, să treacă timpul mai repede. Predicatele sunt zece: s-a trezit, plouă, stă, admiră, seamănă, știe, se formează, vrea, să își imagineze și să treacă. Subiecte exprimate: Irina, fetița, ea, ploaia și timpul. Plouă nu are subiect, pentru că verbul este impersonal. La seamănă, subiectul stropii este subînțeles. La vrea și la să își imagineze, subiectul ea este subînțeles. Dis-de-dimineață este circumstanțial de timp și determină s-a trezit. La fereastră este circumstanțial de loc și determină stă. Stropii este complement direct și determină admiră. Cu niște lacrimi este complement prepozițional și determină seamănă. Rebeli este atribut adjectival. De nori este atribut substantival prepozițional. La alegere, răspunsurile bune sunt acestea. În Florile sunt roșii, florile este subiect, iar roșii este nume predicativ. Propoziția cu subiect multiplu este Fetele și băieții susțin aceleași probe sportive. În Am ascultat părerile tuturor, subiectul este neexprimat inclus, persoana I, eu. Predicate verbale: a sosit, au înflorit, se vor juca, zâmbește, face. Predicate nominale: sunt parfumate și delicate, sunt bucuroși, să fim fericiți. Numele predicative sunt adjective. Unul este multiplu: parfumate și delicate. Formele bune de acord sunt învăluite, pentru că vârfurile este plural, nu îndeplinesc, pentru că articolele este plural, mi-au stricat, pentru că ploaia și vântul sunt două subiecte, și interesați, pentru că băieții și fetele se acordă la masculin plural.\n\nExemplu lucrat: Cele zece predicate sunt s-a trezit, plouă, stă, admiră, seamănă, știe, se formează, vrea, să își imagineze și să treacă. Irina, fetița și ea sunt subiecte exprimate prin substantiv sau pronume. Timpul este subiectul lui să treacă. Florile este subiect. Fetele și băieții este subiect multiplu. Am ascultat are subiect inclus. Sunt parfumate și delicate este predicat nominal cu nume predicativ multiplu. Formele bune sunt învăluite, nu îndeplinesc, mi-au stricat și interesați.\n\nNumără predicatele din fragmentul Irinei și scrie-le pe cele zece. Spune ce fel de subiect are plouă și ce subiect este subînțeles la seamănă. Alege varianta bună: florile este subiect sau nume predicativ, iar propoziția cu subiect multiplu este cea cu fetele și băieții. Împarte în predicat verbal și predicat nominal: a sosit primăvara și florile sunt parfumate și delicate. Scrie formele bune pentru vârfurile, articolele, ploaia și vântul, băieții și fetele.\n\nSubiectul și predicatul sunt părțile principale și depind unul de altul. Subiectul poate fi exprimat, inclus sau subînțeles. Predicatul verbal este un verb predicativ, iar predicatul nominal este a fi plus numele predicativ. La subiect multiplu, predicatul se acordă la plural.",
-      "theory": "Părțile principale de propoziție sunt subiectul și predicatul. Între ele este relație de interdependență: se cer unul pe altul. Subiectul poate fi exprimat prin substantiv, pronume sau numeral, sau poate fi neexprimat, inclus în terminația verbului ori subînțeles din context. Predicatul verbal este un verb predicativ. Predicatul nominal este verbul copulativ a fi plus numele predicativ. Între substantiv și atributul lui este subordonare. Între verb și complementul sau circumstanțialul lui este tot subordonare. Lucrezi fragmentul acesta. Irina s-a trezit dis-de-dimineață. Plouă. Fetița stă la fereastră și admiră stropii rebeli. Seamănă cu niște lacrimi de nori. Ea știe cum se formează ploaia, dar vrea să își imagineze altceva, să treacă timpul mai repede. Predicatele sunt zece: s-a trezit, plouă, stă, admiră, seamănă, știe, se formează, vrea, să își imagineze și să treacă. Subiecte exprimate: Irina, fetița, ea, ploaia și timpul. Plouă nu are subiect, pentru că verbul este impersonal. La seamănă, subiectul stropii este subînțeles. La vrea și la să își imagineze, subiectul ea este subînțeles. Dis-de-dimineață este circumstanțial de timp și determină s-a trezit. La fereastră este circumstanțial de loc și determină stă. Stropii este complement direct și determină admiră. Cu niște lacrimi este complement prepozițional și determină seamănă. Rebeli este atribut adjectival. De nori este atribut substantival prepozițional. La alegere, răspunsurile bune sunt acestea. În Florile sunt roșii, florile este subiect, iar roșii este nume predicativ. Propoziția cu subiect multiplu este Fetele și băieții susțin aceleași probe sportive. În Am ascultat părerile tuturor, subiectul este neexprimat inclus, persoana I, eu. Predicate verbale: a sosit, au înflorit, se vor juca, zâmbește, face. Predicate nominale: sunt parfumate și delicate, sunt bucuroși, să fim fericiți. Numele predicative sunt adjective. Unul este multiplu: parfumate și delicate. Formele bune de acord sunt învăluite, pentru că vârfurile este plural, nu îndeplinesc, pentru că articolele este plural, mi-au stricat, pentru că ploaia și vântul sunt două subiecte, și interesați, pentru că băieții și fetele se acordă la masculin plural.",
-      "example": "Cele zece predicate sunt s-a trezit, plouă, stă, admiră, seamănă, știe, se formează, vrea, să își imagineze și să treacă. Irina, fetița și ea sunt subiecte exprimate prin substantiv sau pronume. Timpul este subiectul lui să treacă. Florile este subiect. Fetele și băieții este subiect multiplu. Am ascultat are subiect inclus. Sunt parfumate și delicate este predicat nominal cu nume predicativ multiplu. Formele bune sunt învăluite, nu îndeplinesc, mi-au stricat și interesați.",
-      "tryThis": "Numără predicatele din fragmentul Irinei și scrie-le pe cele zece. Spune ce fel de subiect are plouă și ce subiect este subînțeles la seamănă. Alege varianta bună: florile este subiect sau nume predicativ, iar propoziția cu subiect multiplu este cea cu fetele și băieții. Împarte în predicat verbal și predicat nominal: a sosit primăvara și florile sunt parfumate și delicate. Scrie formele bune pentru vârfurile, articolele, ploaia și vântul, băieții și fetele.",
-      "recap": "Subiectul și predicatul sunt părțile principale și depind unul de altul. Subiectul poate fi exprimat, inclus sau subînțeles. Predicatul verbal este un verb predicativ, iar predicatul nominal este a fi plus numele predicativ. La subiect multiplu, predicatul se acordă la plural."
-    },
-    {
-      "id": "sintaxa-secundare",
-      "title": "Atribut, complement, circumstanțial",
-      "platter": "Părțile secundare sunt atributul, complementul și circumstanțialul. Atributul determină un substantiv, un pronume sau un numeral. Poate fi adjectival, substantival prepozițional, substantival genitival, pronominal prepozițional sau pronominal genitival. În Am citit o carte interesantă, interesantă este atribut adjectival. În Plăcerea fetei este de a citi, fetei este atribut substantival genitival, iar de a citi este nume predicativ. În În clasă au rămas două fete, două este atribut numeral, iar în clasă este circumstanțial de loc. În Am primit cu bine vestea de la tine, de la tine este atribut pronominal prepozițional, iar cu bine este circumstanțial de mod. În Ideea schimbării de cărți între noi a fost genială, schimbării este atribut substantival genitival, de cărți este atribut substantival prepozițional, iar genială este nume predicativ. În Le-am spus părinților mei că voi cumpăra o carte din librăria din centrul orașului există două complemente directe și un complement indirect. O carte este complementul direct al lui voi cumpăra. Propoziția cu că este complementul direct al lui am spus, pentru că răspunde la ce le-am spus. Părinților este complementul indirect, iar le- este dublura lui, nu un al doilea indirect. Substantivul școală își schimbă funcția. În Școala și-a deschis porțile, școala este subiect, în nominativ. În Citim informații despre școală, despre școală este complement prepozițional. În Am văzut noua școală, școala este complement direct. În Eu locuiesc lângă școală, lângă școală este circumstanțial de loc. În Porțile școlii se deschid, școlii este atribut substantival genitival. În Uniformele pentru școală sunt moderne, pentru școală este atribut substantival prepozițional. Prepozițiile care fac complemente prepoziționale în enunțurile date sunt acestea. Vorbim mereu despre copilărie. Mă gândesc la tine. Am cumpărat flori pentru mama. Nu pot concura cu un atlet. Imaginea satului nu reiese din prezentarea ta. În textul cu vacanța, circumstanțialele sunt în vacanța de vară, de timp, cu prepoziția în, la bunici, de loc, cu la, acolo, de loc, adverb, în zilele frumoase, de timp, cu în, de dimineața până seara, de timp, cu de și până, cu plăcere, de mod, cu cu, pe ulițele satului, de loc, cu pe, împreună cu prietenii mei, de mod, cu cu, și în fiecare dimineață, de timp, cu în. Modele de mod cu substantiv: Am pășit fără teamă. Merge ca o barcă, legănată. Am ales cu grijă cadoul. Fata este mai vorbăreață decât sora. Adverbe de mod pentru enunțuri: lin, încet, rapid, tare. Pentru timp cu prepoziție: Peste o săptămână plecăm. În tinerețe a călătorit.\n\nExemplu lucrat: Interesantă este atribut adjectival. Fetei este atribut genitival. Două este atribut numeral. De la tine este atribut pronominal prepozițional. Școala este subiect în Școala și-a deschis porțile, complement direct în Am văzut noua școală, circumstanțial de loc în Eu locuiesc lângă școală și atribut genitival în Porțile școlii. Prepozițiile bune sunt despre, la, pentru, cu și din. Cu plăcere este circumstanțial de mod. În fiecare dimineață este circumstanțial de timp.\n\nSpune felul atributului pentru o carte interesantă, pentru plăcerea fetei și pentru două fete. Spune câte complemente directe și câte indirecte sunt în Le-am spus părinților mei că voi cumpăra o carte și de ce le- nu este un al doilea indirect. Dă funcția lui școală în Școala și-a deschis porțile, Am văzut noua școală, Eu locuiesc lângă școală și Porțile școlii. Alege prepoziția bună, dintre despre, la și cu, pentru: Vorbim mereu ... copilărie. Mă gândesc ... tine. Nu pot concura ... un atlet. Scrie un enunț cu săptămână ca circumstanțial de timp și unul cu lin ca circumstanțial de mod.\n\nAtributul stă lângă un nume. Complementul direct răspunde la ce, cel indirect la cui, cel prepozițional are prepoziție. Circumstanțialul răspunde la unde, când sau cum. Le- dublează complementul indirect, nu îl înmulțește.",
-      "theory": "Părțile secundare sunt atributul, complementul și circumstanțialul. Atributul determină un substantiv, un pronume sau un numeral. Poate fi adjectival, substantival prepozițional, substantival genitival, pronominal prepozițional sau pronominal genitival. În Am citit o carte interesantă, interesantă este atribut adjectival. În Plăcerea fetei este de a citi, fetei este atribut substantival genitival, iar de a citi este nume predicativ. În În clasă au rămas două fete, două este atribut numeral, iar în clasă este circumstanțial de loc. În Am primit cu bine vestea de la tine, de la tine este atribut pronominal prepozițional, iar cu bine este circumstanțial de mod. În Ideea schimbării de cărți între noi a fost genială, schimbării este atribut substantival genitival, de cărți este atribut substantival prepozițional, iar genială este nume predicativ. În Le-am spus părinților mei că voi cumpăra o carte din librăria din centrul orașului există două complemente directe și un complement indirect. O carte este complementul direct al lui voi cumpăra. Propoziția cu că este complementul direct al lui am spus, pentru că răspunde la ce le-am spus. Părinților este complementul indirect, iar le- este dublura lui, nu un al doilea indirect. Substantivul școală își schimbă funcția. În Școala și-a deschis porțile, școala este subiect, în nominativ. În Citim informații despre școală, despre școală este complement prepozițional. În Am văzut noua școală, școala este complement direct. În Eu locuiesc lângă școală, lângă școală este circumstanțial de loc. În Porțile școlii se deschid, școlii este atribut substantival genitival. În Uniformele pentru școală sunt moderne, pentru școală este atribut substantival prepozițional. Prepozițiile care fac complemente prepoziționale în enunțurile date sunt acestea. Vorbim mereu despre copilărie. Mă gândesc la tine. Am cumpărat flori pentru mama. Nu pot concura cu un atlet. Imaginea satului nu reiese din prezentarea ta. În textul cu vacanța, circumstanțialele sunt în vacanța de vară, de timp, cu prepoziția în, la bunici, de loc, cu la, acolo, de loc, adverb, în zilele frumoase, de timp, cu în, de dimineața până seara, de timp, cu de și până, cu plăcere, de mod, cu cu, pe ulițele satului, de loc, cu pe, împreună cu prietenii mei, de mod, cu cu, și în fiecare dimineață, de timp, cu în. Modele de mod cu substantiv: Am pășit fără teamă. Merge ca o barcă, legănată. Am ales cu grijă cadoul. Fata este mai vorbăreață decât sora. Adverbe de mod pentru enunțuri: lin, încet, rapid, tare. Pentru timp cu prepoziție: Peste o săptămână plecăm. În tinerețe a călătorit.",
-      "example": "Interesantă este atribut adjectival. Fetei este atribut genitival. Două este atribut numeral. De la tine este atribut pronominal prepozițional. Școala este subiect în Școala și-a deschis porțile, complement direct în Am văzut noua școală, circumstanțial de loc în Eu locuiesc lângă școală și atribut genitival în Porțile școlii. Prepozițiile bune sunt despre, la, pentru, cu și din. Cu plăcere este circumstanțial de mod. În fiecare dimineață este circumstanțial de timp.",
-      "tryThis": "Spune felul atributului pentru o carte interesantă, pentru plăcerea fetei și pentru două fete. Spune câte complemente directe și câte indirecte sunt în Le-am spus părinților mei că voi cumpăra o carte și de ce le- nu este un al doilea indirect. Dă funcția lui școală în Școala și-a deschis porțile, Am văzut noua școală, Eu locuiesc lângă școală și Porțile școlii. Alege prepoziția bună, dintre despre, la și cu, pentru: Vorbim mereu ... copilărie. Mă gândesc ... tine. Nu pot concura ... un atlet. Scrie un enunț cu săptămână ca circumstanțial de timp și unul cu lin ca circumstanțial de mod.",
-      "recap": "Atributul stă lângă un nume. Complementul direct răspunde la ce, cel indirect la cui, cel prepozițional are prepoziție. Circumstanțialul răspunde la unde, când sau cum. Le- dublează complementul indirect, nu îl înmulțește."
-    },
-    {
-      "id": "diaspora",
-      "title": "Români care au dus țara cu ei",
-      "platter": "O personalitate este o persoană cu aptitudini deosebite, cu autoritate și prestigiu, care aduce o contribuție valoroasă în viața socială, culturală sau științifică. Diaspora este orice grup etnic aflat în afara granițelor țării de origine. Potrivirile pe care le înveți sunt acestea. Nadia Comăneci este gimnastă și a primit prima notă de 10 la Jocurile Olimpice. Gheorghe Zamfir este muzician, cântă la nai și compune. Ana Aslan a fost biolog, medic și inventatoare. George Enescu a fost compozitor și muzician. Henri Coandă a fost inventator și pionier în aerodinamică. Constantin Brâncuși a fost sculptor modern. Dinu Lipatti s-a născut la 19 martie 1917, la București. Naș de botez i-a fost George Enescu. O fotografie îi arată împreună în 1922. Bunicul, Constantin Lipatti, cânta la chitară și la flaut. Tatăl ar fi vrut vioară, dar Dinu era legat de pian. A fost pianist și compozitor. Lucrările lui, de factură neoclasică, poartă influențe franceze și românești. George Enescu s-a născut în Liveni-Vârnav, un cătun între dealurile Dorohoiului. Actul din 9 august 1881 spune că s-a născut alaltăieri, adică pe 7 pe stil vechi și pe 19 pe stil nou. Se spune că și-a făcut întâi o vioară din șindrilă și sârme și că a încercat și un strujan de porumb. Părinții i-au cumpărat apoi o vioară mică. Primele lecții le-a luat după ureche de la lăutarul Lae Chioru, din Dorohoi. După ani petrecuți în străinătate, a spus că nu a părăsit dealurile, văile și pădurile Moldovei, pentru că le-a luat cu el. Nu cerem frazele lui despre muzică. Cuvintele care li se potrivesc sunt talent, emoție, pasiune și virtuoz. Talentul și pasiunea se văd din copilăria lui Enescu. Virtuozul și emoția se văd din pianul lui Lipatti.\n\nExemplu lucrat: Nadia Comăneci este gimnasta primei note de 10. Gheorghe Zamfir cântă la nai. Ana Aslan a fost medic și inventatoare. George Enescu a fost compozitor. Henri Coandă a fost pionier în aerodinamică. Constantin Brâncuși a fost sculptor modern. Lipatti s-a născut la 19 martie 1917, iar naș i-a fost Enescu. Enescu s-a născut la Liveni-Vârnav, iar data de 19 este stilul nou. Lae Chioru i-a dat primele lecții după ureche.\n\nPotrivește fiecare nume cu domeniul lui: Nadia Comăneci, Gheorghe Zamfir, Ana Aslan, George Enescu, Henri Coandă, Constantin Brâncuși. Scrie data nașterii lui Dinu Lipatti, cine i-a fost naș și ce instrument a ales în locul viorii. Scrie locul nașterii lui Enescu, ce înseamnă 19 pe stil nou și de la cine a învățat după ureche. Apoi scrie opt rânduri despre unul dintre ei, cu o faptă din copilărie și cu un cuvânt dintre talent, pasiune și virtuoz. Spune și ce înseamnă diaspora.\n\nDiaspora este un grup etnic în afara țării de origine. Lipatti, născut la 19 martie 1917, a ales pianul, iar naș i-a fost Enescu. Enescu s-a născut la Liveni-Vârnav, a învățat după ureche de la Lae Chioru și a spus că Moldova a rămas cu el.",
-      "theory": "O personalitate este o persoană cu aptitudini deosebite, cu autoritate și prestigiu, care aduce o contribuție valoroasă în viața socială, culturală sau științifică. Diaspora este orice grup etnic aflat în afara granițelor țării de origine. Potrivirile pe care le înveți sunt acestea. Nadia Comăneci este gimnastă și a primit prima notă de 10 la Jocurile Olimpice. Gheorghe Zamfir este muzician, cântă la nai și compune. Ana Aslan a fost biolog, medic și inventatoare. George Enescu a fost compozitor și muzician. Henri Coandă a fost inventator și pionier în aerodinamică. Constantin Brâncuși a fost sculptor modern. Dinu Lipatti s-a născut la 19 martie 1917, la București. Naș de botez i-a fost George Enescu. O fotografie îi arată împreună în 1922. Bunicul, Constantin Lipatti, cânta la chitară și la flaut. Tatăl ar fi vrut vioară, dar Dinu era legat de pian. A fost pianist și compozitor. Lucrările lui, de factură neoclasică, poartă influențe franceze și românești. George Enescu s-a născut în Liveni-Vârnav, un cătun între dealurile Dorohoiului. Actul din 9 august 1881 spune că s-a născut alaltăieri, adică pe 7 pe stil vechi și pe 19 pe stil nou. Se spune că și-a făcut întâi o vioară din șindrilă și sârme și că a încercat și un strujan de porumb. Părinții i-au cumpărat apoi o vioară mică. Primele lecții le-a luat după ureche de la lăutarul Lae Chioru, din Dorohoi. După ani petrecuți în străinătate, a spus că nu a părăsit dealurile, văile și pădurile Moldovei, pentru că le-a luat cu el. Nu cerem frazele lui despre muzică. Cuvintele care li se potrivesc sunt talent, emoție, pasiune și virtuoz. Talentul și pasiunea se văd din copilăria lui Enescu. Virtuozul și emoția se văd din pianul lui Lipatti.",
-      "example": "Nadia Comăneci este gimnasta primei note de 10. Gheorghe Zamfir cântă la nai. Ana Aslan a fost medic și inventatoare. George Enescu a fost compozitor. Henri Coandă a fost pionier în aerodinamică. Constantin Brâncuși a fost sculptor modern. Lipatti s-a născut la 19 martie 1917, iar naș i-a fost Enescu. Enescu s-a născut la Liveni-Vârnav, iar data de 19 este stilul nou. Lae Chioru i-a dat primele lecții după ureche.",
-      "tryThis": "Potrivește fiecare nume cu domeniul lui: Nadia Comăneci, Gheorghe Zamfir, Ana Aslan, George Enescu, Henri Coandă, Constantin Brâncuși. Scrie data nașterii lui Dinu Lipatti, cine i-a fost naș și ce instrument a ales în locul viorii. Scrie locul nașterii lui Enescu, ce înseamnă 19 pe stil nou și de la cine a învățat după ureche. Apoi scrie opt rânduri despre unul dintre ei, cu o faptă din copilărie și cu un cuvânt dintre talent, pasiune și virtuoz. Spune și ce înseamnă diaspora.",
-      "recap": "Diaspora este un grup etnic în afara țării de origine. Lipatti, născut la 19 martie 1917, a ales pianul, iar naș i-a fost Enescu. Enescu s-a născut la Liveni-Vârnav, a învățat după ureche de la Lae Chioru și a spus că Moldova a rămas cu el."
-    },
-    {
-      "id": "proiect-descoperiri",
-      "title": "O descoperire care a schimbat lumea",
-      "platter": "Proiectul se face în grup. Este un lider. Fiecare grup primește o descoperire și spune cine a făcut-o, un istoric scurt, impactul, o operă literară în care apare și felul în care o prezentați. Nu copiați un articol. Faptele pe care le puteți folosi sunt acestea. Oamenii au schimbat viața prin foc, unelte de piatră, roată, curent electric, tipar, telefon, radio, automobil, vaccinuri, computer și internet. Telefonul: Alexander Graham Bell a primit brevetul în 1876. Aproape un secol mai târziu a apărut telefonul mobil. Becul: Thomas Edison a construit un sistem de iluminat, cu generator, cabluri și bec cu filament de carbon. Manualul notează anul 1876 la acest sistem. Brevetul american al lămpii lui este din 1879. La școală, dacă pagina cere anul din manual, scrii 1876 și spui că este anul notat acolo pentru sistem. Avionul: zmeiele sunt printre cele mai vechi obiecte zburătoare, din jurul anului 200 înainte de Hristos, în China. La 18 martie 1906, Traian Vuia a făcut primul zbor autopropulsat cu un aparat mai greu decât aerul, care s-a ridicat prin mijloace proprii. A rulat aproximativ 50 de metri, a zburat 12 metri și s-a înălțat la 1 metru. Computerul personal: primul folosit de o singură persoană a fost LGP-30, din 1956, vândut cu 47000 de dolari, echivalentul a aproximativ 414000 de dolari în prezent. Internetul: o rețea globală folosită zilnic de miliarde de oameni. Au contribuit mai mulți cercetători. Cel creditat în lecție cu invenția este Lawrence Roberts. Jules Verne a imaginat submarine și drumuri spre Lună din secolul al XIX-lea. Simon Lake, un pionier al submarinelor, a fost influențat de romanul din 1870. Hermann Oberth, român din Ardeal, a primit de la mama sa De la Pământ la Lună, l-a învățat pe de rost și a verificat cifrele. Doar o parte erau corecte, iar curiozitatea lui a crescut. În jurul vârstei de 14 ani a construit un model de rachetă și a ajuns singur la ideea arderii în etape: combustibilul consumat ușurează racheta, dar rezervorul gol rămâne de prisos, deci etapele se desprind. Poate fi prezentat între personalitățile care au lucrat și dincolo de graniță. În textul tău, submarinul poate trimite la romanul din 1870, iar racheta la romanul din 1865.\n\nExemplu lucrat: Grupul alege avionul. Liderul este Ana. Părintele zborului din lecție, pentru data de 18 martie 1906, este Traian Vuia. Istoricul scurt are trei numere: 50 de metri rulați, 12 metri zburați, 1 metru înălțime. Impactul este că un aparat mai greu decât aerul s-a ridicat cu motorul lui. Opera literară este un roman al lui Jules Verne despre zbor. Prezentarea este un afiș.\n\nAlege telefonul, becul, avionul, computerul sau internetul. Scrie opt până la zece rânduri: cine l-a făcut, un an din lecție, impactul într-o propoziție și o carte a lui Verne care se potrivește, dacă se potrivește. Pentru bec, scrie și 1876, și 1879, cu rostul fiecăruia. Pentru Vuia, scrie data și cele trei numere. Separat, în șase rânduri, spune de ce Hermann Oberth poate sta la personalități din diaspora: Ardeal, cartea primită de la mamă, cifrele verificate și racheta în etape.\n\nProiectul spune cine a făcut descoperirea, când, ce a schimbat și unde apare într-o carte. Bell are brevetul în 1876, Vuia a zburat la 18 martie 1906, iar Oberth a verificat cifrele lui Verne și a gândit racheta în etape.",
-      "theory": "Proiectul se face în grup. Este un lider. Fiecare grup primește o descoperire și spune cine a făcut-o, un istoric scurt, impactul, o operă literară în care apare și felul în care o prezentați. Nu copiați un articol. Faptele pe care le puteți folosi sunt acestea. Oamenii au schimbat viața prin foc, unelte de piatră, roată, curent electric, tipar, telefon, radio, automobil, vaccinuri, computer și internet. Telefonul: Alexander Graham Bell a primit brevetul în 1876. Aproape un secol mai târziu a apărut telefonul mobil. Becul: Thomas Edison a construit un sistem de iluminat, cu generator, cabluri și bec cu filament de carbon. Manualul notează anul 1876 la acest sistem. Brevetul american al lămpii lui este din 1879. La școală, dacă pagina cere anul din manual, scrii 1876 și spui că este anul notat acolo pentru sistem. Avionul: zmeiele sunt printre cele mai vechi obiecte zburătoare, din jurul anului 200 înainte de Hristos, în China. La 18 martie 1906, Traian Vuia a făcut primul zbor autopropulsat cu un aparat mai greu decât aerul, care s-a ridicat prin mijloace proprii. A rulat aproximativ 50 de metri, a zburat 12 metri și s-a înălțat la 1 metru. Computerul personal: primul folosit de o singură persoană a fost LGP-30, din 1956, vândut cu 47000 de dolari, echivalentul a aproximativ 414000 de dolari în prezent. Internetul: o rețea globală folosită zilnic de miliarde de oameni. Au contribuit mai mulți cercetători. Cel creditat în lecție cu invenția este Lawrence Roberts. Jules Verne a imaginat submarine și drumuri spre Lună din secolul al XIX-lea. Simon Lake, un pionier al submarinelor, a fost influențat de romanul din 1870. Hermann Oberth, român din Ardeal, a primit de la mama sa De la Pământ la Lună, l-a învățat pe de rost și a verificat cifrele. Doar o parte erau corecte, iar curiozitatea lui a crescut. În jurul vârstei de 14 ani a construit un model de rachetă și a ajuns singur la ideea arderii în etape: combustibilul consumat ușurează racheta, dar rezervorul gol rămâne de prisos, deci etapele se desprind. Poate fi prezentat între personalitățile care au lucrat și dincolo de graniță. În textul tău, submarinul poate trimite la romanul din 1870, iar racheta la romanul din 1865.",
-      "example": "Grupul alege avionul. Liderul este Ana. Părintele zborului din lecție, pentru data de 18 martie 1906, este Traian Vuia. Istoricul scurt are trei numere: 50 de metri rulați, 12 metri zburați, 1 metru înălțime. Impactul este că un aparat mai greu decât aerul s-a ridicat cu motorul lui. Opera literară este un roman al lui Jules Verne despre zbor. Prezentarea este un afiș.",
-      "tryThis": "Alege telefonul, becul, avionul, computerul sau internetul. Scrie opt până la zece rânduri: cine l-a făcut, un an din lecție, impactul într-o propoziție și o carte a lui Verne care se potrivește, dacă se potrivește. Pentru bec, scrie și 1876, și 1879, cu rostul fiecăruia. Pentru Vuia, scrie data și cele trei numere. Separat, în șase rânduri, spune de ce Hermann Oberth poate sta la personalități din diaspora: Ardeal, cartea primită de la mamă, cifrele verificate și racheta în etape.",
-      "recap": "Proiectul spune cine a făcut descoperirea, când, ce a schimbat și unde apare într-o carte. Bell are brevetul în 1876, Vuia a zburat la 18 martie 1906, iar Oberth a verificat cifrele lui Verne și a gândit racheta în etape."
-    },
-    {
-      "id": "recap-ferestre",
-      "title": "Încheierea despre viitor",
-      "platter": "Închei unitatea pe o scenă scrisă aici. Vineri dimineața, la fereastra clasei, Irina a spus: Părerea mea este că orașul viitorului are nevoie de liniște. În primul rând, copiii citesc mai bine când nu este zgomot. Așadar, aș pune parcuri între blocuri. Pe masă stătea o machetă mică. Irina era bucuroasă. Părerea mea este că introduce ipoteza. În primul rând introduce argumentul. Așadar introduce concluzia. Mică este atribut adjectival. La fereastră este circumstanțial de loc. Vineri dimineața este circumstanțial de timp. Bucuroasă este emoție și nume predicativ. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.\n\nExemplu lucrat: Ce scrie: Vineri dimineața, la fereastră, Irina și-a spus părerea, a dat un argument și a încheiat cu așadar, lângă o machetă mică. Ce vezi: O văd pe Irina la fereastră, cu macheta pe masă. Eu aș fi adăugat pe machetă o bancă, pentru că Irina a spus că orașul are nevoie de liniște și macheta era mică. Bucuria este emoția.\n\nPe scena Irinei, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Numește ipoteza, argumentul, concluzia, atributul și emoția. Apoi scrie o descriere de 70 până la 100 de cuvinte despre un oraș al viitorului, cu cel puțin cinci atribute, două circumstanțiale de loc și două de timp.\n\nRecapitularea unește o părere argumentată, un atribut și o emoție. Irina vorbește vineri dimineața, la fereastră, despre liniște, și lângă ea stă o machetă mică.",
-      "theory": "Închei unitatea pe o scenă scrisă aici. Vineri dimineața, la fereastra clasei, Irina a spus: Părerea mea este că orașul viitorului are nevoie de liniște. În primul rând, copiii citesc mai bine când nu este zgomot. Așadar, aș pune parcuri între blocuri. Pe masă stătea o machetă mică. Irina era bucuroasă. Părerea mea este că introduce ipoteza. În primul rând introduce argumentul. Așadar introduce concluzia. Mică este atribut adjectival. La fereastră este circumstanțial de loc. Vineri dimineața este circumstanțial de timp. Bucuroasă este emoție și nume predicativ. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.",
-      "example": "Ce scrie: Vineri dimineața, la fereastră, Irina și-a spus părerea, a dat un argument și a încheiat cu așadar, lângă o machetă mică. Ce vezi: O văd pe Irina la fereastră, cu macheta pe masă. Eu aș fi adăugat pe machetă o bancă, pentru că Irina a spus că orașul are nevoie de liniște și macheta era mică. Bucuria este emoția.",
-      "tryThis": "Pe scena Irinei, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Numește ipoteza, argumentul, concluzia, atributul și emoția. Apoi scrie o descriere de 70 până la 100 de cuvinte despre un oraș al viitorului, cu cel puțin cinci atribute, două circumstanțiale de loc și două de timp.",
-      "recap": "Recapitularea unește o părere argumentată, un atribut și o emoție. Irina vorbește vineri dimineața, la fereastră, despre liniște, și lângă ea stă o machetă mică."
-    }
+  lessons: [
+    lesson({
+      id: 'deschidere-ferestre',
+      title: 'Ce vei lucra despre viitor',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Harta unității',
+          text: 'Drumul trece prin argumentare, text ajutător, atitudini, emoție, stil, sintaxă, diaspora și un proiect. Cele zece competențe sunt ținta, nu o lecție deja scrisă.'
+        }
+      ],
+      theory: [
+        'Ferestre spre viitor pornește de la hartă. Înveți să recunoști un text argumentativ și, separat, un text auxiliar, care stă lângă textul mare și îl lămurește.',
+        'La comunicare exersezi interesul, curiozitatea, implicarea și cooperarea. După aceea pui o emoție pe numele ei, nu o lași doar simțită.',
+        'La redactare, cuvintele se potrivesc cu tema și cu situația. Ce sună bine între prieteni poate fi nepotrivit când scrii pentru clasă.',
+        'La gramatică reiei sintaxa propoziției. Lucrezi subiectul, predicatul, atributul, complementul și circumstanțialele, fiecare cu întrebarea lui.',
+        'La interculturalitate legi limba română de personalități românești din diaspora. Oamenii au dus limba și țara cu ei, dincolo de graniță.',
+        'Închiderea este un proiect de grup, despre o descoperire aleasă. Spui cine a făcut-o și ce a schimbat în jur.',
+        'Competențele vizate sunt zece. Începutul listei este 1.3, apoi 1.4. Din grupa a doua intră 2.1, 2.4 și 2.5.',
+        'Mai sunt 3.1 și 3.3. La urmă stau 4.1, 4.5 și 5.2. Dacă numeri codurile, ajungi la zece, nu la nouă.',
+        'Harta anunță, pe stații, argumentarea, emoția, stilul, sintaxa, diaspora și proiectul legat de descoperiri. Codurile arată unde vrea să ajungă unitatea.',
+        'La clasă, titlul textului de pe bancă poate fi altul. Pașii de lucru rămân aceiași: recunoști, numești, apoi scrii cu vorbele tale.'
+      ].join('\n\n'),
+      example: [
+        'Pe hartă, azi, stația este textul argumentativ. Emoția, stilul, sintaxa, diaspora și proiectul rămân pentru lecțiile următoare.',
+        'Ținta nu este o foaie gata umplută. Ținta sunt cele zece coduri, de la 1.3 și 1.4 până la 4.5 și 5.2, cu 2.1, 2.4, 2.5, 3.1 și 3.3 la mijloc.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Dacă notezi doar argumentarea și uiți sintaxa, harta este pe jumătate. Diaspora și proiectul despre descoperiri închid unitatea. Codurile rămân zece.'
+        }
+      ],
+      tryThis: 'Scrie două propoziții. În prima arăți că tema este o fereastră către viitor și că astăzi te ocupi de textul argumentativ. În a doua enumeri codurile 1.3 și 1.4, apoi 2.1, 2.4, 2.5, apoi 3.1 și 3.3, apoi 4.1, 4.5 și 5.2, și spui că sunt zece.',
+      keyPoints: [
+        'Harta trece prin argumentare, text auxiliar, atitudini, stil, sintaxă, diaspora și proiect.',
+        'Competențele numărate sunt zece, grupate pe codurile date în lecție.',
+        'Titlul de la clasă se poate schimba. Pașii de lucru rămân.'
+      ]
+    }),
+
+    lesson({
+      id: 'text-argumentativ',
+      title: 'O părere și dovezile ei',
+      kind: 'redactare',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Trei piese',
+          text: 'Ipoteza deschide, argumentele țin cuprinsul, concluzia închide. Conectorii arată rolul: pornesc părerea, ordonează dovezile sau trag încheierea.'
+        }
+      ],
+      theory: [
+        'Un text argumentativ susține o părere despre fapte, oameni sau întâmplări. Argumentele și dovezile o țin, fie ca demonstrație, fie ca încercare de a convinge.',
+        'Structura are trei trepte. La început stă ipoteza, adică părerea. O poți porni prin părerea mea este că, prin în opinia mea ori prin din punctul meu de vedere.',
+        'La mijloc vin argumentele, pentru sau împotriva. Le ordonezi cu în primul rând, cu în al doilea rând, cu mai întâi și cu apoi.',
+        'La final revii asupra părerii, după argumente. Închiderea folosește în concluzie, deci sau așadar.',
+        'Scriitorul francez Jules Verne a trăit din 1828 până în 1905 și este precursor al literaturii științifico-fantastice. Cartea din 1863 se numește Cinci săptămâni în balon.',
+        'Contractul seriei Călătorii extraordinare a ținut douăzeci de ani. Volumele de tehnică privesc epoca lui.',
+        'Din 1868 este Copiii căpitanului Grant. Din 1873 este Ocolul Pământului în optzeci de zile. Din 1876 este Mihail Strogoff. Din 1884 este Steaua Sudului. Din 1899 este Vulcanul de aur.',
+        'Alte volume închipuie lumi. Anul 1865 ține de De la Pământ la Lună. Anul 1870 ține de Douăzeci de mii de leghe sub mări. Anul 1886 ține de Robur Cuceritorul.',
+        'Un articol pentru școală apropie socotelile romanului din 1865 de zborul real în jurul Lunii. Comanda primei nave care a înconjurat Luna a fost a lui Frank Borman.',
+        'Capsula: circa 9000 kg, aluminiu, 4 metri. Decolarea stă cam la 100 de mile de punctul lui Verne. Amerizarea: cam două mile și jumătate, în Pacific. Aluminiul modern apare la vreo 20 de ani după carte. Verne vedea ghiulele din tunuri. NASA a prins modulele de rachete.',
+        'Asemănarea nu este întâmplare. Dovezile sunt materialul de aluminiu și punctul de revenire, aflat lângă zona romanului. Închiderea este așadar.',
+        'Luni, la română, Mara spune că o poveste poate apărea înainte ca invenția să existe. Întâi amintește anul 1865 și drumul spre Lună. Apoi zborul real. Încheie cu așadar.'
+      ].join('\n\n'),
+      example: [
+        'Scrisul scenei: luni, la română, Mara dă o părere, două sprijinuri și închide cu așadar. Vederea: o văd în clasă, luni, vorbind despre povești și despre invenții.',
+        'Aș fi adăugat anul 1870, fiindcă atunci iese Douăzeci de mii de leghe sub mări. Mara pomenise doar 1865. Ipoteza: părerea mea este că. Închiderea: așadar.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Ipoteză: părerea mea este că romanul din 1865 a mers înaintea zborului. În primul rând, capsula reală este din aluminiu. În al doilea rând, amerizarea cade foarte aproape de zona din carte. Așadar, socotelile nu par o întâmplare.'
+        }
+      ],
+      tryThis: [
+        'Pe scena Marei redai în trei propoziții ce este scris, ce vezi și ce ai face, legate cu pentru că. Propoziția despre ce vezi pornește cu O văd. Numește ipoteza, cele două sprijinuri și încheierea.',
+        'Notează anul volumului De la Pământ la Lună, materialul capsulei și câți metri are în înălțime. Compune apoi, în 100 până la 120 de cuvinte, o argumentare despre o invenție care te ajută: o ipoteză, două argumente, o concluzie și măcar doi conectori din lecție. Intră în text anul 1865 sau anul 1870.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Argumentarea are ipoteză, argumente și concluzie, fiecare cu conectorii lui.',
+        'Verne, între 1828 și 1905, a scris și despre tehnica vremii, și despre lumi închipuite.',
+        'La Mara, părerea se deschide, se sprijină de două ori și se închide cu așadar.'
+      ]
+    }),
+
+    lesson({
+      id: 'text-auxiliar',
+      title: 'Textul care stă lângă textul mare',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Text auxiliar',
+          text: 'Este notița, caseta sau fragmentul pus alături, ca să lămurească textul mare. Nu îl înlocuiește. Îl face mai clar.'
+        }
+      ],
+      theory: [
+        'Textul mare, aici, este articolul despre Jules Verne. Alături stau o notiță cu un submarin și o trimitere spre romanul din 1870, Douăzeci de mii de leghe sub mări.',
+        'Pe Nautilus, căpitanul Nemo ține o bibliotecă, iar profesorul Aronnax povestește. Nemo dă volumul bibliotecii: douăsprezece mii de cărți.',
+        'Volumele țin de știință, de morală, de literatură. Limbile stau amestecate, nu pe rafturi separate. Cele de știință sunt cele mai multe.',
+        'Aronnax dă peste Fondatorii astronomiei, scrisă de Joseph Bertrand și apărută în 1865. Deducția lui: Nautilus nu putea fi gata mai devreme de anul acela.',
+        'A doua deducție: viața lui Nemo sub apă ține cel mult trei ani. Sala nu se descrie aici. Rămân cuvintele și concluzia.',
+        'Palisandru este un lemn de esență exotică, tare și închis la culoare. Divan este o canapea joasă, unde te poți întinde.',
+        'Capodoperă este o operă de vârf. Balistică este știința traiectoriei unui proiectil.',
+        'Indicativul SSN-571 aparține lui Nautilus, întâiul submarin operațional cu propulsie nucleară și întâiul care a trecut scufundat pe la Polul Nord. Data este 3 august 1958.',
+        'La început, comanda a avut-o Eugene Parks Wilkinson. Din greacă, nautilus i-a dat lui Jules Verne, în 1870, numele submarinului, iar mai târziu și altor nave numite USS Nautilus.',
+        'Scena de lucru se mută. Joi, în biblioteca școlii, Radu ia de pe raft o carte despre Lună. Un ziar vechi stă lângă ea.',
+        'Îi spune Irinei motivul: vrea să vadă zborul închipuit de cineva, dinainte de rachetă. Ziarul rămâne text ajutător, lipit de volum.',
+        'Trei timpi ies din scenă: ce este scris, ce vezi, apoi fapta ta, legată prin pentru că.'
+      ].join('\n\n'),
+      example: [
+        'Scrisul: joi, la biblioteca școlii, Radu alege cartea despre Lună, cu ziarul vechi alături, și îi explică Irinei de ce o ia. Vederea: îl văd cu volumul în mână.',
+        'Aș fi desfăcut ziarul, fiindcă era lângă carte, iar volumul despre Lună fusese deja ales. Auxiliarul explică textul mare, nu îl șterge.',
+        'Biblioteca din roman are douăsprezece mii de volume. Bertrand este din 1865. Polul Nord, trecut scufundat, ține de 3 august 1958.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Ziarul vechi de lângă cartea despre Lună este text auxiliar: nu înlocuiește volumul, îl lămurește. Dacă Radu ia doar cartea, notița de alături rămâne necitită.'
+        }
+      ],
+      tryThis: [
+        'Pentru scena lui Radu, trei propoziții: ce este scris, ce vezi, ce ai face, cu pentru că. Ce vezi pornește cu Îl văd. Definește textul auxiliar, spune câte volume dă Nemo și din ce an este Bertrand.',
+        'Dă sensul pentru palisandru, pentru divan, pentru capodoperă și pentru balistică. Pune data de la Polul Nord și numele comandantului. În opt rânduri inventariază o sală de elevi pe un vas: patru obiecte, fiecare cu folosul lui, de la cel mai de trebuință la cel mai puțin de trebuință.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Auxiliarul stă lângă textul mare și îl limpezește, fără să îi ia locul.',
+        'Cartea lui Bertrand, din 1865, arată că Nautilus nu e mai vechi de atât, iar anii sub apă sunt cel mult trei.',
+        'Data de 3 august 1958 marchează trecerea scufundată a lui SSN-571 pe la Polul Nord. Comanda de la început: Eugene Parks Wilkinson.'
+      ]
+    }),
+
+    lesson({
+      id: 'atitudini-emotii',
+      title: 'Interes, cooperare și emoția pe nume',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Patru atitudini',
+          text: 'Te oprești la temă: interes. Pui o întrebare: curiozitate. Intri în faptă: implicare. Împarți treaba: cooperare.'
+        }
+      ],
+      theory: [
+        'În comunicare, atitudinile nu sunt la fel. În grup arăți interes față de părerile altora, plus atenție, implicare și cooperare.',
+        'Prin inteligență emoțională înțelegi emoțiile tale și pe ale celorlalți și le poți conduce. Nu înseamnă să nu simți. Înseamnă să știi ce simți și ce faci apoi.',
+        'Îți știi sentimentele: aceasta este autocunoașterea. Ții în frâu o trăire care te-ar lovi pe tine sau pe altcineva: aceasta este autostăpânirea. Înțelegi ce simte celălalt: aceasta este empatia.',
+        'În aceeași capacitate intră motivația, colaborarea și lucrul în echipă. Nu stau despărțite de emoție.',
+        'O emoție este o trăire de tărie mijlocie, care nu ține mult. Poate fi pozitivă sau negativă. Intră tristețea și supărarea, apoi disprețul, bucuria și furia. Urmează dezgustul, teama, surprinderea, rușinea, durerea.',
+        'La avizier, în pauză, Lia vede afișul pentru concursul Școala viitorului. Întreabă data probei de machete. Radu spune că proba este sâmbătă și că pot lucra împreună. Lia răspunde că vine și aduce cartonul.',
+        'Curiozitatea este întrebarea. Interesul este oprirea la afiș. Implicarea este vin și eu. Cooperarea este treaba făcută împreună. Patru fapte, patru nume.',
+        'În bucătărie, seara, mama îi spune lui Vlad că a doua zi tabăra pleacă fără el: locurile s-au terminat. El simte teamă și tristețe și spune că vrea să rămână cu ai lui. Mama îl ia în brațe.',
+        'Brațele mamei sunt empatie. În ziua următoare, Vlad îl felicită pe colegul primit în tabără. După tristețe, felicitarea este autostăpânire.',
+        'Când pierzi un concurs pentru care ai muncit mult, atitudinea potrivită este aceasta: rămâi pe loc, spui regretul și îl feliciți pe câștigător.',
+        'Dacă pleci în tăcere și refuzi podiumul, emoția rămâne nespusă. Nu se vede că ai înțeles ce simți.',
+        'Hector Malot, în Singur pe lume, arată un copil căruia îi este teamă să fie luat de acasă. Replicile nu se transcriu. Scenele tale sunt Lia și Vlad.'
+      ].join('\n\n'),
+      example: [
+        'Lia se oprește la afiș: interes. Întreabă de sâmbătă: curiozitate. Spune vin și eu: implicare. Primește lucrul împreună: cooperare.',
+        'Vlad, în bucătărie, poartă teamă și tristețe. Îmbrățișarea mamei este empatie. Felicitarea de a doua zi este autostăpânire. După o înfrângere, spui tristețea și îl feliciți pe câștigător.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'După un concurs pierdut, rămâi lângă podium, spui că îți pare rău și îl feliciți pe câștigător. Plecarea fără un cuvânt lasă tristețea nespusă. Locul al doilea rămâne un loc, pentru că ai muncit.'
+        }
+      ],
+      tryThis: 'Despre concursul Școala viitorului scrie patru enunțuri, în ordinea interes, curiozitate, implicare, cooperare. La Vlad numește două emoții și fapta prin care mama arată empatie. Hotărăște cum stai după un concurs pierdut și sprijină alegerea cu două motive din lecție: munca multă și faptul că locul al doilea rămâne un loc.',
+      keyPoints: [
+        'Cele patru atitudini de grup se văd în fapte, nu doar în intenție.',
+        'Să îți cunoști emoția, să o ții în frâu și să o citești la celălalt: aceasta este inteligența emoțională.',
+        'După ce pierzi, spui ce simți și îl feliciți pe cel care a câștigat.'
+      ]
+    }),
+
+    lesson({
+      id: 'stilul',
+      title: 'Cuvântul potrivit locului',
+      kind: 'redactare',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Patru cerințe',
+          text: 'Tema cere adecvare. Sensul exact cere proprietate. Limba standard și situația cer puritate. Ideea ta, nu fraza gata făcută, cere originalitate.'
+        }
+      ],
+      theory: [
+        'Stilul este felul tău de a spune lucrurile, cu uneltele limbii. Nu este o podoabă pusă la urmă. Este alegerea cuvântului care se potrivește.',
+        'Când ești adecvat la temă, folosești cuvintele-cheie ale ei. Se leagă scrisul, ținta ta și efectul asupra cititorului.',
+        'Proprietatea cere ca fiecare termen să redea ideea exact, nu aproximativ. Un cuvânt vag mută tema în altă parte.',
+        'Puritatea, împreună cu adecvarea la situație, cere limba standard, un limbaj potrivit locului și o exprimare corectă. La școală nu scrii cum alint acasă.',
+        'Originalitatea înseamnă o idee a ta, spusă în felul tău. Nu este o frază luată de-a gata și lipită pe afiș.',
+        'Pentru haina de marinar, forma bună este marinar. Marinel, marinal și mariner nu țin de limba standard.',
+        'Învățat, cu carte: acesta este procopsit. Spus zâmbind către cineva care tot încurcă un cuvânt, sensul din context este ironic, iar lauda rămâne doar de formă.',
+        'Forma de la școală este îi stă bine. Îi șade bine ține de vorbirea veche sau de cea populară. Mamițo este alintare. În clasă spui mamă.',
+        'O schiță cunoscută amestecă tocmai formele acestea. La clasă rămân formele potrivite. Replicile schiței nu se reiau.',
+        'Afișul unei expoziții de invenții poartă titlul, locul, ziua, ora și un slogan făcut de tine. Termenii exacți sunt invenție, machetă și expoziție. Nu schimba tema pe o vorbă vagă.',
+        'Dacă pe afiș scrie doar petrecere, tema s-a pierdut. Cititorul trebuie să vadă că vine la invenții.'
+      ].join('\n\n'),
+      example: [
+        'Fiindcă tema este invenția, afișul anunță expoziție de invenții, nu o simplă petrecere. Pentru haină, termenul exact este marinar. Procopsit, în ironie, nu laudă pe bune.',
+        'La școală se potrivește îi stă bine. Sloganul Un obiect, o întrebare este al tău dacă l-ai făcut pentru expoziția din curte, vineri, ora 11.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Afiș: Expoziție de invenții, curtea școlii, vineri, ora 11. Slogan făcut de tine. Machetă și invenție rămân termenii exacți. Marinel pe afiș ar fi forma greșită.'
+        }
+      ],
+      tryThis: 'Dă forma bună pentru haina de marinar și explică procopsit când sensul este ironic. Pentru o propoziție de la școală hotărăște care formă stă: îi stă bine sau îi șade bine. Fă apoi afișul expoziției de invenții, cu titlu, loc, zi, oră și sloganul tău. În două rânduri arată adecvarea la temă și un termen exact.',
+      keyPoints: [
+        'Cuvântul de stil se potrivește cu tema, cu sensul exact și cu situația.',
+        'În limba standard spui marinar. În clasă, formele sunt îi stă bine și mamă.',
+        'Sloganul făcut de tine este originalitatea. Fraza copiată nu este.'
+      ]
+    }),
+
+    lesson({
+      id: 'drumetie',
+      title: 'Trei popasuri de scris',
+      kind: 'redactare',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Trei tipare',
+          text: 'Întâi narațiunea, cel mult 100 de cuvinte. Apoi descrierea, între 70 și 90. La urmă explicația, cu pași, cauză și concluzie.'
+        }
+      ],
+      theory: [
+        'Drumeția de redactare cere trei tipare deja cunoscute. Nu le amesteci în același popas. Le scrii pe rând și abia apoi le poți uni.',
+        'Popasul întâi este narațiune și nu trece de 100 de cuvinte. Are personaje și o întâmplare. Pune și un reper de timp, și unul de spațiu.',
+        'Popasul al doilea este o descriere, de la 70 până la 90 de cuvinte. Alegi un loc, pui detalii și perechi de substantiv cu adjectiv.',
+        'Popasul al treilea este un text explicativ despre fulger: pași, o cauză, o concluzie. Nu este poveste cu eroi. Este o lămurire.',
+        'Norul se încarcă cu electricitate. Urmează descărcarea, între nori sau între nor și sol. Acea descărcare se numește fulger.',
+        'Ochiul primește lumina aproape pe loc. Sunetul întârzie și poartă numele de tunet. De aceea vezi fulgerul mai devreme decât auzi tunetul.',
+        'Încheierea explicației: lumina este mai rapidă decât sunetul. Fără această încheiere, rămâi cu o listă de pași.',
+        'Cele trei bucăți se pot uni într-o poveste cu titlu, de 100 până la 150 de cuvinte. Narațiunea duce, descrierea oprește privirea, explicația lămurește fulgerul.',
+        'Nu lua un peisaj gata făcut. Poteca dintre școală și pădure poate fi locul tău. Luminișul este al tău.',
+        'Model scurt de narațiune: sâmbătă, ora 8, plecarea din curtea școlii către pădure. Are timp, spațiu și o plecare.',
+        'Model scurt de descriere: în luminiș, iarbă verde și un fag înalt. Sunt două perechi de substantiv cu adjectiv.',
+        'Model scurt de explicație: fulgerul se arată înaintea tunetului, fiindcă lumina ajunge mai repede decât sunetul. Sunt cauză și concluzie.'
+      ].join('\n\n'),
+      example: [
+        'Narațiune: sâmbătă la ora 8 am ieșit din curtea școlii, către pădure. Descriere: luminișul ține iarbă verde și un fag înalt.',
+        'Explicație: fulgerul se vede întâi, tunetul se aude după, pentru că lumina câștigă cursa cu sunetul. Titlul leagă popasurile, iar fiecare își păstrează tiparul.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Patru pași, pe scurt: nor încărcat, descărcare, lumină imediată, sunet întârziat. Concluzia stă separat: lumina o ia înaintea sunetului. Dacă lipsește concluzia, textul nu este încă explicație.'
+        }
+      ],
+      tryThis: [
+        'Redactează popasurile pe rând. Narațiunea nu trece de 100 de cuvinte. Plecarea este sâmbătă, ora 8, din curtea școlii către pădure.',
+        'Luminișul se descrie în 70 până la 90 de cuvinte, cu două epitete. Despre fulger scrii șase până la opt rânduri: cei patru pași și încheierea, anume că lumina ajunge înaintea sunetului. Adaugă un titlu.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Trei popasuri, trei tipare: narațiune, descriere, explicație, fiecare cu limita ei de întindere.',
+        'Descărcarea este fulgerul, sunetul de după este tunetul, iar lumina o ia înainte.',
+        'Poteca dintre școală și pădure poate fi locul tău. Nu copia un peisaj străin.'
+      ]
+    }),
+
+    lesson({
+      id: 'sintaxa-principale',
+      title: 'Subiectul și predicatul, din nou',
+      kind: 'limba',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Două părți principale',
+          text: 'Subiectul și predicatul se cer unul pe altul: interdependență. Atributul, complementul și circumstanțialul stau în subordonare, nu în același raport.'
+        }
+      ],
+      theory: [
+        'Părțile principale sunt subiectul și predicatul. Unul îl cheamă pe celălalt.',
+        'Subiectul se exprimă prin substantiv, prin pronume sau prin numeral. Poate lipsi din enunț: stă inclus în terminația verbului ori se subînțelege din context.',
+        'Un verb predicativ este predicat verbal. Verbul copulativ a fi, împreună cu numele predicativ, este predicat nominal.',
+        'Subordonarea leagă substantivul de atributul lui. Aceeași subordonare leagă verbul de complement sau de circumstanțial.',
+        'Fragmentul, tăiat în propoziții. Prima: Irina s-a trezit dis-de-dimineață. A doua: Plouă. A treia: Fetița stă la fereastră. Admiră stropii rebeli.',
+        'A patra: Seamănă cu niște lacrimi de nori. A cincea: Ea știe cum se formează ploaia. A șasea: vrea să își imagineze altceva. A șaptea: scopul este să treacă timpul mai repede.',
+        'Numărătoarea predicatelor dă zece: s-a trezit, apoi plouă, apoi stă, admiră, seamănă, apoi știe, se formează, apoi vrea, să își imagineze și să treacă.',
+        'Exprimate sunt Irina, fetița, ea, ploaia și timpul. La plouă nu există subiect, căci verbul este impersonal.',
+        'La seamănă, stropii se subînțeleg. La vrea și la să își imagineze se subînțelege ea. La să treacă, subiectul este timpul.',
+        'Circumstanțial de timp, dis-de-dimineață, determină s-a trezit. Circumstanțial de loc, la fereastră, determină stă.',
+        'Complement direct, stropii, determină admiră. Complement prepozițional, cu niște lacrimi, determină seamănă. Atribut adjectival: rebeli. Atribut substantival prepozițional: de nori.',
+        'În Florile sunt roșii, subiectul este florile, iar roșii este nume predicativ. Subiect multiplu are enunțul Fetele și băieții susțin aceleași probe sportive.',
+        'La Am ascultat părerile tuturor, subiectul nu este scris: este inclus, persoana I, eu, în terminația verbului.',
+        'Grupa verbelor predicative: a sosit, apoi au înflorit, apoi se vor juca, apoi zâmbește și face. Grupa nominală: sunt parfumate și delicate, apoi sunt bucuroși, apoi să fim fericiți.',
+        'Numele predicative sunt adjective. Multiplu este unul: parfumate și delicate.',
+        'Pluralul vârfurile cere învăluite. Pluralul articolele cere nu îndeplinesc. Două subiecte, ploaia și vântul, cer mi-au stricat. Masculinul plural, pentru băieții și fetele, cere interesați.'
+      ].join('\n\n'),
+      example: [
+        'Predicatele, pe grupuri: s-a trezit și plouă, apoi stă cu admiră și seamănă, apoi știe cu se formează, apoi vrea cu să își imagineze și cu să treacă.',
+        'Subiect este florile. Subiect multiplu sunt fetele și băieții. Subiect inclus are am ascultat. Predicat nominal, cu nume predicativ multiplu: sunt parfumate și delicate.',
+        'Acordul bun dă învăluite, nu îndeplinesc, mi-au stricat și interesați.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'A sosit primăvara: predicat verbal, a sosit, subiect primăvara. Florile sunt parfumate și delicate: predicat nominal, cu nume predicativ multiplu. Plouă rămâne fără subiect.'
+        }
+      ],
+      practice: [
+        '1) Câte predicate are fragmentul despre Irina? Scrie-le pe cele zece.',
+        '2) Ce subiect are plouă? Ce se subînțelege la seamănă?',
+        '3) Florile, în Florile sunt roșii, este subiect sau nume predicativ? Unde este subiectul multiplu?',
+        '4) Desparte a sosit primăvara de florile sunt parfumate și delicate. Ce formă cer vârfurile?'
+      ].join('\n\n'),
+      answers: [
+        'zece, pe grupuri: s-a trezit și plouă, apoi stă cu admiră și seamănă, apoi știe cu se formează, apoi vrea cu să își imagineze și cu să treacă',
+        'niciunul, verbul este impersonal; stropii',
+        'subiect; roșii este nume predicativ; enunțul cu fetele și băieții',
+        'a sosit este predicat verbal; sunt parfumate și delicate este predicat nominal; învăluite'
+      ],
+      mistakes: 'Nu căuta subiect la plouă. Două subiecte duc predicatul la plural, deci mi-au stricat, nu mi-a stricat. Pentru băieții și fetele, forma este interesați.',
+      tryThis: 'Arată cine se subînțelege la vrea și, separat, la să își imagineze, apoi subiectul lui să treacă. Alege forma pentru articolele, pentru ploaia și vântul și pentru băieții și fetele.',
+      keyPoints: [
+        'Cele două părți principale se cheamă una pe alta. Subiectul poate fi scris, inclus sau doar subînțeles.',
+        'Verbul predicativ dă predicatul verbal. A fi plus numele predicativ dă predicatul nominal.',
+        'Subiectul multiplu cere pluralul. Verbul plouă rămâne fără subiect.'
+      ]
+    }),
+
+    lesson({
+      id: 'sintaxa-secundare',
+      title: 'Atribut, complement, circumstanțial',
+      kind: 'limba',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Lângă cine stă',
+          text: 'Lângă un nume stă atributul. Lângă verb, complementul răspunde la ce sau la cui. La unde, când și cum răspunde circumstanțialul.'
+        }
+      ],
+      theory: [
+        'După subiect și predicat vin atributul, complementul și circumstanțialul. Atributul ține de un substantiv, de un pronume sau de un numeral.',
+        'Felurile lui sunt adjectival, substantival prepozițional, substantival genitival, pronominal prepozițional și pronominal genitival.',
+        'Atributul adjectival interesantă stă în enunțul Am citit o carte interesantă. Plăcerea fetei este de a citi. Aici fetei este genitival de substantiv, iar de a citi este nume predicativ.',
+        'La două fete rămase în clasă, atributul numeral este două. Grupul în clasă este circumstanțial de loc.',
+        'Vestea se taie: Am primit cu bine vestea. Urmează grupul de la tine, atribut pronominal prepozițional. Cu bine este circumstanțial de mod.',
+        'La schimbarea de cărți, genitival de substantiv este schimbării. Prepozițional de substantiv este de cărți. Nume predicativ este genială.',
+        'Propoziția cu Le-am spus, cu părinților mei și cu cumpărarea unei cărți are două complemente directe și un indirect.',
+        'O carte este directul lui voi cumpăra. Propoziția cu că este directul lui am spus, fiindcă răspunde la ce le-am spus. Părinților este indirectul. Le- doar îl dublează.',
+        'Școala își schimbă rolul. Subiect: Școala și-a deschis porțile. Cu despre: complement prepozițional. Direct: Am văzut noua școală. De loc: Eu locuiesc lângă școală. Genitival: școlii, în Porțile școlii. Cu pentru: pentru școală, lângă uniforme.',
+        'Despre stă la copilărie. La stă când te gândești la tine. Pentru stă la flori pentru mama. Cu stă la concursul cu un atlet. Din stă separat: din prezentarea ta nu iese imaginea satului.',
+        'Vacanță. Timp: în vacanța de vară, în zilele frumoase, de dimineața până seara, în fiecare dimineață. Loc: la bunici, acolo, pe ulițele satului. Mod: cu plăcere și împreună cu prietenii mei.',
+        'Mod cu substantiv. Am pășit fără teamă. Apoi Merge ca o barcă, legănată. Apoi Am ales cu grijă cadoul. La final, comparația: Fata este mai vorbăreață decât sora.',
+        'Lista de adverbe: lin, apoi încet, apoi rapid, apoi tare. Timp cu prepoziție: Peste o săptămână plecăm. Alt enunț: În tinerețe a călătorit.'
+      ].join('\n\n'),
+      example: [
+        'Adjectival: interesantă. Genitival: fetei. Numeral: două. Pronominal prepozițional: de la tine. Mod: cu plăcere. Timp: în fiecare dimineață.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Peste o săptămână plecăm: săptămână stă într-un circumstanțial de timp. Am pășit lin: lin este circumstanțial de mod, adverb. Pentru școală, lângă uniforme, rămâne atribut, nu complement.'
+        }
+      ],
+      practice: [
+        '1) Ce fel de atribut este interesantă, ce fel este fetei și ce fel este două?',
+        '2) La Le-am spus, la părinților și la o carte, câte directe și câte indirecte sunt? De ce le- nu mai adaugă un indirect?',
+        '3) Ce funcție are școală când își deschide porțile, când este văzută, când stai lângă ea și în porțile școlii?',
+        '4) Alege despre, la sau cu, pe rânduri separate. Întâi vorbim mereu ... copilărie. Apoi mă gândesc ... tine. La urmă nu pot concura ... un atlet.'
+      ].join('\n\n'),
+      answers: [
+        'adjectival; substantival genitival; numeral',
+        'două directe, un indirect; le- doar îl dublează pe părinților',
+        'subiect; complement direct; circumstanțial de loc; atribut substantival genitival',
+        'despre; la; cu'
+      ],
+      mistakes: 'Forma le- nu este un al doilea complement indirect. Atributul nu determină verbul. Un circumstanțial de loc nu se lipește de substantiv ca și cum ar fi atribut.',
+      tryThis: 'Fă un enunț în care săptămână este circumstanțial de timp și unul în care lin este circumstanțial de mod. Spune rolul lui cu bine la veste și rolul lui genială la schimbarea de cărți.',
+      keyPoints: [
+        'Atributul se lipește de un nume și își ia felul din forma acelui determinant.',
+        'La ce răspunde complementul direct, la cui cel indirect, iar cel cu prepoziție își arată legătura.',
+        'Dublura le- nu înmulțește indirectul. Unde, când și cum țin de circumstanțial.'
+      ]
+    }),
+
+    lesson({
+      id: 'diaspora',
+      title: 'Români care au dus țara cu ei',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Două noțiuni',
+          text: 'Personalitatea are aptitudini, autoritate, prestigiu și o contribuție de preț. Diaspora este grupul etnic trăitor dincolo de granița țării de origine.'
+        }
+      ],
+      theory: [
+        'Personalitatea este omul cu aptitudini rare, cu autoritate, cu prestigiu și cu o contribuție de preț în societate, în cultură sau în știință.',
+        'Nadia Comăneci este gimnastă și a primit, la Jocurile Olimpice, prima notă de 10. La nai cântă și compune Gheorghe Zamfir, muzician.',
+        'Biolog, medic și inventatoare a fost Ana Aslan. Compozitor și muzician a fost George Enescu. Inventator și pionier în aerodinamică a fost Henri Coandă. Sculptor modern a fost Constantin Brâncuși.',
+        'Dinu Lipatti s-a născut în București, pe 19 martie 1917. George Enescu i-a fost naș de botez. În 1922, o fotografie îi arată pe amândoi.',
+        'La chitară și la flaut cânta bunicul, Constantin Lipatti. Tatăl ar fi vrut vioară. Dinu rămânea legat de pian. A ajuns pianist și compozitor.',
+        'Factura lucrărilor este neoclasică, cu influențe franceze și românești. Din pian se văd virtuozul și emoția.',
+        'Locul nașterii lui George Enescu este Liveni-Vârnav, cătun între dealurile Dorohoiului. Actul poartă data de 9 august 1881 și notează nașterea ca fiind alaltăieri.',
+        'Stilul vechi dă ziua de 7. Stilul nou dă ziua de 19. Data de 19 este cea nouă.',
+        'Întâi, se spune, și-a făcut singur o vioară, din șindrilă și din sârme. A probat și un strujan de porumb. Abia apoi părinții i-au cumpărat o vioară mică.',
+        'Primele lecții, după ureche, le-a luat de la lăutarul Lae Chioru, din Dorohoi. În copilăria aceasta se văd talentul și pasiunea.',
+        'După anii din străinătate, a spus că a luat cu el dealurile, văile și pădurile Moldovei, așa că nu le-a părăsit. Frazele lui despre muzică nu se lipesc aici.',
+        'Li se potrivesc patru cuvinte: talent, emoție, pasiune, virtuoz. La Enescu, talentul și pasiunea. La Lipatti, virtuozul și emoția.'
+      ].join('\n\n'),
+      example: [
+        'Nota 10, întâi la Jocurile Olimpice, este a gimnastei Nadia Comăneci. Naiul este al lui Gheorghe Zamfir. Medicina și invenția sunt ale Anei Aslan. Compoziția este a lui George Enescu. Aerodinamica este a lui Henri Coandă. Sculptura modernă este a lui Constantin Brâncuși.',
+        'Data lui Lipatti este 19 martie 1917, iar nașul este Enescu. Liveni-Vârnav este locul lui Enescu, iar 19 ține de stilul nou. Lecțiile după ureche vin de la Lae Chioru.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Copil, Enescu încearcă o vioară din șindrilă și sârme, apoi un strujan. Părinții cumpără o vioară mică. Fapta arată pasiune, înainte de lecțiile după ureche date de Lae Chioru.'
+        }
+      ],
+      tryThis: [
+        'Asociază domeniul fiecăruia: întâi Nadia Comăneci, apoi Gheorghe Zamfir, apoi Ana Aslan, apoi George Enescu, apoi Henri Coandă, apoi Constantin Brâncuși. Pentru Dinu Lipatti dă ziua nașterii, nașul și instrumentul ales în locul viorii.',
+        'Pentru Enescu dă locul nașterii, rostul zilei de 19 pe stil nou și numele celui de la care a învățat după ureche. În opt rânduri povestește despre unul singur: o faptă de copil și unul dintre cuvintele talent, pasiune, virtuoz. La final, definește diaspora.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Dincolo de granița țării de origine, grupul etnic se numește diaspora. Contribuția face personalitatea.',
+        'Lipatti, 19 martie 1917, a rămas la pian. Nașul a fost Enescu.',
+        'Din Liveni-Vârnav, lecțiile după ureche i-au venit de la Lae Chioru. Moldova a plecat cu el.'
+      ]
+    }),
+
+    lesson({
+      id: 'proiect-descoperiri',
+      title: 'O descoperire care a schimbat lumea',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Fișa proiectului',
+          text: 'În grup există un lider. Notați autorul, istoricul scurt, impactul, opera unde se vede și modul de prezentare.'
+        }
+      ],
+      theory: [
+        'Lucrul este de grup și are un lider. Nu copiați un articol gata scris. Faptele de mai jos se spun cu vorbele voastre.',
+        'Viața oamenilor s-a schimbat prin foc, prin unelte de piatră, prin roată, prin curent electric, prin tipar, prin telefon, prin radio, prin automobil, prin vaccinuri, prin computer și prin internet.',
+        'La telefon, brevetul lui Alexander Graham Bell este din 1876. Telefonul mobil apare aproape un secol mai târziu.',
+        'La bec, Thomas Edison a ridicat un sistem de iluminat: generator, cabluri, bec cu filament de carbon. Pentru sistem, anul notat este 1876. Pentru lampa lui, brevetul american este din 1879.',
+        'Dacă se cere anul sistemului, scrii 1876 și precizezi că este anul înregistrat pentru sistem. Anul 1879 rămâne al brevetului.',
+        'La avion, zmeiele sunt între cele mai vechi obiecte care zboară, cam din anul 200 înainte de Hristos, în China.',
+        'Data lui Traian Vuia este 18 martie 1906: primul zbor cu motor propriu, al unui aparat mai greu decât aerul, ridicat de el însuși.',
+        'Trei numere țin istoricul: rularea de circa 50 de metri, zborul de 12 metri, înălțimea de 1 metru.',
+        'LGP-30, din 1956, a fost întâiul computer personal. Prețul: 47000 de dolari, cam 414000 de dolari azi.',
+        'Internetul este rețeaua de pe tot globul, folosită zilnic de miliarde de oameni. Cercetătorii au fost mai mulți. Cel creditat aici cu invenția este Lawrence Roberts.',
+        'Din secolul al XIX-lea, Jules Verne a închipuit submarine și drumuri spre Lună. Romanul din 1870 l-a influențat pe Simon Lake, pionier al submarinelor.',
+        'Român din Ardeal, Hermann Oberth a căpătat de la mamă De la Pământ la Lună, a știut-o pe dinafară. Cifrele le-a controlat, iar corecte erau doar o parte. Curiozitatea i-a crescut.',
+        'Pe la 14 ani a făcut un model de rachetă. Singur a ajuns la arderea pe etape. Combustibilul consumat ușurează racheta, rezervorul gol nu mai folosește, deci etapele se desprind.',
+        'Poate intra la personalitățile care au lucrat și peste graniță. Submarinul din textul tău poate trimite la romanul din 1870. Racheta poate trimite la romanul din 1865.'
+      ].join('\n\n'),
+      example: [
+        'Alegerea grupului este avionul, iar lider este Ana. Pentru 18 martie 1906, numele din lecție este Traian Vuia. Trei numere fac istoricul scurt: 50 de metri la rulare, 12 metri în zbor, 1 metru înălțime.',
+        'Impact: s-a ridicat, cu motorul lui, un aparat mai greu decât aerul. Cartea este un roman de Jules Verne despre zbor. Forma de prezentare este un afiș.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'La bec, 1876 este anul notat pentru sistemul cu generator, cabluri și filament de carbon. 1879 este brevetul american al lămpii. Dacă amesteci anii, istoricul scurt se strică.'
+        }
+      ],
+      tryThis: [
+        'Alege unul dintre telefon, bec, avion, computer și internet. În opt până la zece rânduri spune cine este autorul, care an din lecție îl legi, impactul într-o singură propoziție și, dacă se potrivește, o carte a lui Verne.',
+        'La bec pune amândoi anii, 1876 și 1879, cu rostul fiecăruia. La Vuia pune data și cele trei numere. În șase rânduri aparte arată de ce Hermann Oberth poate sta la personalitățile din diaspora: Ardealul, cartea de la mamă, cifrele verificate, racheta pe etape.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Fișa spune autorul descoperirii, vremea, schimbarea adusă și cartea în care apare.',
+        'Brevetul lui Bell este din 1876. La bec, sistemul ține de 1876, iar lampa de 1879.',
+        'Zborul lui Vuia este la 18 martie 1906. Oberth a controlat cifrele lui Verne și a gândit etapele rachetei.'
+      ]
+    }),
+
+    lesson({
+      id: 'recap-ferestre',
+      title: 'Încheierea despre viitor',
+      kind: 'recapitulare',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Ce se leagă',
+          text: 'Încheierea pune la un loc o părere argumentată, un atribut, o emoție și circumstanțiale de loc și de timp. Scena este scrisă aici.'
+        }
+      ],
+      theory: [
+        'Unitatea se închide pe o scenă scrisă aici, nu pe un text adus din altă parte. Vineri dimineața, Irina stă la fereastra clasei și își spune o părere.',
+        'Părerea ei: orașul viitorului are nevoie de liniște. Deschiderea este părerea mea este că. Aceasta este ipoteza.',
+        'Argumentul: lectura copiilor merge mai bine în lipsa zgomotului. Conectorul este în primul rând. Un singur sprijin ajunge în scena aceasta.',
+        'Încheie spunând că ar așeza parcuri printre blocuri. Conectorul de închidere este așadar. Ipoteza, argumentul și concluzia stau în trei replici scurte.',
+        'Pe masă stătea o machetă mică. Mică este atribut adjectival: stă lângă substantivul machetă și arată o însușire.',
+        'La fereastră este circumstanțial de loc. Răspunde la unde stă Irina. Vineri dimineața este circumstanțial de timp. Răspunde la când vorbește.',
+        'Irina era bucuroasă. Bucuroasă este emoție și, în același timp, nume predicativ, pe lângă era. Emoția are nume, nu rămâne doar un zâmbet.',
+        'Din scenă lucrezi în trei timpi. Notezi ce este scris. Spui ce vezi. La urmă spui fapta ta, legată prin pentru că.',
+        'Ce vezi pornește cu O văd. Fapta ta se leagă de liniște sau de macheta mică, nu de o idee adusă din afara scenei.',
+        'Descrierea de după scenă ține un oraș al viitorului și are între 70 și 100 de cuvinte. Pune minimum cinci atribute. Locul cere două circumstanțiale. Timpul cere alte două.',
+        'Atributul stă lângă un nume, ca mică lângă machetă. Circumstanțialul de loc răspunde la unde. Cel de timp răspunde la când, ca vineri dimineața.',
+        'Dacă în descriere lipsește emoția, recapitularea rămâne doar gramatică. Bucuria Irinei arată că emoția se numește, cum ai făcut la atitudini.'
+      ].join('\n\n'),
+      example: [
+        'Ce este scris: vineri dimineața, la fereastră, Irina dă o părere, un argument și închide prin așadar, lângă o machetă mică. Vederea: o văd la geam, iar macheta stă pe masă.',
+        'Aș fi așezat o bancă pe machetă, fiindcă Irina vorbea despre liniște, iar macheta era mică. Bucuria este emoția. Mică rămâne atribut adjectival.'
+      ].join('\n\n'),
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Ipoteză: părerea mea este că. Argument: în primul rând. Concluzie: așadar. Loc: la fereastră. Timp: vineri dimineața. Atribut: mică. Emoție și nume predicativ: bucuroasă.'
+        }
+      ],
+      tryThis: [
+        'Pentru Irina, trei propoziții: ce este scris, ce vezi, ce ai face, cu pentru că. Ce vezi pornește cu O văd. Apoi identifici ipoteza, argumentul, concluzia, atributul, emoția.',
+        'Adaugă o descriere despre un oraș al viitorului, lungă de 70 până la 100 de cuvinte. Pune măcar cinci atribute. Locul cere două circumstanțiale. Timpul cere alte două.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Închiderea adună o părere cu argument, un atribut și o emoție spusă pe nume.',
+        'Vorbirea Irinei este vineri dimineața, la fereastră, despre liniște, lângă o machetă mică.',
+        'Atributul este mică. Locul este la fereastră. Timpul este vineri dimineața. Emoția este bucuroasă.'
+      ]
+    })
   ]
 };

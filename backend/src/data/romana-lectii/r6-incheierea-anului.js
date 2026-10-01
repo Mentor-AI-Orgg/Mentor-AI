@@ -1,59 +1,198 @@
+'use strict';
+
+const { romanaLesson } = require('../lessonBuilder');
+
+function lesson(f){return romanaLesson(f);}
+
 module.exports = {
-  "id": "incheierea-anului",
-  "title": "Încheierea anului",
-  "inOwnWords": "Încheierea anului reia, pe scene scrise aici, narațiunea, descrierea, dialogul, sunetele, sensurile și propoziția. Lista de lectură închide manualul. Textele de pe foaia de examen rămân la școală. Grilele de punctaj nu sunt lecții.",
-  "toc": [
-    "O dimineață de recapitulare",
-    "Sunete și sensuri",
-    "Grădina, în cuvintele tale",
-    "Ce citești vara"
+  id: 'incheierea-anului',
+  title: 'Încheierea anului',
+  inOwnWords: 'Încheierea anului reia, pe scene scrise aici, narațiunea, descrierea, dialogul, sunetele, sensurile și propoziția. Lista de lectură închide anul. Textele de pe foaia de examen rămân la școală. Grilele de punctaj nu sunt lecții.',
+  toc: [
+    'O dimineață de recapitulare',
+    'Sunete și sensuri',
+    'Grădina, în cuvintele tale',
+    'Ce citești vara'
   ],
-  "glossary": [
+  glossary: [
     {
-      "term": "tablou",
-      "meaning": "Descriere a unui loc, nu a unei persoane."
+      term: 'tablou',
+      meaning: 'Descriere a unui loc, nu a unei persoane.'
     },
     {
-      "term": "omonim",
-      "meaning": "Același șir de sunete, cu sensuri care nu se leagă între ele."
+      term: 'omonim',
+      meaning: 'Același șir de sunete, cu sensuri care nu se leagă între ele.'
     }
   ],
-  "lessons": [
-    {
-      "id": "dimineata-recap",
-      "title": "Pașii pe o scenă nouă",
-      "platter": "La sfârșitul anului repeți pașii pe un text întreg. La școală, textul deschis poate fi altul. O recapitulare folosește un fragment din Trenul către Locurile imposibile, de P. G. Bell. Nu cerem fragmentul. Scena noastră este alta. Miercuri, la ora două noaptea, în casa de la țară, Ana s-a trezit. Afară, ulița era goală. Din bucătărie se auzea un zgomot de metal. Ana a simțit teamă. A coborât și a văzut pe podea două șine lucioase. A strigat: Mamă, tu ești? Din cămară a răspuns un glas: Eu sunt și am adus macheta trenului. Naratorul este la persoana a III-a, pentru că nu spune eu despre sine. Indicele de timp este miercuri, la ora două noaptea. Indicii de spațiu sunt casa de la țară, ulița, bucătăria, podeaua și cămara. Trezirea este expozițiunea. Zgomotul este intriga. Șinele sunt momentul culminant. Răspunsul mamei este deznodământul. Teama vine din zgomotul de metal. Ușurarea vine din răspuns. Ulița goală este descriere. Coborârea este narațiune. Cele două replici sunt dialog. Vorbire indirectă: Ana a întrebat-o pe mama dacă ea este. Glasul a spus că el este și că a adus macheta trenului. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.\n\nExemplu lucrat: Ce scrie: Miercuri, la ora două noaptea, în casa de la țară, Ana a coborât la zgomotul de metal și a văzut două șine lucioase, iar glasul din cămară a spus că a adus macheta. Ce vezi: O văd pe Ana în hol, noaptea, cu șinele pe podea. Eu aș fi aprins lumina, pentru că era ora două noaptea și pe podea erau șine lucioase. Naratorul este la persoana a III-a. Teama vine din zgomot.\n\nPe scena Anei, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Spune un indice de timp, un indice de spațiu, tipul naratorului și emoția de la zgomot. Arată care bucată este descriere, care este narațiune și care este dialog. Transformă în vorbire indirectă replica Mamă, tu ești?\n\nRecapitularea de final cere ce scrie, ce vezi și ce ai face, cu pentru că. Naratorul din scena Anei este la persoana a III-a. Teama vine din zgomot, iar ușurarea vine din răspunsul din cămară.",
-      "theory": "La sfârșitul anului repeți pașii pe un text întreg. La școală, textul deschis poate fi altul. O recapitulare folosește un fragment din Trenul către Locurile imposibile, de P. G. Bell. Nu cerem fragmentul. Scena noastră este alta. Miercuri, la ora două noaptea, în casa de la țară, Ana s-a trezit. Afară, ulița era goală. Din bucătărie se auzea un zgomot de metal. Ana a simțit teamă. A coborât și a văzut pe podea două șine lucioase. A strigat: Mamă, tu ești? Din cămară a răspuns un glas: Eu sunt și am adus macheta trenului. Naratorul este la persoana a III-a, pentru că nu spune eu despre sine. Indicele de timp este miercuri, la ora două noaptea. Indicii de spațiu sunt casa de la țară, ulița, bucătăria, podeaua și cămara. Trezirea este expozițiunea. Zgomotul este intriga. Șinele sunt momentul culminant. Răspunsul mamei este deznodământul. Teama vine din zgomotul de metal. Ușurarea vine din răspuns. Ulița goală este descriere. Coborârea este narațiune. Cele două replici sunt dialog. Vorbire indirectă: Ana a întrebat-o pe mama dacă ea este. Glasul a spus că el este și că a adus macheta trenului. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.",
-      "example": "Ce scrie: Miercuri, la ora două noaptea, în casa de la țară, Ana a coborât la zgomotul de metal și a văzut două șine lucioase, iar glasul din cămară a spus că a adus macheta. Ce vezi: O văd pe Ana în hol, noaptea, cu șinele pe podea. Eu aș fi aprins lumina, pentru că era ora două noaptea și pe podea erau șine lucioase. Naratorul este la persoana a III-a. Teama vine din zgomot.",
-      "tryThis": "Pe scena Anei, scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că. Ce vezi începe cu O văd. Spune un indice de timp, un indice de spațiu, tipul naratorului și emoția de la zgomot. Arată care bucată este descriere, care este narațiune și care este dialog. Transformă în vorbire indirectă replica Mamă, tu ești?",
-      "recap": "Recapitularea de final cere ce scrie, ce vezi și ce ai face, cu pentru că. Naratorul din scena Anei este la persoana a III-a. Teama vine din zgomot, iar ușurarea vine din răspunsul din cămară."
-    },
-    {
-      "id": "sunete-sensuri",
-      "title": "Litere, sunete și înțeles",
-      "platter": "Numărul literelor și numărul sunetelor pot fi diferite. Un diftong este un singur sunet. Un triftong este un singur sunet. Un hiat este două sunete alăturate. Grupul ch este un singur sunet. Teamă are cinci litere, t, e, a, m, ă, și patru sunete, pentru că ea este diftong. Șine are patru litere și patru sunete. Ochi are patru litere, o, c, h, i, și trei sunete, o, ch, i, iar silabele sunt o-chi. Copii are cinci litere și cinci sunete, pentru că ii este hiat, iar silabele sunt co-pi-i. Creioane are opt litere și șase sunete, c, r, e, ioa, n, e, pentru că ioa este triftong, iar silabele sunt cre-ioa-ne. La școală numeri la fel cuvintele de pe pagină, chiar dacă sunt altele. Sensul propriu și sensul figurat se văd din context. Ulița era goală este sens propriu, pentru că nu este nimeni pe uliță. Un gând cufundat în teamă este sens figurat, pentru că gândul nu stă în apă. Sinonimul temei este frica. Antonimul temei este curajul. Sinonimul lui goală, despre uliță, este pustie. Antonimul este plină. Omonimele au aceeași formă și sensuri care nu vin unul din altul. Mai este luna mai în În luna mai înfloresc merii și este adverb în Trenul merge mai repede. Vară este anotimpul în Vara merg la bunici și este verișoara în Vara mea vine în vizită. Dulce este polisemic. Ceaiul este dulce vorbește despre gust. O amintire dulce vorbește despre ceva plăcut. Accentul schimbă sensul la mână. În Mâna doare, mână este substantiv și accentul stă pe mâ. În Ciobanul mână oile spre sat, mână este verb și accentul stă pe nă.\n\nExemplu lucrat: Teamă are cinci litere și patru sunete. Ochi are patru litere și trei sunete. Copii are hiat și cinci sunete. Creioane are triftongul ioa și șase sunete. Ulița goală este sens propriu. Un gând cufundat în teamă este sens figurat. Mai, luna, și mai, adverbul, sunt omonime. Mâna doare are accentul pe mâ. Ciobanul mână oile are accentul pe nă.\n\nScrie numărul de litere și de sunete pentru teamă, ochi și creioane. Spune unde este diftongul, unde este hiatul și unde este triftongul, între teamă, copii și creioane. Dă un sinonim și un antonim pentru teamă. Scrie două enunțuri cu mai, unul pentru lună și unul pentru adverb, și două cu dulce, unul pentru gust și unul pentru o amintire. Arată accentul în Mâna doare și în Ciobanul mână oile.\n\nDiftongul și triftongul sunt câte un sunet, iar hiatul este două sunete. Teamă are cinci litere și patru sunete. Mai și vară sunt omonime, dulce este polisemic, iar mână își schimbă sensul după accent.",
-      "theory": "Numărul literelor și numărul sunetelor pot fi diferite. Un diftong este un singur sunet. Un triftong este un singur sunet. Un hiat este două sunete alăturate. Grupul ch este un singur sunet. Teamă are cinci litere, t, e, a, m, ă, și patru sunete, pentru că ea este diftong. Șine are patru litere și patru sunete. Ochi are patru litere, o, c, h, i, și trei sunete, o, ch, i, iar silabele sunt o-chi. Copii are cinci litere și cinci sunete, pentru că ii este hiat, iar silabele sunt co-pi-i. Creioane are opt litere și șase sunete, c, r, e, ioa, n, e, pentru că ioa este triftong, iar silabele sunt cre-ioa-ne. La școală numeri la fel cuvintele de pe pagină, chiar dacă sunt altele. Sensul propriu și sensul figurat se văd din context. Ulița era goală este sens propriu, pentru că nu este nimeni pe uliță. Un gând cufundat în teamă este sens figurat, pentru că gândul nu stă în apă. Sinonimul temei este frica. Antonimul temei este curajul. Sinonimul lui goală, despre uliță, este pustie. Antonimul este plină. Omonimele au aceeași formă și sensuri care nu vin unul din altul. Mai este luna mai în În luna mai înfloresc merii și este adverb în Trenul merge mai repede. Vară este anotimpul în Vara merg la bunici și este verișoara în Vara mea vine în vizită. Dulce este polisemic. Ceaiul este dulce vorbește despre gust. O amintire dulce vorbește despre ceva plăcut. Accentul schimbă sensul la mână. În Mâna doare, mână este substantiv și accentul stă pe mâ. În Ciobanul mână oile spre sat, mână este verb și accentul stă pe nă.",
-      "example": "Teamă are cinci litere și patru sunete. Ochi are patru litere și trei sunete. Copii are hiat și cinci sunete. Creioane are triftongul ioa și șase sunete. Ulița goală este sens propriu. Un gând cufundat în teamă este sens figurat. Mai, luna, și mai, adverbul, sunt omonime. Mâna doare are accentul pe mâ. Ciobanul mână oile are accentul pe nă.",
-      "tryThis": "Scrie numărul de litere și de sunete pentru teamă, ochi și creioane. Spune unde este diftongul, unde este hiatul și unde este triftongul, între teamă, copii și creioane. Dă un sinonim și un antonim pentru teamă. Scrie două enunțuri cu mai, unul pentru lună și unul pentru adverb, și două cu dulce, unul pentru gust și unul pentru o amintire. Arată accentul în Mâna doare și în Ciobanul mână oile.",
-      "recap": "Diftongul și triftongul sunt câte un sunet, iar hiatul este două sunete. Teamă are cinci litere și patru sunete. Mai și vară sunt omonime, dulce este polisemic, iar mână își schimbă sensul după accent."
-    },
-    {
-      "id": "compunere-gradina",
-      "title": "Grădina bunicilor",
-      "platter": "Compunerea de la sfârșitul anului este o descriere. În unele manuale, textul de pe bancă se numește În grădină și este scris de Dimitrie Anghel. Este un tablou, pentru că înfățișează un loc, nu un portret de om. Nu cerem versurile. La școală, pe textul deschis, numeri silabele, spui tipul de strofă și de rimă și cauți un epitet, o comparație, o personificare și o enumerație, cum ai făcut la pastel. Compunerea ta are altă grădină. Cere patru elemente ale peisajului, două figuri de stil și o emoție. Modelul scurt de aici nu se copiază. În grădina bunicilor mei sunt un tei bătrân, iarbă moale, o bancă de lemn și lumină caldă. Iarba moale este epitet. Lumina caldă este ca o lampă este comparație. Emoția mea este liniștea. Teiul, iarba, banca și lumina sunt cele patru elemente.\n\nExemplu lucrat: Cele patru elemente din model sunt teiul, iarba, banca și lumina. Iarba moale este epitet. Ca o lampă este comparație. Emoția este liniștea. Textul lui Dimitrie Anghel este tablou, nu portret. Compunerea ta schimbă grădina și figurile.\n\nScrie o descriere a grădinii bunicilor, de cel puțin zece rânduri. Pune patru elemente ale peisajului, două figuri de stil diferite și o emoție. Spune sub text care sunt figurile. Nu copia modelul cu teiul și lampa. La sfârșit, scrie că textul lui Anghel este un tablou și că la școală numeri silabele pe versul deschis.\n\nDescrierea de încheiere înfățișează un loc, cu elemente, figuri de stil și o emoție. În grădină, de Dimitrie Anghel, este un tablou. Compunerea ta este despre grădina bunicilor, cu vorbele tale.",
-      "theory": "Compunerea de la sfârșitul anului este o descriere. În unele manuale, textul de pe bancă se numește În grădină și este scris de Dimitrie Anghel. Este un tablou, pentru că înfățișează un loc, nu un portret de om. Nu cerem versurile. La școală, pe textul deschis, numeri silabele, spui tipul de strofă și de rimă și cauți un epitet, o comparație, o personificare și o enumerație, cum ai făcut la pastel. Compunerea ta are altă grădină. Cere patru elemente ale peisajului, două figuri de stil și o emoție. Modelul scurt de aici nu se copiază. În grădina bunicilor mei sunt un tei bătrân, iarbă moale, o bancă de lemn și lumină caldă. Iarba moale este epitet. Lumina caldă este ca o lampă este comparație. Emoția mea este liniștea. Teiul, iarba, banca și lumina sunt cele patru elemente.",
-      "example": "Cele patru elemente din model sunt teiul, iarba, banca și lumina. Iarba moale este epitet. Ca o lampă este comparație. Emoția este liniștea. Textul lui Dimitrie Anghel este tablou, nu portret. Compunerea ta schimbă grădina și figurile.",
-      "tryThis": "Scrie o descriere a grădinii bunicilor, de cel puțin zece rânduri. Pune patru elemente ale peisajului, două figuri de stil diferite și o emoție. Spune sub text care sunt figurile. Nu copia modelul cu teiul și lampa. La sfârșit, scrie că textul lui Anghel este un tablou și că la școală numeri silabele pe versul deschis.",
-      "recap": "Descrierea de încheiere înfățișează un loc, cu elemente, figuri de stil și o emoție. În grădină, de Dimitrie Anghel, este un tablou. Compunerea ta este despre grădina bunicilor, cu vorbele tale."
-    },
-    {
-      "id": "lectura-vara",
-      "title": "Ce iei cu tine vara",
-      "platter": "Manualul închide anul cu două liste. Nu cerem citatele de pe pagină. Prima listă cuprinde opere folosite la lecții: Amintiri din copilărie, de Ion Creangă, Cartea prietenului meu, de Anatole France, Povestea Vrancei, Cireșarii, de Constantin Chiriță, Amintiri dintr-o călătorie, de Calistrat Hogaș, Micul prinț, de Antoine de Saint-Exupéry, Prinț și cerșetor, de Mark Twain, Heidi, fetița munților, de Johanna Spyri, fabule de Alecu Donici și de La Fontaine, Rapsodii de primăvară, de George Topîrceanu, În grădină, de Dimitrie Anghel, România pitorească, de Alexandru Vlahuță, Fascinații, de George Șovu, și Douăzeci de mii de leghe sub mări, de Jules Verne. A doua listă este pentru vacanță și pentru clasa a VII-a, sub tema orizonturile lumii și ale cunoașterii: Toate pânzele sus, de Radu Tudoran, Cișmigiu & Comp., de Grigore Băjenaru, Bună dimineața, băieți!, de Grigore Băjenaru, Viața ca o pradă, de Marin Preda, Hanul Ancuței, de Mihail Sadoveanu, Corigent la limba română, de Ion Minulescu, Inocenții, de Ioana Pârvulescu, poezii de Mihai Eminescu, de Nichita Stănescu, de Lucian Blaga și de Magda Isanos, Chirița în Iași, de Vasile Alecsandri, teatru de Matei Vișniec, În văpaia lunii, de Fănuș Neagu, O vară cu Isidor, de Veronica D. Niculescu, Tabăra, de Louis Sachar, Robinson Crusoe, de Daniel Defoe, O călătorie spre centrul Pământului, de Jules Verne, Vântul din lună, de Eric Linklater, Ursoaica din vis, de Mimi Thebo, Hoțul de stele, de Lindsey Becker, Theodora Tenpenny și tabloul pierdut, de Laura Marx Fitzgerald, Băiatul cu pijamale în dungi, de John Boyne, Darul lui Jonas, de Lois Lowry, și Cei trei muschetari, de Alexandre Dumas. Alegi chiar dacă nu ai terminat încă cartea. Scrii ce vrei să afli, unde ai citi și ce emoție aștepți.\n\nExemplu lucrat: Din lista manualului aleg Douăzeci de mii de leghe sub mări, pentru submarinul Nautilus. Din lista de vacanță aleg Robinson Crusoe, pentru o insulă. Aș citi vara, pe prispă. Emoția așteptată este curiozitatea. Dacă nu am terminat cărțile, scriu asta și spun ce vreau să aflu.\n\nAlege un titlu din prima listă și un titlu din lista de vacanță. Scrie șase până la opt rânduri: de ce le-ai ales, unde ai citi și o emoție. Dacă nu le-ai citit, spune ce vrei să afli din fiecare. Nu copia o frază de pe o copertă.\n\nAnul se închide cu două liste: operele folosite la lecții și cărțile pentru vacanță și pentru clasa a VII-a. Alegi două titluri și spui de ce, unde ai citi și ce emoție aștepți.",
-      "theory": "Manualul închide anul cu două liste. Nu cerem citatele de pe pagină. Prima listă cuprinde opere folosite la lecții: Amintiri din copilărie, de Ion Creangă, Cartea prietenului meu, de Anatole France, Povestea Vrancei, Cireșarii, de Constantin Chiriță, Amintiri dintr-o călătorie, de Calistrat Hogaș, Micul prinț, de Antoine de Saint-Exupéry, Prinț și cerșetor, de Mark Twain, Heidi, fetița munților, de Johanna Spyri, fabule de Alecu Donici și de La Fontaine, Rapsodii de primăvară, de George Topîrceanu, În grădină, de Dimitrie Anghel, România pitorească, de Alexandru Vlahuță, Fascinații, de George Șovu, și Douăzeci de mii de leghe sub mări, de Jules Verne. A doua listă este pentru vacanță și pentru clasa a VII-a, sub tema orizonturile lumii și ale cunoașterii: Toate pânzele sus, de Radu Tudoran, Cișmigiu & Comp., de Grigore Băjenaru, Bună dimineața, băieți!, de Grigore Băjenaru, Viața ca o pradă, de Marin Preda, Hanul Ancuței, de Mihail Sadoveanu, Corigent la limba română, de Ion Minulescu, Inocenții, de Ioana Pârvulescu, poezii de Mihai Eminescu, de Nichita Stănescu, de Lucian Blaga și de Magda Isanos, Chirița în Iași, de Vasile Alecsandri, teatru de Matei Vișniec, În văpaia lunii, de Fănuș Neagu, O vară cu Isidor, de Veronica D. Niculescu, Tabăra, de Louis Sachar, Robinson Crusoe, de Daniel Defoe, O călătorie spre centrul Pământului, de Jules Verne, Vântul din lună, de Eric Linklater, Ursoaica din vis, de Mimi Thebo, Hoțul de stele, de Lindsey Becker, Theodora Tenpenny și tabloul pierdut, de Laura Marx Fitzgerald, Băiatul cu pijamale în dungi, de John Boyne, Darul lui Jonas, de Lois Lowry, și Cei trei muschetari, de Alexandre Dumas. Alegi chiar dacă nu ai terminat încă cartea. Scrii ce vrei să afli, unde ai citi și ce emoție aștepți.",
-      "example": "Din lista manualului aleg Douăzeci de mii de leghe sub mări, pentru submarinul Nautilus. Din lista de vacanță aleg Robinson Crusoe, pentru o insulă. Aș citi vara, pe prispă. Emoția așteptată este curiozitatea. Dacă nu am terminat cărțile, scriu asta și spun ce vreau să aflu.",
-      "tryThis": "Alege un titlu din prima listă și un titlu din lista de vacanță. Scrie șase până la opt rânduri: de ce le-ai ales, unde ai citi și o emoție. Dacă nu le-ai citit, spune ce vrei să afli din fiecare. Nu copia o frază de pe o copertă.",
-      "recap": "Anul se închide cu două liste: operele folosite la lecții și cărțile pentru vacanță și pentru clasa a VII-a. Alegi două titluri și spui de ce, unde ai citi și ce emoție aștepți."
-    }
+  lessons: [
+    lesson({
+      id: 'dimineata-recap',
+      title: 'Pașii pe o scenă nouă',
+      kind: 'recapitulare',
+      boxes: [{
+        type: 'regula',
+        title: 'Trei mișcări',
+        text: 'Pe o întâmplare întreagă notezi faptele, apoi imaginea, apoi fapta ta. Fapta ta se prinde cu pentru că.'
+      }],
+      theory: [
+        'Anul se închide cu aceeași metodă, pe o întâmplare completă. La clasă, bucata deschisă poate purta alt titlu. Scena de aici e făcută pentru exercițiu.',
+        'Unele recapitulări pleacă din Trenul către Locurile imposibile, cartea lui P. G. Bell. Fragmentul se citește la clasă. La noi, casa și zgomotul sunt altele.',
+        'Noaptea de miercuri, pe la ora două, Ana se trezește în casa de la țară. Pe uliță nu trece nimeni. Din bucătărie urcă un zgomot metalic. O cuprinde teama.',
+        'Coboară treptele și dă peste două șine lucioase, pe podea. Strigă: Mamă, tu ești? Din cămară răspunde un glas. El se află acolo și a adus macheta trenului.',
+        'Povestitorul nu folosește eu pentru sine, deci naratorul stă la persoana a III-a. Timpul e noaptea de miercuri, pe la două. Locurile sunt ulița, podeaua, bucătăria, cămara și casa de la țară.',
+        'Trezirea este expozițiunea. Zgomotul metalic este intriga. Șinele lucioase sunt momentul culminant. Glasul din cămară este deznodământul.',
+        'Teama se naște din metalul auzit. Ușurarea vine când răspunsul din cămară se aude. Ulița pustie ține de descriere. Coborârea ține de narațiune. Replicile țin de dialog.',
+        'Vorbirea indirectă mută replica în povestire. Ana a întrebat dacă în casă se află mama. Glasul a lămurit că tot el e acolo și că macheta trenului îi aparține.',
+        'Metoda are trei mișcări. Notezi ce stă scris, fără o a doua întâmplare. Imaginea începe cu o văd. La urmă spui ce ai fi făcut și legi alegerea prin pentru că, cu un motiv din scenă.'
+      ].join('\n\n'),
+      example: [
+        'Ce stă scris: noaptea, Ana coboară spre un zgomot metalic, găsește șine pe podea, iar cineva din cămară spune că a adus o machetă.',
+        'Ce văd: o văd desculță, oprită în hol, cu ochii pe luciul șinelor. Eu aș fi rămas pe scară și aș fi strigat din nou, pentru că metalul suna în întuneric.',
+        'Povestitorul stă la persoana a III-a. Teama pornește de la zgomot. Ușurarea vine odată cu glasul.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Replica Eu am adus macheta ar rămâne vorbire directă. Indirect, verbul de spus intră înainte: a lămurit că a adus macheta. Descrierea stă pe ulița pustie, narațiunea pe coborâre, dialogul pe cele două glasuri.'
+      }],
+      tryThis: [
+        'Pe întâmplarea Anei scrie trei enunțuri: ce stă scris, ce imagine vezi și ce ai fi făcut, cu pentru că. Imaginea începe cu o văd.',
+        'Numește un reper de timp, un reper de loc, felul naratorului și emoția stârnită de zgomot. Arată bucata de descriere, bucata de narațiune și bucata de dialog.',
+        'Treci la vorbire indirectă strigătul Mamă, tu ești? Păstrează faptele din scenă și nu adăuga un tren care nu este pe podea.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Recapitularea cere trei mișcări: faptele din scenă, imaginea cu o văd și fapta ta, prinse prin pentru că.',
+        'Naratorul rămâne la persoana a III-a, iar momentele urcă de la trezire până la glasul din cămară.',
+        'Teama se sprijină pe zgomotul metalic, iar ușurarea se sprijină pe răspunsul auzit din cămară.'
+      ]
+    }),
+    lesson({
+      id: 'sunete-sensuri',
+      title: 'Litere, sunete și înțeles',
+      kind: 'limba',
+      boxes: [{
+        type: 'definitie',
+        title: 'Sunet și sens',
+        text: 'Literele se văd, sunetele se aud. Diftongul și triftongul se aud o dată. Hiatul se aude de două ori. Sensul se alege din enunț.'
+      }],
+      theory: [
+        'Numărul literelor nu este mereu numărul sunetelor. Diftongul ține două vocale într-o silabă și contează un sunet. Triftongul ține trei vocale și tot un sunet dă. Hiatul le desparte în silabe, deci dă două sunete. Grupul ch se aude o dată.',
+        'Teamă se scrie cu cinci semne: t, e, a, m și ă. Se aude în patru bucăți, fiindcă ea este diftong. Șine numără patru litere și tot atâtea sunete.',
+        'Ochi se scrie o, c, h, i, dar se aude o, ch și i. Silabele lui sunt o-chi. La copii, cinci litere dau cinci sunete, fiindcă ii stă în hiat. Silabele sunt co-pi-i.',
+        'La creioane, ioa este triftong. Din opt litere auzi șase: c, apoi r, e, ioa, n și e. Despărțirea este cre-ioa-ne.',
+        'Sensul propriu și sensul figurat se citesc din enunț. Ulița era goală stă în sens propriu, fiindcă nu trecea nimeni. Gândul cufundat în teamă este figurat, fiindcă un gând nu stă în apă.',
+        'Pentru teamă, sinonimul este frica, antonimul este curajul. Pentru goală, despre uliță, sinonimul este pustie, antonimul este plină.',
+        'Omonimul repetă șirul de sunete, iar sensurile nu se leagă. Mai numește luna când merii înfloresc în luna mai. Mai este adverb când trenul aleargă mai repede spre gară.',
+        'Vară numește anotimpul când mergi la bunici. Vară numește verișoara când Vara te vizitează sâmbăta. Dulce este polisemic: la ceai ține de gust, la amintire ține de o clipă dragă.',
+        'La mână, locul bătăii schimbă rolul. În enunțul Mâna doare, cuvântul e substantiv și bătaia cade pe mâ. Când ciobanul mână oile către sat, cuvântul e verb și bătaia cade pe nă.'
+      ].join('\n\n'),
+      example: [
+        'Teamă: cinci litere, patru sunete, diftongul ea. Ochi: patru litere, trei sunete, grupul ch. Copii: hiat și cinci sunete. Creioane: triftongul ioa și șase sunete.',
+        'Ulița goală rămâne sens propriu. Gândul cufundat în teamă este figurat. Omonime sunt mai ca lună și mai ca adverb. Bătaia stă pe mâ la substantiv și pe nă la verb.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Vară, anotimpul, și vară, verișoara, repetă sunetele, dar sensurile nu se nasc unul din celălalt. Dulce la ceai și dulce la amintire rămân legate, deci e polisemie, nu omonimie. Șine nu pierde niciun sunet.'
+      }],
+      practice: [
+        '1) Câte litere și câte sunete au teamă, ochi și creioane?',
+        '2) Între teamă, copii și creioane, unde găsești diftongul, unde găsești hiatul și unde găsești triftongul?',
+        '3) Pentru teamă, dă un cuvânt apropiat și un cuvânt opus. Construiește o propoziție în care mai este lună și alta în care mai este adverb.',
+        '4) Construiește o propoziție în care dulce ține de gust și alta în care ține de o amintire. Arată silaba tare când mâna doare și când ciobanul mână oile.'
+      ].join('\n\n'),
+      answers: [
+        'Teamă: cinci litere și patru sunete. Ochi: patru litere și trei sunete. Creioane: opt litere și șase sunete.',
+        'Diftongul ea este în teamă. Hiatul ii este în copii. Triftongul ioa este în creioane.',
+        'Sinonim: frică. Antonim: curaj. Lună: Merii înfloresc în luna mai. Adverb: Trenul aleargă mai repede spre gară.',
+        'Gust: Ceaiul acesta este dulce. Amintire: Păstrez o amintire dulce de la bunici. La Mâna doare, accentul cade pe mâ. La verb, accentul cade pe nă.'
+      ],
+      mistakes: 'Nu lua hiatul drept un singur sunet și nu despica grupul ch. Mai nu e polisemic, dulce nu e omonim. La mână, bătaia nu stă pe aceeași silabă când cuvântul devine verb.',
+      tryThis: 'Numără literele și sunetele la teamă, ochi și creioane. Arată diftongul, hiatul și triftongul. Dă apropiatul și opusul pentru teamă, apoi propoziții cu mai și cu dulce, și silaba tare.',
+      keyPoints: [
+        'Diftongul și triftongul se aud o dată, hiatul de două ori, iar ch o singură dată.',
+        'La teamă sunetele sunt mai puține decât literele. La copii sunt egale. La creioane, ioa scoate două.',
+        'Omonime rămân mai și vară. Polisemia stă la dulce. Accentul mută mână de la substantiv la verb.'
+      ]
+    }),
+    lesson({
+      id: 'compunere-gradina',
+      title: 'Grădina bunicilor',
+      kind: 'redactare',
+      boxes: [{
+        type: 'regula',
+        title: 'Tabloul scris de tine',
+        text: 'Un tablou înfățișează un loc, nu chipul unui om. Compunerea cere patru elemente de peisaj, două figuri de stil și o emoție.'
+      }],
+      theory: [
+        'Compunerea care închide anul este o descriere. Textul de pe bancă, la unii profesori, se numește În grădină și îl semnează Dimitrie Anghel. Este tablou, fiindcă arată un loc.',
+        'Strofele lui Anghel nu se transcriu aici. La clasă, pe rândul deschis, numeri silabele, spui felul strofei și felul rimei, apoi cauți epitetul, apoi comparația, apoi personificarea și la urmă enumerația, ca la pastel.',
+        'Compunerea ta mută grădina. Modelul scurt de mai jos rămâne doar o schemă. Cerința adună patru elemente de peisaj, o pereche de figuri de stil și emoția simțită în locul acela.',
+        'În grădina bunicilor stau patru lucruri, spuse pe rând: teiul bătrân, apoi iarba moale, apoi banca de lemn, apoi lumina caldă. Acestea sunt piesele peisajului din model.',
+        'Moale, lângă iarbă, lucrează ca epitet, fiindcă spune o însușire. Comparația apare când lumina caldă e pusă ca o lampă, fiindcă intră ca. Emoția aleasă în model este liniștea.',
+        'Personificarea dă unei plante o faptă de om, de pildă teiul veghează peste bancă. Enumerația înșiră fără să explice: tei, iarbă, bancă, lumină. În textul tău alegi doar două figuri, nu toate patru.',
+        'Un text de zece rânduri se poate deschide cu locul și cu ora. Apoi vin elementele, fiecare cu un detaliu văzut. Figurile stau în fraze, nu într-o listă goală. Emoția închide și se leagă de un element.',
+        'Sub text scrii numele figurilor, ca să se vadă că le-ai ales tu. Grădina se poate schimba: un nuc, un gard, o fântână, un cuib. Teiul din model nu rămâne lângă lampa din model.',
+        'La pastel ai învățat să numeri. Pe versul deschis la clasă repeți numărul de silabe, tipul de strofă și rima. În compunerea proprie nu numeri silabe, fiindcă scrii proză, nu strofă.',
+        'Portretul ar fi înfățișat un om. Tabloul rămâne pe loc. De aceea textul lui Anghel se numește tablou, iar compunerea ta descrie grădina bunicilor cu vorbele tale.'
+      ].join('\n\n'),
+      example: [
+        'În model, piesele sunt teiul, iarba, banca și lumina. Epitetul este moale. Comparația este ca o lampă. Emoția este liniștea.',
+        'Textul lui Anghel este tablou, fiindcă arată un loc. Compunerea ta schimbă și locul, și figurile. Sub textul tău apar numele celor două figuri.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'O personificare de rezervă: banca așteaptă seara. O enumerație de rezervă: flori, pietre, umbră, apă. În textul tău lași doar două figuri și le numești dedesubt, lângă emoția aleasă.'
+      }],
+      tryThis: [
+        'Scrie o descriere a grădinii bunicilor, de zece rânduri sau mai multe. Pune patru elemente de peisaj, o pereche de figuri, fiecare de alt fel, și emoția ta. Sub text, numește figurile.',
+        'Lasă deoparte teiul și lampa din model. Încheie cu două lămuriri: textul lui Anghel este tablou, iar la clasă numeri silabele pe rândul deschis.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Compunerea de final descrie un loc: pui elemente de peisaj, două figuri și emoția ta.',
+        'Poezia În grădină, semnată de Anghel, rămâne un tablou, fiindcă înfățișează locul.',
+        'Grădina bunicilor se scrie cu vorbele tale, iar modelul cu lampa rămâne doar schemă.'
+      ]
+    }),
+    lesson({
+      id: 'lectura-vara',
+      title: 'Ce iei cu tine vara',
+      kind: 'lectura',
+      boxes: [{
+        type: 'regula',
+        title: 'Două liste',
+        text: 'Prima strânge operele din lecții. A doua e de vacanță și de clasa a VII-a. Tema are numele orizonturile lumii și ale cunoașterii.'
+      }],
+      theory: [
+        'Anul lasă două liste de cărți. Poți alege și o carte neterminată, dacă spui ce vrei să descoperi.',
+        'Prima listă strânge opere lucrate în lecții. Ion Creangă a scris Amintiri din copilărie. Anatole France a scris Cartea prietenului meu. Povestea Vrancei apare fără nume de autor.',
+        'Constantin Chiriță a scris Cireșarii. Calistrat Hogaș a scris Amintiri dintr-o călătorie. Antoine de Saint-Exupéry a scris Micul prinț. Mark Twain a scris Prinț și cerșetor.',
+        'Johanna Spyri a scris Heidi, fetița munților. Fabulele îi au pe Alecu Donici și pe La Fontaine. George Topîrceanu a scris Rapsodii de primăvară. Dimitrie Anghel a scris În grădină.',
+        'Alexandru Vlahuță a scris România pitorească. George Șovu a scris Fascinații. Jules Verne a scris Douăzeci de mii de leghe sub mări.',
+        'A doua listă e pentru vacanță, apoi și pentru clasa a VII-a. Tema care le strânge se numește orizonturile lumii și ale cunoașterii. Radu Tudoran a scris Toate pânzele sus.',
+        'Grigore Băjenaru a scris Cișmigiu & Comp. Tot el a scris Bună dimineața, băieți! Marin Preda a scris Viața ca o pradă. Mihail Sadoveanu a scris Hanul Ancuței.',
+        'Ion Minulescu a scris Corigent la limba română. Ioana Pârvulescu a scris Inocenții. Din poezii intră Mihai Eminescu și Nichita Stănescu. Alături stau Lucian Blaga și Magda Isanos.',
+        'Vasile Alecsandri a scris Chirița în Iași. Intră și teatru semnat de Matei Vișniec. Fănuș Neagu a scris În văpaia lunii. Veronica D. Niculescu a scris O vară cu Isidor.',
+        'Louis Sachar a scris Tabăra. Daniel Defoe a scris Robinson Crusoe. Jules Verne a scris și O călătorie spre centrul Pământului. Eric Linklater a scris Vântul din lună.',
+        'Mimi Thebo a scris Ursoaica din vis. Lindsey Becker a scris Hoțul de stele. Laura Marx Fitzgerald a scris Theodora Tenpenny și tabloul pierdut. John Boyne a scris Băiatul cu pijamale în dungi.',
+        'Lois Lowry a scris Darul lui Jonas. Alexandre Dumas a scris Cei trei muschetari. Alegi câte un titlu din fiecare listă. Spui motivul, locul lecturii și emoția.',
+        'Dacă lectura nu e gata, notezi ce vrei să descoperi în fiecare carte. Răspunsul are șase rânduri sau opt. O frază luată de pe copertă nu se mută în textul tău.'
+      ].join('\n\n'),
+      example: [
+        'Din prima listă iau Douăzeci de mii de leghe sub mări, fiindcă vreau submarinul Nautilus. Din lista de vacanță iau Robinson Crusoe, fiindcă vreau o insulă.',
+        'Aș citi pe prispă, în vacanță. Curiozitatea este emoția pe care o aștept. Dacă lectura a rămas la jumătate, o spun și adaug ce vreau să aflu.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Din lecții poți lua Micul prinț, fiindcă vrei să vezi ce învață băiatul de la vulpe. Din vacanță poți lua Toate pânzele sus, fiindcă vrei o corabie. Locul poate fi hamacul. Emoția poate fi nerăbdarea. Dacă nu ai ajuns la final, scrii întrebarea cu care ai rămas.'
+      }],
+      tryThis: [
+        'Din operele anului iei un titlu, din cărțile de vacanță iei altul. Pe șase rânduri, sau pe opt, scrii de ce, unde ai sta cu cartea și ce simți că te așteaptă.',
+        'Pentru o carte nedusă la capăt, notezi descoperirea pe care o cauți. Coperta nu își mută fraza în răspunsul tău.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Anul lasă două liste: operele din lecții și cărțile de vacanță, împreună cu clasa a VII-a.',
+        'Alegi câte un titlu și spui motivul, locul lecturii și emoția așteptată.',
+        'O carte neterminată rămâne valabilă dacă scrii ce vrei să afli din ea.'
+      ]
+    })
   ]
 };
