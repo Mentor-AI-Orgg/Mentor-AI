@@ -5,6 +5,7 @@ const { pickPractice } = require("../data/practicePicker");
 const { checkExercise, checkMany, scoreToGrade, encouragementFor } = require("../data/exerciseBank");
 const { findQuestion } = require("../data/practiceBank");
 const { judgeAnswer } = require("../grading/answerJudge");
+const { lessonsFor } = require("../data/gimnaziuLessons");
 const { ensureUser, getTodayKey, recordProgress, recordSkillReview, getSkillHistory } = require("../data/economyStore");
 const { noteCards } = require("../data/mistakeBook");
 const { rate } = require("../data/spacedRepetition");
@@ -26,7 +27,8 @@ router.post("/generate", (req, res) => {
     exclude_ids: excludeIds = [],
     count,
     track = "",
-    target_note: targetNote
+    target_note: targetNote,
+    lesson_id: lessonId = ""
   } = req.body || {};
 
   const isEn = String(track).toLowerCase() === "en" || String(classLevel).toLowerCase() === "en";
@@ -53,7 +55,8 @@ router.post("/generate", (req, res) => {
     excludeIds: Array.isArray(excludeIds) ? excludeIds : [],
     seenPoints: [],
     count,
-    targetNote
+    targetNote,
+    lessonId
   });
 
   const stored = user.practiceSeen[preview.key] || { points: [], questionIds: [], day: null };
@@ -65,8 +68,10 @@ router.post("/generate", (req, res) => {
     kind: kind === "test" ? "test" : "flashcards",
     excludeIds: [...new Set([...(Array.isArray(excludeIds) ? excludeIds : []), ...(stored.questionIds || [])])],
     seenPoints: stored.points || [],
-    count: Number(count) || (kind === "test" ? 10 : 8),
-    targetNote
+    seenQuestionIds: stored.questionIds || [],
+    count: Number(count) || (lessonId ? (kind === "test" ? 5 : 8) : (kind === "test" ? 10 : 8)),
+    targetNote,
+    lessonId
   });
 
   res.json({
@@ -75,7 +80,7 @@ router.post("/generate", (req, res) => {
     mocked: false,
     track: isEn ? "en" : "",
     topic: topic || pack.chapterId,
-    infinite: true
+    infinite: lessonId ? false : true
   });
 });
 
@@ -106,10 +111,10 @@ router.post("/check", (req, res) => {
 });
 
 router.post("/seen", (req, res) => {
-  const { chapter_id: chapterId = "", subject = "matematica", class_level: classLevel = 5, point = "", card_id: cardId = "", kind = "flashcards" } = req.body || {};
+  const { chapter_id: chapterId = "", subject = "matematica", class_level: classLevel = 5, point = "", card_id: cardId = "", kind = "flashcards", lesson_id: lessonId = "" } = req.body || {};
   const user = ensureUser(req.auth.email);
   if (!user.practiceSeen) user.practiceSeen = {};
-  const pack = pickPractice({ subject, grade: classLevel, chapterId, topic: chapterId, kind: kind === "test" ? "test" : "flashcards", count: 3 });
+  const pack = pickPractice({ subject, grade: classLevel, chapterId, topic: chapterId, kind: kind === "test" ? "test" : "flashcards", lessonId, count: 3 });
   const key = pack.key;
   if (!user.practiceSeen[key]) user.practiceSeen[key] = { points: [], questionIds: [], day: getTodayKey() };
   if (point && !user.practiceSeen[key].points.includes(point)) user.practiceSeen[key].points.push(point);
@@ -123,7 +128,8 @@ router.post("/seen", (req, res) => {
     coverage: {
       seen: user.practiceSeen[key].points.length,
       total,
-      complete: user.practiceSeen[key].points.length >= total
+      complete: user.practiceSeen[key].points.length >= total,
+      lessons: pack.coverage.lessons
     }
   });
 });
@@ -141,7 +147,8 @@ router.post("/finish", async (req, res) => {
     title = "",
     answers = [],
     picks = [],
-    duration_ms: durationMs = 0
+    duration_ms: durationMs = 0,
+    lesson_id: lessonId = ""
   } = req.body || {};
 
   const isTest = kind !== "flashcards";
@@ -168,6 +175,7 @@ router.post("/finish", async (req, res) => {
       return {
         id: question.id,
         point: question.point,
+        lesson: question.lesson || "",
         prompt: question.question,
         given: chosen,
         skipped: !chosen,
@@ -239,7 +247,8 @@ router.post("/finish", async (req, res) => {
   let award = null;
   const duration = Math.max(0, Number(durationMs) || 0);
 
-  if (isTest) {
+  const onLesson = Boolean(String(lessonId || "").trim());
+  if (isTest && !onLesson) {
     award = recordProgress({
       userId: req.auth.email,
       type: "chapter_test",
@@ -247,7 +256,7 @@ router.post("/finish", async (req, res) => {
       note: title || "Test de capitol",
       meta: { subject, grade: classLevel, chapterId, title, score: correct, total, gradeNote, durationMs: duration }
     });
-  } else if (correct >= 5) {
+  } else if (!isTest && correct >= 5) {
     award = recordProgress({
       userId: req.auth.email,
       type: "flashcard_known",
@@ -264,8 +273,18 @@ router.post("/finish", async (req, res) => {
       : `Repetă mâine ideea „${point}”: o întrebare, apoi explică de ce varianta ta e bună.`
   }));
 
-  let parentNotify = { skipped: true, reason: "not_a_test" };
-  if (isTest) {
+  const lessons = lessonsFor(subject, classLevel, chapterId) || [];
+  const titleByLesson = new Map(lessons.map(lesson => [lesson.id, lesson.title]));
+  const lessonsToReview = [];
+  const seenLessons = new Set();
+  items.filter(item => !item.ok && item.lesson).forEach(item => {
+    if (seenLessons.has(item.lesson) || lessonsToReview.length >= 3) return;
+    seenLessons.add(item.lesson);
+    lessonsToReview.push({ id: item.lesson, title: titleByLesson.get(item.lesson) || item.lesson });
+  });
+
+  let parentNotify = { skipped: true, reason: onLesson ? "lesson_test" : "not_a_test" };
+  if (isTest && !onLesson) {
     const { notifyParent } = require("../notify/parentActivity");
     parentNotify = await notifyParent({
       studentEmail: req.auth.email,
@@ -297,6 +316,7 @@ router.post("/finish", async (req, res) => {
     message,
     strengths,
     weaknesses,
+    lessonsToReview,
     homework,
     history: review.snapshot,
     awarded: award?.awarded || null,
