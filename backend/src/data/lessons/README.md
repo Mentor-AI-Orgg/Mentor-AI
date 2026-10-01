@@ -78,7 +78,7 @@ Pe ecran, fiecare lecție este un card `<details id="lectie-{id}">`. Prima este 
 
 ## Harta id-urilor
 
-Modulul `backend/src/data/lessonIdMap.js` ajunge în Etapa 0B. Până atunci harta este goală, iar id-urile de azi sunt cele din tabel.
+Modulul `backend/src/data/lessonIdMap.js` ține `LESSON_ID_MAP` (goală până la prima unire) și `LESSON_ID_MAP_VERSION` (pornește de la 1). Instantaneul celor 720 de chei de dinainte de uniri este `tests/fixtures/lessonIds-baseline.json`. Nu îl regenera.
 
 Când un capitol unește sau împarte lecții:
 
@@ -89,7 +89,9 @@ Când un capitol unește sau împarte lecții:
 
 `resolveLessonId(subject, grade, chapterId, id)` întoarce id-ul actual (ținta principală) sau `null` dacă id-ul nu e în hartă. Prompturile de teste care încă pomenesc un id vechi (`ecuatie-grad2`, `teorema-inaltimii`, `paralelogram`) îl rezolvă cu funcția asta, nu prin redenumire în test.
 
-`resolveLessonKey(key)` urmează lanțul și întoarce `{ key, keys, moved }`. `aliasesFor(subject, grade, chapterId)` întoarce `{ idVechi: idNou }` pentru ancorele `#lectie-{idVechi}`.
+`resolveLessonKey(key)` urmează lanțul și întoarce `{ key, keys, moved }`, sau `null` la un ciclu. `aliasesFor(subject, grade, chapterId)` întoarce `{ idVechi: idNou }` pentru ancorele `#lectie-{idVechi}`. `GET /api/curriculum` pune lista pe fiecare capitol, chiar dacă e goală.
+
+Progresul vechi se mută în `economyStore` când `user.lessonMapVersion` e în urma hărții. Înainte de prima migrare la o versiune, se copiază `data/mentor-ai.json.pre-lectii-vN`, fără să se șteargă nimic. Cheile de capitol, `chapters`, seria și `activityLog` rămân neatinse. Dacă `backend/src/data/quiz/` apare, `scripts/migrate-quiz-lessons.js` rescrie `lesson` și `point`.
 
 ## Ordinea cu prompturile de teste
 

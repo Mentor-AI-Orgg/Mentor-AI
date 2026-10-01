@@ -267,6 +267,20 @@ function restoreObject(target, data) {
   Object.assign(target, data || {});
 }
 
+// Copie de dinainte de migrarea id-urilor de lecție. Nu se șterge și nu se rescrie.
+function lessonMapBackup(version) {
+  const dest = `${DATA_FILE}.pre-lectii-v${version}`;
+  if (fs.existsSync(dest)) return { saved: false, reason: "exists", path: dest };
+  if (!fs.existsSync(DATA_FILE)) return { saved: false, reason: "no_file", path: dest };
+  try {
+    fs.copyFileSync(DATA_FILE, dest);
+    return { saved: true, path: dest };
+  } catch (error) {
+    console.error(`[persistence] copia pre-lectii-v${version} a eșuat: ${error.message}`);
+    return { saved: false, reason: "error", path: dest };
+  }
+}
+
 module.exports = {
   DATA_FILE,
   DATA_DIR,
@@ -279,6 +293,7 @@ module.exports = {
   mapToObject,
   stripRemovedCollections,
   migrateFile,
+  lessonMapBackup,
   restoreMap,
   restoreArray,
   restoreObject

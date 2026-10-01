@@ -17,6 +17,7 @@ const { grade6Guide } = require('./romana6Litera');
 const { grade7Guide } = require('./romana7Litera');
 const { grade8Guide } = require('./romana8Litera');
 const { shapeUnit } = require('./lessonShape');
+const { aliasesFor } = require('./lessonIdMap');
 const { glossaryFor } = require('./chapterGlossary');
 const { dailyQuote, formatQuote } = require('./quotes');
 const { listGeometryAtlas } = require('./geometryAtlas');
@@ -528,7 +529,8 @@ function getGuide(subject, grade) {
         : lessonsFor(sid, g, unit.id),
       glossary: Array.isArray(unit.glossary) && unit.glossary.length
         ? unit.glossary
-        : glossaryFor(sid, g, unit.id)
+        : glossaryFor(sid, g, unit.id),
+      lessonAliases: aliasesFor(sid, g, unit.id)
     })),
     atlas: sid === 'matematica' ? listGeometryAtlas(g) : null
   };
