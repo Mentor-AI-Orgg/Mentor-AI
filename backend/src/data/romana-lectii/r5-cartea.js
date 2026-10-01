@@ -1,206 +1,775 @@
+'use strict';
+
+const { romanaLesson } = require('../lessonBuilder');
+
+function lesson(f) {
+  return romanaLesson(f);
+}
+
 module.exports = {
-  "id": "cartea",
-  "title": "Cartea, sursă de cunoaștere și legătură între generații",
-  "inOwnWords": "Unitatea 2 leagă lectura de vocabular și de scris: ce e un cuvânt, alfabetul, silaba, accentul, sinonimele și antonimele, apoi paragraful și pașii scrierii. Cartea românească e urmărită ca obiect de învățătură, de la tipar la forma digitală. Regula și scena de care ai nevoie sunt în lecție.",
-  "toc": [
-    "Cărțile, căi de cunoaștere și autocunoaștere. Carte românească de învățătură",
-    "Câmpul lexical. Cuvinte-cheie",
-    "Cuvântul, forma și sensul. Alfabetul limbii române",
-    "Specificul limbii române în scriere",
-    "Silaba. Tipuri de sunete. Accentul. Corespondența litere–sunete",
-    "Sinonime și antonime",
-    "Prezentarea textului. Scrisul de mână. Paragraful",
-    "Etapele scrierii: generarea ideilor, planificare, scriere",
-    "Tema. Detaliul. Dialogul. Empatia",
-    "Recapitulare și evaluare"
+  id: 'cartea',
+  title: 'Cartea, sursă de cunoaștere și legătură între generații',
+  inOwnWords: 'Unitatea pune cartea între citit, vorbire și scris. Înveți cum se grupează cuvintele, cum se scriu literele, silaba și accentul, apoi cum se aleg vorbele apropiate sau opuse. La urmă vin notița, paragraful, proiectul și felul în care asculți un coleg. Regulile stau în lecții, cu o scenă pe care o poți relua.',
+  toc: [
+    'Cărțile, căi de cunoaștere și autocunoaștere. Carte românească de învățătură',
+    'Câmpul lexical. Cuvinte-cheie',
+    'Cuvântul, forma și sensul. Alfabetul limbii române',
+    'Specificul limbii române în scriere',
+    'Silaba. Tipuri de sunete. Accentul. Corespondența litere–sunete',
+    'Sinonime și antonime',
+    'Prezentarea textului. Scrisul de mână. Paragraful',
+    'Etapele scrierii: generarea ideilor, planificare, scriere',
+    'Tema. Detaliul. Dialogul. Empatia',
+    'Recapitulare și evaluare'
   ],
-  "glossary": [
+  glossary: [
     {
-      "term": "câmp lexical",
-      "meaning": "Cuvinte înrudite ca înțeles. Dacă sunt multe, acolo este tema."
+      term: 'câmp lexical',
+      meaning: 'Cuvinte înrudite ca înțeles. Dacă sunt multe, acolo este tema.'
     },
     {
-      "term": "cuvânt-cheie",
-      "meaning": "Vorba fără de care nu mai înțelegi despre ce este textul."
+      term: 'cuvânt-cheie',
+      meaning: 'Vorba fără de care nu mai înțelegi despre ce este textul.'
     },
     {
-      "term": "diacritice",
-      "meaning": "Semne pe literă: căciulița (ă), virgula (ș, ț), circumflexul (â, î)."
+      term: 'diacritice',
+      meaning: 'Semne pe literă: căciulița (ă), virgula (ș, ț), circumflexul (â, î).'
     },
     {
-      "term": "silabă",
-      "meaning": "Ce spui dintr-o singură deschidere a gurii. În ea stă o singură vocală."
+      term: 'silabă',
+      meaning: 'Ce spui dintr-o singură deschidere a gurii. În ea stă o singură vocală.'
     },
     {
-      "term": "semivocală",
-      "meaning": "e, i, o sau u care nu ține singură silaba, ci stă lângă o vocală."
+      term: 'semivocală',
+      meaning: 'e, i, o sau u care nu ține singură silaba, ci stă lângă o vocală.'
     },
     {
-      "term": "accent",
-      "meaning": "Silaba spusă mai puternic. Poate schimba sensul cuvântului."
+      term: 'accent',
+      meaning: 'Silaba spusă mai puternic. Poate schimba sensul cuvântului.'
     },
     {
-      "term": "sinonim",
-      "meaning": "Altă formă, același înțeles. Contextul alege care se potrivește."
+      term: 'sinonim',
+      meaning: 'Altă formă, același înțeles. Contextul alege care se potrivește.'
     },
     {
-      "term": "antonim",
-      "meaning": "Alt cuvânt, cu sensul din partea opusă: bucurie / tristețe."
+      term: 'antonim',
+      meaning: 'Alt cuvânt, cu sensul din partea opusă: bucurie / tristețe.'
     }
   ],
-  "lessons": [
-    {
-      "id": "deschidere-carte",
-      "title": "Harta unității despre carte",
-      "platter": "Harta unității despre carte este drumul anunțat, nu lecția gata făcută. Prin carte afli despre lume și despre tine. Cei de dinainte îți lasă ce au învățat. De aceea cartea leagă generațiile. Pe hartă stau câmpul lexical, cuvântul, alfabetul, silaba și accentul. Sinonimele vin mai încolo. Competențele sunt opt: 1.1, 1.3, 2.5, 3.2, 3.3, 4.2, 4.3 și 5.1. Ele cer context și scris îngrijit. Dacă lecția de azi este alfabetul, nu bifezi un titlu doar pentru că îl vezi anunțat. Harta arată drumul. Lecția predă. Cartea rămâne firul: aceeași învățătură, alt suport, altă vreme.\n\nExemplu lucrat: Lecția de azi este alfabetul, deci lucrezi literele. Sinonimele rămân un popas viitor pe hartă, nu un titlu bifat azi. Cartea ține aceeași învățătură, pe un alt suport și în altă vreme.\n\nScrie două propoziții. Folosește cuvintele hartă, generații, lume, câmp lexical, cuvânt, alfabet, silabă, accent, sinonime, opt, context și scris îngrijit. În prima spune că harta anunță drumul și că sinonimele vin mai încolo. În a doua spune că lecția de azi este alfabetul și numește competențele 1.1, 1.3, 2.5, 3.2, 3.3, 4.2, 4.3 și 5.1.\n\nHarta unității despre carte anunță drumul prin care cartea leagă generațiile și te învață despre lume și despre tine. Pe hartă stau câmpul lexical, cuvântul, alfabetul, silaba și accentul, sinonimele vin mai încolo, iar cele opt competențe cer context și scris îngrijit.",
-      "theory": "Harta unității despre carte este drumul anunțat, nu lecția gata făcută. Prin carte afli despre lume și despre tine. Cei de dinainte îți lasă ce au învățat. De aceea cartea leagă generațiile. Pe hartă stau câmpul lexical, cuvântul, alfabetul, silaba și accentul. Sinonimele vin mai încolo. Competențele sunt opt: 1.1, 1.3, 2.5, 3.2, 3.3, 4.2, 4.3 și 5.1. Ele cer context și scris îngrijit. Dacă lecția de azi este alfabetul, nu bifezi un titlu doar pentru că îl vezi anunțat. Harta arată drumul. Lecția predă. Cartea rămâne firul: aceeași învățătură, alt suport, altă vreme.",
-      "example": "Lecția de azi este alfabetul, deci lucrezi literele. Sinonimele rămân un popas viitor pe hartă, nu un titlu bifat azi. Cartea ține aceeași învățătură, pe un alt suport și în altă vreme.",
-      "tryThis": "Scrie două propoziții. Folosește cuvintele hartă, generații, lume, câmp lexical, cuvânt, alfabet, silabă, accent, sinonime, opt, context și scris îngrijit. În prima spune că harta anunță drumul și că sinonimele vin mai încolo. În a doua spune că lecția de azi este alfabetul și numește competențele 1.1, 1.3, 2.5, 3.2, 3.3, 4.2, 4.3 și 5.1.",
-      "recap": "Harta unității despre carte anunță drumul prin care cartea leagă generațiile și te învață despre lume și despre tine. Pe hartă stau câmpul lexical, cuvântul, alfabetul, silaba și accentul, sinonimele vin mai încolo, iar cele opt competențe cer context și scris îngrijit."
-    },
-    {
-      "id": "carte-lexic",
-      "title": "Cuvântul-cheie și câmpul lexical",
-      "platter": "Cuvântul-cheie este vorba fără de care nu înțelegi tema și pe care o folosești și la căutare. Oamenii au păstrat ce știau pe piatră, pe lut, pe hârtie, apoi pe ecran. Suportul s-a schimbat. Nevoia a rămas, ca să nu se piardă învățătura. Dacă scoți cuvântul-cheie, nu se mai știe despre ce este textul. Un cuvânt frumos, care nu spune tema, este decor, nu cheie. Când tema este biblioteca, în câmp stau raftul și fișa. Cuvântul-cheie al unui afiș scurt este împrumut. Câmpul lexical este o grupă de cuvinte înrudite ca înțeles, cum sunt păsările, timpul sau rudele. Dacă se adună multe din același câmp, acolo este subiectul. Un text poate avea două câmpuri, de pildă carte și timp. La o altă cultură grupezi la fel, pe mâncare, muzică și clădiri. Nu pui în aceeași listă cuvinte care nu spun același fel de lucru. Rândunică, vrabie și ciocănitoare țin de păsări. Papirus, tipar și ecran țin de carte. Secol, epocă și mileniu țin de timp. Raft, copertă și pagină țin tot de carte. Vrabie lângă secol înseamnă două câmpuri, nu unul singur. Posterul cu un câmp lexical este o lucrare făcută de tine. El amestecă text și imagine. Tu alegi un câmp, cum sunt hobby-ul tău, mâncarea, sportul sau simbolurile. Pui cuvinte-cheie care anunță subiectul, nu o vorbă goală. Informațiile vin din mai multe discipline, pentru că una singură nu ajunge pentru diversitate. Un desen fără niciun cuvânt care să spună tema nu ține loc de poster. Dacă subiectul este ciorba, cuvântul-cheie este ciorba. De la istorie iei o sărbătoare. De la geografie iei o regiune. De la desen iei farfuria. Trei discipline stau într-un singur câmp, mâncarea.\n\nExemplu lucrat: Tema este biblioteca, iar cuvântul-cheie este împrumut. Fără împrumut, afișul nu mai spune ce faci acolo, iar un cuvânt doar frumos rămâne decor. Rândunică, vrabie și ciocănitoare stau la păsări. Secol, epocă și mileniu stau la timp. Sunt două câmpuri, nu unul. La posterul despre ciorbă, cheia este ciorba. Iei o sărbătoare de la istorie, o regiune de la geografie și farfuria de la desen.\n\nScrie planul unui poster despre mâncare. Folosește cuvintele câmp, ciorba, împrumut, raft, fișă, papirus, tipar, ecran, copertă, pagină, secol, epocă, mileniu, rândunică, vrabie, ciocănitoare, hobby, sport, simboluri, piatră, lut, hârtie, rude, muzică și clădiri. Numește trei discipline: istorie, cu o sărbătoare, geografie, cu o regiune, și desen, cu farfuria. Fă o listă pentru carte și una pentru timp. Scrie o propoziție despre bibliotecă în care subliniezi cuvântul-cheie împrumut.\n\nCuvântul-cheie este vorba fără de care nu înțelegi tema, iar câmpul lexical grupează cuvinte înrudite, cum sunt cartea, timpul și păsările. Posterul este lucrarea ta, cu text, imagine și informații din mai multe discipline, iar un desen fără cuvântul temei nu ține loc de poster.",
-      "theory": "Cuvântul-cheie este vorba fără de care nu înțelegi tema și pe care o folosești și la căutare. Oamenii au păstrat ce știau pe piatră, pe lut, pe hârtie, apoi pe ecran. Suportul s-a schimbat. Nevoia a rămas, ca să nu se piardă învățătura. Dacă scoți cuvântul-cheie, nu se mai știe despre ce este textul. Un cuvânt frumos, care nu spune tema, este decor, nu cheie. Când tema este biblioteca, în câmp stau raftul și fișa. Cuvântul-cheie al unui afiș scurt este împrumut. Câmpul lexical este o grupă de cuvinte înrudite ca înțeles, cum sunt păsările, timpul sau rudele. Dacă se adună multe din același câmp, acolo este subiectul. Un text poate avea două câmpuri, de pildă carte și timp. La o altă cultură grupezi la fel, pe mâncare, muzică și clădiri. Nu pui în aceeași listă cuvinte care nu spun același fel de lucru. Rândunică, vrabie și ciocănitoare țin de păsări. Papirus, tipar și ecran țin de carte. Secol, epocă și mileniu țin de timp. Raft, copertă și pagină țin tot de carte. Vrabie lângă secol înseamnă două câmpuri, nu unul singur. Posterul cu un câmp lexical este o lucrare făcută de tine. El amestecă text și imagine. Tu alegi un câmp, cum sunt hobby-ul tău, mâncarea, sportul sau simbolurile. Pui cuvinte-cheie care anunță subiectul, nu o vorbă goală. Informațiile vin din mai multe discipline, pentru că una singură nu ajunge pentru diversitate. Un desen fără niciun cuvânt care să spună tema nu ține loc de poster. Dacă subiectul este ciorba, cuvântul-cheie este ciorba. De la istorie iei o sărbătoare. De la geografie iei o regiune. De la desen iei farfuria. Trei discipline stau într-un singur câmp, mâncarea.",
-      "example": "Tema este biblioteca, iar cuvântul-cheie este împrumut. Fără împrumut, afișul nu mai spune ce faci acolo, iar un cuvânt doar frumos rămâne decor. Rândunică, vrabie și ciocănitoare stau la păsări. Secol, epocă și mileniu stau la timp. Sunt două câmpuri, nu unul. La posterul despre ciorbă, cheia este ciorba. Iei o sărbătoare de la istorie, o regiune de la geografie și farfuria de la desen.",
-      "tryThis": "Scrie planul unui poster despre mâncare. Folosește cuvintele câmp, ciorba, împrumut, raft, fișă, papirus, tipar, ecran, copertă, pagină, secol, epocă, mileniu, rândunică, vrabie, ciocănitoare, hobby, sport, simboluri, piatră, lut, hârtie, rude, muzică și clădiri. Numește trei discipline: istorie, cu o sărbătoare, geografie, cu o regiune, și desen, cu farfuria. Fă o listă pentru carte și una pentru timp. Scrie o propoziție despre bibliotecă în care subliniezi cuvântul-cheie împrumut.",
-      "recap": "Cuvântul-cheie este vorba fără de care nu înțelegi tema, iar câmpul lexical grupează cuvinte înrudite, cum sunt cartea, timpul și păsările. Posterul este lucrarea ta, cu text, imagine și informații din mai multe discipline, iar un desen fără cuvântul temei nu ține loc de poster."
-    },
-    {
-      "id": "stea-intrebari",
-      "title": "Steaua de întrebări",
-      "platter": "Steaua de întrebări este schema în care pui cuvântul în centru și scrii în jur întrebări ca să explorezi tema. Întrebările sunt ce, la ce, pentru cine, cu cine, cum, unde, când și de ce. Pui cel puțin patru. Unde cere un loc. De ce cere un motiv. Din fiecare răspuns poate porni o întrebare nouă. Așa nu rămâi la o propoziție goală, de felul că este important. Tema se deschide în mai multe părți.\n\nExemplu lucrat: Centrul stelei este carte. La ce folosește primește un răspuns pe larg: păstrează o poveste. Unde o cauți azi cere un loc, bibliotecă sau ecran. De ce există cere un motiv: oamenii au vrut să nu uite. Vorba că este important rămâne goală, fără loc și fără motiv. Din răspuns poate porni o întrebare nouă.\n\nDesenează o stea cu cuvântul carte în centru. Scrie în jur întrebările ce, la ce, pentru cine, cu cine, cum, unde, când și de ce. Răspunde la fiecare într-o propoziție. La unde dă un loc. La de ce dă un motiv. Dintr-un răspuns pornește o întrebare nouă, nu te opri la vorba că este important.\n\nSteaua de întrebări este schema cu tema în centru și cu întrebările ce, la ce, pentru cine, cu cine, cum, unde, când și de ce în jur. Unde cere un loc, de ce cere un motiv, iar din fiecare răspuns poate porni o întrebare nouă.",
-      "theory": "Steaua de întrebări este schema în care pui cuvântul în centru și scrii în jur întrebări ca să explorezi tema. Întrebările sunt ce, la ce, pentru cine, cu cine, cum, unde, când și de ce. Pui cel puțin patru. Unde cere un loc. De ce cere un motiv. Din fiecare răspuns poate porni o întrebare nouă. Așa nu rămâi la o propoziție goală, de felul că este important. Tema se deschide în mai multe părți.",
-      "example": "Centrul stelei este carte. La ce folosește primește un răspuns pe larg: păstrează o poveste. Unde o cauți azi cere un loc, bibliotecă sau ecran. De ce există cere un motiv: oamenii au vrut să nu uite. Vorba că este important rămâne goală, fără loc și fără motiv. Din răspuns poate porni o întrebare nouă.",
-      "tryThis": "Desenează o stea cu cuvântul carte în centru. Scrie în jur întrebările ce, la ce, pentru cine, cu cine, cum, unde, când și de ce. Răspunde la fiecare într-o propoziție. La unde dă un loc. La de ce dă un motiv. Dintr-un răspuns pornește o întrebare nouă, nu te opri la vorba că este important.",
-      "recap": "Steaua de întrebări este schema cu tema în centru și cu întrebările ce, la ce, pentru cine, cu cine, cum, unde, când și de ce în jur. Unde cere un loc, de ce cere un motiv, iar din fiecare răspuns poate porni o întrebare nouă."
-    },
-    {
-      "id": "lucru-grup",
-      "title": "Roluri în grup",
-      "platter": "Lucrul în grup este munca în care fiecare are un rol clar. Liderul ține echipa unită. Administratorul are grijă de materiale. Informaticianul ține sursele. Ilustratorul adună imaginile. Cronometrul păzește timpul. Vorbiți pe rând. Nu vorbiți peste coleg. Refuzul se spune politicos, cu motiv. Sursele stau într-o listă separată. Nu este de ajuns ca un singur elev să facă totul, iar ceilalți doar să semneze.\n\nExemplu lucrat: Trei colegi fac o axă a cărții, de la lut la ecran. Cronometrul oprește căutarea la timp. Liderul îl întreabă pe cel tăcut ce crede. Informaticianul notează de unde este imaginea, într-o listă separată. Dacă unul face totul și ceilalți doar semnează, rolurile nu sunt ținute. Fiecare vorbește pe rând.\n\nScrie cinci propoziții despre un proiect despre carte, cu axa cărții, de la lut la ecran. Folosește cuvintele lider, administrator, informatician, ilustrator, cronometru, pe rând, politicos, motiv și listă separată. Arată că nu ajunge ca un singur elev să facă totul, iar ceilalți doar să semneze.\n\nLucrul în grup este munca în care fiecare are un rol: lider, administrator, informatician, ilustrator și cronometru. Vorbiți pe rând, refuzul se spune politicos, cu motiv, iar sursele stau într-o listă separată.",
-      "theory": "Lucrul în grup este munca în care fiecare are un rol clar. Liderul ține echipa unită. Administratorul are grijă de materiale. Informaticianul ține sursele. Ilustratorul adună imaginile. Cronometrul păzește timpul. Vorbiți pe rând. Nu vorbiți peste coleg. Refuzul se spune politicos, cu motiv. Sursele stau într-o listă separată. Nu este de ajuns ca un singur elev să facă totul, iar ceilalți doar să semneze.",
-      "example": "Trei colegi fac o axă a cărții, de la lut la ecran. Cronometrul oprește căutarea la timp. Liderul îl întreabă pe cel tăcut ce crede. Informaticianul notează de unde este imaginea, într-o listă separată. Dacă unul face totul și ceilalți doar semnează, rolurile nu sunt ținute. Fiecare vorbește pe rând.",
-      "tryThis": "Scrie cinci propoziții despre un proiect despre carte, cu axa cărții, de la lut la ecran. Folosește cuvintele lider, administrator, informatician, ilustrator, cronometru, pe rând, politicos, motiv și listă separată. Arată că nu ajunge ca un singur elev să facă totul, iar ceilalți doar să semneze.",
-      "recap": "Lucrul în grup este munca în care fiecare are un rol: lider, administrator, informatician, ilustrator și cronometru. Vorbiți pe rând, refuzul se spune politicos, cu motiv, iar sursele stau într-o listă separată."
-    },
-    {
-      "id": "cuvant-alfabet",
-      "title": "Alfabetul și literele împrumutate",
-      "platter": "Cuvântul este unitatea de bază a vocabularului și are un sens și o formă. Are sunete când îl spui și litere când îl scrii. Alfabetul este lista literelor, într-o ordine fixă. Cel românesc are 31 de litere și vine din cel latin. În dicționar cauți după ordinea aceasta, nu la întâmplare. R vine înaintea lui V, deci roman stă înaintea lui viitor. Carte și book numesc același obiect, cu alte litere. Alfabetul chirilic este alfabetul slav vechi cu care au fost scrise primele cărți românești. A fost scrisul oficial până în 1860. Apoi au venit literele latine de azi. O cronică veche poate avea semne necunoscute, dar nu este neapărat altă limbă. O pagină veche își poate schimba alfabetul și poate rămâne tot românească. Cu literele latine scriem acum. Literele k, w, q și y sunt litere din alfabet. Le folosești mai ales în cuvinte luate din alte limbi sau în nume. Le întâlnești în kilometru, în kilogram sau în watt. Nu le schimbi după ureche și nu le înlocuiești din capul tău, dacă norma le păstrează. Kilogram se scrie cu k, nu cu c. Watt păstrează w. Litera nu este o diacritică. Sensul îl cauți în dicționar. Litera o verifici la scrierea corectă. Altfel cuvântul nu mai este cel din dicționar și poate să nu mai fie găsit.\n\nExemplu lucrat: Ca să cauți roman într-un dicționar tipărit, urmărești alfabetul. R vine înaintea lui V, deci roman stă înaintea lui viitor, nu invers. Kilogram se scrie cu k, nu cu c. Watt păstrează w, nu îl schimbi după ureche. Aceeași idee, scrisă chirilic, pare un șir străin până înveți semnele. Limba rămâne românească. Chirilica a fost oficială până în 1860, apoi au venit literele latine. Alfabetul are 31 de litere și vine din cel latin.\n\nScrie cinci cuvinte așezate în ordinea alfabetului, între care roman și viitor, ca să se vadă că R stă înaintea lui V. Scrie două propoziții cu 31 de litere, latin, chirilic și 1860. Scrie încă două propoziții cu kilometru, kilogram și watt, în care păstrezi literele k și w. Mai folosește literele q și y, cuvintele book și cronică și spune că litera nu este o diacritică.\n\nCuvântul are sens și formă, iar alfabetul românesc are 31 de litere, venite din cel latin, și în dicționar cauți după această ordine, deci roman stă înaintea lui viitor. Chirilica a fost scrierea oficială până în 1860, iar literele k, w, q și y se păstrează în cuvintele împrumutate, cum sunt kilogram și watt.",
-      "theory": "Cuvântul este unitatea de bază a vocabularului și are un sens și o formă. Are sunete când îl spui și litere când îl scrii. Alfabetul este lista literelor, într-o ordine fixă. Cel românesc are 31 de litere și vine din cel latin. În dicționar cauți după ordinea aceasta, nu la întâmplare. R vine înaintea lui V, deci roman stă înaintea lui viitor. Carte și book numesc același obiect, cu alte litere. Alfabetul chirilic este alfabetul slav vechi cu care au fost scrise primele cărți românești. A fost scrisul oficial până în 1860. Apoi au venit literele latine de azi. O cronică veche poate avea semne necunoscute, dar nu este neapărat altă limbă. O pagină veche își poate schimba alfabetul și poate rămâne tot românească. Cu literele latine scriem acum. Literele k, w, q și y sunt litere din alfabet. Le folosești mai ales în cuvinte luate din alte limbi sau în nume. Le întâlnești în kilometru, în kilogram sau în watt. Nu le schimbi după ureche și nu le înlocuiești din capul tău, dacă norma le păstrează. Kilogram se scrie cu k, nu cu c. Watt păstrează w. Litera nu este o diacritică. Sensul îl cauți în dicționar. Litera o verifici la scrierea corectă. Altfel cuvântul nu mai este cel din dicționar și poate să nu mai fie găsit.",
-      "example": "Ca să cauți roman într-un dicționar tipărit, urmărești alfabetul. R vine înaintea lui V, deci roman stă înaintea lui viitor, nu invers. Kilogram se scrie cu k, nu cu c. Watt păstrează w, nu îl schimbi după ureche. Aceeași idee, scrisă chirilic, pare un șir străin până înveți semnele. Limba rămâne românească. Chirilica a fost oficială până în 1860, apoi au venit literele latine. Alfabetul are 31 de litere și vine din cel latin.",
-      "tryThis": "Scrie cinci cuvinte așezate în ordinea alfabetului, între care roman și viitor, ca să se vadă că R stă înaintea lui V. Scrie două propoziții cu 31 de litere, latin, chirilic și 1860. Scrie încă două propoziții cu kilometru, kilogram și watt, în care păstrezi literele k și w. Mai folosește literele q și y, cuvintele book și cronică și spune că litera nu este o diacritică.",
-      "recap": "Cuvântul are sens și formă, iar alfabetul românesc are 31 de litere, venite din cel latin, și în dicționar cauți după această ordine, deci roman stă înaintea lui viitor. Chirilica a fost scrierea oficială până în 1860, iar literele k, w, q și y se păstrează în cuvintele împrumutate, cum sunt kilogram și watt."
-    },
-    {
-      "id": "diacritice",
-      "title": "Diacriticele și scrierea lui î",
-      "platter": "Diacritica este semnul pus pe literă. Diacriticele sunt semne, iar semnele schimbă pronunția. Căciulița stă pe ă. Virgula stă pe ș și pe ț. Accentul circumflex stă pe â și pe î. Le pui mereu, nu doar când ți se pare că arată bine. Dacă lipsește semnul, cuvântul poate însemna altceva. Masă, cu căciuliță, nu este același cuvânt cu masa. Român, cu accent circumflex, nu spune același lucru cu roman. Celălalt poate râde tocmai pentru că s-a schimbat sensul. Pentru sunetul î scrii î la începutul și la sfârșitul cuvântului, ca în în și coborî. În interior scrii â, ca în adânc și român. Dacă rădăcina începe cu î și pui un prefix, î rămâne, ca în neîngrijit, reîncepe și subînțeles. După ne- nu scrii â, pentru că rădăcina este îngrijit, deci forma este neîngrijit. Înainte de b sau p, prefixul în- se scrie cu m, ca în împăduri, unde urmează p, și ca în îmbătrâni, unde urmează b. Forma cu n înainte de p, înpădurire, se înlocuiește cu împădurire. Nu pui un i în plus doar pentru că așa îți sună în grabă. Era nu se scrie iera. Epocă nu se scrie iepocă. Le păstrezi pe toate corecte, nu doar pe prima.\n\nExemplu lucrat: Scrii Acolo era altă epocă, fără i în plus la era și la epocă, nu iera și nu iepocă. Împădurirea se scrie cu m, pentru că după prefix urmează p, deci nu scrii înpădurire. Îmbătrâni se scrie cu m, pentru că urmează b. Adânc are â, fiindcă sunetul stă în mijloc, fără prefix. Neîngrijit păstrează î după ne-, ca reîncepe și subînțeles. În și coborî au î la capete. Masă, cu căciuliță, nu este același cuvânt cu masa. Român nu este roman.\n\nScrie propoziții în care folosești în, coborî, adânc, român, neîngrijit, reîncepe, subînțeles, împăduri, îmbătrâni și împădurire. Mai scrie trei propoziții corecte cu era, epocă și împădurire, fără iera, fără iepocă și fără înpădurire. Arată cum se schimbă sensul între masă și masa și între român și roman. Numește căciulița, virgula și accentul circumflex.\n\nDiacriticele schimbă pronunția: căciulița pe ă, virgula pe ș și pe ț, accentul circumflex pe â și pe î. Scrii î la capete, ca în în și coborî, â în interior, ca în adânc, î după un prefix pe o rădăcină cu î, ca în neîngrijit, m înainte de b sau p, ca în împădurire, și nu pui un i în plus la era și la epocă.",
-      "theory": "Diacritica este semnul pus pe literă. Diacriticele sunt semne, iar semnele schimbă pronunția. Căciulița stă pe ă. Virgula stă pe ș și pe ț. Accentul circumflex stă pe â și pe î. Le pui mereu, nu doar când ți se pare că arată bine. Dacă lipsește semnul, cuvântul poate însemna altceva. Masă, cu căciuliță, nu este același cuvânt cu masa. Român, cu accent circumflex, nu spune același lucru cu roman. Celălalt poate râde tocmai pentru că s-a schimbat sensul. Pentru sunetul î scrii î la începutul și la sfârșitul cuvântului, ca în în și coborî. În interior scrii â, ca în adânc și român. Dacă rădăcina începe cu î și pui un prefix, î rămâne, ca în neîngrijit, reîncepe și subînțeles. După ne- nu scrii â, pentru că rădăcina este îngrijit, deci forma este neîngrijit. Înainte de b sau p, prefixul în- se scrie cu m, ca în împăduri, unde urmează p, și ca în îmbătrâni, unde urmează b. Forma cu n înainte de p, înpădurire, se înlocuiește cu împădurire. Nu pui un i în plus doar pentru că așa îți sună în grabă. Era nu se scrie iera. Epocă nu se scrie iepocă. Le păstrezi pe toate corecte, nu doar pe prima.",
-      "example": "Scrii Acolo era altă epocă, fără i în plus la era și la epocă, nu iera și nu iepocă. Împădurirea se scrie cu m, pentru că după prefix urmează p, deci nu scrii înpădurire. Îmbătrâni se scrie cu m, pentru că urmează b. Adânc are â, fiindcă sunetul stă în mijloc, fără prefix. Neîngrijit păstrează î după ne-, ca reîncepe și subînțeles. În și coborî au î la capete. Masă, cu căciuliță, nu este același cuvânt cu masa. Român nu este roman.",
-      "tryThis": "Scrie propoziții în care folosești în, coborî, adânc, român, neîngrijit, reîncepe, subînțeles, împăduri, îmbătrâni și împădurire. Mai scrie trei propoziții corecte cu era, epocă și împădurire, fără iera, fără iepocă și fără înpădurire. Arată cum se schimbă sensul între masă și masa și între român și roman. Numește căciulița, virgula și accentul circumflex.",
-      "recap": "Diacriticele schimbă pronunția: căciulița pe ă, virgula pe ș și pe ț, accentul circumflex pe â și pe î. Scrii î la capete, ca în în și coborî, â în interior, ca în adânc, î după un prefix pe o rădăcină cu î, ca în neîngrijit, m înainte de b sau p, ca în împădurire, și nu pui un i în plus la era și la epocă."
-    },
-    {
-      "id": "silaba",
-      "title": "Silaba și semivocala",
-      "platter": "Silaba este un sunet sau un grup spus dintr-o singură deschidere a gurii. Într-o silabă stă o singură vocală. Vocalele se rostesc singure și sunt a, ă, â, î, e, i, o, u. Consoanele au nevoie de o vocală și sunt b, c, d, f, g, h, j, k, l, m, n, p, r, s, ș, t, ț, v, z. Numeri vocalele care țin silaba, nu toate literele. Nu numești literele silabe. Acasă se desparte a-ca-să. Sunt trei deschideri și trei silabe. Vocalele sunt a, a și ă. Litera b este consoană, pentru că are nevoie de o vocală ca să stea într-o silabă. Semivocala este sunetul pe care îl fac e, i, o sau u când nu țin singure o silabă, ci stau lângă o altă vocală. Aceleași litere sunt vocale când poartă silaba. Le recunoști ușor când sunt urmate de a, ă sau î, ca în seară. Semivocala se aude mai scurt. Vocala se aude mai prelung. Nu orice e sau i este vocală. În tei, t este consoană, e este vocală, iar i este semivocală și nu face singură o silabă. În zeu, e poartă silaba și este vocală. Nu pui i din tei în aceeași cutie cu e din zeu.\n\nExemplu lucrat: Acasă se desparte a-ca-să, cu trei silabe. Vocalele care le țin sunt a, a și ă, nu toate literele. Litera b nu ține singură o silabă, pentru că este consoană. În tei, e este vocală și i este semivocală, pentru că i nu face singură o silabă. În zeu, e poartă silaba și se aude mai prelung. În seară, semivocala se aude mai scurt decât vocala.\n\nDesparte în silabe cuvintele acasă și carte. Scrie două propoziții în care spui care vocale țin silabele fiecărui cuvânt. Mai scrie două propoziții în care desparți rolurile literelor din tei și din zeu. Folosește cuvintele a-ca-să, seară, vocală, semivocală, consoană și deschidere.\n\nSilaba se spune dintr-o singură deschidere a gurii și ține o singură vocală, iar consoanele au nevoie de o vocală. Semivocala este e, i, o sau u când stă lângă o altă vocală și se aude mai scurt, iar aceeași literă este vocală când poartă silaba, ca e din zeu față de i din tei.",
-      "theory": "Silaba este un sunet sau un grup spus dintr-o singură deschidere a gurii. Într-o silabă stă o singură vocală. Vocalele se rostesc singure și sunt a, ă, â, î, e, i, o, u. Consoanele au nevoie de o vocală și sunt b, c, d, f, g, h, j, k, l, m, n, p, r, s, ș, t, ț, v, z. Numeri vocalele care țin silaba, nu toate literele. Nu numești literele silabe. Acasă se desparte a-ca-să. Sunt trei deschideri și trei silabe. Vocalele sunt a, a și ă. Litera b este consoană, pentru că are nevoie de o vocală ca să stea într-o silabă. Semivocala este sunetul pe care îl fac e, i, o sau u când nu țin singure o silabă, ci stau lângă o altă vocală. Aceleași litere sunt vocale când poartă silaba. Le recunoști ușor când sunt urmate de a, ă sau î, ca în seară. Semivocala se aude mai scurt. Vocala se aude mai prelung. Nu orice e sau i este vocală. În tei, t este consoană, e este vocală, iar i este semivocală și nu face singură o silabă. În zeu, e poartă silaba și este vocală. Nu pui i din tei în aceeași cutie cu e din zeu.",
-      "example": "Acasă se desparte a-ca-să, cu trei silabe. Vocalele care le țin sunt a, a și ă, nu toate literele. Litera b nu ține singură o silabă, pentru că este consoană. În tei, e este vocală și i este semivocală, pentru că i nu face singură o silabă. În zeu, e poartă silaba și se aude mai prelung. În seară, semivocala se aude mai scurt decât vocala.",
-      "tryThis": "Desparte în silabe cuvintele acasă și carte. Scrie două propoziții în care spui care vocale țin silabele fiecărui cuvânt. Mai scrie două propoziții în care desparți rolurile literelor din tei și din zeu. Folosește cuvintele a-ca-să, seară, vocală, semivocală, consoană și deschidere.",
-      "recap": "Silaba se spune dintr-o singură deschidere a gurii și ține o singură vocală, iar consoanele au nevoie de o vocală. Semivocala este e, i, o sau u când stă lângă o altă vocală și se aude mai scurt, iar aceeași literă este vocală când poartă silaba, ca e din zeu față de i din tei."
-    },
-    {
-      "id": "accent",
-      "title": "Accentul, litera și sunetul",
-      "platter": "Accentul este pronunțarea mai puternică sau mai înaltă a unei silabe și poate schimba sensul. Limba standard este forma folosită de toată comunitatea, după norme. Accentul face parte din normă. Dacă nu ești sigur, cauți cuvântul în DOOM. Nu pui apăsarea unde îți vine. Aceleași litere, cu alt accent, pot fi alt cuvânt. În carte, silaba accentuată este car. Maria e veselă poate însemna că este voioasă, dacă apeși începutul cuvântului. Dacă apeși mijlocul, veselă poate însemna vasele de pe masă. De regulă, un sunet se scrie cu o literă. Aceasta nu este o lege fără excepții. Litera x redă două sunete, cs, ca în fix, sau gz, ca în exemplu. Același sunet poate avea litere diferite. Sunetul k se scrie c în casă și k în karate. Sunetul v se scrie v sau w. Fix are 3 litere și 4 sunete, pentru că x valorează cs. Nu numeri literele și nu spui că ai tot atâtea sunete. Nu corectezi un cuvânt după celălalt când încep cu același sunet, dar cu altă literă.\n\nExemplu lucrat: Maria e veselă poate însemna că este voioasă, dacă apeși începutul. Poate însemna că pe masă stau vasele, dacă apeși mijlocul. Forma nesigură se verifică în DOOM, nu o apeși unde îți vine. În carte, silaba accentuată este car. Fix are 3 litere și 4 sunete, pentru că x se aude cs. În exemplu, x se aude gz. Casă și karate încep cu același sunet, dar karate începe cu litera k, nu cu c. Sunetul v se scrie v sau w.\n\nScrie două propoziții cu veselă. Una este pentru sensul de voioasă și spune că apeși începutul. Una este pentru vasele de pe masă și spune că apeși mijlocul. Apoi scrie propoziții cu fix, exemplu, casă și karate. Folosește cuvintele DOOM, car, cs, gz, 3 litere, 4 sunete, k și w. Arată că fiecare cuvânt își păstrează litera de la început și că nu o schimbi doar pentru că sunetul seamănă.\n\nAccentul este pronunțarea mai puternică a unei silabe, poate schimba sensul, ca la veselă, și se verifică în DOOM, pentru că face parte din limba standard. Litera x redă două sunete, cs sau gz, iar același sunet se poate scrie cu litere diferite, cum sunt c și k sau v și w.",
-      "theory": "Accentul este pronunțarea mai puternică sau mai înaltă a unei silabe și poate schimba sensul. Limba standard este forma folosită de toată comunitatea, după norme. Accentul face parte din normă. Dacă nu ești sigur, cauți cuvântul în DOOM. Nu pui apăsarea unde îți vine. Aceleași litere, cu alt accent, pot fi alt cuvânt. În carte, silaba accentuată este car. Maria e veselă poate însemna că este voioasă, dacă apeși începutul cuvântului. Dacă apeși mijlocul, veselă poate însemna vasele de pe masă. De regulă, un sunet se scrie cu o literă. Aceasta nu este o lege fără excepții. Litera x redă două sunete, cs, ca în fix, sau gz, ca în exemplu. Același sunet poate avea litere diferite. Sunetul k se scrie c în casă și k în karate. Sunetul v se scrie v sau w. Fix are 3 litere și 4 sunete, pentru că x valorează cs. Nu numeri literele și nu spui că ai tot atâtea sunete. Nu corectezi un cuvânt după celălalt când încep cu același sunet, dar cu altă literă.",
-      "example": "Maria e veselă poate însemna că este voioasă, dacă apeși începutul. Poate însemna că pe masă stau vasele, dacă apeși mijlocul. Forma nesigură se verifică în DOOM, nu o apeși unde îți vine. În carte, silaba accentuată este car. Fix are 3 litere și 4 sunete, pentru că x se aude cs. În exemplu, x se aude gz. Casă și karate încep cu același sunet, dar karate începe cu litera k, nu cu c. Sunetul v se scrie v sau w.",
-      "tryThis": "Scrie două propoziții cu veselă. Una este pentru sensul de voioasă și spune că apeși începutul. Una este pentru vasele de pe masă și spune că apeși mijlocul. Apoi scrie propoziții cu fix, exemplu, casă și karate. Folosește cuvintele DOOM, car, cs, gz, 3 litere, 4 sunete, k și w. Arată că fiecare cuvânt își păstrează litera de la început și că nu o schimbi doar pentru că sunetul seamănă.",
-      "recap": "Accentul este pronunțarea mai puternică a unei silabe, poate schimba sensul, ca la veselă, și se verifică în DOOM, pentru că face parte din limba standard. Litera x redă două sunete, cs sau gz, iar același sunet se poate scrie cu litere diferite, cum sunt c și k sau v și w."
-    },
-    {
-      "id": "litera-ajutatoare",
-      "title": "Litera care doar ajută",
-      "platter": "Litera ajutătoare este litera care nu se aude ca ea însăși, ci ajută pronunția. Contextul, adică litera de lângă, decide. În che, chi, ghe și ghi, h nu se citește ca h din haz. În hrană, h este consoană. Nu citești che ca pe c, plus h, plus e. În ce, ci, ge și gi, e sau i poate fi doar semn pentru consoana moale, nu o vocală plină.\n\nExemplu lucrat: În chemare, h nu se aude ca în hrană, pentru că ajută pronunția. În hrană, h este consoană și se aude, ca h din haz. În geme, e de după g schimbă sunetul lui g. Acest g nu este același g ca în gaz, unde g se aude plin. În che, h este semn, nu h citit separat.\n\nScrie patru propoziții, cu cuvintele chemare, hrană, geme și gaz. În fiecare spune dacă h sau e se aude ca literă plină sau doar ajută. Mai folosește grupurile che, chi, ghe, ghi, ce, ci, ge, gi și cuvântul haz.\n\nLitera ajutătoare este litera care nu se aude ca ea însăși, ci ajută pronunția, iar contextul decide. H poate fi consoană, ca în hrană, sau semn, ca în che, iar e și i pot marca o consoană moale, ca în ge și gi.",
-      "theory": "Litera ajutătoare este litera care nu se aude ca ea însăși, ci ajută pronunția. Contextul, adică litera de lângă, decide. În che, chi, ghe și ghi, h nu se citește ca h din haz. În hrană, h este consoană. Nu citești che ca pe c, plus h, plus e. În ce, ci, ge și gi, e sau i poate fi doar semn pentru consoana moale, nu o vocală plină.",
-      "example": "În chemare, h nu se aude ca în hrană, pentru că ajută pronunția. În hrană, h este consoană și se aude, ca h din haz. În geme, e de după g schimbă sunetul lui g. Acest g nu este același g ca în gaz, unde g se aude plin. În che, h este semn, nu h citit separat.",
-      "tryThis": "Scrie patru propoziții, cu cuvintele chemare, hrană, geme și gaz. În fiecare spune dacă h sau e se aude ca literă plină sau doar ajută. Mai folosește grupurile che, chi, ghe, ghi, ce, ci, ge, gi și cuvântul haz.",
-      "recap": "Litera ajutătoare este litera care nu se aude ca ea însăși, ci ajută pronunția, iar contextul decide. H poate fi consoană, ca în hrană, sau semn, ca în che, iar e și i pot marca o consoană moale, ca în ge și gi."
-    },
-    {
-      "id": "sinonime",
-      "title": "Sinonime și antonime",
-      "platter": "Sinonimul este cuvântul cu formă diferită și cu același înțeles. Îl alegi după frază, nu după primul cuvânt din listă. Au ridicat un zid are sinonimul a construi, deci înseamnă au construit. I-au ridicat pedeapsa înseamnă au anulat-o. Contextul alege sinonimul. Dacă repeți de patru ori frumos, textul slăbește. Aceeași idee poate sta în altă formă, iar vorbele nu se mai calcă una pe alta. Poți scrie că pisica este blândă, că are mustăți lungi și ochi limpezi. Antonimul este cuvântul cu formă diferită și cu sens opus. Exemple sunt mare și mic, bucurie și tristețe, furie și calm, speranță și disperare. Antonimul este alt cuvânt și îl verifici în frază. Nu merg se opune lui merg, dar nu este antonim. Este aceeași vorbă cu nu, adică o negație. La emoții, bucuria stă în fața tristeții, nu în fața furiei. Urâtă schimbă frumusețea, nu lumina, deci nu este opusul lui luminoasă. Pentru Camera e luminoasă, opusul potrivit este întunecoasă, pentru că se schimbă lumina.\n\nExemplu lucrat: În au ridicat un zid, sinonimul potrivit este a construi, pentru că fraza vorbește despre o construcție. În i-au ridicat pedeapsa, sensul este au anulat-o, deci nu mai folosești a construi. Pisica poate fi blândă, cu mustăți lungi și ochi limpezi, fără să repeți frumos de patru ori. Pentru o cameră luminoasă, opusul potrivit este întunecoasă, nu urâtă. Tristețea stă în fața bucuriei, nu în fața furiei. Nu merg este negație, nu antonimul lui merg.\n\nScrie trei propoziții despre o pisică. Înlocuiește repetarea lui frumos cu blândă, mustăți lungi și ochi limpezi. Apoi scrie patru perechi de propoziții cu antonimele mare și mic, bucurie și tristețe, furie și calm, speranță și disperare. Mai scrie o propoziție cu au ridicat un zid și sinonimul a construi și una cu i-au ridicat pedeapsa, în sensul au anulat-o. Arată că pentru luminoasă opusul este întunecoasă, nu urâtă, și că nu merg este negație.\n\nSinonimele au formă diferită și același înțeles, iar le alegi după frază, ca să nu repeți același cuvânt. Antonimele au sens opus și sunt alt cuvânt, iar nu pus lângă aceeași vorbă este negație, nu antonim.",
-      "theory": "Sinonimul este cuvântul cu formă diferită și cu același înțeles. Îl alegi după frază, nu după primul cuvânt din listă. Au ridicat un zid are sinonimul a construi, deci înseamnă au construit. I-au ridicat pedeapsa înseamnă au anulat-o. Contextul alege sinonimul. Dacă repeți de patru ori frumos, textul slăbește. Aceeași idee poate sta în altă formă, iar vorbele nu se mai calcă una pe alta. Poți scrie că pisica este blândă, că are mustăți lungi și ochi limpezi. Antonimul este cuvântul cu formă diferită și cu sens opus. Exemple sunt mare și mic, bucurie și tristețe, furie și calm, speranță și disperare. Antonimul este alt cuvânt și îl verifici în frază. Nu merg se opune lui merg, dar nu este antonim. Este aceeași vorbă cu nu, adică o negație. La emoții, bucuria stă în fața tristeții, nu în fața furiei. Urâtă schimbă frumusețea, nu lumina, deci nu este opusul lui luminoasă. Pentru Camera e luminoasă, opusul potrivit este întunecoasă, pentru că se schimbă lumina.",
-      "example": "În au ridicat un zid, sinonimul potrivit este a construi, pentru că fraza vorbește despre o construcție. În i-au ridicat pedeapsa, sensul este au anulat-o, deci nu mai folosești a construi. Pisica poate fi blândă, cu mustăți lungi și ochi limpezi, fără să repeți frumos de patru ori. Pentru o cameră luminoasă, opusul potrivit este întunecoasă, nu urâtă. Tristețea stă în fața bucuriei, nu în fața furiei. Nu merg este negație, nu antonimul lui merg.",
-      "tryThis": "Scrie trei propoziții despre o pisică. Înlocuiește repetarea lui frumos cu blândă, mustăți lungi și ochi limpezi. Apoi scrie patru perechi de propoziții cu antonimele mare și mic, bucurie și tristețe, furie și calm, speranță și disperare. Mai scrie o propoziție cu au ridicat un zid și sinonimul a construi și una cu i-au ridicat pedeapsa, în sensul au anulat-o. Arată că pentru luminoasă opusul este întunecoasă, nu urâtă, și că nu merg este negație.",
-      "recap": "Sinonimele au formă diferită și același înțeles, iar le alegi după frază, ca să nu repeți același cuvânt. Antonimele au sens opus și sunt alt cuvânt, iar nu pus lângă aceeași vorbă este negație, nu antonim."
-    },
-    {
-      "id": "notite",
-      "title": "Notițele și paragraful",
-      "platter": "Notița este însemnarea pe care o poți citi și peste o săptămână. Notițele sunt însemnările tale. Lași loc între titlu și text. Data stă sus, în dreapta. Subliniezi cuvintele-cheie. Poți folosi culori și scheme. Unele texte sunt doar paragrafe. Altele amestecă vorbe cu desene sau hărți. Nu scrii totul într-un bloc, fără aer și fără titlu. Paragraful este o bucată unitară, cu o idee principală, despărțită printr-un alineat nou. Când treci la altă idee, începi rând nou. Nu rămâi pe același rând. Cauza spune de ce se întâmplă. Efectul spune ce urmează. Le poți pune în două paragrafe sau într-o schemă. Dacă le lipești fără alineat, cititorul nu vede unde se schimbă firul. Titlul poate fi Cauza și efectul. Un copil poate cere mereu dulciuri. Efectul este că cei din casă obosesc. Săgeata dintre cele două este schema. Poți scrie și că cineva a repetat același cuvânt toată ziua. Efectul este că cei din jur nu l-au mai auzit. Fiecare idee stă în paragraful ei.\n\nExemplu lucrat: Titlul este Cauza și efectul, iar data stă sus, în dreapta, nu lipită de text. Un copil cere mereu dulciuri. Efectul este că cei din casă obosesc. Săgeata dintre ele este schema. Cele două idei stau în două paragrafe, fiecare cu alineat nou. Dacă le lipești fără alineat, firul nu se vede. La fel, cineva a repetat același cuvânt toată ziua, iar efectul este că cei din jur nu l-au mai auzit.\n\nScrie notițe cu titlul Cauza și efectul, cu data sus în dreapta, cu loc între titlu și text și cu cuvintele-cheie subliniate. Folosește culori sau o schemă. Fă două paragrafe cu alineat nou. În unul pune cauza: un copil cere mereu dulciuri. În celălalt pune efectul: cei din casă obosesc. Adaugă o săgeată între ele. Mai scrie că cineva a repetat același cuvânt toată ziua, iar cei din jur nu l-au mai auzit.\n\nNotițele se pot citi și peste o săptămână, au titlu, loc liber, data sus în dreapta și cuvintele-cheie subliniate. Paragraful ține o idee și începe cu alineat nou, cauza spune de ce, iar efectul spune ce urmează.",
-      "theory": "Notița este însemnarea pe care o poți citi și peste o săptămână. Notițele sunt însemnările tale. Lași loc între titlu și text. Data stă sus, în dreapta. Subliniezi cuvintele-cheie. Poți folosi culori și scheme. Unele texte sunt doar paragrafe. Altele amestecă vorbe cu desene sau hărți. Nu scrii totul într-un bloc, fără aer și fără titlu. Paragraful este o bucată unitară, cu o idee principală, despărțită printr-un alineat nou. Când treci la altă idee, începi rând nou. Nu rămâi pe același rând. Cauza spune de ce se întâmplă. Efectul spune ce urmează. Le poți pune în două paragrafe sau într-o schemă. Dacă le lipești fără alineat, cititorul nu vede unde se schimbă firul. Titlul poate fi Cauza și efectul. Un copil poate cere mereu dulciuri. Efectul este că cei din casă obosesc. Săgeata dintre cele două este schema. Poți scrie și că cineva a repetat același cuvânt toată ziua. Efectul este că cei din jur nu l-au mai auzit. Fiecare idee stă în paragraful ei.",
-      "example": "Titlul este Cauza și efectul, iar data stă sus, în dreapta, nu lipită de text. Un copil cere mereu dulciuri. Efectul este că cei din casă obosesc. Săgeata dintre ele este schema. Cele două idei stau în două paragrafe, fiecare cu alineat nou. Dacă le lipești fără alineat, firul nu se vede. La fel, cineva a repetat același cuvânt toată ziua, iar efectul este că cei din jur nu l-au mai auzit.",
-      "tryThis": "Scrie notițe cu titlul Cauza și efectul, cu data sus în dreapta, cu loc între titlu și text și cu cuvintele-cheie subliniate. Folosește culori sau o schemă. Fă două paragrafe cu alineat nou. În unul pune cauza: un copil cere mereu dulciuri. În celălalt pune efectul: cei din casă obosesc. Adaugă o săgeată între ele. Mai scrie că cineva a repetat același cuvânt toată ziua, iar cei din jur nu l-au mai auzit.",
-      "recap": "Notițele se pot citi și peste o săptămână, au titlu, loc liber, data sus în dreapta și cuvintele-cheie subliniate. Paragraful ține o idee și începe cu alineat nou, cauza spune de ce, iar efectul spune ce urmează."
-    },
-    {
-      "id": "proiect",
-      "title": "Proiectul și cum îl notezi",
-      "platter": "Proiectul este lucrarea pe care o pregătești în etape, pornind de la o temă care te interesează. Scrii cel puțin două întrebări de documentare. Apoi o îngustezi la o expresie, o credință sau un desen. Afli termenul de predare. Abia apoi faci planul și alegi tipul: compunere, prezentare sau poster. Sursele pot fi manuale, enciclopedii sau cărți. Nu începi să scrii înainte să știi ce formă trebuie să aibă lucrarea. Tema mare poate fi animalele. Întrebările pot fi de ce se sperie unii de pisica neagră și cum o văd alte culturi. Produsul este un poster când termenul este scurt. Autoevaluarea proiectului este notarea ta până la 100 de puncte, pe șapte criterii. Structura unitară valorează 10 puncte. Tema nuanțată valorează 20. Pagina valorează 10 puncte. Sursele credibile valorează 10. Anexa cu sursele valorează 20. Felul tău de a uni textul cu imaginea valorează 10 puncte. La scriere iei 20 de puncte sub patru greșeli, 10 peste patru și 5 peste opt. Sursele și tema cântăresc cel mai mult. Un colaj frumos, fără să se vadă de unde ai luat informația, pierde anexa, adică 20 de puncte. La cinci greșeli de scriere nu mai iei 20, ci 10.\n\nExemplu lucrat: Tema mare este animalele. Întrebi de ce se sperie unii de pisica neagră și cum o văd alte culturi. Apoi alegi un poster, pentru că termenul este scurt, nu începi să scrii fără formă. Ai un poster clar, dar fără lista de surse, deci pierzi anexa, adică 20 de puncte, chiar dacă desenul este frumos. La cinci greșeli de scriere nu mai iei 20, ci 10. Sub patru greșeli iei 20, iar peste opt iei 5. Punctele se adună după cele șapte criterii, până la 100.\n\nAlege o temă care te interesează. Poți porni de la animale. Scrie două întrebări: de ce se sperie unii de pisica neagră și cum o văd alte culturi. Îngustează tema la o expresie, o credință sau un desen. Notează termenul de predare. Apoi fă un plan scurt pentru un poster, o compunere sau o prezentare. Numește sursele: manuale, enciclopedii sau cărți. Notează, în propoziții, cele șapte criterii: structura unitară 10, tema nuanțată 20, pagina 10, sursele credibile 10, anexa cu sursele 20, unirea textului cu imaginea 10 și scrierea, cu 20 sub patru greșeli, 10 peste patru și 5 peste opt. Adună punctele până la cel mult 100.\n\nProiectul pornește de la o temă care te interesează, cu cel puțin două întrebări, iar planul și tipul lucrării se aleg după termenul de predare. Autoevaluarea împarte 100 de puncte pe șapte criterii, iar tema nuanțată și anexa cu sursele valorează câte 20.",
-      "theory": "Proiectul este lucrarea pe care o pregătești în etape, pornind de la o temă care te interesează. Scrii cel puțin două întrebări de documentare. Apoi o îngustezi la o expresie, o credință sau un desen. Afli termenul de predare. Abia apoi faci planul și alegi tipul: compunere, prezentare sau poster. Sursele pot fi manuale, enciclopedii sau cărți. Nu începi să scrii înainte să știi ce formă trebuie să aibă lucrarea. Tema mare poate fi animalele. Întrebările pot fi de ce se sperie unii de pisica neagră și cum o văd alte culturi. Produsul este un poster când termenul este scurt. Autoevaluarea proiectului este notarea ta până la 100 de puncte, pe șapte criterii. Structura unitară valorează 10 puncte. Tema nuanțată valorează 20. Pagina valorează 10 puncte. Sursele credibile valorează 10. Anexa cu sursele valorează 20. Felul tău de a uni textul cu imaginea valorează 10 puncte. La scriere iei 20 de puncte sub patru greșeli, 10 peste patru și 5 peste opt. Sursele și tema cântăresc cel mai mult. Un colaj frumos, fără să se vadă de unde ai luat informația, pierde anexa, adică 20 de puncte. La cinci greșeli de scriere nu mai iei 20, ci 10.",
-      "example": "Tema mare este animalele. Întrebi de ce se sperie unii de pisica neagră și cum o văd alte culturi. Apoi alegi un poster, pentru că termenul este scurt, nu începi să scrii fără formă. Ai un poster clar, dar fără lista de surse, deci pierzi anexa, adică 20 de puncte, chiar dacă desenul este frumos. La cinci greșeli de scriere nu mai iei 20, ci 10. Sub patru greșeli iei 20, iar peste opt iei 5. Punctele se adună după cele șapte criterii, până la 100.",
-      "tryThis": "Alege o temă care te interesează. Poți porni de la animale. Scrie două întrebări: de ce se sperie unii de pisica neagră și cum o văd alte culturi. Îngustează tema la o expresie, o credință sau un desen. Notează termenul de predare. Apoi fă un plan scurt pentru un poster, o compunere sau o prezentare. Numește sursele: manuale, enciclopedii sau cărți. Notează, în propoziții, cele șapte criterii: structura unitară 10, tema nuanțată 20, pagina 10, sursele credibile 10, anexa cu sursele 20, unirea textului cu imaginea 10 și scrierea, cu 20 sub patru greșeli, 10 peste patru și 5 peste opt. Adună punctele până la cel mult 100.",
-      "recap": "Proiectul pornește de la o temă care te interesează, cu cel puțin două întrebări, iar planul și tipul lucrării se aleg după termenul de predare. Autoevaluarea împarte 100 de puncte pe șapte criterii, iar tema nuanțată și anexa cu sursele valorează câte 20."
-    },
-    {
-      "id": "empatie",
-      "title": "Tema, empatia și dialogul atent",
-      "platter": "Tema este ideea centrală, în linii mari, și o numești scurt, cu un substantiv, cum sunt călătoria, copilăria sau școala. Detaliul o face de crezut printr-un gest concret, un obiect sau un loc. Empatia este felul în care înțelegi gândurile și dorințele celuilalt și te pui în pielea lui, fără să fii mereu de acord cu tot. Dialogul atent este vorbirea în care ești pe rând vorbitor și ascultător. Vorbitorul spune clar, pe temă, cu voce potrivită, cât să fie auzit, nu cât să deranjeze, și îl invită pe celălalt. Ascultătorul se uită la el, nu îl întrerupe și nu vorbește odată cu el. Dacă nu a înțeles, cere o clarificare, adică o lămurire. Doi oameni care vorbesc deodată nu fac un dialog atent. Un dialog atent poate avea patru replici. Ioana spune că tema este copilăria, iar ghiozdanul bătea în genunchi. Vorba a fost frumos, fără o faptă, nu ține loc de detaliu, iar eram emoționat rămâne un detaliu gol. Ioana spune de ce i-a plăcut un personaj, apoi tace, iar Andrei se uită la ea și întreabă ce i s-a părut grijuliu, după ce ea a terminat. Andrei vrea să scrie, nu doar să asculte, și vorbește pe rând, cu voce cât să fie auzit. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.\n\nExemplu lucrat: Ce scrie: Ghiozdanul bătea în genunchi, apoi Ioana tace, iar Andrei se uită la ea și întreabă ce i s-a părut grijuliu. Ce vezi: Îi văd pe Ioana, cu ghiozdanul la genunchi, și pe Andrei lângă ea. Eu aș aștepta, apoi aș vorbi liniștit, pentru că Ioana tace, iar Andrei se uită la ea.\n\nMatei spune că tema este școala și pune creionul pe bancă. El vorbește clar, pe temă, cu voce cât să fie auzit, și îl invită pe coleg. Colegul se uită la el, nu îl întrerupe și cere o clarificare. Cei doi nu vorbesc deodată, iar Matei înțelege că colegul vrea să spună și el o dorință. Scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că.\n\nTema este ideea centrală, numită scurt cu un substantiv, detaliul o face de crezut printr-un gest, iar empatia înseamnă să înțelegi dorința celuilalt, în dialogul atent, pe rând. Din scenă faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că. La școală faci aceiași trei pași pe textul pe care îl ai deschis.",
-      "theory": "Tema este ideea centrală, în linii mari, și o numești scurt, cu un substantiv, cum sunt călătoria, copilăria sau școala. Detaliul o face de crezut printr-un gest concret, un obiect sau un loc. Empatia este felul în care înțelegi gândurile și dorințele celuilalt și te pui în pielea lui, fără să fii mereu de acord cu tot. Dialogul atent este vorbirea în care ești pe rând vorbitor și ascultător. Vorbitorul spune clar, pe temă, cu voce potrivită, cât să fie auzit, nu cât să deranjeze, și îl invită pe celălalt. Ascultătorul se uită la el, nu îl întrerupe și nu vorbește odată cu el. Dacă nu a înțeles, cere o clarificare, adică o lămurire. Doi oameni care vorbesc deodată nu fac un dialog atent. Un dialog atent poate avea patru replici. Ioana spune că tema este copilăria, iar ghiozdanul bătea în genunchi. Vorba a fost frumos, fără o faptă, nu ține loc de detaliu, iar eram emoționat rămâne un detaliu gol. Ioana spune de ce i-a plăcut un personaj, apoi tace, iar Andrei se uită la ea și întreabă ce i s-a părut grijuliu, după ce ea a terminat. Andrei vrea să scrie, nu doar să asculte, și vorbește pe rând, cu voce cât să fie auzit. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.",
-      "example": "Ce scrie: Ghiozdanul bătea în genunchi, apoi Ioana tace, iar Andrei se uită la ea și întreabă ce i s-a părut grijuliu. Ce vezi: Îi văd pe Ioana, cu ghiozdanul la genunchi, și pe Andrei lângă ea. Eu aș aștepta, apoi aș vorbi liniștit, pentru că Ioana tace, iar Andrei se uită la ea.",
-      "tryThis": "Matei spune că tema este școala și pune creionul pe bancă. El vorbește clar, pe temă, cu voce cât să fie auzit, și îl invită pe coleg. Colegul se uită la el, nu îl întrerupe și cere o clarificare. Cei doi nu vorbesc deodată, iar Matei înțelege că colegul vrea să spună și el o dorință. Scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că.",
-      "recap": "Tema este ideea centrală, numită scurt cu un substantiv, detaliul o face de crezut printr-un gest, iar empatia înseamnă să înțelegi dorința celuilalt, în dialogul atent, pe rând. Din scenă faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că. La școală faci aceiași trei pași pe textul pe care îl ai deschis."
-    },
-    {
-      "id": "tiparita-digitala",
-      "title": "Carte tipărită sau digitală",
-      "platter": "Cartea tipărită este un suport pentru text, iar cartea digitală este celălalt suport. Ambele duc același text și ambele sunt cărți. Tipărită nu are baterie. O poți dărui. Nu o ștergi dintr-un clic. Digitală îți dă multe volume fără greutate. Bateria se poate termina. Fiecare are un câștig și o limită. Alegi după drum, nu după modă. Se schimbă suportul, nu faptul că este carte.\n\nExemplu lucrat: În tren, zece povești încap într-un e-reader, iar asta este forma digitală, cu multe volume fără greutate. Pe noptieră, pagina care foșnește și pe care o poți împrumuta este tipărită, fără baterie, și o poți dărui. Digitală se oprește când bateria se termină, iar tipărită nu se șterge dintr-un clic. Ambele sunt cărți. Tu alegi după drum, nu după modă.\n\nScrie trei propoziții în care compari cartea tipărită cu cea digitală pentru un drum cu trenul și pentru seara de acasă. Folosește cuvintele tren, e-reader, zece povești, baterie, dărui, noptieră, clic, greutate și modă. Spune că alegi după drum și că ambele sunt cărți.\n\nCartea tipărită și cartea digitală duc același text, pe suporturi diferite, și ambele sunt cărți. Tipărită nu are baterie și o poți dărui, iar digitală ține multe volume fără greutate, dar bateria se poate termina.",
-      "theory": "Cartea tipărită este un suport pentru text, iar cartea digitală este celălalt suport. Ambele duc același text și ambele sunt cărți. Tipărită nu are baterie. O poți dărui. Nu o ștergi dintr-un clic. Digitală îți dă multe volume fără greutate. Bateria se poate termina. Fiecare are un câștig și o limită. Alegi după drum, nu după modă. Se schimbă suportul, nu faptul că este carte.",
-      "example": "În tren, zece povești încap într-un e-reader, iar asta este forma digitală, cu multe volume fără greutate. Pe noptieră, pagina care foșnește și pe care o poți împrumuta este tipărită, fără baterie, și o poți dărui. Digitală se oprește când bateria se termină, iar tipărită nu se șterge dintr-un clic. Ambele sunt cărți. Tu alegi după drum, nu după modă.",
-      "tryThis": "Scrie trei propoziții în care compari cartea tipărită cu cea digitală pentru un drum cu trenul și pentru seara de acasă. Folosește cuvintele tren, e-reader, zece povești, baterie, dărui, noptieră, clic, greutate și modă. Spune că alegi după drum și că ambele sunt cărți.",
-      "recap": "Cartea tipărită și cartea digitală duc același text, pe suporturi diferite, și ambele sunt cărți. Tipărită nu are baterie și o poți dărui, iar digitală ține multe volume fără greutate, dar bateria se poate termina."
-    },
-    {
-      "id": "intrebare-deschisa",
-      "title": "Întrebarea deschisă",
-      "platter": "Întrebarea deschisă este întrebarea care nu se rezolvă cu da sau nu. Ea începe cu ce, care, cum sau de ce. Așa afli un răspuns pe larg, nu un semn din cap. Întrebarea închisă se rezolvă cu da sau nu. Pentru un cadou, întrebi ce i-a plăcut, nu doar dacă îi place să citească. Patru întrebări închise nu ajung ca să îl cunoști pe coleg.\n\nExemplu lucrat: Îți place cartea este închisă, pentru că se poate răspunde scurt, prin da sau prin nu. Ce carte ai reciti este deschisă și îți dă un titlu. Care, cum și de ce deschid și ele răspunsul. De aceea o folosești când cauți un cadou. Patru întrebări închise nu ajung ca să îl cunoști pe coleg.\n\nScrie patru întrebări deschise, cu ce, care, cum și de ce, prin care afli ce carte i-ar plăcea unui coleg ca dar. Folosește și întrebarea închisă dacă îi place să citească, ca să se vadă contrastul cu da sau nu. Nu te opri la patru întrebări închise.\n\nÎntrebarea deschisă nu se rezolvă cu da sau nu și începe cu ce, care, cum sau de ce. Întrebarea închisă se rezolvă cu da sau nu, iar pentru un cadou ai nevoie de un răspuns pe larg.",
-      "theory": "Întrebarea deschisă este întrebarea care nu se rezolvă cu da sau nu. Ea începe cu ce, care, cum sau de ce. Așa afli un răspuns pe larg, nu un semn din cap. Întrebarea închisă se rezolvă cu da sau nu. Pentru un cadou, întrebi ce i-a plăcut, nu doar dacă îi place să citească. Patru întrebări închise nu ajung ca să îl cunoști pe coleg.",
-      "example": "Îți place cartea este închisă, pentru că se poate răspunde scurt, prin da sau prin nu. Ce carte ai reciti este deschisă și îți dă un titlu. Care, cum și de ce deschid și ele răspunsul. De aceea o folosești când cauți un cadou. Patru întrebări închise nu ajung ca să îl cunoști pe coleg.",
-      "tryThis": "Scrie patru întrebări deschise, cu ce, care, cum și de ce, prin care afli ce carte i-ar plăcea unui coleg ca dar. Folosește și întrebarea închisă dacă îi place să citească, ca să se vadă contrastul cu da sau nu. Nu te opri la patru întrebări închise.",
-      "recap": "Întrebarea deschisă nu se rezolvă cu da sau nu și începe cu ce, care, cum sau de ce. Întrebarea închisă se rezolvă cu da sau nu, iar pentru un cadou ai nevoie de un răspuns pe larg."
-    },
-    {
-      "id": "de-ce-citim",
-      "title": "De ce să citești",
-      "platter": "Cititul cu folos este lectura prin care înțelegi, nu doar treci cu ochii peste rânduri. Poți trăi fără cărți, dar pierzi o convorbire cu alte vremuri. Cititul fără înțelegere este gol. Citești ca să poți povesti o scenă, nu ca să numeri paginile. Un copil a citit zece pagini și nu poate spune despre ce erau, deci cititul a rămas gol. Colegul poate povesti o scenă, deci a citit cu folos și păstrează o convorbire cu alte vremuri. Tiparul în limba română începe în secolul al XVI-lea. O carte din 1544 nu s-a păstrat, iar cea mai veche tipăritură românească păstrată, din care au rămas exemplare, este din 1551–1553. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.\n\nExemplu lucrat: Ce scrie: Un copil a citit zece pagini și nu poate spune despre ce erau, iar colegul poate povesti o scenă. Ce vezi: Îi văd pe copil cu paginile în față și pe coleg lângă el. Eu aș sta lângă coleg, pentru că colegul poate povesti o scenă.\n\nAna spune că poate trăi fără cărți, dar pierde o convorbire cu alte vremuri. Ea a citit doar ca să numere paginile și nu poate povesti nimic. Radu povestește o scenă dintr-o tipăritură din 1551–1553. El spune că o carte din 1544 nu s-a păstrat și că tiparul românesc începe în secolul al XVI-lea. Scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că.\n\nCititul cu folos este lectura prin care înțelegi și păstrezi o convorbire cu alte vremuri, iar tiparul în limba română începe în secolul al XVI-lea, cu exemplare din 1551–1553, nu cu cartea din 1544, care nu s-a păstrat. Din scenă faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că. La școală faci aceiași trei pași pe textul pe care îl ai deschis.",
-      "theory": "Cititul cu folos este lectura prin care înțelegi, nu doar treci cu ochii peste rânduri. Poți trăi fără cărți, dar pierzi o convorbire cu alte vremuri. Cititul fără înțelegere este gol. Citești ca să poți povesti o scenă, nu ca să numeri paginile. Un copil a citit zece pagini și nu poate spune despre ce erau, deci cititul a rămas gol. Colegul poate povesti o scenă, deci a citit cu folos și păstrează o convorbire cu alte vremuri. Tiparul în limba română începe în secolul al XVI-lea. O carte din 1544 nu s-a păstrat, iar cea mai veche tipăritură românească păstrată, din care au rămas exemplare, este din 1551–1553. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.",
-      "example": "Ce scrie: Un copil a citit zece pagini și nu poate spune despre ce erau, iar colegul poate povesti o scenă. Ce vezi: Îi văd pe copil cu paginile în față și pe coleg lângă el. Eu aș sta lângă coleg, pentru că colegul poate povesti o scenă.",
-      "tryThis": "Ana spune că poate trăi fără cărți, dar pierde o convorbire cu alte vremuri. Ea a citit doar ca să numere paginile și nu poate povesti nimic. Radu povestește o scenă dintr-o tipăritură din 1551–1553. El spune că o carte din 1544 nu s-a păstrat și că tiparul românesc începe în secolul al XVI-lea. Scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că.",
-      "recap": "Cititul cu folos este lectura prin care înțelegi și păstrezi o convorbire cu alte vremuri, iar tiparul în limba română începe în secolul al XVI-lea, cu exemplare din 1551–1553, nu cu cartea din 1544, care nu s-a păstrat. Din scenă faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că. La școală faci aceiași trei pași pe textul pe care îl ai deschis."
-    },
-    {
-      "id": "placere-indatorire",
-      "title": "Îndatorire și plăcere",
-      "platter": "Fișa de îndatorire și plăcere este lista pe care separi ce este îndatorire de ce îți face plăcere. Scrii trei îndatoriri și trei plăceri. Apoi spui unde stă cititul, la datorie, la plăcere sau la amândouă, și dai un titlu temei. Mai adaugi două enunțuri afirmative și două propoziții negative, cu detalii, nu cu o vorbă goală de felul e ok. Lista nu rămâne amestecată. O îndatorire este că îți faci tema de matematică. O plăcere este că citești seara o poveste, iar titlul este Cititul meu stă la plăcere. Afirmativ scrii Citesc după cină, iar negativ scrii Nu citesc în pauza de zece minute. Lista are trei îndatoriri și trei plăceri, două enunțuri afirmative și două propoziții negative, cu detalii, nu amestecată și nu cu vorba goală e ok. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.\n\nExemplu lucrat: Ce scrie: O îndatorire este tema de matematică, iar o plăcere este că citești seara o poveste. Titlul este Cititul meu stă la plăcere. Ce vezi: Văd tema de matematică și povestea de seară. Eu aș citi povestea seara, pentru că o plăcere este că citești seara o poveste.\n\nTema de română este o îndatorire, iar fotbalul din curte este o plăcere. Titlul este Cititul meu stă și la datorie, și la plăcere. Afirmativ spui Citesc când am timp, iar negativ spui Nu citesc cu vorba goală e ok. Lista stă despărțită, cu trei îndatoriri, trei plăceri și detalii, nu amestecată. Scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că.\n\nFișa de îndatorire și plăcere este lista pe care separi trei îndatoriri de trei plăceri, spui unde stă cititul și dai un titlu, cu două enunțuri afirmative și două propoziții negative, cu detalii. Din scenă faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că. La școală faci aceiași trei pași pe textul pe care îl ai deschis.",
-      "theory": "Fișa de îndatorire și plăcere este lista pe care separi ce este îndatorire de ce îți face plăcere. Scrii trei îndatoriri și trei plăceri. Apoi spui unde stă cititul, la datorie, la plăcere sau la amândouă, și dai un titlu temei. Mai adaugi două enunțuri afirmative și două propoziții negative, cu detalii, nu cu o vorbă goală de felul e ok. Lista nu rămâne amestecată. O îndatorire este că îți faci tema de matematică. O plăcere este că citești seara o poveste, iar titlul este Cititul meu stă la plăcere. Afirmativ scrii Citesc după cină, iar negativ scrii Nu citesc în pauza de zece minute. Lista are trei îndatoriri și trei plăceri, două enunțuri afirmative și două propoziții negative, cu detalii, nu amestecată și nu cu vorba goală e ok. Din scena asta faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că.",
-      "example": "Ce scrie: O îndatorire este tema de matematică, iar o plăcere este că citești seara o poveste. Titlul este Cititul meu stă la plăcere. Ce vezi: Văd tema de matematică și povestea de seară. Eu aș citi povestea seara, pentru că o plăcere este că citești seara o poveste.",
-      "tryThis": "Tema de română este o îndatorire, iar fotbalul din curte este o plăcere. Titlul este Cititul meu stă și la datorie, și la plăcere. Afirmativ spui Citesc când am timp, iar negativ spui Nu citesc cu vorba goală e ok. Lista stă despărțită, cu trei îndatoriri, trei plăceri și detalii, nu amestecată. Scrie trei propoziții: ce scrie, ce vezi și ce ai face tu, cu pentru că.",
-      "recap": "Fișa de îndatorire și plăcere este lista pe care separi trei îndatoriri de trei plăceri, spui unde stă cititul și dai un titlu, cu două enunțuri afirmative și două propoziții negative, cu detalii. Din scenă faci trei pași: spui ce scrie, spui ce vezi, apoi spui ce ai face tu, cu pentru că. La școală faci aceiași trei pași pe textul pe care îl ai deschis."
-    }
+  lessons: [
+    lesson({
+      id: 'deschidere-carte',
+      title: 'Harta unității despre carte',
+      kind: 'comunicare',
+      boxes: [{
+        type: 'definitie',
+        title: 'Harta și ora',
+        text: 'Cuprinsul îți arată popasurile din față. Ora de azi predă unul singur. Titlul doar zărit dinainte nu este încă exersat.'
+      }],
+      theory: [
+        'Din volume afli cum este lumea și cum gândești tu. Cei care au trăit înainte ți-au lăsat ce au descoperit. Așa se țin generațiile, prin carte.',
+        'Întâi lucrezi grupurile de vorbe, apoi forma cuvântului, lista de litere, tăietura în silabe și apăsarea. Vorbele cu sens apropiat vin după aceste popasuri, nu odată cu ele.',
+        'Sunt opt competențe de urmărit pe parcurs. Întâi 1.1, alături de 1.3. Apoi 2.5. La mijloc stau 3.2 și, lângă ea, 3.3. La urmă vin 4.2, separat 4.3, iar la capăt 5.1.',
+        'Niciuna nu se marchează din titlu. Fiecare cere o scenă și o scriere curată. O propoziție ruptă de ora aceea nu acoperă competența.',
+        'Când ora este despre litere, exercițiul rămâne acolo. Un titlu doar anunțat, cum sunt vorbele apropiate, așteaptă altă dată. Cuprinsul dă ordinea. Ora face lucrul.',
+        'Legătura care nu se rupe este cartea. Învățătura poate sta pe o foaie veche sau pe ecran, în altă vreme. Suportul se schimbă. Rostul de a păstra ce s-a aflat rămâne.',
+        'La deschiderea unității notezi trei lucruri: popasul de acum, popasul de mai târziu și competența pe care o exersezi. Cuprinsul citit o dată nu înseamnă capitol încheiat.',
+        'Un coleg poate crede că a lucrat apăsarea doar pentru că a văzut-o anunțată. Nu ajunge. Apăsarea se lucrează când îi vine rândul, pe un cuvânt, cu locul tare verificat.',
+        'Scrierea curată se vede în semne puse corect și în fraze legate de scenă. Contextul se vede când răspunsul folosește datele orei, nu o vorbă fără faptă.'
+      ].join('\n\n'),
+      example: [
+        'Ora de acum stă pe lista literelor, deci exercițiul nu sare la vorbele apropiate. Acelea rămân un popas de mai târziu, nu un titlu marcat azi.',
+        'Aceeași învățătură poate trece de pe o foaie veche pe ecran. Cartea ține legătura, chiar dacă suportul și vremea sunt altele.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Dacă pe cuprins vezi și silaba, și apăsarea, iar ora este despre litere, marchezi doar literele. Silaba așteaptă. Apăsarea la fel.'
+      }],
+      tryThis: [
+        'Scrie două propoziții despre cuprins. În prima arată că el doar anunță traseul, iar vorbele cu sens apropiat rămân pentru mai târziu. Folosește lume, generații, câmp lexical, cuvânt, alfabet, silabă și accent.',
+        'În a doua spune că ora de acum este alfabetul. Numește competențele în grupuri: 1.1 cu 1.3, apoi 2.5, apoi 3.2 cu 3.3, apoi 4.2, 4.3 și, separat, 5.1. Adaugă scena și scrierea curată.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Cuprinsul dă ordinea popasurilor. Ora de azi predă unul singur.',
+        'Opt competențe cer o scenă și o scriere curată, nu un titlu doar zărit.',
+        'Cartea ține generațiile legate: învățătura rămâne, suportul se poate schimba.'
+      ]
+    }),
+    lesson({
+      id: 'carte-lexic',
+      title: 'Cuvântul-cheie și câmpul lexical',
+      kind: 'lectura',
+      boxes: [{
+        type: 'definitie',
+        title: 'Cheie și câmp',
+        text: 'Cheia este vorba fără de care tema se rătăcește. Câmpul lexical strânge vorbe înrudite ca înțeles. Unde se adună multe, acolo stă subiectul.'
+      }],
+      theory: [
+        'Ce știau oamenii a stat întâi pe piatră, apoi pe lut, apoi pe hârtie și, mai târziu, pe ecran. Suportul s-a tot schimbat. Nevoia a rămas: să nu se piardă învățătura.',
+        'Scoți cheia și textul nu mai spune tema. O vorbă doar frumoasă, fără legătură cu subiectul, rămâne podoabă. Cheia te ajută și când cauți.',
+        'Dacă tema este biblioteca, în câmp intră raftul și fișa. Pe un afiș scurt, cheia este împrumutul. Fără acest cuvânt, afișul nu mai arată ce faci în sală.',
+        'Câmpul lexical grupează vorbe de același fel. Pot fi păsări. Poate fi timpul. Pot fi rudele. Nu pui în aceeași listă lucruri care nu țin de un singur fel.',
+        'Un text poate purta două câmpuri deodată, de pildă cartea și timpul. Rândunica stă cu vrabia. Lângă ele stă ciocănitoarea. Toate trei țin de păsări. Secolul stă cu epoca. Lângă ele stă mileniul. Toate trei țin de timp.',
+        'Papirusul stă cu tiparul și cu ecranul: țin de carte. Raftul stă cu coperta și cu foaia: tot de carte. Vrabia pusă lângă secol înseamnă două liste, nu una.',
+        'La o cultură străină grupezi la fel, dar pe alte teme: mâncarea, muzica, clădirile. Alegi un câmp, cum sunt hobby-ul, sportul sau simbolurile, și pui chei care anunță subiectul, nu o vorbă goală.',
+        'Posterul este lucrarea făcută de tine. Unește textul cu imaginea. Faptele vin din mai multe discipline, fiindcă una singură nu dă diversitate. Un desen din care lipsește vorba temei nu ține loc de poster.',
+        'Când subiectul este ciorba, cheia este chiar ciorba. Istoria îți dă o sărbătoare. Geografia îți dă o regiune. Desenul îți dă farfuria. Trei discipline rămân în câmpul mâncării.'
+      ].join('\n\n'),
+      example: [
+        'Tema aleasă este biblioteca. Cheia afișului scurt este împrumutul. O vorbă doar frumoasă, fără legătură cu el, rămâne podoabă.',
+        'Păsările stau într-o listă: rândunică, vrabie, ciocănitoare. Timpul stă în alta: secol, epocă, mileniu. La ciorbă, cheia este ciorba, cu sărbătoare, regiune și farfurie.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Papirusul, tiparul și ecranul formează lista cărții. Dacă strecori mileniul între ele, ai băgat timpul în alt câmp. Listele se țin despărțite.'
+      }],
+      tryThis: [
+        'Fă planul unui poster despre mâncare, cu cheia ciorba. Spune cele trei discipline: de la istorie iei sărbătoarea, de la geografie iei regiunea, de la desen iei farfuria.',
+        'Desparte lista cărții, cu papirus, tipar, ecran, raft, copertă și foaie, de lista timpului, cu secol, epocă și mileniu. Scrie o propoziție despre bibliotecă și subliniază împrumutul.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Fără cheie, tema se pierde. O vorbă doar frumoasă rămâne podoabă.',
+        'Câmpul lexical strânge vorbe de un singur fel. Vrabia și secolul nu stau împreună.',
+        'Posterul unește text, imagine și fapte din mai multe discipline. Desenul fără cheie nu ajunge.'
+      ]
+    }),
+    lesson({
+      id: 'stea-intrebari',
+      title: 'Steaua de întrebări',
+      kind: 'lectura',
+      boxes: [{
+        type: 'regula',
+        title: 'Centru și raze',
+        text: 'Tema stă în mijloc, iar întrebările stau în jur. Pui minimum patru. Un răspuns poate naște o întrebare nouă.'
+      }],
+      theory: [
+        'Steaua este o schemă cu care explorezi tema. Cuvântul stă la mijloc. În jur nu pui definiții gata făcute, ci întrebări care deschid părți diferite.',
+        'Întrebările bune încep cu ce și cu la ce. Urmează pentru cine, apoi cu cine. Mai departe vin cum, unde și când. La urmă stă de ce. Nu le lași pe toate goale.',
+        'Unde îți cere un loc, nu o părere. De ce îți cere un motiv, nu o umplutură. Dacă răspunsul este doar că tema contează, steaua a rămas închisă.',
+        'Ajung și patru raze, dacă sunt lucrate. Poți pune toate cele opt, când tema le suportă. O singură propoziție nu cuprinde părțile pe care le deschid razele.',
+        'Din răspuns poate crește o întrebare nouă. Dacă spui că volumul păstrează o poveste, poți întreba pentru cine a fost scrisă povestea aceea. Tema se lărgește.',
+        'Centrul poate fi cartea. La întrebarea la ce folosește, răspunsul pe larg este că păstrează o poveste. La unde o cauți acum, locul poate fi biblioteca sau ecranul.',
+        'La de ce există, motivul este că oamenii nu au vrut să uite. Pentru cine se poate răspunde cu un cititor. Cu cine se poate răspunde cu un coleg, la o lectură împreună.',
+        'Cum arată drumul: pe hârtie ori pe ecran. Când poate fi seara sau ora de la școală. Eticheta că tema contează nu dă nici loc, nici motiv.',
+        'Schema nu se închide la prima frază. După patru răspunsuri, alegi unul și mai pui o întrebare. Așa nu rămâi la o etichetă.'
+      ].join('\n\n'),
+      example: [
+        'În centru stă cartea. La ce folosește: ține o poveste. Unde o cauți acum: în bibliotecă sau pe ecran. De ce a apărut: ca oamenii să nu uite.',
+        'Din răspunsul despre poveste pornește o întrebare nouă, anume pentru cine a fost scrisă. Eticheta că tema contează rămâne goală: nu are loc și nu are motiv.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Dacă la unde răspunzi bibliotecă, întrebarea nouă poate fi când se deschide sala. Locul a deschis timpul. Steaua crește din răspuns, nu dintr-o etichetă.'
+      }],
+      tryThis: [
+        'Desenează steaua cu cartea în mijloc. Pe raze pune ce, la ce, pentru cine și cu cine. Separat, adaugă cum, unde, când, de ce. La fiecare rază dă câte un răspuns.',
+        'Pentru unde numești un loc. Pentru de ce numești un motiv. Din unul dintre răspunsuri fă o întrebare nouă. Nu te opri la eticheta că tema contează.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Tema stă în mijloc. În jur stau măcar patru întrebări.',
+        'Locul răspunde la unde. Motivul răspunde la de ce. Eticheta că tema contează nu deschide steaua.',
+        'Un răspuns poate naște o întrebare nouă, iar tema se împarte în mai multe părți.'
+      ]
+    }),
+    lesson({
+      id: 'lucru-grup',
+      title: 'Roluri în grup',
+      kind: 'comunicare',
+      boxes: [{
+        type: 'regula',
+        title: 'Cinci roluri',
+        text: 'Liderul ține echipa laolaltă. Administratorul pregătește materialele. Informaticianul păstrează sursele. Ilustratorul strânge imaginile. Cronometrul păzește minutele.'
+      }],
+      theory: [
+        'Munca în grup are rost când fiecare poartă un rol limpede. Dacă rolul lipsește, se aude o singură voce, iar ceilalți așteaptă. Semnătura pusă la urmă nu ține loc de treabă.',
+        'Liderul nu lucrează singur tot proiectul. El îl cheamă și pe colegul tăcut, ca grupul să rămână întreg. Fără întrebarea aceasta, tăcerea trece drept acord.',
+        'Administratorul aduce materialele înainte de căutare. Informaticianul scrie de unde vine fiecare imagine, într-o listă ținută separat de textul lucrării.',
+        'Ilustratorul leagă imaginile de idee. Nu le pune doar ca să umple foaia. Cronometrul oprește căutarea la timp, ca să rămână minute și pentru scris.',
+        'Se vorbește pe rând. Nu se vorbește peste coleg. Cine are o idee așteaptă pauza celuilalt. Doi care pornesc odată nu se mai aud.',
+        'Un refuz se spune politicos și vine cu un motiv. Poți spune că nu iei imaginea aceea, fiindcă nu ține de axa cărții. Un nu scurt, fără motiv, închide discuția.',
+        'Nu ajunge ca un singur elev să ducă toată treaba, iar restul doar să iscălească. Fiecare rol lasă o urmă: o listă, o imagine, un timp păzit sau o întrebare pusă.',
+        'Trei colegi pot construi axa cărții, din lut până la ecran. Cronometrul taie căutarea. Liderul îl cheamă pe cel tăcut. Informaticianul trece sursa imaginii în lista separată.',
+        'Lista de surse nu se amestecă în textul de pe axă. Cine citește lucrarea trebuie să vadă și ideea, și locul din care a venit imaginea.'
+      ].join('\n\n'),
+      example: [
+        'Trei colegi construiesc axa, din lut până la ecran. Cronometrul oprește căutarea când minutele s-au terminat. Liderul îi cere părerea colegului care a tăcut.',
+        'Informaticianul trece originea imaginii în lista ținută separat. Dacă unul scrie totul și ceilalți doar iscălesc, rolurile nu au fost ținute.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Ilustratorul aduce o imagine de pe ecran. Informaticianul o refuză politicos: nu are sursă. Imaginea intră abia după ce sursa stă în listă.'
+      }],
+      tryThis: [
+        'Scrie cinci propoziții despre un proiect cu axa cărții, din lut până la ecran. Folosește lider, administrator, informatician, ilustrator și cronometru.',
+        'Arată vorbirea pe rând, refuzul politicos cu motiv și lista de surse ținută separat. Arată și că iscălitura fără muncă nu ține loc de rol.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Fiecare coleg poartă un rol: lider, administrator, informatician, ilustrator sau cronometru.',
+        'Se vorbește pe rând. Refuzul este politicos și are un motiv. Sursele stau într-o listă aparte.',
+        'Un elev care face totul, iar restul doar iscălește, nu ține rolurile.'
+      ]
+    }),
+    lesson({
+      id: 'cuvant-alfabet',
+      title: 'Alfabetul și literele împrumutate',
+      kind: 'limba',
+      boxes: [{
+        type: 'definitie',
+        title: 'Formă și ordine',
+        text: 'Cuvântul are un sens și o formă: sunete la vorbire, litere la scris. Alfabetul înșiră literele într-o ordine stabilă, aceeași pe care o urmezi în dicționar.'
+      }],
+      theory: [
+        'Lista românească numără 31 de litere. Ea coboară din alfabetul latin. În dicționar nu răsfoiești la întâmplare. Mergi după ordinea literelor, de la capătul de început spre final.',
+        'R este așezat înaintea lui V. De aceea roman apare înaintea lui viitor. Dacă răsfoiești invers, pierzi cuvântul, chiar dacă îl știi pe de rost.',
+        'Carte și book trimit la același obiect, dar cu alte litere. Sensul se caută în dicționar. Litera se verifică la forma corectă, nu după cum îți sună.',
+        'Chirilica este alfabetul slav de demult, cel cu care s-au scris primele volume românești. A rămas scrierea oficială până la anul 1860. După aceea au intrat literele latine folosite azi.',
+        'O cronică veche poate purta semne pe care nu le cunoști și totuși să fie românească. O foaie din alte veacuri poate trece la alt alfabet și totuși să rămână românească. Acum scriem cu litere latine.',
+        'În alfabet intră și k, și w, și q, și y. Le vezi mai ales la împrumuturi și la nume, cum sunt kilometrul, kilogramul și wattul.',
+        'Nu le schimbi după ureche, când norma le păstrează. La kilogram stă k, nu c. La watt rămâne w. Altfel forma nu mai este cea din dicționar și cuvântul poate să nu mai fie găsit.',
+        'Litera nu se confundă cu diacritica. Diacritica este semnul pus deasupra sau dedesubt. Dacă înlocuiești k cu c numai fiindcă așa auzi, ai schimbat forma, nu ai adăugat un semn.'
+      ].join('\n\n'),
+      example: [
+        'Ca să găsești roman într-un dicționar tipărit, urmezi ordinea. Pentru că R stă înaintea lui V, roman vine înaintea lui viitor.',
+        'Kilogramul își păstrează k. Wattul își păstrează w. Pusă în chirilică, aceeași idee arată ca un rând necunoscut, până recunoști semnele. Totuși limba poate fi româna. Până la 1860, scrierea oficială a fost chirilica.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Kilometrul se scrie cu k, la fel ca kilogramul. Dacă pui c în locul lui k, forma iese din normă și dicționarul nu te mai duce la cuvânt.'
+      }],
+      practice: [
+        '1) Cât de lung este alfabetul românesc și din ce alfabet coboară?',
+        '2) În dicționar, cine stă înainte, roman sau viitor, și din ce motiv?',
+        '3) Până la ce an a fost chirilica scriere oficială și ce litere au urmat?',
+        '4) Variante pentru kilogram și watt: a) cilogram și vat; b) kilogram și vat; c) kilogram și watt. Ce se bifează?'
+      ].join('\n\n'),
+      answers: [
+        'Numără 31 de litere și coboară din alfabetul latin.',
+        'Roman stă înaintea lui viitor, fiindcă R este așezat înaintea lui V.',
+        'Până la anul 1860. După aceea au intrat literele latine.',
+        'se bifează c'
+      ],
+      mistakes: 'Nu înlocui k și w după ureche. La kilogram nu pui c, iar watt nu rămâne fără w. Semnele chirilice nu înseamnă automat altă limbă. Litera nu este totuna cu diacritica.',
+      tryThis: [
+        'Ordonează cinci cuvinte, cu roman înaintea lui viitor, ca să arăți că R îl precede pe V.',
+        'Scrie propoziții despre cele 31 de litere, despre originea latină, despre chirilică și despre anul 1860. Mai scrie kilometru, kilogram și watt, cu k și cu w păstrate, și folosește q și y într-un nume sau într-un împrumut.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Alfabetul românesc numără 31 de litere și coboară din cel latin. Dicționarul se răsfoiește în ordinea lor.',
+        'Roman apare înaintea lui viitor, fiindcă R stă înaintea lui V. Chirilica a fost oficială până la 1860.',
+        'Kilogramul păstrează k, wattul păstrează w. Litera nu se confundă cu diacritica.'
+      ]
+    }),
+    lesson({
+      id: 'diacritice',
+      title: 'Diacriticele și scrierea lui î',
+      kind: 'limba',
+      boxes: [{
+        type: 'regula',
+        title: 'Trei semne',
+        text: 'Pe ă stă căciulița. Pe ș și pe ț stă virgula. Pe â și pe î stă accentul circumflex. Semnele se scriu mereu: schimbă sunetul și pot schimba sensul.'
+      }],
+      theory: [
+        'Diacritica este semnul așezat pe literă. Fără el, vorba poate însemna altceva, iar celălalt poate râde tocmai fiindcă sensul s-a mutat. Nu le rezervi pentru momentele în care ți se par decorative.',
+        'Masă, scrisă cu căciuliță, nu este vorba masa. Român, scris cu accent circumflex, nu spune ce spune roman. O literă lăsată fără semn poate muta cuvântul.',
+        'Sunetul î se notează cu î la începutul cuvântului și la capătul lui. Așa stau în și coborî. În interior, când nu urmează unui prefix, se notează cu â. Modelele sunt adânc, apoi român.',
+        'Când rădăcina pornește cu î și primește un prefix, î rămâne î. Așa se scriu neîngrijit, apoi reîncepe, apoi subînțeles. După ne- nu pui â, pentru că rădăcina este îngrijit.',
+        'Când după prefixul în- urmează b sau p, în loc de n se scrie m. La împăduri urmează p, deci stă m. La îmbătrâni urmează b, deci stă tot m. Forma înpădurire se înlocuiește cu împădurire.',
+        'Nu adăuga un i numai fiindcă așa auzi în grabă. Forma bună a lui era nu este iera. Forma bună a lui epocă nu este iepocă. Le păstrezi corecte pe toate, nu doar pe prima din frază.',
+        'Căciulița, virgula și accentul circumflex sunt semne, nu litere noi. Le vezi pe ă, pe ș, pe ț, pe â și pe î. Apoi verifici și locul lui î față de prefix.'
+      ].join('\n\n'),
+      example: [
+        'Scrii Acolo era altă epocă, nu iera și nu iepocă. Împădurirea ia m, fiindcă după prefix urmează p. Îmbătrâni ia m, fiindcă urmează b.',
+        'Adânc se scrie cu â: sunetul este în mijloc și nu stă după un prefix. Neîngrijit păstrează î după ne-, cum fac reîncepe și subînțeles. Masă nu este masa. Român nu este roman.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'La coborî, î stă la capăt, deci rămâne î. La adânc, sunetul este în interior și nu urmează unui prefix, deci se notează â. Cele două locuri nu se tratează la fel.'
+      }],
+      practice: [
+        '1) Ce semn stă pe ă? Ce semn stă pe ș și pe ț? Ce semn stă pe â și pe î?',
+        '2) Cum notezi sunetul î în în, în coborî, în adânc și în neîngrijit?',
+        '3) De ce împădurire se scrie cu m, iar înpădurire nu este forma bună? Ce se întâmplă și la îmbătrâni?',
+        '4) Corectează iera și iepocă. Ce se schimbă la sens între masă și masa?'
+      ].join('\n\n'),
+      answers: [
+        'Pe ă stă căciulița. Pe ș și pe ț stă virgula. Pe â și pe î stă accentul circumflex.',
+        'î la început, în în; î la capăt, în coborî; â în interior, în adânc; î după prefix, în neîngrijit.',
+        'După prefix urmează p, deci se scrie m: împădurire. La îmbătrâni urmează b, deci este tot m.',
+        'Formele bune sunt era și epocă. Masă, cu căciuliță, nu este aceeași vorbă cu masa.'
+      ],
+      mistakes: 'După ne- nu pui â dacă rădăcina începe cu î: forma este neîngrijit, nu neângrijit. Înainte de b sau de p nu lași n în prefixul în-. Nu lipi un i de era și nici de epocă.',
+      tryThis: [
+        'Scrie propoziții cu în, cu coborî, cu adânc, cu român, cu neîngrijit, cu reîncepe, cu subînțeles, cu împăduri, cu îmbătrâni și cu împădurire.',
+        'Mai scrie trei enunțuri corecte, unul cu era, unul cu epocă și unul cu împădurire. Arată cum diferă masă de masa și român de roman. Spune numele celor trei semne: căciuliță, virgulă, circumflex.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Căciulița, virgula și accentul circumflex schimbă sunetul. Masă diferă de masa, iar român diferă de roman.',
+        'Î se scrie la capete și după un prefix pus pe o rădăcină cu î. În interior, fără prefix, se scrie â.',
+        'Înainte de b sau de p, prefixul în- ia litera m. Era și epocă nu primesc un i în plus.'
+      ]
+    }),
+    lesson({
+      id: 'silaba',
+      title: 'Silaba și semivocala',
+      kind: 'limba',
+      boxes: [{
+        type: 'definitie',
+        title: 'O deschidere',
+        text: 'O silabă se rostește dintr-o singură deschidere a gurii. În ea stă o vocală, numai una. Literele nu se numesc silabe.'
+      }],
+      theory: [
+        'Vocalele se pot rosti singure. Șirul lor începe cu a și cu ă. Urmează â și î. La final stau e, i, o și u. Consoanele au nevoie de o vocală ca să încapă într-o silabă.',
+        'Printre consoane stau b și c, apoi d, f și g. Mai departe vin h, j, k, l și m. Urmează n, p, r, s și ș. Încheie t, ț, v și z. Numărătoarea silabelor urmărește vocalele care le țin, nu toate semnele de pe rând.',
+        'Acasă se taie a-ca-să. Sunt trei deschideri, deci trei silabe. Le țin a, apoi din nou a, apoi ă. Restul literelor nu intră la numărătoarea aceasta.',
+        'Consoana b nu deschide singură o silabă, fiindcă îi trebuie o vocală. Dacă numeri literele și spui că ai tot atâtea silabe, proba este greșită.',
+        'Semivocala este sunetul lui e, al lui i, al lui o sau al lui u când nu poartă singure silaba, ci se sprijină pe vocala de lângă ele. Când chiar ele poartă silaba, aceleași litere redevin vocale.',
+        'Le recunoști ușor când după ele vin a, ă sau î, cum vezi în seară. Semivocala sună mai scurt, vocala sună mai lung.',
+        'Nu orice e și nu orice i poartă silaba. La tei, t este consoană, iar e ține silaba. I rămâne semivocală și nu deschide o silabă nouă.',
+        'În zeu, e ține silaba, deci intră la vocale. Nu așeza i din tei în grupa lui e din zeu. Una nu ține silaba. Cealaltă o ține.'
+      ].join('\n\n'),
+      example: [
+        'Tăietura lui acasă este a-ca-să: trei silabe, ținute de a, de a și de ă. Consoana b nu deschide gura singură într-o silabă.',
+        'La tei, e ține silaba, iar i este semivocală. La zeu, e ține silaba și sună mai lung. La seară, semivocala sună mai scurt decât vocala de lângă ea.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Carte are vocalele a și e, deci două silabe: car-te. Consoanele nu se numără ca silabe. Tei rămâne o singură silabă, fiindcă i nu deschide una nouă.'
+      }],
+      practice: [
+        '1) Taie acasă în silabe. Câte sunt și ce vocale le țin?',
+        '2) În tei, ce rol au t, e și i?',
+        '3) În zeu, ce rol are e? De ce nu stă în aceeași grupă cu i din tei?',
+        '4) De ce consoana b nu ține singură o silabă? În seară, care sunet este mai scurt, semivocala sau vocala?'
+      ].join('\n\n'),
+      answers: [
+        'a-ca-să, trei silabe, ținute de a, de a și de ă.',
+        't este consoană, e este vocală, i este semivocală.',
+        'e poartă silaba și este vocală. i din tei nu ține singur o silabă.',
+        'Îi trebuie o vocală. În seară, semivocala sună mai scurt.'
+      ],
+      mistakes: 'Nu numi literele silabe și nu număra toate semnele din cuvânt. Nu așeza i din tei lângă e din zeu, ca și cum ar avea același rol. Semivocala sună mai scurt, vocala mai lung.',
+      tryThis: [
+        'Taie în silabe acasă și carte. Spune, în două enunțuri, ce vocale poartă fiecare tăietură.',
+        'Apoi descrie rolurile din tei și din zeu. Folosește tăietura a-ca-să, cuvântul seară și termenii vocală, semivocală, consoană, deschidere.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Silaba se rostește dintr-o deschidere și ține o singură vocală. Consoanele au nevoie de vocală.',
+        'Acasă se taie a-ca-să. Se numără vocalele care țin silaba, nu toate literele.',
+        'e, i, o și u sunt semivocale când stau lângă altă vocală. În zeu, e poartă silaba. În tei, i nu o poartă.'
+      ]
+    }),
+    lesson({
+      id: 'accent',
+      title: 'Accentul, litera și sunetul',
+      kind: 'limba',
+      boxes: [{
+        type: 'definitie',
+        title: 'Apăsarea',
+        text: 'Accentul înseamnă că o silabă se spune mai tare sau mai sus. Poate muta sensul. Ține de limba standard și, la îndoială, se caută în DOOM.'
+      }],
+      theory: [
+        'Limba standard este forma comună, ținută de norme. Accentul intră în această formă. La îndoială, deschizi DOOM. Nu lași apăsarea unde îți vine.',
+        'Aceleași litere, cu apăsarea mutată, pot fi alt cuvânt. În carte, silaba tare este car. Nu muți apăsarea pe te numai fiindcă așa auzi în grabă.',
+        'Enunțul Maria e veselă poate însemna că ea este voioasă, dacă apeși începutul. Dacă apeși mijlocul, veselă poate numi vasele de pe masă. Sensul îl decide silaba tare.',
+        'De obicei, unui sunet îi corespunde o literă. Nu este o regulă fără excepții. Litera x redă două sunete: pe cs, cum auzi în fix, sau pe gz, cum auzi în exemplu.',
+        'Un sunet poate fi notat cu litere diferite. În casă, sunetul k ia litera c. În karate, același sunet ia litera k. Sunetul v se notează v sau w. Nu repari un cuvânt după celălalt doar fiindcă încep la fel.',
+        'Fix are 3 litere, dar 4 sunete, fiindcă x înseamnă cs. Nu egala numărul literelor cu numărul sunetelor. În exemplu, x înseamnă gz: iarăși două sunete într-o literă.',
+        'Casă și karate încep cu același sunet, însă karate începe cu k, nu cu c. Dacă îi schimbi litera de la început, cuvântul nu mai este cel din normă.'
+      ].join('\n\n'),
+      example: [
+        'Apeși începutul lui veselă și Maria este voioasă. Apeși mijlocul și pe masă stau vasele. În carte, silaba tare este car. Forma nesigură se caută în DOOM.',
+        'Fix are 3 litere și 4 sunete, fiindcă x înseamnă cs. În exemplu, x înseamnă gz. Karate își păstrează k la început, chiar dacă sunetul seamănă cu cel din casă. Sunetul v se notează și v, și w.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'În fix, x nu este un singur sunet. De aceea sunetele trec peste litere. Aceeași observație nu te pune să scrii karate cu c.'
+      }],
+      practice: [
+        '1) În carte, care silabă este cea tare?',
+        '2) La Maria e veselă, ce sens apare dacă apeși începutul și ce sens apare dacă apeși mijlocul?',
+        '3) Câte litere și câte sunete are fix? Cum se aude x în fix și cum se aude în exemplu?',
+        '4) Casă și karate încep cu același sunet. Ce literă păstrează karate la început? Unde verifici o apăsare nesigură?'
+      ].join('\n\n'),
+      answers: [
+        'Silaba tare este car.',
+        'La început, voioasă. La mijloc, vasele de pe masă.',
+        '3 litere și 4 sunete. În fix, x înseamnă cs. În exemplu, x înseamnă gz.',
+        'Karate păstrează k. Apăsarea nesigură se verifică în DOOM.'
+      ],
+      mistakes: 'Nu pune accentul unde îți vine și nu socoti literele drept sunete. X din fix nu este un singur sunet. Nu schimba k din karate în c doar fiindcă sunetul seamănă cu cel din casă.',
+      tryThis: [
+        'Scrie două propoziții cu veselă. Una arată persoana voioasă și spune că apăsarea cade la început. Alta arată vasele de pe masă și spune că apăsarea cade la mijloc.',
+        'Apoi scrie propoziții cu fix, cu exemplu, cu casă și cu karate. Folosește DOOM, silaba car, grupurile cs și gz, numerele 3 litere și 4 sunete, plus k și w. Arată că litera de la început rămâne a fiecărui cuvânt.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Accentul poate muta sensul, ca la veselă, și se caută în DOOM, fiindcă ține de limba standard.',
+        'În carte, silaba tare este car. Aceleași litere, cu altă apăsare, pot fi alt cuvânt.',
+        'Litera x redă cs sau gz. Fix are 3 litere și 4 sunete. Sunetul k ia c în casă și k în karate.'
+      ]
+    }),
+    lesson({
+      id: 'litera-ajutatoare',
+      title: 'Litera care doar ajută',
+      kind: 'limba',
+      boxes: [{
+        type: 'definitie',
+        title: 'Literă ajutătoare',
+        text: 'Unele litere nu se aud ca ele însele. Ele ajută pronunția. Litera din stânga sau din dreapta decide dacă semnul se aude sau doar ajută.'
+      }],
+      theory: [
+        'Nu orice semn dintr-un grup se citește separat. Uneori stă acolo ca să schimbe sunetul vecinului. De aceea te uiți la litera de alături înainte să pronunți.',
+        'În grupurile che și chi, ca și în ghe și ghi, h nu se aude cum se aude h în haz. Dacă despici che în trei bucăți, c apoi h apoi e, ai citit ceva ce gura nu face.',
+        'În hrană, h este consoană și se rostește. Același semn are alt rol în chemare: acolo ajută pronunția și nu se rostește ca în hrană.',
+        'În grupurile ce și ci, ca și în ge și gi, e ori i rămâne marcă pentru consoana moale, nu o vocală plină. Vecinul îți spune dacă vocala se aude întreagă.',
+        'În geme, e pus după g mută sunetul lui g. Acest g nu este g-ul din gaz, unde se aude plin. Aici e doar ajută, nu se citește ca o vocală lungă pusă după un g tare.',
+        'În che, h este semn, nu un h rostit aparte. Proba este simplă. Dacă îl auzi ca în haz, l-ai citit greșit. Dacă grupul sună dintr-o bucată, h și-a făcut rolul de ajutor.',
+        'La un item cu trei variante despre h din che, varianta bună spune că h ajută pronunția și nu se citește separat. Acolo se bifează c.'
+      ].join('\n\n'),
+      example: [
+        'În chemare, h nu se rostește ca în hrană, fiindcă are rol de ajutor. Hrană, în schimb, îl are pe h drept consoană rostită, la fel ca în haz.',
+        'În geme, e de după g mută sunetul lui g. În gaz, g se aude plin. La variantele despre h din che, se bifează c: h ajută și nu se citește separat.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'În ghi, h nu se aude cum se aude în haz. Grupul se citește dintr-o bucată. Dacă adaugi un h separat, ai citit o consoană care în grupul acela este doar semn.'
+      }],
+      practice: [
+        '1) În chemare, h se aude ca în hrană? Ce rol are acolo?',
+        '2) În hrană, h este consoană sau semn ajutător? Cu ce h se compară?',
+        '3) În geme, ce face e de după g, față de g din gaz?',
+        '4) Variante pentru h din che: a) se citește ca h din haz; b) lipsește din cuvânt; c) ajută și nu se citește separat. Ce se bifează?'
+      ].join('\n\n'),
+      answers: [
+        'Nu se aude ca în hrană. Ajută pronunția.',
+        'Este consoană și se aude. Se compară cu h din haz.',
+        'Schimbă sunetul lui g. În gaz, g se aude plin.',
+        'se bifează c'
+      ],
+      mistakes: 'Nu citi che ca pe trei bucăți, c apoi h apoi e. Nu trata h din chemare ca pe h din hrană. În ge și în gi, e sau i pot fi marcă pentru consoana moale, nu vocală plină.',
+      tryThis: [
+        'Scrie patru propoziții, cu chemare, cu hrană, cu geme și cu gaz. Spune, pentru fiecare, dacă h ori e se rostește plin sau doar ajută.',
+        'Adu și șirul che cu chi, apoi ghe cu ghi, apoi ce cu ci, apoi ge cu gi, împreună cu haz. La itemul cu trei variante despre h din che, arată că se bifează c.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Litera ajutătoare nu se aude ca ea însăși. Vecinul decide rolul.',
+        'În che, în chi, în ghe și în ghi, h nu se rostește ca în haz. În hrană, h este consoană.',
+        'În ce, în ci, în ge și în gi, e sau i pot marca o consoană moale. La variantele despre h din che, se bifează c.'
+      ]
+    }),
+    lesson({
+      id: 'sinonime',
+      title: 'Sinonime și antonime',
+      kind: 'limba',
+      boxes: [{
+        type: 'definitie',
+        title: 'Aproape și opus',
+        text: 'Sinonimul are altă formă, dar același înțeles. Antonimul are altă formă și sens din partea opusă. Pe amândouă le alegi din frază, nu din capul unei liste.'
+      }],
+      theory: [
+        'Fraza alege sinonimul. În au ridicat un zid, înlocuitorul este a construi, deci au clădit. În i-au ridicat pedeapsa, sensul este că au anulat-o. A construi nu mai încape acolo.',
+        'Dacă spui frumos de patru ori, textul slăbește. Poți păstra ideea cu alte forme, ca vorbele să nu se calce. Alegi forma potrivită frazei, nu prima din listă.',
+        'O pisică poate fi blândă. Poate avea mustăți lungi. Poate avea ochi limpezi. Trei detalii țin locul repetiției. Cititorul vede animalul, nu aude mereu aceeași vorbă.',
+        'Antonimul este o vorbă diferită. Perechi lucrate aici sunt mare cu mic, bucurie cu tristețe, furie cu calm, speranță cu disperare. Îl verifici în frază, nu îl lipești mecanic.',
+        'Nu merg se opune lui merg, însă nu este antonim. Este aceeași vorbă oprită cu nu, adică o negație. Antonimul trebuie să fie alt cuvânt, nu aceeași vorbă blocată.',
+        'La emoții, perechea bucuriei este tristețea, nu furia. Furia își are perechea ei, calmul. Dacă amesteci perechile, opoziția nu mai este cea din frază.',
+        'Urâtă schimbă frumusețea, nu lumina, deci nu stă în fața lui luminoasă. Pentru o cameră luminoasă, opusul care se potrivește este întunecoasă, fiindcă se schimbă lumina.',
+        'O listă de sinonime nu se copiază la întâmplare în text. Întâi citești fraza, apoi alegi forma. La antonime faci la fel: verifici ce se opune, lumina sau frumusețea, bucuria sau furia.'
+      ].join('\n\n'),
+      example: [
+        'La zidul din au ridicat un zid, înlocuitorul bun este a construi. La pedeapsa din i-au ridicat pedeapsa, sensul este anulare, deci a construi nu mai este bun.',
+        'Pisica poate fi blândă, poate avea mustăți lungi și ochi limpezi, fără frumos repetat. Pentru o cameră luminoasă, opusul este întunecoasă, nu urâtă. Nu merg este negație, nu antonim pentru merg.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Bucuria nu se opune furiei. Perechea bucuriei este tristețea, iar perechea furiei este calmul. Două emoții tari nu sunt automat antonime.'
+      }],
+      practice: [
+        '1) În au ridicat un zid, ce sinonim se potrivește? În i-au ridicat pedeapsa, ce sens are grupul?',
+        '2) Cum descrii o pisică fără să repeți frumos? Dă trei înlocuiri.',
+        '3) De ce nu merg nu este antonimul lui merg?',
+        '4) Pentru o cameră luminoasă, opusul bun este urâtă sau întunecoasă? Bucuria stă în fața cui?'
+      ].join('\n\n'),
+      answers: [
+        'a construi, deci au clădit. La pedeapsă, sensul este că au anulat-o.',
+        'blândă, mustăți lungi, ochi limpezi.',
+        'Este aceeași vorbă cu nu, deci este negație, nu un alt cuvânt.',
+        'întunecoasă. Bucuria stă în fața tristeții.'
+      ],
+      mistakes: 'Nu lua primul sinonim din listă, fără să citești fraza. Nu numi negația antonim. Nu pune urâtă în fața lui luminoasă și nu pune furia în fața bucuriei.',
+      tryThis: [
+        'Scrie trei propoziții despre o pisică. În locul lui frumos repetat, folosește blândă, mustăți lungi și ochi limpezi.',
+        'Scrie perechi cu mare și mic, cu bucurie și tristețe, cu furie și calm, cu speranță și disperare. Adaugă o propoziție cu zidul clădit și una cu pedeapsa anulată. Arată că nu merg este negație.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Sinonimele se aleg după frază. La zid merge a construi. La pedeapsă, sensul este anulare.',
+        'Frumos repetat se înlocuiește cu detalii: blândă, mustăți lungi, ochi limpezi.',
+        'Antonimul este alt cuvânt, cu sens opus. Negația nu este antonim. Luminoasă stă în fața lui întunecoasă.'
+      ]
+    }),
+    lesson({
+      id: 'notite',
+      title: 'Notițele și paragraful',
+      kind: 'redactare',
+      boxes: [{
+        type: 'regula',
+        title: 'De recitit',
+        text: 'Notița este o însemnare pe care o înțelegi și după șapte zile. Are titlu, spațiu liber, data sus în dreapta și cheile subliniate.'
+      }],
+      theory: [
+        'Însemnările îți aparțin. Între titlu și rânduri lași un spațiu, ca să vezi unde începe textul. Data o așezi în colțul de sus din dreapta, despărțită de primul rând.',
+        'Cheile se subliniază. Poți colora sau desena o schemă. Unele texte au doar paragrafe. Altele pun lângă vorbe un desen sau o hartă. Nu strânge totul grămadă, fără titlu și fără loc gol.',
+        'Un paragraf ține o singură idee și se deschide cu alineat. Ideea nouă cere rând nou. Nu o continui pe rândul anterior.',
+        'De ce s-a întâmplat stă în cauză. Ce a urmat stă în efect. Le poți despărți în două paragrafe sau le poți lega printr-o schemă. Lipite, fără alineat, ele ascund locul în care firul se schimbă.',
+        'Poți intitula însemnarea Cauza și efectul. Copilul cere dulciuri fără oprire. Ce urmează: oamenii din casă obosesc. Săgeata dintre fapte este schema.',
+        'Alt caz: cineva repetă toată ziua o singură vorbă. Ce urmează: cei de lângă el nu o mai aud. Fiecare fapt primește paragraful lui.',
+        'Schema nu șterge titlul. Poți avea săgeată și, separat, două paragrafe. Săgeata arată legătura. Alineatul arată schimbarea de idee.',
+        'După o săptămână trebuie să recunoști însemnarea fără ajutor. Data, titlul, spațiul și cheile subliniate sunt modul în care te regăsești, nu o podoabă.'
+      ].join('\n\n'),
+      example: [
+        'Titlul ales este Cauza și efectul. Data stă în colțul de sus, la dreapta, cu spațiu până la text. Copilul cere dulciuri fără oprire. Oamenii din casă obosesc. Între fapte pui o săgeată.',
+        'Ideile stau separat, fiecare cu alineat. La fel, o vorbă repetată toată ziua nu mai este auzită de cei de lângă. Fiecare fapt are bucata lui.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Dacă lipești cauza și urmarea pe același rând, săgeata nu mai ajută. Cititorul nu vede schimbarea. Alineatul nou desparte cererea de dulciuri de oboseala celor din casă.'
+      }],
+      tryThis: [
+        'Notează cu titlul Cauza și efectul. Pune data în colțul din dreapta sus, lasă spațiu sub titlu și subliniază cheile. Poți colora sau desena.',
+        'Deschide două paragrafe. În primul, cauza: un copil cere dulciuri fără oprire. În al doilea, urmarea: oamenii din casă obosesc. Leagă-le cu o săgeată. Mai adaugă că o vorbă repetată o zi întreagă a încetat să mai fie auzită.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Notița se înțelege și după șapte zile: titlu, spațiu liber, data sus în dreapta, chei subliniate.',
+        'O idee stă într-un paragraf și primește alineat propriu. Blocul fără aer amestecă firul.',
+        'Cauza arată motivul. Efectul arată urmarea. Săgeata le leagă, fără să le pună pe același rând.'
+      ]
+    }),
+    lesson({
+      id: 'proiect',
+      title: 'Proiectul și cum îl notezi',
+      kind: 'comunicare',
+      boxes: [{
+        type: 'regula',
+        title: 'Înainte de scris',
+        text: 'Proiectul se construiește pas cu pas, de la o temă aleasă de tine. Întâi întrebi, apoi îngustezi, afli termenul și abia după aceea alegi forma.'
+      }],
+      theory: [
+        'Pui pe hârtie măcar două întrebări de documentare. Apoi strângi tema la o expresie, la o credință sau la un desen. Afli când trebuie predată lucrarea. Planul vine după termen, nu înainte.',
+        'Lucrarea poate fi compunere, prezentare sau poster. Sursele pot fi cărți de școală, enciclopedii sau alte volume. Nu pornești scrisul înainte să știi ce formă ți se cere.',
+        'Tema largă poate fi animalele. Poți întreba de ce unor oameni le e teamă de pisica neagră și cum o privesc alte culturi. Când termenul este scurt, produsul este un poster.',
+        'Te notezi singur, cu un plafon de 100 de puncte și cu șapte criterii. O structură dintr-o bucată valorează 10. O temă cu nuanțe valorează 20. Felul în care arată foaia valorează 10.',
+        'Sursele de încredere valorează 10. Anexa în care se văd sursele valorează 20. Felul în care legi textul de imagine valorează 10. Tema și anexa cântăresc cel mai greu.',
+        'La scriere iei 20 de puncte dacă greșelile sunt mai puține de patru. Dacă treci de patru, iei 10. Dacă treci de opt, iei 5. La cinci greșeli nu mai iei 20, ci 10.',
+        'Un colaj frumos, care nu arată sursa informației, pierde anexa, adică 20 de puncte. Desenul nu acoperă lipsa listei.',
+        'Întrebările despre pisica neagră strâng tema largă a animalelor. Dacă termenul este scurt, alegi posterul. Nu pornești o compunere lungă fără să știi forma.',
+        'Punctele se adună după cele șapte criterii și nu trec de 100. Înainte de predare verifici structura, nuanța, foaia, sursele, anexa, legătura dintre text și imagine și numărul greșelilor.'
+      ].join('\n\n'),
+      example: [
+        'Tema largă este animalele. Întrebi de ce unor oameni le e teamă de pisica neagră și cum o privesc alte culturi. Apoi alegi un poster, fiindcă termenul este scurt.',
+        'Ai un poster limpede, însă lista de surse lipsește, deci anexa cade: 20 de puncte. Cu cinci greșeli la scris iei 10, nu 20. Sub patru greșeli iei 20. Peste opt iei 5.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Dacă tema rămâne doar animalele, fără o întrebare îngustă, nuanța lipsește. Cele 20 de puncte ale temei nu se iau pe un titlu larg, ci pe o credință, o expresie sau un desen ales.'
+      }],
+      tryThis: [
+        'Alege o temă pe placul tău. Poți porni de la animale. Formulează două întrebări: de ce le e teamă unora de pisica neagră și cum o privesc alte culturi. Strânge tema la o expresie, la o credință sau la un desen.',
+        'Notează termenul, apoi un plan scurt pentru poster, compunere sau prezentare. Numește sursele. Treci cele șapte criterii, cu punctele 10, 20, 10, 10, 20 și 10, plus scrierea: 20 dacă greșelile sunt sub patru, 10 dacă treci de patru, 5 dacă treci de opt.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Proiectul pornește de la întrebări, se îngustează, așteaptă termenul și abia apoi primește o formă.',
+        'Te notezi cu cel mult 100 de puncte, împărțite pe șapte criterii. Tema cu nuanțe și anexa valorează câte 20.',
+        'Dacă lipsește lista de surse, pierzi 20 de puncte. Cu cinci greșeli la scris iei 10, nu 20.'
+      ]
+    }),
+    lesson({
+      id: 'empatie',
+      title: 'Tema, empatia și dialogul atent',
+      kind: 'comunicare',
+      boxes: [{
+        type: 'definitie',
+        title: 'Trei unelte',
+        text: 'Tema se spune scurt, printr-un substantiv. Detaliul o face de crezut prin gest, prin obiect sau prin loc. Empatia înseamnă să înțelegi dorința celuilalt, chiar dacă nu ești de acord cu tot.'
+      }],
+      theory: [
+        'Tema este ideea din centru, spusă în linii mari. O poți numi călătorie, copilărie sau școală. Un adjectiv lung nu ține locul substantivului. Cititorul trebuie să poată rosti tema într-un cuvânt.',
+        'Detaliul este un gest văzut. Spui că a fost frumos, dar fără o faptă, și detaliul lipsește. Spui că erai emoționat, fără obiect și fără loc, și detaliul rămâne gol.',
+        'Prin empatie pricepi ce gândește și ce își dorește celălalt și te pui în locul lui. Poți înțelege și fără să accepți tot ce spune.',
+        'În dialogul atent ești, pe rând, cel care vorbește și cel care ascultă. Vorbitorul spune limpede, rămâne pe temă, ține o voce potrivită, cât să fie auzit și nu cât să deranjeze, și îl cheamă și pe celălalt.',
+        'Ascultătorul îl privește, nu îl taie și nu pornește odată cu el. Dacă nu a priceput, cere o lămurire. Doi care vorbesc în același timp nu fac un dialog atent.',
+        'Încap și patru replici. Ioana anunță tema copilăriei și spune că ghiozdanul îi lovea genunchiul. Apoi explică de ce i-a plăcut un personaj și tace.',
+        'Andrei o privește și, după ce ea a terminat, o întreabă ce anume i s-a părut grijuliu. El vrea să scrie, nu doar să asculte. Vorbește la rândul lui, cu o voce doar cât să se audă.',
+        'Din scenă faci trei pași, în propoziții separate. Întâi spui ce se povestește. Apoi spui ce imagine vezi. La urmă spui ce ai face tu și legi fapta prin pentru că.',
+        'La școală repeți pașii pe textul deschis în fața ta. Nu sari la părere înainte să spui ce se vede. Lămurirea vine după ce celălalt a tăcut, nu peste vorbele lui.'
+      ].join('\n\n'),
+      example: [
+        'Ce se povestește: ghiozdanul îi lovea genunchiul, Ioana tace, iar Andrei, după pauză, o întreabă ce anume i s-a părut grijuliu.',
+        'Ce vezi: Ioana cu ghiozdanul la genunchi și Andrei alături. Eu aș aștepta puțin, apoi aș vorbi încet, pentru că Ioana tace, iar Andrei o privește.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Eram emoționat, fără gest, rămâne gol. Ghiozdanul care bate în genunchi este detaliu, fiindcă se văd un obiect și o mișcare. Tema rămâne copilăria, spusă printr-un substantiv.'
+      }],
+      tryThis: [
+        'Matei spune că tema lui este școala și pune creionul pe bancă. Vorbește limpede, rămâne pe temă, ține vocea cât să fie auzit și îl cheamă pe coleg. Colegul îl privește, nu îl taie și cere o lămurire.',
+        'Cei doi nu pornesc odată. Matei pricepe că și colegul vrea să spună o dorință. Scrie trei propoziții: ce se povestește, ce vezi și ce ai face tu, legate prin pentru că.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Tema se spune printr-un substantiv. Detaliul este un gest, un obiect sau un loc, nu o vorbă goală.',
+        'În dialogul atent se vorbește pe rând. Ascultătorul nu taie vorba și cere o lămurire dacă nu a priceput.',
+        'Din scenă iei trei pași: ce se povestește, ce vezi și ce ai face, legate prin pentru că.'
+      ]
+    }),
+    lesson({
+      id: 'tiparita-digitala',
+      title: 'Carte tipărită sau digitală',
+      kind: 'comunicare',
+      boxes: [{
+        type: 'definitie',
+        title: 'Două suporturi',
+        text: 'Volumul tipărit și volumul digital duc același text. Amândouă sunt cărți. Se schimbă suportul, nu faptul de a fi carte. Alegi după drum, nu după modă.'
+      }],
+      theory: [
+        'Forma tipărită este un suport pentru text. Forma digitală este celălalt suport. Poți citi aceeași poveste în amândouă. Nu una este carte, iar cealaltă este altceva.',
+        'Tipăritura nu are baterie. O poți dărui, o poți da cu împrumut și nu o ștergi printr-un clic. Limita ei este greutatea, când porți multe volume.',
+        'Forma de pe ecran îți dă multe volume, cu greutate mică. Zece povești pot încăpea într-un e-reader. Limita ei este bateria: când se termină, cititul se oprește.',
+        'Fiecare suport are un câștig și o limită. Nu există unul bun pentru orice clipă. Întrebarea este ce drum ai în față, nu ce formă este la modă.',
+        'În tren, e-readerul ține zece povești fără să îngreuneze rucsacul. Acolo câștigul digital este limpede: multe volume, greutate mică. Riscul rămâne bateria.',
+        'Seara, pe noptieră, foaia care foșnește și pe care o poți da mai departe este cea tipărită. O poți dărui a doua zi. Nu depinde de un clic și nu se stinge odată cu bateria.',
+        'Dacă drumul este lung, ecranul te scapă de greutate. Dacă vrei să lași cartea în mâna cuiva, tipăritura se dăruiește mai simplu. Aceeași poveste poate sta în ambele.',
+        'Moda nu alege în locul tău. Poți prefera ecranul luni și hârtia marți. Schimbarea nu scoate niciun suport din rândul cărților.',
+        'Când compari, spui câștigul și limita fiecăruia. Tipăritura: fără baterie, se dăruiește, nu dispare printr-un clic. Ecranul: multe volume, greutate mică, baterie care se poate termina.'
+      ].join('\n\n'),
+      example: [
+        'În tren, zece povești încap în e-reader. Este forma de pe ecran, cu multe volume și cu greutate mică. Se oprește dacă bateria se termină.',
+        'Pe noptieră, foaia care foșnește și pe care o dai mai departe este tipăritura. Nu are baterie și o poți dărui. Alegi după drum, nu după modă. Amândouă sunt cărți.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Un cadou de pus în mână stă mai bine tipărit, fiindcă se dăruiește și nu se șterge printr-un clic. Pentru un drum cu multe titluri, e-readerul scade greutatea.'
+      }],
+      tryThis: [
+        'Scrie trei propoziții în care pui față în față volumul tipărit și pe cel digital, o dată pentru drumul cu trenul și o dată pentru seara de acasă.',
+        'Folosește, pe rând, trenul și e-readerul, cele zece povești, bateria, verbul a dărui, noptiera, clicul, greutatea și moda. Încheie spunând că drumul alege, iar amândouă rămân cărți.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Tipăritura și forma digitală duc același text. Amândouă sunt cărți. Se schimbă suportul.',
+        'Tipăritura nu are baterie și se poate dărui. Nu dispare printr-un clic.',
+        'Ecranul ține multe volume, cu greutate mică, dar bateria se poate termina. Alegerea ține de drum, nu de modă.'
+      ]
+    }),
+    lesson({
+      id: 'intrebare-deschisa',
+      title: 'Întrebarea deschisă',
+      kind: 'comunicare',
+      boxes: [{
+        type: 'definitie',
+        title: 'Răspuns pe larg',
+        text: 'Întrebarea deschisă nu se închide prin da și nici prin nu. Poate începe cu ce, cu care, cu cum sau cu de ce. Întrebarea închisă se rezolvă prin da sau prin nu.'
+      }],
+      theory: [
+        'De la o întrebare deschisă primești un răspuns dezvoltat, nu un semn din cap. Celălalt trebuie să spună un titlu, un motiv sau un fel de a citi. Da și nu nu ajung.',
+        'Ce cere un lucru sau un titlu. Care cere o alegere dintre mai multe. Cum cere un fel. De ce cere un motiv. Toate patru deschid fraza, nu o închid.',
+        'Îți place cartea se poate rezolva scurt, prin da sau prin nu, deci este închisă. Ce carte ai reciti îți dă un titlu, deci este deschisă.',
+        'Când cauți un dar, întrebi ce anume l-a bucurat, nu doar dacă îi place lectura. Întrebarea despre plăcerea de a citi se poate închide cu un semn. Întrebarea despre ce i-a plăcut cere o amintire.',
+        'Patru întrebări care așteaptă da sau nu nu sunt de ajuns pentru a-l cunoaște pe coleg. Poți afla că citește, că are o carte, că a primit un dar și că îi place, și tot să nu știi ce titlu i-ar prinde.',
+        'Pentru dar, pui pe rând ce, care, cum și de ce. Ce carte ai reciti. Care scenă ți-a rămas. Cum citești seara. De ce ai relua titlul acela.',
+        'Poți păstra și o întrebare închisă, ca să vezi contrastul: îi place să citească. Răspunsul da nu îți dă titlul. De aceea nu te oprești la ea.',
+        'Un semn din cap răspunde la o întrebare închisă. Un titlu, un motiv și un fel de a citi răspund la întrebări deschise. Pentru cadou ai nevoie de al doilea fel.',
+        'Dacă toate întrebările încep cu oare și așteaptă da sau nu, colegul rămâne necunoscut. Schimbă începutul. Ce, care, cum și de ce îl pun să povestească.'
+      ].join('\n\n'),
+      example: [
+        'Îți place cartea primește da sau nu, deci este închisă. Ce carte ai reciti îți dă un titlu, deci este deschisă.',
+        'Care, cum și de ce deschid, la rândul lor, fraza. De aceea le folosești când cauți un dar. Patru întrebări care așteaptă doar da sau nu nu îl fac cunoscut pe coleg.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Îi place să citească se închide cu da. Ce i-a plăcut ultima oară cere un titlu sau o scenă. Pentru dar, a doua întrebare este cea care te ajută.'
+      }],
+      tryThis: [
+        'Scrie patru întrebări deschise, pornite din ce, din care, din cum și din de ce, ca să afli ce volum i-ar plăcea unui coleg drept dar.',
+        'Adaugă și forma închisă, anume dacă îi place să citească, ca să vezi contrastul cu da și cu nu. Nu te opri la patru întrebări care așteaptă doar da sau nu.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Întrebarea deschisă poate începe cu ce, cu care, cu cum sau cu de ce și nu se închide prin da sau prin nu.',
+        'Întrebarea închisă se rezolvă prin da sau prin nu și dă un semn, nu un titlu.',
+        'Pentru un dar ai nevoie de un răspuns dezvoltat. Patru întrebări închise nu îl fac cunoscut pe coleg.'
+      ]
+    }),
+    lesson({
+      id: 'de-ce-citim',
+      title: 'De ce să citești',
+      kind: 'comunicare',
+      boxes: [{
+        type: 'definitie',
+        title: 'Citit cu folos',
+        text: 'Este lectura din care înțelegi, nu una în care doar aluneci cu ochii pe rânduri. Poți trăi fără volume, dar pierzi o convorbire cu alte vremuri.'
+      }],
+      theory: [
+        'Lectura fără înțelegere rămâne goală. Citești ca să poți repovesti o scenă, nu ca să numeri foile. Dacă ai trecut prin text și nu poți spune despre ce era, lectura nu a avut folos.',
+        'Un copil a parcurs zece foi și nu poate spune despre ce erau. Cititul lui a rămas gol. Colegul poate spune scena cu vorbele lui, așa că lectura a avut folos și ține legătura cu alte vremuri.',
+        'Poți spune că trăiești și fără volume. Este adevărat ca fapt de toate zilele. Ce se pierde este legătura cu oameni și cu vremuri pe care nu le-ai trăit tu.',
+        'Tiparul în limba română pornește în veacul al XVI-lea. Un volum din anul 1544 nu a ajuns până la noi. Cea mai veche tipăritură românească din care au rămas exemplare stă între 1551 și 1553.',
+        'Anul 1544 nu se confundă cu intervalul din care avem exemplare. Dacă spui că cea mai veche carte păstrată este din 1544, ai mutat data. 1544 este anul unui volum care nu a ajuns până la noi.',
+        'Din scenă faci trei pași. Întâi spui ce se povestește. Apoi spui ce imagine vezi. La urmă spui ce ai face tu și legi alegerea prin pentru că.',
+        'La școală repeți pașii pe textul deschis. Nu sări la sfat înainte să spui cine poate povesti scena și cine a rămas doar cu numărul foilor.',
+        'Ana poate spune că trăiește fără cărți, dar pierde convorbirea cu alte vremuri. Dacă a citit doar ca să numere foile și nu poate povesti nimic, cititul ei a rămas gol.',
+        'Radu poate povesti o scenă dintr-o tipăritură aflată între 1551 și 1553. El ține minte că volumul din 1544 nu a ajuns până la noi și că tiparul românesc pornește în veacul al XVI-lea.'
+      ].join('\n\n'),
+      example: [
+        'Ce se povestește: un copil a parcurs zece foi și nu poate spune subiectul, în timp ce colegul poate reda scena.',
+        'Ce vezi: copilul cu foile în față și colegul alături. Eu m-aș așeza lângă coleg, pentru că el poate repovesti scena, deci a citit cu folos.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Dacă cineva numește 1544 drept cea mai veche tipăritură păstrată, data este mutată. Volumul din 1544 nu a ajuns până la noi. Exemplarele vechi de care știm stau între 1551 și 1553.'
+      }],
+      tryThis: [
+        'Ana zice că s-ar descurca și fără volume, însă pierde convorbirea cu alte vremuri. Ea a citit numai ca să numere foile și nu poate reda nimic.',
+        'Radu repovestește o scenă dintr-o tipăritură aflată între 1551 și 1553. El spune că volumul din 1544 nu a ajuns până la noi și că tiparul românesc pornește în veacul al XVI-lea. Scrie trei propoziții: ce se povestește, ce vezi și ce ai face tu, legate prin pentru că.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Cititul cu folos te lasă să povestești o scenă. Număratul foilor, fără înțelegere, rămâne gol.',
+        'Fără cărți se poate trăi, însă se pierde convorbirea cu alte vremuri.',
+        'Tiparul românesc pornește în veacul al XVI-lea. Volumul din 1544 nu a ajuns până la noi. Exemplarele vechi stau între 1551 și 1553.'
+      ]
+    }),
+    lesson({
+      id: 'placere-indatorire',
+      title: 'Îndatorire și plăcere',
+      kind: 'comunicare',
+      boxes: [{
+        type: 'regula',
+        title: 'Două coloane',
+        text: 'Fișa desparte datoria de plăcere. Scrii trei îndatoriri și trei plăceri, spui unde stă cititul și pui un titlu temei.'
+      }],
+      theory: [
+        'Lista nu rămâne amestecată. O coloană este datoria, alta este plăcerea. Cititul poate sta la datorie, la plăcere sau în ambele. Titlul spune alegerea, nu o lasă ghicită.',
+        'Mai adaugi două spuse pe da și două spuse pe nu. Ele au detalii, nu o vorbă goală de felul e ok. Fără detaliu, fișa nu arată când citești și când nu.',
+        'O datorie este exercițiul de matematică. O plăcere este povestea citită seara. Titlul poate fi Cititul meu stă la plăcere, dacă așa stă la tine.',
+        'Afirmativ poți scrie Citesc după cină. Negativ poți scrie Nu citesc în pauza de zece minute. Ambele au un timp precis. Vorba e ok nu spune nici ora, nici locul.',
+        'Fișa completă are trei datorii și trei plăceri, plus cele două spuse pe da și cele două spuse pe nu. Dacă amesteci coloanele, fișa nu se mai citește.',
+        'Din scenă faci trei pași. Întâi spui ce se povestește. Apoi spui ce imagine vezi. La urmă spui ce ai face tu și legi fapta prin pentru că.',
+        'La școală repeți pașii pe textul deschis. Nu sări la titlu înainte să desparți datoria de plăcere. Titlul vine după ce ai văzut unde stă cititul.',
+        'Tema de română poate fi o datorie. Iar în curte, fotbalul este plăcerea. Atunci titlul poate spune că lectura ține și de datorie, și de plăcere, dacă intră în ambele coloane.',
+        'Afirmativ poți spune Citesc când am timp. Negativ nu folosești vorba goală e ok. Spui un fapt: nu citești în pauza scurtă, sau nu lași lista amestecată. Detaliul ține fișa de crezut.'
+      ].join('\n\n'),
+      example: [
+        'Ce se povestește: o datorie este exercițiul de matematică, iar o plăcere este povestea de seară. Titlul spune că cititul stă la plăcere.',
+        'Ce vezi: tema de matematică și povestea de seară, în coloane separate. Eu aș citi povestea seara, pentru că acolo stă plăcerea, nu în pauza de zece minute.'
+      ].join('\n\n'),
+      extraExamples: [{
+        title: 'Încă un exemplu',
+        text: 'Citesc după cină este afirmativ și are un timp. Nu citesc în pauza de zece minute este negativ și are tot un timp. E ok nu are nici timp, nici faptă, deci nu intră pe fișă.'
+      }],
+      tryThis: [
+        'Tema de română este o datorie. Iar în curte, fotbalul este plăcerea. Titlul spune că lectura ține și de datorie, și de plăcere.',
+        'Pe da scrii Citesc când am timp. La forma negativă evită vorba goală e ok și pune un detaliu. Lista stă despărțită, cu trei datorii și trei plăceri. Scrie trei propoziții: ce se povestește, ce vezi și ce ai face tu, legate prin pentru că.'
+      ].join('\n\n'),
+      keyPoints: [
+        'Fișa desparte trei datorii de trei plăceri și spune, prin titlu, unde stă cititul.',
+        'Trebuie două spuse pe da și două spuse pe nu, cu detalii. Vorba e ok nu ajunge.',
+        'Din scenă iei trei pași: ce se povestește, ce vezi și ce ai face, legate prin pentru că.'
+      ]
+    })
   ]
 };

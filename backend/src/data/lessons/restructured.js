@@ -24,7 +24,15 @@ const RESTRUCTURED = [
   'romana:6:tablouri-de-poveste',
   'romana:6:calatorii-literare',
   'romana:6:ferestre-spre-viitor',
-  'romana:6:incheierea-anului'
+  'romana:6:incheierea-anului',
+  'romana:5:evaluare-initiala',
+  'romana:5:cuvinte',
+  'romana:5:cartea',
+  'romana:5:povestirea',
+  'romana:5:prietenia',
+  'romana:5:natura',
+  'romana:5:trepte',
+  'romana:5:eroi'
 ];
 
 const LENGTH_ALLOWLIST = {};

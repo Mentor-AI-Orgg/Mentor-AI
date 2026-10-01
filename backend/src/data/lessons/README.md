@@ -28,14 +28,14 @@ Starea din tabel este cea de dinainte de rescriere (cuvinte din `platter`). ⬜ 
 
 | Cheie | Fișier | Lecții | Cuvinte | Stare |
 |---|---|---:|---:|---|
-| `romana:5:evaluare-initiala` | `romana-lectii/r5-evaluare-initiala.js` | 2 | 847 | ⬜ |
-| `romana:5:cuvinte` | `romana-lectii/r5-cuvinte.js` | 28 | 7766 | ⬜ |
-| `romana:5:cartea` | `romana-lectii/r5-cartea.js` | 17 | 5511 | ⬜ |
-| `romana:5:povestirea` | `romana-lectii/r5-povestirea.js` | 19 | 6466 | ⬜ |
-| `romana:5:prietenia` | `romana-lectii/r5-prietenia.js` | 15 | 5013 | ⬜ |
-| `romana:5:natura` | `romana-lectii/r5-natura.js` | 10 | 3406 | ⬜ |
-| `romana:5:trepte` | `romana-lectii/r5-trepte.js` | 15 | 4905 | ⬜ |
-| `romana:5:eroi` | `romana-lectii/r5-eroi.js` | 7 | 2430 | ⬜ |
+| `romana:5:evaluare-initiala` | `romana-lectii/r5-evaluare-initiala.js` | 2 | 847 | ✅ |
+| `romana:5:cuvinte` | `romana-lectii/r5-cuvinte.js` | 28 | 7766 | ✅ |
+| `romana:5:cartea` | `romana-lectii/r5-cartea.js` | 17 | 5511 | ✅ |
+| `romana:5:povestirea` | `romana-lectii/r5-povestirea.js` | 19 | 6466 | ✅ |
+| `romana:5:prietenia` | `romana-lectii/r5-prietenia.js` | 15 | 5013 | ✅ |
+| `romana:5:natura` | `romana-lectii/r5-natura.js` | 10 | 3406 | ✅ |
+| `romana:5:trepte` | `romana-lectii/r5-trepte.js` | 15 | 4905 | ✅ |
+| `romana:5:eroi` | `romana-lectii/r5-eroi.js` | 7 | 2430 | ✅ |
 | `romana:6:recapitulare-initiala` | `romana-lectii/r6-recapitulare-initiala.js` | 4 | 885 | ✅ |
 | `romana:6:lumea-de-acasa` | `romana-lectii/r6-lumea-de-acasa.js` | 13 | 3742 | ✅ |
 | `romana:6:taramul-prieteniei` | `romana-lectii/r6-taramul-prieteniei.js` | 14 | 4291 | ✅ |
