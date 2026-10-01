@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import FocusTimer from '../components/FocusTimer.jsx';
 import FlashCards from '../components/FlashCards.jsx';
@@ -85,6 +85,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [sessionDone, setSessionDone] = useState(false);
   const [quizUnit, setQuizUnit] = useState(null);
   const [quizLesson, setQuizLesson] = useState(null);
+  const quizAnchor = useRef(null);
   const [openPaper, setOpenPaper] = useState(null);
   const [paperSession, setPaperSession] = useState(null);
   const [seenPapers, setSeenPapers] = useState([]);
@@ -95,6 +96,12 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [paperError, setPaperError] = useState('');
   const isEn = track === 'en';
   const activeGrade = isEn ? 8 : grade;
+
+  useEffect(() => {
+    if (!quizUnit || !quizAnchor.current) return undefined;
+    quizAnchor.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return undefined;
+  }, [quizUnit, quizLesson]);
 
   useEffect(() => {
     if (!isEn) return undefined;
@@ -653,6 +660,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
       )}
 
       {quizUnit && !isEn && (
+        <div ref={quizAnchor}>
         <ChapterQuiz
           unit={quizUnit}
           subject={subject}
@@ -679,6 +687,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             askMentor(unit);
           }}
         />
+        </div>
       )}
 
       {enTrainUnit && isEn && (

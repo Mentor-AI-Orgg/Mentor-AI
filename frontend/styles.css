@@ -1265,7 +1265,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .quiz-coverage, .quiz-review-note, .quiz-progress, .quiz-loading { margin: 0; color: var(--muted); font-size: 0.8125rem; }
 .quiz-question { margin: 0; font-size: 1.0625rem; font-weight: 800; line-height: 1.7; }
 .quiz-options { display: grid; gap: 8px; }
-.lesson-quiz-button { min-height: 44px; margin-top: 12px; font-size: 1rem; }
+.lesson-quiz-button { min-height: 44px; margin-top: 12px; font-size: 1rem; width: 100%; }
 .quiz-option {
   display: grid;
   grid-template-columns: 28px 1fr;
