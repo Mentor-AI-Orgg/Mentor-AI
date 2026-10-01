@@ -130,7 +130,10 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
         Vrei nota {targetNote}. Itemii se opresc la treapta potrivită. Scrie doar răspunsul final. Pașii îi vezi după finalizare.
       </p>
       )}
-      {coverage && (
+      {coverage && onLesson && coverage.lessons && (
+        <p className="quiz-coverage">Lecții atinse: {coverage.lessons.seen} din {coverage.lessons.total}.</p>
+      )}
+      {coverage && !onLesson && (
         <p className="quiz-coverage">
           Idei din capitol: {coverage.seen}/{coverage.total}
           {coverage.complete ? ' · Ai trecut prin banca de capitol. Următoarele teste sunt variante noi, generate, fără repetare.' : ' · Mai generează până prinzi tot, apoi vin variante infinite.'}
@@ -139,7 +142,10 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
       )}
       {review && <p className="quiz-review-note">Tur de recapitulare — ideile astea le-ai mai întâlnit.</p>}
 
-      {(onLesson || targetNote) && cards.length === 0 && !loading && (
+      {onLesson && cards.length === 0 && !loading && (
+        <p className="quiz-coverage">Lecția asta nu are încă exerciții proprii.</p>
+      )}
+      {!onLesson && targetNote && cards.length === 0 && !loading && (
         <button type="button" className="accent-button" onClick={() => load(false)}>
           Generează testul <i className="fas fa-bolt" />
         </button>
