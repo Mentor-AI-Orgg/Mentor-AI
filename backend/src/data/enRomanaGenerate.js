@@ -299,7 +299,7 @@ Reguli:
 
 Dacă lipsește un coleg, nu se lucrează singur. Dacă plouă, activitatea se mută înăuntru, nu se anulează. Cine întârzie peste cinci minute nu mai intră. La sfârșit se semnează condica, se verifică locul, se anunță ce lipsește — nu a doua zi „din memorie”.
 
-${f.kit.predRule.charAt(0).toUpperCase()}${f.kit.predRule.slice(1)} „că mă cunoaște profesorul”. Reclamațiile se depun în scris, la secretariat, nu verbal la uşă. Părinții pot citi regulamentul pe site; nu au acces în timpul orelor.
+${f.kit.predRule.charAt(0).toUpperCase()}${f.kit.predRule.slice(1)} „că mă cunoaște profesorul”. Reclamațiile se depun în scris, la secretariat, nu verbal la ușă. Părinții pot citi regulamentul pe site; nu au acces în timpul orelor.
 
 Fotografiile se fac doar dacă un profesor cere un rezultat pentru portofoliu, pe fundal neutru, fără chipuri dacă un elev nu e de acord. În săptămâna simulărilor, programul rămâne ${f.openH}–${f.closeH}, fără prelungire, exceptând clasa a VIII-a pe baza carnetului.
 

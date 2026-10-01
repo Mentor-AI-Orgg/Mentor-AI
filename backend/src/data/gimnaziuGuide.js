@@ -84,8 +84,8 @@ const GUIDES = {
           toc: [
             "Curiozități din lumea numerelor naturale",
             "Scrierea și citirea numerelor naturale",
-            "Reprezentarea numerelor naturale pe axă",
-            "Compararea și ordonarea numerelor naturale",
+            "Numerele naturale pe axă",
+            "Compararea și ordonarea",
             "Aproximări și estimări",
             "Recapitulare: numere naturale",
             "Adunarea numerelor naturale",
@@ -98,8 +98,8 @@ const GUIDES = {
             "Reguli de calcul cu puteri",
             "Compararea puterilor",
             "Pătratul unui număr natural",
-            "Scrierea în baza 10 și în baza 2",
-            "Ordinea efectuării operațiilor",
+            "Baza 10 și baza 2",
+            "Ordinea operațiilor și parantezele",
             "Recapitulare: puteri",
             "Metoda reducerii la unitate",
             "Metoda comparației",
@@ -109,8 +109,8 @@ const GUIDES = {
             "Recapitulare: metode aritmetice",
             "Divizor și multiplu",
             "Divizor comun și multiplu comun",
-            "Criteriile de divizibilitate cu 2, 5 și 10",
-            "Criteriile de divizibilitate cu 3 și cu 9",
+            "Criteriile pentru 2, 5 și 10",
+            "Criteriile pentru 3 și pentru 9",
             "Numere prime și numere compuse",
             "Recapitulare: divizibilitate"
           ]
