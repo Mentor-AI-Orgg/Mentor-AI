@@ -9,7 +9,14 @@ const RESTRUCTURED = [
   'romana:8:valori-ascultare',
   'romana:8:traditie-inovatie',
   'romana:8:modele-antimodele',
-  'romana:8:familia-comunitate'
+  'romana:8:familia-comunitate',
+  'romana:7:recapitulare-initiala',
+  'romana:7:pe-drumul-cunoasterii',
+  'romana:7:punti-intre-lumi',
+  'romana:7:taramul-sentimentelor',
+  'romana:7:lumea-teatrului',
+  'romana:7:calator-prin-lume',
+  'romana:7:privind-catre-mine'
 ];
 
 const LENGTH_ALLOWLIST = {};

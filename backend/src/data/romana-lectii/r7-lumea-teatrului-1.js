@@ -1,85 +1,402 @@
+'use strict';
+
+const { romanaLesson } = require('../lessonBuilder');
+
+function lesson(f) {
+  return romanaLesson(f);
+}
+
 module.exports = {
-  "lessons": [
-    {
-      "id": "deschidere-teatru",
-      "title": "Harta măștilor și a chipurilor",
-      "platter": "Unitatea Lumea teatrului începe cu harta. Vei citi text dramatic și vei deosebi actul de scenă, replica de indicația scenică, autorul de actor. Vei vedea cum se face un spectacol și cum se scrie un interviu și o cronică de teatru. La oral vei ține tracul în frâu și vei recunoaște un dialog. La gramatică vei relua pronumele, de la cel personal până la numeral. La interculturalitate vei spune ce este un contact cultural. Competențele de pe hartă sunt douăsprezece: 1.1, 1.3, 1.4, 2.1, 2.2, 2.3, 3.1, 3.2, 4.1, 4.5, 5.1 și 5.2. Mihail Sebastian este autorul piesei Steaua fără nume. A trăit între 1907 și 1945. Nu cerem replicile. Vasile Alecsandri este autorul feeriei Sânziana și Pepelea. Grila de puncte și fișa de observare nu sunt lecții. La școală, piesa de pe bancă poate avea alt titlu. Pașii rămân aceiași.\n\nExemplu lucrat: Harta anunță textul dramatic, spectacolul, interviul, cronica, pronumele și contactul cultural. Competențele sunt douăsprezece. Steaua fără nume este piesa lui Mihail Sebastian. Sânziana și Pepelea este feeria lui Vasile Alecsandri.\n\nScrie trei propoziții. În prima spune că tema este teatrul și că azi lucrezi textul dramatic. În a doua numește competențele 1.1, 1.3, 1.4, 2.1, 2.2, 2.3, 3.1, 3.2, 4.1, 4.5, 5.1 și 5.2 și spune că sunt douăsprezece. În a treia spune că Mihail Sebastian a trăit între 1907 și 1945 și că grila de puncte nu este lecție.\n\nHarta unității anunță textul dramatic, dialogul, spectacolul, interviul, tracul, cronica, pronumele, numeralul și contactul cultural. Competențele sunt douăsprezece. Steaua fără nume este piesa lui Mihail Sebastian. Grila de puncte nu este lecție.",
-      "theory": "Unitatea Lumea teatrului începe cu harta. Vei citi text dramatic și vei deosebi actul de scenă, replica de indicația scenică, autorul de actor. Vei vedea cum se face un spectacol și cum se scrie un interviu și o cronică de teatru. La oral vei ține tracul în frâu și vei recunoaște un dialog. La gramatică vei relua pronumele, de la cel personal până la numeral. La interculturalitate vei spune ce este un contact cultural. Competențele de pe hartă sunt douăsprezece: 1.1, 1.3, 1.4, 2.1, 2.2, 2.3, 3.1, 3.2, 4.1, 4.5, 5.1 și 5.2. Mihail Sebastian este autorul piesei Steaua fără nume. A trăit între 1907 și 1945. Nu cerem replicile. Vasile Alecsandri este autorul feeriei Sânziana și Pepelea. Grila de puncte și fișa de observare nu sunt lecții. La școală, piesa de pe bancă poate avea alt titlu. Pașii rămân aceiași.",
-      "example": "Harta anunță textul dramatic, spectacolul, interviul, cronica, pronumele și contactul cultural. Competențele sunt douăsprezece. Steaua fără nume este piesa lui Mihail Sebastian. Sânziana și Pepelea este feeria lui Vasile Alecsandri.",
-      "tryThis": "Scrie trei propoziții. În prima spune că tema este teatrul și că azi lucrezi textul dramatic. În a doua numește competențele 1.1, 1.3, 1.4, 2.1, 2.2, 2.3, 3.1, 3.2, 4.1, 4.5, 5.1 și 5.2 și spune că sunt douăsprezece. În a treia spune că Mihail Sebastian a trăit între 1907 și 1945 și că grila de puncte nu este lecție.",
-      "recap": "Harta unității anunță textul dramatic, dialogul, spectacolul, interviul, tracul, cronica, pronumele, numeralul și contactul cultural. Competențele sunt douăsprezece. Steaua fără nume este piesa lui Mihail Sebastian. Grila de puncte nu este lecție."
-    },
-    {
-      "id": "text-dramatic",
-      "title": "Acte, scene și indicații",
-      "platter": "Textul dramatic este scris ca să fie jucat pe scenă. Devenit spectacol, are limite de timp și de spațiu. Spațiul teatrului are două fețe: scena, adică locul reprezentării, și spațiul ficțiunii, imaginat de autor. Timpul are și el două fețe: durata reprezentației și momentul din piesa scrisă. Textul se împarte în acte și scene. Actul cuprinde mai multe scene și se notează cu cifră romană. Scena este bucata unui act, mărginită de intrarea sau ieșirea unui personaj ori de schimbarea decorului, și se notează cu cifră arabă. În text stau două feluri de scris. Textul dialogat este format din replicile personajelor. Indicațiile scenice, numite și didascalii, sunt notițele autorului. Ele îndrumă actorii și îl ajută pe cititor să vadă scena în minte. Didascaliile externe stau în afara replicii: titlul, lista personajelor, decorul, timpul, spațiul, așezarea în scenă. Didascaliile interne stau între paranteze rotunde, după nume, înaintea replicii, în ea sau la sfârșit. Ele arată intrări și ieșiri, deplasarea, intonația, mimica, gestul, atitudinea și sentimentul. Scena noastră ține locul piesei. Actul I. Noaptea, în gara unui târg mic. Personaje: Șeful gării, Profesorul Marin, Doamna, Domnișoara Lina. Scena 1. Pe peron sunt doar Șeful și Profesorul, cu o carte de stele sub braț. Scena 2 începe când din tren coboară Doamna. Ea nu își spune numele. Profesorul spune: Rămâi până dimineață. Îți iau eu biletul când primesc leafa. Domnișoara Lina intră și spune, amenințătoare: Douăzeci și două de mii pe o carte este o nebunie. Școala trebuie să afle. Fragmentul are un act și două scene. Noaptea și gara sunt didascalii externe. Amenințătoare, între paranteze, este didascalie internă și arată atitudinea. Între Profesor și Doamna este simpatie: el o găzduiește. Între Lina și Profesor este conflict, nu indiferență. La școală, Steaua fără nume se citește pe roluri, pentru că numele stau înaintea replicii. Durata spectacolului se notează doar după ce ai văzut reprezentația. Nu o inventăm. Pală înseamnă sabie lată și scurtă. Aht înseamnă oftat. În feeria Sânziana și Pepelea, de Vasile Alecsandri, actul I se petrece pe o câmpie arsă de soare, cu o pădure în fund, o căsuță între copaci uscați la stânga și un lac la dreapta. Personajele sunt Pepelea, Sânziana și Zmeul. Pepelea este un băiat sărac, fără părinți, venit din Țara Românească. Sânziana este supărată pentru că a fost răpită din casa părinților și depărtată de lume. Zmeul crede că ea se preface supărată. Vrea să o închidă în turn. Fragmentul arată iubirea neîmpărtășită. Nu cerem replicile.\n\nExemplu lucrat: Fragmentul nostru are un act și două scene. Gara, noaptea, este didascalie externă. Amenințătoare este didascalie internă. Actul se notează cu cifră romană, scena cu cifră arabă. Zmeul crede că Sânziana se preface. Închiderea este în turn. Pală înseamnă sabie. Aht înseamnă oftat.\n\nPe scena din gară, spune câte acte și câte scene are fragmentul și de ce scena 2 începe la coborârea Doamnei. Dă o didascalie externă și una internă și spune cui îi aparțin: autorului. Spune ce relație este între Profesor și Doamna și ce relație este între Lina și Profesor. Pentru feeria lui Alecsandri, scrie locul, personajele, de ce este supărată Sânziana, ce crede Zmeul și unde vrea să o închidă. Spune că pală înseamnă sabie și aht înseamnă oftat. Adaugă tu două indicații scenice și un element de decor pentru o scenă în care un profesor arată o stea fără nume.\n\nTextul dramatic este scris pentru scenă. Actul se notează cu cifră romană, scena cu cifră arabă. Replicile sunt ale personajelor. Didascaliile sunt ale autorului: externe pentru decor și listă, interne, între paranteze, pentru gest și atitudine. În feerie, Zmeul o închide pe Sânziana în turn și crede că supărarea ei este prefăcută.",
-      "theory": "Textul dramatic este scris ca să fie jucat pe scenă. Devenit spectacol, are limite de timp și de spațiu. Spațiul teatrului are două fețe: scena, adică locul reprezentării, și spațiul ficțiunii, imaginat de autor. Timpul are și el două fețe: durata reprezentației și momentul din piesa scrisă. Textul se împarte în acte și scene. Actul cuprinde mai multe scene și se notează cu cifră romană. Scena este bucata unui act, mărginită de intrarea sau ieșirea unui personaj ori de schimbarea decorului, și se notează cu cifră arabă. În text stau două feluri de scris. Textul dialogat este format din replicile personajelor. Indicațiile scenice, numite și didascalii, sunt notițele autorului. Ele îndrumă actorii și îl ajută pe cititor să vadă scena în minte. Didascaliile externe stau în afara replicii: titlul, lista personajelor, decorul, timpul, spațiul, așezarea în scenă. Didascaliile interne stau între paranteze rotunde, după nume, înaintea replicii, în ea sau la sfârșit. Ele arată intrări și ieșiri, deplasarea, intonația, mimica, gestul, atitudinea și sentimentul. Scena noastră ține locul piesei. Actul I. Noaptea, în gara unui târg mic. Personaje: Șeful gării, Profesorul Marin, Doamna, Domnișoara Lina. Scena 1. Pe peron sunt doar Șeful și Profesorul, cu o carte de stele sub braț. Scena 2 începe când din tren coboară Doamna. Ea nu își spune numele. Profesorul spune: Rămâi până dimineață. Îți iau eu biletul când primesc leafa. Domnișoara Lina intră și spune, amenințătoare: Douăzeci și două de mii pe o carte este o nebunie. Școala trebuie să afle. Fragmentul are un act și două scene. Noaptea și gara sunt didascalii externe. Amenințătoare, între paranteze, este didascalie internă și arată atitudinea. Între Profesor și Doamna este simpatie: el o găzduiește. Între Lina și Profesor este conflict, nu indiferență. La școală, Steaua fără nume se citește pe roluri, pentru că numele stau înaintea replicii. Durata spectacolului se notează doar după ce ai văzut reprezentația. Nu o inventăm. Pală înseamnă sabie lată și scurtă. Aht înseamnă oftat. În feeria Sânziana și Pepelea, de Vasile Alecsandri, actul I se petrece pe o câmpie arsă de soare, cu o pădure în fund, o căsuță între copaci uscați la stânga și un lac la dreapta. Personajele sunt Pepelea, Sânziana și Zmeul. Pepelea este un băiat sărac, fără părinți, venit din Țara Românească. Sânziana este supărată pentru că a fost răpită din casa părinților și depărtată de lume. Zmeul crede că ea se preface supărată. Vrea să o închidă în turn. Fragmentul arată iubirea neîmpărtășită. Nu cerem replicile.",
-      "example": "Fragmentul nostru are un act și două scene. Gara, noaptea, este didascalie externă. Amenințătoare este didascalie internă. Actul se notează cu cifră romană, scena cu cifră arabă. Zmeul crede că Sânziana se preface. Închiderea este în turn. Pală înseamnă sabie. Aht înseamnă oftat.",
-      "tryThis": "Pe scena din gară, spune câte acte și câte scene are fragmentul și de ce scena 2 începe la coborârea Doamnei. Dă o didascalie externă și una internă și spune cui îi aparțin: autorului. Spune ce relație este între Profesor și Doamna și ce relație este între Lina și Profesor. Pentru feeria lui Alecsandri, scrie locul, personajele, de ce este supărată Sânziana, ce crede Zmeul și unde vrea să o închidă. Spune că pală înseamnă sabie și aht înseamnă oftat. Adaugă tu două indicații scenice și un element de decor pentru o scenă în care un profesor arată o stea fără nume.",
-      "recap": "Textul dramatic este scris pentru scenă. Actul se notează cu cifră romană, scena cu cifră arabă. Replicile sunt ale personajelor. Didascaliile sunt ale autorului: externe pentru decor și listă, interne, între paranteze, pentru gest și atitudine. În feerie, Zmeul o închide pe Sânziana în turn și crede că supărarea ei este prefăcută."
-    },
-    {
-      "id": "dialog-dramatic",
-      "title": "Autorul scrie, actorul joacă",
-      "platter": "Dialogul este modul de expunere predominant în textul dramatic. Este schimbul de replici dintre personaje. Ajută la prezentarea întâmplărilor și la caracterizare. Se rostește pe scenă de actori, dar aparține personajelor. Prin el, spectatorul și cititorul află informația. În textul scris, dialogul se recunoaște după linia de dialog sau după ghilimele. În piesă, replica este fiecare intervenție și este precedată de numele celui care o spune. Tipurile de replici sunt întrebare și răspuns, replică și completare, replică și continuare, replică și confirmare. Monologul dramatic este intervenția lungă a unui personaj, cu sau fără altcineva de față, fără replică de răspuns și fără destinatar în schimb. Autorul, dramaturgul, este persoana reală care creează acțiunea, replicile și indicațiile de reprezentare. Personajul dramatic este imaginat de autor. Actorul, persoană reală, îl ajută să se exprime și transpune pe scenă emoțiile personajului. Personajele stau la început într-o listă, după importanță sau după statut, cu o prezentare scurtă. Autorul intervine doar în didascalii. Conflictul dramatic este dezacordul dintre două idei sau atitudini, ori o frământare căreia i se caută o rezolvare. În scena noastră, Lina spune că școala trebuie să afle de cartea scumpă. Profesorul răspunde că este nebunia lui și nu dă socoteală. Asta este conflict: ea vrea control, el vrea libertatea lecturii. Replica Linei caracterizează și dă informație. Dacă o lungești fără răspuns, devine monolog. Profesorul este personajul principal al scenei, pentru că el hotărăște găzduirea și apără cartea. Cartea de vizită a Linei: învățătoare, severă, vine noaptea să certe. Cartea de vizită a Profesorului: pasionat de stele, sărac, generos cu oaspetele. Steaua din piesa lui Sebastian nu are încă nume. Profesorul vrea un nume de două silabe, ca să stea lângă Alcor. Vega este exemplul de două silabe pe care îl amintește el. Tu poți propune alt nume de două silabe. Nu cerem versurile. Asemănarea dintre feerie și piesa de gară, spusă cu vorbele tale: în ambele, o tânără nu acceptă soarta pe care i-o impune altcineva. Deosebirea: una stă în basm, cu zmeu și turn, cealaltă stă într-o gară de provincie, într-o singură noapte.\n\nExemplu lucrat: Replica este precedată de nume. Monologul nu așteaptă răspuns. Autorul scrie. Actorul joacă. Conflictul dintre Lina și Profesor pornește de la prețul cărții. Numele stelei trebuie să aibă două silabe. Vega este exemplul de două silabe. Profesorul este personajul principal al scenei noastre.\n\nSpune două tipuri de replici și dă câte un exemplu scurt din scena gării. Arată rolul replicii în care Lina spune că școala trebuie să afle. Transformă replica aceea într-un monolog de patru rânduri. Spune legătura dintre personaj și actor. Argumentează de ce există conflict între Lina și Profesor. Scrie o carte de vizită pentru Lina și una pentru Profesor, cu profesia, două trăsături și o replică de recunoaștere, numai din faptele lecției. Propune un nume de două silabe pentru stea, lângă Alcor. Scrie 60–80 de cuvinte despre o asemănare și o deosebire între feeria lui Alecsandri și piesa de gară, fără citate.\n\nDialogul este schimbul de replici și aparține personajelor. Monologul este o intervenție lungă, fără răspuns. Autorul creează piesa. Actorul o joacă. Conflictul este dezacordul dintre atitudini. Numele stelei trebuie să aibă două silabe, ca Vega lângă Alcor.",
-      "theory": "Dialogul este modul de expunere predominant în textul dramatic. Este schimbul de replici dintre personaje. Ajută la prezentarea întâmplărilor și la caracterizare. Se rostește pe scenă de actori, dar aparține personajelor. Prin el, spectatorul și cititorul află informația. În textul scris, dialogul se recunoaște după linia de dialog sau după ghilimele. În piesă, replica este fiecare intervenție și este precedată de numele celui care o spune. Tipurile de replici sunt întrebare și răspuns, replică și completare, replică și continuare, replică și confirmare. Monologul dramatic este intervenția lungă a unui personaj, cu sau fără altcineva de față, fără replică de răspuns și fără destinatar în schimb. Autorul, dramaturgul, este persoana reală care creează acțiunea, replicile și indicațiile de reprezentare. Personajul dramatic este imaginat de autor. Actorul, persoană reală, îl ajută să se exprime și transpune pe scenă emoțiile personajului. Personajele stau la început într-o listă, după importanță sau după statut, cu o prezentare scurtă. Autorul intervine doar în didascalii. Conflictul dramatic este dezacordul dintre două idei sau atitudini, ori o frământare căreia i se caută o rezolvare. În scena noastră, Lina spune că școala trebuie să afle de cartea scumpă. Profesorul răspunde că este nebunia lui și nu dă socoteală. Asta este conflict: ea vrea control, el vrea libertatea lecturii. Replica Linei caracterizează și dă informație. Dacă o lungești fără răspuns, devine monolog. Profesorul este personajul principal al scenei, pentru că el hotărăște găzduirea și apără cartea. Cartea de vizită a Linei: învățătoare, severă, vine noaptea să certe. Cartea de vizită a Profesorului: pasionat de stele, sărac, generos cu oaspetele. Steaua din piesa lui Sebastian nu are încă nume. Profesorul vrea un nume de două silabe, ca să stea lângă Alcor. Vega este exemplul de două silabe pe care îl amintește el. Tu poți propune alt nume de două silabe. Nu cerem versurile. Asemănarea dintre feerie și piesa de gară, spusă cu vorbele tale: în ambele, o tânără nu acceptă soarta pe care i-o impune altcineva. Deosebirea: una stă în basm, cu zmeu și turn, cealaltă stă într-o gară de provincie, într-o singură noapte.",
-      "example": "Replica este precedată de nume. Monologul nu așteaptă răspuns. Autorul scrie. Actorul joacă. Conflictul dintre Lina și Profesor pornește de la prețul cărții. Numele stelei trebuie să aibă două silabe. Vega este exemplul de două silabe. Profesorul este personajul principal al scenei noastre.",
-      "tryThis": "Spune două tipuri de replici și dă câte un exemplu scurt din scena gării. Arată rolul replicii în care Lina spune că școala trebuie să afle. Transformă replica aceea într-un monolog de patru rânduri. Spune legătura dintre personaj și actor. Argumentează de ce există conflict între Lina și Profesor. Scrie o carte de vizită pentru Lina și una pentru Profesor, cu profesia, două trăsături și o replică de recunoaștere, numai din faptele lecției. Propune un nume de două silabe pentru stea, lângă Alcor. Scrie 60–80 de cuvinte despre o asemănare și o deosebire între feeria lui Alecsandri și piesa de gară, fără citate.",
-      "recap": "Dialogul este schimbul de replici și aparține personajelor. Monologul este o intervenție lungă, fără răspuns. Autorul creează piesa. Actorul o joacă. Conflictul este dezacordul dintre atitudini. Numele stelei trebuie să aibă două silabe, ca Vega lângă Alcor."
-    },
-    {
-      "id": "spectacol",
-      "title": "De la text la reprezentație",
-      "platter": "Artele spectacolului sunt artele a căror operă se reprezintă pe scenă, într-un timp limitat: teatru, balet, operă, operetă. Artiștii folosesc vocea, corpul sau obiecte. Arta teatrală se vede în spectacol. La el lucrează mai mulți. Dramaturgul scrie. Regizorul dirijează punerea în scenă: face scenariul, alege actorii, îi îndrumă la repetiții, avizează decorul și costumele. Actorul interpretează rolul și este figura centrală. Scenograful desenează costumele și decorul, îndrumat de regizor. Coregraful îndrumă mișcarea. Costumierul face costumele. Machiorul se ocupă de machiaj. Tehnicianul de lumini ține luminile. Tehnicianul de sunet ține efectele sonore. Publicul închide lanțul: fără el, reprezentația nu are destinatar. Legătura este aceasta: autorul dă textul dramatic, regizorul îl preface în spectacol, personajul este jucat de actor, cititorul textului devine spectatorul sălii. Conflictul interior îl face pe spectator să țină cu un personaj și să aștepte o rezolvare. Teatrul radiofonic adaptează piesa pentru radio. Rămân dialogul, muzica și efectele. Ascultătorul își imaginează chipul și decorul. Scopul lui este să se audă, nu să se vadă. Ce a citit un personaj într-o înregistrare se notează doar după ce ai ascultat. Nu inventăm detaliul. Proiectul de clasă este punerea în scenă a unei scene scurte, scrise de voi: roluri pentru toată echipa, decor, afiș, prezentare în școală. Afișul are titlul, distribuția și locul. Nu copia un fragment de piesă.\n\nExemplu lucrat: Actorul este figura centrală. Regizorul alege actorii și avizează decorul. Scenograful desenează. Teatrul radiofonic păstrează vocea, muzica și efectele. Spectatorul corespunde cititorului. Conflictul interior ține atenția până la o rezolvare.\n\nSpune scopul textului dramatic și cum ajunge el spectacol. Numește persoanele care participă și spune de ce actorul este cel mai important pe scenă. Completează schema: autor, text dramatic, regizor, spectacol, personaj, actor, cititor, spectator. Spune două deosebiri dintre spectacolul văzut și teatrul radiofonic. Scrie afișul unei scene de cinci minute, cu titlu, trei roluri și un decor. Adaugă două indicații scenice proprii. Nu copia o piesă.\n\nSpectacolul se naște din text, prin regizor, actori și echipa tehnică. Actorul este figura centrală. Teatrul radiofonic păstrează dialogul, muzica și efectele, iar ascultătorul imaginează restul. Ce nu ai văzut sau auzit nu se inventează.",
-      "theory": "Artele spectacolului sunt artele a căror operă se reprezintă pe scenă, într-un timp limitat: teatru, balet, operă, operetă. Artiștii folosesc vocea, corpul sau obiecte. Arta teatrală se vede în spectacol. La el lucrează mai mulți. Dramaturgul scrie. Regizorul dirijează punerea în scenă: face scenariul, alege actorii, îi îndrumă la repetiții, avizează decorul și costumele. Actorul interpretează rolul și este figura centrală. Scenograful desenează costumele și decorul, îndrumat de regizor. Coregraful îndrumă mișcarea. Costumierul face costumele. Machiorul se ocupă de machiaj. Tehnicianul de lumini ține luminile. Tehnicianul de sunet ține efectele sonore. Publicul închide lanțul: fără el, reprezentația nu are destinatar. Legătura este aceasta: autorul dă textul dramatic, regizorul îl preface în spectacol, personajul este jucat de actor, cititorul textului devine spectatorul sălii. Conflictul interior îl face pe spectator să țină cu un personaj și să aștepte o rezolvare. Teatrul radiofonic adaptează piesa pentru radio. Rămân dialogul, muzica și efectele. Ascultătorul își imaginează chipul și decorul. Scopul lui este să se audă, nu să se vadă. Ce a citit un personaj într-o înregistrare se notează doar după ce ai ascultat. Nu inventăm detaliul. Proiectul de clasă este punerea în scenă a unei scene scurte, scrise de voi: roluri pentru toată echipa, decor, afiș, prezentare în școală. Afișul are titlul, distribuția și locul. Nu copia un fragment de piesă.",
-      "example": "Actorul este figura centrală. Regizorul alege actorii și avizează decorul. Scenograful desenează. Teatrul radiofonic păstrează vocea, muzica și efectele. Spectatorul corespunde cititorului. Conflictul interior ține atenția până la o rezolvare.",
-      "tryThis": "Spune scopul textului dramatic și cum ajunge el spectacol. Numește persoanele care participă și spune de ce actorul este cel mai important pe scenă. Completează schema: autor, text dramatic, regizor, spectacol, personaj, actor, cititor, spectator. Spune două deosebiri dintre spectacolul văzut și teatrul radiofonic. Scrie afișul unei scene de cinci minute, cu titlu, trei roluri și un decor. Adaugă două indicații scenice proprii. Nu copia o piesă.",
-      "recap": "Spectacolul se naște din text, prin regizor, actori și echipa tehnică. Actorul este figura centrală. Teatrul radiofonic păstrează dialogul, muzica și efectele, iar ascultătorul imaginează restul. Ce nu ai văzut sau auzit nu se inventează."
-    },
-    {
-      "id": "interviu",
-      "title": "Întrebări deschise, răspunsuri de meșteșug",
-      "platter": "Interviul este un text nonliterar, jurnalistic, informativ. Este un dialog scris sau oral între un reporter și o persoană, pe o temă care interesează. Întrebările deschise cer o părere. Cele închise cer da sau nu. Etapele sunt: alegi tema și interlocutorul, te documentezi, formulezi întrebările, porți discuția, redactezi, verifici ce a spus cel întrebat. Prima întrebare îl prezintă pe invitat și deschide relația. Scopul este să informeze. Participanții au roluri fixe: reporterul întreabă, invitatul răspunde. Faptele din interviul de pe pagină, spuse cu vorbele tale, sunt acestea. Mircea Anghel avea 32 de ani la interviul din 30 aprilie 2022. Este absolvent de regie la UNATC București. A vrut să fie actor și a dat examen opt ani, fără să intre. Apoi a ales regia, pentru că regizorul dă direcția spectacolului, chiar când lucrează cu un scenograf. Pentru el, teatrul leagă oamenii, profesioniști și spectatori. Piesa de la care a pornit este Steaua fără nume, de Mihail Sebastian. El spune că o stea nu își părăsește drumul. Nu cerem formula lui. Peste zece ani, el nu vede teatrul ca pe un film văzut de acasă: teatrul se întâmplă aici și acum, o singură dată, între spectator și actor. Sfatul lui pentru început de drum ține de lucruri simple: haina în cuier, resturile aruncate, venitul la timp, textul învățat, problema spusă și rezolvată. El crede că munca contează mai mult decât talentul. Talentul fără repetiție dă sclipiri. Munca dă meșteșug, adică să știi să faci. Procesul rămâne, chiar când succesul întârzie. Pandemia i-a arătat că îndurarea contează mai mult decât gloria. Mesajul lui este să mergem la teatru.\n\nExemplu lucrat: Interviul este nonliterar și informativ. Prima întrebare cere prezentarea. Mircea Anghel a terminat regia la UNATC și avea 32 de ani în aprilie 2022. A picat opt ani la actorie. Piesa de pornire este Steaua fără nume. Munca dă meșteșug. Teatrul se întâmplă aici și acum.\n\nSpune scopul interviului, rolul primei întrebări și numele celor doi din discuția de pe pagină: reportera și Mircea Anghel. Notează trei fapte: vârsta, facultatea, piesa de pornire. Spune cum vede el teatrul peste zece ani și de ce munca stă înaintea talentului. Scrie un interviu de șapte întrebări deschise către un regizor care montează o piesă. Pune tema, interlocutorul și o întrebare închisă, cu da sau nu. Răspunsurile le scrii tu, ca și cum le-ai fi notat, fără să copiezi pagina.\n\nInterviul este un dialog jurnalistic, nonliterar, cu întrebări deschise și închise. Mircea Anghel, regizor, avea 32 de ani în 2022 și a pornit de la Steaua fără nume. Pentru el, teatrul se întâmplă aici și acum, iar meșteșugul vine din muncă.",
-      "theory": "Interviul este un text nonliterar, jurnalistic, informativ. Este un dialog scris sau oral între un reporter și o persoană, pe o temă care interesează. Întrebările deschise cer o părere. Cele închise cer da sau nu. Etapele sunt: alegi tema și interlocutorul, te documentezi, formulezi întrebările, porți discuția, redactezi, verifici ce a spus cel întrebat. Prima întrebare îl prezintă pe invitat și deschide relația. Scopul este să informeze. Participanții au roluri fixe: reporterul întreabă, invitatul răspunde. Faptele din interviul de pe pagină, spuse cu vorbele tale, sunt acestea. Mircea Anghel avea 32 de ani la interviul din 30 aprilie 2022. Este absolvent de regie la UNATC București. A vrut să fie actor și a dat examen opt ani, fără să intre. Apoi a ales regia, pentru că regizorul dă direcția spectacolului, chiar când lucrează cu un scenograf. Pentru el, teatrul leagă oamenii, profesioniști și spectatori. Piesa de la care a pornit este Steaua fără nume, de Mihail Sebastian. El spune că o stea nu își părăsește drumul. Nu cerem formula lui. Peste zece ani, el nu vede teatrul ca pe un film văzut de acasă: teatrul se întâmplă aici și acum, o singură dată, între spectator și actor. Sfatul lui pentru început de drum ține de lucruri simple: haina în cuier, resturile aruncate, venitul la timp, textul învățat, problema spusă și rezolvată. El crede că munca contează mai mult decât talentul. Talentul fără repetiție dă sclipiri. Munca dă meșteșug, adică să știi să faci. Procesul rămâne, chiar când succesul întârzie. Pandemia i-a arătat că îndurarea contează mai mult decât gloria. Mesajul lui este să mergem la teatru.",
-      "example": "Interviul este nonliterar și informativ. Prima întrebare cere prezentarea. Mircea Anghel a terminat regia la UNATC și avea 32 de ani în aprilie 2022. A picat opt ani la actorie. Piesa de pornire este Steaua fără nume. Munca dă meșteșug. Teatrul se întâmplă aici și acum.",
-      "tryThis": "Spune scopul interviului, rolul primei întrebări și numele celor doi din discuția de pe pagină: reportera și Mircea Anghel. Notează trei fapte: vârsta, facultatea, piesa de pornire. Spune cum vede el teatrul peste zece ani și de ce munca stă înaintea talentului. Scrie un interviu de șapte întrebări deschise către un regizor care montează o piesă. Pune tema, interlocutorul și o întrebare închisă, cu da sau nu. Răspunsurile le scrii tu, ca și cum le-ai fi notat, fără să copiezi pagina.",
-      "recap": "Interviul este un dialog jurnalistic, nonliterar, cu întrebări deschise și închise. Mircea Anghel, regizor, avea 32 de ani în 2022 și a pornit de la Steaua fără nume. Pentru el, teatrul se întâmplă aici și acum, iar meșteșugul vine din muncă."
-    },
-    {
-      "id": "trac",
-      "title": "Emoția din fața sălii",
-      "platter": "Tracul comunicativ este starea emoțională de când apari în fața unui public. Se poate vedea prin frisoane, transpirație, puls ridicat, amețeală, respirație îngreunată. Strategiile sunt șase. Te documentezi. Faci un plan. Repeți mesajul sau rolul de mai multe ori. Accepți emoția și o înlocuiești cu o afirmație pozitivă: Și eu pot. Voi reuși. Va fi bine. Sunt pregătit. Controlezi respirația, mimica și postura: inspiri și expiri. Reduci sala la o singură persoană cunoscută. Dialogul, în comunicare, leagă două sau mai multe persoane. Are o parte verbală, idei și opinii, una nonverbală, gest, mimică, postură, și una paraverbală, ritmul și intensitatea vocii. Forma cea mai frecventă este conversația. Replica este intervenția unei persoane. Dialogul are cel puțin două replici legate logic. În dialog ești corect, civilizat, clar, lași dreptul la replică și potrivești tonul și gestul cu situația. Poți fi ascultător pasiv, ascultător activ sau vorbitor. Ascultătorul activ arată că a înțeles, prin privire și printr-o întrebare scurtă. În scena gării, Lina este vorbitor amenințător, Profesorul este ascultător care apoi răspunde. Gestul amenințător este nonverbal. Vocea ridicată ar fi paraverbală. Alegerea dintre a citi piesa și a o vedea se justifică: lectura îți dă didascaliile, spectacolul îți dă vocea și decorul. Ambele sunt bune, pentru lucruri diferite.\n\nExemplu lucrat: Tracul se vede în puls, respirație și transpirație. Planul, repetiția și afirmația Voi reuși îl țin în frâu. Dialogul are cel puțin două replici. Gestul este nonverbal. Tăria vocii este paraverbală. Ascultătorul activ pune o întrebare scurtă.\n\nSpune trei semne ale tracului și trei strategii din cele șase. Alege un context, de pildă prezentarea unui spectacol în fața clasei, și scrie ce afirmație pozitivă folosești. Scrie cinci reguli haioase care te ajută să nu uiți textul, pe modelul unei benzi de hârtie pe drum. Apoi scrie un dialog de opt replici între un regizor și actorul care joacă un profesor. Marchează un gest și un loc în care vocea coboară. Spune dacă ești, în dialogul tău, vorbitor sau ascultător activ.\n\nTracul apare în fața publicului și se ține cu documentare, plan, repetiție, afirmații pozitive, respirație și cu privirea către o persoană cunoscută. Dialogul are replici legate, plus gest și voce. Ascultătorul activ arată că a înțeles.",
-      "theory": "Tracul comunicativ este starea emoțională de când apari în fața unui public. Se poate vedea prin frisoane, transpirație, puls ridicat, amețeală, respirație îngreunată. Strategiile sunt șase. Te documentezi. Faci un plan. Repeți mesajul sau rolul de mai multe ori. Accepți emoția și o înlocuiești cu o afirmație pozitivă: Și eu pot. Voi reuși. Va fi bine. Sunt pregătit. Controlezi respirația, mimica și postura: inspiri și expiri. Reduci sala la o singură persoană cunoscută. Dialogul, în comunicare, leagă două sau mai multe persoane. Are o parte verbală, idei și opinii, una nonverbală, gest, mimică, postură, și una paraverbală, ritmul și intensitatea vocii. Forma cea mai frecventă este conversația. Replica este intervenția unei persoane. Dialogul are cel puțin două replici legate logic. În dialog ești corect, civilizat, clar, lași dreptul la replică și potrivești tonul și gestul cu situația. Poți fi ascultător pasiv, ascultător activ sau vorbitor. Ascultătorul activ arată că a înțeles, prin privire și printr-o întrebare scurtă. În scena gării, Lina este vorbitor amenințător, Profesorul este ascultător care apoi răspunde. Gestul amenințător este nonverbal. Vocea ridicată ar fi paraverbală. Alegerea dintre a citi piesa și a o vedea se justifică: lectura îți dă didascaliile, spectacolul îți dă vocea și decorul. Ambele sunt bune, pentru lucruri diferite.",
-      "example": "Tracul se vede în puls, respirație și transpirație. Planul, repetiția și afirmația Voi reuși îl țin în frâu. Dialogul are cel puțin două replici. Gestul este nonverbal. Tăria vocii este paraverbală. Ascultătorul activ pune o întrebare scurtă.",
-      "tryThis": "Spune trei semne ale tracului și trei strategii din cele șase. Alege un context, de pildă prezentarea unui spectacol în fața clasei, și scrie ce afirmație pozitivă folosești. Scrie cinci reguli haioase care te ajută să nu uiți textul, pe modelul unei benzi de hârtie pe drum. Apoi scrie un dialog de opt replici între un regizor și actorul care joacă un profesor. Marchează un gest și un loc în care vocea coboară. Spune dacă ești, în dialogul tău, vorbitor sau ascultător activ.",
-      "recap": "Tracul apare în fața publicului și se ține cu documentare, plan, repetiție, afirmații pozitive, respirație și cu privirea către o persoană cunoscută. Dialogul are replici legate, plus gest și voce. Ascultătorul activ arată că a înțeles."
-    },
-    {
-      "id": "cronica",
-      "title": "Cum scrii despre un spectacol",
-      "platter": "Cronica de teatru este un articol publicistic. Consemnează și comentează un spectacol. Este text nonliterar. Scopul este să informeze și să recomande sau nu. Se adresează cititorului care alege ce să vadă. Are trei părți. Introducerea spune locul piesei în dramaturgie și în repertoriu. Cuprinsul arată acțiunea, personajele, dialogul, valoarea textului, viziunea regizorului și mijloacele atmosferei: ton, ritm, lumini, costume, muzică, jocul actorilor. Încheierea spune cui i se adresează spectacolul și ce efect poate avea. Faptele cronicii de pe pagină, fără frazele ei, sunt acestea. Spectacolul este Steaua fără nume, în regia lui Victor Ioan Frunză. Miercuri, 9 decembrie 2015, la Centrul Cultural pentru UNESCO Nicolae Bălcescu. Se mai juca marți, 15 decembrie 2015, pe Strada 11 Iunie, numărul 41, în București. Autoarea cronicii este Maria Ruxandra Burcescu. În viziunea ei, piesa este o capodoperă a lui Sebastian, iar spectacolul i-a depășit așteptările. Târgul are 8.000 de locuitori, iar distracția lor este să privească trenurile. Într-o seară, trenul accelerat lasă în gară o femeie fără bilet. Ea refuză să se legitimeze. Profesorul Miroiu o găzduiește o noapte și îi promite biletul spre București când primește leafa. Acțiunea ține noaptea aceea și dimineața următoare. Miroiu este un intelectual de provincie, pasionat de astronomie, bogat în idei și sărac în lucruri. Decorul duce spectatorul spre Ursa Mare. Adrian Nicolae joacă șeful de gară, cu umor, și, într-o distribuție alternativă, pe Miroiu. Luminița Erga joacă pe domnișoara Cucu, personaj ridicol și auster, greu de umanizat în actul al treilea. Cronica laudă, deci nu este neutră: este o recomandare caldă. O cronică a ta nu copiază pagina. Poți scrie despre un spectacol pe care l-ai văzut sau despre scena gării din lecție, cu decor, un actor și o recomandare. Pentru O scrisoare pierdută, de Ion Luca Caragiale, datele de montare se iau din afișul pe care îl vezi. Nu le inventăm.\n\nExemplu lucrat: Cronica este nonliterară și recomandă. Regizorul din cronică este Victor Ioan Frunză. Data este 9 decembrie 2015. Actori: Adrian Nicolae, șeful de gară, și Luminița Erga, domnișoara Cucu. Acțiunea ține o noapte și dimineața următoare. Târgul are 8.000 de locuitori. Decorul trimite la Ursa Mare.\n\nSpune cui i se adresează cronica, de ce este nonliterară și care este scopul ei. Numește regizorul, data, locul, doi actori și rolurile. Spune ce problemă rezolvă Miroiu în gară și cât durează acțiunea. Descrie decorul într-o propoziție. Spune că textul laudă, deci recomandă. Scrie o cronică de 80–100 de cuvinte despre scena gării din lecție sau despre un spectacol văzut de tine: introducere, un fapt de joc, o încheiere cu recomandare. Nu copia articolul.\n\nCronica de teatru consemnează un spectacol, în introducere, cuprins și încheiere. Este nonliterară. Spectacolul din pagină este regizat de Victor Ioan Frunză, pe 9 decembrie 2015. Adrian Nicolae joacă șeful de gară. Luminița Erga joacă pe domnișoara Cucu. Acțiunea ține o noapte și dimineața următoare.",
-      "theory": "Cronica de teatru este un articol publicistic. Consemnează și comentează un spectacol. Este text nonliterar. Scopul este să informeze și să recomande sau nu. Se adresează cititorului care alege ce să vadă. Are trei părți. Introducerea spune locul piesei în dramaturgie și în repertoriu. Cuprinsul arată acțiunea, personajele, dialogul, valoarea textului, viziunea regizorului și mijloacele atmosferei: ton, ritm, lumini, costume, muzică, jocul actorilor. Încheierea spune cui i se adresează spectacolul și ce efect poate avea. Faptele cronicii de pe pagină, fără frazele ei, sunt acestea. Spectacolul este Steaua fără nume, în regia lui Victor Ioan Frunză. Miercuri, 9 decembrie 2015, la Centrul Cultural pentru UNESCO Nicolae Bălcescu. Se mai juca marți, 15 decembrie 2015, pe Strada 11 Iunie, numărul 41, în București. Autoarea cronicii este Maria Ruxandra Burcescu. În viziunea ei, piesa este o capodoperă a lui Sebastian, iar spectacolul i-a depășit așteptările. Târgul are 8.000 de locuitori, iar distracția lor este să privească trenurile. Într-o seară, trenul accelerat lasă în gară o femeie fără bilet. Ea refuză să se legitimeze. Profesorul Miroiu o găzduiește o noapte și îi promite biletul spre București când primește leafa. Acțiunea ține noaptea aceea și dimineața următoare. Miroiu este un intelectual de provincie, pasionat de astronomie, bogat în idei și sărac în lucruri. Decorul duce spectatorul spre Ursa Mare. Adrian Nicolae joacă șeful de gară, cu umor, și, într-o distribuție alternativă, pe Miroiu. Luminița Erga joacă pe domnișoara Cucu, personaj ridicol și auster, greu de umanizat în actul al treilea. Cronica laudă, deci nu este neutră: este o recomandare caldă. O cronică a ta nu copiază pagina. Poți scrie despre un spectacol pe care l-ai văzut sau despre scena gării din lecție, cu decor, un actor și o recomandare. Pentru O scrisoare pierdută, de Ion Luca Caragiale, datele de montare se iau din afișul pe care îl vezi. Nu le inventăm.",
-      "example": "Cronica este nonliterară și recomandă. Regizorul din cronică este Victor Ioan Frunză. Data este 9 decembrie 2015. Actori: Adrian Nicolae, șeful de gară, și Luminița Erga, domnișoara Cucu. Acțiunea ține o noapte și dimineața următoare. Târgul are 8.000 de locuitori. Decorul trimite la Ursa Mare.",
-      "tryThis": "Spune cui i se adresează cronica, de ce este nonliterară și care este scopul ei. Numește regizorul, data, locul, doi actori și rolurile. Spune ce problemă rezolvă Miroiu în gară și cât durează acțiunea. Descrie decorul într-o propoziție. Spune că textul laudă, deci recomandă. Scrie o cronică de 80–100 de cuvinte despre scena gării din lecție sau despre un spectacol văzut de tine: introducere, un fapt de joc, o încheiere cu recomandare. Nu copia articolul.",
-      "recap": "Cronica de teatru consemnează un spectacol, în introducere, cuprins și încheiere. Este nonliterară. Spectacolul din pagină este regizat de Victor Ioan Frunză, pe 9 decembrie 2015. Adrian Nicolae joacă șeful de gară. Luminița Erga joacă pe domnișoara Cucu. Acțiunea ține o noapte și dimineața următoare."
-    },
-    {
-      "id": "pronume-personal",
-      "title": "Eu, dumneavoastră și sine",
-      "platter": "Pronumele ține locul unui substantiv. Pronumele personal arată persoanele comunicării. La nominativ: eu, noi, tu, voi, el, ea, ei, ele. La acuzativ accentuat: mine, noi, tine, voi, el, ea, ei, ele. La acuzativ neaccentuat: mă sau m-, ne sau ne-, te sau te-, vă sau v-, îl sau l-, o, îi sau i-, le sau le-. La dativ accentuat: mie, nouă, ție, vouă, lui, ei, lor. La dativ neaccentuat: îmi sau mi-, ne- sau ni-, îți sau ți-, vă sau v- sau vi-, îi sau i-, le- sau li-. Genitivul are forme doar la persoana a III-a: lui, ei, lor. Vocativul are tu și voi. Formele neaccentuate se numesc clitice. Se leagă cu cratimă, ca în ne-a oferit și l-a întrebat, sau stau singure, ca în îți spun. Pot relua sau anticipa complementul: Ioanei i-am spus adevărul. L-a văzut pe copil. În scena noastră, eu, din Îți iau eu biletul, este pronume personal accentuat, persoana I, singular, nominativ, subiect. Vă, din Vă salut, este pronume de politețe, persoana a II-a, și cere pluralul. Mă, din Mă duc, este reflexiv, persoana I singular, acuzativ, la fel ca verbul. Vă, din Vă duc cu trăsura, este personal, persoana a II-a, pentru că eu vă duc pe voi, nu pe mine. Pronumele de politețe arată respect, la persoana a II-a și a III-a. Genul se vede doar la persoana a III-a singular. Formele sunt dumneata, dumneavoastră, dumitale, dumnealui, dumnealor, dumneaei. Dumneavoastră se acordă la plural chiar când vorbești cu o singură persoană: Dumneavoastră veniți. Formulele de respect maxim se scriu cu literă mare și fără cratimă: Excelența Sa, Domnia Ta, Domnia Voastră, Înălțimea Ta, Sfinția Ta. Respectul minim stă în dumneata, dânsul, dânșii, dânsele, matale, mătăluță, mătălică, tălică. Pronumele reflexiv arată că obiectul acțiunii este același cu subiectul. La persoana a III-a are forme proprii: acuzativ sine, se, s-, dativ sie, sieși, își, și-. La persoanele I și a II-a împrumută cliticele personale, cu aceeași persoană și același număr ca verbul. Mă plictisesc este reflexiv, persoana I. Mă plictisești este personal, pentru că subiectul este tu. Funcțiile cerute sunt acestea. Noi este subiect, nominativ. Ei, în împreună cu ei, este circumstanțial de asociere, acuzativ. Dumnealui, când a fost condus, este subiect, nominativ. Ne, în Ne îndreptăm, este reflexiv, acuzativ. Voi, în spre voi, este circumstanțial de loc, acuzativ. Tine, în ca tine, este circumstanțial de mod, acuzativ. Dumnealui, în Am scris dumnealui, este complement indirect, dativ. Lui, în ale lui, este atribut, genitiv. Lor, în înaintea lor, este circumstanțial de timp, genitiv, pentru că înaintea cere genitivul. Mine, în Pe mine mă interesează, este complement direct, acuzativ, reluat de mă. Mine, în despre mine, este complement prepozițional. Dumnealor, în pentru dumnealor, este atribut prepozițional, acuzativ. Ei, în Poezia ei, este atribut, genitiv. Sine, în pentru sine, este circumstanțial de scop, acuzativ. Își și sieși, în Își reproșează sieși, sunt complemente indirecte, dativ. Sine, în de sine, este atribut prepozițional. Mă, în Mă spăl, este reflexiv, complement direct. Formele corecte sunt acestea. El i-a spus Anei să ia o carte. M-a văzut cu revista apărută în luna mai. L-a certat că a scris greșit prepoziția la. Va veni când va fi anunțat în mesaj. Sora sa s-a dus la teatru. Își amintește de toate năzbâtiile. S- din S-a spălat este pronume reflexiv. Sunt în gară este verb predicativ, pentru că înseamnă mă aflu. Sunt profesor este verb copulativ.\n\nExemplu lucrat: Eu este accentuat, persoana I, subiect. Mă duc este reflexiv. Vă duc este personal. Dumneavoastră veniți, chiar pentru o singură persoană. El i-a spus, M-a văzut, L-a certat, Va veni, sa s-a dus și Își amintește sunt formele corecte. Sunt în gară este predicativ. Sunt profesor este copulativ.\n\nDin Îți iau eu biletul, Vă salut, Mă duc și Vă duc cu trăsura, spune felul, persoana și numărul fiecărui pronume. Spune de ce dumneavoastră se acordă la plural. Scrie o replică cu Excelența Sa și una cu dumneata. Pentru Noi vom merge împreună cu ei, Dumnealui a fost condus, Pe mine mă interesează și Am scris dumnealui, dă cazul și funcția. Corectează: El ia spus, Mai văzut, La certat, V-a veni, Sora s-a sa dus, Î-și amintește. Arată s- reflexiv, sunt predicativ și sunt copulativ în trei enunțuri.\n\nPronumele personal arată persoana. Cliticele se pot lega cu cratimă. Dumneavoastră se acordă la plural. Formulele de respect maxim au literă mare și nu au cratimă. Reflexivul are aceeași persoană ca verbul. Formele corecte sunt i-a spus, M-a văzut, L-a certat, Va veni, Sora sa s-a dus și Își amintește.",
-      "theory": "Pronumele ține locul unui substantiv. Pronumele personal arată persoanele comunicării. La nominativ: eu, noi, tu, voi, el, ea, ei, ele. La acuzativ accentuat: mine, noi, tine, voi, el, ea, ei, ele. La acuzativ neaccentuat: mă sau m-, ne sau ne-, te sau te-, vă sau v-, îl sau l-, o, îi sau i-, le sau le-. La dativ accentuat: mie, nouă, ție, vouă, lui, ei, lor. La dativ neaccentuat: îmi sau mi-, ne- sau ni-, îți sau ți-, vă sau v- sau vi-, îi sau i-, le- sau li-. Genitivul are forme doar la persoana a III-a: lui, ei, lor. Vocativul are tu și voi. Formele neaccentuate se numesc clitice. Se leagă cu cratimă, ca în ne-a oferit și l-a întrebat, sau stau singure, ca în îți spun. Pot relua sau anticipa complementul: Ioanei i-am spus adevărul. L-a văzut pe copil. În scena noastră, eu, din Îți iau eu biletul, este pronume personal accentuat, persoana I, singular, nominativ, subiect. Vă, din Vă salut, este pronume de politețe, persoana a II-a, și cere pluralul. Mă, din Mă duc, este reflexiv, persoana I singular, acuzativ, la fel ca verbul. Vă, din Vă duc cu trăsura, este personal, persoana a II-a, pentru că eu vă duc pe voi, nu pe mine. Pronumele de politețe arată respect, la persoana a II-a și a III-a. Genul se vede doar la persoana a III-a singular. Formele sunt dumneata, dumneavoastră, dumitale, dumnealui, dumnealor, dumneaei. Dumneavoastră se acordă la plural chiar când vorbești cu o singură persoană: Dumneavoastră veniți. Formulele de respect maxim se scriu cu literă mare și fără cratimă: Excelența Sa, Domnia Ta, Domnia Voastră, Înălțimea Ta, Sfinția Ta. Respectul minim stă în dumneata, dânsul, dânșii, dânsele, matale, mătăluță, mătălică, tălică. Pronumele reflexiv arată că obiectul acțiunii este același cu subiectul. La persoana a III-a are forme proprii: acuzativ sine, se, s-, dativ sie, sieși, își, și-. La persoanele I și a II-a împrumută cliticele personale, cu aceeași persoană și același număr ca verbul. Mă plictisesc este reflexiv, persoana I. Mă plictisești este personal, pentru că subiectul este tu. Funcțiile cerute sunt acestea. Noi este subiect, nominativ. Ei, în împreună cu ei, este circumstanțial de asociere, acuzativ. Dumnealui, când a fost condus, este subiect, nominativ. Ne, în Ne îndreptăm, este reflexiv, acuzativ. Voi, în spre voi, este circumstanțial de loc, acuzativ. Tine, în ca tine, este circumstanțial de mod, acuzativ. Dumnealui, în Am scris dumnealui, este complement indirect, dativ. Lui, în ale lui, este atribut, genitiv. Lor, în înaintea lor, este circumstanțial de timp, genitiv, pentru că înaintea cere genitivul. Mine, în Pe mine mă interesează, este complement direct, acuzativ, reluat de mă. Mine, în despre mine, este complement prepozițional. Dumnealor, în pentru dumnealor, este atribut prepozițional, acuzativ. Ei, în Poezia ei, este atribut, genitiv. Sine, în pentru sine, este circumstanțial de scop, acuzativ. Își și sieși, în Își reproșează sieși, sunt complemente indirecte, dativ. Sine, în de sine, este atribut prepozițional. Mă, în Mă spăl, este reflexiv, complement direct. Formele corecte sunt acestea. El i-a spus Anei să ia o carte. M-a văzut cu revista apărută în luna mai. L-a certat că a scris greșit prepoziția la. Va veni când va fi anunțat în mesaj. Sora sa s-a dus la teatru. Își amintește de toate năzbâtiile. S- din S-a spălat este pronume reflexiv. Sunt în gară este verb predicativ, pentru că înseamnă mă aflu. Sunt profesor este verb copulativ.",
-      "example": "Eu este accentuat, persoana I, subiect. Mă duc este reflexiv. Vă duc este personal. Dumneavoastră veniți, chiar pentru o singură persoană. El i-a spus, M-a văzut, L-a certat, Va veni, sa s-a dus și Își amintește sunt formele corecte. Sunt în gară este predicativ. Sunt profesor este copulativ.",
-      "tryThis": "Din Îți iau eu biletul, Vă salut, Mă duc și Vă duc cu trăsura, spune felul, persoana și numărul fiecărui pronume. Spune de ce dumneavoastră se acordă la plural. Scrie o replică cu Excelența Sa și una cu dumneata. Pentru Noi vom merge împreună cu ei, Dumnealui a fost condus, Pe mine mă interesează și Am scris dumnealui, dă cazul și funcția. Corectează: El ia spus, Mai văzut, La certat, V-a veni, Sora s-a sa dus, Î-și amintește. Arată s- reflexiv, sunt predicativ și sunt copulativ în trei enunțuri.",
-      "recap": "Pronumele personal arată persoana. Cliticele se pot lega cu cratimă. Dumneavoastră se acordă la plural. Formulele de respect maxim au literă mare și nu au cratimă. Reflexivul are aceeași persoană ca verbul. Formele corecte sunt i-a spus, M-a văzut, L-a certat, Va veni, Sora sa s-a dus și Își amintește."
-    },
-    {
-      "id": "pronume-posesiv",
-      "title": "Al meu și cartea mea",
-      "platter": "Pronumele posesiv ține locul și al obiectului posedat, și al posesorului. Este format din al, pronume semiindependent pentru obiectul posedat, și din forma de posesiv pentru posesor, ca tău. Al, a, ai, ale, alor se schimbă după genul și numărul obiectului. Forma de posesiv se schimbă după persoana și numărul posesorului. La nominativ și acuzativ: al meu, a mea, al tău, a ta, al său, a sa, pentru un posesor și un obiect. Ai mei, ale mele, ai tăi, ale tale, ai săi, ale sale, pentru un posesor și mai multe obiecte. Al nostru, a noastră, al vostru, a voastră, pentru mai mulți posesori și un obiect. Ai noștri, ale noastre, ai voștri, ale voastre, pentru mai mulți posesori și mai multe obiecte. La genitiv și dativ nu are singular. La plural: alor mei, alor mele, alor tăi, alor tale, alor săi, alor sale, alor noștri, alor noastre, alor voștri, alor voastre. Nu are forme pentru persoana a III-a plural. Acolo se folosesc formele de genitiv ale pronumelui personal: a lor, al lor, ale lor, ai lor. Al nostru înseamnă mai mulți posesori și un obiect posedat. Completările sunt acestea. Prăjitura mea este delicioasă, dar a ta este aspectuoasă. Florile noastre sunt viu colorate, pe când ale voastre sunt parfumate. Poți să mi le împrumuți pe ale tale. Tunsoarea lui este modernă, Andrei ar trebui să o schimbe pe a sa. Lângă un substantiv, forma corectă este adjectivul: Prietenii noștri sunt pregătiți. Colega sa va pregăti lucrarea. Costumele tale sunt reușite. Noștrii, s-a și tele sunt formele greșite aici. Ai noștri, fără substantiv lângă el, este pronume. Funcțiile, ca la substantiv, sunt acestea. Ai mei este subiect, nominativ. A noastră este nume predicativ, nominativ. Pe ai voștri este complement direct, acuzativ. Cu ai noștri este circumstanțial de asociere, acuzativ. La ai săi este complement prepozițional, acuzativ. Camera alor mei are atribut genitival. Pentru ai tăi este atribut prepozițional, acuzativ. Alor mei, în Le-am comunicat alor mei, este complement indirect, dativ. După ai tăi este circumstanțial de timp. Înaintea alor voștri este circumstanțial de timp, iar alor voștri stă în genitiv, pentru că înaintea cere genitivul. Ca ai noștri este circumstanțial de mod. Lângă ai mei este circumstanțial de loc. În jurul alor săi este circumstanțial de loc, genitiv. Când stă lângă substantiv și se acordă cu el, devine adjectiv pronominal posesiv, atribut adjectival: decorul tău, prietenii tăi, piesa ta. Tău se schimbă după obiectul determinat: decorul tău, piesa ta, prietenii tăi.\n\nExemplu lucrat: Al nostru înseamnă mai mulți posesori și un obiect. A ta este pronume, pentru prăjitura celuilalt. Prietenii noștri este adjectiv. Colega sa este adjectiv. Costumele tale este adjectiv. Ai mei este subiect. A noastră este nume predicativ. Alor mei poate fi complement indirect.\n\nSpune din ce este făcut al nostru și ce arată: câți posesori, câte obiecte. Completează: prăjitura mea, dar a ta; florile noastre, pe când ale voastre; împrumută-mi-le pe ale tale; schimb-o pe a sa. Alege noștri, sa și tale în Prietenii …, Colega …, Costumele …. Dă cazul și funcția pentru Ai mei au fost la teatru, Victoria va fi a noastră, Pe ai voștri, Camera alor mei și Le-am comunicat alor mei. Scrie decorul tău, piesa ta și prietenii tăi și spune că sunt adjective pronominale, atribute.\n\nPronumele posesiv ține locul obiectului și al posesorului. Al se acordă cu obiectul. Al nostru înseamnă mai mulți posesori și un obiect. Lângă substantiv devine adjectiv: prietenii noștri, colega sa, costumele tale. Ai mei poate fi subiect. A noastră poate fi nume predicativ.",
-      "theory": "Pronumele posesiv ține locul și al obiectului posedat, și al posesorului. Este format din al, pronume semiindependent pentru obiectul posedat, și din forma de posesiv pentru posesor, ca tău. Al, a, ai, ale, alor se schimbă după genul și numărul obiectului. Forma de posesiv se schimbă după persoana și numărul posesorului. La nominativ și acuzativ: al meu, a mea, al tău, a ta, al său, a sa, pentru un posesor și un obiect. Ai mei, ale mele, ai tăi, ale tale, ai săi, ale sale, pentru un posesor și mai multe obiecte. Al nostru, a noastră, al vostru, a voastră, pentru mai mulți posesori și un obiect. Ai noștri, ale noastre, ai voștri, ale voastre, pentru mai mulți posesori și mai multe obiecte. La genitiv și dativ nu are singular. La plural: alor mei, alor mele, alor tăi, alor tale, alor săi, alor sale, alor noștri, alor noastre, alor voștri, alor voastre. Nu are forme pentru persoana a III-a plural. Acolo se folosesc formele de genitiv ale pronumelui personal: a lor, al lor, ale lor, ai lor. Al nostru înseamnă mai mulți posesori și un obiect posedat. Completările sunt acestea. Prăjitura mea este delicioasă, dar a ta este aspectuoasă. Florile noastre sunt viu colorate, pe când ale voastre sunt parfumate. Poți să mi le împrumuți pe ale tale. Tunsoarea lui este modernă, Andrei ar trebui să o schimbe pe a sa. Lângă un substantiv, forma corectă este adjectivul: Prietenii noștri sunt pregătiți. Colega sa va pregăti lucrarea. Costumele tale sunt reușite. Noștrii, s-a și tele sunt formele greșite aici. Ai noștri, fără substantiv lângă el, este pronume. Funcțiile, ca la substantiv, sunt acestea. Ai mei este subiect, nominativ. A noastră este nume predicativ, nominativ. Pe ai voștri este complement direct, acuzativ. Cu ai noștri este circumstanțial de asociere, acuzativ. La ai săi este complement prepozițional, acuzativ. Camera alor mei are atribut genitival. Pentru ai tăi este atribut prepozițional, acuzativ. Alor mei, în Le-am comunicat alor mei, este complement indirect, dativ. După ai tăi este circumstanțial de timp. Înaintea alor voștri este circumstanțial de timp, iar alor voștri stă în genitiv, pentru că înaintea cere genitivul. Ca ai noștri este circumstanțial de mod. Lângă ai mei este circumstanțial de loc. În jurul alor săi este circumstanțial de loc, genitiv. Când stă lângă substantiv și se acordă cu el, devine adjectiv pronominal posesiv, atribut adjectival: decorul tău, prietenii tăi, piesa ta. Tău se schimbă după obiectul determinat: decorul tău, piesa ta, prietenii tăi.",
-      "example": "Al nostru înseamnă mai mulți posesori și un obiect. A ta este pronume, pentru prăjitura celuilalt. Prietenii noștri este adjectiv. Colega sa este adjectiv. Costumele tale este adjectiv. Ai mei este subiect. A noastră este nume predicativ. Alor mei poate fi complement indirect.",
-      "tryThis": "Spune din ce este făcut al nostru și ce arată: câți posesori, câte obiecte. Completează: prăjitura mea, dar a ta; florile noastre, pe când ale voastre; împrumută-mi-le pe ale tale; schimb-o pe a sa. Alege noștri, sa și tale în Prietenii …, Colega …, Costumele …. Dă cazul și funcția pentru Ai mei au fost la teatru, Victoria va fi a noastră, Pe ai voștri, Camera alor mei și Le-am comunicat alor mei. Scrie decorul tău, piesa ta și prietenii tăi și spune că sunt adjective pronominale, atribute.",
-      "recap": "Pronumele posesiv ține locul obiectului și al posesorului. Al se acordă cu obiectul. Al nostru înseamnă mai mulți posesori și un obiect. Lângă substantiv devine adjectiv: prietenii noștri, colega sa, costumele tale. Ai mei poate fi subiect. A noastră poate fi nume predicativ."
-    }
+  lessons: [
+    lesson({
+      id: 'deschidere-teatru',
+      title: 'Harta măștilor și a chipurilor',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Harta unității',
+          text: 'Harta anunță teatrul, vorbirea, pronumele și întâlnirea dintre culturi. Grila cu puncte măsoară, nu predă.'
+        }
+      ],
+      theory: [
+        'Unitatea se deschide printr-o hartă. De acolo citești teatru și înveți să desparți actul de scenă, replica de nota de regie, pe scriitor de cel care joacă.',
+        'Mai departe urmărești cum un text ajunge seară de spectacol. Înveți și cum se alcătuiește un interviu, apoi o cronică despre reprezentație.',
+        'La oral ții emoția în frâu când stai dinaintea sălii și recunoști un schimb de replici. La gramatică, pronumele se reia: pornești de la personal și te oprești la numeral.',
+        'La interculturalitate spui ce înseamnă un contact cultural. Este un obicei sau un meșteșug mutat de la un popor către altul.',
+        'De ținut minte sunt douăsprezece competențe. Le așezi pe grupuri: 1.1, separat 1.3, apoi 1.4. Urmează 2.1 cu 2.2 și, alături, 2.3. Mai departe 3.1 și 3.2. La urmă 4.1, apoi 4.5, plus 5.1 și, la final, 5.2.',
+        'Mihail Sebastian a compus piesa Steaua fără nume. Viața lui se întinde între 1907 și 1945. Tiradele nu se lipesc. Rămân autorul, titlul și anii.',
+        'Feeria Sânziana și Pepelea îi aparține lui Vasile Alecsandri. Aduce pe scenă o lume de basm. Și aici păstrezi faptele, nu replicile lungi.',
+        'Nici grila cu puncte, nici fișa pe care se observă nu țin loc de lecție. Dacă pe bancă titlul piesei e altul, metoda de lucru nu se schimbă.',
+        'Harta doar rânduiește drumul: text de teatru, dialog, spectacol, interviu, emoția din sală, cronică, pronume, numeral și contact între culturi. Ea nu înlocuiește exercițiul.',
+        'Cine desparte nota de regie de replică știe cine are voce în text. Cine desparte jucătorul de scriitor știe cine urcă pe scenă și cine a compus piesa.'
+      ].join('\n\n'),
+      example: 'Pe hartă stau textul de teatru, reprezentația, interviul, cronica, pronumele și contactul dintre culturi. Competențele sunt douăsprezece. Steaua fără nume e piesa lui Sebastian. Sânziana și Pepelea e feeria lui Alecsandri.',
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Schimbi titlul de pe bancă și tot desparți actul de scenă, scriitorul de actor. Anii lui Sebastian rămân 1907 și 1945. Grila nu se învață ca text.'
+        }
+      ],
+      tryThis: 'Fă trei propoziții. Prima: tema e teatrul și azi lucrezi textul dramatic. A doua: sunt douăsprezece competențe; le scrii pe grupuri și închei cu 5.1, apoi cu 5.2.\n\nA treia: Mihail Sebastian a trăit din 1907 până în 1945, iar grila de puncte nu e lecție.',
+      keyPoints: [
+        'Harta strânge teatrul, oralul, pronumele și contactul cultural. Competențele sunt douăsprezece.',
+        'Sebastian, 1907–1945, a scris Steaua fără nume. Alecsandri a scris feeria Sânziana și Pepelea.',
+        'Grila și fișa de observare nu predau. Metoda rămâne chiar dacă titlul de pe bancă se schimbă.'
+      ]
+    }),
+
+    lesson({
+      id: 'text-dramatic',
+      title: 'Acte, scene și indicații',
+      kind: 'lectura',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Două scrieri',
+          text: 'Actul se marchează roman, scena arab. Replica e a personajului. Didascalia e a autorului.'
+        }
+      ],
+      theory: [
+        'Textul de teatru se scrie ca să fie jucat. Odată spectacol, nici timpul, nici spațiul nu mai sunt fără margini.',
+        'Spațiul are două fețe. Una e scena, locul jocului. Cealaltă e lumea născocită de autor, spațiul ficțiunii.',
+        'Și timpul are două fețe: cât ține seara în sală și clipa povestită în piesa scrisă. Nu le amesteci.',
+        'Tăietura se face în acte și în scene. Actul adună mai multe scene și primește cifră romană. Scena, o felie din act, primește cifră arabă.',
+        'O scenă se închide când cineva intră, când cineva iese sau când decorul se schimbă.',
+        'Scrisul e dublu. Replicile personajelor alcătuiesc dialogul. Notele autorului se numesc didascalii, adică indicații scenice.',
+        'Ele îi călăuzesc pe actori și îi arată cititorului imaginea. În afara replicii stau titlul, distribuția, decorul, timpul, spațiul și așezarea: didascalii externe.',
+        'Între paranteze rotunde, lângă nume sau în interiorul replicii, stau cele interne. Ele arată intrarea, ieșirea, mersul, tonul, mimica, gestul, atitudinea, simțirea.',
+        'Scena de lucru înlocuiește piesa. Actul I: noapte, gara unui târg mic. În distribuție intră șeful gării, profesorul Marin, o doamnă și domnișoara Lina.',
+        'Scena 1 lasă pe peron doar șeful și profesorul. Sub braț, el ține un volum despre stele. Scena 2 pornește odată cu coborârea doamnei din tren. Femeia nu își dă numele.',
+        'Profesorul îi oferă adăpost până în zori și biletul abia după leafă. Lina intră amenințătoare: volumul scump i se pare o nebunie, iar școala, zice ea, trebuie anunțată.',
+        'Fragmentul are un singur act și două scene. Noaptea și gara, puse în afara replicii, sunt didascalii externe. Cuvântul amenințătoare, în paranteze, e didascalie internă: arată atitudinea.',
+        'Profesorul și doamna se leagă prin simpatie, fiindcă el o găzduiește. Lina și profesorul sunt în conflict, nu în nepăsare. Steaua fără nume se citește pe roluri, căci numele stă înaintea replicii.',
+        'Durata serii o afli doar din sală, nu din imaginație. Pală numește o sabie lată și scurtă. Aht numește oftatul.',
+        'În feeria lui Alecsandri, actul I stă pe o câmpie pârjolită de soare. În fund e pădure. Căsuța dintre copaci fără frunze e în stânga. Lacul e în dreapta.',
+        'Pepelea, flăcău sărac și orfan, sosește din Țara Românească. Sânziana poartă supărare: a fost luată de la părinți și ținută departe de lume.',
+        'Zmeul socotește supărarea jucată și plănuiește închiderea fetei în turn. Din scenă se vede o iubire fără răspuns.'
+      ].join('\n\n'),
+      example: 'Fragmentul de gară are un act și două scene. Gara nopții e didascalie externă. Amenințătoare e didascalie internă. Roman pentru act, arab pentru scenă. Zmeul crede că Sânziana joacă supărarea. Închiderea e în turn. Sensuri: pală numește sabia, iar aht numește oftatul.',
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Didascalie externă nouă: dimineața, în clasă, lângă o hartă a cerului. Internă: în șoaptă. Ambele sunt ale autorului. Replica rămâne a celui care arată steaua.'
+        }
+      ],
+      tryThis: 'La gară, numără actele și scenele. Explică de ce a doua scenă pornește la coborârea doamnei. Dă o didascalie externă, una internă și spune că ambele sunt ale autorului.\n\nSpune legătura profesor–doamnă și legătura Lina–profesor. Pentru feerie, scrie locul, personajele, supărarea Sânzienei, părerea Zmeului și turnul. Adaugă sensul lui pală și al lui aht.',
+      keyPoints: [
+        'Textul de teatru se joacă. Actul ia cifră romană, scena cifră arabă. Didascalia e a autorului.',
+        'Externe sunt decorul și lista. Interne, în paranteze, sunt gestul și atitudinea.',
+        'În feerie, Zmeul vrea închiderea Sânzienei în turn și crede că supărarea ei e prefăcută.'
+      ]
+    }),
+
+    lesson({
+      id: 'dialog-dramatic',
+      title: 'Autorul scrie, actorul joacă',
+      kind: 'lectura',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Trei persoane',
+          text: 'Dramaturgul compune piesa. Personajul e închipuit. Actorul, om real, duce emoția pe scenă.'
+        }
+      ],
+      theory: [
+        'În piesa de teatru, dialogul e felul de expunere cel mai des întâlnit. Este schimbul de replici dintre personaje.',
+        'Prin el afli întâmplarea și vezi cum e omul. Actorii îl rostesc, dar vorbele rămân ale personajelor. Și spectatorul, și cititorul primesc vestea tot de aici.',
+        'Pe hârtie, dialogul se recunoaște după liniuță sau după semnele de citare. În piesă, fiecare intervenție e o replică și poartă înainte numele celui care vorbește.',
+        'Sunt patru tipuri: întrebare cu răspuns, replică urmată de completare, replică urmată de continuare, replică urmată de confirmare.',
+        'Monologul dramatic e o vorbire lungă a unui singur personaj. Poate avea sau nu martori. Nu așteaptă replică și nu schimbă destinatarul pe parcurs.',
+        'Autorul, numit și dramaturg, e omul real care născocește acțiunea, vorbele și indicațiile de joc. Personajul dramatic e făcut de el.',
+        'Actorul, tot om real, dă glas personajului și mută emoțiile pe scenă. Lista de la început îi rânduiește după greutate sau după statut, cu o prezentare scurtă.',
+        'Scriitorul intră în text doar prin didascalii. Conflictul dramatic e neînțelegerea dintre două idei sau două atitudini, ori o neliniște pentru care se caută o ieșire.',
+        'În gară, Lina vrea ca școala să afle de volumul scump. Profesorul răspunde că nebunia e a lui și că nu dă socoteală. Ea cere control. El cere libertatea lecturii. De aici pornește conflictul.',
+        'Vorba Linei și caracterizează, și aduce o veste. Dacă o lungești fără răspuns, se face monolog. Profesorul e figura principală a scenei: el hotărăște găzduirea și apără cartea.',
+        'Fișa Linei: învățătoare, severă, vine noaptea să certe. Fișa profesorului: iubește stelele, e sărac, e darnic cu oaspetele.',
+        'Steaua din piesa lui Sebastian încă n-are nume. El vrea două silabe, ca să o așeze lângă Alcor. Vega e modelul de două silabe pe care îl amintește. Poți propune alt nume.',
+        'Versurile nu se lipesc. Asemănarea, cu vorbele tale: și în feerie, și în gara de noapte, o fată tânără respinge soarta hotărâtă de altcineva.',
+        'Deosebirea: una se petrece în basm, cu zmeu și cu turn. Cealaltă ține o singură noapte, într-o haltă de provincie.'
+      ].join('\n\n'),
+      example: 'Numele stă înaintea replicii. Monologul nu așteaptă răspuns. Scriitorul compune, actorul joacă. Cearta Linei cu profesorul pornește de la prețul cărții. Steaua cere două silabe. Vega e modelul. Profesorul e figura principală.',
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Întrebare: Cât a costat volumul? Răspuns: Prea mult pentru leafă. Completare: Și totuși îl țin. Dacă Lina continuă singură, fără replică, bucata devine monolog.'
+        }
+      ],
+      tryThis: 'Alege două feluri de replici. Pentru fiecare, inventează o vorbă scurtă din gară. Arată ce face vorba prin care Lina vrea școala anunțată. Lungește-o tu în patru rânduri, fără răspuns.\n\nSpune legătura dintre personaj și actor. Argumentează conflictul. Scrie două fișe, cu meseria, două trăsături și o vorbă de recunoaștere, numai din faptele de aici. Propune două silabe pentru stea, lângă Alcor.',
+      keyPoints: [
+        'Dialogul e schimb de replici și rămâne al personajelor. Monologul e lung și nu așteaptă răspuns.',
+        'Dramaturgul creează. Actorul joacă. Conflictul e neînțelegerea dintre atitudini.',
+        'Steaua are nevoie de două silabe, ca Vega, ca să stea lângă Alcor.'
+      ]
+    }),
+
+    lesson({
+      id: 'spectacol',
+      title: 'De la text la reprezentație',
+      kind: 'lectura',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Lanțul',
+          text: 'Scriitorul dă textul. Regizorul face seara. Actorul întrupează personajul. Cititorul ajunge spectator.'
+        }
+      ],
+      theory: [
+        'Artele spectacolului își arată opera pe scenă, într-un răstimp mărginit: teatru, balet, operă, operetă. Artiștii lucrează cu vocea, cu corpul ori cu obiecte.',
+        'Teatrul se vede în reprezentație, iar la ea muncesc mai mulți. Dramaturgul scrie. Regizorul conduce montarea.',
+        'El face scenariul, își alege distribuția, o călăuzește la repetiții și dă aviz pe decor și pe costume. Actorul joacă rolul și rămâne omul din mijlocul scenei.',
+        'Scenograful, călăuzit de regizor, desenează decorul și costumele. Coregraful conduce mișcarea. Costumierul coase. Machiorul pregătește fața.',
+        'Un tehnician ține luminile. Altul ține sunetul. Publicul închide șirul. Fără oameni în sală, seara rămâne fără destinatar.',
+        'Legătura e simplă. Autorul predă textul. Regizorul îl preface în spectacol. Actorul dă trup personajului. Cel care a citit ajunge privitor în sală.',
+        'Conflictul lăuntric îl face pe cel din sală să țină partea cuiva și să aștepte o dezlegare.',
+        'Teatrul la radio mută piesa din sală în unde. Rămân vorbele, muzica și efectele. Ascultătorul își închipuie chipurile și decorul. Ținta e urechea, nu ochiul.',
+        'Un amănunt citit de un personaj, într-o înregistrare, se notează abia după ascultare. Nu se născocește.',
+        'Proiectul clasei: montați o scenă scurtă, scrisă de voi, cu roluri pentru toată echipa, un decor, un afiș și o prezentare la școală.',
+        'Afișul poartă titlul, distribuția și locul. Nu se copiază o bucată dintr-o piesă gata făcută. Scena voastră e a voastră.',
+        'Fără public, lanțul rămâne deschis. De aceea afișul spune și unde vine sala, nu doar cine joacă.'
+      ].join('\n\n'),
+      example: 'Omul din mijlocul scenei e actorul. Regizorul alege distribuția și avizează decorul. Scenograful desenează. La radio rămân vocea, muzica și efectele. Privitorul din sală corespunde cititorului. Conflictul lăuntric ține atenția până la dezlegare.',
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Afiș scurt: Steaua de pe peron. Roluri: profesor, doamnă, șef de gară. Loc: sala de clasă. Decor: o bancă și un felinar. Indicații proprii: stinge felinarul; șoapte pe peron.'
+        }
+      ],
+      tryThis: 'Spune pentru ce se scrie textul dramatic și cum ajunge spectacol. Numește oamenii care lucrează și de ce actorul e cel mai văzut pe scenă.\n\nCompletează șirul: autor, text, regizor, spectacol, personaj, actor, cititor, spectator. Dă două deosebiri între seara văzută și teatrul la radio. Schițează un afiș de cinci minute: titlu, trei roluri, un decor.',
+      keyPoints: [
+        'Din text, regizorul, actorii și tehnicienii fac seara. Actorul stă în centrul scenei.',
+        'La radio rămân dialogul, muzica și efectele. Ascultătorul imaginează chipul și decorul.',
+        'Ce nu ai văzut și nu ai auzit nu se născocește. Afișul poartă titlu, distribuție și loc.'
+      ]
+    }),
+
+    lesson({
+      id: 'interviu',
+      title: 'Întrebări deschise, răspunsuri de meșteșug',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Interviu',
+          text: 'Text nonliterar, de presă, făcut să informeze: reporterul întreabă, invitatul răspunde, pe o temă de interes.'
+        }
+      ],
+      theory: [
+        'Interviul e un dialog, scris sau rostit. Întrebarea deschisă cere o părere. Cea închisă cere doar da sau nu.',
+        'Pașii, în ordine: alegi tema și omul, te documentezi, pui întrebările pe hârtie, stai de vorbă, redactezi. La urmă confrunți notițele cu vorbitorul.',
+        'Întâia întrebare îl înfățișează pe musafir și deschide relația. Scopul e informarea. Rolurile nu se schimbă: unul întreabă, celălalt răspunde.',
+        'În discuția aceasta stau reportera și Mircea Anghel. La 30 aprilie 2022 el avea 32 de ani. A absolvit regia la UNATC București.',
+        'A vrut actorie. Timp de opt ani a susținut proba și nu a intrat. Abia apoi a trecut la regie, fiindcă regizorul orientează seara, chiar când alături lucrează un scenograf.',
+        'Pentru el, teatrul îi apropie pe oameni, meseriași și spectatori. Montarea de la care a plecat e Steaua fără nume, de Mihail Sebastian.',
+        'Despre stea, fără formula lui: ea rămâne pe traiectoria ei. Peste zece ani nu vede teatrul ca pe un film privit de acasă.',
+        'Teatrul se petrece o singură dată, aici și acum, între cel din sală și actor. Sfatul de început e domestic: haina se agață, resturile se aruncă, omul sosește la timp, textul se învață, problema se spune și se rezolvă.',
+        'Munca, crede el, stă înaintea talentului. Fără repetiție, talentul lasă doar sclipiri. Meșteșugul, adică să știi să faci, vine din trudă.',
+        'Drumul de lucru rămâne, chiar dacă reușita vine târziu. Din pandemie a înțeles că rezistența cântărește mai greu decât gloria. Încheie chemând lumea la teatru.',
+        'Un interviu al tău păstrează pașii, nu frazele lui. Întrebările deschise cer părerea unui regizor pe care ți-l alegi tu.'
+      ].join('\n\n'),
+      example: 'Interviul informează și e nonliterar. Întâia întrebare cere o prezentare. În aprilie 2022, Anghel avea 32 de ani și terminase regia la UNATC. Opt ani a picat la actorie. Plecarea lui e Steaua fără nume. Meșteșugul vine din trudă. Teatrul se petrece o dată, aici.',
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Deschisă: Ce te-a împins spre regie după opt ani de actorie? Închisă: Mai vrei să fii actor? La închisă răspunzi da sau nu. La deschisă spui o părere.'
+        }
+      ],
+      tryThis: 'Spune scopul interviului, rostul primei întrebări și cei doi: reportera și Mircea Anghel. Notează vârsta, școala și piesa de la care a pornit.\n\nSpune cum vede teatrul peste zece ani și de ce truda stă înaintea talentului. Schițează șapte întrebări deschise către un regizor, plus una închisă. Răspunsurile le scrii tu.',
+      keyPoints: [
+        'Interviul e dialog de presă, cu întrebări deschise și închise. Reporterul întreabă, invitatul răspunde.',
+        'În aprilie 2022 Anghel avea 32 de ani, terminase regia la UNATC și plecase de la Steaua fără nume.',
+        'Teatrul, pentru el, se petrece o singură dată, între sală și actor. Meșteșugul vine din trudă, nu din sclipirea fără repetiție.'
+      ]
+    }),
+
+    lesson({
+      id: 'trac',
+      title: 'Emoția din fața sălii',
+      kind: 'comunicare',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Trei canale',
+          text: 'Verbal: idei. Nonverbal: gest, mimică, postură. Paraverbal: ritmul vocii și tăria ei.'
+        }
+      ],
+      theory: [
+        'Tracul comunicativ e emoția care apare când stai dinaintea unui public. Se cunoaște după frisoane, sudoare, puls înalt, amețeală și o respirație grea.',
+        'Ai șase căi. Întâi te documentezi. Apoi îți faci un plan. Repeți rolul sau mesajul, de mai multe ori.',
+        'Primești emoția și o schimbi cu o vorbă de sprijin. Poți spune Și eu pot. Separat: Voi reuși. Apoi: Va fi bine. La urmă: Sunt pregătit.',
+        'Ții în frâu suflul, fața și ținuta: tragi aer, apoi îl dai afară. Sala întreagă se reduce la un singur om pe care îl cunoști.',
+        'În comunicare, dialogul leagă cel puțin doi oameni. Partea verbală poartă idei și păreri. Partea nonverbală poartă gestul, mimica, postura. Partea paraverbală poartă ritmul și tăria glasului.',
+        'Conversația e forma pe care o întâlnești cel mai des. Replica e vorba unei persoane. Ca să fie dialog, trebuie măcar două replici legate prin înțeles.',
+        'Vorbești corect, civilizat, limpede, lași și celuilalt dreptul să răspundă și potrivești tonul cu situația. Poți asculta pasiv, poți asculta activ sau poți fi cel care vorbește.',
+        'Cel care ascultă activ arată că a priceput: te privește și pune o întrebare scurtă. În gară, Lina vorbește amenințător. Profesorul ascultă, apoi răspunde.',
+        'Gestul de amenințare ține de nonverbal. Glasul ridicat ar ține de paraverbal. Între citit și văzut, alegerea se explică: lectura îți dă notele de regie, seara îți dă glasul și decorul.',
+        'Amândouă sunt bune, fiecare pentru altceva. Nu le pui una împotriva celeilalte.',
+        'O afirmație scurtă, spusă înainte de intrare, nu șterge emoția. O mută: din frică, în hotărâre.'
+      ].join('\n\n'),
+      example: 'Tracul se vede la puls, la suflu și la sudoare. Planul, repetiția și vorba Voi reuși îl țin în frâu. Dialogul cere măcar două replici. Gestul e nonverbal. Tăria glasului e paraverbală. Cine ascultă activ pune o întrebare scurtă.',
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'În fața clasei spui: Sunt pregătit. Tragi aer de două ori și privești un coleg cunoscut, nu toată sala. Gestul liniștit e nonverbal. Glasul coborât e paraverbal.'
+        }
+      ],
+      tryThis: 'Dă trei semne ale tracului și trei căi din cele șase. Pentru o prezentare în fața clasei, scrie vorba care te sprijină.\n\nNotează cinci reguli scurte ca să nu uiți textul. Apoi fă opt replici: regizorul stă de vorbă cu actorul din rolul de profesor. Arată un gest și locul unde glasul coboară.',
+      keyPoints: [
+        'Tracul apare dinaintea publicului. Îl ții cu documentare, plan, repetiție, vorbe de sprijin și suflu controlat.',
+        'Dialogul leagă replici, plus gest și glas. Cine ascultă activ arată că a priceput.',
+        'Lectura îți dă didascaliile. Seara îți dă glasul și decorul. Amândouă folosesc.'
+      ]
+    }),
+
+    lesson({
+      id: 'cronica',
+      title: 'Cum scrii despre un spectacol',
+      kind: 'redactare',
+      boxes: [
+        {
+          type: 'regula',
+          title: 'Trei părți',
+          text: 'Începutul așază piesa. Mijlocul arată jocul și viziunea. Finalul spune cui i se adresează și cu ce efect.'
+        }
+      ],
+      theory: [
+        'Cronica de teatru e un articol de presă. Notează o seară și o comentează. Textul e nonliterar.',
+        'Ținta: să informeze și să recomande, sau să nu recomande. Se adresează celui care își alege ce să vadă.',
+        'Are trei bucăți. Începutul așază piesa în dramaturgie și în repertoriu. Finalul arată publicul vizat și efectul posibil.',
+        'La mijloc intră acțiunea, oamenii și dialogul, valoarea textului, viziunea de regie, apoi atmosfera: lumini, costume, muzică, ritm, ton și joc.',
+        'Seara comentată e Steaua fără nume. Regia: Victor Ioan Frunză. Întâia dată: miercuri, 9 decembrie 2015.',
+        'Sala acelei seri: Centrul Cultural pentru UNESCO Nicolae Bălcescu. Mai era o reprezentație marți, 15 decembrie 2015, în București, pe Strada 11 Iunie, la numărul 41.',
+        'Semnătura e a Mariei Ruxandra Burcescu. Pentru ea, piesa lui Sebastian e o capodoperă, iar montarea a trecut peste ce aștepta.',
+        'Târgul numără 8.000 de locuitori. Distracția lor e să privească trenurile. Într-o seară, acceleratul oprește o călătoare fără bilet. Femeia nu acceptă legitimarea.',
+        'Miroiu o primește peste noapte și făgăduiește biletul către București după leafă. Întâmplarea ține noaptea aceea și dimineața care vine.',
+        'Miroiu e un intelectual de provincie: iubește astronomia, are idei multe și lucruri puține. Decorul îndreaptă ochiul spre Ursa Mare.',
+        'Adrian Nicolae îl joacă, cu umor, pe șeful de gară și, în altă distribuție, pe Miroiu. Luminița Erga este domnișoara Cucu.',
+        'Cucu e ridicolă și austeră. În actul al treilea e greu de adus spre omenesc. Articolul laudă, deci nu stă neutru: e o recomandare caldă.',
+        'Cronica ta o scrii tu, despre o seară văzută sau despre gara lucrată mai devreme, cu un decor, un actor și o recomandare. Articolul citit nu se copiază.',
+        'La O scrisoare pierdută, de Ion Luca Caragiale, data montării se ia de pe afișul pe care l-ai văzut. Nu se inventează.'
+      ].join('\n\n'),
+      example: 'Cronica e nonliterară și poate recomanda. Regia e a lui Victor Ioan Frunză, în 9 decembrie 2015. Nicolae joacă șeful gării. Erga o joacă pe Cucu. Faptele țin o noapte plus dimineața. Târgul are 8.000 de oameni. Decorul duce spre Ursa Mare.',
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Final posibil, al tău: gara merită văzută de cine vrea o noapte de provincie, un profesor sărac și o stea încă nenumită. Lauda înseamnă recomandare, nu neutralitate.'
+        }
+      ],
+      tryThis: 'Spune pentru cine se scrie cronica, de ce e nonliterară și care îi e ținta. Dă regizorul, data, locul, apoi doi actori cu rolurile lor.\n\nSpune ce rezolvă Miroiu în gară și cât ține acțiunea. Descrie decorul într-o propoziție. Arată că lauda înseamnă recomandare. Scrie apoi 80–100 de cuvinte: început, un fapt de joc, final cu recomandare.',
+      keyPoints: [
+        'Cronica notează o seară în trei părți și e nonliterară. Poate recomanda sau nu.',
+        'Frunză a montat piesa la 9 decembrie 2015. Nicolae e șeful gării, Erga e Cucu.',
+        'Faptele țin o noapte și dimineața de după. O dată de pe un afiș nevăzut nu se inventează.'
+      ]
+    }),
+
+    lesson({
+      id: 'pronume-personal',
+      title: 'Eu, dumneavoastră și sine',
+      kind: 'limba',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Personal',
+          text: 'Înlocuiește un nume și arată persoana. Scurtele, cliticele, se leagă cu cratimă sau stau libere.'
+        }
+      ],
+      theory: [
+        'Pronumele înlocuiește un nume. Personalul arată cine ia parte la vorbire: persoana I, a II-a sau a III-a.',
+        'Nominativ: eu, noi, tu, voi, el, ea, ei, ele. Acuzativ cu accent: mine, noi, tine, voi, el, ea, ei, ele.',
+        'Acuzativ fără accent: mă sau m-, ne sau ne-, te sau te-, vă sau v-, îl sau l-, o, îi sau i-, le sau le-.',
+        'Dativ cu accent: mie, nouă, ție, vouă, lui, ei, lor. Dativ fără accent: îmi sau mi-, ne- sau ni-, îți sau ți-, vă, v- sau vi-, îi sau i-, le- sau li-.',
+        'Genitiv doar la a III-a: lui, ei, lor. Vocativ: tu, voi. Scurtele sunt clitice. Cratima leagă, ca în ne-a oferit. Reiau: Ioanei i-am spus adevărul. Separat, L-a văzut pe copil.',
+        'În bilet, eu e accentuat, I, singular, nominativ, subiect. În salut, vă e politețe, a II-a, cu pluralul. Mă duc: reflexiv, I, acuzativ. Vă duc cu trăsura: personal, a II-a, fiindcă duci pe alții.',
+        'Politețea arată respect la a II-a și a III-a. Genul doar la a III-a singular. Forme: dumneata, dumneavoastră, dumitale, dumnealui, dumnealor, dumneaei. Plural chiar pentru un om: Dumneavoastră veniți.',
+        'Respect mare, cu majusculă, fără liniuță: Excelența Sa, Domnia Ta, Domnia Voastră, Înălțimea Ta, Sfinția Ta. Respect mic: dumneata, dânsul, dânșii, dânsele, matale, mătăluță, mătălică, tălică.',
+        'Reflexivul: obiectul e subiectul. La a III-a: sine, se, s-, sie, sieși, își, și-. La I și a II-a ia cliticele personalului. Mă plictisesc e reflexiv. Mă plictisești e personal, căci subiectul e tu.',
+        'Funcții. Noi: subiect, nominativ. Ei lângă împreună cu: asociere, acuzativ. Dumnealui condus: subiect. Ne îndreptăm: reflexiv. Spre voi: loc. Ca tine: mod. Am scris dumnealui: indirect, dativ.',
+        'Ale lui: atribut, genitiv. Înaintea lor: timp, genitiv. Pe mine reluat de mă: direct. Despre mine: prepozițional. Pentru dumnealor: atribut prepozițional. Poezia ei: atribut. Pentru sine: scop. Își și sieși: indirecte. De sine: atribut. Mă spăl: reflexiv, direct.',
+        'Îngrijit: i-a spus, M-a văzut, L-a certat, Va veni, sa s-a dus, Își amintește. În S-a spălat, s- e reflexiv. Sunt în gară e predicativ. Sunt profesor e copulativ.'
+      ].join('\n\n'),
+      example: 'Eu din bilet e accentuat, I, subiect. Mă duc e reflexiv. Vă duc e personal. Dumneavoastră cere plural. Îngrijit: i-a spus. Sunt în gară e predicativ. Sunt profesor e copulativ.',
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Excelența Sa sosește la premieră. Dumneata vii mai devreme. Prima formulă e de respect maxim, cu literă mare și fără cratimă. A doua e de respect mic.'
+        }
+      ],
+      practice: [
+        '1) Ia pe rând eu din biletul promis, vă din salut, mă din Mă duc și vă din trăsură. Dă felul, persoana și numărul.',
+        '2) De ce dumneavoastră cere pluralul? Dă o formulă de respect maxim și una de respect mic.',
+        '3) La Noi vom merge împreună cu ei, la Pe mine mă interesează și la Am scris dumnealui, dă cazul și funcția.',
+        '4) Îndreaptă El ia spus, apoi Mai văzut, apoi La certat. Spune rolul lui s- și felul lui sunt în gară, apoi la profesor.'
+      ].join('\n\n'),
+      answers: [
+        'eu: personal accentuat, I, singular; vă din salut: politețe, a II-a; mă: reflexiv, I singular; vă din duc: personal, a II-a',
+        'plural chiar pentru o persoană; maxim Excelența Sa; mic dumneata',
+        'Noi: nominativ, subiect; ei: acuzativ, circumstanțial de asociere; mine: acuzativ, complement direct; dumnealui: dativ, complement indirect',
+        'i-a spus; M-a văzut; L-a certat; Va veni; Sora sa s-a dus; Își amintește; s- reflexiv; în gară predicativ; profesor copulativ'
+      ],
+      mistakes: 'Vă salut cere pluralul. Vă duc e personal. Dumneavoastră veniți. Îngrijit: i-a spus și M-a văzut.',
+      tryThis: 'Compune o replică unde apare Excelența Sa și alta cu dumneata. Arată s- reflexiv, sunt predicativ și sunt copulativ.',
+      keyPoints: [
+        'Personalul arată persoana. Cliticele pot lua cratimă și pot relua complementul.',
+        'Dumneavoastră stă cu pluralul. Respectul maxim are literă mare și nu are cratimă.',
+        'Reflexivul se acordă cu verbul. Sunt în gară e predicativ. Sunt profesor e copulativ.'
+      ]
+    }),
+
+    lesson({
+      id: 'pronume-posesiv',
+      title: 'Al meu și cartea mea',
+      kind: 'limba',
+      boxes: [
+        {
+          type: 'definitie',
+          title: 'Posesiv',
+          text: 'Ține locul lucrului posedat și al posesorului. Al se schimbă după obiect. Forma de posesiv, după posesor.'
+        }
+      ],
+      theory: [
+        'Posesivul înlocuiește și lucrul avut, și pe cel care îl are. Se construiește din al, semiindependent pentru obiect, plus forma posesorului, ca tău.',
+        'Al, a, ai, ale, alor urmează genul și numărul obiectului. Partea de posesiv urmează persoana și numărul celui care posedă.',
+        'Nominativ-acuzativ, un posesor, un obiect: al meu, a mea, al tău, a ta, al său, a sa. Un posesor, mai multe obiecte: ai mei, ale mele, ai tăi, ale tale, ai săi, ale sale.',
+        'Mai mulți posesori, un obiect: al nostru, a noastră, al vostru, a voastră. Mai mulți posesori, mai multe obiecte: ai noștri, ale noastre, ai voștri, ale voastre.',
+        'La genitiv și la dativ lipsește singularul. Pluralul: alor mei, alor mele, alor tăi, alor tale, alor săi, alor sale, alor noștri, alor noastre, alor voștri, alor voastre.',
+        'Pentru a III-a plural nu există forme proprii. Se ia genitivul personalului: a lor, al lor, ale lor, ai lor. Iar al nostru înseamnă mai mulți stăpâni și un singur obiect.',
+        'O completare: Prăjitura mea este delicioasă, dar a ta este aspectuoasă. Alta, despărțită: Florile noastre sunt viu colorate, pe când ale voastre sunt parfumate.',
+        'Mai departe: Poți să mi le împrumuți pe ale tale. Și: Andrei schimbă tunsoarea pe a sa. Aici a ta, ale voastre, ale tale și a sa sunt pronume.',
+        'Lângă un nume, corect e adjectivul. Exemple despărțite: Prietenii noștri sunt pregătiți. Apoi Colega sa va pregăti lucrarea. Apoi Costumele tale sunt reușite. Greșit aici: noștrii, s-a, tele.',
+        'Ai noștri, fără nume alături, rămâne pronume. Ai mei poate fi subiect. Iar a noastră poate fi nume predicativ. Pe ai voștri: direct. Camera alor mei: atribut genitival. Le-am comunicat alor mei: indirect, dativ.',
+        'Înaintea alor voștri cere genitivul și e timp. Ca ai noștri: mod. Lângă ai mei: loc.',
+        'Lângă un nume, cu acord, devine adjectiv pronominal, atribut. Forma urmărește obiectul: decorul tău, apoi piesa ta, apoi prietenii tăi.'
+      ].join('\n\n'),
+      example: 'Al nostru: mai mulți posesori, un obiect. A ta e pronume, pentru prăjitura celuilalt. Prietenii noștri, colega sa, costumele tale sunt adjective. Ai mei poate fi subiect. A noastră, nume predicativ. Alor mei, complement indirect.',
+      extraExamples: [
+        {
+          title: 'Încă un exemplu',
+          text: 'Decorul tău, piesa ta, prietenii tăi: forma se schimbă după obiect. Toate trei sunt adjective, atribute. Fără nume lângă ele, ai tăi ar fi pronume.'
+        }
+      ],
+      practice: [
+        '1) Din ce e făcut al nostru și ce arată despre posesori și despre obiecte?',
+        '2) Completează prăjitura mea, dar a ta. Apoi florile noastre, pe când ale voastre, pe ale tale și pe a sa. Alege noștri, sa, tale lângă Prietenii, Colega, Costumele.',
+        '3) Dă cazul și funcția. Ai mei au fost la teatru. Apoi Victoria va fi a noastră. Apoi Pe ai voștri, Camera alor mei și Le-am comunicat alor mei.',
+        '4) Scrie decorul tău, piesa ta, prietenii tăi și spune partea de vorbire și funcția.'
+      ].join('\n\n'),
+      answers: [
+        'din al plus forma de posesiv; mai mulți posesori, un obiect',
+        'a ta; ale voastre; ale tale; a sa; noștri; sa; tale',
+        'Ai mei: nominativ, subiect; a noastră: nominativ, nume predicativ; ai voștri: acuzativ, complement direct; alor mei la cameră: genitiv, atribut; alor mei la comunicat: dativ, complement indirect',
+        'adjective pronominale posesive, atribute'
+      ],
+      mistakes: 'Lângă nume nu scrie noștrii, s-a sau tele. Corect: prietenii noștri, colega sa, costumele tale. Al nostru nu înseamnă un singur posesor. La a III-a plural se ia a lor, nu o formă de alor.',
+      tryThis: 'Fă două enunțuri. Într-unul ai noștri e pronume. În celălalt noștri stă lângă un nume și e adjectiv. Spune funcția în fiecare.',
+      keyPoints: [
+        'Posesivul înlocuiește și lucrul, și pe stăpân. Al urmează obiectul posedat.',
+        'Al nostru: posesori mulți, obiect unul. Lângă nume devine adjectiv.',
+        'Ai mei poate sta subiect. A noastră poate sta nume predicativ. Alor mei poate sta complement indirect.'
+      ]
+    })
   ]
 };
