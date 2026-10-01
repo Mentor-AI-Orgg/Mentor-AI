@@ -4,7 +4,12 @@
 // nelimitate după ce materia e acoperită.
 
 const { stampLists } = require('./quiz/legacyLessons');
-const { flashcardsFor } = require('./quiz/matematica');
+const { flashcardsFor: mathFlashcardsFor } = require('./quiz/matematica');
+const { flashcardsFor: romanaFlashcardsFor } = require('./quiz/romana');
+
+function flashcardsFor(key) {
+  return [...mathFlashcardsFor(key), ...romanaFlashcardsFor(key)];
+}
 
 function item(id, point, question, options, correct, explain) {
   return { id, point, question, options, correct, explain };
@@ -177,8 +182,11 @@ function findQuestion(id) {
     const found = list.find(item => item.id === needle);
     if (found) return found;
   }
-  for (const list of Object.values(require('./quiz/matematica').BY_KEY)) {
-    const found = (list.flashcards || []).find(item => item.id === needle);
+  for (const pack of [
+    ...Object.values(require('./quiz/matematica').BY_KEY),
+    ...Object.values(require('./quiz/romana').BY_KEY)
+  ]) {
+    const found = (pack.flashcards || []).find(item => item.id === needle);
     if (found) return found;
   }
   return null;

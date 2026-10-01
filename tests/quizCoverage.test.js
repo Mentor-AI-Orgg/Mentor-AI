@@ -5,8 +5,17 @@ import { BANK, listChapterQuestions, allChapterKeys, findQuestion } from '../bac
 import { listChapterExercises, allExerciseKeys, findExercise, checkExercise } from '../backend/src/data/exerciseBank.js';
 import { EXTRAS } from '../backend/src/data/exerciseExtras.js';
 import { lessonsFor } from '../backend/src/data/gimnaziuLessons.js';
+import { getGuide } from '../backend/src/data/gimnaziuGuide.js';
+
+function lessonIdsFor(subject, grade, chapterId) {
+  const math = lessonsFor(subject, Number(grade), chapterId) || [];
+  if (math.length) return new Set(math.map(lesson => lesson.id));
+  const unit = (getGuide(subject, Number(grade)).units || []).find(row => row.id === chapterId);
+  return new Set((unit?.lessons || []).map(lesson => lesson.id));
+}
 import { LESSON_ID_MAP } from '../backend/src/data/lessonIdMap.js';
 import { BY_KEY } from '../backend/src/data/quiz/matematica/index.js';
+import { BY_KEY as ROMANA_QUIZ } from '../backend/src/data/quiz/romana/index.js';
 import { BY_KEY as CARD_KEYS, allCardKeys } from '../backend/src/data/cardBank.js';
 import { allProblems } from '../backend/src/data/problemBank.js';
 import { pickPractice } from '../backend/src/data/practicePicker.js';
@@ -75,7 +84,7 @@ describe('acoperirea testelor de matematică', () => {
     const ids = [];
     mathItems().forEach(({ key, kind, item }) => {
       const [subject, grade, chapterId] = key.split(':');
-      const lessons = new Set((lessonsFor(subject, Number(grade), chapterId) || []).map(lesson => lesson.id));
+      const lessons = lessonIdsFor(subject, grade, chapterId);
       ids.push(item.id);
       expect(item.lesson, item.id).toBeTruthy();
       expect(lessons.has(item.lesson), `${item.id} → ${item.lesson}`).toBe(true);
@@ -139,13 +148,14 @@ describe('acoperirea testelor de matematică', () => {
       ...Object.values(BANK).flat().map(item => item.id),
       ...Object.values(EXTRAS).flat().map(item => item.id),
       ...Object.values(BY_KEY).flatMap(pack => [...pack.flashcards, ...pack.tests].map(item => item.id)),
+      ...Object.values(ROMANA_QUIZ).flatMap(pack => [...pack.flashcards, ...pack.tests].map(item => item.id)),
       ...Object.values(CARD_KEYS).flatMap(pack => (pack.cards || []).map(card => card.id)),
       ...allProblems().map(problem => problem.id)
     ];
     expect(new Set(ids).size).toBe(ids.length);
     expect(allExerciseKeys()).toHaveLength(16);
     expect(allCardKeys('matematica')).toHaveLength(15);
-    expect(allCardKeys('romana')).toHaveLength(0);
+    expect(allCardKeys('romana')).toHaveLength(30);
     expect(findQuestion('m5n1').lesson).toBe('comparare');
   });
 
@@ -200,7 +210,7 @@ describe('acoperirea testelor de matematică', () => {
     const byLesson = new Map();
     Object.entries(CARD_KEYS).forEach(([key, pack]) => {
       const [subject, grade, chapterId] = key.split(':');
-      const lessons = new Set((lessonsFor(subject, Number(grade), chapterId) || []).map(lesson => lesson.id));
+      const lessons = lessonIdsFor(subject, grade, chapterId);
       (pack.cards || []).forEach(card => {
         expect(lessons.has(card.lesson), card.id).toBe(true);
         expect(LESSON_ID_MAP[`${key}:${card.lesson}`], card.id).toBeUndefined();

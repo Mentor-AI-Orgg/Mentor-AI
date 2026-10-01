@@ -1,0 +1,7101 @@
+{
+  "report": [
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "intervale",
+      "lesson": "recap-sapte",
+      "title": "Ne amintim din clasa a VII-a",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "intervale",
+      "lesson": "multimi-proprietate",
+      "title": "Mulțimi descrise printr-o proprietate",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "intervale",
+      "lesson": "relatii-multimi",
+      "title": "Relații și operații cu mulțimi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "intervale",
+      "lesson": "axa-submultimi",
+      "title": "Axa și submulțimi ale dreptei",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "intervale",
+      "lesson": "intervale-reale",
+      "title": "Intervale de numere reale",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "intervale",
+      "lesson": "operatii-intervale",
+      "title": "Operații cu intervale",
+      "quiz": 8,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "intervale",
+      "lesson": "proprietati-inegalitati",
+      "title": "Proprietăți ale inegalităților",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "intervale",
+      "lesson": "inecuatie-axb",
+      "title": "Inecuația ax + b",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "intervale",
+      "lesson": "semne-fractii",
+      "title": "Inecuații cu paranteze, fracții și regula semnelor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "intervale",
+      "lesson": "recap-intervale",
+      "title": "Recapitulare: intervale și inecuații",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "algebric",
+      "lesson": "calcule-litere",
+      "title": "Calcule cu numere reale și litere",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "algebric",
+      "lesson": "formule-scurte",
+      "title": "Pătratul sumei și al diferenței. Diferența de pătrate",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "algebric",
+      "lesson": "conjugata",
+      "title": "Raționalizarea cu conjugată",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "algebric",
+      "lesson": "factor-grupare",
+      "title": "Factor comun și grupare",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "algebric",
+      "lesson": "descompunere-formule",
+      "title": "Descompunere cu formule de calcul prescurtat",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "algebric",
+      "lesson": "alte-descompuneri",
+      "title": "Trinomul și alte descompuneri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "algebric",
+      "lesson": "fractii-domeniu",
+      "title": "Fracții algebrice. Domeniu",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "algebric",
+      "lesson": "operatii-fractii",
+      "title": "Operații cu fracții algebrice",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "algebric",
+      "lesson": "ecuatie-grad2",
+      "title": "Ecuația de gradul al doilea",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "algebric",
+      "lesson": "formula-delta",
+      "title": "Plan secundar: formula cu Δ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "algebric",
+      "lesson": "probleme-grad2",
+      "title": "Probleme cu ecuații de gradul al doilea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "algebric",
+      "lesson": "recap-algebric",
+      "title": "Recapitulare: calcul algebric",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "functii",
+      "lesson": "notiune-functie",
+      "title": "Noțiunea de funcție",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "functii",
+      "lesson": "grafic-functie",
+      "title": "Graficul unei funcții",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "functii",
+      "lesson": "functia-axb",
+      "title": "Funcția f(x) = ax + b",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "functii",
+      "lesson": "functie-interval",
+      "title": "Funcții pe un interval. Lecturi grafice",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "functii",
+      "lesson": "frecventa",
+      "title": "Sortare și frecvență",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "functii",
+      "lesson": "tabel-diagrame",
+      "title": "Tabel, bare și poligon",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "functii",
+      "lesson": "indicatori",
+      "title": "Media, mediana, modul și amplitudinea",
+      "quiz": 8,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "functii",
+      "lesson": "recap-functii",
+      "title": "Recapitulare: funcții și statistică",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "puncte-plane",
+      "title": "Puncte, drepte și plane",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "determinare-plan",
+      "title": "Drepte în spațiu și determinarea planului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "dreapta-plan",
+      "title": "Dreapta și planul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "plane-paralele",
+      "title": "Plane secante și plane paralele",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "piramida",
+      "title": "Piramida și desfășurarea ei",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "prisma",
+      "title": "Prisma dreaptă și desfășurarea ei",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "cilindru",
+      "title": "Cilindrul circular drept",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "con",
+      "title": "Conul circular drept",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "unghi-drepte",
+      "title": "Unghiul a două drepte în spațiu",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "dreapta-paralela-plan",
+      "title": "Dreaptă paralelă cu un plan",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "plane-taiate",
+      "title": "Plane paralele tăiate de o secantă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "sectiuni-trunchiuri",
+      "title": "Secțiuni paralele cu baza și trunchiuri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "thales-spatiu",
+      "title": "Plan secundar: Thales în spațiu",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "perp-plan",
+      "title": "Dreaptă perpendiculară pe un plan",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "distanta-plane",
+      "title": "Distanța dintre plane paralele",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "plane-perpendiculare",
+      "title": "Plane perpendiculare și secțiuni",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "proiectii",
+      "title": "Proiecții pe un plan",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "unghi-dreapta-plan",
+      "title": "Unghiul dintre o dreaptă și un plan",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "diedru",
+      "title": "Unghiul diedru",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "trei-perpendiculare",
+      "title": "Teorema celor trei perpendiculare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "distante-corpuri",
+      "title": "Distanțe în corpuri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "unghiuri-corpuri",
+      "title": "Unghiuri în corpuri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "arii-prisma",
+      "title": "Aria și volumul prismei",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "arii-piramida",
+      "title": "Aria și volumul piramidei",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "trunchi-piramida",
+      "title": "Trunchiul de piramidă regulată",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "arii-cilindru",
+      "title": "Aria și volumul cilindrului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "arii-con",
+      "title": "Aria și volumul conului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "trunchi-con",
+      "title": "Trunchiul de con",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "sfera",
+      "title": "Sfera",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 8,
+      "chapter": "spatiu",
+      "lesson": "recap-spatiu",
+      "title": "Recapitulare: geometrie în spațiu și clasa a VIII-a",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "recap-sase",
+      "title": "Ne amintim din clasa a VI-a",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "radical-patrat",
+      "title": "Rădăcina pătrată a unui pătrat perfect",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "radical-rational",
+      "title": "Rădăcina pătrată a unui rațional",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "estimare-radical",
+      "title": "Estimarea rădăcinii pătrate",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "irationale",
+      "title": "Numere iraționale",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "multime-reale",
+      "title": "Mulțimea numerelor reale",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "scoatere-factori",
+      "title": "Scoaterea factorilor de sub radical",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "introducere-factori",
+      "title": "Introducerea factorilor sub radical",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "aproximare-axa",
+      "title": "Aproximare și reprezentare pe axă",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "comparare-reale",
+      "title": "Compararea numerelor reale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "modul-real",
+      "title": "Modulul unui număr real",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "operatii-reale",
+      "title": "Operații cu numere reale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "puteri-reale",
+      "title": "Puteri ale numerelor reale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "rationalizare",
+      "title": "Raționalizarea numitorului a√b",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "ordine-operatii",
+      "title": "Ordinea operațiilor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "medie-ponderata",
+      "title": "Media aritmetică ponderată",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "medie-geometrica",
+      "title": "Media geometrică",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "ecuatie-patrat",
+      "title": "Ecuații de forma x^2 = a",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "reale",
+      "lesson": "recap-reale",
+      "title": "Recapitulare: numere reale",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "ecuati",
+      "lesson": "egalitati",
+      "title": "Egalități echivalente și identități",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "ecuati",
+      "lesson": "ecuatie-axb",
+      "title": "Ecuația ax + b = 0",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "ecuati",
+      "lesson": "doua-necunoscute",
+      "title": "Ecuații cu două necunoscute",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "ecuati",
+      "lesson": "sisteme",
+      "title": "Sisteme de două ecuații",
+      "quiz": 8,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "ecuati",
+      "lesson": "metode-sistem",
+      "title": "Metoda substituției și metoda reducerii",
+      "quiz": 8,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "ecuati",
+      "lesson": "probleme-sisteme",
+      "title": "Probleme cu ecuații și sisteme",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "ecuati",
+      "lesson": "recap-ecuati",
+      "title": "Recapitulare: ecuații și sisteme",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "date",
+      "lesson": "produs-cartezian",
+      "title": "Produsul cartezian",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "date",
+      "lesson": "axe",
+      "title": "Sistem de axe ortogonale",
+      "quiz": 8,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "date",
+      "lesson": "dependente-tabel",
+      "title": "Dependențe prin diagrame și tabele",
+      "quiz": 8,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "date",
+      "lesson": "dependente-grafic",
+      "title": "Dependențe prin grafice",
+      "quiz": 8,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "date",
+      "lesson": "recap-date",
+      "title": "Recapitulare: organizarea datelor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "patrulater-convex",
+      "title": "Patrulater convex și suma unghiurilor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "paralelogram",
+      "title": "Paralelogramul",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "conditii-paralelogram",
+      "title": "Condiții pentru paralelogram",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "linie-mijlocie",
+      "title": "Linia mijlocie și centrul de greutate",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "dreptunghi",
+      "title": "Dreptunghiul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "romb",
+      "title": "Rombul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "patrat",
+      "title": "Pătratul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "trapez",
+      "title": "Trapezul",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "linie-trapez",
+      "title": "Linia mijlocie a trapezului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "arii-dreptunghi",
+      "title": "Perimetru și aria pătratului și a dreptunghiului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "arie-paralelogram",
+      "title": "Aria paralelogramului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "arie-triunghi",
+      "title": "Aria triunghiului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "arie-romb",
+      "title": "Aria rombului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "arie-trapez",
+      "title": "Aria trapezului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "recap-patrulater",
+      "title": "Recapitulare: patrulaterul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "coarde-arce",
+      "title": "Coarde și arce",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "unghi-inscris",
+      "title": "Unghi înscris",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "tangente",
+      "title": "Tangente",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "poligoane-regulate",
+      "title": "Poligoane regulate",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "lungime-disc",
+      "title": "Lungimea cercului și aria discului",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "recap-cerc",
+      "title": "Recapitulare: cercul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "segmente-proportionale",
+      "title": "Segmente proporționale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "paralele-echidistante",
+      "title": "Paralele echidistante",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "thales",
+      "title": "Teorema lui Thales",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "reciproca-thales",
+      "title": "Reciproca lui Thales",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "parti-proportionale",
+      "title": "Împărțirea în părți proporționale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "triunghiuri-asemenea",
+      "title": "Triunghiuri asemenea",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "criterii-asemanare",
+      "title": "Criterii de asemănare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "aplicatii-asemanare",
+      "title": "Aplicații practice ale asemănării",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "recap-asemanare",
+      "title": "Recapitulare: asemănarea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "proiectii",
+      "title": "Proiecții ortogonale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "teorema-inaltimii",
+      "title": "Teorema înălțimii",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "teorema-catetei",
+      "title": "Teorema catetei",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "pitagora",
+      "title": "Teorema lui Pitagora și reciproca",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "trigonometrie",
+      "title": "Sinus, cosinus, tangentă, cotangentă",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "rezolvare-triunghi",
+      "title": "Rezolvarea triunghiului dreptunghic",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "aplicatii-poligoane",
+      "title": "Aplicații în poligoane regulate",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 7,
+      "chapter": "geo7",
+      "lesson": "recap-clasa7",
+      "title": "Recapitulare: relații metrice și clasa a VII-a",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "multimi",
+      "lesson": "multimi-naturale",
+      "title": "Mulțimi. Mulțimea numerelor naturale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "multimi",
+      "lesson": "relatii-multimi",
+      "title": "Relații între mulțimi",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "multimi",
+      "lesson": "operatii-multimi",
+      "title": "Reuniunea, intersecția, diferența",
+      "quiz": 8,
+      "cards": 3,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "multimi",
+      "lesson": "aplicatii-multimi",
+      "title": "Aplicații cu mulțimi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "multimi",
+      "lesson": "divizibilitate",
+      "title": "Divizibilitate în ℕ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "multimi",
+      "lesson": "descompunere",
+      "title": "Descompunerea în factori primi",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "multimi",
+      "lesson": "cmmdc",
+      "title": "Cel mai mare divizor comun",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "multimi",
+      "lesson": "cmmmc",
+      "title": "Cel mai mic multiplu comun",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "multimi",
+      "lesson": "proprietati-div",
+      "title": "Proprietăți ale divizibilității",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "multimi",
+      "lesson": "recap-multimi",
+      "title": "Recapitulare: mulțimi și divizibilitate",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "proportii",
+      "lesson": "rapoarte",
+      "title": "Rapoarte",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "proportii",
+      "lesson": "proportii",
+      "title": "Proporții",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "proportii",
+      "lesson": "sir-rapoarte",
+      "title": "Șir de rapoarte egale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "proportii",
+      "lesson": "direct-invers",
+      "title": "Mărimi direct și invers proporționale",
+      "quiz": 8,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "proportii",
+      "lesson": "regula-trei",
+      "title": "Regula de trei simplă",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "proportii",
+      "lesson": "procente",
+      "title": "Procente",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "proportii",
+      "lesson": "grafice-date",
+      "title": "Grafice și frecvențe",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "proportii",
+      "lesson": "probabilitati",
+      "title": "Probabilități",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "proportii",
+      "lesson": "recap-proportii",
+      "title": "Recapitulare: rapoarte și proporții",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "multime-intregi",
+      "title": "Mulțimea numerelor întregi",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "modul-comparare",
+      "title": "Modulul și compararea",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "adunare-intregi",
+      "title": "Adunarea și scăderea în ℤ",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "inmultire-intregi",
+      "title": "Înmulțirea în ℤ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "impartire-intregi",
+      "title": "Împărțirea în ℤ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "puteri-intregi",
+      "title": "Puterea unui număr întreg",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "calcule-intregi",
+      "title": "Calcule cu adunări și scăderi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "ordine-intregi",
+      "title": "Ordinea operațiilor în ℤ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "ecuatii-intregi",
+      "title": "Ecuații în ℤ",
+      "quiz": 8,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "inecuatii-intregi",
+      "title": "Inecuații în ℤ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "probleme-intregi",
+      "title": "Probleme cu ecuații în ℤ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "recap-intregi",
+      "title": "Recapitulare: numere întregi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "numar-rational",
+      "title": "Numărul rațional",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "axa-rational",
+      "title": "Axa și modulul în ℚ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "comparare-rational",
+      "title": "Compararea numerelor raționale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "adunare-rational",
+      "title": "Adunarea și scăderea în ℚ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "inmultire-rational",
+      "title": "Înmulțirea și împărțirea în ℚ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "puteri-rational",
+      "title": "Puterea cu exponent întreg",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "ordine-rational",
+      "title": "Ordinea operațiilor în ℚ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "ecuatii-rational",
+      "title": "Ecuații în ℚ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "probleme-rational",
+      "title": "Probleme cu ecuații în ℚ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "intregi-rationale",
+      "lesson": "recap-numere",
+      "title": "Recapitulare: numere raționale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "unghi-recap",
+      "title": "Unghiuri: recapitulare și completări",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "complementare",
+      "title": "Unghiuri complementare și suplementare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "opuse-varf",
+      "title": "Unghiuri opuse la vârf",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "adiacente",
+      "title": "Unghiuri adiacente",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "paralele",
+      "title": "Drepte paralele",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "secanta",
+      "title": "Unghiuri formate cu o secantă",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "criterii-paralelism",
+      "title": "Criterii de paralelism",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "paralele-figuri",
+      "title": "Paralele în figuri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "perpendiculare",
+      "title": "Drepte perpendiculare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "mediatoare",
+      "title": "Mediatoarea unui segment",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "simetrie-dreapta",
+      "title": "Simetrie față de o dreaptă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "cerc-elemente",
+      "title": "Cercul și elementele lui",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "unghi-centru",
+      "title": "Unghi la centru",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "pozitii-cerc",
+      "title": "Poziții: dreaptă și cerc, două cercuri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "recap-unghiuri-cerc",
+      "title": "Recapitulare: unghiuri, paralele, cerc",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "triunghi-clasif",
+      "title": "Triunghiul. Clasificare. Perimetru",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "suma-unghiuri",
+      "title": "Suma unghiurilor. Unghi exterior",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "constructie-triunghi",
+      "title": "Construcția triunghiurilor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "bisectoare-tri",
+      "title": "Bisectoarele triunghiului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "mediatoare-tri",
+      "title": "Mediatoarele triunghiului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "inaltimi",
+      "title": "Înălțimile triunghiului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "mediane",
+      "title": "Medianele triunghiului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "congruenta",
+      "title": "Congruența triunghiurilor",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "criterii-congruenta",
+      "title": "Criterii de congruență",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "congruenta-dreptunghic",
+      "title": "Congruența triunghiurilor dreptunghice",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "metoda-congruente",
+      "title": "Metoda triunghiurilor congruente",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "puncte-bisectoare",
+      "title": "Puncte pe bisectoare și pe mediatoare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "isoscel",
+      "title": "Triunghiul isoscel",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "echilateral",
+      "title": "Triunghiul echilateral",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "pitagora",
+      "title": "Triunghiul dreptunghic și Pitagora",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 6,
+      "chapter": "triunghi",
+      "lesson": "recap-final",
+      "title": "Recapitulare: triunghiul și clasa a VI-a",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "curiozitati",
+      "title": "Curiozități din lumea numerelor naturale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "scriere",
+      "title": "Scrierea și citirea numerelor naturale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "axa",
+      "title": "Numerele naturale pe axă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "comparare",
+      "title": "Compararea și ordonarea",
+      "quiz": 7,
+      "cards": 5,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "aproximari",
+      "title": "Aproximări și estimări",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "recap-numere",
+      "title": "Recapitulare: numere naturale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "adunare",
+      "title": "Adunarea numerelor naturale",
+      "quiz": 6,
+      "cards": 5,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "scadere",
+      "title": "Scăderea numerelor naturale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "inmultire",
+      "title": "Înmulțirea numerelor naturale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "impartire-exacta",
+      "title": "Împărțirea cu rest zero",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "impartire-rest",
+      "title": "Împărțirea cu rest",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "recap-operatii",
+      "title": "Recapitulare: operații",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "putere",
+      "title": "Puterea cu exponent natural",
+      "quiz": 7,
+      "cards": 3,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "reguli-puteri",
+      "title": "Reguli de calcul cu puteri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "comparare-puteri",
+      "title": "Compararea puterilor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "patrat-perfect",
+      "title": "Pătratul unui număr natural",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "baze",
+      "title": "Baza 10 și baza 2",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "ordine",
+      "title": "Ordinea operațiilor și parantezele",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "recap-puteri",
+      "title": "Recapitulare: puteri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "reducere",
+      "title": "Metoda reducerii la unitate",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "comparatie",
+      "title": "Metoda comparației",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "figurativa",
+      "title": "Metoda figurativă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "mers-invers",
+      "title": "Metoda mersului invers",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "falsa-ipoteza",
+      "title": "Metoda falsei ipoteze",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "recap-metode",
+      "title": "Recapitulare: metode aritmetice",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "divizor",
+      "title": "Divizor și multiplu",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "comun",
+      "title": "Divizor comun și multiplu comun",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "criterii-2510",
+      "title": "Criteriile pentru 2, 5 și 10",
+      "quiz": 7,
+      "cards": 3,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "criterii-39",
+      "title": "Criteriile pentru 3 și pentru 9",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "prime",
+      "title": "Numere prime și numere compuse",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "naturale",
+      "lesson": "recap-divizibilitate",
+      "title": "Recapitulare: divizibilitate",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "fractali",
+      "title": "Fractali: triunghiul și pătratul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "fractie",
+      "title": "Fracția ordinară",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "echivalente",
+      "title": "Fracții echivalente",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "comparare-fractii",
+      "title": "Compararea fracțiilor ordinare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "axa-fractii",
+      "title": "Fracții pe axa numerelor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "mixte",
+      "title": "Numere mixte",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "cmmdc-fractii",
+      "title": "Cel mai mare divizor comun",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "amplificare",
+      "title": "Amplificare și simplificare",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "cmmmc-numitor",
+      "title": "Cel mai mic multiplu comun și numitorul comun",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "recap-ordinare",
+      "title": "Recapitulare: fracții ordinare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "adunare-fractii",
+      "title": "Adunarea și scăderea fracțiilor",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "inmultire-fractii",
+      "title": "Înmulțirea fracțiilor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "parte-procent",
+      "title": "Fracție dintr-un număr și procentul",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "impartire-fractii",
+      "title": "Împărțirea fracțiilor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "puteri-fractii",
+      "title": "Puterea unei fracții",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "recap-operatii-fractii",
+      "title": "Recapitulare: operații cu fracții",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "tabel-sir",
+      "title": "Un tabel pentru un șir de date",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "scriere-zecimala",
+      "title": "Scrierea fracțiilor zecimale",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "comparare-zecimale",
+      "title": "Compararea fracțiilor zecimale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "aproximari-zecimale",
+      "title": "Aproximări și zecimale pe axă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "recap-scriere-zecimale",
+      "title": "Recapitulare: scrierea zecimalelor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "adunare-zecimale",
+      "title": "Adunarea și scăderea zecimalelor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "inmultire-zecimale",
+      "title": "Înmulțirea zecimalelor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "impartire-media",
+      "title": "Împărțirea cu rezultat zecimal și media",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "periodicitate",
+      "title": "De la fracție ordinară la zecimală periodică",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "impartire-zecimale",
+      "title": "Împărțirea a două zecimale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "zecimal-ordinar",
+      "title": "De la zecimală la fracție ordinară",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "rational",
+      "title": "Numărul rațional pozitiv și ordinea operațiilor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "metode-unitati",
+      "title": "Metode cu fracții și unități de măsură",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "recap-zecimale",
+      "title": "Recapitulare: fracții zecimale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "frecventa",
+      "title": "Tabelul de frecvențe",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "grafice-media",
+      "title": "Grafice și media unui set de date",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "fractii",
+      "lesson": "recap-date",
+      "title": "Recapitulare: organizarea datelor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "punct-plan",
+      "title": "Punct, dreaptă, plan",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "coliniare",
+      "title": "Punctul și dreapta. Puncte coliniare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "semidreapta",
+      "title": "Semidreaptă, segment, semiplan",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "drepte",
+      "title": "Poziții relative a două drepte",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "lungime",
+      "title": "Distanța și segmente congruente",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "mijloc",
+      "title": "Mijlocul unui segment",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "recap-drepte",
+      "title": "Recapitulare: punct, dreaptă, segment",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "unghi",
+      "title": "Unghiul: vârf, laturi, interior",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "masura-unghi",
+      "title": "Măsura unui unghi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "clasificare-unghi",
+      "title": "Clasificări și unghiuri congruente",
+      "quiz": 8,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "grade-minute",
+      "title": "Grade și minute",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "recap-unghiuri",
+      "title": "Recapitulare: unghiuri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "congruente",
+      "title": "Figuri congruente",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "simetrie",
+      "title": "Axă de simetrie",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "recap-congruente",
+      "title": "Recapitulare: congruență și simetrie",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "lungime-unitati",
+      "title": "Unități pentru lungime și perimetrul",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "arie-unitati",
+      "title": "Unități pentru arie",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "volum-unitati",
+      "title": "Unități pentru volum și capacitate",
+      "quiz": 7,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "matematica",
+      "grade": 5,
+      "chapter": "geometrie",
+      "lesson": "recap-unitati",
+      "title": "Recapitulare: geometrie și unități",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "recapitulare-examen",
+      "lesson": "foaia-en",
+      "title": "Unde sunt punctele",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "recapitulare-examen",
+      "lesson": "algoritmul-frazei",
+      "title": "Cum transcrii o subordonată",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "recapitulare-examen",
+      "lesson": "doom-capcane",
+      "title": "Ortografia care aduce șase puncte",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "recapitulare-examen",
+      "lesson": "cinci-compuneri",
+      "title": "Cinci tipuri, același minim",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "recapitulare-examen",
+      "lesson": "vers-la-prima-vedere",
+      "title": "Mesajul unui text liric",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "recapitulare-examen",
+      "lesson": "baiatul-din-sat",
+      "title": "Caracterizarea lui Radu",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "recapitulare-examen",
+      "lesson": "limba-pe-rand",
+      "title": "Grilele scurte de limbă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "calatoria",
+      "lesson": "lectura-en",
+      "title": "Două texte și elementul comun",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "calatoria",
+      "lesson": "argumentare",
+      "title": "Opinia scurtă și compunerea argumentativă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "calatoria",
+      "lesson": "vocabular-drum",
+      "title": "Sensul din frază",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "calatoria",
+      "lesson": "figuri-subiect",
+      "title": "Figuri, rimă și măsură",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "calatoria",
+      "lesson": "parti-de-vorbire",
+      "title": "Caz, mod și un enunț cu constrângeri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "calatoria",
+      "lesson": "cetatea",
+      "title": "Articolul despre cetate",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "calatoria",
+      "lesson": "activ-pasiv",
+      "title": "Copulativul și pasivul, fără set de itemi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "calatoria",
+      "lesson": "reflexiv",
+      "title": "Reflexivul, două feluri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "calatoria",
+      "lesson": "impersonal-concesie",
+      "title": "Impersonalul și concesia, o mențiune",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "calatoria",
+      "lesson": "banca-a9",
+      "title": "Texte de rezervă pentru asociere",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "calatoria",
+      "lesson": "recap-calatorie",
+      "title": "Recapitularea călătoriei",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "lume-sentimente",
+      "lesson": "text-liric",
+      "title": "Liricul nu este versificația",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "lume-sentimente",
+      "lesson": "mesaj-fantana",
+      "title": "Mesajul de la fântână",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "lume-sentimente",
+      "lesson": "versificatie",
+      "title": "Măsura, rima, versul alb",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "lume-sentimente",
+      "lesson": "argument-online",
+      "title": "Pro, contra și ordinea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "lume-sentimente",
+      "lesson": "coordonare",
+      "title": "Virgula la coordonare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "lume-sentimente",
+      "lesson": "subordonare",
+      "title": "Elementul de relație intră în transcriere",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "lume-sentimente",
+      "lesson": "elipsa-apozitie",
+      "title": "Omisiunea și apoziția, o mențiune",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "lume-sentimente",
+      "lesson": "poezie-zi",
+      "title": "Ziua poeziei și pălăriile",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "lume-sentimente",
+      "lesson": "targuri",
+      "title": "Târguri de carte și o traducere",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "lume-sentimente",
+      "lesson": "recap-sentimente",
+      "title": "Recapitularea sentimentelor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "valori-ascultare",
+      "lesson": "ascultare",
+      "title": "Asculți și verifici",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "valori-ascultare",
+      "lesson": "steaua-fara-nume",
+      "title": "O stea găsită pe hârtie",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "valori-ascultare",
+      "lesson": "parti-propozitie",
+      "title": "Funcția, cu toate constrângerile",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "valori-ascultare",
+      "lesson": "grafica-text",
+      "title": "Cum arată pagina",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "valori-ascultare",
+      "lesson": "atributiva",
+      "title": "Atributiva, cu elementul de relație",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "valori-ascultare",
+      "lesson": "completiva-directa",
+      "title": "Completiva directă, cea mai deasă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "valori-ascultare",
+      "lesson": "structuri-text",
+      "title": "Narativ, descriptiv, dialogat",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "valori-ascultare",
+      "lesson": "completiva-indirecta",
+      "title": "Completiva indirectă, cui",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "valori-ascultare",
+      "lesson": "completiva-prepozitionala",
+      "title": "Mă gândesc că nu este directă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "valori-ascultare",
+      "lesson": "valori-lume",
+      "title": "Patru nume și o broșură",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "valori-ascultare",
+      "lesson": "recap-valori",
+      "title": "Patru feluri și un oraș",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "traditie-inovatie",
+      "lesson": "persuasiune",
+      "title": "Faptul, emoția și valoarea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "traditie-inovatie",
+      "lesson": "patrimoniu",
+      "title": "Definiția și părerea, în același text",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "traditie-inovatie",
+      "lesson": "circumstantiala-loc",
+      "title": "Unde stă locul în frază",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "traditie-inovatie",
+      "lesson": "circumstantiala-timp",
+      "title": "Când nu este mereu timp",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "traditie-inovatie",
+      "lesson": "circumstantiala-mod",
+      "title": "Cum, cu virgula din corelativ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "traditie-inovatie",
+      "lesson": "comparare-cozia",
+      "title": "Același loc, alt tip de text",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "traditie-inovatie",
+      "lesson": "cauzala",
+      "title": "Pentru că, și când cum înseamnă fiindcă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "traditie-inovatie",
+      "lesson": "finala",
+      "title": "Ca să stea după scop",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "traditie-inovatie",
+      "lesson": "preferinte",
+      "title": "Opinia, fără pleonasm",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "traditie-inovatie",
+      "lesson": "recap-traditie",
+      "title": "Cinci întrebări și o părere",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "traditie-inovatie",
+      "lesson": "turism-cultural",
+      "title": "Orașul se luminează prin oameni",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "modele-antimodele",
+      "lesson": "nonverbal",
+      "title": "Gestul, tonul și telefonul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "modele-antimodele",
+      "lesson": "limbaj-figurat",
+      "title": "Figurile se transcriu și se numesc",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "modele-antimodele",
+      "lesson": "imn-stefan",
+      "title": "Elogiul de la Putna",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "modele-antimodele",
+      "lesson": "trei-figuri",
+      "title": "Mărește, repetă un sunet, opune",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "modele-antimodele",
+      "lesson": "colierul",
+      "title": "Mărgelele și povestea care rămâne",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "modele-antimodele",
+      "lesson": "redactare-examen",
+      "title": "Lizibil, cu sursa scrisă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "modele-antimodele",
+      "lesson": "fonetica-en",
+      "title": "Sunetul, nu litera",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "modele-antimodele",
+      "lesson": "cuvinte-straine",
+      "title": "Cratima doar când sunetul nu coincide",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "modele-antimodele",
+      "lesson": "derivare-compunere",
+      "title": "Prefix, sufix sau două cuvinte",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "modele-antimodele",
+      "lesson": "conversiune",
+      "title": "Aceeași formă, altă parte de vorbire",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "modele-antimodele",
+      "lesson": "imprumuturi",
+      "title": "Cuvântul vine din altă limbă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "modele-antimodele",
+      "lesson": "erou-recenzie",
+      "title": "Trei sensuri și o prezentare scurtă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "modele-antimodele",
+      "lesson": "recap-modele",
+      "title": "O frază, o figură, o formă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "familia-comunitate",
+      "lesson": "atitudini-orale",
+      "title": "Asertivitate și o expoziție",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "familia-comunitate",
+      "lesson": "interpretari-multiple",
+      "title": "Mai multe citiri, aceeași seară",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "familia-comunitate",
+      "lesson": "baltagul",
+      "title": "Vitoria pe drumul Dornelor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "familia-comunitate",
+      "lesson": "originalitate",
+      "title": "Originalitatea și plagiatul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "familia-comunitate",
+      "lesson": "beneficii-lectura",
+      "title": "De ce citim",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "familia-comunitate",
+      "lesson": "jargon-argou",
+      "title": "Jargon și argou",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "familia-comunitate",
+      "lesson": "colocvial-cultivat",
+      "title": "Colocvial și cultivat",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "familia-comunitate",
+      "lesson": "fraza-orala",
+      "title": "Fraza vorbită și fraza scrisă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "familia-comunitate",
+      "lesson": "coerenta-text",
+      "title": "Coerență și anaforă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "familia-comunitate",
+      "lesson": "spirit-civic",
+      "title": "Trei fapte și o patrulă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "familia-comunitate",
+      "lesson": "proiecte-an",
+      "title": "Trei proiecte, fără foaia de puncte",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 8,
+      "chapter": "familia-comunitate",
+      "lesson": "recap-familie",
+      "title": "Anul se închide pe o scenă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "recapitulare-initiala",
+      "lesson": "jurnal-vacanta",
+      "title": "Vacanța, în șase fraze și într-o scrisoare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "recapitulare-initiala",
+      "lesson": "toamna-de-la-fereastra",
+      "title": "Tabloul de toamnă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "recapitulare-initiala",
+      "lesson": "recap-constructie",
+      "title": "Silabe, omonime și verbul a fi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "recapitulare-initiala",
+      "lesson": "prima-zi",
+      "title": "Ce rămâne în ghiozdan",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "deschidere-scoala",
+      "title": "Harta școlii",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "text-epic",
+      "title": "Întâmplarea, conflictul și legătura dintre secvențe",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "autor-narator",
+      "title": "Cine scrie, cine povestește, cine există doar în text",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "caracterizare",
+      "title": "Cum arăți un personaj",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "anuntul",
+      "title": "Textul care spune ce, unde, când și cum",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "text-oral",
+      "title": "Repetare, reformulare, fapt și opinie",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "fraza",
+      "title": "Propoziții principale legate prin virgulă sau prin conector",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "conjunctia",
+      "title": "Conjuncția coordonatoare și virgula",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "vocabular-context",
+      "title": "Sensul se vede din context",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "pleonasm",
+      "title": "Sinonime, omonime și termenul de prisos",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "paronime",
+      "title": "Cuvinte care seamănă și nu spun același lucru",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "derivarea",
+      "title": "Cuvinte noi dintr-o rădăcină",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "compunerea",
+      "title": "Două cuvinte care devin unul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "locutiuni",
+      "title": "Grupul care vorbește ca un singur cuvânt",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "vorbire-scris",
+      "title": "Cum alegi cuvintele când vorbești și când scrii",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "fonetica",
+      "title": "Vocale, diftongi și numărul sunetelor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "silaba-accent",
+      "title": "Unde tai cuvântul și unde apeși",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "vecini",
+      "title": "Limbile de lângă România",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "proiect-scoli",
+      "title": "Cum faci un proiect despre școala din altă țară",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "pe-drumul-cunoasterii",
+      "lesson": "recap-unitate-scoala",
+      "title": "Închiderea unității, pe o scenă nouă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "deschidere-punti",
+      "title": "Harta dintre lumi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "fantastic",
+      "title": "Două planuri și un lucru care nu se explică",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "planuri-personaje",
+      "title": "Cine leagă lumea reală de cea ireală",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "enciclopedie",
+      "title": "Pagina care amestecă textul cu imaginea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "text-explicativ",
+      "title": "De ce, cum și din ce cauză",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "respect-toleranta",
+      "title": "Atitudinea și fapta",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "recenzie",
+      "title": "Cum scrii despre o carte fără să-i spui finalul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "verbul",
+      "title": "Predicativ, auxiliar și copulativ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "moduri-timpuri",
+      "title": "Indicativul și imperativul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "conjunctiv-optativ",
+      "title": "Acțiunea posibilă și acțiunea dorită",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "infinitiv",
+      "title": "Forma de dicționar a verbului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "participiu",
+      "title": "Acțiunea terminată",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "gerunziu",
+      "title": "Acțiunea în desfășurare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "supin",
+      "title": "Prepoziția și participiul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "combinari-verb",
+      "title": "Verbul centru și verbul adjunct",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "mit-dochia",
+      "title": "Dochia, Traian și stâncile de pe Ceahlău",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "punti-intre-lumi",
+      "lesson": "recap-punti",
+      "title": "Medalionul de pe blat",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "deschidere-sentimente",
+      "title": "Harta emoțiilor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "text-liric",
+      "title": "Vocea care simte nu este autorul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "versificatie",
+      "title": "Versul, măsura, strofa și rima",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "figuri-stil",
+      "title": "Epitetul, comparația, personificarea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "nunta-zamfirei",
+      "title": "O nuntă de baladă, spusă cu faptele ei",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "intonatie",
+      "title": "Aceeași propoziție, altă emoție",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "descriere",
+      "title": "Obiectiv, apoi subiectiv",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "asezare-text",
+      "title": "Pagina se așază după situație",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "substantiv",
+      "title": "Comun, propriu, colectiv",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "cazuri",
+      "title": "Cinci cazuri, cinci roluri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "prepozitie",
+      "title": "Leagă și cere un caz",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "adjectiv",
+      "title": "Grade, acord și topica",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "combinari-adjectiv",
+      "title": "Adjectivul centru și adjectivul adjunct",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "sanziene",
+      "title": "24 iunie, iubire și fertilitate",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "proiect-lada",
+      "title": "Lada cu sentimente și tradiții",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "taramul-sentimentelor",
+      "lesson": "recap-sentimente",
+      "title": "Jucăria de lemn, de la fereastră",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "deschidere-teatru",
+      "title": "Harta măștilor și a chipurilor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "text-dramatic",
+      "title": "Acte, scene și indicații",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "dialog-dramatic",
+      "title": "Autorul scrie, actorul joacă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "spectacol",
+      "title": "De la text la reprezentație",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "interviu",
+      "title": "Întrebări deschise, răspunsuri de meșteșug",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "trac",
+      "title": "Emoția din fața sălii",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "cronica",
+      "title": "Cum scrii despre un spectacol",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "pronume-personal",
+      "title": "Eu, dumneavoastră și sine",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "pronume-posesiv",
+      "title": "Al meu și cartea mea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "pronume-demonstrativ",
+      "title": "Aproape, departe, același",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "pronume-nehotarat",
+      "title": "Cineva, fără un nume precis",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "pronume-interogativ",
+      "title": "Cine, ce și cât, doar în întrebare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "pronume-relativ",
+      "title": "Care leagă o propoziție de alta",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "pronume-negativ",
+      "title": "Nimeni și nicio carte",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "intarire",
+      "title": "Însuși, lângă nume",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "combinari-pronume",
+      "title": "Pronumele centru și pronumele adjunct",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "numeral",
+      "title": "Cât, al câtelea și ce valoare are",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "contacte",
+      "title": "Ce trece de la un popor la altul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "lumea-teatrului",
+      "lesson": "recap-teatru",
+      "title": "O scenă scurtă și o cronică",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "deschidere-calator",
+      "title": "Harta unei călătorii",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "balta-alba",
+      "title": "O noapte de la Brăila până la baltă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "structura-epic",
+      "title": "Cinci momente și o povestire în ramă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "comprehensiune",
+      "title": "Trei feluri de text, aceiași pași",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "jurnal-calatorie",
+      "title": "Fapte adevărate, la persoana I",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "don-quijote",
+      "title": "Mori de vânt, nu uriași",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "ascultare",
+      "title": "Auzi și spui ce a spus celălalt",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "stil",
+      "title": "Firească, scurtă, armonioasă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "secvente",
+      "title": "Narațiune, explicație, descriere, dialog",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "adverb",
+      "title": "Loc, timp, mod și semnele din față",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "grade-adverb",
+      "title": "Mai repede, foarte repede, pentru mâine",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "interjectie",
+      "title": "Of, hai și cucurigu",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "interjectie-predicativa",
+      "title": "Hai, buf și stop",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "vecini-cultura",
+      "title": "Cinci cărți de vizită",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "proiect-ghid",
+      "title": "Ghidul unei țări, în grup",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "calator-prin-lume",
+      "lesson": "recap-calator",
+      "title": "Fesul, hamalii și o barcă pe lac",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "privind-catre-mine",
+      "lesson": "deschidere-privind",
+      "title": "Harta privirii spre mine",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "privind-catre-mine",
+      "lesson": "lectura-mea",
+      "title": "Cum știi că ai citit cu folos",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "privind-catre-mine",
+      "lesson": "metafora",
+      "title": "Comparația din care lipsește ca",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "privind-catre-mine",
+      "lesson": "jonathan",
+      "title": "Zborul contează mai mult decât hrana",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "privind-catre-mine",
+      "lesson": "negociere",
+      "title": "Cât spui, ce spui și cum spui",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "privind-catre-mine",
+      "lesson": "emotie",
+      "title": "Comentezi pasajul și spui ce simți",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "privind-catre-mine",
+      "lesson": "atribut",
+      "title": "Ce stă lângă un nume",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "privind-catre-mine",
+      "lesson": "cauza",
+      "title": "Din ce pricină se întâmplă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "privind-catre-mine",
+      "lesson": "scop",
+      "title": "Cu ce scop pleacă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "privind-catre-mine",
+      "lesson": "contacte-doi",
+      "title": "O investigație despre prietenie",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "privind-catre-mine",
+      "lesson": "recap-privind",
+      "title": "Fata de cincisprezece ani",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 7,
+      "chapter": "privind-catre-mine",
+      "lesson": "recap-finala",
+      "title": "Scoicile din nisip și o corabie spre Constanța",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "recapitulare-initiala",
+      "lesson": "jurnal-prima-zi",
+      "title": "Pagina de jurnal",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "recapitulare-initiala",
+      "lesson": "indicii-recap",
+      "title": "Timpul, spațiul și firul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "recapitulare-initiala",
+      "lesson": "recap-constructie",
+      "title": "Silaba, sunetul și enunțul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "recapitulare-initiala",
+      "lesson": "banda-scurta",
+      "title": "Trei cadre",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "lumea-de-acasa",
+      "lesson": "deschidere-acasa",
+      "title": "Ce vei lucra despre casă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "lumea-de-acasa",
+      "lesson": "narativ-acasa",
+      "title": "Acțiunea, timpul și spațiul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "lumea-de-acasa",
+      "lesson": "autor-narator",
+      "title": "Autor, narator, personaje",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "lumea-de-acasa",
+      "lesson": "context-comunicare",
+      "title": "Locul, momentul, relația",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "lumea-de-acasa",
+      "lesson": "tipar-narativ",
+      "title": "Cinci tipare, unul narativ",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "lumea-de-acasa",
+      "lesson": "scrisoare",
+      "title": "Părțile scrisorii",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "lumea-de-acasa",
+      "lesson": "vocabular-sens",
+      "title": "Forma, sensul, contextul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "lumea-de-acasa",
+      "lesson": "omonime",
+      "title": "Omonime și polisemie",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "lumea-de-acasa",
+      "lesson": "diftong-hiat",
+      "title": "Diftong, triftong, hiat",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "lumea-de-acasa",
+      "lesson": "silabe-reguli",
+      "title": "Cum desparți în silabe",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "lumea-de-acasa",
+      "lesson": "legenda",
+      "title": "Legenda și valoarea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "lumea-de-acasa",
+      "lesson": "proiect-scriitori",
+      "title": "Acasă la scriitorii români",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "lumea-de-acasa",
+      "lesson": "recap-acasa",
+      "title": "Recapitularea despre casă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "deschidere-prietenie",
+      "title": "Ce vei lucra despre prietenie",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "persoana-trei",
+      "title": "Naratorul care nu spune eu",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "momente-subiect",
+      "title": "Cinci momente ale acțiunii",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "dialog-literar",
+      "title": "Dialogul din povestire",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "parafraza",
+      "title": "Cu cuvintele tale",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "rezumat",
+      "title": "Cine, ce face, când",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "vorbire-indirecta",
+      "title": "De la replică la relatare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "verbul",
+      "title": "Predicativ, auxiliar, timpuri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "conjunctiv",
+      "title": "Acțiunea posibilă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "conditional-optativ",
+      "title": "Dorința și condiția",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "predicat-nominal",
+      "title": "Copula și numele",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "cultura-populara",
+      "title": "Ia și valoarea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "proiect-prietenii",
+      "title": "Mari prietenii",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "taramul-prieteniei",
+      "lesson": "recap-prietenie",
+      "title": "Încheierea despre prietenie",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "intelepciunea-lumii",
+      "lesson": "deschidere-intelepciune",
+      "title": "Ce vei lucra despre înțelepciune",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "intelepciunea-lumii",
+      "lesson": "fabula",
+      "title": "Întâmplarea și morala",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "intelepciunea-lumii",
+      "lesson": "personificare",
+      "title": "Lucruri care vorbesc",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "intelepciunea-lumii",
+      "lesson": "dictie",
+      "title": "Să te audă și să te înțeleagă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "intelepciunea-lumii",
+      "lesson": "text-explicativ",
+      "title": "Ce, de ce, cum",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "intelepciunea-lumii",
+      "lesson": "substantiv",
+      "title": "Numele lucrurilor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "intelepciunea-lumii",
+      "lesson": "cazuri",
+      "title": "Cinci forme, cinci roluri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "intelepciunea-lumii",
+      "lesson": "pronume-personal",
+      "title": "Ține locul numelui",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "intelepciunea-lumii",
+      "lesson": "pronume-reflexiv",
+      "title": "Aceeași persoană cu verbul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "intelepciunea-lumii",
+      "lesson": "subiect-acord",
+      "title": "Cine face și cum se acordă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "intelepciunea-lumii",
+      "lesson": "proverbe",
+      "title": "O învățătură scurtă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "intelepciunea-lumii",
+      "lesson": "proiect-fabule",
+      "title": "Personaje cu tâlc",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "intelepciunea-lumii",
+      "lesson": "recap-intelepciune",
+      "title": "Încheierea despre înțelepciune",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "tablouri-de-poveste",
+      "lesson": "deschidere-tablouri",
+      "title": "Ce vei lucra despre tablouri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "tablouri-de-poveste",
+      "lesson": "pastelul",
+      "title": "Tabloul și emoția",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "tablouri-de-poveste",
+      "lesson": "epitet-enumeratie",
+      "title": "Însușirea și șirul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "tablouri-de-poveste",
+      "lesson": "versificatie",
+      "title": "Vers, strofă, rimă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "tablouri-de-poveste",
+      "lesson": "afisul",
+      "title": "O veste pusă la vedere",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "tablouri-de-poveste",
+      "lesson": "stirea",
+      "title": "Cine, ce, unde, când",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "tablouri-de-poveste",
+      "lesson": "ascultare-activa",
+      "title": "Întâi asculți",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "tablouri-de-poveste",
+      "lesson": "text-descriptiv",
+      "title": "Cum scrii un tablou",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "tablouri-de-poveste",
+      "lesson": "adjectivul",
+      "title": "Însușirea și gradele",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "tablouri-de-poveste",
+      "lesson": "adjectiv-functii",
+      "title": "Lângă nume sau după este",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "tablouri-de-poveste",
+      "lesson": "martisorul",
+      "title": "Șnurul alb și roșu",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "tablouri-de-poveste",
+      "lesson": "proiect-tinuturi",
+      "title": "Ținuturi de poveste",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "tablouri-de-poveste",
+      "lesson": "recap-tablouri",
+      "title": "Încheierea despre tablouri",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "calatorii-literare",
+      "lesson": "deschidere-calatorii",
+      "title": "Ce vei lucra despre călătorii",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "calatorii-literare",
+      "lesson": "narativ-timp",
+      "title": "Când se întâmplă și unde se povestește",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "calatorii-literare",
+      "lesson": "recenzia",
+      "title": "O carte și părerea despre ea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "calatorii-literare",
+      "lesson": "act-limbaj",
+      "title": "Ce vrei să se întâmple din vorbă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "calatorii-literare",
+      "lesson": "narativ-descriptiv",
+      "title": "Povestești și te oprești să arăți",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "calatorii-literare",
+      "lesson": "adverbul",
+      "title": "Loc, timp, fel și grade",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "calatorii-literare",
+      "lesson": "complemente",
+      "title": "Pe cine, despre cine, cui",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "calatorii-literare",
+      "lesson": "circumstantiale",
+      "title": "Unde, când și cum",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "calatorii-literare",
+      "lesson": "limba-romana",
+      "title": "Limba română între limbile Europei",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "calatorii-literare",
+      "lesson": "proiect-cititor",
+      "title": "Jurnalul meu de cititor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "calatorii-literare",
+      "lesson": "recap-calatorii",
+      "title": "Încheierea despre călătorii",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "ferestre-spre-viitor",
+      "lesson": "deschidere-ferestre",
+      "title": "Ce vei lucra despre viitor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "ferestre-spre-viitor",
+      "lesson": "text-argumentativ",
+      "title": "O părere și dovezile ei",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "ferestre-spre-viitor",
+      "lesson": "text-auxiliar",
+      "title": "Textul care stă lângă textul mare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "ferestre-spre-viitor",
+      "lesson": "atitudini-emotii",
+      "title": "Interes, cooperare și emoția pe nume",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "ferestre-spre-viitor",
+      "lesson": "stilul",
+      "title": "Cuvântul potrivit locului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "ferestre-spre-viitor",
+      "lesson": "drumetie",
+      "title": "Trei popasuri de scris",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "ferestre-spre-viitor",
+      "lesson": "sintaxa-principale",
+      "title": "Subiectul și predicatul, din nou",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "ferestre-spre-viitor",
+      "lesson": "sintaxa-secundare",
+      "title": "Atribut, complement, circumstanțial",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "ferestre-spre-viitor",
+      "lesson": "diaspora",
+      "title": "Români care au dus țara cu ei",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "ferestre-spre-viitor",
+      "lesson": "proiect-descoperiri",
+      "title": "O descoperire care a schimbat lumea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "ferestre-spre-viitor",
+      "lesson": "recap-ferestre",
+      "title": "Încheierea despre viitor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "incheierea-anului",
+      "lesson": "dimineata-recap",
+      "title": "Pașii pe o scenă nouă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "incheierea-anului",
+      "lesson": "sunete-sensuri",
+      "title": "Litere, sunete și înțeles",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "incheierea-anului",
+      "lesson": "compunere-gradina",
+      "title": "Grădina bunicilor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 6,
+      "chapter": "incheierea-anului",
+      "lesson": "lectura-vara",
+      "title": "Ce iei cu tine vara",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "evaluare-initiala",
+      "lesson": "text-suport",
+      "title": "Textul-suport și esențialul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "evaluare-initiala",
+      "lesson": "intentie",
+      "title": "Intenția și răspunsul scurt",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "deschidere",
+      "title": "Harta unității",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "norma",
+      "title": "Limba standard și abaterea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "puterea",
+      "title": "Vorba poate ajuta sau răni",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "afectiv",
+      "title": "A înțelege, a exprima, răspunsul afectiv",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "canale",
+      "title": "Unde ajunge vorba",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "lectura-continua",
+      "title": "Citești până la capăt",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "jurnal-dublu",
+      "title": "Jurnalul dublu",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "nedreptate",
+      "title": "Iei atitudine și pentru altul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "personaj",
+      "title": "Personaj sau persoană",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "replica",
+      "title": "Cine a spus replica",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "alte-culturi",
+      "title": "Istețul din alte povești",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "dictionar",
+      "title": "Ce cauți în fiecare dicționar",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "carte-film",
+      "title": "Cartea și filmul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "enunt",
+      "title": "Enunțul, tipurile și semnul final",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "roluri",
+      "title": "Rolurile din dialogul politicos",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "compliment",
+      "title": "Cum primești și cum trimiți o laudă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "propozitie",
+      "title": "Propoziția și predicatul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "scuze",
+      "title": "Scuze, refuz, acceptare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "afirmativ-negativ",
+      "title": "Propoziția afirmativă și cea negativă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "acte-vorbire",
+      "title": "Acte de vorbire",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "imagine-text",
+      "title": "Legi imaginea de text",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "subiect",
+      "title": "Subiectul, propoziția și acordul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "atribut",
+      "title": "Atributul și detaliul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "plan-idei",
+      "title": "Ideea principală și planul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "capcana-nimeni",
+      "title": "Negația și întrebarea pe dos",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "valori",
+      "title": "Alegi o valoare și o motivezi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "compunere-unitate",
+      "title": "Compunerea de la finalul unității",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cuvinte",
+      "lesson": "portofoliu",
+      "title": "Portofoliul de semestru",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "deschidere-carte",
+      "title": "Harta unității despre carte",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "carte-lexic",
+      "title": "Cuvântul-cheie și câmpul lexical",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "stea-intrebari",
+      "title": "Steaua de întrebări",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "lucru-grup",
+      "title": "Roluri în grup",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "cuvant-alfabet",
+      "title": "Alfabetul și literele împrumutate",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "diacritice",
+      "title": "Diacriticele și scrierea lui î",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "silaba",
+      "title": "Silaba și semivocala",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "accent",
+      "title": "Accentul, litera și sunetul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "litera-ajutatoare",
+      "title": "Litera care doar ajută",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "sinonime",
+      "title": "Sinonime și antonime",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "notite",
+      "title": "Notițele și paragraful",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "proiect",
+      "title": "Proiectul și cum îl notezi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "empatie",
+      "title": "Tema, empatia și dialogul atent",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "tiparita-digitala",
+      "title": "Carte tipărită sau digitală",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "intrebare-deschisa",
+      "title": "Întrebarea deschisă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "de-ce-citim",
+      "title": "De ce să citești",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "cartea",
+      "lesson": "placere-indatorire",
+      "title": "Îndatorire și plăcere",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "deschidere-poveste",
+      "title": "Poveștile care se transmit",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "narativ",
+      "title": "Textul narativ și indiciile",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "asteptari-titlu",
+      "title": "Așteptarea din titlu și părerea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "personificare",
+      "title": "Personificarea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "compunere-narativa",
+      "title": "Compunerea narativă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "verbul",
+      "title": "Verbul: acțiune, stare și timp",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "moduri",
+      "title": "Modurile verbului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "imperativ",
+      "title": "Imperativul și scrierea lui",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "indicativ-1",
+      "title": "Indicativul: prezent și imperfect",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "perfect-compus",
+      "title": "Perfectul compus: ia, i-a, la, l-a",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "perfecte",
+      "title": "Perfectul simplu și mai-mult-ca-perfectul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "viitor-banda",
+      "title": "Viitorul și timpurile compuse",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "ascultare-activa",
+      "title": "Ascultarea activă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "banda-desenata",
+      "title": "Banda desenată și nonverbalul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "forme-narative",
+      "title": "Formele povestirii și etapele compunerii",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "norma-sortare",
+      "title": "Limbă standard și abatere",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "cratima-le",
+      "title": "neam, ne-am, le-au",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "proiect-taram",
+      "title": "Proiectul despre tărâmul de poveste",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "povestirea",
+      "lesson": "recap-poveste",
+      "title": "Recapitulare: povestirea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "deschidere-prietenie",
+      "title": "Respectul și ce vei descoperi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "identitate",
+      "title": "Identitate personală și națională",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "scrisoare-prieten",
+      "title": "Scrisoarea și cuvântul de azi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "proiect-romi",
+      "title": "Proiectul despre o comunitate",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "inferente",
+      "title": "Explicativ, descriptiv, deducție, real și aparență",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "portret-prieten",
+      "title": "Portretul prietenului",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "explicativ",
+      "title": "Textul explicativ și limba standard",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "substantiv",
+      "title": "Substantivul și pluralul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "articol-prepozitie",
+      "title": "Articolul și scrierea lui",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "atribut-substantiv",
+      "title": "Substantivul și atributul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "prepozitie",
+      "title": "Prepoziția în limba de azi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "prejudecati",
+      "title": "Prejudecăți și încheierea unității",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "carti-prietenie",
+      "title": "Cărți în care prietenia trece peste diferență",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "scrisoare-veche",
+      "title": "Scrisoarea veche și locuitorii",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "prietenia",
+      "lesson": "telefon-scrisoare",
+      "title": "Mesajul de pe telefon și scrisoarea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "natura",
+      "lesson": "emotie-adjectiv",
+      "title": "Emoția, adjectivul, acordul",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "natura",
+      "lesson": "grade",
+      "title": "Gradele de comparație",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "natura",
+      "lesson": "descriptiv",
+      "title": "Text descriptiv, inferențe, comparația",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "natura",
+      "lesson": "camp-lexical",
+      "title": "Câmpul lexical și tema",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "natura",
+      "lesson": "descriere-stiintifica",
+      "title": "Descrierea care informează",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "natura",
+      "lesson": "comparatie",
+      "title": "Comparația",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "natura",
+      "lesson": "portret-fiinta",
+      "title": "Portretul unei ființe",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "natura",
+      "lesson": "carti-pasari",
+      "title": "Două texte despre ciori",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "natura",
+      "lesson": "afis-tombola",
+      "title": "Afișul pentru tombolă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "natura",
+      "lesson": "recap-natura",
+      "title": "Recapitulare: natura",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "deschidere-trepte",
+      "title": "Ce vei descoperi în unitate",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "atitudine",
+      "title": "Emoții, atitudine și recitare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "vieru-casa",
+      "title": "Vieru, tema și detaliile",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "identitate-sat",
+      "title": "Satul și identitatea națională",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "numeral",
+      "title": "Numeralul cardinal",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "ordinal",
+      "title": "Numeralul ordinal",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "masuri-vechi",
+      "title": "Unități de măsură, de azi și de demult",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "patrimoniu",
+      "title": "Patrimoniul și obiectivele",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "scoala",
+      "title": "Școala și mesajul din Hamurabi",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "variatie",
+      "title": "Variația cuvintelor",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "creanga-sat",
+      "title": "Humulești și școala de altădată",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "timp-sumer",
+      "title": "Deceniu, secol, mileniu",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "casa-memoriala",
+      "title": "Casa memorială și relatarea",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "recap-trepte",
+      "title": "Recapitulare: treptele",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "trepte",
+      "lesson": "relatare-scoala",
+      "title": "Fișa relatării",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "eroi",
+      "lesson": "deschidere-eroi",
+      "title": "Ce vei descoperi în unitate",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "eroi",
+      "lesson": "nonliterar",
+      "title": "Știrea și participanții",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "eroi",
+      "lesson": "pronume",
+      "title": "Pronumele personal",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "eroi",
+      "lesson": "compunere-eroica",
+      "title": "Compunerea despre o faptă",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "eroi",
+      "lesson": "politete",
+      "title": "Politețea și pronumele de politețe",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "eroi",
+      "lesson": "marca-persoanei",
+      "title": "Vocea, gestul și textul literar",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    },
+    {
+      "subject": "romana",
+      "grade": 5,
+      "chapter": "eroi",
+      "lesson": "recap-eroi",
+      "title": "Recapitulare și evaluare",
+      "quiz": 6,
+      "cards": 4,
+      "status": "acoperita"
+    }
+  ],
+  "quizIndex": {
+    "matematica": [
+      {
+        "grade": 8,
+        "chapter": "intervale",
+        "file": "m8-intervale.js",
+        "bytes": 26139,
+        "parts": 1
+      },
+      {
+        "grade": 8,
+        "chapter": "algebric",
+        "file": "m8-algebric.js",
+        "bytes": 31578,
+        "parts": 1
+      },
+      {
+        "grade": 8,
+        "chapter": "functii",
+        "file": "m8-functii.js",
+        "bytes": 19695,
+        "parts": 1
+      },
+      {
+        "grade": 8,
+        "chapter": "spatiu",
+        "file": "m8-spatiu.js",
+        "bytes": 78317,
+        "parts": 2
+      },
+      {
+        "grade": 7,
+        "chapter": "reale",
+        "file": "m7-reale.js",
+        "bytes": 50567,
+        "parts": 1
+      },
+      {
+        "grade": 7,
+        "chapter": "ecuati",
+        "file": "m7-ecuati.js",
+        "bytes": 18137,
+        "parts": 1
+      },
+      {
+        "grade": 7,
+        "chapter": "date",
+        "file": "m7-date.js",
+        "bytes": 13253,
+        "parts": 1
+      },
+      {
+        "grade": 7,
+        "chapter": "geo7",
+        "file": "m7-geo7.js",
+        "bytes": 98920,
+        "parts": 2
+      },
+      {
+        "grade": 6,
+        "chapter": "multimi",
+        "file": "m6-multimi.js",
+        "bytes": 25278,
+        "parts": 1
+      },
+      {
+        "grade": 6,
+        "chapter": "proportii",
+        "file": "m6-proportii.js",
+        "bytes": 24101,
+        "parts": 1
+      },
+      {
+        "grade": 6,
+        "chapter": "intregi-rationale",
+        "file": "m6-intregi-rationale.js",
+        "bytes": 59592,
+        "parts": 2
+      },
+      {
+        "grade": 6,
+        "chapter": "triunghi",
+        "file": "m6-triunghi.js",
+        "bytes": 81644,
+        "parts": 2
+      },
+      {
+        "grade": 5,
+        "chapter": "naturale",
+        "file": "m5-naturale.js",
+        "bytes": 83853,
+        "parts": 2
+      },
+      {
+        "grade": 5,
+        "chapter": "fractii",
+        "file": "m5-fractii.js",
+        "bytes": 86998,
+        "parts": 2
+      },
+      {
+        "grade": 5,
+        "chapter": "geometrie",
+        "file": "m5-geometrie.js",
+        "bytes": 46436,
+        "parts": 1
+      }
+    ],
+    "romana": [
+      {
+        "grade": 8,
+        "chapter": "recapitulare-examen",
+        "file": "r8-recapitulare-examen.js",
+        "bytes": 20243,
+        "parts": 1
+      },
+      {
+        "grade": 8,
+        "chapter": "calatoria",
+        "file": "r8-calatoria.js",
+        "bytes": 30269,
+        "parts": 1
+      },
+      {
+        "grade": 8,
+        "chapter": "lume-sentimente",
+        "file": "r8-lume-sentimente.js",
+        "bytes": 28058,
+        "parts": 1
+      },
+      {
+        "grade": 8,
+        "chapter": "valori-ascultare",
+        "file": "r8-valori-ascultare.js",
+        "bytes": 33129,
+        "parts": 1
+      },
+      {
+        "grade": 8,
+        "chapter": "traditie-inovatie",
+        "file": "r8-traditie-inovatie.js",
+        "bytes": 34532,
+        "parts": 1
+      },
+      {
+        "grade": 8,
+        "chapter": "modele-antimodele",
+        "file": "r8-modele-antimodele.js",
+        "bytes": 40276,
+        "parts": 1
+      },
+      {
+        "grade": 8,
+        "chapter": "familia-comunitate",
+        "file": "r8-familia-comunitate.js",
+        "bytes": 38439,
+        "parts": 1
+      },
+      {
+        "grade": 7,
+        "chapter": "recapitulare-initiala",
+        "file": "r7-recapitulare-initiala.js",
+        "bytes": 13037,
+        "parts": 1
+      },
+      {
+        "grade": 7,
+        "chapter": "pe-drumul-cunoasterii",
+        "file": "r7-pe-drumul-cunoasterii.js",
+        "bytes": 62205,
+        "parts": 2
+      },
+      {
+        "grade": 7,
+        "chapter": "punti-intre-lumi",
+        "file": "r7-punti-intre-lumi.js",
+        "bytes": 53054,
+        "parts": 1
+      },
+      {
+        "grade": 7,
+        "chapter": "taramul-sentimentelor",
+        "file": "r7-taramul-sentimentelor.js",
+        "bytes": 51110,
+        "parts": 1
+      },
+      {
+        "grade": 7,
+        "chapter": "lumea-teatrului",
+        "file": "r7-lumea-teatrului.js",
+        "bytes": 60287,
+        "parts": 2
+      },
+      {
+        "grade": 7,
+        "chapter": "calator-prin-lume",
+        "file": "r7-calator-prin-lume.js",
+        "bytes": 49029,
+        "parts": 1
+      },
+      {
+        "grade": 7,
+        "chapter": "privind-catre-mine",
+        "file": "r7-privind-catre-mine.js",
+        "bytes": 36508,
+        "parts": 1
+      },
+      {
+        "grade": 6,
+        "chapter": "recapitulare-initiala",
+        "file": "r6-recapitulare-initiala.js",
+        "bytes": 12214,
+        "parts": 1
+      },
+      {
+        "grade": 6,
+        "chapter": "lumea-de-acasa",
+        "file": "r6-lumea-de-acasa.js",
+        "bytes": 41695,
+        "parts": 1
+      },
+      {
+        "grade": 6,
+        "chapter": "taramul-prieteniei",
+        "file": "r6-taramul-prieteniei.js",
+        "bytes": 45903,
+        "parts": 1
+      },
+      {
+        "grade": 6,
+        "chapter": "intelepciunea-lumii",
+        "file": "r6-intelepciunea-lumii.js",
+        "bytes": 40374,
+        "parts": 1
+      },
+      {
+        "grade": 6,
+        "chapter": "tablouri-de-poveste",
+        "file": "r6-tablouri-de-poveste.js",
+        "bytes": 41068,
+        "parts": 1
+      },
+      {
+        "grade": 6,
+        "chapter": "calatorii-literare",
+        "file": "r6-calatorii-literare.js",
+        "bytes": 30674,
+        "parts": 1
+      },
+      {
+        "grade": 6,
+        "chapter": "ferestre-spre-viitor",
+        "file": "r6-ferestre-spre-viitor.js",
+        "bytes": 34405,
+        "parts": 1
+      },
+      {
+        "grade": 6,
+        "chapter": "incheierea-anului",
+        "file": "r6-incheierea-anului.js",
+        "bytes": 12927,
+        "parts": 1
+      },
+      {
+        "grade": 5,
+        "chapter": "evaluare-initiala",
+        "file": "r5-evaluare-initiala.js",
+        "bytes": 6656,
+        "parts": 1
+      },
+      {
+        "grade": 5,
+        "chapter": "cuvinte",
+        "file": "r5-cuvinte.js",
+        "bytes": 81525,
+        "parts": 2
+      },
+      {
+        "grade": 5,
+        "chapter": "cartea",
+        "file": "r5-cartea.js",
+        "bytes": 51845,
+        "parts": 1
+      },
+      {
+        "grade": 5,
+        "chapter": "povestirea",
+        "file": "r5-povestirea.js",
+        "bytes": 59881,
+        "parts": 2
+      },
+      {
+        "grade": 5,
+        "chapter": "prietenia",
+        "file": "r5-prietenia.js",
+        "bytes": 52820,
+        "parts": 1
+      },
+      {
+        "grade": 5,
+        "chapter": "natura",
+        "file": "r5-natura.js",
+        "bytes": 31575,
+        "parts": 1
+      },
+      {
+        "grade": 5,
+        "chapter": "trepte",
+        "file": "r5-trepte.js",
+        "bytes": 48601,
+        "parts": 1
+      },
+      {
+        "grade": 5,
+        "chapter": "eroi",
+        "file": "r5-eroi.js",
+        "bytes": 23243,
+        "parts": 1
+      }
+    ]
+  },
+  "cardIndex": {
+    "matematica": [
+      {
+        "grade": 8,
+        "chapter": "intervale"
+      },
+      {
+        "grade": 8,
+        "chapter": "algebric"
+      },
+      {
+        "grade": 8,
+        "chapter": "functii"
+      },
+      {
+        "grade": 8,
+        "chapter": "spatiu"
+      },
+      {
+        "grade": 7,
+        "chapter": "reale"
+      },
+      {
+        "grade": 7,
+        "chapter": "ecuati"
+      },
+      {
+        "grade": 7,
+        "chapter": "date"
+      },
+      {
+        "grade": 7,
+        "chapter": "geo7"
+      },
+      {
+        "grade": 6,
+        "chapter": "multimi"
+      },
+      {
+        "grade": 6,
+        "chapter": "proportii"
+      },
+      {
+        "grade": 6,
+        "chapter": "intregi-rationale"
+      },
+      {
+        "grade": 6,
+        "chapter": "triunghi"
+      },
+      {
+        "grade": 5,
+        "chapter": "naturale"
+      },
+      {
+        "grade": 5,
+        "chapter": "fractii"
+      },
+      {
+        "grade": 5,
+        "chapter": "geometrie"
+      }
+    ],
+    "romana": [
+      {
+        "grade": 8,
+        "chapter": "recapitulare-examen"
+      },
+      {
+        "grade": 8,
+        "chapter": "calatoria"
+      },
+      {
+        "grade": 8,
+        "chapter": "lume-sentimente"
+      },
+      {
+        "grade": 8,
+        "chapter": "valori-ascultare"
+      },
+      {
+        "grade": 8,
+        "chapter": "traditie-inovatie"
+      },
+      {
+        "grade": 8,
+        "chapter": "modele-antimodele"
+      },
+      {
+        "grade": 8,
+        "chapter": "familia-comunitate"
+      },
+      {
+        "grade": 7,
+        "chapter": "recapitulare-initiala"
+      },
+      {
+        "grade": 7,
+        "chapter": "pe-drumul-cunoasterii"
+      },
+      {
+        "grade": 7,
+        "chapter": "punti-intre-lumi"
+      },
+      {
+        "grade": 7,
+        "chapter": "taramul-sentimentelor"
+      },
+      {
+        "grade": 7,
+        "chapter": "lumea-teatrului"
+      },
+      {
+        "grade": 7,
+        "chapter": "calator-prin-lume"
+      },
+      {
+        "grade": 7,
+        "chapter": "privind-catre-mine"
+      },
+      {
+        "grade": 6,
+        "chapter": "recapitulare-initiala"
+      },
+      {
+        "grade": 6,
+        "chapter": "lumea-de-acasa"
+      },
+      {
+        "grade": 6,
+        "chapter": "taramul-prieteniei"
+      },
+      {
+        "grade": 6,
+        "chapter": "intelepciunea-lumii"
+      },
+      {
+        "grade": 6,
+        "chapter": "tablouri-de-poveste"
+      },
+      {
+        "grade": 6,
+        "chapter": "calatorii-literare"
+      },
+      {
+        "grade": 6,
+        "chapter": "ferestre-spre-viitor"
+      },
+      {
+        "grade": 6,
+        "chapter": "incheierea-anului"
+      },
+      {
+        "grade": 5,
+        "chapter": "evaluare-initiala"
+      },
+      {
+        "grade": 5,
+        "chapter": "cuvinte"
+      },
+      {
+        "grade": 5,
+        "chapter": "cartea"
+      },
+      {
+        "grade": 5,
+        "chapter": "povestirea"
+      },
+      {
+        "grade": 5,
+        "chapter": "prietenia"
+      },
+      {
+        "grade": 5,
+        "chapter": "natura"
+      },
+      {
+        "grade": 5,
+        "chapter": "trepte"
+      },
+      {
+        "grade": 5,
+        "chapter": "eroi"
+      }
+    ]
+  }
+}

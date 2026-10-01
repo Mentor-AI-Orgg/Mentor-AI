@@ -1,11 +1,13 @@
-const { BY_KEY } = require('./cards/matematica');
+const mathCards = require('./cards/matematica');
+const romanaCards = require('./cards/romana');
+
+const BY_KEY = { ...mathCards.BY_KEY, ...romanaCards.BY_KEY };
 
 function chapterKey(subject, grade, chapterId) {
   return `${String(subject || '').toLowerCase()}:${grade}:${chapterId}`;
 }
 
 function listCards(subject, grade, chapterId, lessonId) {
-  if (String(subject || '').toLowerCase() === 'romana') return [];
   const pack = BY_KEY[chapterKey(subject, grade, chapterId)];
   const cards = pack?.cards || [];
   if (!lessonId) return cards.slice();
@@ -25,7 +27,6 @@ function allCardKeys(subject) {
   const keys = Object.keys(BY_KEY);
   if (!subject) return keys;
   const name = String(subject).toLowerCase();
-  if (name === 'romana') return [];
   return keys.filter(key => key.startsWith(`${name}:`));
 }
 

@@ -49,7 +49,13 @@ const LESSONS = {
 
 function lessonsFor(subject, grade, chapterId) {
   const key = `${String(subject || '').toLowerCase()}:${String(grade || '')}:${String(chapterId || '')}`;
-  return LESSONS[key] ? LESSONS[key].slice() : [];
+  if (LESSONS[key]) return LESSONS[key].slice();
+  if (key.startsWith('romana:')) {
+    const { getGuide } = require('./gimnaziuGuide');
+    const unit = (getGuide(subject, grade).units || []).find(row => row.id === String(chapterId || ''));
+    return unit && Array.isArray(unit.lessons) ? unit.lessons.slice() : [];
+  }
+  return [];
 }
 
 module.exports = { LESSONS, lessonsFor, lesson };
