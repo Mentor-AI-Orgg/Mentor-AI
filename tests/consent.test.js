@@ -14,7 +14,6 @@ const pendingCleanup = nodeRequire('../backend/src/data/pendingCleanup.js');
 const { deliverMessage } = nodeRequire('../backend/src/notify/deliver.js');
 
 const DAY = 24 * 60 * 60 * 1000;
-const LIMITED = 'Am trimis deja emailul. Roagă-ți părintele să verifice și în Spam.';
 
 function hashToken(token) {
   return crypto.createHash('sha256').update(String(token)).digest('hex');
