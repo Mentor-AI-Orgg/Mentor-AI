@@ -194,6 +194,6 @@ describe('harta id-urilor de lecție', () => {
       encoding: 'utf8'
     });
     expect(result.status).toBe(0);
-    expect(result.stdout).toMatch(/Nu există backend\/src\/data\/quiz/);
+    expect(result.stdout).toMatch(/Quiz-ul era deja aliniat cu harta/);
   });
 });

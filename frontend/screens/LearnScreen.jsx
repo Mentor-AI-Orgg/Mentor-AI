@@ -84,6 +84,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [saved, setSaved] = useState(false);
   const [sessionDone, setSessionDone] = useState(false);
   const [quizUnit, setQuizUnit] = useState(null);
+  const [quizLesson, setQuizLesson] = useState(null);
   const [openPaper, setOpenPaper] = useState(null);
   const [paperSession, setPaperSession] = useState(null);
   const [seenPapers, setSeenPapers] = useState([]);
@@ -562,6 +563,10 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                               lessonIndex={lessonIndex}
                               initiallyOpen={lessonIndex === 0}
                               forceOpen={anchorId === entry.id}
+                              onQuiz={isEn ? null : () => {
+                                setQuizUnit(unit);
+                                setQuizLesson({ id: entry.id, title: entry.title });
+                              }}
                             />
                           ))}
                         </ol>
@@ -581,7 +586,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                           Întreabă tutorele <i className="fas fa-comments" />
                         </button>
                         {!isEn && (
-                          <button type="button" className="ghost-button result-action" onClick={() => setQuizUnit(unit)}>
+                          <button type="button" className="ghost-button result-action" onClick={() => { setQuizLesson(null); setQuizUnit(unit); }}>
                             Generează test <i className="fas fa-clipboard-check" />
                           </button>
                         )}
@@ -638,7 +643,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
               {saved ? 'Salvat în lista ta' : 'Salvează pentru mai târziu'} <i className="fas fa-bookmark" />
             </button>
             {!isEn && (
-              <button type="button" className="ghost-button result-action" onClick={() => setQuizUnit({ id: session.chapterId || openChapter, title: session.title, inOwnWords: session.objective })}>
+              <button type="button" className="ghost-button result-action" onClick={() => { setQuizLesson(null); setQuizUnit({ id: session.chapterId || openChapter, title: session.title, inOwnWords: session.objective }); }}>
                 Generează test <i className="fas fa-clipboard-check" />
               </button>
             )}
@@ -652,10 +657,25 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           unit={quizUnit}
           subject={subject}
           grade={grade}
-          onClose={() => setQuizUnit(null)}
+          lesson={quizLesson}
+          onOpenLesson={lessonId => {
+            const aliases = quizUnit.lessonAliases || {};
+            const id = resolveAnchorId(quizUnit.lessons, aliases, aliases[lessonId] || lessonId) || lessonId;
+            setQuizUnit(null);
+            setQuizLesson(null);
+            setOpenChapter(quizUnit.id);
+            setAnchorId(id);
+            const next = `#/lectii/${subject}/${grade}/${quizUnit.id}/lectie-${id}`;
+            if (typeof window !== 'undefined' && window.location.hash !== next) window.location.hash = next;
+          }}
+          onClose={() => {
+            setQuizUnit(null);
+            setQuizLesson(null);
+          }}
           onRewardClaim={onRewardClaim}
           onAskMentor={unit => {
             setQuizUnit(null);
+            setQuizLesson(null);
             askMentor(unit);
           }}
         />

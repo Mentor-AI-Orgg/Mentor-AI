@@ -3,6 +3,9 @@
 // capitol a fost atinsă. Variantele (id diferit, același point) țin testele
 // nelimitate după ce materia e acoperită.
 
+const { stampLists } = require('./quiz/legacyLessons');
+const { flashcardsFor } = require('./quiz/matematica');
+
 function item(id, point, question, options, correct, explain) {
   return { id, point, question, options, correct, explain };
 }
@@ -18,7 +21,7 @@ const BANK = {
     item('m5n7', 'compuse', 'Un număr compus…', ['are și alți divizori în afară de 1 și el', 'nu se poate înmulți', 'e doar 0', 'e mereu impar'], 0, '4, 6, 8, 9, 15 sunt compuse.')
   ],
   'matematica:5:fractii': [
-    item('m5f1', 'parte', 'O fracție arată…', ['câte părți egale luăm dintr-un întreg', 'doar un număr mai mic decât 1', 'o temperatură', 'un unghi'], 0, 'Numitorul taie întregul; numărătorul spune câte felii luăm.'),
+    item('m5f1', 'parte', 'O fracție arată…', ['câte părți egale luăm dintr-un întreg', 'doar un număr mai mic decât 1', 'de câte ori înmulțim numărătorul cu el', 'câte unități are numitorul, fără să le luăm'], 0, 'Numitorul taie întregul; numărătorul spune câte felii luăm.'),
     item('m5f2', 'amplif', 'Amplificarea unei fracții înseamnă…', ['înmulțim numărătorul și numitorul cu același număr', 'adunăm 1 la ambele', 'schimbăm semnul', 'tăiem numitorul'], 0, 'Valoarea rămâne aceeași, doar scrierea se schimbă.'),
     item('m5f3', 'simplif', 'Simplifici o fracție când…', ['împarți sus și jos prin același număr', 'ștergi numitorul', 'aduni numărătorul la numitor', 'înmulțești doar sus'], 0, 'Cauți un divizor comun și „strângi” fracția.'),
     item('m5f4', 'numitor', 'Ca să aduni 1/3 cu 1/6 trebuie…', ['același numitor', 'același numărător', 'să le înmulțești', 'să le faci zecimale obligatoriu'], 0, 'Părțile trebuie să fie de aceeași mărime.'),
@@ -27,7 +30,7 @@ const BANK = {
     item('m5f7', 'media', 'Media aritmetică a două note e…', ['suma lor împărțită la 2', 'produsul lor', 'nota cea mai mare', 'diferența lor'], 0, 'Aduni, apoi împarți la câți termeni ai.')
   ],
   'matematica:5:geometrie': [
-    item('m5g1', 'punct', 'Un punct, în geometria de clasa a V-a, e…', ['o poziție, fără lungime', 'o linie infinită', 'o suprafață', 'un cub'], 0, 'Punctul doar arată „unde”.'),
+    item('m5g1', 'punct', 'Un punct, în geometria de clasa a V-a, e…', ['o poziție, fără lungime', 'o linie infinită', 'o suprafață', 'un segment cu două capete'], 0, 'Punctul doar arată „unde”.'),
     item('m5g2', 'unghi', 'Un unghi drept măsoară…', ['90 de grade', '45 de grade', '180 de grade', '360 de grade'], 0, 'Colțul unui pătrat e un unghi drept.'),
     item('m5g3', 'ascutit', 'Un unghi ascuțit e…', ['mai mic decât 90°', 'exact 90°', 'mai mare decât 90°', 'doar 0°'], 0, 'Ascuțit = sub un unghi drept.'),
     item('m5g4', 'perimetru', 'Perimetrul unei figuri e…', ['suma lungimilor laturilor', 'spațiul din interior', 'o diagonală', 'un unghi'], 0, 'Este lungimea conturului.'),
@@ -40,7 +43,7 @@ const BANK = {
     item('m6m1', 'apartine', '„x aparține mulțimii A” înseamnă…', ['x e un element din A', 'A e mai mare decât x', 'x e în afara lui A', 'A e vidă'], 0, 'Simbolul ∈ spune „face parte din”.'),
     item('m6m2', 'reuniune', 'Reuniunea a două mulțimi conține…', ['elementele care sunt în cel puțin una', 'doar ce e comun', 'doar ce lipsește', 'numerele prime'], 0, 'Strângi tot, fără să numeri de două ori același element.'),
     item('m6m3', 'intersectie', 'Intersecția e…', ['ce au cele două mulțimi în comun', 'tot ce e în ambele luate separat', 'mulțimea vidă mereu', 'un număr'], 0, 'Doar oaspeții invitați la ambele petreceri.'),
-    item('m6m4', 'factori', 'Descompunerea în factori primi…', ['scrii numărul ca produs de numere prime', 'aduni cifrele', 'îl faci par', 'îl rotunjești'], 0, '12 = 2 × 2 × 3.'),
+    item('m6m4', 'factori', 'Descompunerea în factori primi…', ['scrii numărul ca produs de numere prime', 'aduni cifrele', 'îl faci par', 'îl rotunjești'], 0, '12 = 2 × 2 × 3. Trei factori primi.'),
     item('m6m5', 'cmmdc', 'c.m.m.d.c. e…', ['cel mai mare număr care împarte pe amândoi', 'cel mai mic multiplu comun', 'suma lor', 'produsul lor'], 0, 'Cel mai mare „prieten comun” la împărțire.'),
     item('m6m6', 'cmmmc', 'c.m.m.m.c. e…', ['cel mai mic număr care se împarte la amândoi', 'cel mai mare divizor', 'diferența lor', 'un număr prim'], 0, 'Prima stație comună pe axa multiplilor.')
   ],
@@ -54,8 +57,8 @@ const BANK = {
   ],
   'matematica:6:intregi-rationale': [
     item('m6i1', 'semn', 'Minusul la numere întregi arată…', ['direcția pe axă, nu „un număr urât”', 'că numărul e fracție', 'că e prim', 'că e volum'], 0, '−3 e trei pași în stânga lui zero, ca −3 grade.'),
-    item('m6i2', 'modul', 'Modulul unui număr e…', ['distanța până la zero, deci mereu pozitivă', 'opusul lui', 'jumătatea lui', 'un unghi'], 0, '|−5| = 5.'),
-    item('m6i3', 'adunare', 'Când aduni un negativ, de fapt…', ['te muți spre stânga pe axă', 'înmulțești', 'ștergi semnul', 'faci o putere'], 0, '5 + (−2) = 3.'),
+    item('m6i2', 'modul', 'Modulul unui număr e…', ['distanța până la zero, deci mereu pozitivă', 'opusul lui', 'jumătatea lui', 'un unghi'], 0, '|−5| = 5, distanța până la zero.'),
+    item('m6i3', 'adunare', 'Când aduni un negativ, de fapt…', ['te muți spre stânga pe axă', 'înmulțești', 'ștergi semnul', 'faci o putere'], 0, '5 + (−2) = 3: te muți doi pași spre stânga.'),
     item('m6i4', 'rationale', 'Un număr rațional se poate scrie…', ['ca o fracție de întregi (numitor ≠ 0)', 'doar ca radical', 'doar ca procent', 'doar ca volum'], 0, '−3/4, 0,7, 5 sunt raționale.'),
     item('m6i5', 'ecuatie', 'O ecuație de tipul x + 5 = 12 întreabă…', ['ce număr plus 5 face 12', 'cât e 5 × 12', 'dacă 12 e prim', 'perimetrul'], 0, 'Scazi 5 din ambele părți: x = 7.'),
     item('m6i6', 'verificare', 'După ce găsești x, ce faci?', ['Îl pui înapoi în enunț să vezi dacă iese', 'Îl ștergi', 'Îl înmulțești cu 10', 'Îl faci procent'], 0, 'Verificarea e parte din treabă, nu opțională.')
@@ -87,23 +90,23 @@ const BANK = {
   ],
   'matematica:7:date': [
     item('m7d1', 'pereche', 'O pereche (x, y) pe axe e…', ['un punct în plan', 'o fracție', 'un unghi', 'un volum'], 0, 'x spune stânga-dreapta, y sus-jos.'),
-    item('m7d2', 'tabel', 'Un tabel de valori arată…', ['cum se leagă două mărimi, pas cu pas', 'doar un număr', 'un cub', 'o poezie'], 0, 'Fiecare linie e o pereche.'),
-    item('m7d3', 'grafic', 'Un grafic, la date, e…', ['desenul dependenței, nu „niște linii frumoase”', 'un procent', 'un prim', 'un dicționar'], 0, 'Citești: când x crește, ce face y?'),
+    item('m7d2', 'tabel', 'Un tabel de valori arată…', ['cum se leagă două mărimi, pas cu pas', 'doar un număr, fără pereche', 'două coloane care nu se citesc împreună', 'o singură linie, fără x'], 0, 'Fiecare linie e o pereche.'),
+    item('m7d3', 'grafic', 'Un grafic, la date, e…', ['desenul dependenței, nu „niște linii frumoase”', 'o listă de numere fără axe', 'un desen în care x nu se leagă de y', 'doar axa, fără puncte'], 0, 'Citești: când x crește, ce face y?'),
     item('m7d4', 'depend', 'O dependență, la acest nivel, înseamnă…', ['o mărime se schimbă când se schimbă cealaltă', 'două mulțimi vide', 'un unghi drept', 'o sferă'], 0, 'Nu e coincidență: e o regulă.'),
     item('m7d5', 'origine', 'Originea axelor e…', ['punctul (0, 0)', 'punctul (1, 1)', 'infinitul', 'un cub'], 0, 'De acolo măsori ambele direcții.'),
     item('m7d6', 'citire', 'Ca să citești un punct de pe grafic…', ['cobori la x și te uiți la y', 'faci doar media', 'calculezi un volum', 'cauți un prim'], 0, 'Două citiri, o pereche.')
   ],
   'matematica:7:geo7': [
-    item('m7g1', 'paralelogram', 'Într-un paralelogram…', ['laturile opuse sunt paralele (și, de obicei, egale)', 'există un singur unghi', 'toate unghiurile sunt 90° obligatoriu', 'nu există diagonale'], 0, 'Dreptunghiul, rombul, pătratul sunt cazuri speciale.'),
+    item('m7g1', 'paralelogram', 'Într-un paralelogram…', ['laturile opuse sunt paralele și egale', 'există un singur unghi', 'toate unghiurile sunt 90° obligatoriu', 'nu există diagonale'], 0, 'Laturile opuse sunt mereu egale, nu doar de obicei. Dreptunghiul, rombul și pătratul sunt cazuri speciale.'),
     item('m7g2', 'trapez', 'Un trapez are…', ['exact o pereche de laturi paralele', 'toate laturile paralele', 'zero laturi', 'doar unghiuri obtuze'], 0, 'Baza mare și baza mică sunt paralele.'),
-    item('m7g3', 'cerc-in', 'Unghiul înscris în cerc „vede” un arc; față de unghiul la centru pe același arc e…', ['cam jumătate', 'dublu mereu invers', 'egal cu 180°', 'inexistent'], 0, 'Același arc, măsură diferită după unde stă vârful.'),
+    item('m7g3', 'cerc-in', 'Unghiul înscris în cerc „vede” un arc; față de unghiul la centru pe același arc e…', ['exact jumătate', 'dublu', 'egal cu 180°', 'egal cu unghiul la centru'], 0, 'Unghiul înscris este exact jumătate din unghiul la centru care vede același arc.'),
     item('m7g4', 'thales', 'Thales vorbește despre…', ['segmente proporționale pe drepte paralele tăiate de secante', 'volume de sfere', 'doar procente', 'numere prime'], 0, 'Paralelele taie „la fel de proporțional”.'),
     item('m7g5', 'asemanare', 'Triunghiuri asemenea au…', ['aceeași formă, altă scară; unghiuri egale, laturi proporționale', 'aceeași arie obligatoriu', 'un singur unghi', 'laturi paralele toate'], 0, 'Ca o fotografie mărită.'),
     item('m7g6', 'trig', 'Sinusul unui unghi ascuțit, în triunghi dreptunghic, e…', ['cateta opusă pe ipotenuză', 'suma catetelor', 'aria', 'perimetrul'], 0, 'Cosinus: alăturată pe ipotenuză. Tangentă: opusă pe alăturată.'),
     item('m7g7', 'cerc-arie', 'Aria discului se leagă de…', ['rază (și π)', 'doar de o coardă', 'de un cub', 'de un procent'], 0, 'π r² e „câte pătrățele” umple cercul.')
   ],
   'matematica:8:intervale': [
-    item('m8i1', 'interval', 'Un interval e…', ['o bucată de axă, între două capete (cu sau fără ele)', 'un triunghi', 'un procent', 'un cub'], 0, 'Poate fi deschis, închis sau semideschis.'),
+    item('m8i1', 'interval', 'Un interval e…', ['o bucată de axă, între două capete (cu sau fără ele)', 'un singur punct, mereu', 'toată axa, fără capete', 'două numere adunate'], 0, 'Poate fi deschis, închis sau semideschis.'),
     item('m8i2', 'inecuatie', 'O inecuație întreabă…', ['pentru ce x rămâne adevărată o inegalitate', 'care e singurul x', 'cât e un unghi', 'volumul'], 0, 'Răspunsul e o mulțime, nu un punct.'),
     item('m8i3', 'semn', 'Când înmulțești o inecuație cu un negativ…', ['schimbi sensul inegalității', 'nu se întâmplă nimic', 'devine ecuație', 'dispar numerele'], 0, '−2 < −1, dar 2 > 1. Sensul se întoarce.'),
     item('m8i4', 'reuniune-int', 'Uneori soluția e o reuniune de intervale. Asta înseamnă…', ['x poate fi în mai multe bucăți de axă', 'x e un singur număr', 'nu există soluție', 'e un cub'], 0, '„Sau aici, sau acolo”.'),
@@ -114,27 +117,29 @@ const BANK = {
     item('m8a1', 'asemenea', 'Termeni asemenea au…', ['aceeași parte literară, pot fi adunați', 'doar același număr', 'unghiuri egale', 'volume egale'], 0, '3x² și 5x² se adună; 3x și 3x² nu.'),
     item('m8a2', 'patrat', '(a + b)² înseamnă…', ['a² + 2ab + b²', 'a² + b²', '2a + 2b', 'a² − b²'], 0, 'E un pătrat de binom, nu „pătratul fiecăruia separat” plus atât.'),
     item('m8a3', 'diferenta', 'a² − b² se descompune…', ['(a − b)(a + b)', '(a − b)²', 'a − b', '2ab'], 0, 'Diferență de pătrate: două paranteze prietene.'),
-    item('m8a4', 'factor', 'Scoaterea factorului comun…', ['tragi în față ce e la toți termenii', 'ștergi un termen', 'faci radical', 'calculezi un unghi'], 0, '2x + 6 = 2(x + 3).'),
+    item('m8a4', 'factor', 'Scoaterea factorului comun…', ['tragi în față ce e la toți termenii', 'ștergi un termen', 'faci radical', 'calculezi un unghi'], 0, '2x + 6 = 2(x + 3). Factorul 2 e la ambii termeni.'),
     item('m8a5', 'fractie-lit', 'O fracție algebrică se simplifică…', ['dacă sus și jos au un factor comun, după ce ai descompus', 'ștergând numitorul', 'adunând 1', 'făcând procent'], 0, 'Nu tai litere la întâmplare.'),
     item('m8a6', 'grad2', 'Ecuația de gradul II, cât cere gimnaziul, e…', ['o necunoscută la puterea a doua, cu formulă / descompunere, nu toată analiza de liceu', 'un sistem de 5 ecuații', 'doar geometrie', 'un procent'], 0, 'Căutăm valorile care o fac adevărată, apoi verificăm.')
   ],
   'matematica:8:functii': [
     item('m8f1', 'functie', 'O funcție leagă…', ['fiecare x permis de un singur f(x)', 'orice x de toate numerele', 'doar unghiuri', 'doar volume'], 0, 'O mașină: bagi x, iese un singur rezultat.'),
-    item('m8f2', 'dreapta', 'f(x) = ax + b se citește din grafic ca…', ['o dreaptă: a e panta, b e unde taie axa y', 'un cerc', 'un cub', 'o poezie'], 0, 'a > 0 urcă; a < 0 coboară.'),
+    item('m8f2', 'dreapta', 'f(x) = ax + b se citește din grafic ca…', ['o dreaptă: a e panta, b e unde taie axa y', 'o parabolă care se întoarce', 'un segment care se oprește la b', 'două drepte, una pentru a și una pentru b'], 0, 'a > 0 urcă; a < 0 coboară.'),
     item('m8f3', 'medie', 'Media unui set de date e…', ['suma valorilor împărțită la câți sunt', 'valoarea din mijloc mereu', 'cea mai frecventă', 'max − min'], 0, 'E „centrul de greutate” al numerelor.'),
-    item('m8f4', 'mediana', 'Mediana unui set e…', ['valoarea din mijloc după ce ai ordonat', 'media', 'un unghi', 'un prim'], 0, 'Nu se sperie de un număr foarte mare la capăt.'),
-    item('m8f5', 'modul-stat', 'Modulul (moda) e…', ['valoarea care apare cel mai des', 'media', 'max − min', 'un interval'], 0, '„Favoritea” setului.'),
+    item('m8f4', 'mediana', 'Mediana unui set e…', ['valoarea din mijloc după ce ai ordonat', 'media', 'cea mai mare valoare', 'prima valoare, înainte de ordonare'], 0, 'Nu se sperie de un număr foarte mare la capăt.'),
+    item('m8f5', 'modul-stat', 'Modulul (moda) e…', ['valoarea care apare cel mai des', 'media', 'max − min', 'un interval'], 0, '„Favoritea” setului: valoarea care apare cel mai des.'),
     item('m8f6', 'amplitudine', 'Amplitudinea e…', ['cea mai mare minus cea mai mică', 'media', 'mediana', 'un procent'], 0, 'Cât de „întins” e setul.')
   ],
   'matematica:8:spatiu': [
-    item('m8s1', 'plane', 'Un plan, în spațiu, e…', ['o „foaie” infinită, fără grosime', 'un punct', 'un cub gol', 'un procent'], 0, 'Masa e o bucată de plan.'),
+    item('m8s1', 'plane', 'Un plan, în spațiu, e…', ['o „foaie” infinită, fără grosime', 'un punct', 'o dreaptă cu grosime', 'o față mărginită, cu doar patru vârfuri'], 0, 'Masa e o bucată de plan.'),
     item('m8s2', 'paralel-sp', 'O dreaptă paralelă cu un plan…', ['nu-l înțeapă, rămâne la distanță constantă', 'trece mereu prin centru', 'e o rază', 'e un unghi'], 0, 'Ca un creion ținut deasupra mesei, fără s-o atingă.'),
     item('m8s3', 'prisma', 'O prismă are…', ['baze poligonale paralele și fețe laterale', 'doar un cerc', 'o singură față', 'doar un vârf'], 0, 'Cutia de pantofi e o prismă dreaptă.'),
     item('m8s4', 'piramida', 'O piramidă are…', ['o bază și fețe care se întâlnesc într-un vârf', 'două baze paralele', 'doar un cilindru', 'zero vârfuri'], 0, 'Cortul clasic e o piramidă.'),
-    item('m8s5', 'cilindru', 'Cilindrul se gândește ca…', ['un cerc „tras” pe o înălțime', 'un triunghi', 'o fracție', 'un prim'], 0, 'Doza de suc: două capace și o bandă.'),
-    item('m8s6', 'desfasurare', 'Aria unei corp e credibilă doar dacă…', ['vezi desfășurarea: ce fețe lipești', 'tocești formula fără desen', 'ignori înălțimea', 'folosești un procent'], 0, 'Volumul cere și „cât de înalt e teancul”.')
+    item('m8s5', 'cilindru', 'Cilindrul se gândește ca…', ['un cerc „tras” pe o înălțime', 'un triunghi răsucit', 'o piramidă cu bază pătrată', 'două cercuri fără înălțime între ele'], 0, 'Doza de suc: două capace și o bandă.'),
+    item('m8s6', 'desfasurare', 'Aria unui corp e credibilă doar dacă…', ['vezi desfășurarea: ce fețe lipești', 'înveți formula fără să numeri fețele', 'ignori înălțimea la volum', 'aduni doar două fețe și te oprești'], 0, 'Numeri fețele din desfășurare. Volumul cere și cât de înalt e teancul.')
   ],
 };
+
+stampLists(BANK);
 
 function chapterKey(subject, grade, chapterId) {
   return `${String(subject || '').toLowerCase()}:${String(grade || '')}:${String(chapterId || '')}`;
@@ -142,10 +147,10 @@ function chapterKey(subject, grade, chapterId) {
 
 function listChapterQuestions(subject, grade, chapterId) {
   const key = chapterKey(subject, grade, chapterId);
-  const list = BANK[key] ? BANK[key].slice() : [];
-  return list.map((item, index) => ({
-    ...item,
-    level: item.level || index + 1
+  const list = [...(BANK[key] ? BANK[key] : []), ...flashcardsFor(key)];
+  return list.map((entry, index) => ({
+    ...entry,
+    level: entry.level || index + 1
   }));
 }
 
@@ -170,6 +175,10 @@ function findQuestion(id) {
   }
   for (const list of Object.values(BANK)) {
     const found = list.find(item => item.id === needle);
+    if (found) return found;
+  }
+  for (const list of Object.values(require('./quiz/matematica').BY_KEY)) {
+    const found = (list.flashcards || []).find(item => item.id === needle);
     if (found) return found;
   }
   return null;

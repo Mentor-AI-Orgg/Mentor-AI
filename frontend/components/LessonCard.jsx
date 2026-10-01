@@ -164,7 +164,7 @@ function RichBody({ entry }) {
   );
 }
 
-export default function LessonCard({ entry, lessonIndex, initiallyOpen = false, forceOpen = false }) {
+export default function LessonCard({ entry, lessonIndex, initiallyOpen = false, forceOpen = false, onQuiz }) {
   const [open, setOpen] = useState(initiallyOpen || forceOpen);
   useEffect(() => {
     if (forceOpen) setOpen(true);
@@ -187,6 +187,11 @@ export default function LessonCard({ entry, lessonIndex, initiallyOpen = false, 
           <LessonBoxes entry={entry} />
           <FormulaBox entry={entry} />
           {isRestructured(entry) ? <RichBody entry={entry} /> : <LegacyBody entry={entry} />}
+          {onQuiz ? (
+            <button type="button" className="ghost-button lesson-quiz-button" onClick={onQuiz}>
+              Verifică-te la lecția asta
+            </button>
+          ) : null}
         </div>
       </details>
     </li>

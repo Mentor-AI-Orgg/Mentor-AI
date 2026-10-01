@@ -4,6 +4,8 @@
 
 const { EXTRAS } = require('./exerciseExtras');
 const { judgeAnswer } = require('../grading/answerJudge');
+const { stampLists } = require('./quiz/legacyLessons');
+const { testsFor } = require('./quiz/matematica');
 
 function ex(id, point, prompt, answers, explain, extra = {}) {
   return {
@@ -36,9 +38,9 @@ const BANK = {
     ex('e5f4', 'media', 'Notele 6, 8, 9 și 9. Media aritmetică. Scrie și cu virgulă dacă trebuie.', ['8', '8.0'], '(6+8+9+9):4 = 32:4 = 8.', { numeric: { value: 8, tolerance: 0 }, steps: ['Suma = 32', 'Sunt 4 note', '32 : 4 = 8'] })
   ],
   'matematica:5:geometrie': [
-    ex('e5g1', 'unghi', 'Un unghi ascuțit și unul obtuz sunt alăturate și formează un unghi alungit (180°). Dacă ascuțitul e 35°, cât e obtuzul?', ['145', '145°'], '180 − 35 = 145°.', { numeric: { value: 145, tolerance: 0 }, steps: ['Alungit = 180°', '180 − 35 = 145', '145° e obtuz (între 90 și 180)'] }),
+    ex('e5g1', 'unghi', 'Un unghi ascuțit și unul obtuz sunt alăturate și formează un unghi alungit (180°). Dacă ascuțitul e 35°, cât e obtuzul?', ['145', '145°'], '180 − 35 = 145°. Unghiul alungit are 180°.', { numeric: { value: 145, tolerance: 0 }, steps: ['Alungit = 180°', '180 − 35 = 145', '145° e obtuz (între 90 și 180)'] }),
     ex('e5g2', 'perimetru', 'Un dreptunghi are 12 cm și 5 cm. Un pătrat are același perimetru. Cât este latura pătratului, în cm?', ['8.5', '8,5', '17/2'], 'Perimetrul dreptunghiului: 2×(12+5)=34. Latura pătratului: 34:4=8,5 cm.', { hint: 'Mai întâi perimetrul, apoi împarte la 4.', numeric: { value: 8.5, tolerance: 0.01 }, steps: ['P = 2×(12+5) = 34 cm', 'Pătratul are 4 laturi egale', '34 : 4 = 8,5 cm'] }),
-    ex('e5g3', 'arie-drep', 'Un dreptunghi are 9 cm și 4 cm. Câtă arie are, în cm²?', ['36'], '9 × 4 = 36 cm².', { numeric: { value: 36, tolerance: 0 }, steps: ['Aria = lungime × lățime', '9 × 4 = 36'] }),
+    ex('e5g3', 'arie-drep', 'Un dreptunghi are 9 cm și 4 cm. Câtă arie are, în cm²?', ['36'], '9 × 4 = 36 cm². Aria e lungime ori lățime.', { numeric: { value: 36, tolerance: 0 }, steps: ['Aria = lungime × lățime', '9 × 4 = 36'] }),
     ex('e5g4', 'unitati', 'Un vas are 1,5 l. Bei 200 ml. Câți mililitri au rămas?', ['1300', '1300 ml'], '1,5 l = 1500 ml. 1500 − 200 = 1300 ml.', { hint: 'Treci totul în ml. 1 l = 1000 ml.', numeric: { value: 1300, tolerance: 0 }, steps: ['1,5 l = 1500 ml', '1500 − 200 = 1300 ml'] })
   ],
   'matematica:6:multimi': [
@@ -48,16 +50,16 @@ const BANK = {
     ex('e6m4', 'cmmmc', 'Trei semafoare: unul la 8 s, unul la 12 s, unul la 18 s. După câte secunde se aprind din nou toate trei împreună, dacă au pornit odată?', ['72'], 'c.m.m.m.c.(8,12,18) = 72.', { hint: 'Descompune în factori, ia puterile cele mai mari.', numeric: { value: 72, tolerance: 0 }, steps: ['8 = 2³, 12 = 2²×3, 18 = 2×3²', 'c.m.m.m.c. = 2³ × 3² = 8 × 9 = 72'] })
   ],
   'matematica:6:proportii': [
-    ex('e6p1', 'regula3', '8 m de stofă costă 96 lei. Cumperi 5 m și primești 10% reducere pe comandă. Cât plătești?', ['54', '54 lei'], '1 m = 12 lei, 5 m = 60, 10% din 60 = 6, rămân 54.', { hint: 'Întâi prețul celor 5 m, apoi reducerea.', numeric: { value: 54, tolerance: 0 }, steps: ['96 : 8 = 12 lei/m', '5 × 12 = 60 lei', '10% din 60 = 6', '60 − 6 = 54'] }),
+    ex('e6p1', 'regula3', '10 m de stofă costă 80 lei. Cumperi 4 m și primești 25% reducere pe comandă. Cât plătești?', ['24', '24 lei'], '1 m = 8 lei, 4 m = 32, 25% din 32 = 8, rămân 24.', { hint: 'Întâi prețul celor 4 m, apoi reducerea.', numeric: { value: 24, tolerance: 0 }, steps: ['80 : 10 = 8 lei/m', '4 × 8 = 32 lei', '25% din 32 = 8', '32 − 8 = 24'] }),
     ex('e6p2', 'invers', '6 robinete umplu un bazin în 4 ore. Câte ore le-ar lua la 3 robinete, același debit?', ['8', '8 ore'], 'Invers: 6×4 = 24 = 3×8.', { numeric: { value: 8, tolerance: 0 }, steps: ['Produsul lucrători × ore rămâne', '6 × 4 = 24', '24 : 3 = 8'] }),
-    ex('e6p3', 'procent6', 'Un preț crește cu 20%, apoi scade cu 20% din noul preț. Dacă a fost 100 lei, cât e acum?', ['96', '96 lei'], '120, apoi −24 = 96. Nu te întorci la 100.', { hint: 'Al doilea 20% e din 120, nu din 100.', numeric: { value: 96, tolerance: 0 }, steps: ['100 + 20% = 120', '20% din 120 = 24', '120 − 24 = 96'] }),
+    ex('e6p3', 'procent6', 'Un preț crește cu 20%, apoi scade cu 20% din noul preț. Dacă a fost 50 lei, cât e acum?', ['48', '48 lei'], '60, apoi −12 = 48. Nu te întorci la 50.', { hint: 'Al doilea 20% e din 60, nu din 50.', numeric: { value: 48, tolerance: 0 }, steps: ['50 + 20% = 60', '20% din 60 = 12', '60 − 12 = 48'] }),
     ex('e6p4', 'scara', 'Hartă 1:50 000. Distanța reală e 2,5 km. Câți cm pe hartă?', ['5', '5 cm'], '2,5 km = 250 000 cm. 250000/50000 = 5 cm.', { hint: 'Treci km în cm.', numeric: { value: 5, tolerance: 0 }, steps: ['2,5 km = 250 000 cm', '1 cm pe hartă = 50 000 cm reali', '250 000 : 50 000 = 5'] })
   ],
   'matematica:6:intregi-rationale': [
-    ex('e6i1', 'adunare', 'Calculează (−7) + 12 + (−9) − (−4).', ['0'], '−7+12=5, 5+(−9)=−4, −4−(−4)=0.', { numeric: { value: 0, tolerance: 0 }, steps: ['−7 + 12 = 5', '5 + (−9) = −4', '−4 − (−4) = 0'] }),
-    ex('e6i2', 'modul', 'Calculează |−5| − |3 − 8| + |−2|.', ['2'], '|−5|=5, |3−8|=|−5|=5, |−2|=2. 5−5+2=2.', { numeric: { value: 2, tolerance: 0 }, steps: ['3 − 8 = −5, deci |3 − 8| = 5', '|−5| = 5 și |−2| = 2', '5 − 5 + 2 = 2'] }),
+    ex('e6i1', 'adunare', 'Calculează (−8) + 15 + (−6) − (−3).', ['4'], '−8+15=7, 7+(−6)=1, 1−(−3)=4.', { numeric: { value: 4, tolerance: 0 }, steps: ['−8 + 15 = 7', '7 + (−6) = 1', '1 − (−3) = 4'] }),
+    ex('e6i2', 'modul', 'Calculează |−8| − |4 − 9| + |−1|.', ['4'], '|−8|=8, |4−9|=5, |−1|=1. 8−5+1=4.', { numeric: { value: 4, tolerance: 0 }, steps: ['4 − 9 = −5, deci |4 − 9| = 5', '|−8| = 8 și |−1| = 1', '8 − 5 + 1 = 4'] }),
     ex('e6i3', 'ecuatie', 'Află x: 3x − 8 = −2x + 7.', ['3'], '3x+2x=7+8, 5x=15, x=3.', { numeric: { value: 3, tolerance: 0 }, steps: ['Treci −2x la stânga: 3x + 2x', 'Treci −8 la dreapta: 7 + 8', '5x = 15, x = 3'] }),
-    ex('e6i4', 'rationale', 'Calculează (−3/4) + (5/6). Fracție ireductibilă.', ['1/12'], 'Numitor 12: −9/12 + 10/12 = 1/12.', { steps: ['c.m.m.m.c.(4, 6) = 12', '−3/4 = −9/12, 5/6 = 10/12', '−9/12 + 10/12 = 1/12'] })
+    ex('e6i4', 'rationale', 'Calculează (−1/4) + (5/6). Fracție ireductibilă.', ['7/12'], 'Numitor 12: −3/12 + 10/12 = 7/12.', { steps: ['c.m.m.m.c.(4, 6) = 12', '−1/4 = −3/12, 5/6 = 10/12', '−3/12 + 10/12 = 7/12'] })
   ],
   'matematica:6:triunghi': [
     ex('e6t1', 'suma180', 'Triunghi isoscel, unghiul din vârf 40°. Cât are un unghi de la bază?', ['70', '70°'], 'Baza: (180−40):2 = 70°.', { numeric: { value: 70, tolerance: 0 }, steps: ['Suma unghiurilor = 180°', 'Rămân 140° pentru bazele egale', '140 : 2 = 70°'] }),
@@ -69,10 +71,10 @@ const BANK = {
     ex('e7r1', 'radical', 'Calculează √(9×16) − √9 × 2.', ['6'], '√144 − 3×2 = 12 − 6 = 6.', { numeric: { value: 6, tolerance: 0 }, steps: ['√(9×16) = √144 = 12', '√9 = 3, 3×2 = 6', '12 − 6 = 6'] }),
     ex('e7r2', 'ordin', 'Câți naturali n există cu 3 < √n < 6?', ['26'], '√n>3 ⇒ n≥10; √n<6 ⇒ n≤35. De la 10 la 35: 26 numere.', { hint: 'n ≥ 10 și n ≤ 35.', numeric: { value: 26, tolerance: 0 }, steps: ['√n > 3 ⇒ n ≥ 10', '√n < 6 ⇒ n ≤ 35', '35 − 10 + 1 = 26'] }),
     ex('e7r3', 'rationaliz', 'Raționalizează 6/√3 și simplifică. Scrie de forma a√3 (ex. 2√3).', ['2√3', '2*sqrt(3)', '2sqrt3', '2 sqrt 3'], '6/√3 × √3/√3 = 6√3/3 = 2√3.', { steps: ['Înmulțești sus și jos cu √3', '6√3 / 3', '2√3'] }),
-    ex('e7r4', 'medii', 'Media aritmetică a lui 4 și 16 e 10. Media geometrică? Doar numărul.', ['8'], '√(4×16)=√64=8.', { numeric: { value: 8, tolerance: 0 }, steps: ['Media geometrică = √(ab)', '√(4×16) = √64 = 8'] })
+    ex('e7r4', 'medii', 'Media aritmetică a lui 4 și 16 e 10. Media geometrică? Doar numărul.', ['8'], '√(4×16)=√64=8. Media geometrică e radical din produs.', { numeric: { value: 8, tolerance: 0 }, steps: ['Media geometrică = √(ab)', '√(4×16) = √64 = 8'] })
   ],
   'matematica:7:ecuati': [
-    ex('e7e1', 'cantar', 'Rezolvă (3x − 1)/2 = x + 4.', ['9'], '3x−1 = 2x+8, x=9.', { numeric: { value: 9, tolerance: 0 }, steps: ['Înmulțești cu 2: 3x − 1 = 2x + 8', '3x − 2x = 8 + 1', 'x = 9'] }),
+    ex('e7e1', 'cantar', 'Rezolvă (3x − 1)/2 = x + 4.', ['9'], '3x−1 = 2x+8, x=9. Înmulțești cu 2, apoi aduni termenii.', { numeric: { value: 9, tolerance: 0 }, steps: ['Înmulțești cu 2: 3x − 1 = 2x + 8', '3x − 2x = 8 + 1', 'x = 9'] }),
     ex('e7e2', 'sistem', '2x + y = 11, x − y = 1. Află y.', ['3'], 'Din a doua x=y+1. 2(y+1)+y=11, 3y=9, y=3.', { numeric: { value: 3, tolerance: 0 }, steps: ['x = y + 1', '2(y + 1) + y = 11', '2y + 2 + y = 11', '3y = 9, y = 3'] }),
     ex('e7e3', 'substituie', '3x + 2y = 16, x = y + 2. Cât e x?', ['4'], '3(y+2)+2y=16, 5y=10, y=2, x=4.', { numeric: { value: 4, tolerance: 0 }, steps: ['Înlocuiești x: 3(y+2)+2y=16', '3y+6+2y=16', '5y=10, y=2', 'x=2+2=4'] }),
     ex('e7e4', 'solutie', 'Pentru perechea (1, −2) calculează 4x − y. Verifică și dacă x + 2y = −3. Scrie valoarea, apoi da sau nu (ex. 6 da).', ['6 da', '6, da', '6da'], '4·1 − (−2) = 6. 1 + 2·(−2) = −3. Deci 6 și da.', { tokens: ['6', 'da'], steps: ['4·1 − (−2) = 4 + 2 = 6', '1 + 2·(−2) = 1 − 4 = −3', 'Prima valoare e 6; a doua ecuație e verificată → da'] })
@@ -97,9 +99,9 @@ const BANK = {
   ],
   'matematica:8:algebric': [
     ex('e8a1', 'patrat', 'Calculează (x+3)² − (x−1)² pentru x = 2. Poți folosi a² − b².', ['24'], '(x+3)² − (x−1)² = [(x+3)−(x−1)][(x+3)+(x−1)] = 4·(2x+2) = 8(x+1). Pentru x=2: 8·3=24.', { hint: 'Diferență de pătrate, sau înlocuiești x=2.', numeric: { value: 24, tolerance: 0 }, steps: ['a = x+3, b = x−1', 'a − b = 4, a + b = 2x + 2', 'Produsul: 4(2x+2) = 8(x+1)', 'Pentru x=2: 8×3 = 24'] }),
-    ex('e8a2', 'diferenta', 'Descompune 9x² − 25, apoi calculează pentru x=2.', ['11'], '(3x−5)(3x+5). Pentru 2: (6−5)(6+5)=1×11=11.', { numeric: { value: 11, tolerance: 0 }, steps: ['9x² − 25 = (3x−5)(3x+5)', 'x=2: (6−5)(6+5) = 1×11 = 11'] }),
-    ex('e8a3', 'factor', 'Scoate factorul, apoi calculează 4x² − 6x pentru x=5.', ['70'], '2x(2x−3). 10×(10−3)=70.', { numeric: { value: 70, tolerance: 0 }, steps: ['4x² − 6x = 2x(2x−3)', 'x=5: 10 × 7 = 70'] }),
-    ex('e8a4', 'asemenea', 'Simplifică (x²−9)/(x−3) pentru x=5 (x≠3).', ['8'], '(x−3)(x+3)/(x−3)=x+3. 5+3=8.', { numeric: { value: 8, tolerance: 0 }, steps: ['x² − 9 = (x−3)(x+3)', 'Se taie x−3 (x≠3)', 'Rămâne x+3 = 8'] })
+    ex('e8a2', 'diferenta', 'Descompune 4x² − 9, apoi calculează pentru x=2.', ['7'], '(2x−3)(2x+3). Pentru 2: (4−3)(4+3)=1×7=7.', { numeric: { value: 7, tolerance: 0 }, steps: ['4x² − 9 = (2x−3)(2x+3)', 'x=2: (4−3)(4+3) = 1×7 = 7'] }),
+    ex('e8a3', 'factor', 'Scoate factorul, apoi calculează 6x² − 9x pentru x=4.', ['60'], '3x(2x−3). 12×(8−3)=60.', { numeric: { value: 60, tolerance: 0 }, steps: ['6x² − 9x = 3x(2x−3)', 'x=4: 12 × 5 = 60'] }),
+    ex('e8a4', 'asemenea', 'Simplifică (x²−16)/(x−4) pentru x=7 (x≠4).', ['11'], '(x−4)(x+4)/(x−4)=x+4. 7+4=11.', { numeric: { value: 11, tolerance: 0 }, steps: ['x² − 16 = (x−4)(x+4)', 'Se taie x−4 (x≠4)', 'Rămâne x+4 = 11'] })
   ],
   'matematica:8:functii': [
     ex('e8f1', 'dreapta', 'f(x)=−2x+7. Pentru ce x avem f(x)=f(3)+4?', ['1'], 'f(3)=1, deci f(x)=5, −2x+7=5, x=1.', { numeric: { value: 1, tolerance: 0 }, steps: ['f(3) = −6 + 7 = 1', '1 + 4 = 5', '−2x + 7 = 5', '−2x = −2, x = 1'] }),
@@ -109,24 +111,57 @@ const BANK = {
   ],
   'matematica:8:spatiu': [
     ex('e8s1', 'prisma', 'Prismă dreaptă, bază dreptunghi 6×4, înălțime 5. Aria laterală (fără baze), cm²?', ['100'], 'Perimetrul bazei 20, × h = 100.', { numeric: { value: 100, tolerance: 0 }, steps: ['Perimetrul bazei = 2×(6+4) = 20', 'Aria laterală = 20 × 5 = 100'] }),
-    ex('e8s2', 'piramida', 'Piramidă regulată, bază pătrat de latură 6, apotema feței laterale 5. Aria laterală?', ['60'], '4 × (6×5/2) = 60.', { numeric: { value: 60, tolerance: 0 }, steps: ['O față triunghi: (6×5)/2 = 15', '4 fețe: 60'] }),
-    ex('e8s3', 'cilindru', 'Cilindru r=3, h=4, π=3. Volumul aproximativ?', ['108'], 'πr²h ≈ 3×9×4=108.', { numeric: { value: 108, tolerance: 3 }, steps: ['r² = 9', '9 × 4 = 36', '36 × 3 = 108'] }),
-    ex('e8s4', 'desfasurare', 'Cub de latură 5. Tai dintr-un colț un cubuleț de latură 2. Cât e volumul rămas?', ['117'], '125 − 8 = 117.', { numeric: { value: 117, tolerance: 0 }, steps: ['Volumul cubului mare = 5³ = 125', 'Cubulețul = 2³ = 8', '125 − 8 = 117'] })
+    ex('e8s2', 'piramida', 'Piramidă regulată, bază pătrat de latură 6, apotema feței laterale 5. Aria laterală?', ['60'], '4 × (6×5/2) = 60. Patru fețe triunghiulare.', { numeric: { value: 60, tolerance: 0 }, steps: ['O față triunghi: (6×5)/2 = 15', '4 fețe: 60'] }),
+    ex('e8s3', 'cilindru', 'Cilindru r=3, h=4, π=3. Volumul aproximativ?', ['108'], 'πr²h ≈ 3×9×4=108. Raza la pătrat, ori înălțimea, ori 3.', { numeric: { value: 108, tolerance: 3 }, steps: ['r² = 9', '9 × 4 = 36', '36 × 3 = 108'] }),
+    ex('e8s4', 'desfasurare', 'Cub de latură 5. Tai dintr-un colț un cubuleț de latură 2. Cât e volumul rămas?', ['117'], '125 − 8 = 117. Scoți cubulețul din cubul mare.', { numeric: { value: 117, tolerance: 0 }, steps: ['Volumul cubului mare = 5³ = 125', 'Cubulețul = 2³ = 8', '125 − 8 = 117'] })
   ],
   'romana:5:cartea': [
     ex('e5r3', 'etape', 'În 2 fraze, povestește o întâmplare inventată cu un ghiozdan. Trebuie un verb de acțiune și cuvântul „ghiozdan”.', ['ghiozdan'], 'Se vede o faptă, nu doar adjective. E pasul de scriere, după idee și plan.', { long: true, tokens: ['ghiozdan'], minWords: 10, steps: ['Alegi o faptă (cade, se pierde, e găsit)', 'Scrii 2 fraze, nu o listă de adjective', 'Verbul arată ce s-a întâmplat'] })
   ]
 };
 
+stampLists(BANK);
+
 function chapterKey(subject, grade, chapterId) {
   return `${String(subject || '').toLowerCase()}:${String(grade || '')}:${String(chapterId || '')}`;
+}
+
+function shuffle(list) {
+  const copy = list.slice();
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function questionAsExercise(item) {
+  const correctText = item.options[item.correct];
+  return {
+    id: item.id,
+    point: item.point,
+    prompt: item.question,
+    answers: [correctText],
+    choices: item.options.slice(),
+    explain: item.explain,
+    hint: '',
+    numeric: null,
+    tokens: [],
+    long: false,
+    minWords: 0,
+    steps: item.explain ? [item.explain] : [],
+    level: item.level || 1,
+    lesson: item.lesson,
+    secondary: item.secondary
+  };
 }
 
 function listChapterExercises(subject, grade, chapterId) {
   const key = chapterKey(subject, grade, chapterId);
   const extra = EXTRAS[key] || [];
   const base = BANK[key] || [];
-  return [...extra, ...base].map((item, index) => ({
+  const added = testsFor(key);
+  return [...extra, ...base, ...added].map((item, index) => ({
     ...item,
     level: item.level || index + 1
   }));
@@ -158,6 +193,17 @@ function findExercise(id) {
   for (const list of Object.values(EXTRAS)) {
     const found = list.find(item => item.id === needle);
     if (found) return found;
+  }
+  for (const pack of Object.values(require('./quiz/matematica').BY_KEY)) {
+    const found = (pack.tests || []).find(item => item.id === needle);
+    if (found) return found;
+  }
+  try {
+    const { findQuestion } = require('./practiceBank');
+    const question = findQuestion(needle);
+    if (question && Array.isArray(question.options)) return questionAsExercise(question);
+  } catch {
+    return null;
   }
   return null;
 }
@@ -193,15 +239,20 @@ function answersMatch(given, exercise) {
 }
 
 function publicExercise(item, review = false) {
-  return {
+  const card = {
     id: item.id,
     point: item.point,
     prompt: item.prompt,
     hint: item.hint || '',
     level: item.level || 0,
+    lesson: item.lesson || '',
     review,
     long: Boolean(item.long || (item.minWords && item.minWords >= 5))
   };
+  if (Array.isArray(item.choices) && item.choices.length === 4) {
+    card.choices = shuffle(item.choices);
+  }
+  return card;
 }
 
 function checkExercise(id, given) {
@@ -228,6 +279,7 @@ function checkExercise(id, given) {
     sample: writing ? (rubric?.sampleHint || exercise.explain) : (judge.sample || exercise.answers[0] || ''),
     steps: exercise.steps || [],
     point: exercise.point || '',
+    lesson: exercise.lesson || '',
     prompt: exercise.prompt || '',
     rubric
   };
@@ -241,6 +293,7 @@ function checkMany(pairs) {
     return {
       id,
       point: result.point || '',
+      lesson: result.lesson || '',
       prompt: result.prompt || '',
       given: String(given || ''),
       skipped: !String(given || '').trim(),
@@ -279,6 +332,7 @@ module.exports = {
   normalizeAnswer,
   answersMatch,
   publicExercise,
+  questionAsExercise,
   checkExercise,
   checkMany,
   scoreToGrade,

@@ -5,10 +5,11 @@ import { formatScore, verdictClass, verdictLabel } from '../verdictCopy.js';
 import QuoteCard from './QuoteCard.jsx';
 import GradeGoalPicker from './GradeGoalPicker.jsx';
 import MathText from './MathText.jsx';
+import { effortLine } from '../i18n/quizFeedback.js';
 
 const letters = ['A', 'B', 'C', 'D'];
 
-const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMentor, track = '', mode = '' }) => {
+const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMentor, track = '', mode = '', lesson = null }) => {
   const [cards, setCards] = useState([]);
   const [index, setIndex] = useState(0);
   const [picked, setPicked] = useState(null);
@@ -44,7 +45,8 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
       count: 8,
       track,
       mode,
-      target_note: note
+      target_note: note,
+      lesson_id: lesson?.id || ''
     });
     const next = result.success && result.data?.cards?.length ? result.data.cards : [];
     setCards(next);
@@ -222,8 +224,8 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
           {Number.isInteger(choices[card.id]) && (
             <p className={`quiz-feedback ${choices[card.id] === card.correct ? 'ok' : 'bad'}`}>
               {choices[card.id] === card.correct
-                ? <><i className="fas fa-check" aria-hidden="true" /> Corect.</>
-                : <><i className="fas fa-xmark" aria-hidden="true" /> Ai greșit.</>}
+                ? <><i className="fas fa-check" aria-hidden="true" /> {effortLine('exact', card.id, true)}</>
+                : <><i className="fas fa-xmark" aria-hidden="true" /> {effortLine('wrong', card.id, false)}</>}
               {' '}
               <MathText text={card.explain} />
             </p>

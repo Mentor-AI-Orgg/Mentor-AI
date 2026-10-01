@@ -1,6 +1,7 @@
 const { listChapterQuestions, listPoints, chapterKey } = require('./practiceBank');
-const { listChapterExercises, listExercisePoints, publicExercise } = require('./exerciseBank');
+const { listChapterExercises, listExercisePoints, publicExercise, questionAsExercise } = require('./exerciseBank');
 const { getGuide, normalizeGrade, normalizeSubject } = require('./gimnaziuGuide');
+const { lessonsFor } = require('./gimnaziuLessons');
 const { generateMany } = require('./itemGenerator');
 const { normalizeTargetNote, maxLevelForNote, levelPlan } = require('./targetGrade');
 
@@ -19,6 +20,7 @@ function publicCard(item, review = false) {
   return {
     id: item.id,
     point: item.point,
+    lesson: item.lesson || '',
     question: item.question,
     options: mixed.map(entry => entry.text),
     correct: mixed.findIndex(entry => entry.index === item.correct),
@@ -26,6 +28,59 @@ function publicCard(item, review = false) {
     level: item.level || 1,
     review
   };
+}
+
+function lessonCoverage(subject, grade, chapterId, seenIds) {
+  const lessons = lessonsFor(subject, grade, chapterId) || [];
+  const items = [
+    ...listChapterQuestions(subject, grade, chapterId),
+    ...listChapterExercises(subject, grade, chapterId)
+  ];
+  const idsByLesson = new Map();
+  items.forEach(item => {
+    if (!item.lesson) return;
+    if (!idsByLesson.has(item.lesson)) idsByLesson.set(item.lesson, []);
+    idsByLesson.get(item.lesson).push(String(item.id));
+  });
+  const seen = new Set((seenIds || []).map(String));
+  let hit = 0;
+  lessons.forEach(lesson => {
+    const ids = idsByLesson.get(lesson.id) || [];
+    if (ids.some(id => seen.has(id))) hit += 1;
+  });
+  return { seen: hit, total: lessons.length };
+}
+
+function chapterLevelPlan(want, maxLevel) {
+  if (maxLevel) return levelPlan(want, maxLevel).map(level => Math.min(8, Math.max(1, level)));
+  return Array.from({ length: want }, (_, index) => Math.min(8, index + 1));
+}
+
+function pickOne(candidates, usedLessons, seenLessons) {
+  if (!candidates.length) return null;
+  const freshLesson = candidates.filter(item => item.lesson && !usedLessons.has(item.lesson));
+  const pool = freshLesson.length ? freshLesson : candidates;
+  const unseen = pool.filter(item => item.lesson && !seenLessons.has(item.lesson));
+  const bucket = unseen.length ? unseen : pool;
+  return bucket[Math.floor(Math.random() * bucket.length)];
+}
+
+function chooseForLevel(pool, level, excluded, used, usedLessons, seenLessons, allowSecondary) {
+  const open = pool.filter(item => {
+    if (used.has(item.id) || excluded.has(item.id)) return false;
+    if (!allowSecondary && item.secondary) return false;
+    return true;
+  });
+  const ceiling = Math.min(8, Number(level) || 1);
+  let candidates = open.filter(item => (Number(item.level) || 1) === ceiling);
+  if (!candidates.length) {
+    const lower = open.filter(item => (Number(item.level) || 1) <= ceiling);
+    if (lower.length) {
+      const best = Math.max(...lower.map(item => Number(item.level) || 1));
+      candidates = lower.filter(item => (Number(item.level) || 1) === best);
+    }
+  }
+  return pickOne(candidates, usedLessons, seenLessons);
 }
 
 function resolveChapterId(subject, grade, chapterId, topic) {
@@ -47,6 +102,8 @@ function pickPractice({
   kind = 'flashcards',
   excludeIds = [],
   seenPoints = [],
+  seenQuestionIds = [],
+  lessonId = '',
   count,
   targetNote
 }) {
@@ -54,55 +111,98 @@ function pickPractice({
   const g = normalizeGrade(grade);
   const cid = resolveChapterId(sid, g, chapterId, topic);
   const isTest = kind === 'test';
-  const target = normalizeTargetNote(targetNote);
-  const maxLevel = maxLevelForNote(target);
-  const rawPool = isTest ? listChapterExercises(sid, g, cid) : listChapterQuestions(sid, g, cid);
-  const pool = maxLevel
-    ? rawPool.filter(item => (Number(item.level) || 1) <= maxLevel)
-    : rawPool;
-  const points = isTest ? listExercisePoints(sid, g, cid) : listPoints(sid, g, cid);
-  const want = isTest ? Math.max(1, Number(count) || 10) : Math.max(1, Number(count) || 8);
+  const lesson = String(lessonId || '');
+  const target = lesson ? null : normalizeTargetNote(targetNote);
+  const maxLevel = lesson ? null : maxLevelForNote(target);
+  const questions = listChapterQuestions(sid, g, cid);
+  const exercises = listChapterExercises(sid, g, cid);
   const excluded = new Set((excludeIds || []).map(String));
   const seen = new Set((seenPoints || []).map(String));
+  const seenLessons = new Set();
+  const idToLesson = new Map();
+  [...questions, ...exercises].forEach(item => {
+    if (item.lesson) idToLesson.set(String(item.id), item.lesson);
+  });
+  (seenQuestionIds || []).forEach(id => {
+    const name = idToLesson.get(String(id));
+    if (name) seenLessons.add(name);
+  });
 
-  const freshPoint = pool.filter(item => !seen.has(item.point) && !excluded.has(item.id));
-  const freshId = pool.filter(item => !excluded.has(item.id) && seen.has(item.point));
-
-  const byLevel = list => list.slice().sort((a, b) => (a.level || 99) - (b.level || 99));
-  const ordered = byLevel([...freshPoint, ...freshId]);
+  const points = isTest ? listExercisePoints(sid, g, cid) : listPoints(sid, g, cid);
+  const defaultCount = lesson ? (isTest ? 5 : 8) : (isTest ? 10 : 8);
+  const want = Math.max(1, Number(count) || defaultCount);
   const picked = [];
   const used = new Set();
-  for (const item of ordered) {
-    if (used.has(item.id) || excluded.has(item.id)) continue;
-    used.add(item.id);
-    const reviewCard = seen.has(item.point) && !freshPoint.some(entry => entry.id === item.id);
-    picked.push(isTest ? publicExercise(item, reviewCard) : publicCard(item, reviewCard));
-    if (picked.length >= want) break;
-  }
-  if (picked.length < want) {
-    const generated = generateMany({
-      kind: isTest ? 'test' : 'flashcards',
-      subject: sid,
-      grade: g,
-      chapterId: cid,
-      startLevel: picked.length + 1,
-      levels: maxLevel ? levelPlan(want, maxLevel).slice(picked.length) : undefined,
-      excludeIds: [...excluded, ...used]
-    }, want - picked.length);
-    generated.forEach(item => {
-      const card = isTest
-        ? publicExercise({ ...item, level: item.level }, false)
-        : publicCard(item, false);
-      picked.push(card);
-    });
-  }
-  picked.sort((a, b) => (a.level || 99) - (b.level || 99));
+  const usedLessons = new Set();
+  let reviewMode = false;
 
+  if (lesson && !isTest) {
+    let pool = questions.filter(item => item.lesson === lesson && !excluded.has(item.id));
+    if (!pool.length) {
+      pool = questions.filter(item => item.lesson === lesson);
+      reviewMode = pool.length > 0;
+    }
+    pool.sort((a, b) => (a.level || 99) - (b.level || 99));
+    pool.slice(0, want).forEach(item => {
+      used.add(item.id);
+      picked.push(publicCard(item, reviewMode || seen.has(item.point)));
+    });
+  } else if (lesson && isTest) {
+    const grids = questions.filter(item => item.lesson === lesson).map(questionAsExercise);
+    let pool = [...exercises, ...grids].filter(item => item.lesson === lesson && !excluded.has(item.id));
+    if (!pool.length) {
+      pool = [...exercises, ...grids].filter(item => item.lesson === lesson);
+      reviewMode = pool.length > 0;
+    }
+    pool.sort((a, b) => (a.level || 99) - (b.level || 99));
+    pool.slice(0, want).forEach(item => {
+      used.add(item.id);
+      const reviewCard = reviewMode || seen.has(item.point);
+      picked.push(publicExercise(item, reviewCard));
+    });
+  } else {
+    const rawPool = isTest ? exercises : questions;
+    const pool = maxLevel
+      ? rawPool.filter(item => (Number(item.level) || 1) <= maxLevel && !item.secondary)
+      : rawPool.filter(item => !item.secondary);
+    const plan = chapterLevelPlan(want, maxLevel);
+    plan.forEach(level => {
+      if (picked.length >= want) return;
+      const item = chooseForLevel(pool, level, excluded, used, usedLessons, seenLessons, false);
+      if (!item) return;
+      used.add(item.id);
+      if (item.lesson) usedLessons.add(item.lesson);
+      const reviewCard = seen.has(item.point);
+      picked.push(isTest ? publicExercise(item, reviewCard) : publicCard(item, reviewCard));
+    });
+    if (picked.length < want) {
+      const rest = chapterLevelPlan(want, maxLevel).slice(picked.length);
+      const generated = generateMany({
+        kind: isTest ? 'test' : 'flashcards',
+        subject: sid,
+        grade: g,
+        chapterId: cid,
+        startLevel: Math.min(8, picked.length + 1),
+        levels: rest,
+        excludeIds: [...excluded, ...used]
+      }, want - picked.length);
+      generated.forEach(item => {
+        const card = isTest
+          ? publicExercise({ ...item, level: item.level }, false)
+          : publicCard(item, false);
+        picked.push(card);
+      });
+    }
+  }
+
+  picked.sort((a, b) => (a.level || 99) - (b.level || 99));
   const afterPoints = new Set([...seen, ...picked.map(card => card.point)]);
+  const seenIds = [...(seenQuestionIds || []), ...picked.map(card => card.id)];
   return {
     subject: sid,
     grade: g,
     chapterId: cid,
+    lessonId: lesson,
     kind,
     targetNote: target,
     maxLevel,
@@ -110,10 +210,11 @@ function pickPractice({
     coverage: {
       seen: Math.min(points.length, afterPoints.size),
       total: Math.max(1, points.length),
-      complete: points.length > 0 && points.every(point => afterPoints.has(point) || seen.has(point))
+      complete: points.length > 0 && points.every(point => afterPoints.has(point) || seen.has(point)),
+      lessons: lessonCoverage(sid, g, cid, seenIds)
     },
-    review: picked.every(card => card.review) && seen.size >= points.length,
-    infinite: true,
+    review: reviewMode || (picked.length > 0 && picked.every(card => card.review) && seen.size >= points.length),
+    infinite: !lesson,
     key: chapterKey(sid, g, cid)
   };
 }
