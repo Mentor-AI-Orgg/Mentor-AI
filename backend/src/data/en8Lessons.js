@@ -305,7 +305,7 @@ const LESSONS_EN = {
       'cerinta',
       'Cum citești un item, cuvintele mici',
       '„Precizează”, „numește”, „transcrie”, „explică într-un enunț”, „motivează cu o secvență”: fiecare verb cere altceva. Transcrie = copie exact din text. Numește = un cuvânt sau o etichetă. Explică = o frază cu cauză. Motivează cu secvență = idee + citat.',
-      'Limitele de cuvinte la redactare nu sunt sugestii. Sub minim, conținutul e subțire. Mult peste maxim, rişti să te împrăștii și să greșești mai mult.',
+      'Limitele de cuvinte la redactare nu sunt sugestii. Sub minim, conținutul e subțire. Mult peste maxim, riști să te împrăștii și să greșești mai mult.',
       'Exemplu lucrat: „Transcrie un epitet”. Răspunsul e un cuvânt/grup din text, nu definiția epitetului. Dacă scrii „epitetul este un adjectiv…”, ai făcut lecția, nu itemul.',
       'Reține: verbul din cerință e instructorul. Definiția tocită, fără text, nu punctează.'
     )

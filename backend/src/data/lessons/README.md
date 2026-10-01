@@ -1,6 +1,6 @@
 # Lecțiile „Sunt de 10”
 
-Acest folder ține infrastructura comună a lecțiilor. Capitolele de matematică stau în `backend/src/data/mate*.js`. Româna stă, până la Etapa 0C, în `romana5Litera.js` … `romana8Litera.js`.
+Acest folder ține infrastructura comună a lecțiilor. Capitolele de matematică stau în `backend/src/data/mate*.js`. Româna stă în `backend/src/data/romana-lectii/`, câte un fișier pe unitate. `romana5Litera.js` … `romana8Litera.js` sunt re-exporturi.
 
 Starea din tabel este cea de dinainte de rescriere (cuvinte din `platter`). ⬜ înseamnă că etapa capitolului nu a rulat. ✅ se bifează când capitolul intră în `RESTRUCTURED` (din Etapa 0C).
 
@@ -28,36 +28,38 @@ Starea din tabel este cea de dinainte de rescriere (cuvinte din `platter`). ⬜ 
 
 | Cheie | Fișier | Lecții | Cuvinte | Stare |
 |---|---|---:|---:|---|
-| `romana:5:evaluare-initiala` | `romana5Litera.js` | 2 | 847 | ⬜ |
-| `romana:5:cuvinte` | `romana5Litera.js` | 28 | 7766 | ⬜ |
-| `romana:5:cartea` | `romana5Litera.js` | 17 | 5511 | ⬜ |
-| `romana:5:povestirea` | `romana5Litera.js` | 19 | 6466 | ⬜ |
-| `romana:5:prietenia` | `romana5Litera.js` | 15 | 5013 | ⬜ |
-| `romana:5:natura` | `romana5Litera.js` | 10 | 3406 | ⬜ |
-| `romana:5:trepte` | `romana5Litera.js` | 15 | 4905 | ⬜ |
-| `romana:5:eroi` | `romana5Litera.js` | 7 | 2430 | ⬜ |
-| `romana:6:recapitulare-initiala` | `romana6Litera.js` | 4 | 885 | ⬜ |
-| `romana:6:lumea-de-acasa` | `romana6Litera.js` | 13 | 3742 | ⬜ |
-| `romana:6:taramul-prieteniei` | `romana6Litera.js` | 14 | 4291 | ⬜ |
-| `romana:6:intelepciunea-lumii` | `romana6Litera.js` | 13 | 4435 | ⬜ |
-| `romana:6:tablouri-de-poveste` | `romana6Litera.js` | 13 | 3956 | ⬜ |
-| `romana:6:calatorii-literare` | `romana6Litera.js` | 11 | 4964 | ⬜ |
-| `romana:6:ferestre-spre-viitor` | `romana6Litera.js` | 11 | 4854 | ⬜ |
-| `romana:6:incheierea-anului` | `romana6Litera.js` | 4 | 1492 | ⬜ |
-| `romana:7:recapitulare-initiala` | `romana7Litera.js` | 4 | 1779 | ⬜ |
-| `romana:7:pe-drumul-cunoasterii` | `romana7Litera.js` | 20 | 10190 | ⬜ |
-| `romana:7:punti-intre-lumi` | `romana7Litera.js` | 17 | 7883 | ⬜ |
-| `romana:7:taramul-sentimentelor` | `romana7Litera.js` | 16 | 8075 | ⬜ |
-| `romana:7:lumea-teatrului` | `romana7Litera.js` | 19 | 9015 | ⬜ |
-| `romana:7:calator-prin-lume` | `romana7Litera.js` | 16 | 8763 | ⬜ |
-| `romana:7:privind-catre-mine` | `romana7Litera.js` | 12 | 6545 | ⬜ |
-| `romana:8:recapitulare-examen` | `romana8Litera.js` | 7 | 3138 | ⬜ |
-| `romana:8:calatoria` | `romana8Litera.js` | 11 | 4136 | ⬜ |
-| `romana:8:lume-sentimente` | `romana8Litera.js` | 10 | 4004 | ⬜ |
-| `romana:8:valori-ascultare` | `romana8Litera.js` | 11 | 5355 | ⬜ |
-| `romana:8:traditie-inovatie` | `romana8Litera.js` | 11 | 5527 | ⬜ |
-| `romana:8:modele-antimodele` | `romana8Litera.js` | 13 | 6540 | ⬜ |
-| `romana:8:familia-comunitate` | `romana8Litera.js` | 12 | 8043 | ⬜ |
+| `romana:5:evaluare-initiala` | `romana-lectii/r5-evaluare-initiala.js` | 2 | 847 | ⬜ |
+| `romana:5:cuvinte` | `romana-lectii/r5-cuvinte.js` | 28 | 7766 | ⬜ |
+| `romana:5:cartea` | `romana-lectii/r5-cartea.js` | 17 | 5511 | ⬜ |
+| `romana:5:povestirea` | `romana-lectii/r5-povestirea.js` | 19 | 6466 | ⬜ |
+| `romana:5:prietenia` | `romana-lectii/r5-prietenia.js` | 15 | 5013 | ⬜ |
+| `romana:5:natura` | `romana-lectii/r5-natura.js` | 10 | 3406 | ⬜ |
+| `romana:5:trepte` | `romana-lectii/r5-trepte.js` | 15 | 4905 | ⬜ |
+| `romana:5:eroi` | `romana-lectii/r5-eroi.js` | 7 | 2430 | ⬜ |
+| `romana:6:recapitulare-initiala` | `romana-lectii/r6-recapitulare-initiala.js` | 4 | 885 | ⬜ |
+| `romana:6:lumea-de-acasa` | `romana-lectii/r6-lumea-de-acasa.js` | 13 | 3742 | ⬜ |
+| `romana:6:taramul-prieteniei` | `romana-lectii/r6-taramul-prieteniei.js` | 14 | 4291 | ⬜ |
+| `romana:6:intelepciunea-lumii` | `romana-lectii/r6-intelepciunea-lumii.js` | 13 | 4435 | ⬜ |
+| `romana:6:tablouri-de-poveste` | `romana-lectii/r6-tablouri-de-poveste.js` | 13 | 3956 | ⬜ |
+| `romana:6:calatorii-literare` | `romana-lectii/r6-calatorii-literare.js` | 11 | 4964 | ⬜ |
+| `romana:6:ferestre-spre-viitor` | `romana-lectii/r6-ferestre-spre-viitor.js` | 11 | 4854 | ⬜ |
+| `romana:6:incheierea-anului` | `romana-lectii/r6-incheierea-anului.js` | 4 | 1492 | ⬜ |
+| `romana:7:recapitulare-initiala` | `romana-lectii/r7-recapitulare-initiala.js` | 4 | 1779 | ⬜ |
+| `romana:7:pe-drumul-cunoasterii` | `romana-lectii/r7-pe-drumul-cunoasterii.js` | 20 | 10190 | ⬜ |
+| `romana:7:punti-intre-lumi` | `romana-lectii/r7-punti-intre-lumi.js` | 17 | 7883 | ⬜ |
+| `romana:7:taramul-sentimentelor` | `romana-lectii/r7-taramul-sentimentelor.js` | 16 | 8075 | ⬜ |
+| `romana:7:lumea-teatrului` | `romana-lectii/r7-lumea-teatrului.js` | 19 | 9015 | ⬜ |
+| `romana:7:calator-prin-lume` | `romana-lectii/r7-calator-prin-lume.js` | 16 | 8763 | ⬜ |
+| `romana:7:privind-catre-mine` | `romana-lectii/r7-privind-catre-mine.js` | 12 | 6545 | ⬜ |
+| `romana:8:recapitulare-examen` | `romana-lectii/r8-recapitulare-examen.js` | 7 | 3138 | ⬜ |
+| `romana:8:calatoria` | `romana-lectii/r8-calatoria.js` | 11 | 4136 | ⬜ |
+| `romana:8:lume-sentimente` | `romana-lectii/r8-lume-sentimente.js` | 10 | 4004 | ⬜ |
+| `romana:8:valori-ascultare` | `romana-lectii/r8-valori-ascultare.js` | 11 | 5355 | ⬜ |
+| `romana:8:traditie-inovatie` | `romana-lectii/r8-traditie-inovatie.js` | 11 | 5527 | ⬜ |
+| `romana:8:modele-antimodele` | `romana-lectii/r8-modele-antimodele.js` | 13 | 6540 | ⬜ |
+| `romana:8:familia-comunitate` | `romana-lectii/r8-familia-comunitate.js` | 12 | 8043 | ⬜ |
+
+Tabelul de mai sus este starea „înainte”, în cuvinte din `platter`. `node scripts/lesson-stats.js` retipărește lecțiile, cuvintele vizibile și cele ascunse. `RESTRUCTURED` din `lessons/restructured.js` rămâne goală până la etapa capitolului. Unitățile care treceau singure de 90 000 de caractere sunt tăiate în `-1` și `-2`, după lecții.
 
 ## Forma unei lecții
 

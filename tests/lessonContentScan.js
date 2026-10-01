@@ -257,14 +257,21 @@ export function isAllowed(finding) {
 }
 
 export function loadRestructured() {
-  try {
-    const mod = require('../backend/src/data/restructuredLessons.js');
-    const list = mod && (mod.RESTRUCTURED || mod.restructured);
-    return Array.isArray(list) ? list : null;
-  } catch (err) {
-    if (err && err.code === 'MODULE_NOT_FOUND') return null;
-    throw err;
+  const candidates = [
+    '../backend/src/data/lessons/restructured.js',
+    '../backend/src/data/restructuredLessons.js'
+  ];
+  for (const candidate of candidates) {
+    try {
+      const mod = require(candidate);
+      const list = mod && (mod.RESTRUCTURED || mod.restructured);
+      if (Array.isArray(list)) return list;
+    } catch (err) {
+      if (err && err.code === 'MODULE_NOT_FOUND') continue;
+      throw err;
+    }
   }
+  return null;
 }
 
 function sameUnit(finding, entry) {
