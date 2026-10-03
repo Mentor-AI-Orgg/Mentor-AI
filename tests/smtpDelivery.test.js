@@ -18,14 +18,14 @@ const FROM = 'nu-raspunde@example.test';
 
 function savedEnv() {
   const values = {};
-  SMTP_KEYS.forEach(key => {
+  SMTP_KEYS.forEach((key) => {
     values[key] = process.env[key];
   });
   return values;
 }
 
 function applySmtp(values) {
-  SMTP_KEYS.forEach(key => {
+  SMTP_KEYS.forEach((key) => {
     const value = values[key] ?? '';
     config[key] = value;
     if (value) process.env[key] = value;
@@ -34,13 +34,13 @@ function applySmtp(values) {
 }
 
 function mailText(spy) {
-  return spy.mock.calls.map(call => String(call[0])).join('\n');
+  return spy.mock.calls.map((call) => String(call[0])).join('\n');
 }
 
 describe('livrare SMTP', () => {
   const previousConfig = {};
   const previousEnv = savedEnv();
-  SMTP_KEYS.forEach(key => {
+  SMTP_KEYS.forEach((key) => {
     previousConfig[key] = config[key];
   });
   let sendMail;
@@ -48,11 +48,11 @@ describe('livrare SMTP', () => {
 
   afterEach(() => {
     applySmtp(previousConfig);
-    SMTP_KEYS.forEach(key => {
+    SMTP_KEYS.forEach((key) => {
       if (previousEnv[key] == null) delete process.env[key];
       else process.env[key] = previousEnv[key];
     });
-    SMTP_KEYS.forEach(key => {
+    SMTP_KEYS.forEach((key) => {
       config[key] = previousConfig[key];
     });
     if (errorSpy) errorSpy.mockRestore();
@@ -112,8 +112,12 @@ describe('livrare SMTP', () => {
     const created = await registerGranted(app);
     const missingName = `lipsa${Date.now()}`;
 
-    const known = await request(app).post('/api/auth/forgot-password').send({ email: created.username });
-    const missing = await request(app).post('/api/auth/forgot-password').send({ email: missingName });
+    const known = await request(app)
+      .post('/api/auth/forgot-password')
+      .send({ email: created.username });
+    const missing = await request(app)
+      .post('/api/auth/forgot-password')
+      .send({ email: missingName });
 
     expect(known.status).toBe(missing.status);
     expect(known.body).toEqual(missing.body);
@@ -162,8 +166,12 @@ describe('livrare SMTP', () => {
     const { app } = createApp({ autosave: false });
     const created = await registerGranted(app);
     errorSpy.mockClear();
-    const known = await request(app).post('/api/auth/forgot-password').send({ email: created.username });
-    const missing = await request(app).post('/api/auth/forgot-password').send({ email: `lipsa${Date.now()}` });
+    const known = await request(app)
+      .post('/api/auth/forgot-password')
+      .send({ email: created.username });
+    const missing = await request(app)
+      .post('/api/auth/forgot-password')
+      .send({ email: `lipsa${Date.now()}` });
     expect(known.body).toEqual(missing.body);
     expect(known.body.success).toBe(true);
     expect(known.body.mocked).toBe(true);
@@ -183,13 +191,18 @@ describe('livrare SMTP', () => {
     const { app } = createApp({ autosave: false });
     const created = await registerGranted(app);
     const secretBody = `corp-secret-${created.parentEmail}-${PASSWORD}`;
-    sendMail.mockRejectedValue(Object.assign(
-      new Error(`535 ${created.parentEmail} ${PASSWORD} ${secretBody}`),
-      { code: 'EAUTH', response: created.parentEmail, command: `AUTH PLAIN ${PASSWORD}` }
-    ));
+    sendMail.mockRejectedValue(
+      Object.assign(new Error(`535 ${created.parentEmail} ${PASSWORD} ${secretBody}`), {
+        code: 'EAUTH',
+        response: created.parentEmail,
+        command: `AUTH PLAIN ${PASSWORD}`
+      })
+    );
     errorSpy.mockClear();
     const known = await request(app).post('/api/parent/magic').send({ email: created.parentEmail });
-    const missing = await request(app).post('/api/parent/magic').send({ email: uniqueEmail('nimeni') });
+    const missing = await request(app)
+      .post('/api/parent/magic')
+      .send({ email: uniqueEmail('nimeni') });
     expect(known.status).toBe(missing.status);
     expect(known.body).toEqual(missing.body);
     expect(known.body.success).toBe(true);
@@ -207,7 +220,9 @@ describe('livrare SMTP', () => {
     arm();
     const parent = 'parinte@example.test';
     sendMail
-      .mockRejectedValueOnce(Object.assign(new Error(`550 relay for ${parent} ${PASSWORD}`), { code: 'EENVELOPE' }))
+      .mockRejectedValueOnce(
+        Object.assign(new Error(`550 relay for ${parent} ${PASSWORD}`), { code: 'EENVELOPE' })
+      )
       .mockResolvedValueOnce({ messageId: 'ok' });
     const { sendEmail } = nodeRequire('../backend/src/notify/deliver.js');
     errorSpy.mockClear();
@@ -216,7 +231,10 @@ describe('livrare SMTP', () => {
     expect(result.error).toBeUndefined();
     expect(nodemailer.createTransport).toHaveBeenCalledTimes(2);
     expect(nodemailer.createTransport.mock.calls[0][0].auth).toBeUndefined();
-    expect(nodemailer.createTransport.mock.calls[1][0].auth).toEqual({ user: FROM, pass: PASSWORD });
+    expect(nodemailer.createTransport.mock.calls[1][0].auth).toEqual({
+      user: FROM,
+      pass: PASSWORD
+    });
     expect(nodemailer.createTransport.mock.calls[1][0].ignoreTLS).toBe(false);
     const logged = mailText(errorSpy);
     expect(logged).toContain('smtp_accepted');
@@ -227,7 +245,10 @@ describe('livrare SMTP', () => {
   });
 
   it('citește numele de utilizator din câmp, nu doar din starea React', () => {
-    const source = fs.readFileSync(path.join(__dirname, '../frontend/components/LoginScreen.jsx'), 'utf8');
+    const source = fs.readFileSync(
+      path.join(__dirname, '../frontend/components/LoginScreen.jsx'),
+      'utf8'
+    );
     expect(source).toContain('emailRef.current?.value');
     expect(source).toContain('onForgotPassword(name)');
   });
