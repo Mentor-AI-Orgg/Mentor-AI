@@ -166,6 +166,23 @@ function reportClientError({ message, file, line }) {
   return noteIncident({ type: "client_error", id });
 }
 
+function recordMailCode(code) {
+  const safe = String(code || "").trim();
+  if (!/^[A-Za-z0-9_]{1,40}$/.test(safe)) return;
+  let line = "";
+  try {
+    line = logError({ at: new Date().toISOString(), code: safe });
+  } catch {
+    return;
+  }
+  if (process.env.NODE_ENV === "test" && !process.env.ERROR_LOG_DIR) return;
+  try {
+    appendLog(line);
+  } catch {
+    /* discul nu oprește trimiterea */
+  }
+}
+
 function noteSmtpSuccess() {
   state.smtpStreak = 0;
 }
@@ -227,6 +244,7 @@ module.exports = {
   noteIncident,
   reportError,
   reportClientError,
+  recordMailCode,
   noteSmtpSuccess,
   noteSmtpFailure,
   checkBackupAge,

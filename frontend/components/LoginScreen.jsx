@@ -1,22 +1,35 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import QuoteCard from './QuoteCard.jsx';
 
 const LoginScreen = ({ onBack, onLogin, onForgotPassword }) => {
   const { t } = useI18n();
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const canSubmit = email.trim() && password && !loading;
+  // Autofill-ul scrie în DOM înainte să ajungă în starea React. Butonul
+  // citește valoarea din câmp, altfel „Ai uitat parola?” se oprește.
+  const usernameNow = () => String(emailRef.current?.value ?? email).trim();
+  const passwordNow = () => String(passwordRef.current?.value ?? password);
 
   const submit = async event => {
     event.preventDefault();
-    if (!canSubmit) return;
+    const name = usernameNow();
+    const secret = passwordNow();
+    if (!name) {
+      setError(t('login.needEmail'));
+      return;
+    }
+    if (!secret || loading) return;
+    if (name !== email) setEmail(name);
+    if (secret !== password) setPassword(secret);
     setError('');
     setLoading(true);
-    const result = await onLogin({ email: email.trim(), password });
+    const result = await onLogin({ email: name, password: secret });
     setLoading(false);
     if (result && !result.success) {
       setError(result.error || t('login.error'));
@@ -35,6 +48,7 @@ const LoginScreen = ({ onBack, onLogin, onForgotPassword }) => {
       <form className="form-fields" onSubmit={submit}>
         <label className="field-label">{t('login.email')}
           <input
+            ref={emailRef}
             type="text"
             value={email}
             onChange={e => setEmail(e.target.value)}
@@ -46,6 +60,7 @@ const LoginScreen = ({ onBack, onLogin, onForgotPassword }) => {
         </label>
         <label className="field-label">{t('login.password')}
           <input
+            ref={passwordRef}
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
@@ -58,7 +73,7 @@ const LoginScreen = ({ onBack, onLogin, onForgotPassword }) => {
 
         {error && <div className="form-error" role="alert"><i className="fas fa-circle-exclamation"></i> {error}</div>}
 
-        <button type="submit" className="accent-button form-submit" disabled={!canSubmit}>
+        <button type="submit" className="accent-button form-submit" disabled={loading}>
           {loading ? t('login.submitting') : <>{t('login.submit')} <i className="fas fa-arrow-right"></i></>}
         </button>
       </form>
@@ -67,11 +82,13 @@ const LoginScreen = ({ onBack, onLogin, onForgotPassword }) => {
         className="forgot-link"
         type="button"
         onClick={() => {
-          if (!email.trim()) {
+          const name = usernameNow();
+          if (!name) {
             setError(t('login.needEmail'));
             return;
           }
-          onForgotPassword(email.trim());
+          if (name !== email) setEmail(name);
+          onForgotPassword(name);
         }}
       >
         {t('login.forgot')}
