@@ -21,6 +21,10 @@ const { ensureRecentBackup } = require("./src/ops/backup");
 const freshBackup = ensureRecentBackup();
 if (!freshBackup.ok) console.error(`[backup] ${freshBackup.reason}`);
 
+const { smtpConfigured } = require("./src/notify/deliver");
+const { recordMailCode } = require("./src/ops/errorMonitor");
+recordMailCode(smtpConfigured() ? "smtp_configured" : "smtp_unconfigured");
+
 const server = app.listen(config.PORT, () => {
   console.log(`${config.APP_NAME} backend listening on http://localhost:${config.PORT}`);
   const { isSiteClosed } = require("./src/middleware/comingSoon");
