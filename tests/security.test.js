@@ -128,7 +128,7 @@ describe('antete, cookie și jurnale', () => {
       expect(page.headers['strict-transport-security']).toMatch(/max-age=/);
       expect(page.headers['x-content-type-options']).toBe('nosniff');
       expect(page.headers['content-security-policy']).toMatch(/frame-ancestors 'none'/);
-      expect(page.headers['permissions-policy']).toMatch(/microphone=\(\)/);
+      expect(page.headers['permissions-policy']).toBe('camera=(self), microphone=(self), geolocation=()');
     } finally {
       process.env.NODE_ENV = previous;
       if (previousPublic === undefined) delete process.env.SITE_PUBLIC;
