@@ -31,7 +31,7 @@ function securityHeaders() {
   return (req, res, next) => {
     guarded(req, res, err => {
       if (err) return next(err);
-      res.setHeader("Permissions-Policy", "camera=(self), microphone=(), geolocation=()");
+      res.setHeader("Permissions-Policy", "camera=(self), microphone=(self), geolocation=()");
       next();
     });
   };

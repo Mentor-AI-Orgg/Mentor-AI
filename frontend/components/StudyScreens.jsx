@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
+import { readSpeechMicContext, speechFailureKind, speechMicNote } from '../speechMic.js';
 import MathText from './MathText.jsx';
 
 const makeConversationId = prefix => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
@@ -29,6 +30,8 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef(null);
+  const micSessionRef = useRef(0);
+  const micStopRef = useRef(false);
   const [diagMode, setDiagMode] = useState(false);
   const [micNote, setMicNote] = useState('');
   const [subject, setSubject] = useState(normalizeSubject(studyFocus.subject || userData.subject || userData.profile || 'matematica'));
@@ -72,31 +75,84 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
     setLoading(false);
   };
 
+  const showMicFailure = (session, kind) => {
+    if (micSessionRef.current !== session || !kind) return;
+    setListening(false);
+    setMicNote(speechMicNote(kind));
+  };
+
   const toggleMic = () => {
     const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!Speech) {
-      setMicNote('Microfonul nu e suportat în acest browser. Scrie întrebarea.');
+      setMicNote(speechMicNote('missing'));
       return;
     }
-    setMicNote('');
     if (listening && recognitionRef.current) {
-      recognitionRef.current.stop();
+      micStopRef.current = true;
+      try {
+        recognitionRef.current.stop();
+      } catch {
+        /* recunoașterea se oprise deja */
+      }
       setListening(false);
       return;
     }
+    const session = micSessionRef.current + 1;
+    micSessionRef.current = session;
+    micStopRef.current = false;
+    setMicNote('');
+    let heard = false;
+    let failed = false;
     const recognition = new Speech();
     recognition.lang = 'ro-RO';
     recognition.interimResults = true;
     recognition.continuous = false;
     recognition.onresult = event => {
+      if (micSessionRef.current !== session) return;
       const text = Array.from(event.results).map(result => result[0].transcript).join(' ').trim();
-      if (text) setDraft(text);
+      if (!text) return;
+      heard = true;
+      setMicNote('');
+      setDraft(text);
     };
-    recognition.onend = () => setListening(false);
-    recognition.onerror = () => setListening(false);
+    recognition.onerror = event => {
+      if (micSessionRef.current !== session) return;
+      const code = event?.error || '';
+      if (code === 'aborted') {
+        if (!micStopRef.current) {
+          failed = true;
+          showMicFailure(session, 'failed');
+        }
+        return;
+      }
+      failed = true;
+      setListening(false);
+      if (code === 'no-speech') {
+        if (!micStopRef.current) showMicFailure(session, 'no-speech');
+        return;
+      }
+      if (code === 'not-allowed' || code === 'service-not-allowed') {
+        readSpeechMicContext()
+          .then(context => showMicFailure(session, speechFailureKind(code, context)))
+          .catch(() => showMicFailure(session, 'blocked'));
+        return;
+      }
+      showMicFailure(session, speechFailureKind(code));
+    };
+    recognition.onend = () => {
+      if (micSessionRef.current !== session) return;
+      setListening(false);
+      if (micStopRef.current || heard || failed) return;
+      showMicFailure(session, 'no-speech');
+    };
     recognitionRef.current = recognition;
     setListening(true);
-    recognition.start();
+    try {
+      recognition.start();
+    } catch {
+      failed = true;
+      showMicFailure(session, 'blocked');
+    }
   };
 
   const send = async text => {
@@ -166,7 +222,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
     <form className="mentor-composer" onSubmit={event => { event.preventDefault(); send(draft); }}>
       <button type="button" className={`ghost-button composer-tool ${listening ? 'is-live' : ''}`} onClick={toggleMic} aria-label={listening ? 'Oprește microfonul' : 'Vorbește, apoi apasă Enter'}><i className={`fas ${listening ? 'fa-stop' : 'fa-microphone'}`} /></button>
       <div className="composer-field">
-        {micNote && <span className="composer-chip">{micNote}</span>}
+        {micNote && <span className="composer-chip" role="status">{micNote}</span>}
         <input value={draft} onChange={event => setDraft(event.target.value)} placeholder={listening ? 'Te-am auzit. Apasă Enter ca să trimiți.' : (diagMode ? 'Scrie orice, va rula diagnosticarea...' : 'Scrie sau vorbește, apoi Enter…')} aria-label="Întrebarea pentru tutore" />
       </div>
       <button className="accent-button" type="submit" disabled={loading || !draft.trim()} aria-label="Trimite întrebarea"><i className={`fas ${diagMode ? 'fa-stethoscope' : 'fa-arrow-up'}`} /></button>
