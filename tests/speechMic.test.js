@@ -36,6 +36,13 @@ describe('microfonul de la tutore', () => {
     });
     expect(speechFailureKind('not-allowed', blocked)).toBe('blocked');
 
+    const legacyPolicy = await readSpeechMicContext({
+      isSecureContext: true,
+      document: { featurePolicy: { allowsFeature: (name) => name !== 'microphone' } },
+      navigator: { permissions: { query: async () => ({ state: 'prompt' }) } }
+    });
+    expect(speechFailureKind('not-allowed', legacyPolicy)).toBe('blocked');
+
     const denied = await readSpeechMicContext({
       isSecureContext: true,
       document: { permissionsPolicy: { allowsFeature: () => true } },

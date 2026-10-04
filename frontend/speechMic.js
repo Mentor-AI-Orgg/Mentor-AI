@@ -27,7 +27,7 @@ export async function readSpeechMicContext(target = globalThis) {
   const secure = target.isSecureContext !== false;
   let policyAllows = true;
   try {
-    const policy = target.document?.permissionsPolicy;
+    const policy = target.document?.permissionsPolicy || target.document?.featurePolicy;
     if (policy?.allowsFeature) policyAllows = policy.allowsFeature('microphone') !== false;
   } catch {
     policyAllows = false;
