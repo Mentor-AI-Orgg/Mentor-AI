@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { pickPractice } from '../backend/src/data/practicePicker.js';
 import { listChapterExercises } from '../backend/src/data/exerciseBank.js';
-import { levelPlan, maxLevelForNote, normalizeTargetNote } from '../backend/src/data/targetGrade.js';
+import { chapterTestPlan, levelPlan, maxLevelForNote, normalizeTargetNote } from '../backend/src/data/targetGrade.js';
 
 describe('desired grade shapes the practice pack', () => {
   it('maps 5–10 to a rising ceiling and keeps a ramp from 1', () => {
@@ -12,6 +12,9 @@ describe('desired grade shapes the practice pack', () => {
     expect(levelPlan(10, 2)).toEqual([1, 1, 1, 1, 1, 2, 2, 2, 2, 2]);
     expect(levelPlan(7, 7)[0]).toBe(1);
     expect(levelPlan(7, 7)[6]).toBe(7);
+    expect(chapterTestPlan(7)).toEqual([4, 5, 5, 6, 7, 7, 8]);
+    expect(chapterTestPlan(7)[0]).toBeGreaterThanOrEqual(4);
+    expect(chapterTestPlan(10, 2).every(level => level >= 4 && level <= 5)).toBe(true);
   });
 
   it('keeps a modest target on easy rungs and a 10 on the full climb', () => {
@@ -26,8 +29,8 @@ describe('desired grade shapes the practice pack', () => {
     });
     expect(modest.cards).toHaveLength(10);
     expect(modest.targetNote).toBe(5);
-    expect(modest.cards.every(card => (card.level || 1) <= 2)).toBe(true);
-    expect(Math.max(...modest.cards.map(card => card.level || 1))).toBe(2);
+    expect(modest.cards.every(card => (card.level || 1) >= 4 && (card.level || 1) <= 5)).toBe(true);
+    expect(Math.max(...modest.cards.map(card => card.level || 1))).toBe(5);
 
     const top = pickPractice({
       subject: 'matematica',
@@ -49,7 +52,9 @@ describe('desired grade shapes the practice pack', () => {
       kind: 'test',
       count: 7
     });
-    expect(pack.cards.map(card => card.level)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    expect(pack.cards.every(card => card.level >= 4)).toBe(true);
+    expect(pack.cards[0].level).toBeLessThan(pack.cards[pack.cards.length - 1].level);
+    expect(Math.max(...pack.cards.map(card => card.level))).toBeGreaterThanOrEqual(7);
     expect(pack.targetNote).toBeNull();
   });
 });

@@ -22,7 +22,8 @@ function test(point, prompt, value, steps, extra = {}) {
 
 function rung(level, fns) {
   const n = fns.length;
-  const i = ((Math.max(1, Number(level) || 1) - 1) % n + n) % n;
+  const lv = Math.max(1, Number(level) || 1);
+  const i = Math.min(n - 1, lv - 1);
   return fns[i];
 }
 
@@ -39,13 +40,14 @@ const BY_CHAPTER = {
       () => flash('cmmmc', 'Cel mai mic multiplu comun nenul e…', ['cel mai mic număr nenul care se împarte la amândouă', 'cel mai mare divizor', 'diferența lor', 'un număr prim'], 'Este primul multiplu comun pe care îl întâlnești după 0.', 8)
     ],
     tests: [
-      (rand, lv) => { const a = int(rand, 2, 9); const b = int(rand, 2, 9); return test('adunare', `Calculează ${a} + ${b}. Doar rezultatul.`, a + b, [`${a} + ${b} = ${a + b}`], { level: lv }); },
+      (rand, lv) => { const a = int(rand, 12, 48); const b = int(rand, 6, 18); return test('adunare', `Calculează ${a} + ${b} × 2. Doar rezultatul.`, a + b * 2, [`Întâi înmulțirea: ${b} × 2 = ${b * 2}`, `${a} + ${b * 2} = ${a + b * 2}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 2, 8); return test('puteri', `Calculează ${a}².`, a * a, [`${a} × ${a} = ${a * a}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 2, 6); const b = int(rand, 2, 5); const c = int(rand, 1, 8); const val = a ** 2 * b + c; return test('paranteze', `Calculează ${a}² × ${b} + ${c}.`, val, [`${a}² = ${a * a}`, `${a * a} × ${b} = ${a * a * b}`, `+ ${c} = ${val}`], { level: lv }); },
-      (rand, lv) => { const n = int(rand, 12, 40) * 3; const sum = String(n).split('').reduce((acc, d) => acc + Number(d), 0); return test('div3', `Suma cifrelor numărului ${n}. Doar suma.`, sum, [`Cifrele lui ${n}`, `Suma = ${sum}`], { level: lv }); },
+      (rand, lv) => { const a = int(rand, 3, 8); const b = int(rand, 2, 6); const c = int(rand, 2, 9); const val = a * a * b + c * c; return test('paranteze', `Calculează ${a}² × ${b} + ${c}². Doar rezultatul.`, val, [`${a}² = ${a * a}`, `${a * a} × ${b} = ${a * a * b}`, `${c}² = ${c * c}`, `Suma = ${val}`], { level: lv }); },
       (rand, lv) => { const g = int(rand, 2, 6); const a = g * int(rand, 2, 7); const b = g * int(rand, 2, 7); return test('cmmdc', `Cel mai mare număr care împarte și pe ${a}, și pe ${b}.`, gcd(a, b), [`Divizorii comuni se opresc la ${gcd(a, b)}`], { level: lv }); },
       (rand, lv) => { const a = pick(rand, [4, 6, 8, 9, 10]); const b = pick(rand, [6, 8, 12, 15]); return test('cmmmc', `Cel mai mic multiplu comun nenul al numerelor ${a} și ${b}.`, lcm(a, b), [`Multiplul comun nenul cel mai mic este ${lcm(a, b)}`], { level: lv }); },
-      (rand, lv) => { const a = int(rand, 2, 5); const b = int(rand, 2, 4); const c = int(rand, 2, 6); const val = a ** 2 * b - c ** 2; return test('paranteze', `Calculează ${a}² × ${b} − ${c}². Doar rezultatul.`, val, [`${a}² = ${a * a}`, `${a * a} × ${b} = ${a * a * b}`, `${c}² = ${c * c}`, `${a * a * b} − ${c * c} = ${val}`], { level: lv }); }
+      (rand, lv) => { const a = int(rand, 3, 7); const b = int(rand, 2, 5); const c = int(rand, 2, a); const val = a * a * b - c * c; return test('paranteze', `Calculează ${a}² × ${b} − ${c}². Doar rezultatul.`, val, [`${a}² = ${a * a}`, `${a * a} × ${b} = ${a * a * b}`, `${c}² = ${c * c}`, `${a * a * b} − ${c * c} = ${val}`], { level: lv }); },
+      (rand, lv) => { const a = pick(rand, [4, 6, 8, 10]); const b = pick(rand, [6, 8, 12]); const c = pick(rand, [9, 10, 15]); const val = lcm(lcm(a, b), c); return test('cmmmc', `Cel mai mic multiplu comun nenul al numerelor ${a}, ${b} și ${c}.`, val, [`Întâi ${a} și ${b}: ${lcm(a, b)}`, `Apoi cu ${c}: ${val}`], { level: lv }); }
     ]
   },
   fractii: {
@@ -66,7 +68,8 @@ const BY_CHAPTER = {
       (rand, lv) => { const pret = pick(rand, [40, 80, 100, 120]); const p = pick(rand, [10, 20, 25]); const cut = (pret * p) / 100; return test('procent', `Un obiect costă ${pret} lei. Reducere ${p}%. Cât plătești?`, pret - cut, [`${p}% din ${pret} = ${cut}`, `${pret} − ${cut} = ${pret - cut}`], { level: lv }); },
       (rand, lv) => { const k = pick(rand, [3, 4, 6]); const n = k * pick(rand, [3, 4, 5, 6]); return test('parte', `Cât este 1/${k} din ${n}?`, n / k, [`${n} : ${k} = ${n / k}`], { level: lv }); },
       (rand, lv) => { const pret = pick(rand, [80, 100, 120]); const p = pick(rand, [10, 15, 20]); const cut = (pret * p) / 100; const extra = pick(rand, [5, 8, 10]); return test('procent', `Preț ${pret} lei, reducere ${p}%, apoi mai scazi ${extra} lei. Cât rămâne?`, pret - cut - extra, [`${p}% = ${cut}`, `${pret} − ${cut} = ${pret - cut}`, `${pret - cut} − ${extra} = ${pret - cut - extra}`], { level: lv }); },
-      (rand, lv) => { const a = pick(rand, [2, 3, 4]); const b = pick(rand, [3, 4, 6]); const d = lcm(a, b); const n1 = d / a; const n2 = d / b; const g = gcd(n1 + n2, d); return test('numitor', `Calculează 1/${a} + 1/${b}. Fracție ireductibilă.`, `${(n1 + n2) / g}/${d / g}`, [`Numitor comun ${d}`, `1/${a}=${n1}/${d}, 1/${b}=${n2}/${d}`, `Suma = ${(n1 + n2) / g}/${d / g}`], { answers: [`${(n1 + n2) / g}/${d / g}`], numeric: false, level: lv }); }
+      (rand, lv) => { const a = pick(rand, [2, 3, 4]); const b = pick(rand, [3, 4, 6]); const d = lcm(a, b); const n1 = d / a; const n2 = d / b; const g = gcd(n1 + n2, d); return test('numitor', `Calculează 1/${a} + 1/${b}. Fracție ireductibilă.`, `${(n1 + n2) / g}/${d / g}`, [`Numitor comun ${d}`, `1/${a}=${n1}/${d}, 1/${b}=${n2}/${d}`, `Suma = ${(n1 + n2) / g}/${d / g}`], { answers: [`${(n1 + n2) / g}/${d / g}`], numeric: false, level: lv }); },
+      (rand, lv) => { const row = pick(rand, [[40, 2, 50, 10], [80, 4, 25, 5], [60, 2, 10, 3], [40, 5, 25, 2]]); const [whole, k, p, val] = row; const part = whole / k; return test('procent', `Cât este ${p}% din 1/${k} din ${whole}?`, val, [`1/${k} din ${whole} = ${part}`, `${p}% din ${part} = ${val}`], { level: lv }); }
     ]
   },
   geometrie: {
@@ -86,8 +89,9 @@ const BY_CHAPTER = {
       (rand, lv) => { const a = int(rand, 4, 9); const b = int(rand, 4, 9); const c = int(rand, 4, 9); return test('perimetru', `Triunghi cu laturile ${a} cm, ${b} cm și ${c} cm. Perimetrul, în cm.`, a + b + c, [`${a} + ${b} + ${c} = ${a + b + c}`], { level: lv }); },
       (rand, lv) => { const L = int(rand, 6, 14); const l = int(rand, 4, 9); return test('arie-drep', `Aria unui dreptunghi ${L} cm × ${l} cm, în cm².`, L * l, [`${L} × ${l} = ${L * l}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 20, 70); return test('unghi', `Un unghi de ${a}° și unul alăturat fac 180°. Cât e alăturatul?`, 180 - a, [`180 − ${a} = ${180 - a}`], { level: lv }); },
-      (rand, lv) => { const whole = int(rand, 4, 12) * 2; return test('mijloc', `Segment de ${whole} cm. Cât măsoară jumătatea până la mijloc, în cm?`, whole / 2, [`${whole} : 2 = ${whole / 2}`], { level: lv }); },
-      (rand, lv) => { const a = int(rand, 2, 6); return test('volum-cub', `Cub cu latura ${a} cm. Volumul, în cm³.`, a * a * a, [`${a} × ${a} × ${a} = ${a * a * a}`], { level: lv }); }
+      (rand, lv) => { let L = int(rand, 8, 16); let l = int(rand, 4, 9); if ((L + l) % 2) l += 1; const side = (L + l) / 2; return test('perimetru', `Dreptunghi ${L} cm pe ${l} cm. Un pătrat are același perimetru. Latura pătratului, în cm.`, side, [`P = 2×(${L}+${l}) = ${2 * (L + l)}`, `${2 * (L + l)} : 4 = ${side}`], { level: lv }); },
+      (rand, lv) => { const a = int(rand, 2, 6); return test('volum-cub', `Cub cu latura ${a} cm. Volumul, în cm³.`, a * a * a, [`${a} × ${a} × ${a} = ${a * a * a}`], { level: lv }); },
+      (rand, lv) => { const a = int(rand, 5, 9); const aria = a * a; const peri = 4 * a; return test('arie-drep', `Pătrat de latură ${a} cm. Cu cât este aria (cm²) mai mare decât perimetrul (cm)?`, aria - peri, [`Aria = ${aria}`, `Perimetrul = ${peri}`, `${aria} − ${peri} = ${aria - peri}`], { level: lv }); }
     ]
   },
   multimi: {
@@ -107,8 +111,9 @@ const BY_CHAPTER = {
       (rand, lv) => { const a = int(rand, 4, 9); const b = int(rand, 6, 12); return test('cmmdc', `c.m.m.d.c.(${a * 2}, ${b * 2}).`, gcd(a * 2, b * 2), [`c.m.m.d.c. = ${gcd(a * 2, b * 2)}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 8, 20); const b = int(rand, 8, 20); const both = int(rand, 2, Math.min(6, a, b)); const total = int(rand, a + b - both + 2, a + b - both + 10); const none = total - (a + b - both); return test('intersectie', `Grup de ${total}: ${a} mate, ${b} română, ${both} pe amândouă. Câți niciunul?`, none, [`În cel puțin un cerc: ${a + b - both}`, `${total} − ${a + b - both} = ${none}`], { level: lv }); },
       (rand, lv) => { const a = pick(rand, [8, 12, 18]); const b = pick(rand, [12, 18, 24]); return test('cmmmc', `c.m.m.m.c.(${a}, ${b}).`, lcm(a, b), [`c.m.m.m.c. = ${lcm(a, b)}`], { level: lv }); },
-      (rand, lv) => { const a = 48; const b = 18; return test('cmmdc', `c.m.m.d.c.(${a}, ${b}) × c.m.m.m.c.(${a}, ${b}) : ${a}.`, b, ['Produsul c.m.m.d.c. și c.m.m.m.c. e produsul numerelor', `${a}×${b}/${a} = ${b}`], { level: lv }); },
-      (rand, lv) => { const x = pick(rand, [8, 10, 12]); const y = pick(rand, [12, 15, 18]); const z = pick(rand, [18, 20, 24]); return test('cmmmc', `Trei semnale la ${x}, ${y} și ${z} s. După câte secunde coincid din nou?`, lcm(lcm(x, y), z), [`c.m.m.m.c.(${x},${y},${z}) = ${lcm(lcm(x, y), z)}`], { level: lv }); }
+      (rand, lv) => { const a = pick(rand, [36, 48, 60]); const b = pick(rand, [18, 24, 30]); return test('cmmdc', `c.m.m.d.c.(${a}, ${b}) × c.m.m.m.c.(${a}, ${b}) : ${a}.`, b, ['Produsul c.m.m.d.c. și c.m.m.m.c. e produsul numerelor', `${a}×${b}/${a} = ${b}`], { level: lv }); },
+      (rand, lv) => { const x = pick(rand, [8, 10, 12]); const y = pick(rand, [12, 15, 18]); const z = pick(rand, [18, 20, 24]); return test('cmmmc', `Trei semnale la ${x}, ${y} și ${z} s. După câte secunde coincid din nou?`, lcm(lcm(x, y), z), [`c.m.m.m.c.(${x},${y},${z}) = ${lcm(lcm(x, y), z)}`], { level: lv }); },
+      (rand, lv) => { const a = int(rand, 12, 20); const b = int(rand, 10, 18); const both = int(rand, 2, 5); const outside = int(rand, 3, 8); const inOne = a + b - both; const total = inOne + outside; return test('reuniune', `${a} fac sport, ${b} muzică, ${both} pe amândouă. Alți ${outside} nu fac niciuna. Câți sunt în grup?`, total, [`Cel puțin una: ${inOne}`, `Plus cei ${outside}: ${total}`], { level: lv }); }
     ]
   },
   proportii: {
@@ -129,7 +134,8 @@ const BY_CHAPTER = {
       (rand, lv) => { const k = pick(rand, [2, 3, 4, 5]); const real = k * int(rand, 4, 12); return test('scara', `Scara 1:${k}. Pe hartă ${real / k} cm. Câți cm în realitate?`, real, [`${real / k} × ${k} = ${real}`], { level: lv }); },
       (rand, lv) => { const work = pick(rand, [3, 5, 7]); const hours = pick(rand, [2, 4, 6]); return test('invers', `${work} robinete umplu un bazin în ${hours} ore. Câte ore la ${work * 2} robinete?`, hours / 2, [`Produsul rămâne ${work * hours}`, `${work * 2} × ? = ${work * hours}`, `? = ${hours / 2}`], { level: lv }); },
       (rand, lv) => { const pret = pick(rand, [80, 100, 120]); return test('procent6', `Un preț de ${pret} lei crește cu 20%, apoi scade cu 20% din noul preț. Cât e acum?`, Math.round(pret * 1.2 * 0.8), [`${pret} + 20% = ${pret * 1.2}`, `20% din noul preț, nu din ${pret}`, `Rămân ${Math.round(pret * 1.2 * 0.8)}`], { level: lv }); },
-      (rand, lv) => { const n = int(rand, 6, 10); const pret = n * int(rand, 10, 16); const k = int(rand, 3, n - 2); const p = pick(rand, [10, 20]); const brute = (pret / n) * k; const cut = (brute * p) / 100; return test('regula3', `${n} m costă ${pret} lei. Cumperi ${k} m cu ${p}% reducere. Cât plătești?`, brute - cut, [`1 m = ${pret / n}`, `${k} m = ${brute}`, `${p}% = ${cut}`, `Plătești ${brute - cut}`], { level: lv }); }
+      (rand, lv) => { const n = int(rand, 6, 10); const pret = n * int(rand, 10, 16); const k = int(rand, 3, n - 2); const p = pick(rand, [10, 20]); const brute = (pret / n) * k; const cut = (brute * p) / 100; return test('regula3', `${n} m costă ${pret} lei. Cumperi ${k} m cu ${p}% reducere. Cât plătești?`, brute - cut, [`1 m = ${pret / n}`, `${k} m = ${brute}`, `${p}% = ${cut}`, `Plătești ${brute - cut}`], { level: lv }); },
+      (rand, lv) => { const w2 = pick(rand, [2, 3, 4]); const h1 = pick(rand, [3, 4, 5]); const w1 = w2 * 2; const hours = h1 * 2; return test('invers', `${w1} oameni termină o lucrare în ${h1} ore. Câte ore le trebuie la ${w2} oameni, același ritm?`, hours, [`Produsul rămâne ${w1 * h1}`, `${w1 * h1} : ${w2} = ${hours}`], { level: lv }); }
     ]
   },
   'intregi-rationale': {
@@ -148,9 +154,10 @@ const BY_CHAPTER = {
       (rand, lv) => { const n = int(rand, 3, 12); return test('modul', `Cât este |−${n}|?`, n, [`Distanța până la 0 e ${n}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 2, 8); const b = int(rand, 2, 8); return test('produs', `Calculează (−${a}) × ${b}.`, -a * b, ['Minus ori plus = minus', `= ${-a * b}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 3, 12); const b = int(rand, 2, 9); const c = int(rand, 1, 8); return test('adunare', `Calculează (−${a}) + ${b} + (−${c}).`, -a + b - c, [`−${a} + ${b} = ${-a + b}`, `${-a + b} + (−${c}) = ${-a + b - c}`], { level: lv }); },
-      (rand, lv) => { const x = int(rand, 2, 9); const b = int(rand, 2, 10); return test('ecuatie', `Află x: x + ${b} = ${x + b}.`, x, [`x = ${x + b} − ${b} = ${x}`], { level: lv }); },
+      (rand, lv) => { const a = int(rand, 6, 15); const b = int(rand, 3, 9); const c = int(rand, 2, 8); const val = -a + b - c; return test('adunare', `Calculează (−${a}) − (−${b}) + (−${c}).`, val, [`−${a} − (−${b}) = ${-a + b}`, `${-a + b} + (−${c}) = ${val}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 2, 5); const x = int(rand, 2, 8); const b = int(rand, 1, 9); return test('ecuatie', `Află x: ${a}x − ${b} = ${a * x - b}.`, x, [`${a}x = ${a * x}`, `x = ${x}`], { level: lv }); },
-      (rand, lv) => { const a = int(rand, 2, 4); const x = int(rand, 2, 6); const b = int(rand, 1, 8); const c = int(rand, 1, 5); return test('ecuatie', `Află x: ${a}x − ${b} = −${c}x + ${a * x - b + c * x}.`, x, [`Treci necunoscutele într-o parte`, `${a}x + ${c}x = ${a * x + c * x}`, `x = ${x}`], { level: lv }); }
+      (rand, lv) => { const a = int(rand, 2, 4); const x = int(rand, 2, 6); const b = int(rand, 1, 8); const c = int(rand, 1, 5); return test('ecuatie', `Află x: ${a}x − ${b} = −${c}x + ${a * x - b + c * x}.`, x, [`Treci necunoscutele într-o parte`, `${a}x + ${c}x = ${a * x + c * x}`, `x = ${x}`], { level: lv }); },
+      (rand, lv) => { const a = int(rand, 2, 5); const b = int(rand, 2, 6); const c = int(rand, 1, 4); const val = a * b - c; return test('produs', `Calculează (−${a}) × (−${b}) + (−${c}).`, val, [`Minus ori minus = plus`, `${a} × ${b} = ${a * b}`, `${a * b} + (−${c}) = ${val}`], { level: lv }); }
     ]
   },
   triunghi: {
@@ -169,9 +176,10 @@ const BY_CHAPTER = {
       (rand, lv) => { const a = int(rand, 30, 70); const b = int(rand, 30, 80); const useB = a + b < 170 ? b : 40; return test('suma180', `Unghiurile ${a}° și ${useB}°. Al treilea unghi?`, 180 - a - useB, [`180 − ${a} − ${useB} = ${180 - a - useB}`], { level: lv }); },
       (rand, lv) => { const varf = pick(rand, [20, 30, 40, 50, 80]); const baza = (180 - varf) / 2; return test('suma180', `Triunghi isoscel, unghiul din vârf ${varf}°. Un unghi de la bază?`, baza, [`Rămân ${180 - varf}°`, `${180 - varf} : 2 = ${baza}`], { level: lv }); },
       (rand, lv) => { const triples = [[3, 4, 5], [5, 12, 13], [6, 8, 10]]; const [x, y, z] = pick(rand, triples); return test('pitagora', `Catete ${x} și ${y}. Ipotenuza?`, z, [`${x}² + ${y}² = ${z}²`], { level: lv }); },
-      (rand, lv) => { const r = pick(rand, [3, 5, 7, 8]); return test('cerc', `Raza unui cerc este ${r} cm. Cât este diametrul?`, 2 * r, [`d = 2r = ${2 * r}`], { level: lv }); },
+      (rand, lv) => { const baza = pick(rand, [50, 65, 70]); const varf = 180 - 2 * baza; return test('suma180', `Triunghi isoscel, un unghi de la bază ${baza}°. Unghiul din vârf?`, varf, [`Cele două de la bază sunt egale`, `180 − ${baza} − ${baza} = ${varf}`], { level: lv }); },
       (rand, lv) => { const triples = [[3, 4, 5], [6, 8, 10], [5, 12, 13]]; const [x, y, z] = pick(rand, triples); const k = int(rand, 1, 3); return test('pitagora', `Catete ${x * k} și ${y * k}. Perimetrul triunghiului dreptunghic.`, (x + y + z) * k, [`Ipotenuza = ${z * k}`, `Perimetru = ${(x + y + z) * k}`], { level: lv }); },
-      (rand, lv) => { const a = pick(rand, [40, 50, 62]); return test('opuse', `Două drepte se taie. Un unghi e ${a}°. Suma dintre opusul la vârf și unul alăturat?`, 180, [`Opusul = ${a}°`, `Alăturatul = ${180 - a}°`, `Suma = 180`], { level: lv }); }
+      (rand, lv) => { const a = pick(rand, [40, 50, 62]); return test('opuse', `Două drepte se taie. Un unghi e ${a}°. Suma dintre opusul la vârf și unul alăturat?`, 180, [`Opusul = ${a}°`, `Alăturatul = ${180 - a}°`, `Suma = 180`], { level: lv }); },
+      (rand, lv) => { const u = pick(rand, [35, 40, 48, 55]); const v = pick(rand, [62, 70, 78]); const ext = u + v; return test('suma180', `Într-un triunghi, două unghiuri au ${u}° și ${v}°. Cât măsoară unghiul exterior alăturat celui de-al treilea?`, ext, [`Exteriorul e egal cu suma celor două nealăturate`, `${u} + ${v} = ${ext}`], { level: lv }); }
     ]
   },
   reale: {
@@ -190,9 +198,10 @@ const BY_CHAPTER = {
       (rand, lv) => { const a = pick(rand, [4, 9, 16, 25]); return test('radical', `Calculează √${a} + 1.`, Math.sqrt(a) + 1, [`√${a} = ${Math.sqrt(a)}`, `+ 1 = ${Math.sqrt(a) + 1}`], { level: lv }); },
       (rand, lv) => { const a = pick(rand, [4, 9, 16, 25]); const b = pick(rand, [4, 9, 16]); return test('radical', `Calculează √${a} × √${b}.`, Math.sqrt(a) * Math.sqrt(b), [`√${a} = ${Math.sqrt(a)}`, `√${b} = ${Math.sqrt(b)}`, `Produs = ${Math.sqrt(a) * Math.sqrt(b)}`], { level: lv }); },
       (rand, lv) => { const k = pick(rand, [2, 3, 4]); const n = pick(rand, [9, 16, 25]); return test('radical', `Calculează ${k} × √${n}.`, k * Math.sqrt(n), [`√${n} = ${Math.sqrt(n)}`, `${k} × ${Math.sqrt(n)} = ${k * Math.sqrt(n)}`], { level: lv }); },
-      (rand, lv) => test('rationaliz', 'Raționalizează 6/√3 și simplifică. Scrie de forma a√3 (ex. 2√3).', '2√3', ['6/√3 × √3/√3 = 6√3/3', '2√3'], { answers: ['2√3', '2*sqrt(3)', '2sqrt3'], numeric: false, level: lv }),
-      (rand, lv) => test('medii', 'Media geometrică a lui 4 și 16. Doar numărul.', 8, ['√(4×16)=√64=8'], { level: lv }),
-      (rand, lv) => { const lo = 3; const hi = 6; return test('ordin', `Câți naturali n există cu ${lo} < √n < ${hi}?`, 26, [`n ≥ ${lo * lo + 1} și n ≤ ${hi * hi - 1}`, 'De la 10 la 35: 26'], { level: lv }); }
+      (rand, lv) => { const row = pick(rand, [[6, 3, 2, 3], [8, 2, 4, 2], [12, 3, 4, 3], [18, 2, 9, 2]]); const [num, rad, coef, root] = row; return test('rationaliz', `Raționalizează ${num}/√${rad} și simplifică. Scrie de forma a√${root}.`, `${coef}√${root}`, [`${num}/√${rad} × √${rad}/√${rad}`, `${coef}√${root}`], { answers: [`${coef}√${root}`, `${coef}*sqrt(${root})`, `${coef}sqrt${root}`], numeric: false, level: lv }); },
+      (rand, lv) => { const row = pick(rand, [[4, 16, 8], [9, 16, 12], [4, 36, 12], [9, 25, 15]]); const [p, q, g] = row; return test('medii', `Media geometrică a lui ${p} și ${q}. Doar numărul.`, g, [`√(${p}×${q}) = √${p * q} = ${g}`], { level: lv }); },
+      (rand, lv) => { const lo = pick(rand, [2, 3, 4]); const hi = lo + pick(rand, [2, 3]); const from = lo * lo + 1; const to = hi * hi - 1; const val = to - from + 1; return test('ordin', `Câți naturali n există cu ${lo} < √n < ${hi}?`, val, [`n ≥ ${from} și n ≤ ${to}`, `De la ${from} la ${to}: ${val}`], { level: lv }); },
+      (rand, lv) => { const a = pick(rand, [4, 9, 16, 25]); const b = pick(rand, [4, 9, 16]); const val = Math.sqrt(a * b); return test('radical', `Calculează √(${a} × ${b}).`, val, [`${a} × ${b} = ${a * b}`, `√${a * b} = ${val}`], { level: lv }); }
     ]
   },
   ecuati: {
@@ -213,7 +222,8 @@ const BY_CHAPTER = {
       (rand, lv) => { const x = int(rand, 3, 10); const a = int(rand, 2, 5); let b = int(rand, 1, 6); if ((a * x - b) % 2) b += 1; return test('cantar', `Află x: (${a}x − ${b})/2 = ${(a * x - b) / 2}.`, x, [`Înmulțești cu 2`, `${a}x = ${a * x}`, `x = ${x}`], { level: lv }); },
       (rand, lv) => { const y = int(rand, 2, 8); const x = y + 1; return test('sistem', `x − y = 1 și x + y = ${x + y}. Află y.`, y, [`Aduni: 2x = ${2 * x}`, `x = ${x}`, `y = ${y}`], { level: lv }); },
       (rand, lv) => { const y = int(rand, 2, 6); const x = y + 2; return test('substituie', `3x + 2y = ${3 * x + 2 * y}, x = y + 2. Cât e x?`, x, [`x = y + 2`, `3(y+2)+2y = ${3 * x + 2 * y}`, `y = ${y}, x = ${x}`], { level: lv }); },
-      (rand, lv) => { const x = int(rand, 2, 5); const y = int(rand, -3, 4); return test('solutie', `Pentru (${x}, ${y}) calculează 4x − y.`, 4 * x - y, [`4×${x} − (${y}) = ${4 * x - y}`], { level: lv }); }
+      (rand, lv) => { const y = int(rand, 2, 6); const x = y + int(rand, 1, 3); return test('sistem', `x + y = ${x + y} și x − y = ${x - y}. Află x.`, x, [`Aduni ecuațiile: 2x = ${2 * x}`, `x = ${x}`], { level: lv }); },
+      (rand, lv) => { const x = int(rand, 3, 8); const y = int(rand, 1, 5); return test('sistem', `2x + y = ${2 * x + y} și x − y = ${x - y}. Află y.`, y, [`Din a doua: x = y + ${x - y}`, `2(y + ${x - y}) + y = ${2 * x + y}`, `y = ${y}`], { level: lv }); }
     ]
   },
   date: {
@@ -233,8 +243,9 @@ const BY_CHAPTER = {
       (rand, lv) => { const a = int(rand, 1, 5); const b = int(rand, 1, 8); const x = int(rand, 2, 6); return test('depend', `y = ${a}x + ${b}. Cât e y pentru x = ${x}?`, a * x + b, [`${a} × ${x} = ${a * x}`, `${a * x} + ${b} = ${a * x + b}`], { level: lv }); },
       (rand, lv) => { const x = int(rand, 1, 6); const y = int(rand, 1, 6); return test('origine', `Simetricul lui A(${x}, −${y}) față de origine. Scrie (x, y).`, `(-${x}, ${y})`, ['Schimbi ambele semne'], { answers: [`(-${x}, ${y})`, `(-${x},${y})`], numeric: false, level: lv }); },
       (rand, lv) => { const x1 = int(rand, 1, 4); const y1 = int(rand, 1, 5); const x2 = x1 + int(rand, 1, 3); const y2 = y1 + int(rand, 1, 3); return test('depend', `Din ( ${x1}, ${y1} ) la ( ${x2}, ${y2} ), cu cât crește y când x crește cu ${x2 - x1}?`, y2 - y1, [`Δx = ${x2 - x1}`, `Δy = ${y2 - y1}`], { level: lv }); },
-      (rand, lv) => { const a = int(rand, 2, 5); const x = int(rand, 3, 7); return test('depend', `y = ${a}x. Tabel: x=${x}. y=?`, a * x, [`${a} × ${x} = ${a * x}`], { level: lv }); },
-      (rand, lv) => { const x = int(rand, 2, 6); const y = int(rand, 2, 8); return test('origine', `A(${x}, ${y}). Simetric față de axa Ox. Ordonata noului punct?`, -y, ['Ox păstrează x, schimbă semnul lui y', `y → ${-y}`], { level: lv }); }
+      (rand, lv) => { const a = int(rand, 2, 5); const b = int(rand, 1, 6); const x = int(rand, 2, 7); const y = a * x + b; return test('depend', `y = ${a}x + ${b}. Pentru ce x avem y = ${y}?`, x, [`${a}x = ${y} − ${b} = ${y - b}`, `x = ${x}`], { level: lv }); },
+      (rand, lv) => { const x = int(rand, 2, 6); const y = int(rand, 2, 8); return test('origine', `A(${x}, ${y}). Simetric față de axa Ox. Ordonata noului punct?`, -y, ['Ox păstrează x, schimbă semnul lui y', `y → ${-y}`], { level: lv }); },
+      (rand, lv) => { const row = pick(rand, [[3, 4, 5], [6, 8, 10], [5, 12, 13]]); const [dx, dy, dist] = row; return test('pereche', `Cât e lungimea segmentului de la O(0, 0) la A(${dx}, ${dy})?`, dist, [`${dx}² + ${dy}² = ${dist * dist}`, `√${dist * dist} = ${dist}`], { level: lv }); }
     ]
   },
   geo7: {
@@ -255,7 +266,8 @@ const BY_CHAPTER = {
       (rand, lv) => { const r = pick(rand, [7, 14]); const val = (44 * r) / 7; return test('cerc', `Cerc raza ${r}, π=22/7. Lungimea cercului.`, val, [`L = 2πr = 2×(22/7)×${r} = ${val}`], { level: lv }); },
       (rand, lv) => { const k = pick(rand, [2, 3, 4]); return test('asemanare', `Raportul laturilor e 1:${k}. Raportul ariilor? Scrie pătratul (un număr).`, k * k, [`Ariile = pătratul scării`, `${k}² = ${k * k}`], { level: lv }); },
       (rand, lv) => { const B = int(rand, 8, 14); const b = int(rand, 4, 7); let h = int(rand, 4, 8); if (((B + b) * h) % 2) h += 1; const val = ((B + b) * h) / 2; return test('trapez', `Trapez baze ${B} și ${b}, înălțime ${h}. Aria.`, val, [`(${B}+${b})×${h} : 2 = ${val}`], { level: lv }); },
-      (rand, lv) => { const ip = pick(rand, [10, 13, 15]); const op = pick(rand, [6, 8, 9]); return test('trig', `Triunghi dreptunghic, ipotenuză ${ip}, catetă opusă ${op}. sin α = opusă/ipotenuză. Scrie fracția ${op}/${ip} simplificată dacă se poate.`, `${op}/${ip}`, [`sin = ${op}/${ip}`], { answers: [`${op}/${ip}`], numeric: false, level: lv }); }
+      (rand, lv) => { const ip = pick(rand, [10, 13, 15]); const op = pick(rand, [6, 8, 9]); const g = gcd(op, ip); const num = op / g; const den = ip / g; return test('trig', `Triunghi dreptunghic, ipotenuză ${ip}, catetă opusă ${op}. sin α = opusă/ipotenuză. Scrie fracția simplificată.`, `${num}/${den}`, [`sin = ${op}/${ip}`, g > 1 ? `Simplifici cu ${g}: ${num}/${den}` : `Deja ireductibilă: ${num}/${den}`], { answers: [`${num}/${den}`], numeric: false, level: lv }); },
+      (rand, lv) => { const k = pick(rand, [2, 3, 4]); const small = pick(rand, [12, 16, 18, 24]); const big = small * k * k; return test('asemanare', `Raportul laturilor (mare:mic) e ${k}:1. Aria celui mic e ${small}. Aria celui mare?`, big, [`Raportul ariilor = ${k}² = ${k * k}`, `${small} × ${k * k} = ${big}`], { level: lv }); }
     ]
   },
   intervale: {
@@ -274,9 +286,10 @@ const BY_CHAPTER = {
       (rand, lv) => { const a = int(rand, -4, 1); const b = int(rand, 3, 8); return test('interval', `Câte întregi sunt în (${a}, ${b}]?`, b - a, [`${a} nu e inclus, ${b} da`, `De la ${a + 1} la ${b}: ${b - a}`], { level: lv }); },
       (rand, lv) => { const b = int(rand, 2, 6); return test('inecuatie', `Cea mai mică valoare întreagă a lui x dacă x > ${b}?`, b + 1, [`x întreg, strict mai mare decât ${b}: ${b + 1}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 0, 3); const b = a + int(rand, 4, 8); return test('interval', `Câte întregi în [${a}, ${b})?`, b - a, [`${b} nu e inclus`, `De la ${a} la ${b - 1}: ${b - a}`], { level: lv }); },
-      (rand, lv) => test('inecuatie', 'Rezolvă x + 3 ≥ 7. Cel mai mic întreg x.', 4, ['x ≥ 4', 'Cel mai mic întreg: 4'], { level: lv }),
+      (rand, lv) => { const k = int(rand, 2, 6); return test('inecuatie', `Rezolvă −2x ≤ ${2 * k}. Cel mai mic întreg x.`, -k, [`Împarți la −2 și schimbi sensul`, `x ≥ ${-k}`, `Cel mai mic întreg: ${-k}`], { level: lv }); },
       (rand, lv) => { const k = int(rand, 2, 5); return test('inecuatie', `2x < ${2 * k}. Cel mai mare întreg x.`, k - 1, [`x < ${k}`, `Cel mai mare întreg: ${k - 1}`], { level: lv }); },
-      (rand, lv) => { const a = int(rand, -3, 0); const b = int(rand, 4, 7); return test('interval', `Câte întregi sunt în [${a}, ${b}) ∪ {${b}}?`, b - a + 1, [`[${a}, ${b}) plus capătul ${b} = [${a}, ${b}]`, `${b - a + 1} întregi`], { level: lv }); }
+      (rand, lv) => { const a = int(rand, -3, 0); const b = int(rand, 4, 7); return test('interval', `Câte întregi sunt în [${a}, ${b}) ∪ {${b}}?`, b - a + 1, [`[${a}, ${b}) plus capătul ${b} = [${a}, ${b}]`, `${b - a + 1} întregi`], { level: lv }); },
+      (rand, lv) => { const left = int(rand, -4, -1); const right = int(rand, 3, 6); const low = int(rand, 0, 2); const high = int(rand, 4, 5); const from = Math.max(left, low); const to = Math.min(right, high); const val = to >= from ? to - from + 1 : 0; return test('interval', `Câte întregi sunt în [${left}, ${right}] ∩ [${low}, ${high}]?`, val, [`Intersecția e [${from}, ${to}]`, `${val} întregi`], { level: lv }); }
     ]
   },
   algebric: {
@@ -296,8 +309,9 @@ const BY_CHAPTER = {
       (rand, lv) => { const x = int(rand, 2, 6); return test('binom', `Calculează (x+3)² pentru x=${x}.`, x * x + 6 * x + 9, ['x² + 6x + 9', `${x * x} + ${6 * x} + 9 = ${x * x + 6 * x + 9}`], { level: lv }); },
       (rand, lv) => { const x = int(rand, 3, 8); return test('factor', `Calculează 2(x+4) pentru x=${x}.`, 2 * (x + 4), [`x+4 = ${x + 4}`, `×2 = ${2 * (x + 4)}`], { level: lv }); },
       (rand, lv) => { const x = int(rand, 4, 9); return test('binom', `Calculează (x−2)² pentru x=${x}.`, (x - 2) * (x - 2), ['x² − 4x + 4', `${(x - 2) ** 2}`], { level: lv }); },
-      (rand, lv) => { const n = pick(rand, [4, 9, 16, 25]); return test('grad2', `Rezolvă x² = ${n}. Scrie soluția pozitivă.`, Math.sqrt(n), [`x = ±${Math.sqrt(n)}`, `Cerut: ${Math.sqrt(n)}`], { level: lv }); },
-      (rand, lv) => { const x = int(rand, 2, 5); return test('diferenta', `Calculează (2x+1)(2x−1) pentru x=${x}.`, (2 * x + 1) * (2 * x - 1), ['E 4x² − 1', `${4 * x * x} − 1 = ${4 * x * x - 1}`], { level: lv }); }
+      (rand, lv) => { const x = int(rand, 5, 9); return test('asemenea', `Simplifică (x² − 16)/(x − 4) pentru x=${x} (x≠4).`, x + 4, [`x² − 16 = (x−4)(x+4)`, `Rămâne x+4 = ${x + 4}`], { level: lv }); },
+      (rand, lv) => { const x = int(rand, 2, 6); const k = int(rand, 2, 4); const val = (x + k) ** 2 - (x - k) ** 2; return test('diferenta', `Calculează (x+${k})² − (x−${k})² pentru x=${x}.`, val, [`Diferență de pătrate: (2×${k})×(2x) = ${4 * k}x`, `${4 * k}×${x} = ${val}`], { level: lv }); },
+      (rand, lv) => { const x = int(rand, 2, 7); const k = int(rand, 2, 5); const val = x * x; return test('diferenta', `Calculează (x−${k})(x+${k}) + ${k * k} pentru x=${x}.`, val, [`(x−${k})(x+${k}) = x² − ${k * k}`, `x² − ${k * k} + ${k * k} = x²`, `${x}² = ${val}`], { level: lv }); }
     ]
   },
   functii: {
@@ -316,9 +330,10 @@ const BY_CHAPTER = {
       (rand, lv) => { const a = int(rand, -4, 4) || 2; const b = int(rand, -6, 8); const x = int(rand, -3, 5); const y = a * x + b; const sign = b >= 0 ? `+ ${b}` : `− ${-b}`; return test('dreapta', `f(x)=${a}x ${sign}. Calculează f(${x}).`, y, [`${a} × ${x} = ${a * x}`, `${a * x} ${sign} = ${y}`], { level: lv }); },
       (rand, lv) => { const b = int(rand, 1, 9); return test('b', `f(x)=3x + ${b}. Cât e f(0)?`, b, ['f(0)=b', `${b}`], { level: lv }); },
       (rand, lv) => { const a = int(rand, 6, 9); const b = int(rand, 6, 9); const m = int(rand, 6, 9); let c = 3 * m - a - b; if (c < 5 || c > 10) { return test('medie', 'Media notelor 8, 8, 8.', 8, ['Suma = 24', ': 3 = 8'], { level: lv }); } return test('medie', `Media notelor ${a}, ${b}, ${c}.`, m, [`Suma = ${a + b + c}`, `: 3 = ${m}`], { level: lv }); },
-      (rand, lv) => { const a = int(rand, 2, 6); const b = a + 4; const c = a + 8; return test('mediana', `Mediana setului ${c}, ${a}, ${b} (sortezi întâi).`, b, [`Sortat: ${a}, ${b}, ${c}`, `Mijlocul e ${b}`], { level: lv }); },
-      (rand, lv) => { const lo = int(rand, 2, 5); const hi = lo + int(rand, 6, 12); return test('amplitudine', `Amplitudinea unui set cu min ${lo} și max ${hi}.`, hi - lo, [`${hi} − ${lo} = ${hi - lo}`], { level: lv }); },
-      (rand, lv) => { const a = int(rand, 2, 5); const x1 = int(rand, 1, 4); const x2 = x1 + int(rand, 2, 4); return test('dreapta', `f(x)=${a}x. Cu cât crește f când x crește de la ${x1} la ${x2}?`, a * (x2 - x1), [`Δx = ${x2 - x1}`, `Δf = ${a} × ${x2 - x1} = ${a * (x2 - x1)}`], { level: lv }); }
+      (rand, lv) => { const raw = [int(rand, 1, 5), int(rand, 6, 9), int(rand, 10, 14), int(rand, 3, 8), int(rand, 15, 20)]; const sorted = raw.slice().sort((x, y) => x - y); const med = sorted[2]; return test('mediana', `Mediana setului ${raw.join(', ')} după ordonare.`, med, [`Ordine: ${sorted.join(', ')}`, `Mijlocul e ${med}`], { level: lv }); },
+      (rand, lv) => { const nums = [int(rand, 1, 5), int(rand, 6, 11), int(rand, 12, 19), int(rand, 3, 9)]; const amp = Math.max(...nums) - Math.min(...nums); return test('amplitudine', `Amplitudinea setului ${nums.join(', ')}.`, amp, [`max − min = ${amp}`], { level: lv }); },
+      (rand, lv) => { const a = int(rand, 2, 5); const x1 = int(rand, 1, 4); const x2 = x1 + int(rand, 2, 4); return test('dreapta', `f(x)=${a}x. Cu cât crește f când x crește de la ${x1} la ${x2}?`, a * (x2 - x1), [`Δx = ${x2 - x1}`, `Δf = ${a} × ${x2 - x1} = ${a * (x2 - x1)}`], { level: lv }); },
+      (rand, lv) => { const mode = int(rand, 4, 9); const other = [mode - 2, mode + 3, mode + 1]; const bag = [mode, mode, ...other]; const shown = [bag[2], bag[0], bag[3], bag[1], bag[4]]; return test('modul-stat', `Moda setului ${shown.join(', ')}.`, mode, [`${mode} apare de două ori, celelalte o dată`, `Moda = ${mode}`], { level: lv }); }
     ]
   },
   spatiu: {
@@ -339,7 +354,8 @@ const BY_CHAPTER = {
       (rand, lv) => { const b = int(rand, 4, 10); const h = (b % 3 === 0) ? int(rand, 4, 10) : pick(rand, [3, 6, 9, 12]); return test('piramida', `Piramidă cu baza pătrat ${b}×${b}, înălțime ${h}. Volumul.`, (b * b * h) / 3, [`Ab = ${b * b}`, `V = (${b * b}×${h})/3 = ${(b * b * h) / 3}`], { level: lv }); },
       (rand, lv) => { const r = pick(rand, [7, 14]); const h = int(rand, 2, 6); const val = (22 * r * r * h) / 7; return test('cilindru', `Cilindru r=${r}, h=${h}, π=22/7. Volumul.`, val, [`πr²h = (22/7)×${r}²×${h} = ${val}`], { level: lv }); },
       (rand, lv) => { const r = pick(rand, [3, 6]); const h = pick(rand, [3, 9]); return test('con', `Con r=${r}, h=${h}, π=3. Volumul (aprox.).`, (3 * r * r * h) / 3, [`(πr²h)/3 = (3×${r * r}×${h})/3 = ${r * r * h}`], { level: lv }); },
-      (rand, lv) => { const r = pick(rand, [3, 6]); return test('sfera', `Sferă r=${r}, π=3. Volumul aprox. (4/3)πr³.`, (4 / 3) * 3 * r ** 3, [`(4/3)×3×${r ** 3} = ${4 * r ** 3}`], { level: lv }); }
+      (rand, lv) => { const r = pick(rand, [3, 6]); return test('sfera', `Sferă r=${r}, π=3. Volumul aprox. (4/3)πr³.`, (4 / 3) * 3 * r ** 3, [`(4/3)×3×${r ** 3} = ${4 * r ** 3}`], { level: lv }); },
+      (rand, lv) => { const a = int(rand, 4, 8); const cut = int(rand, 1, 3); return test('desfasurare', `Cub de latură ${a}. Tai dintr-un colț un cubuleț de latură ${cut}. Volumul rămas.`, a ** 3 - cut ** 3, [`Cubul mare: ${a}³ = ${a ** 3}`, `Cubulețul: ${cut}³ = ${cut ** 3}`, `Rămân ${a ** 3 - cut ** 3}`], { level: lv }); }
     ]
   }
 };
@@ -359,8 +375,9 @@ function generateMath(chapterId, kind, rand, level) {
   if (!pack) return null;
   const lv = Math.max(1, Number(level) || 1);
   if (kind === 'test') {
-    const fn = rung(lv, pack.tests);
-    return fn(rand, ((lv - 1) % pack.tests.length) + 1);
+    const n = pack.tests.length;
+    const idx = Math.min(n - 1, lv - 1);
+    return pack.tests[idx](rand, idx + 1);
   }
   const fn = rung(lv, pack.flashes);
   return fn(rand);
