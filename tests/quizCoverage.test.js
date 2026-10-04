@@ -167,7 +167,7 @@ describe('acoperirea testelor de matematică', () => {
       kind: 'test',
       count: 7
     });
-    expect(chapter.cards.every(card => card.level >= 4)).toBe(true);
+    expect(chapter.cards.every(card => card.level >= 6)).toBe(true);
     expect(chapter.cards[0].level).toBeLessThan(chapter.cards[chapter.cards.length - 1].level);
     expect(Math.max(...chapter.cards.map(card => card.level))).toBeGreaterThanOrEqual(7);
     expect(chapter.coverage.lessons.total).toBeGreaterThan(0);

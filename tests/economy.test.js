@@ -94,7 +94,7 @@ describe('economy purchases', () => {
       count: 7
     });
     expect(mathPack.status).toBe(200);
-    expect(mathPack.body.cards.every(card => card.level >= 4)).toBe(true);
+    expect(mathPack.body.cards.every(card => card.level >= 6)).toBe(true);
     expect(Math.max(...mathPack.body.cards.map(card => card.level))).toBeGreaterThanOrEqual(7);
     const mathAnswers = mathPack.body.cards.map(card => ({
       card_id: card.id,

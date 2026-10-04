@@ -72,8 +72,8 @@ describe('infinite generated practice', () => {
     expect(pack.cards).toHaveLength(7);
     expect(pack.infinite).toBe(true);
     expect(pack.cards.every(card => String(card.id).startsWith('g:'))).toBe(true);
-    expect(pack.cards.every(card => card.level >= 4)).toBe(true);
-    expect(pack.cards.map(card => card.level)).toEqual([4, 5, 5, 6, 7, 7, 8]);
+    expect(pack.cards.every(card => card.level >= 6)).toBe(true);
+    expect(pack.cards.map(card => card.level)).toEqual([6, 6, 7, 7, 7, 8, 8]);
     expect(pack.cards[0].answers).toBeUndefined();
     const graded = checkExercise(pack.cards[0].id, 'nu-asta');
     expect(graded.found).toBe(true);
@@ -134,7 +134,7 @@ describe('infinite generated practice', () => {
         (GUIDES[subject][grade].units || []).forEach(unit => {
           const tests = pickPractice({ subject, grade, chapterId: unit.id, kind: 'test', count: 7 });
           expect(tests.cards).toHaveLength(7);
-          expect(tests.cards.every(card => card.level >= 4)).toBe(true);
+          expect(tests.cards.every(card => card.level >= 6)).toBe(true);
           expect(Math.max(...tests.cards.map(card => card.level))).toBeGreaterThanOrEqual(7);
           tests.cards.forEach((card, index) => {
             const exercise = findExercise(card.id);

@@ -255,8 +255,10 @@ function line(point, prompt, sample, why, lv, tokens, minWords) {
 
 function choice(rand, rows, lv) {
   const row = pick(rand, rows);
-  if (row.answers) return word(row.point, row.prompt, row.answers, row.why, lv, { tokens: row.tokens });
-  return line(row.point, row.prompt, row.sample, row.why, lv, row.tokens, row.min || 6);
+  const who = Number(lv) >= 6 ? pick(rand, NAMES) : '';
+  const lead = who ? `Pentru ${who}: ` : '';
+  if (row.answers) return word(row.point, `${lead}${row.prompt}`, row.answers, row.why, lv, { tokens: row.tokens });
+  return line(row.point, `${lead}${row.prompt}`, row.sample, row.why, lv, row.tokens, row.min || 6);
 }
 
 function tale(rand) {
@@ -303,12 +305,18 @@ TESTS.limba5 = [
     return word('antonime', `În enunț, «${row[0]}» cere antonimul. Scrie un cuvânt.`, [row[1], row[1] === 'fricos' ? 'laș' : row[1]], row[3], lv, { tokens: [row[2]] });
   },
   (r, lv) => {
+    const who = pick(r, NAMES);
     const row = pick(r, [
       ['Andrei are inimă de piatră', 'piatră', 'figurat pentru că inima nu e o piatră adevărată'],
       ['Maria e o rază de soare', 'soare', 'figurat pentru că Maria nu e un soare pe cer'],
-      ['Vlad e un leu în teren', 'leu', 'figurat pentru că Vlad nu e animalul leu']
+      ['Vlad e un leu în teren', 'leu', 'figurat pentru că Vlad nu e animalul leu'],
+      ['Elena e o floare rară', 'floare', 'figurat pentru că Elena nu e o floare din grădină'],
+      ['Radu are o inimă de aur', 'aur', 'figurat pentru că inima nu e făcută din aur'],
+      ['Ioana e o albină harnică', 'albină', 'figurat pentru că Ioana nu e o albină'],
+      ['Mihai e un stejar în echipă', 'stejar', 'figurat pentru că Mihai nu e un copac'],
+      ['Ana înoată într-un ocean de teme', 'ocean', 'figurat pentru că temele nu sunt o apă']
     ]);
-    return line('sens', `În «${row[0]}», «${row[1]}» are sens propriu sau figurat? Scrie cuvântul și un motiv, minim 6 cuvinte.`, row[2], 'Sensul nu e cel din dicționarul de obiecte.', lv, ['figurat'], 6);
+    return line('sens', `Pentru ${who}: în «${row[0]}», «${row[1]}» are sens propriu sau figurat? Scrie cuvântul și un motiv, minim 6 cuvinte.`, row[2], 'Sensul nu e cel din dicționarul de obiecte.', lv, ['figurat'], 6);
   },
   (r, lv) => {
     const row = pick(r, [
@@ -319,11 +327,22 @@ TESTS.limba5 = [
     return line('acord', `Rescrie corect, minim 6 cuvinte: «${row[0]}»`, row[1], 'Subiectul e la plural, deci și verbul.', lv, [row[2]], 6);
   },
   (r, lv) => {
+    const who = pick(r, NAMES);
     const row = pick(r, [
-      ['piatră', 'Andrei are inimă de piatră', 'figurat'],
-      ['soare', 'Maria e o rază de soare', 'figurat']
+      ['Fetele citește o carte în bibliotecă.', 'Fetele citesc o carte în bibliotecă', 'citesc', 'inimă de piatră'],
+      ['Copiii merge la muzeu după ore.', 'Copiii merg la muzeu după ore', 'merg', 'rază de soare'],
+      ['Băieții scrie tema în clasă.', 'Băieții scriu tema în clasă', 'scriu', 'leu în teren'],
+      ['Elevele a citit poezia ieri.', 'Elevele au citit poezia ieri', 'citit', 'floare rară'],
+      ['Băieții a plecat de la ora de sport.', 'Băieții au plecat de la ora de sport', 'plecat', 'inimă de aur'],
+      ['Fetele a scris compunerea azi.', 'Fetele au scris compunerea azi', 'scris', 'ocean de teme'],
+      ['Copiii a văzut filmul sâmbătă.', 'Copiii au văzut filmul sâmbătă', 'vazut', 'stejar în echipă'],
+      ['Ei a dus atlasul înapoi.', 'Ei au dus atlasul înapoi', 'dus', 'albină harnică'],
+      ['Fetele a plecat de la muzeu.', 'Fetele au plecat de la muzeu', 'plecat', 'rază de soare'],
+      ['Copiii a scris tema aseară.', 'Copiii au scris tema aseară', 'scris', 'inimă de piatră'],
+      ['Băieții citește romanul în clasă.', 'Băieții citesc romanul în clasă', 'citesc', 'stejar în echipă'],
+      ['Elevele merge la bibliotecă mâine.', 'Elevele merg la bibliotecă mâine', 'merg', 'floare rară']
     ]);
-    return line('sens', `Propoziția «${row[1]}» folosește «${row[0]}» figurat. Explică de ce, minim 8 cuvinte, cu «pentru că».`, `Este figurat pentru că ${row[0]} nu e aici obiectul din lumea reală.`, 'Explici sensul, nu doar îl numeri.', lv, ['pentru', 'figurat'], 8);
+    return line('acord', `Pentru ${who}, două lucruri într-un singur răspuns, minim 12 cuvinte. (1) Rescrie corect: «${row[0]}» (2) «${row[3]}» e sens propriu sau figurat? Spune și de ce, cu «pentru că».`, `${row[1]}, iar «${row[3]}» e figurat pentru că nu e obiectul din lumea reală.`, 'Acordul și sensul, amândouă.', lv, [row[2], 'figurat', 'pentru'], 12);
   }
 ];
 
@@ -358,7 +377,7 @@ TESTS.lectura = [
   },
   (r, lv) => {
     const row = tale(r);
-    return line('argument', `Text: ${row.text} Faptul că la final e bucuros e un detaliu sau ideea principală? Spune care și de ce, minim 8 cuvinte, cu «pentru că».`, `E un detaliu pentru că ideea principală e că ${row.name} caută ${row.thing} și îl duce acasă.`, 'Detaliul nu ține loc de idee.', lv, ['pentru', 'detali'], 8);
+    return line('argument', `Text: ${row.text} Două lucruri, minim 12 cuvinte. (1) De ce e bine că duce lucrul acasă? Cu «pentru că». (2) «Bucuros» e un detaliu sau ideea? Spune care, cu «detaliu».`, `E bine pentru că ${row.thing} ajunge acasă, iar bucuros e un detaliu, nu ideea principală.`, 'Motiv și deosebire.', lv, ['pentru', 'detali', 'acasa'], 12);
   }
 ];
 
@@ -390,9 +409,9 @@ TESTS.redactare = [
     { point: 'argument', prompt: 'Tema: de ce finalul nu se scrie înaintea faptelor. O frază cu «pentru că», minim 8 cuvinte.', sample: 'Nu se scrie înainte pentru că finalul strânge faptele, nu le înlocuiește.', why: 'Întâi firul.', tokens: ['pentru'], min: 8 }
   ], lv),
   (r, lv) => choice(r, [
-    { point: 'plan', prompt: 'Ai amestecat planul: sfârșit, început, cuprins. Pune-l în ordine, minim 5 cuvinte.', sample: 'Început, cuprins și sfârșit, în ordinea asta, nu invers.', why: 'Trei părți, în ordine.', tokens: ['inceput', 'sfarsit'], min: 5 },
-    { point: 'redactare', prompt: 'Scrie doar cuprinsul unei întâmplări cu un caiet găsit. Minim 8 cuvinte, cu «apoi».', sample: 'Găsește caietul sub bancă, apoi îl deschide și îl duce la catedră.', why: 'Cuprinsul e șirul de fapte.', tokens: ['apoi', 'caiet'], min: 8 },
-    { point: 'argument', prompt: 'De ce ștergi un adjectiv dacă nu arată fapta? O frază cu «pentru că», minim 8 cuvinte.', sample: 'Îl ștergi pentru că povestirea cere o faptă, nu o listă de cuvinte frumoase.', why: 'Verbul ține textul.', tokens: ['pentru'], min: 8 }
+    { point: 'plan', prompt: 'Două lucruri, minim 12 cuvinte. (1) Pune în ordine planul amestecat: sfârșit, început, cuprins. (2) Scrie cuprinsul unei întâmplări cu un caiet, cu «apoi».', sample: 'Început, cuprins și sfârșit. În cuprins găsește caietul sub bancă, apoi îl duce la catedră.', why: 'Ordinea și fapta din mijloc.', tokens: ['inceput', 'apoi', 'caiet'], min: 12 },
+    { point: 'plan', prompt: 'Două lucruri, minim 12 cuvinte. (1) Pune în ordine planul amestecat: cuprins, sfârșit, început. (2) Scrie cuprinsul unei întâmplări cu un atlas, cu «apoi».', sample: 'Început, cuprins și sfârșit. În cuprins găsește atlasul pe raft, apoi îl pune la loc.', why: 'Ordinea și fapta din mijloc.', tokens: ['inceput', 'apoi', 'atlas'], min: 12 },
+    { point: 'plan', prompt: 'Două lucruri, minim 12 cuvinte. (1) Pune în ordine planul amestecat: sfârșit, cuprins, început. (2) Scrie cuprinsul unei întâmplări cu o scrisoare, cu «apoi».', sample: 'Început, cuprins și sfârșit. În cuprins găsește scrisoarea în curte, apoi o duce în clasă.', why: 'Ordinea și fapta din mijloc.', tokens: ['inceput', 'apoi', 'scrisoare'], min: 12 }
   ], lv)
 ];
 
@@ -430,9 +449,9 @@ TESTS.oral = [
     { point: 'mesaj', prompt: 'Spune ce lipsește din «Vino la bibliotecă și adu caietul.» Minim 6 cuvinte, cu «ora» sau «când».', sample: 'Lipsește ora, adică când trebuie să ajungi la bibliotecă.', why: 'Când lipsește.', tokens: ['ora'], min: 6 }
   ], lv),
   (r, lv) => choice(r, [
-    { point: 'mesaj', prompt: 'Fă un anunț scurt, minim 8 cuvinte, cu o oră, un loc și un obiect.', sample: 'Mâine la ora 10, la bibliotecă, adu atlasul și anunță dacă întârzii.', why: 'Când, unde și ce.', tokens: ['ora'], min: 8 },
-    { point: 'argument', prompt: 'De ce nu întrerupi un coleg la mijlocul frazei? O frază cu «pentru că», minim 8 cuvinte.', sample: 'Nu îl întrerupi pentru că încă nu ai auzit ideea până la capăt.', why: 'Întâi asculți.', tokens: ['pentru'], min: 8 },
-    { point: 'mesaj', prompt: 'Din anunțul «Ana, vineri ora 9, sala de clasă, adu romanul.» ce obiect se aduce? Un cuvânt, apoi locul, minim 4 cuvinte.', sample: 'Romanul, iar locul este sala de clasă.', why: 'Obiectul și locul din anunț.', tokens: ['roman'], min: 4 }
+    { point: 'mesaj', prompt: 'Două lucruri, minim 12 cuvinte. (1) Fă un anunț cu ora 10, biblioteca și atlasul. (2) Spune ce lipsește din «Vino la bibliotecă», cu «ora».', sample: 'Mâine la ora 10, la bibliotecă, adu atlasul. Din anunțul scurt lipsește ora, adică când să vii.', why: 'Anunț întreg și ce lipsește.', tokens: ['ora', 'atlas'], min: 12 },
+    { point: 'mesaj', prompt: 'Două lucruri, minim 12 cuvinte. (1) Fă un anunț cu ora 9, sala de clasă și romanul. (2) Spune de ce nu întrerupi un coleg, cu «pentru că».', sample: 'Vineri la ora 9, în sala de clasă, adu romanul. Nu întrerupi pentru că încă nu ai auzit ideea.', why: 'Anunț și ascultare.', tokens: ['ora', 'pentru', 'roman'], min: 12 },
+    { point: 'mesaj', prompt: 'Două lucruri, minim 12 cuvinte. (1) Fă un anunț cu ora 8, curtea școlii și caietul. (2) Spune ce lipsește dacă nu zici locul, cu «unde».', sample: 'Mâine la ora 8, în curtea școlii, adu caietul. Fără loc nu se știe unde să vii.', why: 'Anunț și locul.', tokens: ['ora', 'unde', 'caiet'], min: 12 }
   ], lv)
 ];
 
@@ -461,9 +480,9 @@ TESTS.inter5 = [
     { point: 'identitate', prompt: 'Spune un obicei și cui aparține. Minim 8 cuvinte, cu «acasă» și «pentru că».', sample: 'Obiceiul de seară e de acasă pentru că acolo l-am auzit prima dată.', why: 'Loc și motiv.', tokens: ['acasa', 'pentru'], min: 8 }
   ], lv),
   (r, lv) => choice(r, [
-    { point: 'identitate', prompt: 'Ce rămâne dintr-o poveste de-acasă după ce o spui? Minim 8 cuvinte, cu «după».', sample: 'După ce o spui, rămâne amintirea comună, nu doar întâmplarea.', why: 'Povestea lasă ceva.', tokens: ['dupa'], min: 8 },
-    { point: 'argument', prompt: 'De ce nu schimbi finalul unei întâmplări de-acasă ca să pară mai tare? O frază cu «pentru că», minim 8 cuvinte.', sample: 'Nu îl schimbi pentru că povestea e a oamenilor, nu un spectacol.', why: 'Fără podoabă mincinoasă.', tokens: ['pentru'], min: 8 },
-    { point: 'identitate', prompt: 'Numește două lucruri care fac o poveste „de-acasă”. Minim 8 cuvinte.', sample: 'O fac oamenii casei și un obicei pe care îl recunoști.', why: 'Oameni și obicei.', tokens: ['obicei'], min: 8 }
+    { point: 'identitate', prompt: 'Două lucruri, minim 12 cuvinte. (1) Ce rămâne dintr-o poveste de-acasă după ce o spui? Cu «după». (2) De ce nu schimbi finalul ca să pară mai tare? Cu «pentru că».', sample: 'După ce o spui rămâne amintirea comună, și nu schimbi finalul pentru că povestea e a oamenilor.', why: 'Ce rămâne și de ce nu o schimbi.', tokens: ['dupa', 'pentru'], min: 12 },
+    { point: 'identitate', prompt: 'Două lucruri, minim 12 cuvinte. (1) Numește un obicei de-acasă, cu «acasă». (2) Spune ce rămâne după ce îl povestești, cu «după».', sample: 'Obiceiul de seară e de acasă, iar după ce îl povestești rămâne amintirea comună a casei.', why: 'Obicei și ce rămâne.', tokens: ['acasa', 'dupa'], min: 12 },
+    { point: 'identitate', prompt: 'Două lucruri, minim 12 cuvinte. (1) Numește două lucruri care fac o poveste de-acasă. (2) De ce nu e „mai bună” decât alta? Cu «pentru că».', sample: 'O fac oamenii casei și un obicei recunoscut, și nu e mai bună pentru că fiecare poveste ține de oamenii ei.', why: 'Semne și fără rang.', tokens: ['obicei', 'pentru'], min: 12 }
   ], lv)
 ];
 
@@ -492,9 +511,9 @@ TESTS.limba6 = [
     { point: 'argument', prompt: 'De ce schimbi «a citit» în «au citit» când subiectul e «fetele»? O frază cu «pentru că», minim 8 cuvinte.', sample: 'Schimbi pentru că fetele e plural și perfectul compus cere au, nu a.', why: 'Au, nu a.', tokens: ['pentru', 'plural'], min: 8 }
   ], lv),
   (r, lv) => choice(r, [
-    { point: 'timp', prompt: 'În «Azi citesc, ieri am citit, mâine voi citi.» care formă e la viitor? Un cuvânt sau două.', answers: ['voi citi'], why: 'Voi + verb = viitor.', tokens: ['voi citi'] },
-    { point: 'timp', prompt: 'În «Azi merg, ieri am mers, mâine voi merge.» care formă e la trecut? Două cuvinte.', answers: ['am mers'], why: 'Am + participiu = trecut.', tokens: ['am mers'] },
-    { point: 'acord', prompt: 'Rescrie corect, minim 6 cuvinte: «Voi ați citit, dar ei a uitat cartea.»', sample: 'Voi ați citit, dar ei au uitat cartea în clasă.', why: 'Ei au uitat, nu a uitat.', tokens: ['au uitat'], min: 6 }
+    { point: 'acord', prompt: 'Două lucruri, minim 12 cuvinte. (1) Rescrie corect: «Fetele a citit poezia ieri.» (2) În «Azi citesc, ieri am citit, mâine voi citi» care formă e la viitor? Spune și de ce, cu «pentru că».', sample: 'Fetele au citit poezia ieri în clasă, iar la viitor e voi citi pentru că voi arată o acțiune care urmează.', why: 'Acord și timp, amândouă.', tokens: ['au citit', 'voi citi', 'pentru'], min: 12 },
+    { point: 'acord', prompt: 'Două lucruri, minim 12 cuvinte. (1) Rescrie corect: «Copiii a mers ieri la parc.» (2) În «Azi merg, ieri am mers, mâine voi merge» care formă e la trecut? Spune și de ce, cu «pentru că».', sample: 'Copiii au mers ieri la parc după ore, iar la trecut e am mers pentru că am arată o acțiune încheiată.', why: 'Acord și timp, amândouă.', tokens: ['au mers', 'am mers', 'pentru'], min: 12 },
+    { point: 'acord', prompt: 'Două lucruri, minim 12 cuvinte. (1) Rescrie corect: «Ei a uitat cartea.» (2) De ce «au uitat» și nu «a uitat» când subiectul e «ei»? Cu «pentru că».', sample: 'Ei au uitat cartea în clasă, pentru că subiectul ei e la plural și cere au, nu a.', why: 'Forma corectă și motivul.', tokens: ['au uitat', 'pentru', 'plural'], min: 12 }
   ], lv)
 ];
 
@@ -530,7 +549,7 @@ TESTS.lectura6 = [
   ], lv),
   (r, lv) => {
     const row = room(r);
-    return line('descriere', `Text: ${row.text} Alege un detaliu și spune ce stare dă locului. Minim 8 cuvinte, cu «pentru că».`, `Băncile reci dau o stare rece pentru că locul nu pare primitor.`, 'Detaliu și stare.', lv, ['pentru'], 8);
+    return line('descriere', `Text: ${row.text} Două lucruri, minim 12 cuvinte. (1) Numește două detalii ale locului. (2) Alege unul și spune ce stare dă, cu «pentru că».`, `Lumina e slabă și băncile sunt reci, iar băncile reci dau o stare rece pentru că locul nu pare primitor.`, 'Detalii și stare.', lv, ['slab', 'pentru', 'reci'], 12);
   }
 ];
 
@@ -559,9 +578,9 @@ TESTS.inter6 = [
     { point: 'argument', prompt: 'Tema: aceeași limbă, alt oraș. O frază cu «pentru că», minim 8 cuvinte.', sample: 'Merită citită pentru că auzi limba ta în viața altor oameni.', why: 'Aceeași limbă.', tokens: ['pentru'], min: 8 }
   ], lv),
   (r, lv) => choice(r, [
-    { point: 'reflectie', prompt: 'Ce rămâne după un text scris departe, în română? Minim 8 cuvinte, cu «după».', sample: 'După text rămâne o viață recunoscută, nu doar numele țării.', why: 'Reflecție, nu fișă.', tokens: ['dupa'], min: 8 },
-    { point: 'argument', prompt: 'De ce nu pui note țărilor după cum vorbesc româna? O frază cu «pentru că», minim 8 cuvinte.', sample: 'Nu pui note pentru că limba nu e un concurs între locuri.', why: 'Fără rang.', tokens: ['pentru'], min: 8 },
-    { point: 'lume', prompt: 'Spune un loc, în afară de orașul tău, unde se poate auzi româna. Minim 8 cuvinte, cu «vorbitori».', sample: 'Se aude și în alte locuri, pentru că există vorbitori dincolo de orașul tău.', why: 'Vorbitori, nu doar hartă.', tokens: ['vorbitori'], min: 8 }
+    { point: 'lume', prompt: 'Două lucruri, minim 12 cuvinte. (1) Spune un loc, în afară de orașul tău, unde se aude româna, cu «vorbitori». (2) Ce rămâne după un astfel de text? Cu «după».', sample: 'Se aude și în alte locuri, pentru că există vorbitori dincolo de orașul tău, iar după text rămâne o viață recunoscută.', why: 'Loc și ce rămâne.', tokens: ['vorbitori', 'dupa'], min: 12 },
+    { point: 'argument', prompt: 'Două lucruri, minim 12 cuvinte. (1) De ce nu pui note țărilor după cum vorbesc româna? Cu «pentru că». (2) Ce rămâne după text? Cu «după».', sample: 'Nu pui note pentru că limba nu e un concurs, iar după text rămâne o viață recunoscută, nu doar țara.', why: 'Fără rang și ce rămâne.', tokens: ['pentru', 'dupa'], min: 12 },
+    { point: 'lume', prompt: 'Două lucruri, minim 12 cuvinte. (1) De ce «doar la noi» e prea scurt? Cu «pentru că». (2) Ce iei cu tine după un text scris departe? Cu «după».', sample: 'E prea scurt pentru că există vorbitori și dincolo de graniță, iar după text iei o viață recunoscută.', why: 'Motiv și ce rămâne.', tokens: ['pentru', 'dupa'], min: 12 }
   ], lv)
 ];
 
@@ -590,9 +609,9 @@ TESTS.limba7 = [
     { point: 'argument', prompt: 'De ce la analiză spui și felul subordonatei? O frază cu «pentru că», minim 8 cuvinte.', sample: 'Spui felul pentru că altfel nu se vede dacă e cauză, timp sau scop.', why: 'Felul e partea de programme.', tokens: ['pentru'], min: 8 }
   ], lv),
   (r, lv) => choice(r, [
-    { point: 'finala', prompt: 'În «Plec ca să prind trenul care întârzie.» câte subordonate vezi și ce fel are «ca să»? Minim 8 cuvinte, cu «finală».', sample: 'Sunt două subordonate, iar «ca să» este finală pentru că arată scopul plecării.', why: 'Finală = scop. Atributiva lămurește trenul.', tokens: ['finala', 'scop'], min: 8 },
-    { point: 'cauzala', prompt: 'În «Rămân, fiindcă plouă când sună.» ce fel este «fiindcă plouă»? Minim 8 cuvinte, cu «cauzală».', sample: 'Este cauzală pentru că dă motivul pentru care rămân, nu ora ploii.', why: 'Fiindcă = motiv.', tokens: ['cauzala', 'motiv'], min: 8 },
-    { point: 'atributiva', prompt: 'În «Cartea pe care o cauți stă pe raft.» ce lămurește «pe care o cauți»? Minim 8 cuvinte.', sample: 'Lămurește cartea, deci este atributivă, nu spune de ce stă pe raft.', why: 'Atributiva stă lângă substantiv.', tokens: ['carte', 'atributiv'], min: 8 }
+    { point: 'finala', prompt: 'Două lucruri, minim 12 cuvinte. (1) În «Plec ca să prind trenul care întârzie» ce fel are «ca să»? Cu «finală». (2) Ce fel are «care întârzie» și pe cine lămurește? Cu «atributivă».', sample: '«Ca să» este finală pentru că arată scopul plecării, iar «care întârzie» este atributivă pentru că lămurește trenul.', why: 'Două subordonate, două feluri.', tokens: ['finala', 'atributiv', 'scop'], min: 12 },
+    { point: 'cauzala', prompt: 'Două lucruri, minim 12 cuvinte. (1) În «Rămân, fiindcă plouă când sună» ce fel este «fiindcă plouă»? Cu «cauzală». (2) Ce fel este «când sună»? Cu «timp».', sample: '«Fiindcă plouă» este cauzală pentru că dă motivul, iar «când sună» este de timp pentru că dă momentul.', why: 'Cauză și timp, deosebite.', tokens: ['cauzala', 'timp', 'motiv'], min: 12 },
+    { point: 'atributiva', prompt: 'Două lucruri, minim 12 cuvinte. (1) În «Citesc ca să înțeleg cartea pe care o cauți» ce fel are «ca să»? Cu «finală». (2) Ce lămurește «pe care o cauți»? Cu «cartea».', sample: '«Ca să» este finală pentru că arată scopul cititului, iar «pe care o cauți» lămurește cartea, deci e atributivă.', why: 'Scop și atributivă.', tokens: ['finala', 'carte', 'scop'], min: 12 }
   ], lv)
 ];
 
@@ -621,9 +640,9 @@ TESTS.lectura7 = [
     { point: 'argument', prompt: '«Noaptea stă pe umăr» nu e o descriere de vreme. Explică în minim 8 cuvinte, cu «pentru că».', sample: 'Este figurat pentru că noaptea nu stă, ca un om, pe umărul cuiva.', why: 'Sens figurat.', tokens: ['pentru', 'figurat'], min: 8 }
   ], lv),
   (r, lv) => choice(r, [
-    { point: 'liric', prompt: 'Deosebește liricul de epic pe un vers și o faptă. Minim 8 cuvinte, cu «stare» și «faptă».', sample: 'Liricul arată o stare, iar epicul spune o faptă cu personaje.', why: 'Două genuri.', tokens: ['stare', 'fapta'], min: 8 },
-    { point: 'figura', prompt: 'În «ești un leu», de ce nu scrii «comparație»? Minim 8 cuvinte, cu «pentru că».', sample: 'Nu scrii comparație pentru că lipsește «ca» și apare o metaforă.', why: 'Metafora identifică.', tokens: ['pentru', 'metafor'], min: 8 },
-    { point: 'personificare', prompt: 'Dă tu o personificare scurtă, minim 6 cuvinte, și numește figura.', sample: 'Personificare: vântul îmi șoptește tema la geam, ca un coleg.', why: 'Un lucru face o faptă de om.', tokens: ['personific'], min: 6 }
+    { point: 'liric', prompt: 'Două lucruri, minim 12 cuvinte. (1) Deosebește liricul de epic, cu «stare» și «faptă». (2) În «inima îmi e un clopot» de ce nu scrii «comparație»? Cu «pentru că» și «metaforă».', sample: 'Liricul arată o stare, iar epicul spune o faptă, și nu scrii comparație pentru că lipsește «ca» și apare o metaforă.', why: 'Gen și figură.', tokens: ['stare', 'fapta', 'metafor'], min: 12 },
+    { point: 'figura', prompt: 'Două lucruri, minim 12 cuvinte. (1) Ce figură este «vântul șoptește»? Cu «personificare». (2) Ce figură este «ești un leu»? Cu «metaforă» și «pentru că».', sample: '«Vântul șoptește» este personificare pentru că vântul face o faptă de om, iar «ești un leu» este metaforă pentru că lipsește «ca».', why: 'Două figuri, deosebite.', tokens: ['personific', 'metafor', 'pentru'], min: 12 },
+    { point: 'personificare', prompt: 'Două lucruri, minim 12 cuvinte. (1) Dă o personificare scurtă, cu «vântul». (2) Spune de ce textul «Inima îmi e un clopot» e liric, cu «stare».', sample: 'Personificare: vântul îmi șoptește la geam, iar textul e liric pentru că arată o stare, nu o faptă cu personaje.', why: 'Figura ta și genul.', tokens: ['vant', 'stare', 'liric'], min: 12 }
   ], lv)
 ];
 
@@ -652,9 +671,9 @@ TESTS.inter7 = [
     { point: 'mit', prompt: 'Spune o întrebare pe care o pune un mit despre lume. Minim 8 cuvinte, cu «de ce».', sample: 'Întreabă de ce e noaptea noapte și de ce se întoarce soarele.', why: 'Întrebarea lumii.', tokens: ['de ce'], min: 8 }
   ], lv),
   (r, lv) => choice(r, [
-    { point: 'argument', prompt: 'De ce nu râzi de un zeu cu alt nume? O frază cu «pentru că», minim 8 cuvinte.', sample: 'Nu râzi pentru că numele e al locului, iar întrebarea e și a ta.', why: 'Fără batjocură.', tokens: ['pentru'], min: 8 },
-    { point: 'mit', prompt: 'Deosebește întrebarea mitului de podoaba lui. Minim 8 cuvinte, cu «pentru că».', sample: 'Întrebarea stă pentru că podoaba se schimbă, iar mirarea rămâne.', why: 'Fond, nu podoabă.', tokens: ['pentru'], min: 8 },
-    { point: 'reflectie', prompt: 'Ce iei cu tine dintr-un mit care nu e de la tine? Minim 8 cuvinte, cu «după».', sample: 'După mit rămâne o întrebare pe care o poți pune și acasă.', why: 'Întrebarea călătorește.', tokens: ['dupa'], min: 8 }
+    { point: 'mit', prompt: 'Două lucruri, minim 12 cuvinte. (1) Ce întrebare pune un mit despre soare? Cu «de ce». (2) Ce iei cu tine după un mit care nu e de la tine? Cu «după».', sample: 'Întreabă de ce răsare soarele, iar după mit rămâne o întrebare pe care o poți pune și acasă.', why: 'Întrebarea și ce rămâne.', tokens: ['de ce', 'dupa'], min: 12 },
+    { point: 'argument', prompt: 'Două lucruri, minim 12 cuvinte. (1) De ce nu râzi de un zeu cu alt nume? Cu «pentru că». (2) Deosebește întrebarea mitului de podoaba lui.', sample: 'Nu râzi pentru că numele e al locului, iar întrebarea rămâne chiar dacă podoaba se schimbă.', why: 'Respect și fond.', tokens: ['pentru', 'intreb'], min: 12 },
+    { point: 'reflectie', prompt: 'Două lucruri, minim 12 cuvinte. (1) De ce compari un mit de-al nostru cu unul din altă cultură? Cu «aceleași». (2) Ce rămâne după comparație? Cu «după».', sample: 'Compari pentru că aceleași întrebări apar și la alții, iar după comparație rămâne mirarea, nu lista de nume.', why: 'Motiv și ce rămâne.', tokens: ['aceleasi', 'dupa'], min: 12 }
   ], lv)
 ];
 
@@ -683,9 +702,9 @@ TESTS.limba8 = [
     { point: 'argument', prompt: 'De ce la subordonată scrii și întrebarea la care răspunde? O frază cu «pentru că», minim 8 cuvinte.', sample: 'O scrii pentru că de ce, când și ca să nu sunt același fel de propoziție.', why: 'Întrebarea arată felul.', tokens: ['pentru'], min: 8 }
   ], lv),
   (r, lv) => choice(r, [
-    { point: 'atributiva', prompt: 'În «cartea pe care o citesc e nouă», «pe care o citesc» este atributivă sau cauzală? Spune felul și de ce, minim 8 cuvinte.', sample: 'Este atributivă pentru că lămurește substantivul carte, nu dă motivul.', why: 'Stă lângă substantiv.', tokens: ['atributiv'], min: 8 },
-    { point: 'finala', prompt: 'Analizează «ca să» în «Citesc ca să înțeleg.» Minim 8 cuvinte, cu «finală» și «scop».', sample: 'Este finală pentru că arată scopul cititului, nu cauza și nu timpul.', why: 'Ca să = scop.', tokens: ['finala', 'scop'], min: 8 },
-    { point: 'cauzala', prompt: 'Analizează «fiindcă» în «Am rămas fiindcă ploua.» Minim 8 cuvinte, cu «cauzală».', sample: 'Este cauzală pentru că dă motivul pentru care am rămas.', why: 'Fiindcă = motiv.', tokens: ['cauzala'], min: 8 }
+    { point: 'atributiva', prompt: 'Două lucruri, minim 12 cuvinte. (1) În «Citesc ca să înțeleg cartea pe care o caut» ce fel are «ca să»? Cu «finală» și «scop». (2) Ce fel are «pe care o caut»? Cu «atributivă».', sample: '«Ca să» este finală pentru că arată scopul cititului, iar «pe care o caut» este atributivă pentru că lămurește cartea.', why: 'Finală și atributivă.', tokens: ['finala', 'scop', 'atributiv'], min: 12 },
+    { point: 'cauzala', prompt: 'Două lucruri, minim 12 cuvinte. (1) Analizează «fiindcă» în «Am rămas fiindcă ploua». Cu «cauzală». (2) De ce nu e totuna cu «ca să»? Cu «scop».', sample: 'Este cauzală pentru că dă motivul pentru care am rămas, iar ca să arată scopul, nu motivul.', why: 'Cauză deosebită de scop.', tokens: ['cauzala', 'motiv', 'scop'], min: 12 },
+    { point: 'finala', prompt: 'Două lucruri, minim 12 cuvinte. (1) «Învață ca să înțeleagă» este finală. De ce? Cu «scop». (2) «Plec, pentru că trenul a întârziat» este cauzală. De ce? Cu «motiv».', sample: 'Prima este finală pentru că arată scopul învățării, iar a doua este cauzală pentru că dă motivul plecării.', why: 'Scop și motiv, în același răspuns.', tokens: ['scop', 'motiv', 'cauzal'], min: 12 }
   ], lv)
 ];
 
@@ -718,9 +737,13 @@ TESTS.lectura8 = [
     { point: 'reflectie', prompt: 'Ce rămâne după ce Ana tace despre atlas? Minim 8 cuvinte, cu «după».', sample: 'După tăcere rămâne adevărul nespus și întrebarea colegei.', why: 'Reflecția trece de faptă.', tokens: ['dupa'], min: 8 }
   ], lv),
   (r, lv) => choice(r, [
-    { point: 'tema', prompt: 'La textul cu Mara: «scrisoarea» e un detaliu. Care e ideea, nu detaliul? Minim 8 cuvinte, cu «despre».', sample: 'Este despre o taină ascunsă, nu doar despre o scrisoare pe masă.', why: 'Ideea trece de obiect.', tokens: ['despre'], min: 8 },
-    { point: 'tema', prompt: 'La textul cu Ion: «catedra» e un detaliu. Care e ideea, nu detaliul? Minim 8 cuvinte, cu «despre».', sample: 'Este despre repararea unei greșeli, nu doar despre catedră.', why: 'Ideea trece de loc.', tokens: ['despre'], min: 8 },
-    { point: 'tema', prompt: 'La textul cu Ana: «raftul» e un detaliu. Care e ideea, nu detaliul? Minim 8 cuvinte, cu «despre».', sample: 'Este despre tăcerea aleasă, nu doar despre raftul cu atlasul.', why: 'Ideea trece de obiect.', tokens: ['despre'], min: 8 }
+    { point: 'caracterizare', prompt: 'Două lucruri, minim 12 cuvinte. (1) Caracterizeaz-o pe Mara: ascunde scrisoarea și nu spune adevărul, cu «pentru că». (2) Ce rămâne după, cu «după».', sample: 'Mara e tăcută pentru că ascunde scrisoarea, iar după faptă rămâne adevărul nespus.', why: 'Trăsătură și ce rămâne.', tokens: ['pentru', 'dupa', 'ascunde'], min: 12 },
+    { point: 'caracterizare', prompt: 'Două lucruri, minim 12 cuvinte. (1) Caracterizează-l pe Ion: duce caietul la catedră după greșeală, cu «pentru că». (2) Ce rămâne după, cu «după».', sample: 'Ion e cinstit pentru că duce caietul la catedră, iar după gest rămâne greșeala recunoscută.', why: 'Trăsătură și ce rămâne.', tokens: ['pentru', 'dupa', 'caiet'], min: 12 },
+    { point: 'caracterizare', prompt: 'Două lucruri, minim 12 cuvinte. (1) Caracterizeaz-o pe Ana: tace, deși știe unde este atlasul, cu «pentru că». (2) Ce rămâne după, cu «după».', sample: 'Ana e reținută pentru că tace deși știe unde este atlasul, iar după tăcere rămâne adevărul nespus.', why: 'Trăsătură și ce rămâne.', tokens: ['pentru', 'dupa', 'atlas'], min: 12 },
+    { point: 'caracterizare', prompt: 'Două lucruri, minim 12 cuvinte. (1) Caracterizează-l pe Radu: găsește scrisoarea și o pune la loc, cu «pentru că». (2) Ce rămâne după, cu «după».', sample: 'Radu e cinstit pentru că pune scrisoarea la loc, iar după gest rămâne adevărul spus.', why: 'Trăsătură și ce rămâne.', tokens: ['pentru', 'dupa', 'scrisoare'], min: 12 },
+    { point: 'caracterizare', prompt: 'Două lucruri, minim 12 cuvinte. (1) Caracterizeaz-o pe Elena: ascunde caietul colegei, cu «pentru că». (2) Ce rămâne după, cu «după».', sample: 'Elena e reținută pentru că ascunde caietul, iar după faptă rămâne tăcerea ei.', why: 'Trăsătură și ce rămâne.', tokens: ['pentru', 'dupa', 'caiet'], min: 12 },
+    { point: 'caracterizare', prompt: 'Două lucruri, minim 12 cuvinte. (1) Caracterizează-l pe Vlad: spune adevărul despre atlas, cu «pentru că». (2) Ce rămâne după, cu «după».', sample: 'Vlad e deschis pentru că spune adevărul despre atlas, iar după vorbă rămâne încrederea colegilor.', why: 'Trăsătură și ce rămâne.', tokens: ['pentru', 'dupa', 'atlas'], min: 12 },
+    { point: 'caracterizare', prompt: 'Două lucruri, minim 12 cuvinte. (1) Caracterizeaz-o pe Ioana: duce romanul înapoi la bibliotecă, cu «pentru că». (2) Ce rămâne după, cu «după».', sample: 'Ioana e corectă pentru că duce romanul înapoi, iar după drum rămâne gestul cinstit.', why: 'Trăsătură și ce rămâne.', tokens: ['pentru', 'dupa', 'roman'], min: 12 }
   ], lv)
 ];
 
@@ -749,9 +772,9 @@ TESTS.redactare8 = [
     { point: 'argument', prompt: 'De ce finalul nu repetă titlul? O frază cu «pentru că», minim 8 cuvinte.', sample: 'Nu îl repetă pentru că finalul arată ce ai înțeles, nu cum se cheamă textul.', why: 'Înțelegere, nu titlu.', tokens: ['pentru'], min: 8 }
   ], lv),
   (r, lv) => choice(r, [
-    { point: 'narativ', prompt: 'Scrie o faptă de mijloc, minim 8 cuvinte, cu «apoi», despre un caiet pierdut.', sample: 'Caută caietul în bancă, apoi îl găsește în ghiozdan și răsuflă.', why: 'Cuprinsul e o faptă.', tokens: ['apoi'], min: 8 },
-    { point: 'descriere', prompt: 'Descrie sala de examen în 8–12 cuvinte, cu două detalii concrete.', sample: 'Sala e tăcută, foile sunt albe și lumina cade pe bancă.', why: 'Detalii, nu „frumos”.', tokens: ['tacut'], min: 8 },
-    { point: 'argument', prompt: 'De ce la compunere pui un exemplu lângă părere? O frază cu «pentru că», minim 8 cuvinte.', sample: 'Pui un exemplu pentru că părerea fără faptă nu se vede.', why: 'Exemplul ține părerea.', tokens: ['pentru', 'exemplu'], min: 8 }
+    { point: 'narativ', prompt: 'Două lucruri, minim 12 cuvinte. (1) Scrie o faptă de mijloc despre un caiet pierdut, cu «apoi». (2) De ce încheierea nu e un slogan? Cu «pentru că».', sample: 'Caută caietul în bancă, apoi îl găsește în ghiozdan, și încheierea nu e un slogan pentru că strânge ideea.', why: 'Faptă și încheiere.', tokens: ['apoi', 'pentru', 'caiet'], min: 12 },
+    { point: 'descriere', prompt: 'Două lucruri, minim 12 cuvinte. (1) Descrie sala de examen cu două detalii, între care «lumină». (2) De ce planul stă înaintea adjectivelor? Cu «pentru că».', sample: 'Sala e tăcută și lumina cade pe foaie, iar planul stă înainte pentru că întâi știi despre ce scrii.', why: 'Descriere și plan.', tokens: ['lumina', 'pentru'], min: 12 },
+    { point: 'argument', prompt: 'Două lucruri, minim 12 cuvinte. (1) De ce pui un exemplu lângă părere? Cu «pentru că» și «exemplu». (2) Dă exemplul, cu «zece».', sample: 'Pui un exemplu pentru că părerea fără faptă nu se vede, de exemplu zece minute de citit în fiecare zi.', why: 'Motiv și exemplu.', tokens: ['pentru', 'exemplu', 'zece'], min: 12 }
   ], lv)
 ];
 
@@ -780,9 +803,9 @@ TESTS.oral8 = [
     { point: 'concluzie', prompt: 'Încheie o discuție despre teme. Minim 8 cuvinte, cu «așadar».', sample: 'Așadar, tema scurtă te ajută să ții minte, nu să umpli caietul.', why: 'Concluzia strânge.', tokens: ['asadar'], min: 8 }
   ], lv),
   (r, lv) => choice(r, [
-    { point: 'sursa', prompt: 'Cum spui o idee din manual fără să o pui în locul părerii tale? Minim 8 cuvinte, cu «apoi».', sample: 'Spui pe scurt ideea din manual, apoi adaugi ce crezi tu despre ea.', why: 'Sursa sprijină.', tokens: ['apoi'], min: 8 },
-    { point: 'contra', prompt: 'Colegul spune „anunțul poate fi și fără oră”. Răspunde, minim 8 cuvinte, cu «pentru că».', sample: 'Nu poate pentru că fără oră nimeni nu știe când să vină.', why: 'Contraargument pe mesaj.', tokens: ['pentru'], min: 8 },
-    { point: 'concluzie', prompt: 'Încheie: de ce asculți înainte să răspunzi. Minim 8 cuvinte, cu «așadar».', sample: 'Așadar, asculți până la capăt și abia apoi spui ce crezi.', why: 'Concluzia strânge.', tokens: ['asadar'], min: 8 }
+    { point: 'sursa', prompt: 'Două lucruri, minim 12 cuvinte. (1) Cum spui o idee din manual fără să o pui în locul părerii tale? Cu «apoi». (2) Încheie de ce asculți înainte să răspunzi, cu «așadar».', sample: 'Spui ideea din manual, apoi adaugi ce crezi tu. Așadar, asculți până la capăt și abia apoi răspunzi.', why: 'Sursă și concluzie.', tokens: ['apoi', 'asadar'], min: 12 },
+    { point: 'contra', prompt: 'Două lucruri, minim 12 cuvinte. (1) Colegul spune „anunțul poate fi și fără oră”. Răspunde, cu «pentru că». (2) Încheie discuția, cu «așadar».', sample: 'Nu poate pentru că fără oră nimeni nu știe când să vină. Așadar, anunțul ține ora, locul și obiectul.', why: 'Contraargument și concluzie.', tokens: ['pentru', 'asadar', 'ora'], min: 12 },
+    { point: 'concluzie', prompt: 'Două lucruri, minim 12 cuvinte. (1) Deosebește o informație de o părere, cu «pentru că». (2) Încheie, cu «așadar».', sample: 'Informația se verifică, pentru că părerea rămâne a ta chiar dacă nu e măsurată. Așadar, nu le amesteci.', why: 'Deosebire și concluzie.', tokens: ['pentru', 'asadar'], min: 12 }
   ], lv)
 ];
 
@@ -811,9 +834,9 @@ TESTS.inter8 = [
     { point: 'reflectie', prompt: 'Încheie cu o idee de pus lângă una de-acasă. Minim 8 cuvinte, cu «după».', sample: 'După lectură pui întrebarea lor lângă o întrebare de-acasă.', why: 'Alăturare.', tokens: ['dupa'], min: 8 }
   ], lv),
   (r, lv) => choice(r, [
-    { point: 'lume-lit', prompt: 'De ce un text tradus tot cere idee și dovadă? Minim 8 cuvinte, cu «pentru că».', sample: 'Cere pentru că uneltele de lectură nu se schimbă odată cu limba de pe copertă.', why: 'Aceleași unelte.', tokens: ['pentru'], min: 8 },
-    { point: 'noi', prompt: 'Cum vorbești despre personajele dintr-un text străin? Minim 8 cuvinte, cu «curiozitate».', sample: 'Vorbești cu curiozitate și nu le pui o notă mai mică decât celor de-acasă.', why: 'Descrii, nu cobori.', tokens: ['curiozitate'], min: 8 },
-    { point: 'reflectie', prompt: 'Ce întrebare comună poți lua dintr-un text de aiurea? Minim 8 cuvinte, cu «după».', sample: 'După text poți lua întrebarea despre curaj și o poți pune lângă una de-acasă.', why: 'Întrebarea călătorește.', tokens: ['dupa'], min: 8 }
+    { point: 'lume-lit', prompt: 'Două lucruri, minim 12 cuvinte. (1) De ce un text tradus tot cere idee și dovadă? Cu «pentru că». (2) Ce iei după text? Cu «după».', sample: 'Cere pentru că uneltele de lectură nu se schimbă odată cu limba de pe copertă, iar după text iei o întrebare, nu o notă.', why: 'Unelte și ce rămâne.', tokens: ['pentru', 'dupa'], min: 12 },
+    { point: 'noi', prompt: 'Două lucruri, minim 12 cuvinte. (1) Cum vorbești despre personajele dintr-un text străin? Cu «curiozitate». (2) Ce întrebare iei după text? Cu «după».', sample: 'Vorbești cu curiozitate și nu le pui o notă mai mică, iar după text iei întrebarea despre curaj.', why: 'Felul și ce iei.', tokens: ['curiozitate', 'dupa'], min: 12 },
+    { point: 'reflectie', prompt: 'Două lucruri, minim 12 cuvinte. (1) De ce nu schimbi uneltele când textul e tradus? Cu «pentru că». (2) Ce pui lângă o idee de-acasă? Cu «după».', sample: 'Nu le schimbi pentru că tema și dovada se citesc la fel, iar după text pui întrebarea lor lângă una de-acasă.', why: 'Unelte și alăturare.', tokens: ['pentru', 'dupa'], min: 12 }
   ], lv)
 ];
 

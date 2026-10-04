@@ -12,9 +12,10 @@ describe('desired grade shapes the practice pack', () => {
     expect(levelPlan(10, 2)).toEqual([1, 1, 1, 1, 1, 2, 2, 2, 2, 2]);
     expect(levelPlan(7, 7)[0]).toBe(1);
     expect(levelPlan(7, 7)[6]).toBe(7);
-    expect(chapterTestPlan(7)).toEqual([4, 5, 5, 6, 7, 7, 8]);
-    expect(chapterTestPlan(7)[0]).toBeGreaterThanOrEqual(4);
-    expect(chapterTestPlan(10, 2).every(level => level >= 4 && level <= 5)).toBe(true);
+    expect(chapterTestPlan(7)).toEqual([6, 6, 7, 7, 7, 8, 8]);
+    expect(chapterTestPlan(7)[0]).toBeGreaterThanOrEqual(6);
+    expect(chapterTestPlan(10, 2).every(level => level === 6)).toBe(true);
+    expect(chapterTestPlan(10, 8).every(level => level === 8)).toBe(true);
   });
 
   it('keeps a modest target on easy rungs and a 10 on the full climb', () => {
@@ -29,8 +30,8 @@ describe('desired grade shapes the practice pack', () => {
     });
     expect(modest.cards).toHaveLength(10);
     expect(modest.targetNote).toBe(5);
-    expect(modest.cards.every(card => (card.level || 1) >= 4 && (card.level || 1) <= 5)).toBe(true);
-    expect(Math.max(...modest.cards.map(card => card.level || 1))).toBe(5);
+    expect(modest.cards.every(card => (card.level || 1) === 6)).toBe(true);
+    expect(Math.max(...modest.cards.map(card => card.level || 1))).toBe(6);
 
     const top = pickPractice({
       subject: 'matematica',
@@ -41,7 +42,8 @@ describe('desired grade shapes the practice pack', () => {
       targetNote: 10,
       excludeIds: listChapterExercises('matematica', 5, 'naturale').map(item => item.id)
     });
-    expect(Math.max(...top.cards.map(card => card.level || 1))).toBeGreaterThanOrEqual(6);
+    expect(top.cards.every(card => (card.level || 1) === 8)).toBe(true);
+    expect(Math.max(...top.cards.map(card => card.level || 1))).toBe(8);
   });
 
   it('does not change the default pack when no target is sent', () => {
@@ -52,7 +54,7 @@ describe('desired grade shapes the practice pack', () => {
       kind: 'test',
       count: 7
     });
-    expect(pack.cards.every(card => card.level >= 4)).toBe(true);
+    expect(pack.cards.every(card => card.level >= 6)).toBe(true);
     expect(pack.cards[0].level).toBeLessThan(pack.cards[pack.cards.length - 1].level);
     expect(Math.max(...pack.cards.map(card => card.level))).toBeGreaterThanOrEqual(7);
     expect(pack.targetNote).toBeNull();

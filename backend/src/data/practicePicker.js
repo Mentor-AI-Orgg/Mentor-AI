@@ -166,11 +166,11 @@ function pickPractice({
     });
   } else {
     const rawPool = isTest ? exercises : questions;
-    const skillFloor = isTest ? 4 : 1;
+    const plan = isTest ? chapterTestPlan(want, maxLevel) : chapterLevelPlan(want, maxLevel);
+    const skillFloor = isTest ? Math.min(...plan) : 1;
     const pool = maxLevel && !isTest
       ? rawPool.filter(item => (Number(item.level) || 1) <= maxLevel && !item.secondary)
       : rawPool.filter(item => !item.secondary && (!isTest || (Number(item.level) || 1) >= skillFloor));
-    const plan = isTest ? chapterTestPlan(want, maxLevel) : chapterLevelPlan(want, maxLevel);
     plan.forEach(level => {
       if (picked.length >= want) return;
       const item = chooseForLevel(pool, level, excluded, used, usedLessons, seenLessons, false, skillFloor);

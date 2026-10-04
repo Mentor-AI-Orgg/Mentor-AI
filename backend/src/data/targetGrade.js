@@ -34,28 +34,29 @@ function levelPlan(count, maxLevel) {
   return Array.from({ length: want }, (_, i) => 1 + Math.round((i / (want - 1)) * (max - 1)));
 }
 
-// Testul de capitol stă în banda programei (treptele 4–8), nu pe încălzirea 1–3.
-// Rampa e scurtă: câteva trepte, apoi tavanul. Nota dorită urcă tavanul,
-// dar nu coboară testul la itemii de primar.
+// Testul de capitol nu coboară sub treapta 6: acolo e deja problema de capitol,
+// nu încălzirea. Nota 5 stă pe treapta 6 (un procedeu, doi pași).
+// Nota 10 stă doar pe treapta 8 (doi procedee, mai mulți pași).
+// Între ele tavanul urcă: 6 → 6–7, 7 → 7, 8–9 → 7–8.
 const TEST_BAND = {
-  1: [4, 5],
-  2: [4, 5],
-  3: [4, 6],
-  4: [5, 7],
-  5: [5, 7],
-  6: [6, 8],
-  7: [6, 8],
-  8: [6, 8]
+  1: [6, 6],
+  2: [6, 6],
+  3: [6, 7],
+  4: [7, 7],
+  5: [7, 8],
+  6: [7, 8],
+  7: [8, 8],
+  8: [8, 8]
 };
 
 function chapterTestPlan(count, maxLevel) {
   const want = Math.max(0, Number(count) || 0);
   if (!want) return [];
-  let start = 4;
+  let start = 6;
   let top = 8;
   if (maxLevel) {
     const raw = Math.min(8, Math.max(1, Number(maxLevel) || 1));
-    const band = TEST_BAND[raw] || [5, 8];
+    const band = TEST_BAND[raw] || [6, 8];
     start = band[0];
     top = band[1];
   }
