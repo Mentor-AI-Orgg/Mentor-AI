@@ -65,11 +65,11 @@ const UNITS = [
 
 function grade8Guide() {
   return {
-    title: "Limba și literatura română, clasa a VIII-a",
+    title: "Limba română, clasa a VIII-a",
     restored: true,
     manual: MANUAL,
     competencies: COMPETENCIES,
-    howISeeIt: "Manualul Litera, A1954, este parcurs până la capăt: testul inițial, Unitățile 1-5 și Unitatea 6, Familia și comunitatea, până la recapitulare. Foile de evaluare finală și fișa de observare nu sunt lecții. Planul principal ține compunerea, caracterizarea, coerența, timpurile, anafora și originalitatea, pe lângă subordonatele, figurile și fonetica deja predate. Planul secundar ține atitudinile orale, jargonul, argoul și proiectele. Subordonatele din afara programei nu se exersează. Matematica nu se schimbă aici.",
+    howISeeIt: "Clasa a VIII-a este parcursă până la capăt: testul inițial, Unitățile 1-5 și Unitatea 6, Familia și comunitatea, până la recapitulare. Foile de evaluare finală și fișa de observare nu sunt lecții. Planul principal ține compunerea, caracterizarea, coerența, timpurile, anafora și originalitatea, pe lângă subordonatele, figurile și fonetica deja predate. Planul secundar ține atitudinile orale, jargonul, argoul și proiectele. Subordonatele din afara programei nu se exersează. Matematica nu se schimbă aici.",
     units: UNITS
   };
 }

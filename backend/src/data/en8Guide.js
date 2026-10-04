@@ -75,13 +75,13 @@ const EN_GUIDES = {
     ]
   },
   romana: {
-    title: "Evaluare Națională · Limba și literatura română",
+    title: "Evaluare Națională · Limba română",
     howISeeIt:
-      "Proba de română cere trei lucruri: să citești un text necunoscut și să dovedești că l-ai înțeles, să aplici limba pe acel text, apoi să scrii un text scurt cu plan. Nu se tocește un comentariu gata făcut. Se antrenează ochiul, norma și structura.",
+      "Proba de limba română cere trei lucruri: să citești un text necunoscut și să dovedești că l-ai înțeles, să aplici limba pe acel text, apoi să scrii un text scurt cu plan. Nu se tocește un comentariu gata făcut. Se antrenează ochiul, norma și structura.",
     units: [
       {
         id: "proba-ro",
-        title: "Cum arată proba de română",
+        title: "Cum arată proba de limba română",
         inOwnWords:
           "Două ore, 90 de puncte plus 10 din oficiu. Subiectul I (70p): două texte-suport — textul 1 poate fi versuri sau narațiune, textul 2 e nonliterar. Partea A (38p): notare, 3 grile, adevărat/fals (6 enunțuri), apoi itemii 6–9 se scriu (6 scurt; 7 min. 30 de cuvinte; 8–9 câte 50–100). Partea B (32p): 4 grile + 4 răspunsuri scrise de gramatică. Subiectul II (20p): compunere pe caiet, min. 150 de cuvinte. După predare vezi rezolvarea-model și baremul pe pași și îți autoevaluezi foaia."
       },
@@ -146,7 +146,7 @@ function getEnGuide(subject) {
     trainingAvailable: true,
     quote: formatQuote(dailyQuote()),
     papersNote:
-      "Modelele A–C sunt originale. La mate, structura clasică de EN (ca în 2022): I 6 grile de numere, II 6 grile de geometrie, III 6 exerciții cu a) 2p și b) 3p. La română, foaia EN 2026: două texte (textul 1 poate fi versuri), I A 38p (notare, 3 grile, A/F, apoi 6–9 scrise aici cu număr de cuvinte), I B 32p (4 grile + 4 scrise), II 20p pe caiet. „Alt model” dă o simulare nouă, fără capăt. „Antrenament scurt” taie geometria / taie 8–9 și compunerea la română, fără ora de sală. După predare vezi rezolvarea-model și baremul pe pași și îți autoevaluezi foaia. Antrenamentul de capitol (10 exerciții) e separat.",
+      "Modelele A–C sunt originale. La matematică, structura clasică de EN (ca în 2022): I 6 grile de numere, II 6 grile de geometrie, III 6 exerciții cu a) 2p și b) 3p. La limba română, foaia EN 2026: două texte (textul 1 poate fi versuri), I A 38p (notare, 3 grile, A/F, apoi 6–9 scrise aici cu număr de cuvinte), I B 32p (4 grile + 4 scrise), II 20p pe caiet. „Alt model” dă o simulare nouă, fără capăt. „Antrenament scurt” taie geometria / taie 8–9 și compunerea la limba română, fără ora de sală. După predare vezi rezolvarea-model și baremul pe pași și îți autoevaluezi foaia. Antrenamentul de capitol (10 exerciții) e separat.",
     units: (entry.units || []).map(unit => shapeUnit({
       ...unit,
       lessons: lessonsForEn(sid, unit.id),
@@ -166,7 +166,7 @@ function listEnCatalog() {
     grade: 8,
     subjects: [
       { id: "matematica", name: { ro: "Matematică EN", en: "National Assessment Maths" }, icon: "fa-square-root-alt" },
-      { id: "romana", name: { ro: "Română EN", en: "National Assessment Romanian" }, icon: "fa-book" }
+      { id: "romana", name: { ro: "Limba română", en: "National Assessment Romanian" }, icon: "fa-book" }
     ],
     guides: EN_SUBJECT_IDS.map(subject => {
       const guide = getEnGuide(subject);

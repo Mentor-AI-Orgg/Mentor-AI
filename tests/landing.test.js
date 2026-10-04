@@ -18,7 +18,7 @@ describe('landing page', () => {
       'Intră în cont',
       'Creează cont',
       'Sunt părinte',
-      'Mate și română pentru clasele V–VIII, pe înțelesul tău',
+      'Matematică și limba română pentru clasele V–VIII, pe înțelesul tău',
       'Lecții după programa școlară, exerciții și un tutore care te ajută pas cu pas. Gratuit.',
       'Începe gratuit',
       'Puțin în fiecare zi te duce departe',

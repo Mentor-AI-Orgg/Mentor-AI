@@ -2,7 +2,7 @@ export const GRADES = [5, 6, 7, 8];
 
 export const SUBJECTS = [
   { id: 'matematica', labelRo: 'Matematică', labelEn: 'Mathematics', icon: 'fa-square-root-alt' },
-  { id: 'romana', labelRo: 'Limba și literatura română', labelEn: 'Romanian', icon: 'fa-book' }
+  { id: 'romana', labelRo: 'Limba română', labelEn: 'Romanian', icon: 'fa-book' }
 ];
 
 export function normalizeGrade(value) {

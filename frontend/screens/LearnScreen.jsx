@@ -16,6 +16,16 @@ import { MASCOT_MESSAGES } from '../i18n/mascotMessages.js';
 import { lessonIdFromHash, resolveAnchorId } from '../lessonText.js';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
 
+const OFFICIAL_SOURCE_LINE = 'Informațiile au fost adunate din manualele oficiale ale Ministerului Educației, pe baza programei actuale.';
+const EXACT_SOURCE = /litera|editura|isbn|\bA1\d{3}\b|aprobat prin/i;
+
+function sourceAttribution(guide) {
+  const disclaimer = String(guide?.source?.disclaimer || '');
+  if (!disclaimer && !guide?.manual) return '';
+  if (guide?.manual || EXACT_SOURCE.test(disclaimer)) return OFFICIAL_SOURCE_LINE;
+  return disclaimer;
+}
+
 const MONTHS = ['ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie'];
 const sayDay = iso => {
   const [year, month, day] = String(iso || '').split('-').map(Number);
@@ -354,7 +364,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           <MascotPresence />
           <div className="learn-hero">
             <div className="eyebrow">{isEn ? 'EVALUARE NAȚIONALĂ · CLASA A VIII-A' : 'LECȚII DE GIMNAZIU'}</div>
-            <h1 className="display-font screen-title">{isEn ? 'Pregătire pentru Evaluarea Națională.' : 'Română și matematică, clasele 5–8.'}</h1>
+            <h1 className="display-font screen-title">{isEn ? 'Pregătire pentru Evaluarea Națională.' : 'Limba română și matematică, clasele 5–8.'}</h1>
           </div>
         </div>
         <div className="learn-hero">
@@ -409,7 +419,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
         >
           <i className="fas fa-clipboard-check" />
           <strong>Evaluare Națională</strong>
-          <small>Clasa a 8-a · română și matematică</small>
+          <small>Clasa a 8-a · limba română și matematică</small>
         </button>
       </section>
 
@@ -480,11 +490,9 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                   : 'Niciun capitol aici. Alege cealaltă materie sau Evaluarea Națională.'}
               </p>
             )}
-            {guide?.manual && (
-              <p className="chapter-disclaimer">
-                {guide.manual.author}, {guide.manual.title}. {guide.manual.publisher}, {guide.manual.year}. Aprobat prin {guide.manual.approval}. Programă: {guide.manual.curriculum}.
-              </p>
-            )}
+            {sourceAttribution(guide) ? (
+              <p className="chapter-disclaimer">{sourceAttribution(guide)}</p>
+            ) : null}
             {Array.isArray(guide?.competencies) && guide.competencies.length > 0 && (
               <details className="official-competencies">
                 <summary>Competențe din programa oficială</summary>
@@ -495,7 +503,6 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                 </ul>
               </details>
             )}
-            {guide?.source?.disclaimer && <small className="chapter-disclaimer">{guide.source.disclaimer}</small>}
           </section>
 
           {isEn && (guide?.papers || []).length > 0 && (

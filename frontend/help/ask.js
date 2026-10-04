@@ -32,7 +32,7 @@ const APP_FAQ = [
   {
     id: 'lectii',
     keys: ['lecție', 'lecții', 'unde sunt lecțiile', 'capitol', 'capitole', 'română sau matematică', 'deschid o lecție'],
-    answer: 'Lecțiile sunt la Lecții: alegi română sau matematică, apoi clasa și capitolul. Butonul Continuă de pe prima pagină te duce înapoi unde ai rămas.',
+    answer: 'Lecțiile sunt la Lecții: alegi limba română sau matematică, apoi clasa și capitolul. Butonul Continuă de pe prima pagină te duce înapoi unde ai rămas.',
     screen: 'learn',
     extras: {}
   },
@@ -119,7 +119,7 @@ const SUBJECT_WORDS = [
 const BROAD_SUBJECT = ['matematica', 'mate', 'romana', 'gramatica'];
 
 const TUTOR = {
-  answer: 'Asta e o întrebare de matematică sau română. O luăm cu tutorele, nu de aici.',
+  answer: 'Asta e o întrebare de matematică sau de limba română. O luăm cu tutorele, nu de aici.',
   screen: 'professor',
   extras: {}
 };

@@ -2,7 +2,7 @@
 function emptyYear(grade) {
   const label = { 6: 'VI', 7: 'VII', 8: 'VIII' }[grade];
   return {
-    title: `Limba și literatura română, clasa a ${label}-a`,
+    title: `Limba română, clasa a ${label}-a`,
     restored: false,
     manual: null,
     competencies: [],

@@ -29,7 +29,7 @@ const SOURCE = {
   portal: "https://www.edu.ro/Ordin_ministru_3393_2017",
   textbooks: "https://www.manuale.edu.ro/",
   disclaimer:
-    "La clasa a V-a, româna urmează cuprinsul manualului Litera, A1249. La clasa a VI-a, manualul Litera, A1470, este parcurs până la capăt: recapitularea inițială, Unitățile 1–6 și încheierea anului. La clasa a VII-a, manualul Litera, A1732, cuprinde recapitularea inițială, Unitatea 1 până la capăt, Unitatea 2 până la capăt, Unitatea 3, Tărâmul sentimentelor, până la capăt, Unitatea 4, Lumea teatrului, până la capăt, Unitatea 5, Călător prin lume, până la capăt, Unitatea 6, Privind către mine, până la capăt, și recapitularea finală. La clasa a VIII-a, manualul Litera, A1954, este parcurs până la capăt: testul inițial, Unitatea 1, Călătoria, Unitatea 2, O lume plină de sentimente, Unitatea 3, Valori și atitudini, până la recapitulare, Unitatea 4, Tradiție și inovație, până la turismul cultural, Unitatea 5, Modele și antimodele, până la recapitulare, și Unitatea 6, Familia și comunitatea, până la recapitulare. Foile de evaluare finală și fișa de observare nu sunt lecții. Planul principal ține itemii care aduc puncte la Evaluarea Națională: compunerea, caracterizarea, coerența, timpurile, anafora și originalitatea, pe lângă subordonate, figuri și fonetică. Planul secundar păstrează, scurt, atitudinile orale, jargonul, argoul și proiectele. Textul lecțiilor e un rezumat propriu: nu copiem fragmentele și exercițiile."
+    "Informațiile au fost adunate din manualele oficiale ale Ministerului Educației, pe baza programei actuale."
 };
 
 const GRADES = [5, 6, 7, 8];
@@ -188,7 +188,7 @@ const GUIDES = {
     6: {
       title: "Matematică, clasa a VI-a",
       howISeeIt:
-        "Manualul Litera, clasa a VI-a, merge în ordinea asta: mulțimi și divizibilitate, rapoarte și proporții, numere întregi, numere raționale, apoi geometria. La geometrie înveți unghiul cu minute și secunde, paralelele, perpendiculara, cercul și triunghiul, până la Pitagora.",
+        "Clasa a VI-a merge în ordinea asta: mulțimi și divizibilitate, rapoarte și proporții, numere întregi, numere raționale, apoi geometria. La geometrie înveți unghiul cu minute și secunde, paralelele, perpendiculara, cercul și triunghiul, până la Pitagora.",
       units: [
         {
           id: "multimi",
@@ -542,7 +542,7 @@ function listCatalog() {
     grades: GRADES,
     subjects: [
       { id: "matematica", name: { ro: "Matematică", en: "Mathematics" }, icon: "fa-square-root-alt" },
-      { id: "romana", name: { ro: "Limba și literatura română", en: "Romanian language and literature" }, icon: "fa-book" }
+      { id: "romana", name: { ro: "Limba română", en: "Romanian language and literature" }, icon: "fa-book" }
     ],
     guides: SUBJECT_IDS.flatMap(subject =>
       GRADES.map(grade => {
@@ -563,17 +563,17 @@ function buildMentorContext(subject, grade) {
   const guide = getGuide(subject, grade);
   const units = guide.units.map(unit => `- ${unit.title}: ${unit.inOwnWords}`).join("\n");
   const manualLine = guide.manual
-    ? `Manual de structură: ${guide.manual.title}, ${guide.manual.author}, ${guide.manual.publisher}, ${guide.manual.year}, aprobat prin ${guide.manual.approval}. Nu cita fragmente din el.`
+    ? "Nu cita titlul, autorul, editura sau codul unui manual. Informațiile urmează programa actuală."
     : "";
   return [
-    `Ești mentor doar pentru gimnaziu (clasele 5–8), materiile Limba și literatura română și Matematică.`,
-    `Elevul este în clasa a ${guide.grade}-a, materia: ${guide.subject === "romana" ? "Limba și literatura română" : "Matematică"}.`,
+    `Ești mentor doar pentru gimnaziu (clasele 5–8), materiile Limba română și Matematică.`,
+    `Elevul este în clasa a ${guide.grade}-a, materia: ${guide.subject === "romana" ? "Limba română" : "Matematică"}.`,
     `Cum stă materia acum: ${guide.howISeeIt}`,
     manualLine,
     guide.units.length
       ? `Unități, în ordinea cuprinsului, rezumate aici, nu citate din manual:\n${units}`
       : "Nu există încă unități pentru clasa asta. Nu inventa un manual.",
-    `Dacă întrebarea e din altă materie sau de liceu, spune politicos că aici lucrăm doar română și matematică de gimnaziu și propune o punte (de exemplu: un text de fizică se poate citi ca text explicativ la română; o formulă de liceu se reduce la ce știe deja din clasa lui).`,
+    `Dacă întrebarea e din altă materie sau de liceu, spune politicos că aici lucrăm doar limba română și matematică de gimnaziu și propune o punte (de exemplu: un text de fizică se poate citi ca text explicativ la limba română; o formulă de liceu se reduce la ce știe deja din clasa lui).`,
     `Nu copia lecții din manuale. Explică cu cuvintele tale, cu un exemplu cotidian, apoi o întrebare ghidată.`,
     SOURCE.disclaimer
   ].filter(Boolean).join("\n");

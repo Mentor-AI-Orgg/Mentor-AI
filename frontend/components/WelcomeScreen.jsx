@@ -41,7 +41,7 @@ const FAQ = [
   { q: 'E gratuit?', a: 'Da. Nu cerem bani și nu punem reclame.' },
   { q: 'De ce trebuie emailul părintelui?', a: 'Ca să vadă ce înveți: un rezumat pe email și în zona de părinte. Tu nu îți pui adresa de email.' },
   { q: 'Merge pe telefon?', a: 'Da. Poți învăța de pe telefon sau de pe calculator.' },
-  { q: 'Ce clase acoperă?', a: 'Matematică și română, pentru clasele V–VIII.' },
+  { q: 'Ce clase acoperă?', a: 'Matematică și limba română, pentru clasele V–VIII.' },
   {
     q: 'Cine îmi poate șterge datele?',
     a: 'Tu, din Profil, sau părintele, din zona lui. Ștergerea ia și datele.'
@@ -70,7 +70,7 @@ const WelcomeScreen = ({ onConnect, onRegister, onParent }) => {
 
       <section className="welcome-hero" aria-labelledby="welcome-hero-title">
         <h1 id="welcome-hero-title" className="display-font welcome-title">
-          Mate și română pentru clasele V–VIII, pe înțelesul tău
+          Matematică și limba română pentru clasele V–VIII, pe înțelesul tău
         </h1>
         <p className="welcome-lead">
           Lecții după programa școlară, exerciții și un tutore care te ajută pas cu pas. Gratuit.

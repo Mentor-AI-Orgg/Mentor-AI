@@ -68,7 +68,7 @@ function answerFromLessons({ message, subject, grade }) {
   const level = normalizeGrade(grade);
   const guide = getGuide(sid, level);
   const query = tokens(message);
-  const subjectName = sid === "romana" ? "română" : "matematică";
+  const subjectName = sid === "romana" ? "limba română" : "matematică";
 
   if (!query.length) {
     return {

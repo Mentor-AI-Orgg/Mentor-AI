@@ -364,7 +364,7 @@ const LESSONS_EN = {
     lesson(
       'sintaxa',
       'Subiect, predicat, atribute, complemente',
-      'Predicatul spune ce se întâmplă. Subiectul e „cine”. Atributul ține de un substantiv (fata harnică, caietul de mate). Complementul direct răspunde la „pe cine / ce” după un verb tranzitiv. Indirectul: „cui”. Circumstanțialele: unde, când, cum, de ce.',
+      'Predicatul spune ce se întâmplă. Subiectul e „cine”. Atributul ține de un substantiv (fata harnică, caietul de matematică). Complementul direct răspunde la „pe cine / ce” după un verb tranzitiv. Indirectul: „cui”. Circumstanțialele: unde, când, cum, de ce.',
       'Predicatul nominal: „este” + nume predicativ. „Ana e atentă”: e — copulă, atentă — nume predicativ.',
       'Exemplu lucrat: „Ieri, elevii au scris o scrisoare bunicii.” Ieri — circumstanțial de timp; elevii — subiect; au scris — predicat; o scrisoare — complement direct; bunicii — complement indirect.',
       'Reține: întrebi verbul. Răspunsurile sunt funcțiile. Nu lipi etichete după ordine în frază.'

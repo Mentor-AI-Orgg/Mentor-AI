@@ -605,7 +605,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
       <p className="en-paper-foot">
         {isDrill
           ? 'Antrenament scurt: predai când termini, fără ora de sală. Baremul se deschide după predare. Simularea completă (minim 60 de minute) e butonul „Alt model” de deasupra.'
-          : 'Baremul întregului test se deschide după predare. La română, itemii 6–9 de la I A se scriu aici (cu număr de cuvinte); compunerea rămâne pe caiet. La mate, la Subiectul III scrii doar rezultatul. Pozele de corectare: 3 pe zi, ca să rămână aplicația gratuită. Părintele primește nota, durata și răspunsurile tale.'}
+          : 'Baremul întregului test se deschide după predare. La limba română, itemii 6–9 de la I A se scriu aici (cu număr de cuvinte); compunerea rămâne pe caiet. La matematică, la Subiectul III scrii doar rezultatul. Pozele de corectare: 3 pe zi, ca să rămână aplicația gratuită. Părintele primește nota, durata și răspunsurile tale.'}
       </p>
     </section>
   );

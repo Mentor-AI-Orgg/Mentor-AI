@@ -107,11 +107,11 @@ const UNITS = [
 
 function grade6Guide() {
   return {
-    title: "Limba și literatura română, clasa a VI-a",
+    title: "Limba română, clasa a VI-a",
     restored: true,
     manual: MANUAL,
     competencies: COMPETENCIES,
-    howISeeIt: "Manualul Litera pentru clasa a VI-a, cod A1470, este parcurs până la capăt: recapitularea inițială, Unitățile 1–6 și încheierea anului. Scena sau regula stă în lecție.",
+    howISeeIt: "Clasa a VI-a este parcursă până la capăt: recapitularea inițială, Unitățile 1–6 și încheierea anului. Scena sau regula stă în lecție.",
     units: UNITS
   };
 }

@@ -14,7 +14,7 @@ const SUBJECTS = [
   },
   {
     id: "romana",
-    name: { ro: "Limba și literatura română", en: "Romanian language and literature" },
+    name: { ro: "Limba română", en: "Romanian language and literature" },
     cycles: ["gimnazial"],
     icon: "fa-book"
   }

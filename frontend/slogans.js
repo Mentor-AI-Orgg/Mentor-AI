@@ -8,7 +8,7 @@ const SLOGANS = [
   'Ai bifat un pas? Ești deja mai departe decât ieri.',
   'Curiozitatea e superputerea ta de gimnaziu.',
   'Dacă te-ai încurcat, e semn că ești pe teren, nu pe tușă.',
-  'Română și mate, același joc: înțelegi, apoi încerci.',
+  'Limba română și matematică, același joc: înțelegi, apoi încerci.',
   'Hai, încă o întrebare. Creierul tău colecționează stele.',
   'Nu e cursă. E un joc: încerci, vezi, mai încerci.',
   'Astăzi ești detectiv: găsești ideea, nu tocești pagina.'
