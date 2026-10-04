@@ -51,7 +51,9 @@ describe('chapter practice bank', () => {
     });
     const pack = pickPractice({ subject: 'matematica', grade: 5, chapterId: 'naturale', kind: 'test', count: 7 });
     expect(pack.cards).toHaveLength(7);
-    expect(pack.cards.map(card => card.level)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    expect(pack.cards.every(card => card.level >= 6)).toBe(true);
+    expect(pack.cards[0].level).toBeLessThan(pack.cards[pack.cards.length - 1].level);
+    expect(Math.max(...pack.cards.map(card => card.level))).toBeGreaterThanOrEqual(7);
     expect(pack.cards[0].prompt).toBeTruthy();
     expect(pack.cards[0].options).toBeUndefined();
     expect(pack.cards[0].answers).toBeUndefined();
@@ -151,7 +153,7 @@ describe('practice API', () => {
     });
     expect(modest.status).toBe(200);
     expect(modest.body.targetNote).toBe(5);
-    expect(modest.body.cards.every(card => (card.level || 1) <= 2)).toBe(true);
+    expect(modest.body.cards.every(card => (card.level || 1) === 6)).toBe(true);
 
     const checked = await agent.post('/api/flashcards/check').send({
       card_id: generated.body.cards[0].id,

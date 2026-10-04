@@ -3,7 +3,7 @@ const { listChapterExercises, listExercisePoints, publicExercise, questionAsExer
 const { getGuide, normalizeGrade, normalizeSubject } = require('./gimnaziuGuide');
 const { lessonsFor } = require('./gimnaziuLessons');
 const { generateMany } = require('./itemGenerator');
-const { normalizeTargetNote, maxLevelForNote, levelPlan } = require('./targetGrade');
+const { normalizeTargetNote, maxLevelForNote, levelPlan, chapterTestPlan } = require('./targetGrade');
 
 function shuffle(list) {
   const copy = list.slice();
@@ -65,16 +65,20 @@ function pickOne(candidates, usedLessons, seenLessons) {
   return bucket[Math.floor(Math.random() * bucket.length)];
 }
 
-function chooseForLevel(pool, level, excluded, used, usedLessons, seenLessons, allowSecondary) {
+function chooseForLevel(pool, level, excluded, used, usedLessons, seenLessons, allowSecondary, floor = 1) {
   const open = pool.filter(item => {
     if (used.has(item.id) || excluded.has(item.id)) return false;
     if (!allowSecondary && item.secondary) return false;
     return true;
   });
   const ceiling = Math.min(8, Number(level) || 1);
-  let candidates = open.filter(item => (Number(item.level) || 1) === ceiling);
+  const minLevel = Math.min(ceiling, Math.max(1, Number(floor) || 1));
+  let candidates = open.filter(item => (Number(item.level) || 1) === ceiling && ceiling >= minLevel);
   if (!candidates.length) {
-    const lower = open.filter(item => (Number(item.level) || 1) <= ceiling);
+    const lower = open.filter(item => {
+      const lv = Number(item.level) || 1;
+      return lv <= ceiling && lv >= minLevel;
+    });
     if (lower.length) {
       const best = Math.max(...lower.map(item => Number(item.level) || 1));
       candidates = lower.filter(item => (Number(item.level) || 1) === best);
@@ -162,13 +166,14 @@ function pickPractice({
     });
   } else {
     const rawPool = isTest ? exercises : questions;
-    const pool = maxLevel
+    const plan = isTest ? chapterTestPlan(want, maxLevel) : chapterLevelPlan(want, maxLevel);
+    const skillFloor = isTest ? Math.min(...plan) : 1;
+    const pool = maxLevel && !isTest
       ? rawPool.filter(item => (Number(item.level) || 1) <= maxLevel && !item.secondary)
-      : rawPool.filter(item => !item.secondary);
-    const plan = chapterLevelPlan(want, maxLevel);
+      : rawPool.filter(item => !item.secondary && (!isTest || (Number(item.level) || 1) >= skillFloor));
     plan.forEach(level => {
       if (picked.length >= want) return;
-      const item = chooseForLevel(pool, level, excluded, used, usedLessons, seenLessons, false);
+      const item = chooseForLevel(pool, level, excluded, used, usedLessons, seenLessons, false, skillFloor);
       if (!item) return;
       used.add(item.id);
       if (item.lesson) usedLessons.add(item.lesson);
@@ -176,7 +181,7 @@ function pickPractice({
       picked.push(isTest ? publicExercise(item, reviewCard) : publicCard(item, reviewCard));
     });
     if (picked.length < want) {
-      const rest = chapterLevelPlan(want, maxLevel).slice(picked.length);
+      const rest = (isTest ? chapterTestPlan(want, maxLevel) : chapterLevelPlan(want, maxLevel)).slice(picked.length);
       const generated = generateMany({
         kind: isTest ? 'test' : 'flashcards',
         subject: sid,

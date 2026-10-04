@@ -48,7 +48,7 @@ function materialize(meta) {
   const scoped = { ...meta, level };
   const rand = rng(seedFromHex(scoped.seed));
   const built = scoped.subject === 'romana'
-    ? generateRomana(scoped.chapterId, scoped.kind, rand, level)
+    ? generateRomana(scoped.chapterId, scoped.kind, rand, level, scoped.grade)
     : generateMath(scoped.chapterId, scoped.kind, rand, level);
   if (!built || !itemLooksSound(built, scoped.kind)) return null;
   return {
@@ -120,8 +120,13 @@ function generateOne({ kind, subject, grade, chapterId, excludeIds = [], level }
   return last;
 }
 
+function surface(item) {
+  return String((item && (item.prompt || item.question)) || '').replace(/\s+/g, ' ').trim();
+}
+
 function generateMany(opts, count) {
   const exclude = [...(opts.excludeIds || [])];
+  const seen = new Set();
   const out = [];
   const want = Math.max(0, Number(count) || 0);
   const start = Math.max(1, Number(opts.startLevel) || 1);
@@ -130,9 +135,23 @@ function generateMany(opts, count) {
     : Array.from({ length: want }, (_, i) => start + i);
   for (let i = 0; i < want; i += 1) {
     const level = clampLevel(Number(plan[i] || plan[plan.length - 1] || start) || 1);
-    const item = generateOne({ ...opts, excludeIds: exclude, level });
+    let item = null;
+    for (let attempt = 0; attempt < 24; attempt += 1) {
+      const candidate = generateOne({ ...opts, excludeIds: exclude, level });
+      if (!candidate) break;
+      const text = surface(candidate);
+      if (text && seen.has(text)) {
+        exclude.push(candidate.id);
+        continue;
+      }
+      item = candidate;
+      break;
+    }
+    if (!item) item = generateOne({ ...opts, excludeIds: exclude, level });
     if (!item) break;
     exclude.push(item.id);
+    const text = surface(item);
+    if (text) seen.add(text);
     out.push({ ...item, level });
   }
   return out;
