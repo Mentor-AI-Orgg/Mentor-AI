@@ -654,6 +654,20 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .mentor-subject-picks { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 10px; }
 .mentor-subject-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--ink); font-size: 0.8125rem; font-weight: 700; }
 .mentor-subject-chip.selected { border-color: rgba(68, 214, 215,.7); background: rgba(68, 214, 215,.18); }
+.mentor-chats-wrap { margin: 0 0 14px; }
+.mentor-chats { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.mentor-chat-new { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 0; border-radius: 14px; font-size: 0.875rem; font-weight: 800; }
+.mentor-chat-new:hover { background: var(--primary); color: var(--on-primary); transform: none; }
+.mentor-chat-new:disabled, .mentor-chat-open:disabled { opacity: .45; cursor: not-allowed; }
+.mentor-chat-list { display: flex; flex: 1 1 200px; gap: 8px; min-width: 0; overflow-x: auto; padding-bottom: 2px; }
+.mentor-chat-open { min-height: 44px; max-width: 220px; padding: 0 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-2); color: var(--text); font-size: 0.8125rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mentor-chat-open.selected { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); }
+.mentor-chat-title-row, .mentor-rename-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+.mentor-chat-heading { margin: 0; font: 700 1rem 'Space Grotesk', sans-serif; overflow-wrap: anywhere; }
+.mentor-chat-rename, .mentor-rename-save, .mentor-rename-cancel { min-height: 44px; padding: 0 14px; border-radius: 12px; font-size: 0.8125rem; font-weight: 800; }
+.mentor-chat-rename, .mentor-rename-cancel { color: var(--text); }
+.mentor-rename-label { flex: 1 0 100%; color: var(--muted); font-size: 0.75rem; font-weight: 800; }
+.mentor-rename-row input { flex: 1 1 180px; min-width: 0; min-height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 1rem; }
 .subject-pick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 8px 0 18px; }
 .subject-pick-grid-three { grid-template-columns: 1fr 1fr; }
 .subject-pick-grid-three .subject-pick-en { grid-column: 1 / -1; min-height: 120px; }
