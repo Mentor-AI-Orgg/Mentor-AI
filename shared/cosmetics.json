@@ -41,7 +41,7 @@
     { "id": "theme-city-night", "name": "Oraș noaptea", "price": 90, "rarity": "Rare", "accent": "#4b4e8a", "emoji": "🌃", "description": "Teme seara, luminile aprinse." },
     { "id": "theme-tokyo-neon", "name": "Neon", "price": 100, "rarity": "Rare", "accent": "#ff4d9a", "emoji": "🌆", "description": "Roz-neon, se vede pe profil." },
     { "id": "theme-library", "name": "Bibliotecă", "price": 100, "rarity": "Rare", "accent": "#c4a574", "emoji": "📚", "description": "Căldura rafturilor." },
-    { "id": "theme-lab", "name": "Laborator", "price": 110, "rarity": "Rare", "accent": "#5ec8c0", "emoji": "🧪", "description": "Pentru cine iubește mate-ul precis." },
+    { "id": "theme-lab", "name": "Laborator", "price": 110, "rarity": "Rare", "accent": "#5ec8c0", "emoji": "🧪", "description": "Pentru cine iubește matematica precisă." },
     { "id": "theme-cafe", "name": "Cafenea", "price": 110, "rarity": "Rare", "accent": "#c9895a", "emoji": "☕", "description": "O masă, un exercițiu, o pauză." },
     { "id": "theme-night-aurora", "name": "Aurora", "price": 140, "rarity": "Epic", "accent": "#6fd7ff", "emoji": "🌌", "description": "Albastru rece, de noapte." },
     { "id": "theme-castle", "name": "Castel", "price": 150, "rarity": "Epic", "accent": "#9b8ec4", "emoji": "🏰", "description": "Poveste, nu basm de adormit." },

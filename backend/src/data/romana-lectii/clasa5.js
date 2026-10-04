@@ -128,7 +128,7 @@ const UNITS = [
 
 function grade5Guide() {
   return {
-    title: "Limba și literatura română, clasa a V-a",
+    title: "Limba română, clasa a V-a",
     restored: true,
     manual: MANUAL,
     competencies: COMPETENCIES,

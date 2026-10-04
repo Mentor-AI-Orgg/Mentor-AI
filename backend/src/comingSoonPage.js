@@ -96,7 +96,7 @@ function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
       ${error}
     </section>
     <p class="lead">${creatorPage ? "Doar tu vezi aplicația. Lumea rămâne pe pagina de mentenanță." : "Nota 10, fără meditații de sute de lei."}</p>
-    <p>${creatorPage ? "După parolă se deschide aplicația pe telefonul sau calculatorul tău." : "Română + matematică, clasele 5–8. Complet gratuit. Aplicația se pregătește — nu e deschisă încă."}</p>
+    <p>${creatorPage ? "După parolă se deschide aplicația pe telefonul sau calculatorul tău." : "Limba română + matematică, clasele 5–8. Complet gratuit. Aplicația se pregătește — nu e deschisă încă."}</p>
     <p class="handle">@suntde10</p>
     <p class="nets">TikTok · Instagram · YouTube · Facebook</p>
   </main>

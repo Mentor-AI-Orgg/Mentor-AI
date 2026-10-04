@@ -180,7 +180,7 @@ const CalendarScreen = ({ onBack, userData }) => {
                 </div>
                 <div className="calendar-add-row">
                   <input type="time" value={newTime} onChange={e => setNewTime(e.target.value)} aria-label="Ora (opțional)" />
-                  <input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Ex: Test la mate" onKeyDown={e => { if (e.key === 'Enter') addEvent(); }} />
+                  <input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Ex: Test la matematică" onKeyDown={e => { if (e.key === 'Enter') addEvent(); }} />
                   <button type="button" className="accent-button" onClick={addEvent} disabled={!newTitle.trim()}><i className="fas fa-plus" /></button>
                 </div>
                 <label className="calendar-important-check">
@@ -188,7 +188,7 @@ const CalendarScreen = ({ onBack, userData }) => {
                   <span>Important — un reminder cu o zi înainte</span>
                 </label>
                 <div className="calendar-suggest-row">
-                  {['Test la mate', 'Lectură la română', 'Serbare', userData?.dailyHours === '0.5' ? 'Sesiune 30 min' : 'Sesiune 1 oră'].map(label => (
+                  {['Test la matematică', 'Lectură la limba română', 'Serbare', userData?.dailyHours === '0.5' ? 'Sesiune 30 min' : 'Sesiune 1 oră'].map(label => (
                     <button key={label} type="button" className="ghost-button" onClick={() => setNewTitle(label)}>{label}</button>
                   ))}
                 </div>

@@ -63,7 +63,7 @@ const MULTIMI_LESSONS = [
     figure: 'venn',
     formulas: ['|A ∪ B| = |A| + |B| − |A ∩ B|'],
     theory: 'Când mulțimile sunt date prin enumerare, faci operațiile element cu element. Când sunt date prin proprietate, cauți numerele care îndeplinesc condiția.\n\nCardinalul reuniunii nu este mereu suma cardinalelor. Elementele comune ar fi numărate de două ori. Le scazi o dată: |A ∪ B| = |A| + |B| − |A ∩ B|.\n\nPe diagramă pui întâi intersecția, apoi restul fiecărui cerc, apoi pe cei care nu sunt în niciun cerc.',
-    example: 'Într-un grup de 32 de elevi, 18 fac mate și 16 fac română. 7 le fac pe amândouă. În cel puțin un cerc: 18 + 16 − 7 = 27. În niciun cerc: 32 − 27 = 5. Doar mate: 18 − 7 = 11. Doar română: 16 − 7 = 9.',
+    example: 'Într-un grup de 32 de elevi, 18 fac matematică și 16 fac limba română. 7 le fac pe amândouă. În cel puțin un cerc: 18 + 16 − 7 = 27. În niciun cerc: 32 − 27 = 5. Doar matematică: 18 − 7 = 11. Doar limba română: 16 − 7 = 9.',
     practice: '1. 10 copii au câine, 8 au pisică, 3 au amândouă. Câți au cel puțin un animal dintre acestea? 2. Doar câine? 3. Dacă sunt 20 de copii în total, câți nu au nici câine, nici pisică?\n\nRăspunsuri: 15. 7. 5.',
     mistakes: 'Nu aduna 18 + 16 fără să scoți pe cei 7. Nu pune intersecția și în „doar A”, și în „doar B”. Nu uita zona din afara cercurilor când ți se cere „câți nu”.',
     tryThis: 'Întreabă opt colegi dacă le place fotbalul, desenul sau amândouă. Fă diagrama și scrie cardinalul reuniunii cu formula.',

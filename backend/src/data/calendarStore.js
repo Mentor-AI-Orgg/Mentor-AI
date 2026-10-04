@@ -94,8 +94,8 @@ function connectProvider(userId, provider, extra = {}) {
 
   const today = new Date();
   const demoEvents = [
-    { offset: 1, title: provider === "google" ? "Curs Matematică (sincronizat)" : "Recapitulare Notion – Română", type: "sync" },
-    { offset: 3, title: provider === "google" ? "Exerciții de mate (Google Calendar)" : "Deadline temă – Notion", type: "sync" },
+    { offset: 1, title: provider === "google" ? "Curs Matematică (sincronizat)" : "Recapitulare Notion – Limba română", type: "sync" },
+    { offset: 3, title: provider === "google" ? "Exerciții de matematică (Google Calendar)" : "Deadline temă – Notion", type: "sync" },
     { offset: 6, title: provider === "google" ? "Pregătire Evaluare (Google Calendar)" : "Sesiune focus – Notion", type: "sync" }
   ];
 

@@ -11,7 +11,7 @@ const HELP_ARTICLES = [
     id: 'lectie',
     category: 'lectii',
     title: 'Cum deschizi o lecție',
-    body: 'De pe prima pagină apeși Română sau Matematică. Alegi clasa, apoi un capitol. Citești lecția și abia după aceea treci la exerciții. Dacă ai lăsat un capitol la jumătate, butonul Continuă te duce înapoi acolo.'
+    body: 'De pe prima pagină apeși Limba română sau Matematică. Alegi clasa, apoi un capitol. Citești lecția și abia după aceea treci la exerciții. Dacă ai lăsat un capitol la jumătate, butonul Continuă te duce înapoi acolo.'
   },
   {
     id: 'test',
@@ -41,7 +41,7 @@ const HELP_ARTICLES = [
     id: 'en',
     category: 'examen',
     title: 'Evaluarea Națională',
-    body: 'La Evaluare Națională lucrezi ca la examen: subiecte de română și matematică pentru clasa a 8-a. Citește cerința de două ori înainte să răspunzi și verifică calculele la final. Furnicuța îți amintește asta când intri.'
+    body: 'La Evaluare Națională lucrezi ca la examen: subiecte de limba română și matematică pentru clasa a 8-a. Citește cerința de două ori înainte să răspunzi și verifică calculele la final. Furnicuța îți amintește asta când intri.'
   },
   {
     id: 'parinte',

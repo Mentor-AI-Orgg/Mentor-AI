@@ -244,7 +244,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
           ))}
         </ul>
         <div className="quick-grid">
-          <button type="button" onClick={() => onNavigate('learn', { subject: 'romana', grade, track: null })} className="quick-card quick-aqua"><i className="fas fa-book" /><span>Română</span><small>Capitol + lecție</small></button>
+          <button type="button" onClick={() => onNavigate('learn', { subject: 'romana', grade, track: null })} className="quick-card quick-aqua"><i className="fas fa-book" /><span>Limba română</span><small>Capitol + lecție</small></button>
           <button type="button" onClick={() => onNavigate('learn', { subject: 'matematica', grade, track: null })} className="quick-card quick-gold"><i className="fas fa-square-root-alt" /><span>Matematică</span><small>Capitol + test</small></button>
           <button type="button" onClick={() => onNavigate('learn', { track: 'en', grade: 8, subject: 'matematica' })} className="quick-card quick-coral"><i className="fas fa-clipboard-check" /><span>Evaluare Națională</span><small>Ca la examen + antrenament</small></button>
           <button type="button" onClick={() => onNavigate('calendar')} className="quick-card quick-aqua"><i className="fas fa-calendar-check" /><span>Calendar</span><small>Ritmul tău</small></button>
