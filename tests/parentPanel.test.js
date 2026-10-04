@@ -51,5 +51,17 @@ describe('panoul părintelui', () => {
     expect(me.body.user.timeBlocked).toBe(true);
     const home = fs.readFileSync('frontend/screens/HomeScreen.jsx', 'utf8');
     expect(home).toContain('Ai lucrat mult azi, ne vedem mâine!');
+    const screen = fs.readFileSync('frontend/components/ConsentScreens.jsx', 'utf8');
+    expect(screen).toContain('Duminică, de la ora 19');
+    expect(screen).toContain('În fiecare zi, de la ora 19');
+    expect(screen).toContain('Nu mai primești rezumatul de activitate');
+    expect(screen).toContain('cel mult trei rezumate');
+    expect(screen).toContain('Nu apare mesajul că a lucrat destul');
+    expect(screen).toContain('La 30 de minute de cronometru și teste');
+    expect(screen).toContain('La 60 de minute de cronometru și teste');
+    expect(screen).toContain('La 90 de minute de cronometru și teste');
+    expect(screen).toContain('Săptămânal');
+    expect(screen).toContain('Fără emailuri');
+    expect(screen).toContain('Fără limită');
   });
 });

@@ -89,6 +89,47 @@ const ConsentScreen = ({ token = '' }) => {
   );
 };
 
+const EMAIL_CHOICES = [
+  {
+    cadence: 'weekly',
+    label: 'Săptămânal',
+    note: 'Duminică, de la ora 19 (ora României): un email cu lecțiile, minutele și testele adunate până atunci. Nu pleacă dacă n-a lucrat.'
+  },
+  {
+    cadence: 'daily',
+    label: 'Zilnic',
+    note: 'În fiecare zi, de la ora 19 (ora României): un email cu lecțiile, minutele și testele de la ultimul rezumat. Nu pleacă dacă n-a lucrat. După trimitere, lista se golește.'
+  },
+  {
+    cadence: 'off',
+    label: 'Fără emailuri',
+    note: 'Nu mai primești rezumatul de activitate. Îl vezi în continuare aici.'
+  }
+];
+
+const LIMIT_CHOICES = [
+  {
+    minutes: 0,
+    label: 'Fără limită',
+    note: 'Copilul poate lucra oricât. Nu apare mesajul că a lucrat destul.'
+  },
+  {
+    minutes: 30,
+    label: '30 min/zi',
+    note: 'La 30 de minute de cronometru și teste azi, pe prima pagină vede că a lucrat destul. Poate continua; a doua zi o ia de la capăt.'
+  },
+  {
+    minutes: 60,
+    label: '60 min/zi',
+    note: 'La 60 de minute de cronometru și teste azi, pe prima pagină vede că a lucrat destul. Poate continua; a doua zi o ia de la capăt.'
+  },
+  {
+    minutes: 90,
+    label: '90 min/zi',
+    note: 'La 90 de minute de cronometru și teste azi, pe prima pagină vede că a lucrat destul. Poate continua; a doua zi o ia de la capăt.'
+  }
+];
+
 const ParentScreen = ({ token = '' }) => {
   const [email, setEmail] = useState('');
   const [note, setNote] = useState('');
@@ -201,30 +242,43 @@ const ParentScreen = ({ token = '' }) => {
               <p>Prieteni: {panels[child.id].friends.map(person => person.username).filter(Boolean).join(', ') || 'niciunul'}.</p>
             </>
           )}
-          <div className="onboarding-actions">
+          <div className="onboarding-actions parent-controls">
             <button type="button" className="ghost-button" onClick={() => download(child)}>Descarcă datele</button>
-            {['weekly', 'daily', 'off'].map(cadence => (
-              <button
-                key={cadence}
-                type="button"
-                className={child.emails === cadence ? 'accent-button' : 'ghost-button'}
-                aria-pressed={child.emails === cadence}
-                onClick={() => MentorAPI.parentEmails(child.id, { cadence }).then(load)}
-              >
-                {cadence === 'weekly' ? 'Săptămânal' : cadence === 'daily' ? 'Zilnic' : 'Fără emailuri'}
-              </button>
-            ))}
-            {[0, 30, 60, 90].map(minutes => (
-              <button
-                key={minutes}
-                type="button"
-                className={Number(child.dailyLimit) === minutes ? 'accent-button' : 'ghost-button'}
-                aria-pressed={Number(child.dailyLimit) === minutes}
-                onClick={() => MentorAPI.parentLimit(child.id, minutes).then(load)}
-              >
-                {minutes ? `${minutes} min/zi` : 'Fără limită'}
-              </button>
-            ))}
+            <div className="parent-choices">
+              <p className="parent-choices-title">Emailuri</p>
+              <p className="parent-choices-lead">Cu mai mulți copii, aceeași adresă primește într-o zi cel mult trei rezumate.</p>
+              {EMAIL_CHOICES.map(choice => (
+                <div key={choice.cadence} className="parent-choice">
+                  <button
+                    type="button"
+                    className={child.emails === choice.cadence ? 'accent-button' : 'ghost-button'}
+                    aria-pressed={child.emails === choice.cadence}
+                    aria-describedby={`email-${child.id}-${choice.cadence}`}
+                    onClick={() => MentorAPI.parentEmails(child.id, { cadence: choice.cadence }).then(load)}
+                  >
+                    {choice.label}
+                  </button>
+                  <p id={`email-${child.id}-${choice.cadence}`} className="parent-choice-note">{choice.note}</p>
+                </div>
+              ))}
+            </div>
+            <div className="parent-choices">
+              <p className="parent-choices-title">Timp în aplicație</p>
+              {LIMIT_CHOICES.map(choice => (
+                <div key={choice.minutes} className="parent-choice">
+                  <button
+                    type="button"
+                    className={Number(child.dailyLimit) === choice.minutes ? 'accent-button' : 'ghost-button'}
+                    aria-pressed={Number(child.dailyLimit) === choice.minutes}
+                    aria-describedby={`limit-${child.id}-${choice.minutes}`}
+                    onClick={() => MentorAPI.parentLimit(child.id, choice.minutes).then(load)}
+                  >
+                    {choice.label}
+                  </button>
+                  <p id={`limit-${child.id}-${choice.minutes}`} className="parent-choice-note">{choice.note}</p>
+                </div>
+              ))}
+            </div>
             <button type="button" className="ghost-button" onClick={() => MentorAPI.parentFriends(child.id, { enabled: panels[child.id]?.friendsEnabled === false }).then(load)}>
               {panels[child.id]?.friendsEnabled === false ? 'Pornește prietenii' : 'Oprește prietenii'}
             </button>
