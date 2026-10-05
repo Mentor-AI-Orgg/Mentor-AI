@@ -22,6 +22,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
   const [report, setReport] = useState(null);
   const [targetNote, setTargetNote] = useState(lesson ? 0 : null);
   const [hintFor, setHintFor] = useState('');
+  const [sessionId, setSessionId] = useState('');
   const startedAt = useRef(Date.now());
   const onLesson = Boolean(lesson?.id);
 
@@ -47,6 +48,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
       lesson_id: lesson?.id || ''
     });
     const next = pack.success ? (pack.data.cards || []) : [];
+    setSessionId(pack.data?.session_id || '');
     setCards(next);
     setCoverage(pack.data?.coverage || null);
     setReview(Boolean(pack.data?.review));
@@ -91,6 +93,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
       class_level: grade,
       title: lesson?.title || unit.title,
       lesson_id: lesson?.id || '',
+      session_id: sessionId,
       answers,
       duration_ms: Date.now() - startedAt.current
     });
