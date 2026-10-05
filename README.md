@@ -134,7 +134,11 @@ build și deploy. La următoarea vizită worker-ul se dezînregistrează și
 - `tests/` — Vitest + Supertest (auth, chat din lecții, cumpărături, clasament)
 
 Fără SMTP aplicația pornește, iar emailurile rămân în inbox. Variabilele sunt în
-[backend/.env.example](backend/.env.example).
+[backend/.env.example](backend/.env.example). `ADMIN_EMAIL`, împreună cu
+SMTP, primește alertele de cădere și de eroare (limitate, ca să nu umple
+inboxul). Copia zilnică pleacă din proces, nu dintr-o cerere; pe DirectAdmin
+poți pune și cronul din [DEPLOY.md](DEPLOY.md). Tutorele acceptă 10 întrebări
+pe minut și 60 pe oră pentru un cont, apoi spune să încerci din nou.
 
 Acordul părintelui se dă doar din linkul primit pe email. Dacă mesajul
 ajunge în Spam, părintele nu confirmă și contul se șterge după 14 zile.

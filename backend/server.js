@@ -27,12 +27,14 @@ for (const item of prelansare().items) {
   }
 }
 
-const { ensureRecentBackup } = require("./src/ops/backup");
+const { ensureRecentBackup, startDailyBackup } = require("./src/ops/backup");
 const freshBackup = ensureRecentBackup();
 if (!freshBackup.ok) console.error(`[backup] ${freshBackup.reason}`);
+startDailyBackup();
 
 const { smtpConfigured } = require("./src/notify/deliver");
-const { recordMailCode } = require("./src/ops/errorMonitor");
+const { recordMailCode, installProcessAlerts, reportError } = require("./src/ops/errorMonitor");
+installProcessAlerts();
 recordMailCode(smtpConfigured() ? "smtp_configured" : "smtp_unconfigured");
 
 const server = app.listen(config.PORT, () => {
@@ -43,6 +45,15 @@ const server = app.listen(config.PORT, () => {
   console.log(restored.loaded
     ? `Date: restaurate din ${persistence.DATA_FILE} (salvate la ${restored.savedAt})`
     : `Date: pornire pe curat (${restored.reason}); voi salva în ${persistence.DATA_FILE}`);
+});
+
+server.on("error", (error) => {
+  reportError({
+    status: 500,
+    route: "listen",
+    code: "health_listen",
+    stack: error && error.stack ? error.stack : String(error || "")
+  }).catch(() => {});
 });
 
 function shutdown(signal) {

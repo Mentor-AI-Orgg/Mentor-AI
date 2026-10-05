@@ -43,6 +43,14 @@ const chatRequest = async ({
     language,
     plan_id: planId
   });
+  if (result.rateLimited) {
+    return {
+      response: result.data?.response || result.error || 'Încearcă din nou peste un minut.',
+      mocked: false,
+      engine_used: 'rate_limit',
+      rateLimited: true
+    };
+  }
   if (result.success && result.data) {
     return { ...result.data, mocked: !!result.data.engine_mocked };
   }

@@ -43,6 +43,14 @@ const SESSION_STEPS = [
 
 const chatRequest = async ({ message, conversationId, subject, classLevel, language, planId, mockReply }) => {
   const result = await MentorAPI.chat({ message, conversation_id: conversationId, subject, class_level: classLevel, language, plan_id: planId });
+  if (result.rateLimited) {
+    return {
+      response: result.data?.response || result.error || 'Încearcă din nou peste un minut.',
+      mocked: false,
+      engine_used: 'rate_limit',
+      rateLimited: true
+    };
+  }
   if (result.success && result.data) {
     return { ...result.data, mocked: !!result.data.engine_mocked };
   }
@@ -118,6 +126,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [guideError, setGuideError] = useState(false);
   const [guideLoading, setGuideLoading] = useState(false);
   const [paperError, setPaperError] = useState('');
+  const [askNote, setAskNote] = useState('');
   const isEn = track === 'en';
   const activeGrade = isEn ? 8 : grade;
 
@@ -300,6 +309,12 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
       planId: userData.planId || 'free',
       mockReply: `Obiectiv: înțelegi ${unit.title.toLowerCase()} în pași simpli. Încălzire: notează 2 lucruri pe care le știi deja. Exercițiu: rezolvă un exemplu scurt și încadrează răspunsul în 3 etape. Verificare: spune cu voce tare ce ai făcut. Bonus: repetă ideea principală într-o propoziție.`
     });
+    if (reply.rateLimited) {
+      setAskNote(reply.response || 'Încearcă din nou peste un minut.');
+      setLoading(false);
+      return;
+    }
+    setAskNote('');
     const plan = parseSessionPlan(reply.response || '');
     setSession({
       title: unit.title,
@@ -729,6 +744,8 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           </section>
         </>
       )}
+
+      {askNote && <p className="session-check-hint" role="status">{askNote}</p>}
 
       {session && (
         <section className="learning-result surface">

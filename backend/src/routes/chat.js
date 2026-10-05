@@ -10,6 +10,7 @@ const memory = require("../memory/memoryStore");
 const { validateBody } = require("../middleware/validate");
 const { chatSchema } = require("../validation/schemas");
 const { obviouslyInappropriate } = require("../safety/usernamePolicy");
+const { guardTutorAsk } = require("../safety/tutorQuota");
 
 router.post("/", validateBody(chatSchema), async (req, res) => {
   const startTotal = Date.now();
@@ -49,6 +50,10 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
   if (!accountIsOpen(req.auth.account)) {
     return res.status(403).json({ error: "consent_pending" });
   }
+
+  // După ajutorul de criză, ca 116 111 să nu fie oprit de limită.
+  // Aceeași rută primește întrebarea din chat și din lecție.
+  if (guardTutorAsk(req, res)) return;
 
   if (obviouslyInappropriate(message)) {
     return res.json({
