@@ -137,6 +137,38 @@ describe('backup criptat', () => {
     expect(fs.existsSync(path.join(dir, oldName))).toBe(false);
   });
 
+  it('scrie copia zilei o singură dată și nu dintr-o cerere', () => {
+    const keys = pair();
+    const dir = tempDir();
+    const data = path.join(dir, 'mentor-ai.json');
+    const out = path.join(dir, 'backups');
+    fs.writeFileSync(data, '{"ok":true}');
+    const now = new Date('2026-10-05T01:30:00.000Z');
+    const options = {
+      inline: true,
+      publicKey: keys.publicKey,
+      dataFile: data,
+      backupDir: out,
+      preDir: dir,
+      now
+    };
+    const first = backup.runScheduledBackup(options);
+    expect(first.ok).toBe(true);
+    expect(first.skipped).toBeUndefined();
+    expect(first.file).toContain('mentor-ai-2026-10-05.json.gz.enc');
+    const mtime = fs.statSync(first.file).mtimeMs;
+    const second = backup.runScheduledBackup(options);
+    expect(second).toMatchObject({ ok: true, skipped: true, reason: 'today' });
+    expect(fs.statSync(first.file).mtimeMs).toBe(mtime);
+
+    const server = fs.readFileSync(path.join(__dirname, '../backend/server.js'), 'utf8');
+    const appSource = fs.readFileSync(path.join(__dirname, '../backend/src/app.js'), 'utf8');
+    expect(server).toContain('startDailyBackup()');
+    expect(appSource).not.toContain('startDailyBackup');
+    expect(appSource).not.toContain('runScheduledBackup');
+    expect(appSource).not.toContain('createBackup');
+  });
+
   it('nu are o cheie privată în repo', () => {
     const skip = new Set(['node_modules', '.git', 'dist', 'coverage']);
     function walk(dir) {

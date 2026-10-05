@@ -359,6 +359,11 @@ function saveNow() {
     return { saved: true, bytes: Buffer.byteLength(json) };
   } catch (error) {
     console.error(`[persistence] salvare eșuată: ${error.message}`);
+    try {
+      require("../ops/errorMonitor").noteSaveFailure(error);
+    } catch {
+      /* jurnalul nu oprește salvarea */
+    }
     return { saved: false, reason: "error", error: error.message };
   }
 }

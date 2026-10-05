@@ -142,6 +142,51 @@ describe('jurnal de erori și deploy', () => {
     expect(log).not.toContain('secret');
   });
 
+  it('anunță o dată când aceeași eroare se repetă, apoi tace', async () => {
+    arm();
+    const start = Date.parse('2026-09-27T08:00:00Z');
+    await monitor.noteIncident({ type: 'health_save_failed', id: 's0', now: start });
+    expect(spy).toHaveBeenCalledTimes(1);
+    for (let i = 2; i < monitor.REPEAT_AT; i += 1) {
+      await monitor.noteIncident({ type: 'health_save_failed', id: `s${i}`, now: start + i });
+    }
+    expect(spy).toHaveBeenCalledTimes(1);
+    await monitor.noteIncident({ type: 'health_save_failed', id: 'repeat', now: start + 50 });
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy.mock.calls[1][0].body).toContain(`Apariții: ${monitor.REPEAT_AT}`);
+    await monitor.noteIncident({ type: 'health_save_failed', id: 'more', now: start + 60 });
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('nu retrimite alerta de cădere după restart, în aceeași oră', async () => {
+    arm();
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'alert-'));
+    process.env.ERROR_LOG_DIR = dir;
+    process.env.NODE_ENV = 'production';
+    const start = Date.parse('2026-09-27T08:00:00Z');
+    await monitor.noteIncident({ type: 'uncaught_exception', id: 'c1', now: start });
+    expect(spy).toHaveBeenCalledTimes(1);
+    const saved = fs.readFileSync(path.join(dir, 'alert-state.json'), 'utf8');
+    monitor.resetAlerts();
+    fs.writeFileSync(path.join(dir, 'alert-state.json'), saved);
+    spy.mockClear();
+    await monitor.noteIncident({ type: 'uncaught_exception', id: 'c2', now: start + 1000 });
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('anunță salvarea eșuată ca problemă de sănătate', async () => {
+    arm();
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'savefail-'));
+    process.env.ERROR_LOG_DIR = dir;
+    await monitor.noteSaveFailure(new Error('disc plin'));
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy.mock.calls[0][0].body).toContain('health_save_failed');
+    expect(spy.mock.calls[0][0].body).not.toContain('disc plin');
+    const log = fs.readFileSync(path.join(dir, 'errors.log'), 'utf8');
+    expect(log).toContain('health_save_failed');
+    expect(log).toContain('persistence.save');
+  });
+
   it('pornește deploy-ul doar după CI reușit', () => {
     spy = vi.spyOn(deliver, 'deliverMessage');
     const yml = fs.readFileSync(path.join(__dirname, '../.github/workflows/deploy.yml'), 'utf8');

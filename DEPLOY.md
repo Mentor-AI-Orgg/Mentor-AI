@@ -150,6 +150,14 @@ Copia zilnică stă în `backups/`, lângă `data/`, nu în site-ul public.
 Este gzip, apoi AES-256-GCM, iar cheia AES este înfășurată cu `BACKUP_PUBLIC_KEY`.
 Se păstrează 14 zile și 4 duminici. Fișierele `data/*.pre-*` mai vechi de 35 de zile se șterg odată cu rotația.
 
+Copia nu se face în timpul unei cereri. Procesul Node pornește un timer
+(la 45 de secunde după start, apoi la fiecare 30 de minute) și scrie
+`mentor-ai-AAAA-LL-ZZ.json.gz.enc` doar dacă fișierul zilei, pe ora
+României, lipsește. La pornire, dacă ultima copie are peste 26 de ore,
+se face una imediat, tot în afara cererilor. Fără `BACKUP_PUBLIC_KEY`
+(sau fără `backend/backup-public.pem`) copia nu pornește și site-ul
+rămâne închis până o pui.
+
 Pe laptop, o singură dată:
 
 ```bash
@@ -160,7 +168,9 @@ node scripts/backup-keygen.mjs
 `backend/backup-public.pem`. `backup-private.pem` rămâne pe laptop și pe un stick.
 Nu o urca și nu o comite.
 
-Cron în DirectAdmin, în fiecare zi la 03:30, dacă ceasul serverului e pe ora României.
+Pe DirectAdmin, cronul de mai jos e a doua cale: rulează și dacă oprești
+aplicația Node, și nu ține de timerul din proces. Îl pui în **Cron Jobs**,
+în fiecare zi la 03:30, dacă ceasul serverului e pe ora României.
 Calea către `node` o copiezi din **Setup Node.js App** (linia „Enter to the virtual environment”):
 
 ```bash
@@ -190,11 +200,17 @@ node scripts/backup-restore.mjs --copie mentor-ai-AAAA-LL-ZZ.json.gz.enc --cheie
 Pe un folder local, nu pe server: descarcă artifact-ul din GitHub → Actions, rulează comanda de restaurare, pornește aplicația cu `DATA_DIR` spre folderul restaurat și intră cu un cont de test.
 
 `ADMIN_EMAIL` primește alerta când aplicația înregistrează o eroare (prima
-de un tip într-o oră, maxim 10 pe zi), când ultima copie de siguranță are
-peste 26 de ore, sau când SMTP eșuează de 3 ori la rând. Mesajul are tipul,
-numărul de apariții și un id scurt, fără date despre copii. Fără adresă,
-erorile rămân doar în `logs/errors.log` pe server (în afara site-ului public,
-nu se urcă în git). Sentry nu este pornit.
+de un tip într-o oră; încă un mesaj dacă același tip ajunge la 8 apariții;
+maxim 10 emailuri pe zi), când Node cade (`uncaughtException`, apoi procesul
+iese; `unhandledRejection` doar se anunță), când salvarea datelor eșuează,
+când portul nu pornește, când copia zilnică eșuează, când ultima copie are
+peste 26 de ore, sau când SMTP eșuează de 3 ori la rând. O cădere care
+repornește procesul nu retrimite același tip în aceeași oră: contorul stă
+în `logs/alert-state.json`. Mesajul are tipul, numărul de apariții și un id
+scurt, fără date despre copii. Ca mailul să plece îți trebuie și
+`SMTP_HOST` plus `SMTP_FROM`. Fără `ADMIN_EMAIL`, erorile rămân doar în
+`logs/errors.log` pe server (în afara site-ului public, nu se urcă în git).
+Sentry nu este pornit.
 
 Pagina de confidențialitate rămâne deschisă și cât site-ul e închis.
 Numele, adresa și emailul operatorului vin din variabile, nu din repo:

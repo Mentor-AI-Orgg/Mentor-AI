@@ -28,7 +28,7 @@ const { startRetention } = require("./data/retentionJob");
 const { startDigestSchedule } = require("./notify/parentActivity");
 const { migrateLegacyProfiles, flagRejectedUsernames } = require("./data/authStore");
 const { corsAllowlist, isAllowedOrigin } = require("./middleware/corsAllowlist");
-const { generalApiLimiter, chatLimiter, previewPasswordLimiter } = require("./middleware/rateLimits");
+const { generalApiLimiter, previewPasswordLimiter } = require("./middleware/rateLimits");
 const { securityHeaders } = require("./middleware/security");
 const { requestLog } = require("./logger");
 const clientErrorRoute = require("./routes/clientError");
@@ -137,7 +137,7 @@ function createApp(options = {}) {
 
     const studentOnly = [authRequired, studentRequired];
 
-    app.use(`${prefix}/chat`, ...studentOnly, chatLimiter, chatRoute);
+    app.use(`${prefix}/chat`, ...studentOnly, chatRoute);
     app.use(`${prefix}/flashcards`, ...studentOnly, flashcardsRoute);
     app.use(`${prefix}/cards`, ...studentOnly, cardsRoute);
     app.use(`${prefix}/problems`, ...studentOnly, problemsRoute);

@@ -1,5 +1,7 @@
 // Jurnal de erori pe disc și alerte către ADMIN_EMAIL.
 // Fără emailuri, tokenuri sau corpuri de cerere: doar tip, rută, cod și stack.
+// O alertă pe tip într-o oră, încă una dacă același tip se repetă, maxim 10 pe zi.
+// Starea se ține pe disc în producție, ca un restart în buclă să nu trimită iar.
 
 const fs = require("fs");
 const path = require("path");
@@ -8,6 +10,7 @@ const { logError } = require("../logger");
 
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_ALERTS = 10;
+const REPEAT_AT = 8;
 const BACKUP_STALE_MS = 26 * HOUR_MS;
 const RETENTION_MS = 30 * 24 * HOUR_MS;
 const MAX_BYTES = 1024 * 1024;
@@ -18,7 +21,9 @@ const state = {
   sentToday: 0,
   types: new Map(),
   smtpStreak: 0,
-  alerting: false
+  alerting: false,
+  hydrated: false,
+  hooksInstalled: false
 };
 
 function newId() {
@@ -39,6 +44,65 @@ function resetAlerts() {
   state.types = new Map();
   state.smtpStreak = 0;
   state.alerting = false;
+  state.hydrated = false;
+  if (process.env.ERROR_LOG_DIR) {
+    try {
+      fs.rmSync(stateFile(), { force: true });
+    } catch {
+      /* fișierul de stare lipsește */
+    }
+  }
+}
+
+function persistEnabled() {
+  if (!process.env.ERROR_LOG_DIR && (process.env.NODE_ENV === "test" || process.env.VITEST === "true")) {
+    return false;
+  }
+  return Boolean(process.env.ERROR_LOG_DIR) || process.env.NODE_ENV === "production";
+}
+
+function stateFile() {
+  return path.join(logDirectory(), "alert-state.json");
+}
+
+function hydrateAlerts() {
+  if (state.hydrated) return;
+  state.hydrated = true;
+  if (!persistEnabled()) return;
+  let parsed;
+  try {
+    parsed = JSON.parse(fs.readFileSync(stateFile(), "utf8"));
+  } catch {
+    return;
+  }
+  if (!parsed || typeof parsed !== "object") return;
+  state.day = String(parsed.day || "");
+  state.sentToday = Number(parsed.sentToday) || 0;
+  const types = parsed.types && typeof parsed.types === "object" ? parsed.types : {};
+  state.types = new Map(Object.entries(types).map(([key, row]) => [key, {
+    windowStart: Number(row && row.windowStart) || 0,
+    count: Number(row && row.count) || 0,
+    repeatSent: Boolean(row && row.repeatSent)
+  }]));
+}
+
+function persistAlerts() {
+  if (!persistEnabled()) return;
+  const types = {};
+  for (const [key, row] of state.types) {
+    types[key] = {
+      windowStart: row.windowStart,
+      count: row.count,
+      repeatSent: Boolean(row.repeatSent)
+    };
+  }
+  try {
+    const dir = logDirectory();
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(stateFile(), JSON.stringify({ day: state.day, sentToday: state.sentToday, types }));
+  } catch {
+    /* discul nu oprește procesul */
+  }
 }
 
 function adminEmail() {
@@ -122,17 +186,41 @@ async function sendAlert({ type, count, id }) {
 
 async function noteIncident({ type, id, now = Date.now() }) {
   const key = String(type || "Error").slice(0, 80);
+  hydrateAlerts();
   rollDay(now);
   const previous = state.types.get(key);
   if (previous && now - previous.windowStart < HOUR_MS) {
     previous.count += 1;
+    if (previous.count === REPEAT_AT && !previous.repeatSent) {
+      previous.repeatSent = true;
+      if (state.sentToday >= DAY_ALERTS || !adminEmail()) {
+        persistAlerts();
+        return {
+          sent: false,
+          reason: state.sentToday >= DAY_ALERTS ? "day" : "no_admin",
+          count: previous.count
+        };
+      }
+      state.sentToday += 1;
+      persistAlerts();
+      await sendAlert({ type: key, count: previous.count, id });
+      return { sent: true, reason: "repeat", count: previous.count };
+    }
+    persistAlerts();
     return { sent: false, reason: "hour", count: previous.count };
   }
   const count = previous ? previous.count : 1;
-  state.types.set(key, { windowStart: now, count: 1 });
-  if (state.sentToday >= DAY_ALERTS) return { sent: false, reason: "day", count };
-  if (!adminEmail()) return { sent: false, reason: "no_admin", count };
+  state.types.set(key, { windowStart: now, count: 1, repeatSent: false });
+  if (state.sentToday >= DAY_ALERTS) {
+    persistAlerts();
+    return { sent: false, reason: "day", count };
+  }
+  if (!adminEmail()) {
+    persistAlerts();
+    return { sent: false, reason: "no_admin", count };
+  }
   state.sentToday += 1;
+  persistAlerts();
   await sendAlert({ type: key, count, id });
   return { sent: true, count };
 }
@@ -229,6 +317,42 @@ function checkBackupAge({ dataFile, now = Date.now() } = {}) {
   return noteIncident({ type: "backup_stale", id: "backup", now });
 }
 
+function noteSaveFailure(error) {
+  return reportError({
+    status: 500,
+    route: "persistence.save",
+    code: "health_save_failed",
+    stack: error && error.stack ? error.stack : String((error && error.message) || "")
+  });
+}
+
+function onProcessFault(code, exitAfter) {
+  return (error) => {
+    const stack = error && error.stack ? error.stack : String(error || "");
+    const pending = reportError({
+      status: 500,
+      route: "process",
+      code,
+      stack
+    });
+    if (!exitAfter) {
+      Promise.resolve(pending).catch(() => {});
+      return;
+    }
+    Promise.resolve(pending).catch(() => {}).finally(() => {
+      setTimeout(() => process.exit(1), 400).unref();
+    });
+  };
+}
+
+function installProcessAlerts() {
+  if (state.hooksInstalled) return;
+  if (process.env.NODE_ENV === "test" || process.env.VITEST === "true") return;
+  state.hooksInstalled = true;
+  process.on("uncaughtException", onProcessFault("uncaught_exception", true));
+  process.on("unhandledRejection", onProcessFault("unhandled_rejection", false));
+}
+
 function watchOperations(dataFile) {
   checkBackupAge({ dataFile }).catch(() => {});
   const timer = setInterval(() => {
@@ -247,10 +371,13 @@ module.exports = {
   recordMailCode,
   noteSmtpSuccess,
   noteSmtpFailure,
+  noteSaveFailure,
+  installProcessAlerts,
   checkBackupAge,
   watchOperations,
   logFile,
   DAY_ALERTS,
+  REPEAT_AT,
   HOUR_MS,
   BACKUP_STALE_MS
 };

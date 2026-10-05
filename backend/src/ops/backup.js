@@ -258,6 +258,69 @@ function latestBackup(options = {}) {
   };
 }
 
+function runScheduledBackup(options = {}) {
+  const inTest = process.env.NODE_ENV === "test" || process.env.VITEST === "true";
+  if (inTest && !options.inline) return { ok: true, skipped: true, reason: "test" };
+  const now = options.now ? new Date(options.now) : new Date();
+  if (!loadPublicKey(options.publicKey).includes("BEGIN PUBLIC KEY")) {
+    return { ok: false, reason: "BACKUP_PUBLIC_KEY lipsește" };
+  }
+  const dir = backupDir(options.backupDir);
+  const name = `mentor-ai-${formatDate(now)}.json.gz.enc`;
+  const existing = path.join(dir, name);
+  if (!options.force && fs.existsSync(existing)) {
+    return { ok: true, skipped: true, reason: "today", file: existing };
+  }
+  const file = options.dataFile || dataFile();
+  if (!fs.existsSync(file)) return { ok: false, reason: "nu există fișierul de date" };
+  try {
+    return { ok: true, ...createBackup({ ...options, now }) };
+  } catch (error) {
+    return { ok: false, reason: error.message };
+  }
+}
+
+let backupTimer = null;
+let backupKick = null;
+let missingKeyLogged = false;
+
+function startDailyBackup() {
+  if (backupTimer || backupKick) return { started: false, reason: "already" };
+  if (process.env.NODE_ENV === "test" || process.env.VITEST === "true") {
+    return { started: false, reason: "test" };
+  }
+  const tick = () => {
+    const result = runScheduledBackup();
+    if (result.ok) {
+      if (!result.skipped && result.file) console.log(`[backup] copie ${path.basename(result.file)}`);
+      return;
+    }
+    if (String(result.reason || "").includes("BACKUP_PUBLIC_KEY")) {
+      if (!missingKeyLogged) {
+        missingKeyLogged = true;
+        console.error(`[backup] ${result.reason}`);
+      }
+      return;
+    }
+    console.error(`[backup] ${result.reason}`);
+    try {
+      require("./errorMonitor").noteIncident({ type: "backup_failed", id: "backup" }).catch(() => {});
+    } catch {
+      /* alerta nu oprește aplicația */
+    }
+  };
+  // În afara cererilor: la 45s după pornire, apoi la 30 de minute.
+  // Dacă fișierul zilei (ora României) există, nu se mai scrie.
+  backupKick = setTimeout(() => {
+    backupKick = null;
+    tick();
+    backupTimer = setInterval(tick, 30 * 60 * 1000);
+    if (typeof backupTimer.unref === "function") backupTimer.unref();
+  }, 45 * 1000);
+  if (typeof backupKick.unref === "function") backupKick.unref();
+  return { started: true };
+}
+
 function ensureRecentBackup(options = {}) {
   if (process.env.NODE_ENV === "test" && !options.force) {
     return { ok: true, skipped: true, reason: "test" };
@@ -302,6 +365,8 @@ module.exports = {
   emailHash,
   createBackup,
   latestBackup,
+  runScheduledBackup,
+  startDailyBackup,
   ensureRecentBackup,
   backupDir
 };

@@ -552,6 +552,16 @@ const MentorAPI = {
       }, 45000);
       return { success: true, data, fallback: false };
     } catch (error) {
+      if (error.status === 429 || error.payload?.code === 'rate_limited') {
+        const text = error.message || 'Încearcă din nou peste un minut.';
+        return {
+          success: false,
+          fallback: false,
+          rateLimited: true,
+          error: text,
+          data: { response: text, engine_used: 'rate_limit' }
+        };
+      }
       return {
         success: false,
         fallback: true,

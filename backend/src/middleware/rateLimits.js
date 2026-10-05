@@ -47,13 +47,8 @@ const authLimiter = rateLimit({
   }
 });
 
-const chatLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 20,
-  ...common,
-  keyGenerator: req => (req.auth && req.auth.email) || req.ip,
-  handler: romanianHandler("Ai trimis prea multe mesaje. Așteaptă un moment înainte să continui.")
-});
+// Întrebările către tutore (chat și lecție) sunt limitate în
+// safety/tutorQuota.js: 10 pe minut și 60 pe oră, pe cont, fără blocare.
 
 const accessCodeVerifyLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -92,7 +87,6 @@ const previewPasswordLimiter = rateLimit({
 module.exports = {
   generalApiLimiter,
   authLimiter,
-  chatLimiter,
   clientErrorLimiter,
   usernameCheckLimiter,
   accessCodeVerifyLimiter,
