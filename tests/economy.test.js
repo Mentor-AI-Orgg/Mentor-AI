@@ -106,6 +106,7 @@ describe('economy purchases', () => {
       subject: 'matematica',
       class_level: 5,
       title: 'Numere naturale',
+      session_id: mathPack.body.session_id,
       answers: mathAnswers
     });
     expect(mathDone.status).toBe(200);

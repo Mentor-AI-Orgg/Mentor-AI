@@ -28,7 +28,7 @@ const { startRetention } = require("./data/retentionJob");
 const { startDigestSchedule } = require("./notify/parentActivity");
 const { migrateLegacyProfiles, flagRejectedUsernames } = require("./data/authStore");
 const { corsAllowlist, isAllowedOrigin } = require("./middleware/corsAllowlist");
-const { generalApiLimiter, chatLimiter } = require("./middleware/rateLimits");
+const { generalApiLimiter, chatLimiter, previewPasswordLimiter } = require("./middleware/rateLimits");
 const { securityHeaders } = require("./middleware/security");
 const { requestLog } = require("./logger");
 const clientErrorRoute = require("./routes/clientError");
@@ -61,7 +61,9 @@ function createApp(options = {}) {
   app.use(requestLog);
 
   // Formularul de intrare creator trimite parola prin POST, nu prin adresă.
+  // Limita e pe ruta asta: cererea nu ajunge la limiterul general de pe /api.
   const parseCreatorForm = express.urlencoded({ extended: false, limit: "2kb" });
+  app.post("/creator", previewPasswordLimiter);
   app.use((req, res, next) => {
     if (req.method === "POST" && req.path === "/creator") return parseCreatorForm(req, res, next);
     next();

@@ -14,6 +14,11 @@ const persistence = require("./persistence");
 const scrypt = promisify(crypto.scrypt);
 
 const ACCOUNTS = new Map(); // email normalizat -> cont
+// Nume ținute doar pe durata createStudentAccount, înainte să existe contul.
+// Hash-ul parolei cedează event loop-ul; fără rezervarea asta, două
+// înregistrări simultane trec de usernameTaken și păstrează același nume.
+// La eșec eliberăm numele. După reușită îl ține contul din ACCOUNTS.
+const RESERVED_USERNAMES = new Set();
 // Indexat pe hash-ul token-ului, nu pe token. Fișierul de date ajunge pe disc
 // și în backup-uri; dacă ar conține token-urile în clar, oricine l-ar citi
 // putea prelua sesiunile active. Hash-ul nu este reversibil, iar verificarea
@@ -57,6 +62,7 @@ function listAccounts() {
 function usernameTaken(username, exceptEmail = "") {
   const needle = String(username || "").trim().toLowerCase();
   if (!needle) return false;
+  if (RESERVED_USERNAMES.has(needle)) return true;
   const skip = normalizeEmail(exceptEmail);
   return listAccounts().some(account => (
     account.email !== skip && String(account.profile?.username || "").trim().toLowerCase() === needle
@@ -95,40 +101,49 @@ async function changePassword(email, currentPassword, nextPassword) {
 
 async function createStudentAccount({ username, password, className, parentEmail }) {
   const handle = String(username || "").trim();
+  const reservedKey = handle.toLowerCase();
   if (usernameTaken(handle)) return { ok: false, reason: "username_taken" };
-  const id = crypto.randomBytes(16).toString("hex");
-  const email = `u-${id}@elev.invalid`;
-  const { salt, hash } = await hashPassword(password);
-  const now = new Date().toISOString();
-  const account = {
-    email,
-    salt,
-    passwordHash: hash,
-    role: "student",
-    profile: {
-      name: "",
-      username: handle,
-      phone: "",
-      school: "",
-      class: String(className || ""),
-      subject: "",
-      parentEmail: normalizeEmail(parentEmail),
-      teacherEmail: "",
-      profile: "",
-      exam: "",
-      dailyHours: "",
-      uiLanguage: "",
-      language: "",
-      hasCompletedOnboarding: false,
-      parentEmails: "weekly"
-    },
-    consent: { status: "notified", at: now, method: "email-on-file" },
-    parentalConsentAt: null,
-    privacyAcceptedAt: null,
-    createdAt: now
-  };
-  ACCOUNTS.set(email, account);
-  return { ok: true, account };
+  // Sincron, înainte de hash: a doua creare concurentă găsește numele ocupat.
+  if (reservedKey) RESERVED_USERNAMES.add(reservedKey);
+  try {
+    const id = crypto.randomBytes(16).toString("hex");
+    const email = `u-${id}@elev.invalid`;
+    const { salt, hash } = await hashPassword(password);
+    const now = new Date().toISOString();
+    const account = {
+      email,
+      salt,
+      passwordHash: hash,
+      role: "student",
+      profile: {
+        name: "",
+        username: handle,
+        phone: "",
+        school: "",
+        class: String(className || ""),
+        subject: "",
+        parentEmail: normalizeEmail(parentEmail),
+        teacherEmail: "",
+        profile: "",
+        exam: "",
+        dailyHours: "",
+        uiLanguage: "",
+        language: "",
+        hasCompletedOnboarding: false,
+        parentEmails: "weekly"
+      },
+      consent: { status: "notified", at: now, method: "email-on-file" },
+      parentalConsentAt: null,
+      privacyAcceptedAt: null,
+      createdAt: now
+    };
+    ACCOUNTS.set(email, account);
+    return { ok: true, account };
+  } finally {
+    // Contul salvat ține numele mai departe. Dacă hash-ul sau pașii de după
+    // eșuează, eliberăm rezervarea ca numele să poată fi folosit din nou.
+    if (reservedKey) RESERVED_USERNAMES.delete(reservedKey);
+  }
 }
 
 async function ensureParentAccount(parentEmail) {

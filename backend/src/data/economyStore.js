@@ -506,6 +506,9 @@ function grantAward(user, award, type, note, meta = {}) {
 
 function recordProgress({ userId, type, meta = {}, note = '', trusted = false }) {
   const user = ensureUser(userId);
+  if (type === 'chapter_test' && !(trusted && meta && meta.serverScored)) {
+    return { entry: null, awarded: null, summary: buildSummary(user) };
+  }
   if (meta.grade) user.preferences.className = String(meta.grade);
   const todayKey = getTodayKey();
   noteEarlyBird(user, todayKey);
@@ -585,9 +588,26 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
   if (type === 'chapter_test') {
     const key = chapterKey(meta.subject, meta.grade, meta.chapterId);
     const stamp = `${key}:${todayKey}`;
+    const { capDurationMs } = require('./chapterTestSession');
+    const durationMs = capDurationMs(meta.durationMs);
+    const score = Number(meta.score);
+    const total = Number(meta.total);
     if (key && !user.practiceTests[stamp]) {
-      user.practiceTests[stamp] = { at: new Date().toISOString(), score: Number(meta.score) || 0 };
-      if (trusted) awarded = grantAward(user, AWARDS.chapter_test, 'chapter_test', note || 'Test de capitol', meta);
+      user.practiceTests[stamp] = {
+        at: new Date().toISOString(),
+        score: Number.isFinite(score) ? score : 0,
+        total: Number.isFinite(total) ? total : 0,
+        durationMs
+      };
+      awarded = grantAward(user, AWARDS.chapter_test, 'chapter_test', note || 'Test de capitol', {
+        subject: meta.subject,
+        grade: meta.grade,
+        chapterId: meta.chapterId,
+        title: meta.title || '',
+        score: Number.isFinite(score) ? score : 0,
+        total: Number.isFinite(total) ? total : 0,
+        durationMs
+      });
     }
   }
 

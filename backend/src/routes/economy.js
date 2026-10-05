@@ -149,11 +149,18 @@ router.post('/preferences', (_req, res) => {
   res.status(410).json(STUDENTS_ONLY);
 });
 
+function rejectClientChapterTest(type, res) {
+  if (type !== 'chapter_test') return false;
+  res.status(400).json({ error: 'Nota la testul de capitol se calculează la finalizare, pe server.' });
+  return true;
+}
+
 router.post('/progress', validateBody(progressSchema), async (req, res) => {
   const { type, note = '', meta = {} } = req.body || {};
   if (type === 'mentor_message') {
     return res.status(400).json({ error: 'Recompensa pentru mentor se acordă doar din conversație.' });
   }
+  if (rejectClientChapterTest(type, res)) return;
   const result = recordProgress({ userId: req.auth.email, type, note, meta });
   const parentNotify = await notifyParent({
     studentEmail: req.auth.email,
@@ -177,6 +184,7 @@ router.post('/activity', async (req, res) => {
   if (!type || !ALLOWED_TYPES.has(type)) {
     return res.status(400).json({ error: 'Tip de activitate necunoscut.' });
   }
+  if (rejectClientChapterTest(type, res)) return;
   const result = logActivity({ userId: req.auth.email, type, note: '', meta, amount: 0 });
   const parentNotify = await notifyParent({
     studentEmail: req.auth.email,
