@@ -31,10 +31,12 @@ function tempDir() {
 describe('backup criptat', () => {
   afterEach(() => {
     delete process.env.BACKUP_KEY;
+    delete process.env.BACKUP_ROTATE_MS;
   });
 
   it('nu lasă numele în clar și poate restaura fișierul stricat', async () => {
     process.env.BACKUP_KEY = KEY;
+    process.env.BACKUP_ROTATE_MS = '0';
     const { app } = createApp({ autosave: false });
     const username = 'zmeubackupqq';
     const created = await registerGranted(app, { username });
@@ -42,6 +44,9 @@ describe('backup criptat', () => {
     expect(persistence.saveNow().saved).toBe(true);
     authStore.findByUsername(username).profile.class = '8';
     expect(persistence.saveNow().saved).toBe(true);
+    fs.rmSync(`${persistence.DATA_FILE}.bak1.enc`, { force: true });
+    expect(fs.existsSync(`${persistence.DATA_FILE}.bak1.enc`)).toBe(false);
+    expect(persistence.flushDeferredBackup().flushed).toBe(true);
 
     const enc = fs.readFileSync(`${persistence.DATA_FILE}.bak1.enc`);
     expect(enc.subarray(0, 4).toString()).toBe('S10B');

@@ -68,10 +68,13 @@ const memoryPurgeTimer = setInterval(() => purgeStale(), 6 * 60 * 60 * 1000);
 memoryPurgeTimer.unref();
 
 persistence.register("memory", {
-  snapshot: () => store,
+  snapshot: () => {
+    purgeStale();
+    return store;
+  },
   restore: data => {
     persistence.restoreObject(store, data);
-    purgeStale();
+    if (purgeStale() > 0) persistence.noteDirty();
   }
 });
 
