@@ -9,6 +9,45 @@ const { lessonsFor } = require("../data/gimnaziuLessons");
 const { ensureUser, getTodayKey, recordProgress, recordSkillReview, getSkillHistory } = require("../data/economyStore");
 const { noteCards } = require("../data/mistakeBook");
 const { rate } = require("../data/spacedRepetition");
+const {
+  capDurationMs,
+  openChapterTest,
+  getChapterTest,
+  hasForeignCard,
+  pairsForSession,
+  finishChapterTest,
+  answerKeyVisible
+} = require("../data/chapterTestSession");
+
+function sealedCheck(result) {
+  const verdict = result.verdict || (result.ok ? "exact" : "wrong");
+  let explain = "Nu am punctat. Baremul apare după ce predai testul.";
+  if (verdict === "empty") explain = "Foaia e goală la acest item. Scrie răspunsul, chiar scurt.";
+  else if (result.ok) explain = "Am punctat. Baremul apare după ce predai testul.";
+  else if (verdict === "partial") explain = "Am dat jumătate. Baremul apare după ce predai testul.";
+  else if (verdict === "near") explain = "Nu am punctat. Ești aproape. Baremul apare după ce predai testul.";
+  return {
+    ok: Boolean(result.ok),
+    credit: Number(result.credit) || 0,
+    verdict,
+    explain,
+    sample: "",
+    steps: [],
+    rubric: null
+  };
+}
+
+function releasedCheck(result) {
+  return {
+    ok: Boolean(result.ok),
+    credit: Number(result.credit) || 0,
+    verdict: result.verdict || (result.ok ? "exact" : "wrong"),
+    explain: result.explain || "",
+    sample: result.sample || "",
+    steps: Array.isArray(result.steps) ? result.steps : [],
+    rubric: result.rubric || null
+  };
+}
 
 function trimPracticeIds(ids) {
   const list = (ids || []).map(String);
@@ -74,8 +113,21 @@ router.post("/generate", (req, res) => {
     lessonId
   });
 
+  const chapterTest = (kind === "test") && !String(lessonId || "").trim();
+  let sessionId = "";
+  if (chapterTest && pack.cards.length) {
+    const session = openChapterTest(req.auth.email, {
+      cardIds: pack.cards.map(card => card.id),
+      subject: pack.subject,
+      grade: pack.grade,
+      chapterId: pack.chapterId
+    });
+    sessionId = session.id;
+  }
+
   res.json({
     ...pack,
+    session_id: sessionId,
     engine_used: isEn ? "en_training" : "chapter_bank",
     mocked: false,
     track: isEn ? "en" : "",
@@ -99,15 +151,9 @@ router.post("/check", (req, res) => {
   if (next.retired) delete user.cardBoxes[cardId];
   else user.cardBoxes[cardId] = { box: next.box, streak: next.streak, due: next.due };
   if (!result.ok) noteCards(user, [{ id: cardId, ok: false, found: true, point: result.point }], { lesson: result.point || cardId });
-  res.json({
-    ok: result.ok,
-    credit: Number(result.credit) || 0,
-    verdict: result.verdict || (result.ok ? "exact" : "wrong"),
-    explain: result.explain,
-    sample: result.ok || String(answer || "").trim() ? result.sample : "",
-    steps: Array.isArray(result.steps) ? result.steps : [],
-    rubric: result.rubric || null
-  });
+  // Baremul (sample, pași, explicația cu răspunsul) doar după predare.
+  const released = answerKeyVisible(req.auth.email, cardId);
+  res.json(released ? releasedCheck(result) : sealedCheck(result));
 });
 
 router.post("/seen", (req, res) => {
@@ -148,14 +194,29 @@ router.post("/finish", async (req, res) => {
     answers = [],
     picks = [],
     duration_ms: durationMs = 0,
-    lesson_id: lessonId = ""
+    lesson_id: lessonId = "",
+    session_id: sessionId = ""
   } = req.body || {};
 
   const isTest = kind !== "flashcards";
+  const onLesson = Boolean(String(lessonId || "").trim());
+  const isChapterTest = isTest && !onLesson;
+  let session = null;
+  if (isChapterTest) {
+    session = getChapterTest(req.auth.email, sessionId);
+    if (!session || session.finishedAt) {
+      return res.status(400).json({ error: "Deschide testul din nou. Sesiunea nu e deschisă." });
+    }
+    if (hasForeignCard(session, answers)) {
+      return res.status(400).json({ error: "Un exercițiu nu face parte din testul ăsta." });
+    }
+  }
+
   let items = [];
 
   if (isTest) {
-    items = checkMany(Array.isArray(answers) ? answers : []);
+    const pairs = session ? pairsForSession(session, answers) : (Array.isArray(answers) ? answers : []);
+    items = checkMany(pairs);
   } else {
     items = (Array.isArray(picks) ? picks : []).map(pick => {
       const question = findQuestion(pick.card_id || pick.id);
@@ -201,13 +262,17 @@ router.post("/finish", async (req, res) => {
   const strengths = [...new Set(items.filter(item => item.ok).map(item => item.point).filter(Boolean))];
   const weaknesses = [...new Set(items.filter(item => !item.ok).map(item => item.point).filter(Boolean))];
 
+  const scoredSubject = session ? session.subject : subject;
+  const scoredGrade = session ? session.grade : classLevel;
+  const scoredChapter = session ? session.chapterId : chapterId;
+
   const user = ensureUser(req.auth.email);
   if (!user.practiceSeen) user.practiceSeen = {};
   const pack = pickPractice({
-    subject,
-    grade: classLevel,
-    chapterId,
-    topic: chapterId,
+    subject: scoredSubject,
+    grade: scoredGrade,
+    chapterId: scoredChapter,
+    topic: scoredChapter,
     kind: isTest ? "test" : "flashcards",
     count: 3
   });
@@ -223,17 +288,17 @@ router.post("/finish", async (req, res) => {
     user.practiceSeen[pack.key].questionIds = trimPracticeIds(user.practiceSeen[pack.key].questionIds);
 
   noteCards(user, items, {
-    lesson: title || chapterId || "Lecție",
-    lessonId: chapterId,
-    subject,
-    grade: classLevel
+    lesson: title || scoredChapter || "Lecție",
+    lessonId: scoredChapter,
+    subject: scoredSubject,
+    grade: scoredGrade
   });
 
   const review = recordSkillReview(req.auth.email, {
     kind: isTest ? "test" : "flashcards",
-    subject,
-    grade: classLevel,
-    chapterId,
+    subject: scoredSubject,
+    grade: scoredGrade,
+    chapterId: scoredChapter,
     title,
     correct,
     total,
@@ -245,16 +310,30 @@ router.post("/finish", async (req, res) => {
   });
 
   let award = null;
-  const duration = Math.max(0, Number(durationMs) || 0);
+  let duration = capDurationMs(durationMs);
+  if (session) {
+    const closed = finishChapterTest(req.auth.email, session.id, { correct, total });
+    duration = closed ? closed.durationMs : duration;
+  }
 
-  const onLesson = Boolean(String(lessonId || "").trim());
-  if (isTest && !onLesson) {
+  if (isChapterTest) {
     award = recordProgress({
       userId: req.auth.email,
       type: "chapter_test",
       trusted: true,
       note: title || "Test de capitol",
-      meta: { subject, grade: classLevel, chapterId, title, score: correct, total, gradeNote, durationMs: duration }
+      meta: {
+        subject: scoredSubject,
+        grade: scoredGrade,
+        chapterId: scoredChapter,
+        title,
+        score: correct,
+        correct,
+        total,
+        gradeNote,
+        durationMs: duration,
+        serverScored: true
+      }
     });
   } else if (!isTest && correct >= 5) {
     award = recordProgress({
@@ -262,7 +341,7 @@ router.post("/finish", async (req, res) => {
       type: "flashcard_known",
       trusted: true,
       note: title || "Flashcarduri",
-      meta: { subject, grade: classLevel, chapterId, title, topic: title || chapterId, correct }
+      meta: { subject: scoredSubject, grade: scoredGrade, chapterId: scoredChapter, title, topic: title || scoredChapter, correct }
     });
   }
 
@@ -273,7 +352,7 @@ router.post("/finish", async (req, res) => {
       : `Repetă mâine ideea „${point}”: o întrebare, apoi explică de ce varianta ta e bună.`
   }));
 
-  const lessons = lessonsFor(subject, classLevel, chapterId) || [];
+  const lessons = lessonsFor(scoredSubject, scoredGrade, scoredChapter) || [];
   const titleByLesson = new Map(lessons.map(lesson => [lesson.id, lesson.title]));
   const lessonsToReview = [];
   const seenLessons = new Set();
@@ -284,17 +363,22 @@ router.post("/finish", async (req, res) => {
   });
 
   let parentNotify = { skipped: true, reason: onLesson ? "lesson_test" : "not_a_test" };
-  if (isTest && !onLesson) {
+  if (isChapterTest) {
     const { notifyParent } = require("../notify/parentActivity");
     parentNotify = await notifyParent({
       studentEmail: req.auth.email,
       type: "chapter_test",
-      note: title || "Test de capitol",
       meta: {
         title: title || "Test de capitol",
-        subject,
+        subject: scoredSubject,
+        grade: scoredGrade,
+        chapterId: scoredChapter,
         gradeNote,
+        correct,
+        score: correct,
+        total,
         durationMs: duration,
+        serverScored: true,
         answers: items.map(item => ({
           prompt: item.prompt,
           given: item.given,

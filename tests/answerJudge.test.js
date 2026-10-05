@@ -40,6 +40,29 @@ describe('intelligent barem', () => {
     expect(miss.explain).toMatch(/20/);
   });
 
+  it('la un răspuns numeric punctează doar ultimul număr, nu și primul', () => {
+    const phrase = '20, dar cred că e 15';
+    expect(numberHit(phrase, 20)).toBe(false);
+    expect(numberHit('20', 20)).toBe(true);
+    expect(numberHit(phrase, 15)).toBe(true);
+
+    const discarded = checkExercise('e5n1', phrase);
+    expect(discarded.ok).toBe(false);
+    expect(discarded.credit).toBe(0);
+
+    expect(checkExercise('e5n1', '20').ok).toBe(true);
+
+    const revised = judgeAnswer({
+      given: phrase,
+      answers: ['15'],
+      numeric: { value: 15, tolerance: 0 }
+    });
+    expect(revised.ok).toBe(true);
+
+    // Calculul cu rezultatul la final rămâne corect; nu cerem un singur număr în text.
+    expect(checkExercise('e5n1', '72 − 16 = 20').ok).toBe(true);
+  });
+
   it('accepts the text of the correct EN choice, not only the letter', () => {
     const paper = recommendedList('matematica')[0];
     const bundle = getBundle(paper.id);

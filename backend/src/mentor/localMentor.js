@@ -13,6 +13,7 @@
 //
 // „Nu am înțeles” este tot o urmare: aceeași lecție, mai scurt și mai pe pași.
 // Fiecare apăsare coboară încă un pas sau schimbă unghiul, tot în lecție.
+// Dacă ultimul răspuns salvat nu are lecție, nu sărim la una mai veche din chat.
 
 const { getGuide, normalizeGrade, normalizeSubject } = require("../data/gimnaziuGuide");
 
@@ -404,6 +405,29 @@ function pickedFromRow(row) {
   return { best: { row, byWord }, query };
 }
 
+function storedLessonId(turn) {
+  const meta = turn && turn.metadata;
+  if (!meta || typeof meta !== "object") return undefined;
+  if (!Object.prototype.hasOwnProperty.call(meta, "lessonId") && !Object.prototype.hasOwnProperty.call(meta, "lesson_id")) {
+    return undefined;
+  }
+  return String(meta.lessonId || meta.lesson_id || "").trim();
+}
+
+// Ultimul răspuns care chiar poartă lessonId. Fără câmp, istoricul e doar text
+// și rămâne pe potrivirea veche. Cu câmp gol, nu există lecție de simplificat.
+function simplifyAnchor(rows, history) {
+  const turns = Array.isArray(history) ? history : [];
+  for (let index = turns.length - 1; index >= 0; index -= 1) {
+    const turn = turns[index];
+    if (!turn || turn.role !== "assistant") continue;
+    const id = storedLessonId(turn);
+    if (id === undefined) return { known: false };
+    return { known: true, row: rowByLessonId(rows, id) };
+  }
+  return { known: false };
+}
+
 function remembered(rows, history) {
   const turns = Array.isArray(history) ? history.slice(-12) : [];
   for (let index = turns.length - 1; index >= 0; index -= 1) {
@@ -750,7 +774,20 @@ function answerFromLessons({ message, subject, grade, history } = {}) {
 
   const intent = classifyFollowUp(message);
   if (intent && intent.pure) {
-    const prior = remembered(rows, history);
+    let prior = null;
+    if (intent.kind === "simpler") {
+      const anchor = simplifyAnchor(rows, history);
+      if (anchor.known && !anchor.row) {
+        return {
+          matched: false,
+          engine: "lectii",
+          text: `Nu am ce să simplific. Ultimul răspuns nu e dintr-o lecție. Spune cu un cuvânt din lecția de ${subjectName}, clasa a ${level}-a.`
+        };
+      }
+      prior = anchor.row ? pickedFromRow(anchor.row) : remembered(rows, history);
+    } else {
+      prior = remembered(rows, history);
+    }
     if (!prior) return missed(true);
     if (intent.kind === "simpler") {
       const depth = simplifyDepth(history);
