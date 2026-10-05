@@ -4,6 +4,7 @@
 const { findAccount, accountIsOpen, listAccounts } = require("../data/authStore");
 const { getGuide } = require("../data/gimnaziuGuide");
 const { publicPaperById } = require("../data/enPaperFactory");
+const { capDurationMs } = require("../data/chapterTestSession");
 
 const LABELS = {
   learn_module: "lecție",
@@ -124,6 +125,9 @@ function outboundCount(parentEmail, date) {
 }
 
 async function notifyParent({ studentEmail, type, meta = {} }) {
+  if (type === "chapter_test" && !meta.serverScored) {
+    return { skipped: true, reason: "untrusted_score" };
+  }
   const account = findAccount(studentEmail);
   if (!account || account.role !== "student") return { skipped: true, reason: "not_student" };
   if (type === "crisis_help") return { skipped: true, reason: "crisis_no_email" };
@@ -136,15 +140,23 @@ async function notifyParent({ studentEmail, type, meta = {} }) {
   const { getUser, ensureUser } = require("../data/economyStore");
   const economy = getUser(studentEmail) || ensureUser(studentEmail);
   if (!Array.isArray(economy.digestEvents)) economy.digestEvents = [];
-  const minutes = numberOrNull(meta.minutes) ?? (
+  let minutes = numberOrNull(meta.minutes) ?? (
     numberOrNull(meta.durationMs) != null ? Math.max(0, Math.round(numberOrNull(meta.durationMs) / 60000)) : 0
   );
+  let correct = numberOrNull(meta.correct ?? meta.score);
+  let total = numberOrNull(meta.total);
+  if (type === "chapter_test") {
+    const durationMs = capDurationMs(meta.durationMs);
+    minutes = Math.max(0, Math.round(durationMs / 60000));
+    correct = numberOrNull(meta.correct ?? meta.score);
+    total = numberOrNull(meta.total);
+  }
   economy.digestEvents.push({
     at: new Date().toISOString(),
     type,
     title: catalogTitle(meta),
-    correct: numberOrNull(meta.correct ?? meta.score),
-    total: numberOrNull(meta.total),
+    correct,
+    total,
     minutes
   });
   if (economy.digestEvents.length > 400) economy.digestEvents.splice(0, economy.digestEvents.length - 400);

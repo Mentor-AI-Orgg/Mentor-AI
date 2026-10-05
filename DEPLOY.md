@@ -132,6 +132,8 @@ poarta HTTP Basic, pune `ENABLE_STAGING_AUTH=1` plus `STAGING_AUTH_USER`
 Cât site-ul e închis, publicul vede „În curând”. Tu deschizi aplicația
 din formularul **Intrare creator**, cu `PREVIEW_PASSWORD` setată în
 DirectAdmin. Dacă parola lipsește, nimeni nu intră. Nu o pune în adresă.
+După `SITE_PUBLIC=1`, copiii intră fără parola asta. `/creator` rămâne:
+aceeași parolă pune cookie-ul cerut de moderare. Încercările sunt limitate pe IP.
 Cookie-ul se semnează cu `PREVIEW_COOKIE_SECRET` (cel puțin 32 de caractere).
 `SESSION_SECRET` are tot cel puțin 32 de caractere; fără el aplicația nu pornește în producție.
 `HEALTH_TOKEN` deschide detaliile din `/api/health` (dacă emailul e configurat și cât de veche e copia). Fără token, ruta răspunde doar `{ ok, version }`.
@@ -223,6 +225,11 @@ SMTP_USER=
 SMTP_PASS=
 SMTP_FROM=
 ```
+
+`APP_BASE_URL` este obligatoriu în producție: un URL `https`, fără slash
+final, de exemplu `https://suntde10.ro`. Dacă lipsește sau nu este valid,
+aplicația nu pornește și `npm run prelansare` iese cu cod 1. Linkurile
+către părinte nu se construiesc din antetul `Host` sau `X-Forwarded-Host`.
 
 `SMTP_FROM` trebuie să fie o adresă de pe domeniul site-ului, de exemplu
 `nu-raspunde@suntde10.ro`. Linkul de acord pleacă doar pe email. Dacă

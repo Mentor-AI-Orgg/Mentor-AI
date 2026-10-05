@@ -47,7 +47,7 @@ const HELP_ARTICLES = [
     id: 'parinte',
     category: 'cont',
     title: 'Emailul părintelui',
-    body: 'La cont scrii emailul părintelui. Nu confirmă contul. Primește un rezumat pe email și vede același fel de rezumat în zona de părinte: lecții, minute, teste. Nu primește mesajele tale către tutore.'
+    body: 'La cont scrii emailul părintelui. Nu confirmă contul. Primește un rezumat pe email și vede același fel de rezumat în zona de părinte: lecții, minute, teste. Nu primește mesajele tale către tutore, nici în fișierul cu datele.'
   },
   {
     id: 'privat',

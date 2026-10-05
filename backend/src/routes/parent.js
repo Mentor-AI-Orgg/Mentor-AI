@@ -167,6 +167,26 @@ router.post("/children/:id/friends", parentRequired, (req, res) => {
   res.json({ success: true });
 });
 
+// Părintele primește progresul, nu conversația cu tutorele și nici bucățile
+// din mesaje păstrate ca notă la mentor_message.
+function withoutTutorContent(payload) {
+  if (!payload || typeof payload !== "object") return payload;
+  const next = { ...payload };
+  delete next.conversatii;
+  const activity = next.economie?.activitate;
+  if (!Array.isArray(activity)) return next;
+  next.economie = {
+    ...next.economie,
+    activitate: activity.map(entry => {
+      if (!entry || entry.tip !== "mentor_message" || !("nota" in entry)) return entry;
+      const cleaned = { ...entry };
+      delete cleaned.nota;
+      return cleaned;
+    })
+  };
+  return next;
+}
+
 router.get("/children/:id/export", parentRequired, (req, res) => {
   const child = ownedChild(req, req.params.id);
   if (!child) {
@@ -175,7 +195,7 @@ router.get("/children/:id/export", parentRequired, (req, res) => {
   }
   const { collectExport } = require("./account");
   res.setHeader("Content-Disposition", "attachment; filename=\"suntde10-date.json\"");
-  res.json(collectExport(child.email));
+  res.json(withoutTutorContent(collectExport(child.email)));
 });
 
 router.post("/children/:id/delete", parentRequired, async (req, res) => {

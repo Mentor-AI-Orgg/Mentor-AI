@@ -351,6 +351,34 @@ describe('„Nu am înțeles” rămâne la lecție și coboară', () => {
     expect(early.text).toMatch(/Spune cu un cuvânt/);
   });
 
+  it('după un răspuns fără lecție nu simplifică lecția mai veche', () => {
+    const opened = ask(topic, 'romana', 6);
+    const unmatched = ask('vreau o prajitura cu ciocolata', 'romana', 6);
+    expect(opened.matched).toBe(true);
+    expect(unmatched.matched).toBe(false);
+
+    const unclear = continueChat(
+      'Nu am înțeles',
+      [
+        { role: 'user', content: topic },
+        { role: 'assistant', content: opened.text, metadata: { lessonId: opened.lessonId } },
+        { role: 'user', content: 'vreau o prajitura cu ciocolata' },
+        { role: 'assistant', content: unmatched.text, metadata: { lessonId: '' } }
+      ],
+      'romana',
+      6
+    );
+
+    expect(unclear.matched).toBe(false);
+    expect(unclear.lesson).toBeUndefined();
+    expect(unclear.lessonId).toBeUndefined();
+    expect(unclear.text).toMatch(/Nu am ce să simplific/);
+    expect(unclear.text).toMatch(/Spune cu un cuvânt/);
+    expect(unclear.text).not.toMatch(/Diftong/);
+    expect(unclear.text).not.toMatch(/Rămânem la aceeași lecție/);
+    expect(unclear.text).not.toBe(opened.text);
+  });
+
   it('după o temă nouă, coborârea rămâne la tema nouă', () => {
     const switched = continueChat(
       'Nu am înțeles',
