@@ -44,7 +44,7 @@ describe('emailuri către părinte', () => {
     const created = await registerGranted(app);
     const phrase = `fraza-unica-${Date.now()}-copil`;
     await created.agent.post('/api/chat').send({ message: phrase });
-    const activity = await created.agent.post('/api/economy/activity').send({
+    const forged = await created.agent.post('/api/economy/activity').send({
       type: 'chapter_test',
       note: phrase,
       meta: {
@@ -56,6 +56,12 @@ describe('emailuri către părinte', () => {
         minutes: 25
       }
     });
+    expect(forged.status).toBe(400);
+    const activity = await created.agent.post('/api/economy/activity').send({
+      type: 'learn_module',
+      note: phrase,
+      meta: { chapterId: 'fractii', subject: 'matematica', grade: 5, minutes: 12 }
+    });
     expect(activity.status).toBe(200);
     const spy = vi.spyOn(deliver, 'deliverMessage');
     const first = await sendDueDigests(new Date(), { force: true });
@@ -64,8 +70,9 @@ describe('emailuri către părinte', () => {
     expect(second).toHaveLength(0);
     expect(spy).toHaveBeenCalledTimes(1);
     const body = first[0].body;
-    expect(body).toContain('8 din 10');
-    expect(body).toContain('Fracții');
+    expect(body).toContain('1 lecție');
+    expect(body).toContain('12 minute');
+    expect(body).not.toContain('8 din 10');
     expect(body).not.toContain(phrase);
     expect(body).toContain('/#/parinte');
     expect(body).toContain('/#/emailuri/');
