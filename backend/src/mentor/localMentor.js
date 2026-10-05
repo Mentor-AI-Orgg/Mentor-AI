@@ -5,6 +5,11 @@
 // cuvântul din titlu. Potrivirea se face pe cuvântul de temă: vorbele de cerere
 // nu ridică pragul și nu mută lecția. O formă cu articol, fără diacritice sau cu
 // o greșeală mică rămâne același termen.
+//
+// O urmare scurtă („dă-mi un exemplu”, „mai pe scurt”, „cum se folosește”) nu
+// repetă tema. Dacă în același chat tocmai s-a potrivit o lecție, răspunsul
+// rămâne la lecția aceea. Fără temă anterioară, nu se inventează una din
+// cuvântul „exemplu” sau „scurt”.
 
 const { getGuide, normalizeGrade, normalizeSubject } = require("../data/gimnaziuGuide");
 
@@ -304,11 +309,282 @@ function needlesOf(query, foundMap) {
   return [...needles];
 }
 
-function answerFromLessons({ message, subject, grade }) {
+const REQUEST_WORDS = new Set([
+  "exemplu", "exemple", "exemplul", "exemplele",
+  "scurt", "scurta", "scurte", "simplu", "simpla",
+  "foloseste", "folosim", "folosesti", "folositi", "folosit",
+  "aplica", "aplici", "aplicam", "aplicati",
+  "inca", "inteles", "intelesul", "asta", "deloc"
+]);
+
+function looseWord(word, canonical) {
+  if (!word || !canonical) return false;
+  if (word === canonical) return true;
+  if (word.length < 5 || canonical.length < 5) return false;
+  return smallTypo(word, canonical) || inflected(word, canonical);
+}
+
+function mentionsWord(folded, canonical) {
+  return folded.split(" ").some(word => looseWord(word, canonical));
+}
+
+function isRequestWord(word) {
+  if (REQUEST_WORDS.has(word)) return true;
+  if (word.length < 5) return false;
+  return ["exemplu", "foloseste", "folosim", "aplica", "inteles", "simplu"].some(item => looseWord(word, item));
+}
+
+function followKind(folded) {
+  if (!folded || folded.split(" ").length > 12) return null;
+  if (/^(mai\s+explica(\s+mi)?|explica(\s+mi)?(\s+te\s+rog)?|explica(\s+mi)?\s+(din\s+nou|iar)|nu\s+(am\s+)?inteles(\s+(asta|deloc))?|nu\s+inteleg(\s+(asta|deloc))?|inca\s+o\s+data|repeta(\s+te\s+rog)?)$/.test(folded)) {
+    return "again";
+  }
+  const example = mentionsWord(folded, "exemplu");
+  if (example && (/\bmai\s+(da|dai)\b/.test(folded) || /\b(alt|alta|altul|alte)\s+exempl/.test(folded) || /\binca\s+(un\s+)?exempl/.test(folded) || /\bun\s+alt\s+exempl/.test(folded))) {
+    return "another";
+  }
+  if (example && (
+    /\b(da|dai|dam)\s+mi\b/.test(folded)
+    || /\bdami\b/.test(folded)
+    || /\b(imi|mi)\s+dai\b/.test(folded)
+    || /\bvrea[ui]?\b/.test(folded)
+    || /\barata(\s+mi)?\b/.test(folded)
+    || /^(te\s+rog\s+)?(un\s+)?exemplu$/.test(folded)
+  )) {
+    return "example";
+  }
+  if (folded.split(" ").length <= 8 && (/\bpe\s+scurt\b/.test(folded) || /\bmai\s+scurt\b/.test(folded) || /\bmai\s+simplu\b/.test(folded) || (/\bpe\s+intelesul\b/.test(folded) && /\b(explica|spune|zi)\b/.test(folded)))) {
+    return "short";
+  }
+  if (folded.split(" ").length <= 8 && (/^cum\b/.test(folded) || /^la\s+ce\b/.test(folded)) && ["foloseste", "folosim", "folosesti", "aplica"].some(word => mentionsWord(folded, word))) {
+    return "use";
+  }
+  return null;
+}
+
+function classifyFollowUp(message) {
+  const folded = fold(message);
+  const kind = followKind(folded);
+  if (!kind) return null;
+  if (kind === "again") return { kind, pure: true };
+  const leftover = tokens(message).filter(word => !isRequestWord(word));
+  return { kind, pure: leftover.length === 0 };
+}
+
+function selectBest(rows, message) {
+  const query = tokens(message);
+  if (!query.length) return null;
+  const { scored, coverage } = scoreRows(rows, query);
+  let best = null;
+  scored.forEach(item => {
+    if (!best || better(item, best)) best = item;
+  });
+  if (blocked(query, scored, coverage, best)) return null;
+  return { best, query };
+}
+
+function rowByLessonId(rows, id) {
+  if (!id) return null;
+  return rows.find(item => item.lesson && item.lesson.id === id) || null;
+}
+
+function pickedFromRow(row) {
+  const query = tokens(row.lesson.title || "");
+  const byWord = new Map();
+  query.forEach(word => {
+    const found = hit(word, row);
+    if (found.rank) byWord.set(word, found);
+  });
+  return { best: { row, byWord }, query };
+}
+
+function remembered(rows, history) {
+  const turns = Array.isArray(history) ? history.slice(-12) : [];
+  for (let index = turns.length - 1; index >= 0; index -= 1) {
+    const turn = turns[index];
+    if (!turn || typeof turn !== "object") continue;
+    if (turn.role === "assistant") {
+      const meta = turn.metadata || {};
+      const row = rowByLessonId(rows, meta.lessonId || meta.lesson_id);
+      if (row) return pickedFromRow(row);
+      continue;
+    }
+    if (turn.role !== "user") continue;
+    const content = String(turn.content || "");
+    const intent = classifyFollowUp(content);
+    if (intent && intent.pure) continue;
+    const picked = selectBest(rows, content);
+    if (picked) return picked;
+  }
+  return null;
+}
+
+function focusWords(best) {
+  const words = [];
+  best.byWord.forEach(found => {
+    if (found.rank >= 2 && found.term) words.push(found.term);
+  });
+  return unique(words);
+}
+
+function onTopic(text, words) {
+  if (!words.length) return true;
+  const folded = fold(text);
+  return words.some(word => {
+    if (!word) return false;
+    if (folded.includes(word)) return true;
+    const stem = stemOf(word);
+    return stem && stem !== word && stem.length >= 5 && folded.includes(stem);
+  });
+}
+
+function splitSentences(text) {
+  return stripMarkers(text)
+    .split(/(?<=[.!?])\s+/)
+    .map(part => part.replace(/\s+/g, " ").trim())
+    .filter(part => part.length > 12);
+}
+
+function concrete(text) {
+  const folded = fold(text);
+  if (/\d/.test(text)) return true;
+  return /\b(la|in)\s+[a-z]{3,}/.test(folded);
+}
+
+function titleOwns(lesson, words) {
+  const title = fold(lesson.title || "");
+  return words.some(word => {
+    if (!word || word.length < 4) return false;
+    if (title.includes(word)) return true;
+    const stem = stemOf(word);
+    return Boolean(stem && stem.length >= 5 && title.includes(stem));
+  });
+}
+
+function dedupeTexts(list) {
+  const accepted = [];
+  list.forEach(raw => {
+    const text = stripMarkers(raw || "").replace(/\s+/g, " ").trim();
+    if (text.length < 12) return;
+    const key = fold(text);
+    const overlap = accepted.some(kept => {
+      const other = fold(kept);
+      return other === key || (key.length > 24 && other.includes(key)) || (other.length > 24 && key.includes(other));
+    });
+    if (!overlap) accepted.push(text);
+  });
+  return accepted;
+}
+
+function exampleSentences(lesson) {
+  const bits = [];
+  String(lesson.example || "").split(/\n\n+/).forEach(paragraph => {
+    const sentences = splitSentences(paragraph);
+    (sentences.length ? sentences : [String(paragraph).trim()]).forEach(text => bits.push(text));
+  });
+  return bits;
+}
+
+function rankedExamples(lesson, words) {
+  const fromExample = exampleSentences(lesson);
+  const extras = (lesson.extraExamples || []).map(item => item && item.text);
+  const notes = [...(lesson.keyPoints || []), ...sentencesOf(lesson)];
+  const namedExamples = fromExample.filter(text => onTopic(text, words));
+  const namedExtras = extras.filter(text => onTopic(text, words));
+  const namedNotes = notes.filter(text => onTopic(text, words));
+  const concreteNotes = namedNotes.filter(concrete);
+  const otherNotes = namedNotes.filter(text => !concrete(text));
+  let ordered;
+  if (namedExamples.length) ordered = [...namedExamples, ...namedExtras, ...concreteNotes, ...otherNotes];
+  else if (titleOwns(lesson, words) && fromExample.length) ordered = [...fromExample, ...namedExtras, ...concreteNotes, ...otherNotes];
+  else ordered = [...namedExtras, ...concreteNotes, ...otherNotes];
+  const pool = dedupeTexts(ordered);
+  return pool.length ? pool : dedupeTexts(fromExample.length ? fromExample : notes);
+}
+
+function clipSentence(text, max) {
+  const clean = stripMarkers(text).replace(/\s+/g, " ").trim();
+  if (!clean) return "";
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max);
+  const stop = Math.max(cut.lastIndexOf("."), cut.lastIndexOf("!"), cut.lastIndexOf("?"));
+  if (stop >= 80) return cut.slice(0, stop + 1);
+  return `${cut.trim()}…`;
+}
+
+function exampleBody(lesson, words, another) {
+  const focused = rankedExamples(lesson, words);
+  const pool = focused.length ? focused : rankedExamples(lesson, []);
+  if (!pool.length) return "";
+  const text = another && pool.length > 1 ? pool[1] : pool[0];
+  const lead = another ? "Încă un exemplu:" : "Exemplu:";
+  return `${lead} ${text}`;
+}
+
+function shortBody(lesson, words) {
+  const boxes = (lesson.boxes || [])
+    .map(box => stripMarkers(box && box.text || "").replace(/\s+/g, " ").trim())
+    .filter(text => text.length >= 20 && text.length <= 380);
+  const box = boxes.find(text => onTopic(text, words)) || boxes[0];
+  if (box) {
+    const brief = splitSentences(box).slice(0, 2).join(" ");
+    return `Pe scurt: ${brief || box}`;
+  }
+  const recap = stripMarkers(lessonRecap(lesson)).replace(/\s+/g, " ").trim();
+  if (recap && recap.length <= 380 && onTopic(recap, words)) return `Pe scurt: ${recap}`;
+  const sentences = splitSentences(lesson.theory || "");
+  const picked = sentences.find(text => onTopic(text, words)) || sentences[0] || recap;
+  return picked ? `Pe scurt: ${clipSentence(picked, 280)}` : "";
+}
+
+function useBody(lesson, words) {
+  const tryThis = stripMarkers(lesson.tryThis || "").replace(/\s+/g, " ").trim();
+  if (tryThis && !fold(tryThis).includes("inchide ecranul")) return `Cum se folosește: ${clipSentence(tryThis, 420)}`;
+  const practice = String(lesson.practice || "").split(/\n+/).map(line => line.trim()).find(line => line.length > 15);
+  if (practice) return `Cum se folosește: ${clipSentence(practice, 320)}`;
+  const example = exampleBody(lesson, words, false);
+  return example ? example.replace(/^Exemplu:/, "Cum se folosește:") : "";
+}
+
+function explainBody(picked) {
+  const needles = needlesOf(picked.query, picked.best.byWord);
+  const lesson = picked.best.row.lesson;
+  const pickedSentences = sentencesOf(lesson)
+    .filter(sentence => {
+      const folded = fold(sentence);
+      return needles.some(word => folded.includes(word));
+    })
+    .slice(0, 3);
+  return stripMarkers(pickedSentences.length
+    ? pickedSentences.join(" ")
+    : String(lesson.theory || lesson.example || boxText(lesson) || "").slice(0, 700));
+}
+
+function reply(row, body) {
+  return {
+    matched: true,
+    engine: "lectii",
+    lesson: row.lesson.title,
+    lessonId: row.lesson.id || "",
+    unit: row.unit.title,
+    text: `Din lecția „${row.lesson.title}”, ${row.unit.title}:\n\n${body}\n\nAsta stă scris în lecție. Dacă un pas nu e limpede, spune cuvântul care te încurcă.`
+  };
+}
+
+function bodyFor(picked, kind) {
+  const lesson = picked.best.row.lesson;
+  const words = focusWords(picked.best);
+  if (kind === "example") return exampleBody(lesson, words, false) || explainBody(picked);
+  if (kind === "another") return exampleBody(lesson, words, true) || explainBody(picked);
+  if (kind === "short") return shortBody(lesson, words) || explainBody(picked);
+  if (kind === "use") return useBody(lesson, words) || explainBody(picked);
+  return explainBody(picked);
+}
+
+function answerFromLessons({ message, subject, grade, history } = {}) {
   const sid = normalizeSubject(subject);
   const level = normalizeGrade(grade);
   const { rows, hints } = prepare(sid, level);
-  const query = tokens(message);
   const subjectName = sid === "romana" ? "limba română" : "matematică";
 
   const missed = (empty) => {
@@ -327,36 +603,17 @@ function answerFromLessons({ message, subject, grade }) {
     };
   };
 
-  if (!query.length) return missed(true);
+  const intent = classifyFollowUp(message);
+  if (intent && intent.pure) {
+    const prior = remembered(rows, history);
+    if (!prior) return missed(true);
+    return reply(prior.best.row, bodyFor(prior, intent.kind));
+  }
 
-  const { scored, coverage } = scoreRows(rows, query);
-  let best = null;
-  scored.forEach(item => {
-    if (!best || better(item, best)) best = item;
-  });
-
-  // Un termen găsit în titlu sau în lecție ajunge. Cuvintele din jur, care nu
-  // sunt în lecție, nu mai cer puncte în plus.
-  if (blocked(query, scored, coverage, best)) return missed(false);
-
-  const needles = needlesOf(query, best.byWord);
-  const picked = sentencesOf(best.row.lesson)
-    .filter(sentence => {
-      const folded = fold(sentence);
-      return needles.some(word => folded.includes(word));
-    })
-    .slice(0, 3);
-  const body = stripMarkers(picked.length
-    ? picked.join(" ")
-    : String(best.row.lesson.theory || best.row.lesson.example || boxText(best.row.lesson) || "").slice(0, 700));
-
-  return {
-    matched: true,
-    engine: "lectii",
-    lesson: best.row.lesson.title,
-    unit: best.row.unit.title,
-    text: `Din lecția „${best.row.lesson.title}”, ${best.row.unit.title}:\n\n${body}\n\nAsta stă scris în lecție. Dacă un pas nu e limpede, spune cuvântul care te încurcă.`
-  };
+  const picked = selectBest(rows, message);
+  if (!picked) return missed(!tokens(message).length);
+  if (intent) return reply(picked.best.row, bodyFor(picked, intent.kind));
+  return reply(picked.best.row, explainBody(picked));
 }
 
 module.exports = { answerFromLessons, tokens, fold, stripMarkers, lessonRecap };

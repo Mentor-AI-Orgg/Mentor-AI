@@ -87,7 +87,7 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
   }
 
   const history = memory.get(conversationId);
-  const local = answerFromLessons({ message, subject, grade: class_level });
+  const local = answerFromLessons({ message, subject, grade: class_level, history });
   const result = {
     response: local.text,
     engine_used: "lectii",
@@ -96,7 +96,11 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
   };
 
   memory.add(conversationId, "user", message);
-  memory.add(conversationId, "assistant", result.response, { engine: result.engine_used, plan_id: normalizedPlanId });
+  memory.add(conversationId, "assistant", result.response, {
+    engine: result.engine_used,
+    plan_id: normalizedPlanId,
+    lessonId: local.lessonId || ""
+  });
   const scaffoldingLevel = Math.min(3, 1 + Math.floor(history.length / 3));
 
   let progress = null;

@@ -125,3 +125,119 @@ describe('întrebări spuse în propoziție', () => {
     expect(ask('azi e soare afara', 'romana', 6).matched).toBe(true);
   });
 });
+
+function continueChat(message, prior, subject, grade) {
+  const history = Array.isArray(prior) ? prior : [{ role: 'user', content: prior }];
+  return answerFromLessons({ message, subject, grade, history });
+}
+
+describe('urmăriri scurte, în aceeași temă', () => {
+  const topic = 'prezintă-mi ce este un diftong';
+
+  it('după diftong, „dă-mi un exemplu” rămâne la diftong', () => {
+    const opened = ask(topic, 'romana', 6);
+    expect(opened.matched).toBe(true);
+
+    ['dă-mi un exemplu', 'da mi un exemplu', 'da-mi un exemplu', 'da mi un exemlu'].forEach(message => {
+      const result = continueChat(message, topic, 'romana', 6);
+      expect(result.matched, message).toBe(true);
+      expect(result.lesson, message).toBe(opened.lesson);
+      expect(result.text, message).toMatch(/exemplu/i);
+      expect(result.text, message).toMatch(/diftong/i);
+      expect(result.text, message).toMatch(/c[aâ]ine|âi/i);
+      expect(result.text, message).not.toMatch(/Însușirea și șirul/);
+    });
+  });
+
+  it('mai cere un exemplu sau o explicație scurtă, tot despre diftong', () => {
+    const opened = ask(topic, 'romana', 6);
+    const another = continueChat('mai dă un exemplu', topic, 'romana', 6);
+    const other = continueChat('alt exemplu', topic, 'romana', 6);
+    const again = continueChat('încă un exemplu', [
+      { role: 'user', content: topic },
+      { role: 'assistant', content: opened.text },
+      { role: 'user', content: 'dă-mi un exemplu' }
+    ], 'romana', 6);
+    const shorter = continueChat('explică mai pe scurt', topic, 'romana', 6);
+    const plain = continueChat('explica mai pe scurt', topic, 'romana', 6);
+    const how = continueChat('cum se folosește', topic, 'romana', 6);
+
+    [another, other, again].forEach(result => {
+      expect(result.matched).toBe(true);
+      expect(result.lesson).toBe(opened.lesson);
+      expect(result.text).toMatch(/diftong/i);
+      expect(result.text).toMatch(/exemplu/i);
+    });
+    expect(another.text).not.toBe(continueChat('dă-mi un exemplu', topic, 'romana', 6).text);
+
+    expect(shorter.matched).toBe(true);
+    expect(shorter.lesson).toBe(opened.lesson);
+    expect(shorter.text).toMatch(/pe scurt/i);
+    expect(shorter.text).toMatch(/diftong/i);
+    expect(shorter.text).toMatch(/semivocal|silab/i);
+    expect(shorter.text.length).toBeLessThan(opened.text.length);
+    expect(plain.lesson).toBe(opened.lesson);
+
+    expect(how.matched).toBe(true);
+    expect(how.lesson).toBe(opened.lesson);
+    expect(how.text).toMatch(/folosește|câine|caine|despărț|despart/i);
+  });
+
+  it('aceeași urmare merge și la procent, pe lecția de matematică', () => {
+    const opened = ask('prezintă-mi ce este un procent', 'matematica', 6);
+    const example = continueChat('da mi un exemplu', 'ce este un procent', 'matematica', 6);
+    const shorter = continueChat('mai pe scurt', 'procent', 'matematica', 6);
+    expect(opened.matched).toBe(true);
+    expect(example.lesson).toBe(opened.lesson);
+    expect(example.text).toMatch(/20%|80/);
+    expect(example.text).toMatch(/procent/i);
+    expect(shorter.lesson).toBe(opened.lesson);
+    expect(shorter.text).toMatch(/pe scurt/i);
+    expect(shorter.text).toMatch(/100/);
+  });
+
+  it('fără temă anterioară nu inventează lecția din cuvântul de cerere', () => {
+    ['dă-mi un exemplu', 'da mi un exemplu', 'mai dă un exemplu', 'alt exemplu', 'explică mai pe scurt', 'cum se folosește', ''].forEach(message => {
+      const result = ask(message, 'romana', 6);
+      expect(result.matched, message || '(gol)').toBe(false);
+      expect(result.text, message || '(gol)').toMatch(/Spune cu un cuvânt/);
+      expect(result.text, message || '(gol)').not.toMatch(/Însușirea|învățătură scurtă|Autor, narator/);
+    });
+  });
+
+  it('o prostie sau o temă nouă nu rămâne lipită de diftong', () => {
+    const noise = continueChat('vreau o prajitura cu ciocolata', topic, 'romana', 6);
+    expect(noise.matched).toBe(false);
+    expect(noise.text).toMatch(/nu am găsit/);
+
+    const unknown = continueChat('dă-mi un exemplu de blablabla', topic, 'romana', 6);
+    expect(unknown.matched).toBe(false);
+
+    const named = continueChat('ce este un exemplu', topic, 'romana', 6);
+    expect(named.lesson).not.toBe('Diftong, triftong, hiat');
+
+    const switched = continueChat('dă-mi un exemplu', [
+      { role: 'user', content: topic },
+      { role: 'user', content: 'ce este un omonim' }
+    ], 'romana', 6);
+    expect(switched.matched).toBe(true);
+    expect(switched.lesson).toMatch(/omonim/i);
+    expect(switched.text).toMatch(/omonim/i);
+  });
+
+  it('ține lecția și când în istoric a rămas doar răspunsul tutorelui', () => {
+    const opened = ask(topic, 'romana', 6);
+    const result = continueChat('mai dă un exemplu', [
+      { role: 'assistant', content: opened.text, metadata: { lessonId: opened.lessonId } }
+    ], 'romana', 6);
+    expect(result.matched).toBe(true);
+    expect(result.lesson).toBe(opened.lesson);
+    expect(result.text).toMatch(/diftong/i);
+  });
+
+  it('la clasa a V-a, diftongul tot nu se inventează dintr-o urmare', () => {
+    const result = continueChat('dă-mi un exemplu', topic, 'romana', 5);
+    expect(result.matched).toBe(false);
+    expect(result.text).toMatch(/Spune cu un cuvânt/);
+  });
+});
