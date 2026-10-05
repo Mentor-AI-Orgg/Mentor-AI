@@ -10,12 +10,35 @@ import {
   SUBJECT_IDS
 } from '../backend/src/data/gimnaziuGuide.js';
 import { getEnGuide, enCounts } from '../backend/src/data/en8Guide.js';
+import { registerGranted } from './registerStudent.js';
+
+function hasAnswersField(value) {
+  if (!value || typeof value !== 'object') return false;
+  if (Array.isArray(value)) return value.some(hasAnswersField);
+  return Object.entries(value).some(([key, child]) => key === 'answers' || hasAnswersField(child));
+}
+
+function firstAnsweredLesson(subject, grade) {
+  const guide = getGuide(subject, grade);
+  for (const unit of guide.units || []) {
+    for (const lesson of unit.lessons || []) {
+      if (Array.isArray(lesson.answers) && lesson.answers.length) {
+        return { unitId: unit.id, lesson };
+      }
+    }
+  }
+  return null;
+}
 
 describe('gimnaziu curriculum', () => {
   let app;
+  let agent;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     ({ app } = createApp({ autosave: false }));
+    const created = await registerGranted(app);
+    expect(created.res.status).toBe(201);
+    agent = created.agent;
   });
 
   it('normalizes messy class and subject labels', () => {
@@ -158,13 +181,76 @@ describe('gimnaziu curriculum', () => {
     expect(context).not.toMatch(/manuale\.edu\.ro/i);
   });
 
-  it('exposes the catalog at /api/curriculum', async () => {
+  it('refuză catalogul fără autentificare', async () => {
     const catalog = await request(app).get('/api/curriculum');
+    expect(catalog.status).toBe(401);
+    expect(catalog.body.code).toBe('unauthenticated');
+    const guide = await request(app).get('/api/curriculum').query({ subject: 'matematica', class_level: 5 });
+    expect(guide.status).toBe(401);
+    const en = await request(app).get('/api/curriculum').query({ track: 'en' });
+    expect(en.status).toBe(401);
+    const alias = await request(app).get('/api/v1/curriculum');
+    expect(alias.status).toBe(401);
+  });
+
+  it('nu pune câmpul answers în catalog', async () => {
+    const catalog = await agent.get('/api/curriculum');
+    expect(catalog.status).toBe(200);
+    expect(hasAnswersField(catalog.body)).toBe(false);
+    expect(JSON.stringify(catalog.body)).not.toMatch(/Răspunsuri:\s*1\)/);
+
+    const one = await agent.get('/api/curriculum').query({ subject: 'romana', class_level: 5 });
+    expect(one.status).toBe(200);
+    expect(hasAnswersField(one.body)).toBe(false);
+
+    const en = await agent.get('/api/curriculum').query({ track: 'en' });
+    expect(en.status).toBe(200);
+    expect(hasAnswersField(en.body)).toBe(false);
+
+    const picked = firstAnsweredLesson('romana', 5);
+    expect(picked).toBeTruthy();
+    const unit = one.body.units.find(item => item.id === picked.unitId);
+    const lesson = unit.lessons.find(item => item.id === picked.lesson.id);
+    expect(lesson.answers).toBeUndefined();
+    expect(lesson.hasAnswers).toBe(true);
+    expect(JSON.stringify(lesson)).not.toMatch(/Răspunsuri:\s*1\)/);
+
+    const hidden = await agent.post('/api/curriculum/lesson-answers').send({
+      subject: 'romana',
+      class_level: 5,
+      unit: picked.unitId,
+      lesson: picked.lesson.id
+    });
+    expect(hidden.status).toBe(403);
+    expect(hidden.body.answers).toBeUndefined();
+
+    const anon = await request(app).post('/api/curriculum/lesson-answers').send({
+      reveal: true,
+      subject: 'romana',
+      class_level: 5,
+      unit: picked.unitId,
+      lesson: picked.lesson.id
+    });
+    expect(anon.status).toBe(401);
+
+    const revealed = await agent.post('/api/curriculum/lesson-answers').send({
+      reveal: true,
+      subject: 'romana',
+      class_level: 5,
+      unit: picked.unitId,
+      lesson: picked.lesson.id
+    });
+    expect(revealed.status).toBe(200);
+    expect(revealed.body.answers).toEqual(picked.lesson.answers);
+  });
+
+  it('exposes the catalog at /api/curriculum', async () => {
+    const catalog = await agent.get('/api/curriculum');
     expect(catalog.status).toBe(200);
     expect(catalog.body.subjects.map(item => item.id)).toEqual(['matematica', 'romana']);
     expect(catalog.body.grades).toEqual([5, 6, 7, 8]);
 
-    const one = await request(app).get('/api/curriculum').query({ subject: 'romana', class_level: 5 });
+    const one = await agent.get('/api/curriculum').query({ subject: 'romana', class_level: 5 });
     expect(one.status).toBe(200);
     expect(one.body.grade).toBe(5);
     expect(one.body.subject).toBe('romana');
@@ -172,15 +258,15 @@ describe('gimnaziu curriculum', () => {
     expect(one.body.units[0].toc.length).toBeGreaterThan(0);
     expect(one.body.units[0].lessons.length).toBeGreaterThanOrEqual(2);
     expect(one.body.units[0].lessons[0].platter).toMatch(/Exemplu/i);
-    const six = await request(app).get('/api/curriculum').query({ subject: 'romana', class_level: 6 });
+    const six = await agent.get('/api/curriculum').query({ subject: 'romana', class_level: 6 });
     expect(six.body.restored).toBe(true);
     expect(six.body.manual.code).toBe('A1470');
     expect(six.body.units).toHaveLength(8);
-    const seven = await request(app).get('/api/curriculum').query({ subject: 'romana', class_level: 7 });
+    const seven = await agent.get('/api/curriculum').query({ subject: 'romana', class_level: 7 });
     expect(seven.body.restored).toBe(true);
     expect(seven.body.manual.code).toBe('A1732');
     expect(seven.body.units).toHaveLength(7);
-    const eight = await request(app).get('/api/curriculum').query({ subject: 'romana', class_level: 8 });
+    const eight = await agent.get('/api/curriculum').query({ subject: 'romana', class_level: 8 });
     expect(eight.body.restored).toBe(true);
     expect(eight.body.manual.code).toBe('A1954');
     expect(eight.body.units).toHaveLength(7);
@@ -235,12 +321,12 @@ describe('gimnaziu curriculum', () => {
       expect(JSON.stringify(paper)).not.toMatch(/"letter":\s*"A"/);
     });
 
-    const catalog = await request(app).get('/api/curriculum').query({ track: 'en' });
+    const catalog = await agent.get('/api/curriculum').query({ track: 'en' });
     expect(catalog.status).toBe(200);
     expect(catalog.body.track).toBe('en');
     expect(catalog.body.guides).toHaveLength(2);
 
-    const one = await request(app).get('/api/curriculum').query({ track: 'en', subject: 'romana' });
+    const one = await agent.get('/api/curriculum').query({ track: 'en', subject: 'romana' });
     expect(one.status).toBe(200);
     expect(one.body.subject).toBe('romana');
     expect(one.body.papers[0].hint).toMatch(/Începe test|oră|finaliz|barem/i);

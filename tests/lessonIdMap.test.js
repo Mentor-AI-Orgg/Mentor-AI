@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { spawnSync } from 'node:child_process';
 import { readFileSync, existsSync, writeFileSync, rmSync } from 'node:fs';
-import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
 import {
   LESSON_ID_MAP,
@@ -17,6 +16,7 @@ import { DATA_FILE, lessonMapBackup } from '../backend/src/data/persistence.js';
 import { collectLessonKeys } from '../scripts/snapshot-lesson-ids.js';
 import { getGuide } from '../backend/src/data/gimnaziuGuide.js';
 import { getEnGuide } from '../backend/src/data/en8Guide.js';
+import { registerGranted } from './registerStudent.js';
 
 const BASELINE_PATH = new URL('./fixtures/lessonIds-baseline.json', import.meta.url);
 const FIXTURE_MAP = {
@@ -105,7 +105,9 @@ describe('harta id-urilor de lecție', () => {
     const guide = getGuide('matematica', 8);
     guide.units.forEach(unit => expect(unit.lessonAliases).toEqual({}));
     expect(getEnGuide('romana').units[0].lessonAliases).toEqual({});
-    const response = await request(app).get('/api/curriculum').query({ subject: 'matematica', class_level: 8 });
+    const created = await registerGranted(app);
+    expect(created.res.status).toBe(201);
+    const response = await created.agent.get('/api/curriculum').query({ subject: 'matematica', class_level: 8 });
     expect(response.status).toBe(200);
     expect(response.body.units[0].lessonAliases).toEqual({});
   });
