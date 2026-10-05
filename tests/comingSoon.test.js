@@ -1,10 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
-import {
-  PREVIEW_COOKIE,
-  previewToken
-} from '../backend/src/middleware/comingSoon.js';
+import { PREVIEW_COOKIE, previewToken } from '../backend/src/middleware/comingSoon.js';
 import { PREVIEW_PASSWORD_MAX } from '../backend/src/middleware/rateLimits.js';
 
 describe('coming soon gate', () => {
@@ -66,7 +63,10 @@ describe('coming soon gate', () => {
     expect(fromUrl.status).toBe(200);
     expect(fromUrl.text).toContain('În curând');
 
-    const posted = await request(app).post('/creator').type('form').send({ password: 'suntde10-creator' });
+    const posted = await request(app)
+      .post('/creator')
+      .type('form')
+      .send({ password: 'suntde10-creator' });
     expect(posted.status).toBe(401);
     expect(posted.text).toContain('nu e corectă');
   });
@@ -185,7 +185,10 @@ describe('coming soon gate', () => {
   it('refuses creator entry on the public site when PREVIEW_PASSWORD is unset', async () => {
     process.env.SITE_PUBLIC = '1';
     const { app } = createApp({ autosave: false });
-    const posted = await request(app).post('/creator').type('form').send({ password: 'orice-parola' });
+    const posted = await request(app)
+      .post('/creator')
+      .type('form')
+      .send({ password: 'orice-parola' });
     expect(posted.status).toBe(401);
     expect(posted.headers['set-cookie'] || []).not.toEqual(
       expect.arrayContaining([expect.stringContaining(PREVIEW_COOKIE)])
@@ -240,9 +243,7 @@ describe('coming soon gate', () => {
     process.env.PREVIEW_PASSWORD = 'cookie-ok';
     process.env.PREVIEW_COOKIE_SECRET = 'secret-de-cookie-separat';
     const { app } = createApp({ autosave: false });
-    const page = await request(app)
-      .get('/')
-      .set('Cookie', `${PREVIEW_COOKIE}=${previewToken()}`);
+    const page = await request(app).get('/').set('Cookie', `${PREVIEW_COOKIE}=${previewToken()}`);
     expect(page.text).not.toMatch(/În curând/);
   });
 });
