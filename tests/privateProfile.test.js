@@ -68,6 +68,46 @@ describe('profil privat', () => {
     expect(register).toContain('Alege alt nume. Nu folosi numele tău real.');
     expect(board).toContain('Profil privat');
     expect(board).toContain('fa-lock');
+    expect(board).toContain('avatarEmoji');
+    expect(board).toContain('leaderboard-badge');
+  });
+
+  it('pune avatarul și insignele doar pe rândul public', async () => {
+    const { app } = createApp({ autosave: false });
+    const ion = await registerGranted(app);
+    const ana = await registerGranted(app);
+    const ionAccount = authStore.findByUsername(ion.username);
+    const anaAccount = authStore.findByUsername(ana.username);
+    const hiddenUser = economy.ensureUser(ionAccount.email, { role: 'student', username: ion.username });
+    hiddenUser.xp = 1000000;
+    hiddenUser.equipped.avatar = 'avatar-neon-fox';
+    hiddenUser.chapters['matematica:5:numere'] = { status: 'done', grade: '5', chapterId: 'numere' };
+    hiddenUser.skillLog = [{ gradeNote: 10, kind: 'test' }];
+
+    const shown = economy.ensureUser(anaAccount.email, { role: 'student', username: ana.username });
+    shown.xp = 50;
+    shown.equipped.avatar = 'avatar-starlight-owl';
+    shown.chapters['romana:6:text'] = { status: 'done', grade: '6', chapterId: 'text' };
+    shown.practiceTests['romana:6:text:2026-01-01'] = { score: 4, total: 4 };
+    const opened = await ana.agent.patch('/api/friends/settings').send({
+      profilePrivate: false,
+      acceptFriendRequests: true
+    });
+    expect(opened.status).toBe(200);
+
+    const board = await ion.agent.get('/api/leaderboard').query({ limit: 50 });
+    const pub = board.body.leaderboard.find(row => row.name === ana.username);
+    expect(pub.avatarEmoji).toBe('🦉');
+    expect(pub.badges.map(badge => badge.id)).toEqual(['capitol', 'nota-10']);
+    expect(pub.badges.map(badge => badge.label)).toEqual(['Capitol terminat', 'Nota 10']);
+    expect(pub.school).toBeUndefined();
+    expect(JSON.stringify(pub)).not.toContain(anaAccount.profile?.parentEmail || 'parinte');
+
+    const hiddenBoard = await ana.agent.get('/api/leaderboard').query({ limit: 50 });
+    const hidden = hiddenBoard.body.leaderboard.find(row => row.private && row.xp === 1000000);
+    expect(Object.keys(hidden).sort()).toEqual(['private', 'rank', 'xp']);
+    expect(JSON.stringify(hiddenBoard.body)).not.toContain(ion.username);
+    expect(JSON.stringify(hiddenBoard.body)).not.toContain('🦊');
   });
 });
 

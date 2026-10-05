@@ -116,8 +116,10 @@ export default function StepProblem({ problems = [], lesson, onClose }) {
       {problem && !mode && (
         <div className="study-rates">
           <p><MathText text={problem.statement} /></p>
-          <button type="button" className="accent-button study-rate" onClick={() => setMode('pasi')}>Pas cu pas</button>
-          <button type="button" className="ghost-button study-rate" onClick={() => setMode('examen')}>Mod examen</button>
+          <div className="choice-pair">
+            <button type="button" className="ghost-button study-rate" onClick={() => setMode('pasi')}>Pas cu pas</button>
+            <button type="button" className="ghost-button study-rate" onClick={() => setMode('examen')}>Mod examen</button>
+          </div>
         </div>
       )}
       {problem && mode && (

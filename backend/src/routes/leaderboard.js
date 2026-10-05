@@ -38,6 +38,7 @@ router.get("/", authRequired, consentRequired, (req, res) => {
   if (self && !capped.some(entry => entry.isCurrentUser)) capped.push(self);
   const board = capped.map(entry => {
     if (entry.isCurrentUser || !isPrivatePublicId(entry.id)) return entry;
+    // Profil privat: doar locul și punctajul. Fără nume, avatar, insignă sau id.
     return { rank: entry.rank, xp: entry.xp, private: true };
   });
 

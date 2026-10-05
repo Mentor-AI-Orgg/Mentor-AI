@@ -5,7 +5,7 @@ const { needsMigration, migrateUserLessonIds, migrateNotificationList } = requir
 const { getGuide } = require('./gimnaziuGuide');
 const { levelFromXp, touchStudy, AWARDS } = require('./progressEngine');
 const { TITLE_CATALOG, unlockedTitleIds, titleById, noteEarlyBird } = require('./titles');
-const { SHOP_CATALOG } = require('./shopCatalog');
+const { SHOP_CATALOG, shopItemById } = require('./shopCatalog');
 
 const USERS = new Map();
 const NOTIFICATIONS = [];
@@ -1193,6 +1193,21 @@ function xpFromUser(user) {
   return Math.max(0, Number(user.coinsEarned || 0) + Number(user.metrics?.streak || 0) * 10);
 }
 
+function publicPlayBadges(user) {
+  const badges = [];
+  const chapters = user.chapters && typeof user.chapters === 'object' ? user.chapters : {};
+  const finishedChapter = Object.values(chapters).some(row => row && row.status === 'done');
+  if (finishedChapter) badges.push({ id: 'capitol', label: 'Capitol terminat' });
+  const perfectTest = Object.values(user.practiceTests || {}).some(row => {
+    const total = Number(row && row.total);
+    const score = Number(row && row.score);
+    return total > 0 && score >= total;
+  });
+  const noteTen = (Array.isArray(user.skillLog) ? user.skillLog : []).some(row => Number(row && row.gradeNote) >= 10);
+  if (perfectTest || noteTen) badges.push({ id: 'nota-10', label: 'Nota 10' });
+  return badges.slice(0, 2);
+}
+
 function listLeaderboardEntries({ limit = 10, currentEmail = '' } = {}) {
   const cap = Math.min(50, Math.max(1, Number(limit) || 10));
   const me = String(currentEmail || '').trim().toLowerCase();
@@ -1205,12 +1220,14 @@ function listLeaderboardEntries({ limit = 10, currentEmail = '' } = {}) {
         id: crypto.createHash('sha256').update(String(user.userId || '')).digest('hex').slice(0, 12),
         name,
         initials: initialsFromPseudonym(name),
+        avatarEmoji: shopItemById(user.equipped?.avatar)?.emoji || '',
         xp,
         streak: Number(user.metrics?.streak || 0),
         level: levelFromXp(xp).level,
         class: user.preferences.className || '',
         title: titleById(user.equipped?.title)?.name || '',
         titleEmoji: titleById(user.equipped?.title)?.emoji || '',
+        badges: publicPlayBadges(user),
         isCurrentUser: Boolean(me) && String(user.userId).toLowerCase() === me
       };
     })
