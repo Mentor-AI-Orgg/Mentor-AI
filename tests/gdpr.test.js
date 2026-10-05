@@ -171,6 +171,40 @@ describe('export, ștergere și păstrare', () => {
     expect(rest).not.toContain(created.parentEmail);
   });
 
+  it('nu dă părintelui conversațiile și notele de la tutore', async () => {
+    const { app } = createApp({ autosave: false });
+    const username = wordUsername();
+    const phrase = `zmeumesaj ${username.slice(0, 4)} secretul tutorelui`;
+    const created = await registerGranted(app, { username });
+    expect(created.res.status).toBe(201);
+
+    const chat = await created.agent.post('/api/chat').send({
+      message: phrase,
+      subject: 'matematica',
+      class_level: '5'
+    });
+    expect(chat.status).toBe(200);
+
+    const own = await created.agent.get('/api/account/export');
+    expect(own.status).toBe(200);
+    expect(JSON.stringify(own.body.conversatii)).toContain(phrase);
+    const ownNotes = (own.body.economie?.activitate || []).filter(item => item.tip === 'mentor_message');
+    expect(ownNotes.some(item => String(item.nota || '').includes(phrase))).toBe(true);
+
+    const parent = await parentAgent(app, created.parentEmail);
+    expect(parent.consume.status).toBe(200);
+    const mine = await parent.agent.get('/api/parent/me');
+    const childId = mine.body.children[0].id;
+    const parentExport = await parent.agent.get(`/api/parent/children/${childId}/export`);
+    expect(parentExport.status).toBe(200);
+    expect(parentExport.body.cont.utilizator).toBe(username);
+    expect(parentExport.body.conversatii).toBeUndefined();
+    const parentNotes = (parentExport.body.economie?.activitate || []).filter(item => item.tip === 'mentor_message');
+    expect(parentNotes.length).toBeGreaterThan(0);
+    expect(parentNotes.every(item => !('nota' in item))).toBe(true);
+    expect(JSON.stringify(parentExport.body)).not.toContain(phrase);
+  });
+
   it('lasă părintele să șteargă fără parola copilului', async () => {
     const { app } = createApp({ autosave: false });
     const created = await registerGranted(app);

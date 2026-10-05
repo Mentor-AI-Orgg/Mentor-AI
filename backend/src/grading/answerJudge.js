@@ -91,6 +91,11 @@ function closeEnough(a, b, tolerance = 0) {
   return Math.abs(a - b) <= tol;
 }
 
+// Un barem numeric e o singură valoare. Dacă răspunsul are mai multe numere,
+// contează doar ultimul: e rezultatul la care s-a oprit copilul
+// („72 − 16 = 20”, sau „20, dar cred că e 15” → 15). Primul număr nu
+// punctează când după el vine altul. Mulțimile, perechile și intervalele
+// nu trec pe aici — le compară textHit, cu toate numerele.
 function numberHit(given, target, tolerance = 0) {
   const want = Number(target);
   if (!Number.isFinite(want)) return false;
@@ -98,8 +103,7 @@ function numberHit(given, target, tolerance = 0) {
   if (closeEnough(whole, want, tolerance)) return true;
   const nums = candidateNumbers(given);
   if (!nums.length) return false;
-  if (nums.length === 1) return closeEnough(nums[0], want, tolerance);
-  return closeEnough(nums[nums.length - 1], want, tolerance) || closeEnough(nums[0], want, tolerance);
+  return closeEnough(nums[nums.length - 1], want, tolerance);
 }
 
 function isSetAnswer(text) {

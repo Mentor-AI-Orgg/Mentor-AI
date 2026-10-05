@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { getGuide, listCatalog } = require("../data/gimnaziuGuide");
 const { getEnGuide, listEnCatalog, enCounts } = require("../data/en8Guide");
+const { catalogWithoutAnswers } = require("../data/lessonShape");
 const { recommendedList, generatePaper, publicPaperById, getBaremItem, listBarem, scoreAttempt } = require("../data/enPaperFactory");
 const { previewPaper, startPaper, canFinish, finishPaper, isFinished, saveSelfScore } = require("../data/enSessionStore");
 const { photoStatus, PHOTO_DAILY_LIMIT } = require("../data/enPhotoQuota");
@@ -15,16 +16,63 @@ function isEnTrack(query = {}) {
   return track === "en" || track === "evaluare" || classLevel === "en" || classLevel === "en8" || classLevel === "evaluare";
 }
 
-router.get("/", (req, res) => {
+function lessonInGuide(guide, lessonId, unitId) {
+  const units = Array.isArray(guide?.units) ? guide.units : [];
+  const pool = unitId ? units.filter(unit => unit.id === unitId) : units;
+  const hits = [];
+  pool.forEach(unit => {
+    (unit.lessons || []).forEach(lesson => {
+      if (lesson && lesson.id === lessonId) hits.push(lesson);
+    });
+  });
+  return hits.length === 1 ? hits[0] : null;
+}
+
+function explicitReveal(body) {
+  const flag = body?.reveal;
+  return flag === true || flag === 1 || flag === "1" || flag === "true";
+}
+
+// Catalogul și ghidul cer un elev. `answers` nu pleacă aici: butonul
+// „Vezi răspunsurile” le cere pentru o singură lecție.
+router.get("/", authRequired, studentRequired, (req, res) => {
   const { subject, class_level: classLevel } = req.query || {};
   if (isEnTrack(req.query)) {
-    if (subject) return res.json(getEnGuide(subject));
-    return res.json(listEnCatalog());
+    if (subject) return res.json(catalogWithoutAnswers(getEnGuide(subject)));
+    return res.json(catalogWithoutAnswers(listEnCatalog()));
   }
   if (subject || classLevel) {
-    return res.json(getGuide(subject, classLevel));
+    return res.json(catalogWithoutAnswers(getGuide(subject, classLevel)));
   }
-  return res.json(listCatalog());
+  return res.json(catalogWithoutAnswers(listCatalog()));
+});
+
+router.post("/lesson-answers", authRequired, studentRequired, (req, res) => {
+  if (!explicitReveal(req.body)) {
+    return res.status(403).json({
+      error: "Răspunsurile se deschid când apeși „Vezi răspunsurile”.",
+      code: "reveal_required"
+    });
+  }
+  const lessonId = String(req.body?.lesson || req.body?.lesson_id || "").trim();
+  const unitId = String(req.body?.unit || req.body?.unit_id || "").trim();
+  if (!lessonId) return res.status(400).json({ error: "Trimite lecția." });
+  const source = { ...(req.query || {}), ...(req.body || {}) };
+  let guide;
+  if (isEnTrack(source)) {
+    guide = getEnGuide(source.subject || "matematica");
+  } else if (!source.subject || !(source.class_level || source.grade)) {
+    return res.status(400).json({ error: "Trimite materia și clasa." });
+  } else {
+    guide = getGuide(source.subject, source.class_level || source.grade);
+  }
+  const lesson = lessonInGuide(guide, lessonId, unitId);
+  if (!lesson) return res.status(404).json({ error: "Lecția nu a fost găsită." });
+  const answers = Array.isArray(lesson.answers)
+    ? lesson.answers.map(item => String(item).trim()).filter(Boolean)
+    : [];
+  if (!answers.length) return res.status(404).json({ error: "Lecția nu are răspunsuri separate." });
+  res.json({ lesson: lesson.id, answers });
 });
 
 router.get("/en/counts", (req, res) => {

@@ -7,6 +7,7 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 const { smtpConfigured } = require("../notify/deliver");
 const { CSP_MODE } = require("../middleware/security");
+const { productionBaseUrlError } = require("../appBaseUrl");
 
 function value(env, key) {
   return String(env[key] || "").trim();
@@ -50,6 +51,7 @@ function checklist(env = process.env) {
     { key: "BACKUP_KEY", ok: value(env, "BACKUP_KEY").length >= 16, required: false },
     { key: "BACKUP_PUBLIC_KEY", ok: publicKeyReady(env), required: true },
     { key: "BACKUP_AGE", ok: backupFresh(), required: true },
+    { key: "APP_BASE_URL", ok: productionBaseUrlError(value(env, "APP_BASE_URL")) === "", required: true },
     { key: "SMTP", ok: smtpConfigured(), required: true },
     { key: "CSP", ok: CSP_MODE === "enforce", required: true },
     { key: "AUDIT", ok: auditClean(), required: true },

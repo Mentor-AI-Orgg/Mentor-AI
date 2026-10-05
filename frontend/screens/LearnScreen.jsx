@@ -629,6 +629,13 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                               lessonIndex={lessonIndex}
                               initiallyOpen={lessonIndex === 0}
                               forceOpen={anchorId === entry.id}
+                              loadAnswers={entry.hasAnswers ? () => MentorAPI.revealLessonAnswers({
+                                subject,
+                                class_level: grade,
+                                track: isEn ? 'en' : undefined,
+                                unit: unit.id,
+                                lesson: entry.id
+                              }).then(result => (result.success ? result.data?.answers : null)) : undefined}
                               onQuiz={isEn ? null : () => {
                                 setCardSession(null);
                                 setProblemSession(null);

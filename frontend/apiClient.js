@@ -752,6 +752,19 @@ const MentorAPI = {
     }
   },
 
+  async revealLessonAnswers(payload) {
+    try {
+      const data = await safeFetchJson('/api/curriculum/lesson-answers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...payload, reveal: true })
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async reportStudent({ userId, reason, note }) {
     try {
       const data = await safeFetchJson('/api/friends/report', {

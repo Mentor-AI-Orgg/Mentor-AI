@@ -94,6 +94,57 @@ function shapeLesson(lesson) {
   return shaped;
 }
 
+// „Răspunsuri: 1) …; 2) …” e cheia, nu enunțul. O scoatem din textul public
+// doar când e numerotată: forma veche („Răspunsuri: 15. 9.”) rămâne în
+// exercițiu, unde elevul o vede și azi.
+function dropNumberedAnswerBlock(text) {
+  const raw = String(text ?? '');
+  const parts = raw.split(/\n\n+/);
+  const kept = parts.filter(part => !/^Răspunsuri:\s*1\)/i.test(part.trim()));
+  if (kept.length === parts.length) return raw;
+  return kept.map(part => part.trim()).filter(Boolean).join('\n\n');
+}
+
+function lessonForCatalog(lesson) {
+  if (!lesson || typeof lesson !== 'object') return lesson;
+  const answers = Array.isArray(lesson.answers)
+    ? lesson.answers.map(item => String(item).trim()).filter(Boolean)
+    : [];
+  const next = { ...lesson };
+  delete next.answers;
+  if (!answers.length) return next;
+  next.hasAnswers = true;
+  if (typeof next.practice === 'string') {
+    const split = takeNumberedAnswers(next.practice);
+    next.practice = split ? split.practice : dropNumberedAnswerBlock(next.practice);
+  }
+  if (typeof next.platter === 'string') next.platter = dropNumberedAnswerBlock(next.platter);
+  return next;
+}
+
+function unitsForCatalog(units) {
+  return (units || []).map(unit => {
+    if (!unit || typeof unit !== 'object') return unit;
+    return {
+      ...unit,
+      lessons: (unit.lessons || []).map(lessonForCatalog)
+    };
+  });
+}
+
+function catalogWithoutAnswers(payload) {
+  if (!payload || typeof payload !== 'object') return payload;
+  const next = { ...payload };
+  if (Array.isArray(payload.units)) next.units = unitsForCatalog(payload.units);
+  if (Array.isArray(payload.guides)) {
+    next.guides = payload.guides.map(guide => {
+      if (!guide || typeof guide !== 'object') return guide;
+      return { ...guide, units: unitsForCatalog(guide.units) };
+    });
+  }
+  return next;
+}
+
 function shapeUnit(unit) {
   if (!unit) return unit;
   return {
@@ -111,4 +162,11 @@ function collectGlossary(unit) {
   return words.slice(0, 8);
 }
 
-module.exports = { shapeLesson, shapeUnit, splitPlatter, takeNumberedAnswers };
+module.exports = {
+  shapeLesson,
+  shapeUnit,
+  splitPlatter,
+  takeNumberedAnswers,
+  lessonForCatalog,
+  catalogWithoutAnswers
+};

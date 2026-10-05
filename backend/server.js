@@ -1,4 +1,14 @@
 const config = require("./src/config");
+const { productionBaseUrlError } = require("./src/appBaseUrl");
+
+if (process.env.NODE_ENV === "production") {
+  const problem = productionBaseUrlError(process.env.APP_BASE_URL);
+  if (problem) {
+    console.error(`[prelansare] APP_BASE_URL ${problem}. Opresc pornirea.`);
+    process.exit(1);
+  }
+}
+
 const persistence = require("./src/data/persistence");
 const { createApp } = require("./src/app");
 
