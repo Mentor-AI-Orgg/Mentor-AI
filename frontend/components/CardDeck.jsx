@@ -110,10 +110,10 @@ export default function CardDeck({ unit, lesson, mode = 'chapter', subject, grad
               <div className="study-card-back" aria-live="polite">
                 <p className="study-card-text"><MathText text={card.back} /></p>
                 {card.why ? <p className="quiz-explain"><MathText text={card.why} /></p> : null}
-                <div className="study-rates">
+                <div className="study-rates choice-equal">
                   <button type="button" className="ghost-button study-rate" onClick={() => gradeSelf('nu')}>Nu știam încă</button>
                   <button type="button" className="ghost-button study-rate" onClick={() => gradeSelf('aproape')}>Aproape</button>
-                  <button type="button" className="accent-button study-rate" onClick={() => gradeSelf('stiam')}>Știam</button>
+                  <button type="button" className="ghost-button study-rate" onClick={() => gradeSelf('stiam')}>Știam</button>
                 </div>
               </div>
             )}

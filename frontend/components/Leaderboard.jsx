@@ -19,20 +19,34 @@ const LeaderboardSkeleton = () => (
 
 const RANK_ICONS = { 1: 'fa-trophy', 2: 'fa-medal', 3: 'fa-award' };
 
-const LeaderboardRow = ({ entry }) => (
-  <div className={`leaderboard-row ${entry.isCurrentUser ? 'is-current-user' : ''}`}>
-    <div className={`leaderboard-rank ${entry.rank <= 3 ? `rank-${entry.rank}` : ''}`}>
-      {RANK_ICONS[entry.rank] ? <i className={`fas ${RANK_ICONS[entry.rank]}`} /> : entry.rank}
+const LeaderboardRow = ({ entry }) => {
+  const locked = Boolean(entry.private);
+  const emoji = !locked && entry.avatarEmoji ? entry.avatarEmoji : '';
+  const badges = locked ? [] : (Array.isArray(entry.badges) ? entry.badges.slice(0, 2) : []);
+  return (
+    <div className={`leaderboard-row ${entry.isCurrentUser ? 'is-current-user' : ''}`}>
+      <div className={`leaderboard-rank ${entry.rank <= 3 ? `rank-${entry.rank}` : ''}`}>
+        {RANK_ICONS[entry.rank] ? <i className={`fas ${RANK_ICONS[entry.rank]}`} /> : entry.rank}
+      </div>
+      <div className={`leaderboard-avatar ${emoji ? 'is-emoji' : ''} ${locked ? 'is-lock' : ''}`} aria-hidden="true">
+        {locked ? <i className="fas fa-lock" /> : (emoji || entry.initials || (entry.name || '?').charAt(0))}
+      </div>
+      <div className="leaderboard-row-copy">
+        <strong>{locked ? 'Profil privat' : entry.name}{!locked && entry.title ? ` · ${entry.titleEmoji || ''} ${entry.title}` : ''}{entry.isCurrentUser && <span className="leaderboard-you-tag">Tu</span>}</strong>
+        {badges.length > 0 && (
+          <span className="leaderboard-badges">
+            {badges.map(badge => (
+              <span key={badge.id || badge.label} className={`leaderboard-badge badge-${badge.id || 'play'}`}>{badge.label}</span>
+            ))}
+          </span>
+        )}
+        <small>{locked ? 'Loc și punctaj' : (entry.class || `Nivel ${entry.level || 1}`)}{locked ? '' : ` · streak ${entry.streak || 0}z`}</small>
+      </div>
+      <div className="leaderboard-xp"><i className="fas fa-bolt" /> {entry.xp?.toLocaleString?.('ro-RO') || entry.xp}</div>
+      {!entry.isCurrentUser && !locked && <ReportButton userId={entry.id} />}
     </div>
-    <div className="leaderboard-avatar">{entry.private ? <i className="fas fa-lock" aria-hidden="true" /> : (entry.initials || (entry.name || '?').charAt(0))}</div>
-    <div className="leaderboard-row-copy">
-      <strong>{entry.private ? 'Profil privat' : entry.name}{!entry.private && entry.title ? ` · ${entry.titleEmoji || ''} ${entry.title}` : ''}{entry.isCurrentUser && <span className="leaderboard-you-tag">Tu</span>}</strong>
-      <small>{entry.private ? 'Loc și punctaj' : (entry.class || `Nivel ${entry.level || 1}`)}{entry.private ? '' : ` · streak ${entry.streak || 0}z`}</small>
-    </div>
-    <div className="leaderboard-xp"><i className="fas fa-bolt" /> {entry.xp?.toLocaleString?.('ro-RO') || entry.xp}</div>
-    {!entry.isCurrentUser && !entry.private && <ReportButton userId={entry.id} />}
-  </div>
-);
+  );
+};
 
 const Leaderboard = () => {
   const [state, setState] = useState({ loading: true, entries: [], offline: false });
