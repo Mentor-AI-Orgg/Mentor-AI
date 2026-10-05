@@ -224,6 +224,11 @@ SMTP_PASS=
 SMTP_FROM=
 ```
 
+`APP_BASE_URL` este obligatoriu în producție: un URL `https`, fără slash
+final, de exemplu `https://suntde10.ro`. Dacă lipsește sau nu este valid,
+aplicația nu pornește și `npm run prelansare` iese cu cod 1. Linkurile
+către părinte nu se construiesc din antetul `Host` sau `X-Forwarded-Host`.
+
 `SMTP_FROM` trebuie să fie o adresă de pe domeniul site-ului, de exemplu
 `nu-raspunde@suntde10.ro`. Linkul de acord pleacă doar pe email. Dacă
 mesajul cade în Spam, părintele nu confirmă, iar după 14 zile contul se

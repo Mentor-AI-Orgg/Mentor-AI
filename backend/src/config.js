@@ -53,7 +53,8 @@ module.exports = {
   APP_VERSION: "3.0.0",
 
   // URL public (fără slash final) pentru linkurile din email.
-  // Dacă lipsește, rutele reconstruiesc originea din request.
+  // În producție trebuie să fie un https valid; altfel procesul nu pornește.
+  // În development, dacă lipsește, linkurile cad pe localhost.
   APP_BASE_URL: String(process.env.APP_BASE_URL || "").replace(/\/$/, ""),
 
   SMTP_HOST: process.env.SMTP_HOST || "",
