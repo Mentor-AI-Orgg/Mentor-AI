@@ -79,10 +79,57 @@ function isRestructured(entry) {
     || entry.boxes?.length
     || entry.extraExamples?.length
     || entry.answers?.length
+    || entry.hasAnswers
     || entry.more?.length
     || entry.seeAlso?.length
     || entry.figures?.length
     || entry.kind
+  );
+}
+
+function AnswerList({ answers }) {
+  return (
+    <p>
+      {answers.map((answer, index) => (
+        <span key={`${index}-${answer}`}>
+          {index ? '; ' : null}
+          {index + 1}) <MathText text={String(answer)} />
+        </span>
+      ))}
+    </p>
+  );
+}
+
+function AnswerFold({ entry, loadAnswers }) {
+  const initial = Array.isArray(entry.answers) && entry.answers.length ? entry.answers : null;
+  const [answers, setAnswers] = useState(initial);
+  const [phase, setPhase] = useState(initial ? 'ready' : 'idle');
+  if (!initial && !entry.hasAnswers) return null;
+  const openAnswers = event => {
+    if (!event.currentTarget.open || answers || phase === 'loading') return;
+    if (typeof loadAnswers !== 'function') {
+      setPhase('error');
+      return;
+    }
+    setPhase('loading');
+    Promise.resolve(loadAnswers())
+      .then(next => {
+        if (Array.isArray(next) && next.length) {
+          setAnswers(next);
+          setPhase('ready');
+          return;
+        }
+        setPhase('error');
+      })
+      .catch(() => setPhase('error'));
+  };
+  return (
+    <details className="lesson-fold" onToggle={openAnswers}>
+      <summary>Vezi răspunsurile</summary>
+      {answers ? <AnswerList answers={answers} /> : (
+        <p>{phase === 'error' ? 'Nu am putut aduce răspunsurile. Închide și deschide din nou.' : 'Le aduc…'}</p>
+      )}
+    </details>
   );
 }
 
@@ -104,7 +151,7 @@ function LegacyBody({ entry }) {
   );
 }
 
-function RichBody({ entry }) {
+function RichBody({ entry, loadAnswers }) {
   return (
     <>
       <LessonProse label="Teorie." text={entry.theory} />
@@ -116,19 +163,7 @@ function RichBody({ entry }) {
         </details>
       ))}
       {entry.practice ? <LessonProse label="Exersează." text={entry.practice} className="lesson-practice" /> : null}
-      {entry.answers?.length ? (
-        <details className="lesson-fold">
-          <summary>Vezi răspunsurile</summary>
-          <p>
-            {entry.answers.map((answer, index) => (
-              <span key={`${index}-${answer}`}>
-                {index ? '; ' : null}
-                {index + 1}) <MathText text={String(answer)} />
-              </span>
-            ))}
-          </p>
-        </details>
-      ) : null}
+      <AnswerFold entry={entry} loadAnswers={loadAnswers} />
       {entry.mistakes ? <LessonProse label="Greșeli frecvente." text={entry.mistakes} className="lesson-mistakes" /> : null}
       <LessonProse label="Încearcă tu." text={entry.tryThis} className="lesson-try" />
       {entry.keyPoints?.length ? (
@@ -165,7 +200,7 @@ function RichBody({ entry }) {
   );
 }
 
-export default function LessonCard({ entry, lessonIndex, initiallyOpen = false, forceOpen = false, onQuiz, onCards, cardsDue = 0, onProblem }) {
+export default function LessonCard({ entry, lessonIndex, initiallyOpen = false, forceOpen = false, onQuiz, onCards, cardsDue = 0, onProblem, loadAnswers }) {
   const [open, setOpen] = useState(initiallyOpen || forceOpen);
   useEffect(() => {
     if (forceOpen) setOpen(true);
@@ -188,7 +223,7 @@ export default function LessonCard({ entry, lessonIndex, initiallyOpen = false, 
           <LessonFigures entry={entry} open={open} />
           <LessonBoxes entry={entry} />
           <FormulaBox entry={entry} />
-          {isRestructured(entry) ? <RichBody entry={entry} /> : <LegacyBody entry={entry} />}
+          {isRestructured(entry) ? <RichBody entry={entry} loadAnswers={loadAnswers} /> : <LegacyBody entry={entry} />}
           {(onQuiz || onCards || onProblem) ? (
             <div className="lesson-card-actions">
               {onQuiz ? (

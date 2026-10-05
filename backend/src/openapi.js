@@ -31,8 +31,24 @@ const spec = {
     "/curriculum": {
       get: {
         tags: ["health"],
-        summary: "Rezumate proprii ale programei de gimnaziu (română și matematică)",
-        responses: { 200: { description: "Catalog sau ghid pe materie/clasă" } }
+        security: [{ cookieAuth: [] }],
+        summary: "Rezumate proprii ale programei de gimnaziu (română și matematică), fără câmpul answers",
+        responses: {
+          200: { description: "Catalog sau ghid pe materie/clasă, pentru un elev autentificat" },
+          401: { description: "Neautentificat" }
+        }
+      }
+    },
+    "/curriculum/lesson-answers": {
+      post: {
+        tags: ["health"],
+        security: [{ cookieAuth: [] }],
+        summary: "Răspunsurile unei lecții, doar când elevul apasă „Vezi răspunsurile”",
+        responses: {
+          200: { description: "Lista de răspunsuri a lecției" },
+          401: { description: "Neautentificat" },
+          403: { description: "Lipsește reveal" }
+        }
       }
     },
     "/health": {
