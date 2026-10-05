@@ -10,6 +10,9 @@
 // repetă tema. Dacă în același chat tocmai s-a potrivit o lecție, răspunsul
 // rămâne la lecția aceea. Fără temă anterioară, nu se inventează una din
 // cuvântul „exemplu” sau „scurt”.
+//
+// „Nu am înțeles” este tot o urmare: aceeași lecție, mai scurt și mai pe pași.
+// Fiecare apăsare coboară încă un pas sau schimbă unghiul, tot în lecție.
 
 const { getGuide, normalizeGrade, normalizeSubject } = require("../data/gimnaziuGuide");
 
@@ -336,7 +339,10 @@ function isRequestWord(word) {
 
 function followKind(folded) {
   if (!folded || folded.split(" ").length > 12) return null;
-  if (/^(mai\s+explica(\s+mi)?|explica(\s+mi)?(\s+te\s+rog)?|explica(\s+mi)?\s+(din\s+nou|iar)|nu\s+(am\s+)?inteles(\s+(asta|deloc))?|nu\s+inteleg(\s+(asta|deloc))?|inca\s+o\s+data|repeta(\s+te\s+rog)?)$/.test(folded)) {
+  if (/^(nu\s+(am\s+)?inteles(\s+(asta|deloc))?|nu\s+inteleg(\s+(asta|deloc))?|n\s+am\s+inteles)$/.test(folded)) {
+    return "simpler";
+  }
+  if (/^(mai\s+explica(\s+mi)?|explica(\s+mi)?(\s+te\s+rog)?|explica(\s+mi)?\s+(din\s+nou|iar)|inca\s+o\s+data|repeta(\s+te\s+rog)?)$/.test(folded)) {
     return "again";
   }
   const example = mentionsWord(folded, "exemplu");
@@ -425,6 +431,46 @@ function focusWords(best) {
     if (found.rank >= 2 && found.term) words.push(found.term);
   });
   return unique(words);
+}
+
+function lastAssistantText(history) {
+  const turns = Array.isArray(history) ? history : [];
+  for (let index = turns.length - 1; index >= 0; index -= 1) {
+    const turn = turns[index];
+    if (turn && turn.role === "assistant") return String(turn.content || "");
+  }
+  return "";
+}
+
+function simplifyDepth(history) {
+  const turns = Array.isArray(history) ? history : [];
+  let depth = 0;
+  for (let index = turns.length - 1; index >= 0; index -= 1) {
+    const turn = turns[index];
+    if (!turn || turn.role !== "user") continue;
+    const intent = classifyFollowUp(String(turn.content || ""));
+    if (!intent || intent.kind !== "simpler" || !intent.pure) break;
+    depth += 1;
+  }
+  return depth;
+}
+
+function topicFocus(rows, history, prior) {
+  const turns = Array.isArray(history) ? history.slice(-12) : [];
+  const lessonId = prior.best.row.lesson.id || "";
+  for (let index = turns.length - 1; index >= 0; index -= 1) {
+    const turn = turns[index];
+    if (!turn || turn.role !== "user") continue;
+    const content = String(turn.content || "");
+    const intent = classifyFollowUp(content);
+    if (intent && intent.pure) continue;
+    const picked = selectBest(rows, content);
+    if (!picked) continue;
+    if (lessonId && picked.best.row.lesson.id !== lessonId) continue;
+    const words = focusWords(picked.best);
+    if (words.length) return words;
+  }
+  return focusWords(prior.best);
 }
 
 function onTopic(text, words) {
@@ -546,6 +592,99 @@ function useBody(lesson, words) {
   return example ? example.replace(/^Exemplu:/, "Cum se folosește:") : "";
 }
 
+function onWord(text, word) {
+  if (!word) return true;
+  const folded = fold(text);
+  if (folded.includes(word)) return true;
+  const stem = stemOf(word);
+  return Boolean(stem && stem !== word && stem.length >= 5 && folded.includes(stem));
+}
+
+function keepOnWord(list, word) {
+  if (!word) return list;
+  const narrowed = list.filter(text => onWord(text, word));
+  return narrowed.length ? narrowed : list;
+}
+
+function shortestText(list) {
+  return list.reduce((best, item) => (item.length < best.length ? item : best), list[0]);
+}
+
+function lessonPieces(lesson, words) {
+  const definitions = [];
+  const examples = [];
+  const take = (bucket, text) => {
+    splitSentences(text).forEach(sentence => {
+      const clean = sentence.replace(/\s+/g, " ").trim();
+      if (clean.length < 18 || clean.length > 240) return;
+      if (!onTopic(clean, words)) return;
+      bucket.push(clean);
+    });
+  };
+  (lesson.boxes || []).forEach(box => take(definitions, box && box.text));
+  (lesson.keyPoints || []).forEach(point => take(definitions, point));
+  take(definitions, lessonRecap(lesson));
+  take(definitions, lesson.theory);
+  rankedExamples(lesson, words).forEach(text => take(examples, text));
+  return {
+    definitions: dedupeTexts(definitions),
+    examples: dedupeTexts(examples)
+  };
+}
+
+const SIMPLER_LEADS = [
+  "Altă privire, tot simplă, aceeași lecție.",
+  "O luăm și mai pe bucăți.",
+  "Încă un pas mic, tot aici.",
+  "Încă mai simplu, tot pe lecția asta."
+];
+
+function simplerBody(lesson, words, depth) {
+  const primary = words[0] || "";
+  const pieces = lessonPieces(lesson, words);
+  const steps = keepOnWord(pieces.definitions.length ? pieces.definitions : pieces.examples, primary);
+  const samples = keepOnWord(pieces.examples, primary);
+  if (!steps.length) return "";
+
+  const step = Math.max(0, Number(depth) || 0);
+  const core = steps[0];
+  const brief = shortestText(steps);
+  const other = steps.reduce((best, item) => {
+    if (item === brief) return best;
+    if (!best || item.length < best.length) return item;
+    return best;
+  }, "");
+  const sample = samples.find(item => item !== core) || "";
+
+  if (step === 0) {
+    const lines = ["E în regulă. Pași mici:", "", `1) ${core}`];
+    if (sample && fold(sample) !== fold(core)) lines.push("", `Exemplu mic: ${clipSentence(sample, 80)}`);
+    return lines.join("\n");
+  }
+
+  if (step === 1) return `Și mai scurt:\n\n${brief}`;
+
+  if (step === 2) {
+    const angle = other || brief;
+    const hinted = `Adică:\n\n${angle}`;
+    const previous = `Și mai scurt:\n\n${brief}`;
+    if (angle !== brief && hinted.length < previous.length) return hinted;
+    return `Adică: ${brief}`;
+  }
+
+  const lead = SIMPLER_LEADS[(step - 3) % SIMPLER_LEADS.length];
+  const avoid = step % 2 === 0 ? fold(core) : fold(brief);
+  let choice = steps[step % steps.length];
+  for (let offset = 0; offset < steps.length; offset += 1) {
+    const candidate = steps[(step + offset) % steps.length];
+    if (fold(candidate) !== avoid) {
+      choice = candidate;
+      break;
+    }
+  }
+  return `${lead}\n\n${clipSentence(choice, 120)}`;
+}
+
 function explainBody(picked) {
   const needles = needlesOf(picked.query, picked.best.byWord);
   const lesson = picked.best.row.lesson;
@@ -560,24 +699,30 @@ function explainBody(picked) {
     : String(lesson.theory || lesson.example || boxText(lesson) || "").slice(0, 700));
 }
 
-function reply(row, body) {
+function reply(row, body, kind) {
+  const close = kind === "simpler"
+    ? "Rămânem la aceeași lecție."
+    : "Asta stă scris în lecție. Dacă un pas nu e limpede, spune cuvântul care te încurcă.";
   return {
     matched: true,
     engine: "lectii",
     lesson: row.lesson.title,
     lessonId: row.lesson.id || "",
     unit: row.unit.title,
-    text: `Din lecția „${row.lesson.title}”, ${row.unit.title}:\n\n${body}\n\nAsta stă scris în lecție. Dacă un pas nu e limpede, spune cuvântul care te încurcă.`
+    text: `Din lecția „${row.lesson.title}”, ${row.unit.title}:\n\n${body}\n\n${close}`
   };
 }
 
-function bodyFor(picked, kind) {
+function bodyFor(picked, kind, depth, words) {
   const lesson = picked.best.row.lesson;
-  const words = focusWords(picked.best);
-  if (kind === "example") return exampleBody(lesson, words, false) || explainBody(picked);
-  if (kind === "another") return exampleBody(lesson, words, true) || explainBody(picked);
-  if (kind === "short") return shortBody(lesson, words) || explainBody(picked);
-  if (kind === "use") return useBody(lesson, words) || explainBody(picked);
+  const focus = words && words.length ? words : focusWords(picked.best);
+  if (kind === "example") return exampleBody(lesson, focus, false) || explainBody(picked);
+  if (kind === "another") return exampleBody(lesson, focus, true) || explainBody(picked);
+  if (kind === "short") return shortBody(lesson, focus) || explainBody(picked);
+  if (kind === "use") return useBody(lesson, focus) || explainBody(picked);
+  if (kind === "simpler") {
+    return simplerBody(lesson, focus, depth) || shortBody(lesson, focus) || explainBody(picked);
+  }
   return explainBody(picked);
 }
 
@@ -607,12 +752,24 @@ function answerFromLessons({ message, subject, grade, history } = {}) {
   if (intent && intent.pure) {
     const prior = remembered(rows, history);
     if (!prior) return missed(true);
+    if (intent.kind === "simpler") {
+      const depth = simplifyDepth(history);
+      const words = topicFocus(rows, history, prior);
+      const previous = lastAssistantText(history);
+      let body = bodyFor(prior, "simpler", depth, words);
+      for (let extra = 0; extra < 6; extra += 1) {
+        body = bodyFor(prior, "simpler", depth + extra, words);
+        const full = reply(prior.best.row, body, "simpler").text;
+        if (full && full !== previous) break;
+      }
+      return reply(prior.best.row, body, "simpler");
+    }
     return reply(prior.best.row, bodyFor(prior, intent.kind));
   }
 
   const picked = selectBest(rows, message);
   if (!picked) return missed(!tokens(message).length);
-  if (intent) return reply(picked.best.row, bodyFor(picked, intent.kind));
+  if (intent) return reply(picked.best.row, bodyFor(picked, intent.kind, 0));
   return reply(picked.best.row, explainBody(picked));
 }
 

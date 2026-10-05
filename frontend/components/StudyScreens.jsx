@@ -195,6 +195,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
     state: loadTutorChats({ owner })
   }));
   const stateRef = useRef(bundle.state);
+  const sendingRef = useRef(false);
   const ownerRef = useRef(owner);
   ownerRef.current = owner;
   const [draft, setDraft] = useState('');
@@ -401,15 +402,16 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
     }
   };
 
-  const send = async (text) => {
-    const message = text.trim();
-    if (!message || loading) return;
+  const send = async (text, options = {}) => {
+    const message = String(text || '').trim();
+    if (!message || loading || sendingRef.current) return;
     const outgoing = message;
-    setDraft('');
-    if (diagMode) {
+    if (!options.keepDraft) setDraft('');
+    if (diagMode && !options.forceChat) {
       await runDiagnostics(outgoing);
       return;
     }
+    sendingRef.current = true;
     const scopeNow = scopeRef.current;
     let chatId = '';
     let conversationId = '';
@@ -448,9 +450,12 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
           content: 'Nu pot răspunde acum. Încearcă din nou în câteva secunde.'
         });
     } finally {
+      sendingRef.current = false;
       setLoading(false);
     }
   };
+
+  const askSimpler = () => send('Nu am înțeles', { keepDraft: true, forceChat: true });
 
   const beginRename = () => {
     if (!current) return;
@@ -595,17 +600,41 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
             </div>
           </div>
         )}
-        {messages.map((message, index) => (
-          <MessageBubble key={`${current?.id || 'chat'}-${index}`} role={message.role}>
-            {message.diagnostic ? (
-              <pre className={`diag-report ${message.allOk ? 'all-ok' : 'has-issues'}`}>
-                {message.content}
-              </pre>
-            ) : (
-              <MathText text={message.content} />
-            )}
-          </MessageBubble>
-        ))}
+        {messages.map((message, index) => {
+          const latestTutor =
+            message.role === 'assistant' &&
+            !message.diagnostic &&
+            !messages
+              .slice(index + 1)
+              .some((item) => item.role === 'assistant' && !item.diagnostic);
+          const bubble = (
+            <MessageBubble role={message.role}>
+              {message.diagnostic ? (
+                <pre className={`diag-report ${message.allOk ? 'all-ok' : 'has-issues'}`}>
+                  {message.content}
+                </pre>
+              ) : (
+                <MathText text={message.content} />
+              )}
+            </MessageBubble>
+          );
+          if (!latestTutor) {
+            return <div key={`${current?.id || 'chat'}-${index}`}>{bubble}</div>;
+          }
+          return (
+            <div key={`${current?.id || 'chat'}-${index}`} className="mentor-reply-with-help">
+              {bubble}
+              <button
+                type="button"
+                className="ghost-button mentor-unclear"
+                onClick={askSimpler}
+                disabled={loading}
+              >
+                Nu am înțeles
+              </button>
+            </div>
+          );
+        })}
         {loading && <LoadingMessage />}
       </section>
       <form
