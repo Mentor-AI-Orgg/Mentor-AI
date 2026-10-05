@@ -241,3 +241,129 @@ describe('urmăriri scurte, în aceeași temă', () => {
     expect(result.text).toMatch(/Spune cu un cuvânt/);
   });
 });
+
+function pressUnclear(seed, times, subject, grade, phrase = 'Nu am înțeles') {
+  const history = Array.isArray(seed)
+    ? seed.map((item) => ({ ...item }))
+    : [{ role: 'user', content: seed }];
+  const replies = [];
+  for (let index = 0; index < times; index += 1) {
+    const result = answerFromLessons({ message: phrase, subject, grade, history });
+    replies.push(result);
+    history.push({ role: 'user', content: phrase });
+    history.push({
+      role: 'assistant',
+      content: result.text,
+      metadata: { lessonId: result.lessonId || '' }
+    });
+  }
+  return replies;
+}
+
+describe('„Nu am înțeles” rămâne la lecție și coboară', () => {
+  const topic = 'prezintă-mi ce este un diftong';
+
+  it('după diftong, prima apăsare explică aceeași lecție mai simplu', () => {
+    const opened = ask(topic, 'romana', 6);
+    const [first] = pressUnclear(topic, 1, 'romana', 6);
+    const plain = continueChat('nu am inteles', topic, 'romana', 6);
+
+    expect(opened.matched).toBe(true);
+    expect(first.matched).toBe(true);
+    expect(first.lesson).toBe(opened.lesson);
+    expect(first.lessonId).toBe(opened.lessonId);
+    expect(first.text).toMatch(/diftong/i);
+    expect(first.text).toMatch(/pași mici|în regulă/i);
+    expect(first.text).toMatch(/exemplu mic/i);
+    expect(first.text.length).toBeLessThan(opened.text.length);
+    expect(first.text).not.toMatch(/Însușirea și șirul|Legenda și valoarea/);
+    expect(plain.lesson).toBe(opened.lesson);
+    expect(plain.text).toMatch(/diftong/i);
+  });
+
+  it('a doua și a treia apăsare rămân la diftong și nu se repetă', () => {
+    const opened = ask(topic, 'romana', 6);
+    const [first, second, third, fourth] = pressUnclear(
+      [
+        { role: 'user', content: topic },
+        { role: 'assistant', content: opened.text, metadata: { lessonId: opened.lessonId } }
+      ],
+      4,
+      'romana',
+      6
+    );
+
+    [first, second, third, fourth].forEach((result) => {
+      expect(result.matched).toBe(true);
+      expect(result.lesson).toBe(opened.lesson);
+      expect(result.text).toMatch(/diftong/i);
+      expect(result.text).toMatch(/Rămânem la aceeași lecție/);
+      expect(result.text.length).toBeLessThan(opened.text.length);
+    });
+    expect(second.text.length).toBeLessThan(first.text.length);
+    expect(third.text.length).toBeLessThan(second.text.length);
+    expect(new Set([first.text, second.text, third.text, fourth.text]).size).toBe(4);
+    expect(third.text).toMatch(/Adică/);
+    expect(third.text).toMatch(/c[aâ]i-ne/);
+    expect(fourth.text).toMatch(/Altă privire/);
+    expect(fourth.text).not.toMatch(/Grupul âi este diftongul/);
+  });
+
+  it('aceeași coborâre merge și la procent', () => {
+    const opened = ask('prezintă-mi ce este un procent', 'matematica', 6);
+    const [first, second, third] = pressUnclear(
+      'ce este un procent',
+      3,
+      'matematica',
+      6,
+      'nu am inteles'
+    );
+
+    expect(opened.matched).toBe(true);
+    expect(first.lesson).toBe(opened.lesson);
+    expect(second.lesson).toBe(opened.lesson);
+    expect(third.lesson).toBe(opened.lesson);
+    [first, second, third].forEach((result) => {
+      expect(result.text).toMatch(/procent/i);
+      expect(result.text.length).toBeLessThan(opened.text.length);
+    });
+    expect(second.text.length).toBeLessThan(first.text.length);
+    expect(new Set([first.text, second.text, third.text]).size).toBe(3);
+  });
+
+  it('fără temă anterioară nu inventează o lecție', () => {
+    ['Nu am înțeles', 'nu am inteles', 'nu inteleg', ''].forEach((message) => {
+      const result = ask(message, 'romana', 6);
+      expect(result.matched, message || '(gol)').toBe(false);
+      expect(result.text).toMatch(/Spune cu un cuvânt/);
+      expect(result.text).not.toMatch(/Diftong, triftong|Procente|Însușirea/);
+    });
+  });
+
+  it('după o prostie sau la clasa a V-a tot nu născocește diftongul', () => {
+    const noise = continueChat('Nu am înțeles', 'vreau o prajitura cu ciocolata', 'romana', 6);
+    expect(noise.matched).toBe(false);
+    expect(noise.text).toMatch(/Spune cu un cuvânt|nu am găsit/);
+    expect(noise.text).not.toMatch(/Diftong, triftong/);
+
+    const early = continueChat('Nu am înțeles', topic, 'romana', 5);
+    expect(early.matched).toBe(false);
+    expect(early.text).toMatch(/Spune cu un cuvânt/);
+  });
+
+  it('după o temă nouă, coborârea rămâne la tema nouă', () => {
+    const switched = continueChat(
+      'Nu am înțeles',
+      [
+        { role: 'user', content: topic },
+        { role: 'user', content: 'ce este un omonim' }
+      ],
+      'romana',
+      6
+    );
+    expect(switched.matched).toBe(true);
+    expect(switched.lesson).toMatch(/omonim/i);
+    expect(switched.text).toMatch(/omonim/i);
+    expect(switched.text).not.toMatch(/Diftong, triftong/);
+  });
+});

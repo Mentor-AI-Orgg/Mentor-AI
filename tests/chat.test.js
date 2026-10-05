@@ -16,7 +16,11 @@ describe('chat fallback chain', () => {
   it('returns a mocked engine when no provider keys are set', async () => {
     const res = await agent
       .post('/api/chat')
-      .send({ message: 'Am rămas blocat la o problemă de geometrie, cum aș putea să încep?', language: 'ro', plan_id: 'free' });
+      .send({
+        message: 'Am rămas blocat la o problemă de geometrie, cum aș putea să încep?',
+        language: 'ro',
+        plan_id: 'free'
+      });
     expect(res.status).toBe(200);
     expect(res.body.response).toBeTruthy();
     expect(res.body.engine_mocked).toBe(false);
@@ -76,6 +80,47 @@ describe('chat fallback chain', () => {
     expect(fresh.status).toBe(200);
     expect(fresh.body.response).toMatch(/Spune cu un cuvânt/);
     expect(fresh.body.response).not.toMatch(/c[aâ]ine/);
+  });
+
+  it('„Nu am înțeles” coboară aceeași lecție de câte ori e apăsat', async () => {
+    const opened = await agent.post('/api/chat').send({
+      message: 'prezintă-mi ce este un diftong',
+      subject: 'romana',
+      class_level: 6,
+      conversation_id: 'diftong-neclar',
+      language: 'ro'
+    });
+    expect(opened.status).toBe(200);
+    expect(opened.body.response).toMatch(/diftong/i);
+
+    const replies = [];
+    for (let index = 0; index < 3; index += 1) {
+      const res = await agent.post('/api/chat').send({
+        message: 'Nu am înțeles',
+        subject: 'romana',
+        class_level: 6,
+        conversation_id: 'diftong-neclar',
+        language: 'ro'
+      });
+      expect(res.status).toBe(200);
+      expect(res.body.engine_used).toBe('lectii');
+      expect(res.body.response).toMatch(/diftong/i);
+      expect(res.body.response.length).toBeLessThan(opened.body.response.length);
+      replies.push(res.body.response);
+    }
+    expect(new Set(replies).size).toBe(3);
+    expect(replies[1].length).toBeLessThan(replies[0].length);
+
+    const empty = await agent.post('/api/chat').send({
+      message: 'Nu am înțeles',
+      subject: 'romana',
+      class_level: 6,
+      conversation_id: 'chat-fara-neclar',
+      language: 'ro'
+    });
+    expect(empty.status).toBe(200);
+    expect(empty.body.response).toMatch(/Spune cu un cuvânt/);
+    expect(empty.body.response).not.toMatch(/Diftong, triftong/);
   });
 
   it('is also available under /api/v1', async () => {

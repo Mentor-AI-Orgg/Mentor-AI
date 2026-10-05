@@ -237,5 +237,7 @@ describe('chat-urile tutorelui', () => {
     expect(source).toContain('Chat nou');
     expect(source).toContain('Schimbă numele');
     expect(source).toContain('Numele chatului');
+    expect(source).toContain('Nu am înțeles');
+    expect(source).toContain('mentor-unclear');
   });
 });
