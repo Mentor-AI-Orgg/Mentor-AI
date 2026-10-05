@@ -6,6 +6,7 @@ import GradeGoalPicker from './GradeGoalPicker.jsx';
 import MathText from './MathText.jsx';
 import { effortLine } from '../i18n/quizFeedback.js';
 import MascotPresence from './mascot/MascotPresence.jsx';
+import { emitMascot } from '../mascot/mascotEvents.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -95,6 +96,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
     });
     if (result.success) {
       setReport(result.data);
+      emitMascot(onLesson ? 'lectie_terminata' : 'test_terminat', { capitol: lesson?.title || unit.title || '' });
       if (onRewardClaim && result.data?.summary) {
         onRewardClaim({
           balance: result.data.summary.balance,

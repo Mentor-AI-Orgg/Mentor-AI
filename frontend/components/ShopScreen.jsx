@@ -138,6 +138,8 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         score: next.score,
         chaptersDone: next.chaptersDone,
         chaptersTotal: next.chaptersTotal,
+        ...(next.chapters ? { chapters: next.chapters } : {}),
+        ...(Array.isArray(next.titles?.unlocked) ? { unlockedTitleIds: next.titles.unlocked } : {}),
         avatarId: next.equipped?.avatar,
         themeId: next.equipped?.background,
         titleId: next.equipped?.title,
@@ -196,11 +198,15 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
     setPendingItem(null);
     if (result.success) {
       if (typeof onCoinsChange === 'function') {
-        onCoinsChange(result.data.balance, result.data.equipped || {}, summary?.role || userData.role || 'student', {
+        const bought = result.data.summary;
+      onCoinsChange(result.data.balance, result.data.equipped || {}, summary?.role || userData.role || 'student', {
           avatarId: result.data.equipped?.avatar,
           themeId: result.data.equipped?.background,
           titleId: result.data.equipped?.title,
-          titleName: result.data.summary?.titleName
+          titleName: bought?.titleName,
+          ...(bought?.level != null ? { level: bought.level } : {}),
+          ...(bought?.chapters ? { chapters: bought.chapters } : {}),
+          ...(Array.isArray(bought?.titles?.unlocked) ? { unlockedTitleIds: bought.titles.unlocked } : {})
         });
       }
       if (typeof onAppearanceChange === 'function') {

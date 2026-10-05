@@ -33,6 +33,18 @@ const ART = {
   'trist-bland': '/mascot/explica.png'
 };
 
+const POSE = {
+  salut: 'salut',
+  incurajeaza: 'salut',
+  somnoros: 'salut',
+  mandru: 'mandru',
+  gandeste: 'gandeste',
+  explica: 'explica',
+  'trist-bland': 'explica',
+  bucuros: 'bucuros',
+  sarbatoare: 'bucuros'
+};
+
 function mascotLabel(translate, name) {
   const text = typeof translate === 'function' ? translate('mascot.aria', { mascota: name }) : '';
   if (!text || text === 'mascot.aria' || !String(text).includes(name)) {
@@ -58,20 +70,30 @@ const Mascota = ({ mood = 'salut', size = 'md', message = '', art = '', pulse = 
   const src = size === 'sm'
     ? '/mascot/cap.png'
     : (art === 'semnatura' ? '/mascot/explica.png' : ART[safeMood]);
+  const pose = size === 'sm' ? 'cap' : (art === 'semnatura' ? 'explica' : (POSE[safeMood] || 'salut'));
   const pulseClass = pulse === 'succes' ? ' is-succes' : pulse === 'gresit' ? ' is-gresit' : '';
 
   return (
     <div className={`mascota-wrap mascota-${size} is-${safeMood}`}>
-      <img
-        className={`mascota${pulseClass}`}
-        data-mood={safeMood}
-        data-size={size}
-        src={src}
-        width={box}
-        height={box}
-        alt={label}
-        aria-label={label}
-      />
+      <div className={`mascota-pop${pulseClass}`}>
+        <div className="mascota-figure" data-pose={pose}>
+          <img
+            className="mascota"
+            data-mood={safeMood}
+            data-size={size}
+            src={src}
+            width={box}
+            height={box}
+            alt={label}
+            aria-label={label}
+          />
+          <span className="mascota-shine" aria-hidden="true" />
+          <span className="mascota-blink" aria-hidden="true">
+            <i />
+            <i />
+          </span>
+        </div>
+      </div>
       {open && message ? (
         <button type="button" className="mascota-bubble" aria-live="polite" onClick={() => setOpen(false)}>
           {message}

@@ -13,6 +13,7 @@ import SplashScreen from './components/SplashScreen.jsx';
 import WelcomeScreen from './components/WelcomeScreen.jsx';
 import Mascota from './components/mascot/Mascota.jsx';
 import MascotLayer from './components/mascot/MascotLayer.jsx';
+import { emitMascot, pickCelebration } from './mascot/mascotEvents.js';
 import LoginScreen from './components/LoginScreen.jsx';
 import ResetPasswordScreen from './components/ResetPasswordScreen.jsx';
 import RegisterScreen from './components/RegisterScreen.jsx';
@@ -109,25 +110,36 @@ function AppShell({ userData, setUserData }) {
     setToast({ message, type });
   }, []);
 
+  const celebratedKey = useRef('');
+  const userRef = useRef(userData);
+  userRef.current = userData;
+  const announceProgress = useCallback((prev, next) => {
+    const pick = pickCelebration(prev, next);
+    if (!pick) return;
+    const key = `${pick.event}:${pick.vars.capitol || ''}:${pick.vars.n || ''}`;
+    if (celebratedKey.current === key) return;
+    celebratedKey.current = key;
+    emitMascot(pick.event, pick.vars);
+  }, []);
+
   const handleEconomyUpdate = useCallback((balance, equipped = {}, role = null, extra = {}) => {
-    let leveledTo = null;
-    setUserData(prev => {
-      const next = {
-        ...prev,
-        coins: typeof balance === 'number' ? balance : prev.coins,
-        avatarId: equipped.avatar !== undefined ? (equipped.avatar || '') : prev.avatarId,
-        themeId: equipped.background !== undefined ? (equipped.background || '') : prev.themeId,
-        titleId: equipped.title !== undefined ? (equipped.title || extra.titleId || '') : (extra.titleId ?? prev.titleId),
-        titleName: extra.titleName !== undefined ? extra.titleName : prev.titleName,
-        role: role || prev.role,
-        ...extra
-      };
-      if (next.level > (prev.level || 1)) leveledTo = next.level;
-      applyTheme(next.themeId);
-      return next;
-    });
-    if (leveledTo) showToast(`Ai urcat la nivelul ${leveledTo}!`, 'success');
-  }, [showToast]);
+    const prev = userRef.current;
+    const extraClean = Object.fromEntries(Object.entries(extra).filter(([, value]) => value !== undefined));
+    const next = {
+      ...prev,
+      coins: typeof balance === 'number' ? balance : prev.coins,
+      avatarId: equipped.avatar !== undefined ? (equipped.avatar || '') : prev.avatarId,
+      themeId: equipped.background !== undefined ? (equipped.background || '') : prev.themeId,
+      titleId: equipped.title !== undefined ? (equipped.title || extra.titleId || '') : (extra.titleId ?? prev.titleId),
+      titleName: extra.titleName !== undefined ? extra.titleName : prev.titleName,
+      role: role || prev.role,
+      ...extraClean
+    };
+    userRef.current = next;
+    applyTheme(next.themeId);
+    announceProgress(prev, next);
+    setUserData(next);
+  }, [announceProgress, setUserData]);
 
   const syncEconomy = useCallback(async (patch = {}) => {
     const result = await MentorAPI.getEconomySummary({
@@ -136,16 +148,14 @@ function AppShell({ userData, setUserData }) {
     });
     const summary = result.success ? result.data?.summary : null;
     if (!summary) return null;
-    let leveledTo = null;
-    setUserData(prev => {
-      const next = applyProgress(summary, prev);
-      if (next.level > (prev.level || 1)) leveledTo = next.level;
-      applyTheme(next.themeId);
-      return next;
-    });
-    if (leveledTo) showToast(`Ai urcat la nivelul ${leveledTo}!`, 'success');
+    const prev = userRef.current;
+    const next = applyProgress(summary, prev);
+    userRef.current = next;
+    applyTheme(next.themeId);
+    announceProgress(prev, next);
+    setUserData(next);
     return summary;
-  }, [userData.class, userData.name, showToast]);
+  }, [userData.class, userData.name, announceProgress, setUserData]);
 
   const handleAppearanceChange = useCallback((equipped = {}, inventory = [], extra = {}) => {
     setUserData(prev => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { MASCOT_MESSAGES, emojiCount } from '../frontend/i18n/mascotMessages.js';
-import { reactTo, resetMascotFeed } from '../frontend/mascot/mascotEvents.js';
+import { pickCelebration, reactTo, resetMascotFeed } from '../frontend/mascot/mascotEvents.js';
 
 describe('mesajele furnicuței', () => {
   it('fiecare categorie are două mesaje, fără nume scris și cu cel mult un emoji', () => {
@@ -26,5 +26,24 @@ describe('mesajele furnicuței', () => {
     const again = reactTo('raspuns_gresit', { attempt: 2, hint: 'uită-te la semn' }, 30_000);
     expect(again.mood).toBe('explica');
     expect(again.message).toContain('uită-te la semn');
+  });
+
+  it('alege felicitarea mare: insignă, apoi nivel, apoi capitol', () => {
+    expect(pickCelebration(
+      { level: 2, unlockedTitleIds: ['prima-lectie'], chapters: {} },
+      { level: 2, unlockedTitleIds: ['prima-lectie', 'foc-7'], chapters: {} }
+    )).toEqual({ event: 'insigna_noua', vars: { n: 2 } });
+    expect(pickCelebration(
+      { level: 2, unlockedTitleIds: [], chapters: {} },
+      { level: 3, unlockedTitleIds: [], chapters: {} }
+    )).toEqual({ event: 'nivel_nou', vars: { n: 3 } });
+    expect(pickCelebration(
+      { level: 2, chapters: { mate: { status: 'started', title: 'Fracții' } } },
+      { level: 2, chapters: { mate: { status: 'done', title: 'Fracții' } } }
+    )).toEqual({ event: 'capitol_terminat', vars: { capitol: 'Fracții' } });
+    expect(pickCelebration(
+      { level: 4 },
+      { level: 4, unlockedTitleIds: ['prima-lectie'], chapters: { mate: { status: 'done', title: 'Fracții' } } }
+    )).toBeNull();
   });
 });

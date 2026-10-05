@@ -72,10 +72,37 @@ function emitMascot(event, vars) {
   return reaction;
 }
 
+function pickCelebration(prev = {}, next = {}) {
+  const prevIds = Array.isArray(prev.unlockedTitleIds) ? prev.unlockedTitleIds : null;
+  const nextIds = Array.isArray(next.unlockedTitleIds) ? next.unlockedTitleIds : null;
+  if (prevIds && nextIds) {
+    const fresh = nextIds.find(id => !prevIds.includes(id));
+    if (fresh) return { event: 'insigna_noua', vars: { n: next.level || prev.level || '' } };
+  }
+  const prevLevel = Number(prev.level || 0);
+  const nextLevel = Number(next.level || 0);
+  if (prevLevel > 0 && nextLevel > prevLevel) {
+    return { event: 'nivel_nou', vars: { n: nextLevel } };
+  }
+  const prevChapters = prev.chapters && typeof prev.chapters === 'object' ? prev.chapters : null;
+  const nextChapters = next.chapters && typeof next.chapters === 'object' ? next.chapters : null;
+  if (prevChapters && nextChapters) {
+    for (const [key, row] of Object.entries(nextChapters)) {
+      if (!row || row.status !== 'done') continue;
+      const before = prevChapters[key];
+      if (before && before.status && before.status !== 'done') {
+        return { event: 'capitol_terminat', vars: { capitol: row.title || 'ăsta' } };
+      }
+    }
+  }
+  return null;
+}
+
 export {
   emitMascot,
   holdMascotStage,
   mascotStageOpen,
+  pickCelebration,
   reactTo,
   resetMascotFeed,
   subscribeMascot,
