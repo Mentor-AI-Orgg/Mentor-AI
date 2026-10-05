@@ -32,6 +32,52 @@ describe('chat fallback chain', () => {
     expect(String(res.body.response || '')).not.toMatch(/nu pot să-ți dau „pe tavă”/i);
   });
 
+  it('ține minte tema chatului la o urmare scurtă, dar nu o inventează în alt chat', async () => {
+    const first = await agent.post('/api/chat').send({
+      message: 'prezintă-mi ce este un diftong',
+      subject: 'romana',
+      class_level: 6,
+      conversation_id: 'diftong-urmare',
+      language: 'ro'
+    });
+    expect(first.status).toBe(200);
+    expect(first.body.response).toMatch(/diftong/i);
+
+    const example = await agent.post('/api/chat').send({
+      message: 'dă-mi un exemplu',
+      subject: 'romana',
+      class_level: 6,
+      conversation_id: 'diftong-urmare',
+      language: 'ro'
+    });
+    expect(example.status).toBe(200);
+    expect(example.body.engine_used).toBe('lectii');
+    expect(example.body.response).toMatch(/diftong/i);
+    expect(example.body.response).toMatch(/c[aâ]ine|exemplu/i);
+
+    const shorter = await agent.post('/api/chat').send({
+      message: 'explică mai pe scurt',
+      subject: 'romana',
+      class_level: 6,
+      conversation_id: 'diftong-urmare',
+      language: 'ro'
+    });
+    expect(shorter.status).toBe(200);
+    expect(shorter.body.response).toMatch(/diftong/i);
+    expect(shorter.body.response).toMatch(/pe scurt/i);
+
+    const fresh = await agent.post('/api/chat').send({
+      message: 'dă-mi un exemplu',
+      subject: 'romana',
+      class_level: 6,
+      conversation_id: 'chat-fara-tema',
+      language: 'ro'
+    });
+    expect(fresh.status).toBe(200);
+    expect(fresh.body.response).toMatch(/Spune cu un cuvânt/);
+    expect(fresh.body.response).not.toMatch(/c[aâ]ine/);
+  });
+
   it('is also available under /api/v1', async () => {
     const res = await agent
       .post('/api/v1/chat')
