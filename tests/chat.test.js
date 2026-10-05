@@ -123,6 +123,39 @@ describe('chat fallback chain', () => {
     expect(empty.body.response).not.toMatch(/Diftong, triftong/);
   });
 
+  it('„Nu am înțeles” după un răspuns fără lecție nu reia lecția mai veche', async () => {
+    const opened = await agent.post('/api/chat').send({
+      message: 'prezintă-mi ce este un diftong',
+      subject: 'romana',
+      class_level: 6,
+      conversation_id: 'diftong-apoi-gol',
+      language: 'ro'
+    });
+    expect(opened.status).toBe(200);
+    expect(opened.body.response).toMatch(/diftong/i);
+
+    const missed = await agent.post('/api/chat').send({
+      message: 'vreau o prajitura cu ciocolata',
+      subject: 'romana',
+      class_level: 6,
+      conversation_id: 'diftong-apoi-gol',
+      language: 'ro'
+    });
+    expect(missed.status).toBe(200);
+    expect(missed.body.response).toMatch(/nu am găsit/);
+
+    const unclear = await agent.post('/api/chat').send({
+      message: 'Nu am înțeles',
+      subject: 'romana',
+      class_level: 6,
+      conversation_id: 'diftong-apoi-gol',
+      language: 'ro'
+    });
+    expect(unclear.status).toBe(200);
+    expect(unclear.body.response).toMatch(/Nu am ce să simplific/);
+    expect(unclear.body.response).not.toMatch(/Diftong|Rămânem la aceeași lecție/);
+  });
+
   it('is also available under /api/v1', async () => {
     const res = await agent
       .post('/api/v1/chat')
