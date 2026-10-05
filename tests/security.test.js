@@ -1,10 +1,16 @@
 import { spawnSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
 import { redact } from '../backend/src/logger.js';
 import { PASSWORD, registerGranted } from './registerStudent.js';
+
+const nodeRequire = createRequire(import.meta.url);
+const { publicBaseUrl } = nodeRequire('../backend/src/publicUrl.js');
+const { checklist } = nodeRequire('../backend/src/ops/prelansare.js');
+const config = nodeRequire('../backend/src/config.js');
 
 describe('antete, cookie și jurnale', () => {
   it('pune CSP pe același site și nu publică integrările', async () => {
@@ -166,6 +172,91 @@ describe('antete, cookie și jurnale', () => {
     } finally {
       delete process.env.ENFORCE_LIMITS;
     }
+  });
+
+  it('în producție linkul public vine doar din APP_BASE_URL', () => {
+    const previous = {
+      NODE_ENV: process.env.NODE_ENV,
+      APP_BASE_URL: process.env.APP_BASE_URL,
+      configured: config.APP_BASE_URL
+    };
+    const forged = {
+      protocol: 'http',
+      headers: {
+        host: 'evil.example',
+        'x-forwarded-host': 'evil.example, suntde10.ro',
+        'x-forwarded-proto': 'http'
+      }
+    };
+    try {
+      process.env.NODE_ENV = 'production';
+      process.env.APP_BASE_URL = 'https://suntde10.ro/';
+      config.APP_BASE_URL = 'https://suntde10.ro/';
+      expect(publicBaseUrl(forged)).toBe('https://suntde10.ro');
+
+      process.env.APP_BASE_URL = '';
+      config.APP_BASE_URL = '';
+      expect(() => publicBaseUrl(forged)).toThrow(/APP_BASE_URL/);
+
+      process.env.APP_BASE_URL = 'http://suntde10.ro';
+      config.APP_BASE_URL = 'http://suntde10.ro';
+      expect(() => publicBaseUrl(forged)).toThrow(/APP_BASE_URL/);
+    } finally {
+      process.env.NODE_ENV = previous.NODE_ENV;
+      if (previous.APP_BASE_URL === undefined) delete process.env.APP_BASE_URL;
+      else process.env.APP_BASE_URL = previous.APP_BASE_URL;
+      config.APP_BASE_URL = previous.configured;
+    }
+  });
+
+  it('în development păstrează localhost când nu există host', () => {
+    const previous = {
+      NODE_ENV: process.env.NODE_ENV,
+      APP_BASE_URL: process.env.APP_BASE_URL,
+      configured: config.APP_BASE_URL
+    };
+    try {
+      process.env.NODE_ENV = 'test';
+      process.env.APP_BASE_URL = '';
+      config.APP_BASE_URL = '';
+      expect(publicBaseUrl({ headers: {}, protocol: 'http' })).toBe(`http://localhost:${config.PORT}`);
+    } finally {
+      process.env.NODE_ENV = previous.NODE_ENV;
+      if (previous.APP_BASE_URL === undefined) delete process.env.APP_BASE_URL;
+      else process.env.APP_BASE_URL = previous.APP_BASE_URL;
+      config.APP_BASE_URL = previous.configured;
+    }
+  });
+
+  it('oprește prelansarea și pornirea fără un APP_BASE_URL https', () => {
+    const previousAudit = process.env.PRELANSARE_SKIP_AUDIT;
+    process.env.PRELANSARE_SKIP_AUDIT = '1';
+    try {
+      const item = (url) => checklist({ APP_BASE_URL: url }).find((entry) => entry.key === 'APP_BASE_URL');
+      expect(item('').ok).toBe(false);
+      expect(item('').required).toBe(true);
+      expect(item('http://suntde10.ro').ok).toBe(false);
+      expect(item('https://user:pass@suntde10.ro').ok).toBe(false);
+      expect(item('https://suntde10.ro/').ok).toBe(true);
+    } finally {
+      if (previousAudit === undefined) delete process.env.PRELANSARE_SKIP_AUDIT;
+      else process.env.PRELANSARE_SKIP_AUDIT = previousAudit;
+    }
+
+    const boot = spawnSync(process.execPath, ['backend/server.js'], {
+      cwd: path.resolve('.'),
+      env: {
+        ...process.env,
+        NODE_ENV: 'production',
+        APP_BASE_URL: '',
+        PRELANSARE_SKIP_AUDIT: '1'
+      },
+      encoding: 'utf8',
+      timeout: 15000
+    });
+    expect(boot.status).toBe(1);
+    expect(boot.stderr).toContain('APP_BASE_URL');
+    expect(boot.stderr).toContain('Opresc pornirea');
   });
 
   it('nu are script inline și nu folosește innerHTML în index', () => {
