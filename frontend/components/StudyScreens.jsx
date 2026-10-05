@@ -1,12 +1,40 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
-import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
+import {
+  GRADES,
+  SUBJECTS,
+  gradeLabel,
+  normalizeGrade,
+  normalizeSubject,
+  subjectLabel
+} from '../curriculum.js';
 import { readSpeechMicContext, speechFailureKind, speechMicNote } from '../speechMic.js';
+import {
+  activeChat,
+  appendMessage,
+  chatsForScope,
+  ensureActiveChat,
+  lessonFromChapter,
+  loadTutorChats,
+  nameChatsFromLesson,
+  renameChat,
+  saveTutorChats,
+  scopeFromSelection,
+  scopeKey,
+  selectChat,
+  startNewChat
+} from '../tutorChats.js';
 import MathText from './MathText.jsx';
 
-const makeConversationId = prefix => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-
-const chatRequest = async ({ message, conversationId, subject, classLevel, language, planId, mockReply }) => {
+const chatRequest = async ({
+  message,
+  conversationId,
+  subject,
+  classLevel,
+  language,
+  planId,
+  mockReply
+}) => {
   const result = await MentorAPI.chat({
     message,
     conversation_id: conversationId,
@@ -21,11 +49,154 @@ const chatRequest = async ({ message, conversationId, subject, classLevel, langu
   return { response: mockReply, mocked: true, engine_used: 'offline' };
 };
 
-const MessageBubble = ({ role, children }) => <div className={`mentor-message ${role === 'user' ? 'mentor-message-user' : 'mentor-message-ai'}`}><span className="mentor-message-role">{role === 'user' ? 'Tu' : 'Tutore'}</span><div>{children}</div></div>;
-const LoadingMessage = () => <div className="mentor-message mentor-message-ai"><span className="mentor-message-role">Tutore</span><div className="loading-dots"><i /><i /><i /></div></div>;
+const MessageBubble = ({ role, children }) => (
+  <div
+    className={`mentor-message ${role === 'user' ? 'mentor-message-user' : 'mentor-message-ai'}`}
+  >
+    <span className="mentor-message-role">{role === 'user' ? 'Tu' : 'Tutore'}</span>
+    <div>{children}</div>
+  </div>
+);
+
+const LoadingMessage = () => (
+  <div className="mentor-message mentor-message-ai">
+    <span className="mentor-message-role">Tutore</span>
+    <div className="loading-dots">
+      <i />
+      <i />
+      <i />
+    </div>
+  </div>
+);
+
+function samePin(left, right) {
+  if (!left && !right) return true;
+  if (!left || !right) return false;
+  return left.id === right.id && left.title === right.title && left.subject === right.subject;
+}
+
+function pinFromFocus(chapter, subject) {
+  const lesson = lessonFromChapter(chapter);
+  if (!lesson) return null;
+  return { ...lesson, subject: normalizeSubject(subject) };
+}
+
+function TutorChatsBar({
+  chats,
+  activeId,
+  renaming,
+  draft,
+  loading,
+  onDraft,
+  onNew,
+  onOpen,
+  onBeginRename,
+  onSaveRename,
+  onCancelRename
+}) {
+  const selectedRef = useRef(null);
+  const skipSave = useRef(false);
+  const current = chats.find((chat) => chat.id === activeId) || null;
+
+  useEffect(() => {
+    selectedRef.current?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+  }, [activeId]);
+
+  const save = (event) => {
+    event?.preventDefault();
+    onSaveRename(draft);
+  };
+
+  return (
+    <div className="mentor-chats-wrap">
+      <div className="mentor-chats">
+        <button
+          type="button"
+          className="accent-button mentor-chat-new"
+          onClick={onNew}
+          disabled={loading}
+        >
+          <i className="fas fa-plus" aria-hidden="true" /> Chat nou
+        </button>
+        <div className="mentor-chat-list" role="list" aria-label="Chat-urile tale">
+          {chats.map((chat) => (
+            <button
+              key={chat.id}
+              type="button"
+              role="listitem"
+              ref={chat.id === activeId ? selectedRef : null}
+              className={`mentor-chat-open ${chat.id === activeId ? 'selected' : ''}`}
+              aria-current={chat.id === activeId ? 'true' : undefined}
+              onClick={() => onOpen(chat.id)}
+              disabled={loading && chat.id !== activeId}
+            >
+              {chat.title}
+            </button>
+          ))}
+        </div>
+      </div>
+      {current &&
+        (renaming ? (
+          <form className="mentor-rename-row" onSubmit={save}>
+            <label className="mentor-rename-label" htmlFor="mentor-chat-title">
+              Numele chatului
+            </label>
+            <input
+              id="mentor-chat-title"
+              value={draft}
+              maxLength={42}
+              autoFocus
+              onChange={(event) => onDraft(event.target.value)}
+              onBlur={() => {
+                if (skipSave.current) {
+                  skipSave.current = false;
+                  return;
+                }
+                onSaveRename(draft);
+              }}
+              aria-label="Numele chatului"
+            />
+            <button className="accent-button mentor-rename-save" type="submit">
+              Gata
+            </button>
+            <button
+              type="button"
+              className="ghost-button mentor-rename-cancel"
+              onPointerDown={() => {
+                skipSave.current = true;
+              }}
+              onClick={onCancelRename}
+            >
+              Renunță
+            </button>
+          </form>
+        ) : (
+          <div className="mentor-chat-title-row">
+            <strong className="mentor-chat-heading">{current.title}</strong>
+            <button
+              type="button"
+              className="ghost-button mentor-chat-rename"
+              onClick={onBeginRename}
+            >
+              Schimbă numele
+            </button>
+          </div>
+        ))}
+    </div>
+  );
+}
 
 const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
-  const [messages, setMessages] = useState([]);
+  const owner = String(userData?.email || userData?.username || '')
+    .trim()
+    .toLowerCase();
+  const [bundle, setBundle] = useState(() => ({
+    owner,
+    state: loadTutorChats({ owner })
+  }));
+  const stateRef = useRef(bundle.state);
+  const ownerRef = useRef(owner);
+  ownerRef.current = owner;
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
@@ -34,43 +205,115 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
   const micStopRef = useRef(false);
   const [diagMode, setDiagMode] = useState(false);
   const [micNote, setMicNote] = useState('');
-  const [subject, setSubject] = useState(normalizeSubject(studyFocus.subject || userData.subject || userData.profile || 'matematica'));
+  const [subject, setSubject] = useState(
+    normalizeSubject(studyFocus.subject || userData.subject || userData.profile || 'matematica')
+  );
   const [grade, setGrade] = useState(normalizeGrade(studyFocus.grade || userData.class));
-  const conversationId = useRef(makeConversationId('mentor'));
-  const classLevel = grade;
+  const [pinnedLesson, setPinnedLesson] = useState(() =>
+    pinFromFocus(studyFocus.chapter, studyFocus.subject || userData.subject || userData.profile)
+  );
+  const [rename, setRename] = useState(null);
+  const commit = useCallback((updater) => {
+    const current = stateRef.current;
+    const next = typeof updater === 'function' ? updater(current) : updater;
+    if (!next || next === current) return current;
+    stateRef.current = next;
+    saveTutorChats(next, { owner: ownerRef.current });
+    setBundle({ owner: ownerRef.current, state: next });
+    return next;
+  }, []);
+
+  useEffect(() => {
+    if (bundle.owner === owner) return;
+    const state = loadTutorChats({ owner });
+    stateRef.current = state;
+    setBundle({ owner, state });
+  }, [owner, bundle.owner]);
 
   useEffect(() => {
     if (studyFocus.subject) setSubject(normalizeSubject(studyFocus.subject));
     if (studyFocus.grade) setGrade(normalizeGrade(studyFocus.grade));
-  }, [studyFocus.subject, studyFocus.grade]);
+    const next = pinFromFocus(
+      studyFocus.chapter,
+      studyFocus.subject || userData.subject || userData.profile
+    );
+    setPinnedLesson((prev) => (samePin(prev, next) ? prev : next));
+  }, [
+    studyFocus.subject,
+    studyFocus.grade,
+    studyFocus.chapter,
+    userData.subject,
+    userData.profile
+  ]);
+
+  const scope = useMemo(
+    () => scopeFromSelection({ subject, grade, lesson: pinnedLesson }),
+    [subject, grade, pinnedLesson]
+  );
+  const scopeRef = useRef(scope);
+  scopeRef.current = scope;
+  const scopeId = scopeKey(scope);
 
   useEffect(() => {
-    conversationId.current = makeConversationId('mentor');
-    setMessages([]);
-    if (studyFocus.chapter?.title) {
-      setDraft('');
-    }
-  }, [subject, grade, studyFocus.chapter]);
+    commit((state) => nameChatsFromLesson(state, scope));
+  }, [commit, scope]);
 
-  const formatDiagnostics = checks => {
-    const icon = status => (status === 'ok' ? '✅' : '❌');
-    const lines = checks.map(c => `${icon(c.status)} ${c.label} - ${c.status === 'ok' ? 'funcționează' : 'eroare'}${c.detail ? ` (${c.detail})` : ''}`);
+  useEffect(() => {
+    setRename(null);
+  }, [scopeId]);
+
+  const visibleChats = chatsForScope(bundle.state, scope);
+  const current = activeChat(bundle.state, scope);
+  const messages = current?.messages || [];
+  const lessonTitle = scope.lessonTitle;
+
+  const formatDiagnostics = (checks) => {
+    const icon = (status) => (status === 'ok' ? '✅' : '❌');
+    const lines = checks.map(
+      (c) =>
+        `${icon(c.status)} ${c.label} - ${c.status === 'ok' ? 'funcționează' : 'eroare'}${c.detail ? ` (${c.detail})` : ''}`
+    );
     return lines.join('\n');
   };
 
-  const runDiagnostics = async messageText => {
-    setMessages(previous => [...previous, { role: 'user', content: messageText }]);
+  const remember = (chatId, message) => {
+    commit((state) => appendMessage(state, chatId, message));
+  };
+
+  const openForSend = () => {
+    let chatId = '';
+    let conversationId = '';
+    commit((state) => {
+      const ensured = ensureActiveChat(state, scopeRef.current);
+      chatId = ensured.chat?.id || '';
+      conversationId = ensured.chat?.conversationId || '';
+      return ensured.state;
+    });
+    return { chatId, conversationId };
+  };
+
+  const runDiagnostics = async (messageText) => {
+    const { chatId } = openForSend();
+    if (chatId) remember(chatId, { role: 'user', content: messageText });
     setLoading(true);
     const result = await MentorAPI.runDiagnostics();
-    if (result.success && result.data?.checks) {
-      setMessages(previous => [...previous, {
-        role: 'assistant',
-        content: formatDiagnostics(result.data.checks),
-        diagnostic: true,
-        allOk: result.data.all_ok
-      }]);
-    } else {
-      setMessages(previous => [...previous, { role: 'assistant', content: '❌ Nu am putut contacta backend-ul pentru diagnosticare. Serverul e probabil offline.', diagnostic: true, allOk: false }]);
+    if (chatId) {
+      if (result.success && result.data?.checks) {
+        remember(chatId, {
+          role: 'assistant',
+          content: formatDiagnostics(result.data.checks),
+          diagnostic: true,
+          allOk: result.data.all_ok
+        });
+      } else {
+        remember(chatId, {
+          role: 'assistant',
+          content:
+            '❌ Nu am putut contacta backend-ul pentru diagnosticare. Serverul e probabil offline.',
+          diagnostic: true,
+          allOk: false
+        });
+      }
     }
     setLoading(false);
   };
@@ -107,15 +350,18 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
     recognition.lang = 'ro-RO';
     recognition.interimResults = true;
     recognition.continuous = false;
-    recognition.onresult = event => {
+    recognition.onresult = (event) => {
       if (micSessionRef.current !== session) return;
-      const text = Array.from(event.results).map(result => result[0].transcript).join(' ').trim();
+      const text = Array.from(event.results)
+        .map((result) => result[0].transcript)
+        .join(' ')
+        .trim();
       if (!text) return;
       heard = true;
       setMicNote('');
       setDraft(text);
     };
-    recognition.onerror = event => {
+    recognition.onerror = (event) => {
       if (micSessionRef.current !== session) return;
       const code = event?.error || '';
       if (code === 'aborted') {
@@ -133,7 +379,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
       }
       if (code === 'not-allowed' || code === 'service-not-allowed') {
         readSpeechMicContext()
-          .then(context => showMicFailure(session, speechFailureKind(code, context)))
+          .then((context) => showMicFailure(session, speechFailureKind(code, context)))
           .catch(() => showMicFailure(session, 'blocked'));
         return;
       }
@@ -155,80 +401,258 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
     }
   };
 
-  const send = async text => {
+  const send = async (text) => {
     const message = text.trim();
     if (!message || loading) return;
     const outgoing = message;
     setDraft('');
-    if (diagMode) { await runDiagnostics(outgoing); return; }
-    setMessages(previous => [...previous, { role: 'user', content: outgoing }]);
+    if (diagMode) {
+      await runDiagnostics(outgoing);
+      return;
+    }
+    const scopeNow = scopeRef.current;
+    let chatId = '';
+    let conversationId = '';
+    commit((state) => {
+      const ensured = ensureActiveChat(state, scopeNow);
+      chatId = ensured.chat?.id || '';
+      conversationId = ensured.chat?.conversationId || '';
+      if (!chatId) return state;
+      return appendMessage(ensured.state, chatId, { role: 'user', content: outgoing });
+    });
     setLoading(true);
     try {
       const reply = await chatRequest({
         message: outgoing,
-        conversationId: conversationId.current,
-        subject,
-        classLevel,
+        conversationId,
+        subject: scopeNow.subject,
+        classLevel: scopeNow.grade,
         language: userData.language || 'ro',
         planId: userData.planId || 'free',
-        mockReply: 'Hai să o luăm pe înțelesul tău. Spune-mi mai întâi ce ai încercat și ce ți se pare neclar.'
+        mockReply:
+          'Hai să o luăm pe înțelesul tău. Spune-mi mai întâi ce ai încercat și ce ți se pare neclar.'
       });
-      setMessages(previous => [...previous, { role: 'assistant', content: reply.response || 'Am primit întrebarea. Hai să o desfacem în pași simpli.', mocked: reply.mocked, engine: reply.engine_used }]);
+      if (chatId) {
+        remember(chatId, {
+          role: 'assistant',
+          content: reply.response || 'Am primit întrebarea. Hai să o desfacem în pași simpli.',
+          mocked: reply.mocked,
+          engine: reply.engine_used
+        });
+      }
       if (reply.progress && onProgress) onProgress(reply.progress);
-    } catch (error) { setMessages(previous => [...previous, { role: 'assistant', content: 'Nu pot răspunde acum. Încearcă din nou în câteva secunde.' }]); }
-    finally { setLoading(false); }
+    } catch {
+      if (chatId)
+        remember(chatId, {
+          role: 'assistant',
+          content: 'Nu pot răspunde acum. Încearcă din nou în câteva secunde.'
+        });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return <main className="screen-page mentor-page animate-fadeIn">
-    <header className="screen-header"><div><div className="eyebrow">TUTORE</div><h1 className="display-font screen-title">Alege materia, apoi întreabă.</h1>
-      <p className="screen-subtitle">Răspund doar din lecțiile salvate în aplicație, pentru materia și clasa pe care le alegi. Nu încarc poze și nu apelez un serviciu plătit.</p>
-      <p className="mentor-limit">Întrebări cu XP azi: mai ai {userData.mentorLeft ?? 5} din 5 (apoi poți întreba în continuare, fără monede extra).</p>
-      <div className="mentor-subject-picks" role="group" aria-label="Materia">
-        {SUBJECTS.map(item => (
+  const beginRename = () => {
+    if (!current) return;
+    setRename({ id: current.id, draft: current.title });
+  };
+
+  const saveRename = (value) => {
+    if (!rename) return;
+    commit((state) => renameChat(state, rename.id, value));
+    setRename(null);
+  };
+
+  const startChat = () => {
+    commit((state) => startNewChat(state, scopeRef.current));
+    setRename(null);
+  };
+
+  const openChat = (id) => {
+    commit((state) => selectChat(state, scopeRef.current, id));
+    setRename(null);
+  };
+
+  const explainPrompt = lessonTitle
+    ? `Explică lecția „${lessonTitle}”.`
+    : subject === 'romana'
+      ? 'Ce este ideea principală?'
+      : 'Ce este o fracție?';
+  const examplePrompt = lessonTitle
+    ? `Dă-mi exemplul din lecția „${lessonTitle}”.`
+    : 'Dă-mi un exemplu din lecție.';
+
+  return (
+    <main className="screen-page mentor-page animate-fadeIn">
+      <header className="screen-header">
+        <div>
+          <div className="eyebrow">TUTORE</div>
+          <h1 className="display-font screen-title">Alege materia, apoi întreabă.</h1>
+          <p className="screen-subtitle">
+            Răspund doar din lecțiile salvate în aplicație, pentru materia și clasa pe care le
+            alegi. Nu încarc poze și nu apelez un serviciu plătit.
+          </p>
+          <p className="mentor-limit">
+            Întrebări cu XP azi: mai ai {userData.mentorLeft ?? 5} din 5 (apoi poți întreba în
+            continuare, fără monede extra).
+          </p>
+          <div className="mentor-subject-picks" role="group" aria-label="Materia">
+            {SUBJECTS.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className={`mentor-subject-chip ${subject === item.id ? 'selected' : ''}`}
+                onClick={() => {
+                  setSubject(item.id);
+                  const fromFocus = pinFromFocus(studyFocus.chapter, studyFocus.subject || item.id);
+                  if (fromFocus && fromFocus.subject === item.id) {
+                    setPinnedLesson(fromFocus);
+                    return;
+                  }
+                  setPinnedLesson((prev) => (prev && prev.subject === item.id ? prev : null));
+                }}
+              >
+                <i className={`fas ${item.icon}`} /> {item.labelRo}
+              </button>
+            ))}
+          </div>
+          <div className="grade-chip-row mentor-grade-row" aria-label="Clasa">
+            {GRADES.map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={`grade-chip ${grade === item ? 'selected' : ''}`}
+                onClick={() => setGrade(item)}
+              >
+                {gradeLabel(item)}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="mentor-header-actions">
           <button
-            key={item.id}
             type="button"
-            className={`mentor-subject-chip ${subject === item.id ? 'selected' : ''}`}
-            onClick={() => setSubject(item.id)}
+            onClick={() => setDiagMode((d) => !d)}
+            className={`memory-pill diag-toggle ${diagMode ? 'active' : ''}`}
+            aria-pressed={diagMode}
+            title="Verifică status-ul memoriei și al fiecărui API"
           >
-            <i className={`fas ${item.icon}`} /> {item.labelRo}
+            <i className="fas fa-stethoscope" /> {diagMode ? 'Diagnosticare: ON' : 'Diagnosticare'}
           </button>
+          <span className="memory-pill">
+            <i className="fas fa-brain" /> Memorie activă
+          </span>
+          {messages.some((m) => m.mocked) && (
+            <span className="memory-pill mock-mode-pill">
+              <i className="fas fa-flask" /> Mod demo
+            </span>
+          )}
+        </div>
+      </header>
+      {diagMode && (
+        <div className="diag-banner">
+          <i className="fas fa-circle-info" /> Diagnosticarea verifică memoria locală. Nu se
+          apelează servicii plătite.
+        </div>
+      )}
+      <TutorChatsBar
+        chats={visibleChats}
+        activeId={current?.id || ''}
+        renaming={Boolean(rename && rename.id === current?.id)}
+        draft={rename?.draft || ''}
+        loading={loading}
+        onDraft={(value) => setRename((prev) => (prev ? { ...prev, draft: value } : prev))}
+        onNew={startChat}
+        onOpen={openChat}
+        onBeginRename={beginRename}
+        onSaveRename={saveRename}
+        onCancelRename={() => setRename(null)}
+      />
+      <section className="mentor-thread surface" aria-busy={loading}>
+        {messages.length === 0 && (
+          <div className="mentor-empty">
+            <div className="professor-icon">
+              <i className="fas fa-sparkles" />
+            </div>
+            <h2 className="display-font">
+              {lessonTitle ? `Hai la „${lessonTitle}”.` : 'Cu ce începem?'}
+            </h2>
+            <p>
+              {lessonTitle
+                ? 'Întreabă cu un cuvânt din lecție. Răspunsul vine din textul salvat aici.'
+                : `Întrebări din ${subjectLabel(subject)} pentru ${gradeLabel(grade)}. Răspund din lecții, nu dintr-un model plătit.`}
+            </p>
+            <div className="suggestion-row">
+              <button onClick={() => send(explainPrompt)} type="button">
+                Explică lecția
+              </button>
+              <button onClick={() => send('Arată-mi doar primul pas din lecție.')} type="button">
+                Primul pas
+              </button>
+              <button onClick={() => send(examplePrompt)} type="button">
+                Exemplul din lecție
+              </button>
+            </div>
+          </div>
+        )}
+        {messages.map((message, index) => (
+          <MessageBubble key={`${current?.id || 'chat'}-${index}`} role={message.role}>
+            {message.diagnostic ? (
+              <pre className={`diag-report ${message.allOk ? 'all-ok' : 'has-issues'}`}>
+                {message.content}
+              </pre>
+            ) : (
+              <MathText text={message.content} />
+            )}
+          </MessageBubble>
         ))}
-      </div>
-      <div className="grade-chip-row mentor-grade-row" aria-label="Clasa">
-        {GRADES.map(item => (
-          <button key={item} type="button" className={`grade-chip ${grade === item ? 'selected' : ''}`} onClick={() => setGrade(item)}>
-            {gradeLabel(item)}
-          </button>
-        ))}
-      </div>
-    </div>
-      <div className="mentor-header-actions">
+        {loading && <LoadingMessage />}
+      </section>
+      <form
+        className="mentor-composer"
+        onSubmit={(event) => {
+          event.preventDefault();
+          send(draft);
+        }}
+      >
         <button
           type="button"
-          onClick={() => setDiagMode(d => !d)}
-          className={`memory-pill diag-toggle ${diagMode ? 'active' : ''}`}
-          aria-pressed={diagMode}
-          title="Verifică status-ul memoriei și al fiecărui API"
+          className={`ghost-button composer-tool ${listening ? 'is-live' : ''}`}
+          onClick={toggleMic}
+          aria-label={listening ? 'Oprește microfonul' : 'Vorbește, apoi apasă Enter'}
         >
-          <i className="fas fa-stethoscope" /> {diagMode ? 'Diagnosticare: ON' : 'Diagnosticare'}
+          <i className={`fas ${listening ? 'fa-stop' : 'fa-microphone'}`} />
         </button>
-        <span className="memory-pill"><i className="fas fa-brain" /> Memorie activă</span>
-        {messages.some(m => m.mocked) && <span className="memory-pill mock-mode-pill"><i className="fas fa-flask" /> Mod demo</span>}
-      </div>
-    </header>
-    {diagMode && <div className="diag-banner"><i className="fas fa-circle-info" /> Diagnosticarea verifică memoria locală. Nu se apelează servicii plătite.</div>}
-    <section className="mentor-thread surface">{messages.length === 0 && <div className="mentor-empty"><div className="professor-icon"><i className="fas fa-sparkles" /></div><h2 className="display-font">{studyFocus.chapter?.title ? `Hai la „${studyFocus.chapter.title}”.` : 'Cu ce începem?'}</h2><p>{studyFocus.chapter?.title ? 'Întreabă cu un cuvânt din lecție. Răspunsul vine din textul salvat aici.' : `Întrebări din ${subjectLabel(subject)} pentru ${gradeLabel(grade)}. Răspund din lecții, nu dintr-un model plătit.`}</p><div className="suggestion-row"><button onClick={() => send(studyFocus.chapter?.title ? `Explică lecția „${studyFocus.chapter.title}”.` : (subject === 'romana' ? 'Ce este ideea principală?' : 'Ce este o fracție?'))} type="button">Explică lecția</button><button onClick={() => send('Arată-mi doar primul pas din lecție.')} type="button">Primul pas</button><button onClick={() => send(studyFocus.chapter?.title ? `Dă-mi exemplul din lecția „${studyFocus.chapter.title}”.` : 'Dă-mi un exemplu din lecție.')} type="button">Exemplul din lecție</button></div></div>}{messages.map((message, index) => <MessageBubble key={`${message.role}-${index}`} role={message.role}>{message.diagnostic ? <pre className={`diag-report ${message.allOk ? 'all-ok' : 'has-issues'}`}>{message.content}</pre> : <MathText text={message.content} />}</MessageBubble>)}{loading && <LoadingMessage />}</section>
-    <form className="mentor-composer" onSubmit={event => { event.preventDefault(); send(draft); }}>
-      <button type="button" className={`ghost-button composer-tool ${listening ? 'is-live' : ''}`} onClick={toggleMic} aria-label={listening ? 'Oprește microfonul' : 'Vorbește, apoi apasă Enter'}><i className={`fas ${listening ? 'fa-stop' : 'fa-microphone'}`} /></button>
-      <div className="composer-field">
-        {micNote && <span className="composer-chip" role="status">{micNote}</span>}
-        <input value={draft} onChange={event => setDraft(event.target.value)} placeholder={listening ? 'Te-am auzit. Apasă Enter ca să trimiți.' : (diagMode ? 'Scrie orice, va rula diagnosticarea...' : 'Scrie sau vorbește, apoi Enter…')} aria-label="Întrebarea pentru tutore" />
-      </div>
-      <button className="accent-button" type="submit" disabled={loading || !draft.trim()} aria-label="Trimite întrebarea"><i className={`fas ${diagMode ? 'fa-stethoscope' : 'fa-arrow-up'}`} /></button>
-    </form>
-  </main>;
+        <div className="composer-field">
+          {micNote && (
+            <span className="composer-chip" role="status">
+              {micNote}
+            </span>
+          )}
+          <input
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            placeholder={
+              listening
+                ? 'Te-am auzit. Apasă Enter ca să trimiți.'
+                : diagMode
+                  ? 'Scrie orice, va rula diagnosticarea...'
+                  : 'Scrie sau vorbește, apoi Enter…'
+            }
+            aria-label="Întrebarea pentru tutore"
+          />
+        </div>
+        <button
+          className="accent-button"
+          type="submit"
+          disabled={loading || !draft.trim()}
+          aria-label="Trimite întrebarea"
+        >
+          <i className={`fas ${diagMode ? 'fa-stethoscope' : 'fa-arrow-up'}`} />
+        </button>
+      </form>
+    </main>
+  );
 };
-
 
 export { ProfessorScreen };
