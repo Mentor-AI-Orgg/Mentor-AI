@@ -137,7 +137,8 @@ Cookie-ul se semnează cu `PREVIEW_COOKIE_SECRET` (cel puțin 32 de caractere).
 `HEALTH_TOKEN` deschide detaliile din `/api/health` (dacă emailul e configurat și cât de veche e copia). Fără token, ruta răspunde doar `{ ok, version }`.
 Ca să vezi iar pagina
 publică: `https://suntde10.ro/creator/iesire`.
-`BACKUP_KEY` cifrează doar copiile rapide bak1–bak3, făcute la fiecare salvare.
+`BACKUP_KEY` cifrează doar copiile rapide bak1–bak3. Cifrarea nu blochează
+salvarea: rulează după scriere, cel mult o dată la 15 minute.
 Pune un șir de cel puțin 16 caractere. `BACKUP_PUBLIC_KEY` este cheia publică
 RSA pentru copia zilnică. Cheia privată nu se pune pe server.
 
@@ -288,7 +289,12 @@ Conturile, monedele, abonamentele, calendarul și istoricul conversațiilor sunt
 salvate în `data/mentor-ai.json`, în rădăcina aplicației (configurabil prin
 `DATA_DIR`). Fișierul este scris automat la câteva secunde după orice
 modificare și încă o dată la oprirea procesului, deci datele supraviețuiesc
-restartului și deploy-ului.
+restartului și deploy-ului. Conversațiile cu tutorele mai vechi de 90 de zile
+se scot la încărcare și la salvare; conturile și progresul nu se ating.
+
+Passenger trebuie să ruleze un singur proces Node (pool de 1). Un al doilea
+proces nu scrie peste fișier: `data/mentor-ai.json.lock` ține pid-ul, iar
+procesul nou lasă datele neatinse cât timp primul trăiește.
 
 Trei lucruri de reținut:
 

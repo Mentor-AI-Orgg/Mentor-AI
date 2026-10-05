@@ -9,7 +9,11 @@ module.exports = {
   INACTIVE_MS: 730 * DAY_MS,
   WARNING_BEFORE_MS: 30 * DAY_MS,
   PARENT_ACTIVITY_MS: 90 * DAY_MS,
-  TUTOR_MEMORY_MS: 365 * DAY_MS,
+  // Conversația cu tutorele ține 90 de zile (un modul școlar), nu un an.
+  // Pagina de confidențialitate citește aceeași valoare. La încărcare și la
+  // fiecare salvare, mesajele mai vechi se scot din fișier; conturile și
+  // progresul rămân.
+  TUTOR_MEMORY_MS: 90 * DAY_MS,
   DELETION_KEEP_MS: 40 * DAY_MS,
   MODERATION_LOG_MS: 365 * DAY_MS,
   BACKUP_KEEP_MS: 35 * DAY_MS

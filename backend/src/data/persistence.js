@@ -14,6 +14,14 @@
 // Modelul de salvare: la fiecare interval serializăm tot și scriem doar dacă
 // s-a schimbat ceva față de ultima scriere. Așa nu trebuie să marcăm manual
 // "dirty" în zeci de funcții, deci store-urile rămân neatinse în logica lor.
+//
+// Cifrarea copiilor bak1–bak3 nu stă pe această cale. După o scriere reușită,
+// bytes-ul anterior se cifrează într-un timer, cel mult o dată la 15 minute.
+// Fișierul principal rămâne scris sincron, înainte de ieșirea din saveNow.
+//
+// Un singur proces Passenger. Al doilea proces găsește mentor-ai.json.lock cu
+// un pid viu și nu scrie, ca să nu calce datele primului. Lock-ul unui proces
+// mort se preia la următoarea salvare.
 
 const fs = require("fs");
 const path = require("path");
@@ -22,14 +30,33 @@ const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "..", "..", "..", 
 // Numele tehnic vechi al fișierului rămâne intenționat: o redenumire ar pierde datele.
 const DATA_FILE = path.join(DATA_DIR, "mentor-ai.json");
 const TEMP_FILE = `${DATA_FILE}.tmp`;
+const LOCK_FILE = `${DATA_FILE}.lock`;
 const AUTOSAVE_MS = 5000;
+const DEFAULT_BACKUP_ROTATE_MS = 15 * 60 * 1000;
 const FORMAT_VERSION = 1;
 
 const collections = new Map(); // nume -> { snapshot(), restore(data) }
 
 let lastSerialized = null;
+let migrationDirty = false;
 let autosaveTimer = null;
+let backupTimer = null;
+let pendingBackup = null;
+let lastBackupAt = 0;
+let lockWarned = false;
 let loaded = false;
+
+function backupRotateMs() {
+  const raw = process.env.BACKUP_ROTATE_MS;
+  if (raw === undefined || raw === "") return DEFAULT_BACKUP_ROTATE_MS;
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed) || parsed < 0) return DEFAULT_BACKUP_ROTATE_MS;
+  return parsed;
+}
+
+function noteDirty() {
+  migrationDirty = true;
+}
 
 // Fiecare store se înregistrează singur la require.
 function register(name, handlers) {
@@ -70,23 +97,118 @@ function readBackupFile(file) {
   return raw.toString("utf8");
 }
 
-function rotateBackups() {
+function backupDue() {
+  if (backupTimer) return true;
+  if (!lastBackupAt) return true;
+  return Date.now() - lastBackupAt >= backupRotateMs();
+}
+
+// Copiază generațiile și scrie bak1 din bytes deja citiți, nu din fișierul
+// care tocmai a fost înlocuit. Așa o scriere proastă nu devine singura copie.
+function rotateBackupsFrom(bytes) {
   try {
     const { backupKeyConfigured, encrypt } = require("../ops/backupCrypto");
     if (backupKeyConfigured()) {
       if (fs.existsSync(encryptedBackupPath(2))) fs.renameSync(encryptedBackupPath(2), encryptedBackupPath(3));
       if (fs.existsSync(encryptedBackupPath(1))) fs.renameSync(encryptedBackupPath(1), encryptedBackupPath(2));
-      fs.writeFileSync(encryptedBackupPath(1), encrypt(fs.readFileSync(DATA_FILE)));
+      fs.writeFileSync(encryptedBackupPath(1), encrypt(bytes));
       for (const n of [1, 2, 3]) {
         if (fs.existsSync(backupPath(n))) fs.rmSync(backupPath(n));
       }
-      return;
+      return true;
     }
     if (fs.existsSync(backupPath(2))) fs.renameSync(backupPath(2), backupPath(3));
     if (fs.existsSync(backupPath(1))) fs.renameSync(backupPath(1), backupPath(2));
-    fs.copyFileSync(DATA_FILE, backupPath(1));
+    fs.writeFileSync(backupPath(1), bytes);
+    return true;
   } catch (error) {
     console.error(`[persistence] backup eșuat: ${error.message}`);
+    return false;
+  }
+}
+
+function runDeferredBackup() {
+  backupTimer = null;
+  const bytes = pendingBackup;
+  pendingBackup = null;
+  if (!bytes) return { flushed: false };
+  const ok = rotateBackupsFrom(bytes);
+  if (ok) lastBackupAt = Date.now();
+  return { flushed: ok };
+}
+
+function queueBackup(bytes) {
+  if (!backupDue()) return;
+  pendingBackup = bytes;
+  if (backupTimer) return;
+  backupTimer = setTimeout(runDeferredBackup, 0);
+  if (typeof backupTimer.unref === "function") backupTimer.unref();
+}
+
+function flushDeferredBackup() {
+  if (backupTimer) {
+    clearTimeout(backupTimer);
+    backupTimer = null;
+  }
+  return runDeferredBackup();
+}
+
+function pidAlive(pid) {
+  if (!Number.isInteger(pid) || pid <= 0) return false;
+  if (pid === process.pid) return true;
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    return error.code === "EPERM";
+  }
+}
+
+function writeLock() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(LOCK_FILE, JSON.stringify({ pid: process.pid, at: new Date().toISOString() }));
+}
+
+// Soft-guard: un al doilea proces Node nu are voie să rescrie fișierul.
+// Passenger trebuie configurat cu un singur proces. Dacă pid-ul din lock a
+// murit (restart), preluăm lock-ul și scriem mai departe.
+function acquireWriteLock() {
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    const fd = fs.openSync(LOCK_FILE, "wx");
+    fs.writeFileSync(fd, JSON.stringify({ pid: process.pid, at: new Date().toISOString() }));
+    fs.closeSync(fd);
+    lockWarned = false;
+    return { ok: true };
+  } catch (error) {
+    if (error.code !== "EEXIST") {
+      console.error(`[persistence] nu am putut lua lock-ul: ${error.message}`);
+      return { ok: false, reason: "error" };
+    }
+  }
+
+  let current = null;
+  try {
+    current = JSON.parse(fs.readFileSync(LOCK_FILE, "utf8"));
+  } catch {
+    current = null;
+  }
+  if (current && pidAlive(current.pid) && current.pid !== process.pid) {
+    if (!lockWarned) {
+      console.error(
+        `[persistence] procesul ${current.pid} ține deja datele. Nu scriu peste ${path.basename(DATA_FILE)}. Passenger trebuie un singur proces Node.`
+      );
+      lockWarned = true;
+    }
+    return { ok: false, reason: "locked", pid: current.pid };
+  }
+  try {
+    writeLock();
+    lockWarned = false;
+    return { ok: true, replaced: true };
+  } catch (error) {
+    console.error(`[persistence] nu am putut prelua lock-ul: ${error.message}`);
+    return { ok: false, reason: "error" };
   }
 }
 
@@ -99,7 +221,8 @@ function tryLoadBackup() {
   for (const file of files) {
     if (!fs.existsSync(file)) continue;
     try {
-      const parsed = JSON.parse(readBackupFile(file));
+      const text = readBackupFile(file);
+      const parsed = JSON.parse(text);
       if (parsed?.version !== FORMAT_VERSION) continue;
       const restored = [];
       for (const [name, handlers] of collections.entries()) {
@@ -211,19 +334,29 @@ function load() {
 function saveNow() {
   if (!collections.size) return { saved: false, reason: "nothing_registered" };
 
+  const lock = acquireWriteLock();
+  if (!lock.ok) return { saved: false, reason: lock.reason || "locked" };
+
   const data = serialize();
   const current = fingerprint(data);
-  if (current === lastSerialized) return { saved: false, reason: "unchanged" };
+  if (!migrationDirty && current === lastSerialized) return { saved: false, reason: "unchanged" };
 
   try {
     fs.mkdirSync(DATA_DIR, { recursive: true });
-    // Backup-ul e copia de DINAINTE de scriere. Dacă noul fișier e ilizibil,
-    // bak1 rămâne ultima versiune bună, nu un duplicat al fișierului stricat.
-    if (fs.existsSync(DATA_FILE)) rotateBackups();
-    fs.writeFileSync(TEMP_FILE, JSON.stringify(data), "utf8");
+    const json = JSON.stringify(data);
+    // Backup-ul e copia de dinainte de scriere, cifrată după ce write-ul a
+    // reușit, în afara acestui apel. Citirea se face doar când rotația e
+    // scadentă (cel mult o dată la 15 minute), nu la fiecare salvare.
+    let previous = null;
+    if (backupDue() && fs.existsSync(DATA_FILE)) {
+      try { previous = fs.readFileSync(DATA_FILE); } catch { previous = null; }
+    }
+    fs.writeFileSync(TEMP_FILE, json, "utf8");
     fs.renameSync(TEMP_FILE, DATA_FILE);
     lastSerialized = current;
-    return { saved: true, bytes: Buffer.byteLength(JSON.stringify(data)) };
+    migrationDirty = false;
+    if (previous) queueBackup(previous);
+    return { saved: true, bytes: Buffer.byteLength(json) };
   } catch (error) {
     console.error(`[persistence] salvare eșuată: ${error.message}`);
     return { saved: false, reason: "error", error: error.message };
@@ -284,9 +417,12 @@ function lessonMapBackup(version) {
 module.exports = {
   DATA_FILE,
   DATA_DIR,
+  LOCK_FILE,
   register,
   load,
   saveNow,
+  noteDirty,
+  flushDeferredBackup,
   startAutosave,
   stopAutosave,
   isLoaded: () => loaded,
