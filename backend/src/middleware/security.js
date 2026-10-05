@@ -7,12 +7,13 @@ function securityHeaders() {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://cloud.umami.is"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         styleSrcAttr: ["'unsafe-inline'"],
         fontSrc: ["'self'"],
         imgSrc: ["'self'", "data:", "blob:"],
-        connectSrc: ["'self'"],
+        // Scriptul Umami e pe cloud.umami.is; evenimentele pleacă spre gateway.umami.is.
+        connectSrc: ["'self'", "https://gateway.umami.is"],
         workerSrc: ["'self'"],
         manifestSrc: ["'self'"],
         objectSrc: ["'none'"],
