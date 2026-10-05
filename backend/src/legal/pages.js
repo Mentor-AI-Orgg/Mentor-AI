@@ -48,6 +48,7 @@ function layout(title, body) {
     .note { padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.03); color: var(--muted); font-size: 14px; }
     code { color: var(--ink); }
   </style>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="dc441396-9915-4ee0-8f77-7f98eb595bc8"></script>
 </head>
 <body>
   <main>
