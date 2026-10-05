@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { createRequire } from 'node:module';
-import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
 import { registerGranted } from './registerStudent.js';
 
