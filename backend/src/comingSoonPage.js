@@ -1,9 +1,22 @@
 const { MASCOT_NAME } = require("./config/mascot");
 
-function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
+function comingSoonPage({ creatorPage = false, previewError = "", siteOpen = false } = {}) {
   const error = previewError
     ? `<p class="err">${escapeHtml(previewError)}</p>`
     : "";
+  const pill = siteOpen ? "Creator" : "În curând";
+  const title = siteOpen ? "Sunt de 10 · Creator" : "Sunt de 10 · În curând";
+  const button = siteOpen ? "Intră ca creator" : "Deschide aplicația";
+  const lead = siteOpen
+    ? "Parola e doar pentru creator."
+    : creatorPage
+      ? "Doar tu vezi aplicația. Lumea rămâne pe pagina de mentenanță."
+      : "Nota 10, fără meditații de sute de lei.";
+  const detail = siteOpen
+    ? "Aplicația rămâne deschisă pentru copii și părinți."
+    : creatorPage
+      ? "După parolă se deschide aplicația pe telefonul sau calculatorul tău."
+      : "Limba română + matematică, clasele 5–8. Complet gratuit. Aplicația se pregătește — nu e deschisă încă.";
 
   return `<!DOCTYPE html>
 <html lang="ro">
@@ -11,7 +24,7 @@ function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Sunt de 10 · În curând</title>
+  <title>${title}</title>
   <link rel="stylesheet" href="/fonts/faces.css" />
   <style>
     :root { color-scheme: dark; }
@@ -93,7 +106,7 @@ function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
 </head>
 <body>
   <main>
-    <p class="pill">În curând</p>
+    <p class="pill">${pill}</p>
     <span class="mascot-live"><img class="mascot" data-mood="salut" src="/mascot/salut.png" width="120" height="120" alt="${escapeHtml(MASCOT_NAME)}, furnicuța care te ajută" /></span>
     <h1>Sunt de 10</h1>
     <section class="gate" aria-label="Intrare creator">
@@ -101,12 +114,12 @@ function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
       <form method="post" action="/creator">
         <label for="parola-creator">Parolă</label>
         <input id="parola-creator" type="password" name="password" autocomplete="current-password" placeholder="Scrie parola aici" autofocus />
-        <button type="submit">Deschide aplicația</button>
+        <button type="submit">${button}</button>
       </form>
       ${error}
     </section>
-    <p class="lead">${creatorPage ? "Doar tu vezi aplicația. Lumea rămâne pe pagina de mentenanță." : "Nota 10, fără meditații de sute de lei."}</p>
-    <p>${creatorPage ? "După parolă se deschide aplicația pe telefonul sau calculatorul tău." : "Limba română + matematică, clasele 5–8. Complet gratuit. Aplicația se pregătește — nu e deschisă încă."}</p>
+    <p class="lead">${lead}</p>
+    <p>${detail}</p>
     <p class="handle">@suntde10</p>
     <p class="nets">TikTok · Instagram · YouTube · Facebook</p>
   </main>

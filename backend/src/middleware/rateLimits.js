@@ -77,11 +77,25 @@ const clientErrorLimiter = rateLimit({
   handler: romanianHandler("Prea multe raportări de eroare. Încearcă din nou mai târziu.")
 });
 
+// POST /creator verifică parola înainte de limiterul de pe /api.
+// Fără limita asta, parola unică de creator poate fi încercată la nesfârșit.
+const PREVIEW_PASSWORD_MAX = 10;
+
+const previewPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: PREVIEW_PASSWORD_MAX,
+  ...common,
+  skip: () => skipInTests() && process.env.ENFORCE_PREVIEW_LIMIT !== "1",
+  handler: romanianHandler("Prea multe încercări de parolă. Așteaptă înainte să reîncerci.")
+});
+
 module.exports = {
   generalApiLimiter,
   authLimiter,
   chatLimiter,
   clientErrorLimiter,
   usernameCheckLimiter,
-  accessCodeVerifyLimiter
+  accessCodeVerifyLimiter,
+  previewPasswordLimiter,
+  PREVIEW_PASSWORD_MAX
 };

@@ -107,9 +107,39 @@ function normalizePath(req) {
   return raw;
 }
 
+function creatorDoor(req, res) {
+  const submitted = submittedPassword(req);
+  if (submitted && passwordMatches(submitted)) return grantPreview(res, "/");
+  res.set("X-Robots-Tag", "noindex, nofollow");
+  if (submitted) {
+    return res.status(401).type("html").send(comingSoonPage({
+      creatorPage: true,
+      siteOpen: true,
+      previewError: "Parola de creator nu e corectă."
+    }));
+  }
+  if (hasPreviewAccess(req)) return res.redirect(303, "/");
+  return res.status(200).type("html").send(comingSoonPage({
+    creatorPage: true,
+    siteOpen: true
+  }));
+}
+
+// Site deschis: copiii și părinții intră normal. /creator rămâne ca să poți
+// primi cookie-ul cerut de moderare. Nu deschide restul site-ului cât e închis.
+function allowPublic(req, res, next) {
+  if (hasPreviewAccess(req)) req.previewAccess = true;
+  const path = normalizePath(req);
+  if (path === "/creator/iesire") return clearPreview(res);
+  if (path === "/creator" && (req.method === "GET" || req.method === "POST")) {
+    return creatorDoor(req, res);
+  }
+  return next();
+}
+
 function comingSoon() {
   return (req, res, next) => {
-    if (!isSiteClosed()) return next();
+    if (!isSiteClosed()) return allowPublic(req, res, next);
 
     const path = normalizePath(req);
     if (SKIP_PATHS.has(path) || path.startsWith("/fonts/") || path.startsWith("/mascot/")) return next();
