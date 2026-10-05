@@ -34,7 +34,8 @@ function applyProgress(summary = {}, prev = {}) {
     chapterMaps: summary.chapterMaps || prev.chapterMaps,
     mentorLeft: summary.mentorLeft ?? prev.mentorLeft,
     collection: summary.collection || prev.collection,
-    nudge: summary.nudge || prev.nudge || null
+    nudge: summary.nudge || prev.nudge || null,
+    unlockedTitleIds: Array.isArray(summary.titles?.unlocked) ? summary.titles.unlocked : prev.unlockedTitleIds
   };
 }
 

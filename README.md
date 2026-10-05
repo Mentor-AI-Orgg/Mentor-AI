@@ -91,6 +91,9 @@ ca textul să treacă de 4.5:1.
 Furnicuța se desenează în `frontend/components/mascot/Mascota.jsx`.
 Numele afișat stă doar în `shared/mascot.json` (`MASCOT_NAME`).
 Mesajele, starea și categoria stau în `frontend/i18n/mascotMessages.js`.
+Desenul nu stă pe loc: respiră, se leagănă, clipește și i se aprind ochelarii.
+La reușite mari (capitol, insignă, nivel, test) apare pe tot ecranul.
+La reușite mici, bula stă în colț, ca lecția să meargă mai departe.
 
 Stările: `salut`, `bucuros`, `sarbatoare`, `gandeste`, `incurajeaza`,
 `explica`, `somnoros`, `mandru`, `trist-bland`.

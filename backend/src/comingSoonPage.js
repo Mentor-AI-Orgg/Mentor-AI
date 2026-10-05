@@ -75,7 +75,17 @@ function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
     .gate input { background: #151633; color: #fff; }
     .gate button { background: #c8f542; color: #171633; font-weight: 700; cursor: pointer; }
     .err { margin: 8px 0 0; color: #ff8fa3; font-size: 14px; }
+    .mascot-live { display: inline-block; line-height: 0; transform-origin: 50% 86%; animation: mascotIdle 4.8s ease-in-out infinite; }
+    .mascot { display: block; }
     .lead { margin: 18px 0 0; color: #c8f542; font-size: 16px; font-weight: 700; }
+    @keyframes mascotIdle {
+      0%, 100% { transform: translateY(0) rotate(-1.1deg) scale(1, 1); }
+      35% { transform: translateY(-3px) rotate(.8deg) scale(1.02, .99); }
+      70% { transform: translateY(0) rotate(1.1deg) scale(1, 1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mascot-live { animation: none; }
+    }
     p { margin: 10px 0 0; color: #cbcee4; line-height: 1.45; font-size: 15px; }
     .handle { margin-top: 16px; color: #fff; font-weight: 700; font-size: 16px; }
     .nets { margin-top: 4px; color: #9aa0c6; font-size: 13px; }
@@ -84,7 +94,7 @@ function comingSoonPage({ creatorPage = false, previewError = "" } = {}) {
 <body>
   <main>
     <p class="pill">În curând</p>
-    <img class="mascot" data-mood="salut" src="/mascot/salut.png" width="120" height="120" alt="${escapeHtml(MASCOT_NAME)}, furnicuța care te ajută" />
+    <span class="mascot-live"><img class="mascot" data-mood="salut" src="/mascot/salut.png" width="120" height="120" alt="${escapeHtml(MASCOT_NAME)}, furnicuța care te ajută" /></span>
     <h1>Sunt de 10</h1>
     <section class="gate" aria-label="Intrare creator">
       <h2>Intrare creator</h2>

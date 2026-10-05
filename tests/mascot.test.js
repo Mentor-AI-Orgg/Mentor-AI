@@ -51,6 +51,22 @@ describe('furnicuța', () => {
     expect(html).not.toContain('/mascot/bucuros.png');
     expect(html).toContain('width="176"');
     expect(html).toContain('is-succes');
+    expect(html).toContain('data-pose="explica"');
+    expect(html).toContain('mascota-shine');
+    expect(html).toContain('mascota-blink');
     expect(markup({ mood: 'explica', size: 'bust', pulse: 'gresit' })).toContain('is-gresit');
+  });
+
+  it('respiră, clipește și i se aprind ochelarii, fără să înghețe', () => {
+    const html = markup({ mood: 'salut', size: 'lg' });
+    expect(html).toContain('mascota-figure');
+    expect(html).toContain('data-pose="salut"');
+    expect(html).toContain('class="mascota-shine"');
+    expect(html).toContain('class="mascota-blink"');
+    const css = readFileSync(join(import.meta.dirname, '../frontend/styles.css'), 'utf8');
+    expect(css).toContain('@keyframes mascotaIdle');
+    expect(css).toContain('@keyframes mascotaBlink');
+    expect(css).toContain('@keyframes mascotaShine');
+    expect(css).toContain('animation: mascotaIdle 4.8s ease-in-out infinite');
   });
 });
