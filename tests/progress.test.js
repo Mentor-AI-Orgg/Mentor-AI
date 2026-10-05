@@ -109,7 +109,7 @@ describe('verified study progress', () => {
     expect(second.body.parentNotify.skipped).toBe(false);
   });
 
-  it('still emails the parent for every chapter test after the daily digest', async () => {
+  it('does not record a client chapter_test score after other study', async () => {
     const agent = request.agent(app);
     await registerStudent(agent);
 
@@ -122,10 +122,9 @@ describe('verified study progress', () => {
     const test = await agent.post('/api/economy/progress').send({
       type: 'chapter_test',
       note: 'Fracții',
-      meta: { subject: 'matematica', grade: '6', chapterId: 'fractii', title: 'Fracții', gradeNote: 8, durationMs: 420000 }
+      meta: { subject: 'matematica', grade: '6', chapterId: 'fractii', title: 'Fracții', score: 10, gradeNote: 8, durationMs: 420000 }
     });
-    expect(test.status).toBe(200);
-    expect(test.body.parentNotify.skipped).toBe(false);
+    expect(test.status).toBe(400);
   });
 
   it('fills the current level and keeps climbing after the last table step', () => {
