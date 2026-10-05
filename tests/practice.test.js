@@ -1,10 +1,17 @@
 import { describe, it, expect, beforeAll } from 'vitest';
+import { createRequire } from 'node:module';
 import { createApp } from '../backend/src/app.js';
 import { registerGranted } from './registerStudent.js';
 import { allChapterKeys, chapterKey, listChapterQuestions } from '../backend/src/data/practiceBank.js';
-import { allExerciseKeys, checkExercise, listChapterExercises } from '../backend/src/data/exerciseBank.js';
+import { allExerciseKeys, checkExercise, findExercise, listChapterExercises } from '../backend/src/data/exerciseBank.js';
 import { pickPractice } from '../backend/src/data/practicePicker.js';
 import { GRADES, GUIDES, SUBJECT_IDS } from '../backend/src/data/gimnaziuGuide.js';
+import { MAX_DURATION_MS } from '../backend/src/data/chapterTestSession.js';
+
+const nodeRequire = createRequire(import.meta.url);
+const { sendDueDigests } = nodeRequire('../backend/src/notify/parentActivity.js');
+const economyStore = nodeRequire('../backend/src/data/economyStore.js');
+const authStore = nodeRequire('../backend/src/data/authStore.js');
 
 describe('chapter practice bank', () => {
   it('has original theory questions with 4 options for every 5–8 chapter', () => {
@@ -138,6 +145,7 @@ describe('practice API', () => {
     });
     expect(generated.status).toBe(200);
     expect(generated.body.cards).toHaveLength(7);
+    expect(generated.body.session_id).toBeTruthy();
     expect(generated.body.cards[0].prompt).toBeTruthy();
     expect(generated.body.cards[0].options).toBeUndefined();
     expect(generated.body.cards[0].answers).toBeUndefined();
@@ -161,9 +169,8 @@ describe('practice API', () => {
     });
     expect(checked.status).toBe(200);
     expect(typeof checked.body.ok).toBe('boolean');
-    expect(Array.isArray(checked.body.steps)).toBe(true);
-    expect(checked.body.steps.length).toBeGreaterThan(0);
-    expect(checked.body.explain).toBeTruthy();
+    expect(checked.body.sample).toBe('');
+    expect(checked.body.steps).toEqual([]);
 
     const card = generated.body.cards[0];
     const seen = await agent.post('/api/flashcards/seen').send({
@@ -182,6 +189,7 @@ describe('practice API', () => {
       subject: 'matematica',
       class_level: 5,
       title: 'Fracții',
+      session_id: generated.body.session_id,
       duration_ms: 185000,
       answers: generated.body.cards.map((card, index) => ({
         card_id: card.id,
@@ -194,13 +202,160 @@ describe('practice API', () => {
     expect(finished.body.grade).toBeLessThanOrEqual(10);
     expect(finished.body.message).toBeTruthy();
     expect(finished.body.items[0].steps.length).toBeGreaterThan(0);
+    expect(finished.body.items[0].sample).toBeTruthy();
     expect(finished.body.history.log.length).toBeGreaterThan(0);
     expect(finished.body.parentNotified).toBe(true);
     expect(finished.body.parentNotify.skipped).toBe(false);
-    expect(finished.body.durationMs).toBe(185000);
+    expect(finished.body.durationMs).toBeGreaterThanOrEqual(0);
+    expect(finished.body.durationMs).toBeLessThan(60 * 1000);
 
     const history = await agent.get('/api/flashcards/history');
     expect(history.status).toBe(200);
     expect(history.body.log[0].gradeNote).toBe(finished.body.grade);
+  });
+
+  it('rejects a foreign card, hides the barem until finish, and digests the server score', async () => {
+    const created = await registerGranted(app);
+    const agent = created.agent;
+    const generated = await agent.post('/api/flashcards/generate').send({
+      chapter_id: 'naturale',
+      subject: 'matematica',
+      class_level: 5,
+      kind: 'test',
+      count: 7
+    });
+    expect(generated.status).toBe(200);
+    const cards = generated.body.cards;
+    const sessionId = generated.body.session_id;
+    expect(sessionId).toBeTruthy();
+    expect(cards.length).toBeGreaterThan(1);
+
+    const first = findExercise(cards[0].id);
+    expect(first.answers[0]).toBeTruthy();
+    const peek = await agent.post('/api/flashcards/check').send({
+      card_id: cards[0].id,
+      answer: first.answers[0]
+    });
+    expect(peek.status).toBe(200);
+    expect(peek.body.ok).toBe(true);
+    expect(peek.body.sample).toBe('');
+    expect(peek.body.steps).toEqual([]);
+    expect(peek.body.rubric).toBeNull();
+    expect(peek.body.explain || '').not.toContain(first.answers[0]);
+    (first.steps || []).forEach(step => {
+      if (String(step).length > 8) expect(JSON.stringify(peek.body)).not.toContain(step);
+    });
+
+    const outsider = await agent.post('/api/flashcards/check').send({
+      card_id: 'e8a1',
+      answer: '24'
+    });
+    expect(outsider.status).toBe(200);
+    expect(outsider.body.sample).toBe('');
+    expect(outsider.body.steps).toEqual([]);
+
+    const email = authStore.findByUsername(created.username).email;
+    const before = economyStore.getUser(email);
+    const xpBefore = before.xp || 0;
+    const forged = await agent.post('/api/economy/activity').send({
+      type: 'chapter_test',
+      meta: {
+        chapterId: 'naturale',
+        subject: 'matematica',
+        grade: 5,
+        correct: 8,
+        score: 8,
+        total: 10,
+        minutes: 9999,
+        durationMs: 9999 * 60000
+      }
+    });
+    expect(forged.status).toBe(400);
+    const spoof = await agent.post('/api/economy/progress').send({
+      type: 'chapter_test',
+      meta: {
+        chapterId: 'naturale',
+        subject: 'matematica',
+        grade: 5,
+        score: 100,
+        correct: 100,
+        total: 100,
+        durationMs: 9e15
+      }
+    });
+    expect(spoof.status).toBe(400);
+    expect(economyStore.getUser(email).xp || 0).toBe(xpBefore);
+
+    const foreign = await agent.post('/api/flashcards/finish').send({
+      kind: 'test',
+      chapter_id: 'naturale',
+      subject: 'matematica',
+      class_level: 5,
+      session_id: sessionId,
+      duration_ms: 9e15,
+      answers: [
+        { card_id: cards[0].id, answer: first.answers[0] },
+        { card_id: 'e8a1', answer: '24' }
+      ]
+    });
+    expect(foreign.status).toBe(400);
+
+    const missing = await agent.post('/api/flashcards/finish').send({
+      kind: 'test',
+      chapter_id: 'naturale',
+      subject: 'matematica',
+      class_level: 5,
+      duration_ms: 60000,
+      answers: cards.map(card => ({ card_id: card.id, answer: '' }))
+    });
+    expect(missing.status).toBe(400);
+
+    before.chapterTestSessions[sessionId].startedAt = Date.now() - 10 * 24 * 60 * 60 * 1000;
+    const finished = await agent.post('/api/flashcards/finish').send({
+      kind: 'test',
+      chapter_id: 'alt-capitol',
+      subject: 'matematica',
+      class_level: 8,
+      session_id: sessionId,
+      duration_ms: 60000,
+      answers: [{ card_id: cards[0].id, answer: first.answers[0] }]
+    });
+    expect(finished.status).toBe(200);
+    expect(finished.body.total).toBe(cards.length);
+    expect(finished.body.correct).toBe(1);
+    expect(finished.body.durationMs).toBe(MAX_DURATION_MS);
+    expect(finished.body.items[0].sample).toBeTruthy();
+    expect(finished.body.items[0].steps.length).toBeGreaterThan(0);
+    expect(finished.body.summary.xp).toBeGreaterThan(xpBefore);
+
+    const revealed = await agent.post('/api/flashcards/check').send({
+      card_id: cards[0].id,
+      answer: first.answers[0]
+    });
+    expect(revealed.status).toBe(200);
+    expect(revealed.body.sample).toBeTruthy();
+    expect(revealed.body.steps.length).toBeGreaterThan(0);
+
+    const user = economyStore.getUser(email);
+    const stored = Object.values(user.practiceTests);
+    expect(stored).toHaveLength(1);
+    expect(stored[0].score).toBe(1);
+    expect(stored[0].total).toBe(cards.length);
+    expect(stored[0].durationMs).toBe(MAX_DURATION_MS);
+    const digest = user.digestEvents.filter(event => event.type === 'chapter_test');
+    expect(digest).toHaveLength(1);
+    expect(digest[0].correct).toBe(1);
+    expect(digest[0].total).toBe(cards.length);
+    expect(digest[0].minutes).toBe(180);
+    expect(digest[0].title).toBe('Numere naturale');
+
+    const sent = await sendDueDigests(new Date(), { force: true });
+    const mine = sent.find(row => row.username === created.username);
+    expect(mine).toBeTruthy();
+    expect(mine.body).toContain(`1 din ${cards.length}`);
+    expect(mine.body).toContain('Numere naturale');
+    expect(mine.body).toContain('180 minute');
+    expect(mine.body).not.toContain('8 din 10');
+    expect(mine.body).not.toContain('100 din 100');
   });
 });
