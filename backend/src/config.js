@@ -1,8 +1,8 @@
 // singura fila de atinge .env, care contine cheile pentru fiecare engine de chat si tool specializat.
 // de protejat
 const path = require("path");
-require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
-require("dotenv").config();
+require("dotenv").config({ path: path.join(__dirname, "..", ".env"), quiet: true });
+require("dotenv").config({ quiet: true });
 
 module.exports = {
   PORT: process.env.PORT || 3001,
