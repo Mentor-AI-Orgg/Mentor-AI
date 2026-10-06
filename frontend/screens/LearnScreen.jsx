@@ -385,7 +385,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
         <div className="learn-hero">
           <p className="screen-subtitle">
             {isEn
-              ? 'Secțiune separată față de capitolele pe clase. Lecțiile sunt rezumate originale, cu exemple lucrate, după programa de examen (OM 4.730/2022). Simularea EN se lucrează ca la examen: începi, stai minim o oră, apoi finalizezi. Antrenamentul scurt n-are ora de sală — predai când termini. Baremul și nota apar după predare; părintele le primește împreună cu durata.'
+              ? 'Lecțiile sunt pe baza manualelor oficiale aprobate de Ministerul Educației, după programa Evaluării Naționale (OM 4.730/2022).'
               : 'Alege materia, apoi clasa. În fiecare capitol ai lecțiile pe tavă — cu exemple lucrate, nu copiate din manual. Testele și grilele rapide urcă de la foarte ușor la greu. La test scrii doar răspunsul final; nota și pașii vin după finalizare. După banca de capitol apar variante noi, generate pe programă.'}
           </p>
           <p className="learn-slogan">{dailySlogan()}</p>
