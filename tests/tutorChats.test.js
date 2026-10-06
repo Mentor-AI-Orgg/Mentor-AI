@@ -1,5 +1,9 @@
 import { readFileSync } from 'node:fs';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { ProfessorScreen } from '../frontend/components/StudyScreens.jsx';
+import { MASCOT_NAME } from '../frontend/config/mascot.js';
 import {
   activeChat,
   adoptExistingMessages,
@@ -239,5 +243,78 @@ describe('chat-urile tutorelui', () => {
     expect(source).toContain('Numele chatului');
     expect(source).toContain('Nu am înțeles');
     expect(source).toContain('mentor-unclear');
+  });
+
+  it('o prezintă pe mascotă ca tutore și nu mai arată diagnosticarea', () => {
+    const source = readFileSync(
+      new URL('../frontend/components/StudyScreens.jsx', import.meta.url),
+      'utf8'
+    );
+    const css = readFileSync(new URL('../frontend/styles.css', import.meta.url), 'utf8');
+    const home = readFileSync(
+      new URL('../frontend/screens/HomeScreen.jsx', import.meta.url),
+      'utf8'
+    );
+    expect(source).toContain('MASCOT_NAME');
+    expect(source).toContain('Mascota');
+    expect(source).toContain('mentor-avatar');
+    expect(source).toContain('Ce învățăm azi?');
+    expect(source).toContain('!message.diagnostic');
+    expect(source).not.toMatch(/Diagnosticare|diagMode|runDiagnostics|fa-stethoscope/);
+    expect(source).not.toContain('Zecița');
+    expect(css).toContain('.mentor-avatar');
+    expect(css).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(home).toContain('Da, hai!');
+    expect(home).toContain('Nu acum');
+  });
+
+  it('pune numele și avatarul lângă răspuns și ascunde raportul de diagnosticare', () => {
+    const owner = 'maria@test';
+    const scope = { subject: 'matematica', grade: 6 };
+    const storage = memoryStorage();
+    let state = startNewChat(emptyState(), scope);
+    const id = activeChat(state, scope).id;
+    state = appendMessage(state, id, { role: 'user', content: 'Ce este o fracție?' });
+    state = appendMessage(state, id, {
+      role: 'assistant',
+      content: 'O fracție este o parte dintr-un întreg.'
+    });
+    state = appendMessage(state, id, { role: 'user', content: 'verifică sistemul' });
+    state = appendMessage(state, id, {
+      role: 'assistant',
+      content: 'Memorie - funcționează',
+      diagnostic: true,
+      allOk: true
+    });
+    saveTutorChats(state, { storage, owner });
+    const previous = globalThis.localStorage;
+    globalThis.localStorage = storage;
+    try {
+      const html = renderToStaticMarkup(
+        createElement(ProfessorScreen, {
+          userData: {
+            name: 'Maria',
+            email: owner,
+            class: '6',
+            subject: 'matematica',
+            mentorLeft: 4
+          },
+          studyFocus: { subject: 'matematica', grade: '6' }
+        })
+      );
+      expect(html).toContain('Salut, Maria!');
+      expect(html).toContain(MASCOT_NAME);
+      expect(html).toContain('Ce învățăm azi?');
+      expect(html).toContain('src="/mascot/explica.png"');
+      expect(html).toContain('mentor-avatar');
+      expect(html).toContain('O fracție este o parte dintr-un întreg.');
+      expect(html).toContain('Nu am înțeles');
+      expect(html).not.toContain('funcționează');
+      expect(html).not.toContain('Diagnosticare');
+      expect(html).not.toContain('diag-report');
+    } finally {
+      if (previous === undefined) delete globalThis.localStorage;
+      else globalThis.localStorage = previous;
+    }
   });
 });
