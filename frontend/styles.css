@@ -402,7 +402,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .learn-metric span { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: .1em; }
 .learn-metric strong { font: 700 1.125rem 'Space Grotesk', sans-serif; color: var(--ink); }
 .mentor-thread { min-height: min(58vh, 540px); min-height: min(58dvh, 540px); max-height: 620px; overflow-y: auto; padding: clamp(16px, 3vw, 28px); border-radius: 26px; background: rgba(20, 21, 51, .9); box-shadow: 0 24px 70px rgba(0,0,0,.2); }
-.mentor-empty { display: grid; align-content: center; min-height: 390px; max-width: 550px; margin: auto; text-align: center; }
+.mentor-empty { display: grid; align-content: start; justify-items: center; min-height: 0; max-width: 550px; margin: 0 auto; padding: 8px 0 4px; text-align: center; }
 .mentor-empty .professor-icon { margin: 0 auto 20px; }
 .mentor-empty h2 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
 .mentor-empty p { max-width: 430px; margin: 12px auto 0; color: var(--muted); font-size: 0.875rem; line-height: 1.55; }
@@ -737,8 +737,27 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .flashcards-meta { margin-top: 10px; color: var(--muted); font-size: 0.75rem; text-align: center; }
 .flashcards-empty { color: var(--muted); font-size: 0.8125rem; line-height: 1.6; }
 
-/* ============ Mentor diagnostics mode ============ */
+/* ============ Mentor chat ============ */
 .mentor-header-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.mentor-heading { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.mentor-heading-copy { min-width: 0; }
+.mentor-heading-avatar { flex: 0 0 auto; width: min(112px, 32vw); }
+.mentor-heading-avatar .mascota-wrap { justify-items: center; }
+.mentor-heading-avatar .mascota-md .mascota-figure { width: min(112px, 32vw); }
+.mentor-heading .screen-title { margin-top: 4px; font-size: clamp(26px, 6vw, 40px); }
+.mentor-heading .screen-subtitle { margin-top: 8px; }
+.mentor-turn { display: flex; align-items: flex-end; gap: 8px; width: 100%; margin: 0 0 14px; }
+.mentor-turn-user { justify-content: flex-end; }
+.mentor-turn .mentor-message { margin: 0; min-width: 0; max-width: none; }
+.mentor-turn-user .mentor-message { max-width: min(82%, 620px); }
+.mentor-reply, .mentor-turn .mentor-reply-with-help { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px; flex: 1 1 auto; min-width: 0; margin: 0; }
+.mentor-turn .mentor-reply-with-help .mentor-message,
+.mentor-reply .mentor-message { flex: 1 1 180px; max-width: none; }
+.mentor-avatar { flex: 0 0 auto; width: 64px; }
+.mentor-avatar .mascota-wrap { gap: 0; }
+.mentor-avatar .mascota-figure,
+.mentor-avatar .mascota-md .mascota-figure { width: 64px; }
+.mentor-avatar .mascota-figure::before { display: none; }
 .mentor-context-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .mentor-context-row label { display: flex; flex-direction: column; gap: 4px; font-size: 0.75rem; color: #9aa0c3; font-weight: 700; }
 .mentor-context-row select { min-width: 160px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(15,16,40,.8); color: #e8eaf8; }
@@ -951,11 +970,11 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 @media (max-width: 680px) {
   .subject-pick-grid { grid-template-columns: 1fr; }
 }
-.diag-toggle { cursor: pointer; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); color: var(--muted); }
-.diag-toggle.active { color: var(--on-primary); background: var(--lime); border-color: var(--lime); }
-.diag-banner { display: flex; align-items: center; gap: 8px; margin: -10px 0 16px; padding: 10px 14px; border-radius: 14px; background: rgba(68, 214, 215,.1); border: 1px solid rgba(68, 214, 215,.28); color: #e2ddff; font-size: 0.75rem; line-height: 1.5; }
-.diag-report { margin: 0; font-family: 'Nunito', sans-serif; font-size: 0.8125rem; line-height: 1.9; white-space: pre-wrap; }
-.diag-report.has-issues { color: #ffb4b4; }
+@media (max-width: 680px) {
+  .mentor-heading { align-items: flex-start; }
+  .mentor-turn-user .mentor-message { max-width: 92%; }
+  .mentor-avatar, .mentor-avatar .mascota-figure, .mentor-avatar .mascota-md .mascota-figure { width: 52px; }
+}
 
 /* ============ Calendar ============ */
 .calendar-connect-card { padding: 20px; border-radius: 22px; }

@@ -24,6 +24,8 @@ import {
   selectChat,
   startNewChat
 } from '../tutorChats.js';
+import { MASCOT_NAME } from '../config/mascot.js';
+import Mascota from './mascot/Mascota.jsx';
 import MathText from './MathText.jsx';
 
 const chatRequest = async ({
@@ -57,22 +59,31 @@ const chatRequest = async ({
   return { response: mockReply, mocked: true, engine_used: 'offline' };
 };
 
-const MessageBubble = ({ role, children }) => (
+const TutorFace = ({ mood = 'explica' }) => (
+  <div className="mentor-avatar" aria-hidden="true">
+    <Mascota mood={mood} size="md" />
+  </div>
+);
+
+const MessageBubble = ({ role, tutorName, children }) => (
   <div
     className={`mentor-message ${role === 'user' ? 'mentor-message-user' : 'mentor-message-ai'}`}
   >
-    <span className="mentor-message-role">{role === 'user' ? 'Tu' : 'Tutore'}</span>
+    <span className="mentor-message-role">{role === 'user' ? 'Tu' : tutorName}</span>
     <div>{children}</div>
   </div>
 );
 
-const LoadingMessage = () => (
-  <div className="mentor-message mentor-message-ai">
-    <span className="mentor-message-role">Tutore</span>
-    <div className="loading-dots">
-      <i />
-      <i />
-      <i />
+const LoadingMessage = ({ tutorName }) => (
+  <div className="mentor-turn">
+    <TutorFace mood="gandeste" />
+    <div className="mentor-message mentor-message-ai">
+      <span className="mentor-message-role">{tutorName}</span>
+      <div className="loading-dots">
+        <i />
+        <i />
+        <i />
+      </div>
     </div>
   </div>
 );
@@ -212,7 +223,6 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
   const recognitionRef = useRef(null);
   const micSessionRef = useRef(0);
   const micStopRef = useRef(false);
-  const [diagMode, setDiagMode] = useState(false);
   const [micNote, setMicNote] = useState('');
   const [subject, setSubject] = useState(
     normalizeSubject(studyFocus.subject || userData.subject || userData.profile || 'matematica')
@@ -276,55 +286,8 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
   const messages = current?.messages || [];
   const lessonTitle = scope.lessonTitle;
 
-  const formatDiagnostics = (checks) => {
-    const icon = (status) => (status === 'ok' ? '✅' : '❌');
-    const lines = checks.map(
-      (c) =>
-        `${icon(c.status)} ${c.label} - ${c.status === 'ok' ? 'funcționează' : 'eroare'}${c.detail ? ` (${c.detail})` : ''}`
-    );
-    return lines.join('\n');
-  };
-
   const remember = (chatId, message) => {
     commit((state) => appendMessage(state, chatId, message));
-  };
-
-  const openForSend = () => {
-    let chatId = '';
-    let conversationId = '';
-    commit((state) => {
-      const ensured = ensureActiveChat(state, scopeRef.current);
-      chatId = ensured.chat?.id || '';
-      conversationId = ensured.chat?.conversationId || '';
-      return ensured.state;
-    });
-    return { chatId, conversationId };
-  };
-
-  const runDiagnostics = async (messageText) => {
-    const { chatId } = openForSend();
-    if (chatId) remember(chatId, { role: 'user', content: messageText });
-    setLoading(true);
-    const result = await MentorAPI.runDiagnostics();
-    if (chatId) {
-      if (result.success && result.data?.checks) {
-        remember(chatId, {
-          role: 'assistant',
-          content: formatDiagnostics(result.data.checks),
-          diagnostic: true,
-          allOk: result.data.all_ok
-        });
-      } else {
-        remember(chatId, {
-          role: 'assistant',
-          content:
-            '❌ Nu am putut contacta backend-ul pentru diagnosticare. Serverul e probabil offline.',
-          diagnostic: true,
-          allOk: false
-        });
-      }
-    }
-    setLoading(false);
   };
 
   const showMicFailure = (session, kind) => {
@@ -415,10 +378,6 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
     if (!message || loading || sendingRef.current) return;
     const outgoing = message;
     if (!options.keepDraft) setDraft('');
-    if (diagMode && !options.forceChat) {
-      await runDiagnostics(outgoing);
-      return;
-    }
     sendingRef.current = true;
     const scopeNow = scopeRef.current;
     let chatId = '';
@@ -486,6 +445,9 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
     setRename(null);
   };
 
+  const shown = messages.filter((message) => !message.diagnostic);
+  const studentName = String(userData.name || '').trim();
+  const hello = studentName ? `Salut, ${studentName}!` : 'Salut!';
   const explainPrompt = lessonTitle
     ? `Explică lecția „${lessonTitle}”.`
     : subject === 'romana'
@@ -499,12 +461,19 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
     <main className="screen-page mentor-page animate-fadeIn">
       <header className="screen-header">
         <div>
-          <div className="eyebrow">TUTORE</div>
-          <h1 className="display-font screen-title">Alege materia, apoi întreabă.</h1>
-          <p className="screen-subtitle">
-            Răspund doar din lecțiile salvate în aplicație, pentru materia și clasa pe care le
-            alegi. Nu încarc poze și nu apelez un serviciu plătit.
-          </p>
+          <div className="mentor-heading">
+            <div className="mentor-heading-avatar">
+              <Mascota mood="explica" size="md" />
+            </div>
+            <div className="mentor-heading-copy">
+              <div className="eyebrow">{MASCOT_NAME}</div>
+              <h1 className="display-font screen-title">{hello}</h1>
+              <p className="screen-subtitle">
+                Ce învățăm azi? Îți răspund din lecțiile de aici, pas cu pas. Nu încarc poze și nu
+                apelez un serviciu plătit.
+              </p>
+            </div>
+          </div>
           <p className="mentor-limit">
             Întrebări cu XP azi: mai ai {userData.mentorLeft ?? 5} din 5 (apoi poți întreba în
             continuare, fără monede extra).
@@ -543,15 +512,6 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
           </div>
         </div>
         <div className="mentor-header-actions">
-          <button
-            type="button"
-            onClick={() => setDiagMode((d) => !d)}
-            className={`memory-pill diag-toggle ${diagMode ? 'active' : ''}`}
-            aria-pressed={diagMode}
-            title="Verifică status-ul memoriei și al fiecărui API"
-          >
-            <i className="fas fa-stethoscope" /> {diagMode ? 'Diagnosticare: ON' : 'Diagnosticare'}
-          </button>
           <span className="memory-pill">
             <i className="fas fa-brain" /> Memorie activă
           </span>
@@ -562,12 +522,6 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
           )}
         </div>
       </header>
-      {diagMode && (
-        <div className="diag-banner">
-          <i className="fas fa-circle-info" /> Diagnosticarea verifică memoria locală. Nu se
-          apelează servicii plătite.
-        </div>
-      )}
       <TutorChatsBar
         chats={visibleChats}
         activeId={current?.id || ''}
@@ -582,18 +536,15 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
         onCancelRename={() => setRename(null)}
       />
       <section className="mentor-thread surface" aria-busy={loading}>
-        {messages.length === 0 && (
+        {shown.length === 0 && (
           <div className="mentor-empty">
-            <div className="professor-icon">
-              <i className="fas fa-sparkles" />
-            </div>
             <h2 className="display-font">
-              {lessonTitle ? `Hai la „${lessonTitle}”.` : 'Cu ce începem?'}
+              {lessonTitle ? `Hai la „${lessonTitle}”.` : 'Întreabă-mă când ești gata.'}
             </h2>
             <p>
               {lessonTitle
-                ? 'Întreabă cu un cuvânt din lecție. Răspunsul vine din textul salvat aici.'
-                : `Întrebări din ${subjectLabel(subject)} pentru ${gradeLabel(grade)}. Răspund din lecții, nu dintr-un model plătit.`}
+                ? 'Un cuvânt din lecție e de ajuns. O luăm împreună, pas cu pas.'
+                : `Spune-mi ce nu e clar la ${subjectLabel(subject)}, ${gradeLabel(grade)}. Îți răspund din lecția salvată aici.`}
             </p>
             <div className="suggestion-row">
               <button onClick={() => send(explainPrompt)} type="button">
@@ -608,42 +559,45 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
             </div>
           </div>
         )}
-        {messages.map((message, index) => {
+        {shown.map((message, index) => {
           const latestTutor =
             message.role === 'assistant' &&
-            !message.diagnostic &&
-            !messages
-              .slice(index + 1)
-              .some((item) => item.role === 'assistant' && !item.diagnostic);
+            !shown.slice(index + 1).some((item) => item.role === 'assistant');
           const bubble = (
-            <MessageBubble role={message.role}>
-              {message.diagnostic ? (
-                <pre className={`diag-report ${message.allOk ? 'all-ok' : 'has-issues'}`}>
-                  {message.content}
-                </pre>
-              ) : (
-                <MathText text={message.content} />
-              )}
+            <MessageBubble role={message.role} tutorName={MASCOT_NAME}>
+              <MathText text={message.content} />
             </MessageBubble>
           );
-          if (!latestTutor) {
-            return <div key={`${current?.id || 'chat'}-${index}`}>{bubble}</div>;
+          if (message.role === 'user') {
+            return (
+              <div
+                key={`${current?.id || 'chat'}-${index}`}
+                className="mentor-turn mentor-turn-user"
+              >
+                {bubble}
+              </div>
+            );
           }
           return (
-            <div key={`${current?.id || 'chat'}-${index}`} className="mentor-reply-with-help">
-              {bubble}
-              <button
-                type="button"
-                className="ghost-button mentor-unclear"
-                onClick={askSimpler}
-                disabled={loading}
-              >
-                Nu am înțeles
-              </button>
+            <div key={`${current?.id || 'chat'}-${index}`} className="mentor-turn">
+              <TutorFace mood="explica" />
+              <div className={latestTutor ? 'mentor-reply-with-help' : 'mentor-reply'}>
+                {bubble}
+                {latestTutor && (
+                  <button
+                    type="button"
+                    className="ghost-button mentor-unclear"
+                    onClick={askSimpler}
+                    disabled={loading}
+                  >
+                    Nu am înțeles
+                  </button>
+                )}
+              </div>
             </div>
           );
         })}
-        {loading && <LoadingMessage />}
+        {loading && <LoadingMessage tutorName={MASCOT_NAME} />}
       </section>
       <form
         className="mentor-composer"
@@ -672,9 +626,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
             placeholder={
               listening
                 ? 'Te-am auzit. Apasă Enter ca să trimiți.'
-                : diagMode
-                  ? 'Scrie orice, va rula diagnosticarea...'
-                  : 'Scrie sau vorbește, apoi Enter…'
+                : 'Scrie sau vorbește, apoi Enter…'
             }
             aria-label="Întrebarea pentru tutore"
           />
@@ -685,7 +637,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
           disabled={loading || !draft.trim()}
           aria-label="Trimite întrebarea"
         >
-          <i className={`fas ${diagMode ? 'fa-stethoscope' : 'fa-arrow-up'}`} />
+          <i className="fas fa-arrow-up" />
         </button>
       </form>
     </main>
