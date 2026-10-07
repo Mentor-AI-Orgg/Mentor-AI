@@ -160,7 +160,7 @@ function pickPractice({
     chosen.sort((a, b) => (a.level || 99) - (b.level || 99));
     chosen.forEach(item => {
       used.add(item.id);
-      picked.push(publicCard(retuneCard(item, pool), reviewMode || seen.has(item.point)));
+      picked.push(publicCard(retuneCard(item, questions), reviewMode || seen.has(item.point)));
     });
   } else if (lesson && isTest) {
     const grids = questions.filter(item => item.lesson === lesson).map(questionAsExercise);
@@ -207,7 +207,7 @@ function pickPractice({
       generated.forEach(item => {
         const card = isTest
           ? publicExercise({ ...item, level: item.level }, false)
-          : publicCard(item, false);
+          : publicCard(retuneCard(item, rawPool), false);
         picked.push(card);
       });
     }
