@@ -1,5 +1,7 @@
 // securiate plus
 
+const { MASCOT_NAME } = require("../config/mascot");
+
 const SAFETY_REFUSAL_TEXT = {
         ro: "🛡️ Hei! Am detectat că întrebarea ta nu este adecvată pentru platforma noastră educațională. Încearcă să reformulezi folosind cuvinte potrivite școlii! Sunt de 10 este aici să te ajute să ÎNVEȚI, nu să facem lucruri inadecvate. 📚",
         en: "🛡️ Hey! I detected that your question is not appropriate for our educational platform. Try to rephrase using school-appropriate words! Sunt de 10 is here to help you LEARN, not to do inappropriate things. 📚",
@@ -15,7 +17,7 @@ const SAFETY_REFUSAL_TEXT = {
 };
 
 const DIRECT_ANSWER_GUARD_TEXT = {
-        ro: "🤔 Observ că cauți un răspuns direct. Ca tutorele tău, nu pot să-ți dau „pe tavă” soluția — asta nu te-ar ajuta să înveți! În schimb, hai să abordăm împreună:\n\n1️⃣ Ce știi deja despre subiect?\n2️⃣ Care sunt datele problemei?\n3️⃣ Ce concepte îți sună familiare?\n\nRăspunde-mi la aceste întrebări și te voi ghida pas cu pas! 💪",
+        ro: `🤔 Observ că cauți un răspuns direct. Sunt ${MASCOT_NAME} și nu pot să-ți dau „pe tavă” soluția — asta nu te-ar ajuta să înveți! În schimb, hai să abordăm împreună:\n\n1️⃣ Ce știi deja despre subiect?\n2️⃣ Care sunt datele problemei?\n3️⃣ Ce concepte îți sună familiare?\n\nRăspunde-mi la aceste întrebări și te voi ghida pas cu pas! 💪`,
         en: "🤔 I notice you're looking for a direct answer. As your mentor, I can't give you the solution on a silver platter — that wouldn't help you learn! Instead, let's approach it together:\n\n1️⃣ What do you already know about the subject?\n2️⃣ What are the problem's data?\n3️⃣ What concepts sound familiar?\n\nAnswer these questions and I'll guide you step by step! 💪",
         fr: "🤔 Je remarque que tu cherches une réponse directe. En tant que ton mentor, je ne peux pas te donner la solution sur un plateau d'argent — ça ne t'aiderait pas à apprendre! Au lieu de ça, abordons-le ensemble:\n\n1️⃣ Que sais-tu déjà sur le sujet?\n2️⃣ Quelles sont les données du problème?\n3️⃣ Quels concepts te semblent familiers?\n\nRéponds à ces questions et je te guiderai pas à pas! 💪",
         de: "🤔 Ich bemerke, dass du nach einer direkten Antwort suchst. Als dein Mentor kann ich dir die Lösung nicht auf dem Silbertablett servieren — das würde dir nicht beim Lernen helfen! Stattdessen lass es uns gemeinsam angehen:\n\n1️⃣ Was weißt du bereits über das Thema?\n2️⃣ Was sind die Daten des Problems?\n3️⃣ Welche Konzepte klingen dir vertraut?\n\nBeantworte diese Fragen und ich werde dich Schritt für Schritt führen! 💪",

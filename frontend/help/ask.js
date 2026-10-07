@@ -1,4 +1,5 @@
 import { fold } from './articles.js';
+import { MASCOT_NAME } from '../config/mascot.js';
 
 const APP_FAQ = [
   {
@@ -59,8 +60,8 @@ const APP_FAQ = [
   },
   {
     id: 'tutore',
-    keys: ['tutore', 'mentor', 'întreb tutorele', 'chat', 'unde e tutorele'],
-    answer: 'Tutorele e ecranul Mentor. Acolo întrebi despre lecție. Mesajele acelea nu pleacă la părinte.',
+    keys: ['tutore', 'mentor', 'întreb tutorele', 'chat', 'unde e tutorele', MASCOT_NAME.toLowerCase()],
+    answer: `${MASCOT_NAME} e tutorele, pe ecranul Mentor. Acolo o întrebi despre lecție. Mesajele acelea nu pleacă la părinte.`,
     screen: 'professor',
     extras: {}
   },
@@ -119,7 +120,7 @@ const SUBJECT_WORDS = [
 const BROAD_SUBJECT = ['matematica', 'mate', 'romana', 'gramatica'];
 
 const TUTOR = {
-  answer: 'Asta e o întrebare de matematică sau de limba română. O luăm cu tutorele, nu de aici.',
+  answer: `Asta e o întrebare de matematică sau de limba română. O luăm cu ${MASCOT_NAME}, tutorele, nu de aici.`,
   screen: 'professor',
   extras: {}
 };

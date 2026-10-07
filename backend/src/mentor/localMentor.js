@@ -16,6 +16,7 @@
 // Dacă ultimul răspuns salvat nu are lecție, nu sărim la una mai veche din chat.
 
 const { getGuide, normalizeGrade, normalizeSubject } = require("../data/gimnaziuGuide");
+const { MASCOT_NAME } = require("../config/mascot");
 
 const STOP = new Set([
   "ce", "este", "sunt", "un", "una", "unei", "unui", "la", "de", "si", "in", "pe", "cu", "din",
@@ -733,7 +734,7 @@ function reply(row, body, kind) {
     lesson: row.lesson.title,
     lessonId: row.lesson.id || "",
     unit: row.unit.title,
-    text: `Din lecția „${row.lesson.title}”, ${row.unit.title}:\n\n${body}\n\n${close}`
+    text: `Sunt ${MASCOT_NAME}. Din lecția „${row.lesson.title}”, ${row.unit.title}:\n\n${body}\n\n${close}`
   };
 }
 
@@ -761,14 +762,14 @@ function answerFromLessons({ message, subject, grade, history } = {}) {
       return {
         matched: false,
         engine: "lectii",
-        text: `Spune cu un cuvânt din lecția de ${subjectName}, clasa a ${level}-a. Răspund doar cu ce este scris acolo.`
+        text: `Sunt ${MASCOT_NAME}. Spune cu un cuvânt din lecția de ${subjectName}, clasa a ${level}-a. Răspund doar cu ce este scris acolo.`
       };
     }
     const hint = hints.length ? ` Poți întreba despre: ${hints.join("; ")}.` : "";
     return {
       matched: false,
       engine: "lectii",
-      text: `În lecțiile de ${subjectName} pentru clasa a ${level}-a nu am găsit asta. Nu completez din afara manualului salvat aici.${hint}`
+      text: `Sunt ${MASCOT_NAME}. În lecțiile de ${subjectName} pentru clasa a ${level}-a nu am găsit asta. Nu completez din afara manualului salvat aici.${hint}`
     };
   };
 
@@ -781,7 +782,7 @@ function answerFromLessons({ message, subject, grade, history } = {}) {
         return {
           matched: false,
           engine: "lectii",
-          text: `Nu am ce să simplific. Ultimul răspuns nu e dintr-o lecție. Spune cu un cuvânt din lecția de ${subjectName}, clasa a ${level}-a.`
+          text: `Sunt ${MASCOT_NAME}. Nu am ce să simplific. Ultimul răspuns nu e dintr-o lecție. Spune cu un cuvânt din lecția de ${subjectName}, clasa a ${level}-a.`
         };
       }
       prior = anchor.row ? pickedFromRow(anchor.row) : remembered(rows, history);

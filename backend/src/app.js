@@ -19,7 +19,7 @@ const moderationRoute = require("./routes/moderation");
 const creatorRoute = require("./routes/creator");
 const { spec: openapiSpec } = require("./openapi");
 const { basicAuth } = require("./middleware/basicAuth");
-const { comingSoon } = require("./middleware/comingSoon");
+const { comingSoon, creatorRequired } = require("./middleware/comingSoon");
 const { attachUser, authRequired, studentRequired, consentRequired } = require("./middleware/auth");
 const parentRoute = require("./routes/parent");
 const placementRoute = require("./routes/placement");
@@ -141,7 +141,8 @@ function createApp(options = {}) {
     app.use(`${prefix}/flashcards`, ...studentOnly, flashcardsRoute);
     app.use(`${prefix}/cards`, ...studentOnly, cardsRoute);
     app.use(`${prefix}/problems`, ...studentOnly, problemsRoute);
-    app.use(`${prefix}/diagnostics`, ...studentOnly, diagnosticsRoute);
+    // Verificarea de sistem e unealtă de creator, nu un buton în chatul elevului.
+    app.use(`${prefix}/diagnostics`, creatorRequired, diagnosticsRoute);
     app.use(`${prefix}/calendar`, ...studentOnly, calendarRoute);
     app.use(`${prefix}/economy`, ...studentOnly, economyRoute);
     app.use(`${prefix}/account`, ...studentOnly, accountRoute);

@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import { verdictLabel } from '../verdictCopy.js';
 import QuoteCard from './QuoteCard.jsx';
 import GeoFigure from './GeoFigure.jsx';
+import { MASCOT_NAME } from '../config/mascot.js';
+import { TEST_OPEN_ERROR, mergeExamSession, takeTicket, ticketIsCurrent } from '../testOpen.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -86,15 +88,27 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
   const [result, setResult] = useState(initialSession?.result || null);
   const [sheetTicks, setSheetTicks] = useState({});
   const [sheetNote, setSheetNote] = useState('');
+  const ticketRef = useRef(0);
 
   useEffect(() => {
     if (!paper?.id) return undefined;
+    const ticket = takeTicket(ticketRef);
+    let gone = false;
     MentorAPI.openEnPaper({ paper_id: paper.id }).then(response => {
-      if (!response.success) return;
-      setSession(response.data.session);
-      if (response.data.session?.result) setResult(response.data.session.result);
+      if (gone || !ticketIsCurrent(ticketRef, ticket)) return;
+      if (!response.success) {
+        setError(response.error || TEST_OPEN_ERROR);
+        return;
+      }
+      setSession(prev => mergeExamSession(prev, response.data?.session));
+      if (response.data?.session?.result) {
+        setResult(prev => prev || response.data.session.result);
+      }
     });
-    return undefined;
+    return () => {
+      gone = true;
+      ticketRef.current += 1;
+    };
   }, [paper?.id]);
 
   useEffect(() => {
@@ -140,15 +154,17 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
 
   const startExam = async () => {
     if (starting || session?.started) return;
+    const ticket = takeTicket(ticketRef);
     setStarting(true);
     setError('');
     const response = await MentorAPI.startEnPaper({ paper_id: paper.id });
+    if (!ticketIsCurrent(ticketRef, ticket)) return;
     setStarting(false);
     if (!response.success) {
-      setError(response.error || 'Nu am putut porni testul.');
+      setError(response.error || TEST_OPEN_ERROR);
       return;
     }
-    setSession(response.data.session);
+    setSession(prev => mergeExamSession(prev, response.data?.session));
     setNow(Date.now());
   };
 
@@ -558,7 +574,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
                             )}
                             {scoredItem.photoFeedback ? (
                               <div className="en-photo-feedback">
-                                <strong>Tutorele, după poză</strong>
+                                <strong>{MASCOT_NAME}, după poză</strong>
                                 <p>{scoredItem.photoFeedback}</p>
                                 {scoredItem.photoTips?.length ? (
                                   <ul>
@@ -601,7 +617,7 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
         </div>
       )}
 
-      {error ? <p className="guide-error">{error}</p> : null}
+      {error ? <p className="guide-error" role="alert">{error}</p> : null}
       <p className="en-paper-foot">
         {isDrill
           ? 'Antrenament scurt: predai când termini, fără ora de sală. Baremul se deschide după predare. Simularea completă (minim 60 de minute) e butonul „Alt model” de deasupra.'

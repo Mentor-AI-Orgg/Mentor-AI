@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { MASCOT_NAME } from '../config/mascot.js';
 
 const DockItem = ({ item, active, onNavigate, pointerX, baseSize, maxScale }) => {
   const ref = useRef(null);
@@ -43,7 +44,7 @@ const BottomNav = ({ active, onNavigate }) => {
   const { t } = useI18n();
   const items = [
     { id: 'home', icon: 'fa-home', label: t('nav.home') },
-    { id: 'professor', icon: 'fa-graduation-cap', label: t('nav.professor') },
+    { id: 'professor', icon: 'fa-graduation-cap', label: MASCOT_NAME || t('nav.professor') },
     { id: 'learn', icon: 'fa-book-open', label: t('nav.learn') },
     { id: 'shop', icon: 'fa-store', label: t('nav.shop') },
     { id: 'calendar', icon: 'fa-calendar-check', label: t('nav.calendar') },

@@ -1116,7 +1116,7 @@ const MentorAPI = {
       });
       return { success: true, data, fallback: false };
     } catch (error) {
-      return { success: false, data: null, fallback: true };
+      return { success: false, data: null, fallback: true, error: error.message };
     }
   },
 
@@ -1142,7 +1142,7 @@ const MentorAPI = {
       });
       return { success: true, data, fallback: false };
     } catch (error) {
-      return { success: false, data: null, fallback: true };
+      return { success: false, data: null, fallback: true, error: error.message };
     }
   },
 
@@ -1173,7 +1173,7 @@ const MentorAPI = {
       const data = await safeFetchJson('/api/diagnostics/full', { method: 'POST' }, 40000);
       return { success: true, data, fallback: false };
     } catch (error) {
-      return { success: false, data: null, fallback: true };
+      return { success: false, data: null, fallback: true, error: error.message };
     }
   },
 

@@ -7,6 +7,8 @@ import MathText from './MathText.jsx';
 import { effortLine } from '../i18n/quizFeedback.js';
 import MascotPresence from './mascot/MascotPresence.jsx';
 import { emitMascot } from '../mascot/mascotEvents.js';
+import { MASCOT_NAME } from '../config/mascot.js';
+import { readQuizPack, takeTicket, ticketIsCurrent } from '../testOpen.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -14,7 +16,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
   const [cards, setCards] = useState([]);
   const [index, setIndex] = useState(0);
   const [drafts, setDrafts] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(() => Boolean(lesson?.id));
   const [finishing, setFinishing] = useState(false);
   const [coverage, setCoverage] = useState(null);
   const [review, setReview] = useState(false);
@@ -23,11 +25,15 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
   const [targetNote, setTargetNote] = useState(lesson ? 0 : null);
   const [hintFor, setHintFor] = useState('');
   const [sessionId, setSessionId] = useState('');
+  const [error, setError] = useState('');
   const startedAt = useRef(Date.now());
+  const ticketRef = useRef(0);
   const onLesson = Boolean(lesson?.id);
 
   const load = async (more = false, note = targetNote) => {
+    const ticket = takeTicket(ticketRef);
     setLoading(true);
+    setError('');
     setReport(null);
     setDrafts({});
     setHintFor('');
@@ -47,12 +53,20 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
       target_note: onLesson ? undefined : note,
       lesson_id: lesson?.id || ''
     });
-    const next = pack.success ? (pack.data.cards || []) : [];
-    setSessionId(pack.data?.session_id || '');
-    setCards(next);
-    setCoverage(pack.data?.coverage || null);
-    setReview(Boolean(pack.data?.review));
-    setExclude(prev => [...new Set([...prev, ...next.map(card => card.id)])]);
+    if (!ticketIsCurrent(ticketRef, ticket)) return;
+    const outcome = readQuizPack(pack, { lesson: onLesson });
+    if (!outcome.ok) {
+      setCards([]);
+      setSessionId('');
+      setError(outcome.error);
+      setLoading(false);
+      return;
+    }
+    setSessionId(outcome.sessionId);
+    setCards(outcome.cards);
+    setCoverage(outcome.coverage);
+    setReview(outcome.review);
+    setExclude(prev => [...new Set([...prev, ...outcome.cards.map(card => card.id)])]);
     setLoading(false);
   };
 
@@ -60,11 +74,16 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
     if (onLesson) {
       setTargetNote(0);
       load(false, null);
-      return;
+    } else {
+      setTargetNote(null);
+      setCards([]);
+      setReport(null);
+      setError('');
+      setLoading(false);
     }
-    setTargetNote(null);
-    setCards([]);
-    setReport(null);
+    return () => {
+      ticketRef.current += 1;
+    };
     // load depinde de exclude; pus în dependențe, testul pe lecție s-ar reîncărca mereu.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unit.id, lesson?.id]);
@@ -126,9 +145,10 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
         </div>
         <button type="button" className="ghost-button" onClick={onClose} aria-label="Închide testul"><i className="fas fa-xmark" /></button>
       </div>
-      {!onLesson && !targetNote && (
+      {!onLesson && !report && cards.length === 0 && (
         <GradeGoalPicker
           kind="test"
+          busy={loading}
           onPick={note => {
             setTargetNote(note);
             load(false, note);
@@ -153,12 +173,12 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
       )}
       {review && <p className="quiz-review-note">Tur de recapitulare — ideile astea le-ai mai întâlnit.</p>}
 
-      {onLesson && cards.length === 0 && !loading && (
-        <p className="quiz-coverage">Lecția asta nu are încă exerciții proprii.</p>
+      {error && !loading && (
+        <p className="guide-error" role="alert">{error}</p>
       )}
-      {!onLesson && targetNote && cards.length === 0 && !loading && (
-        <button type="button" className="accent-button" onClick={() => load(false)}>
-          Generează testul <i className="fas fa-bolt" />
+      {onLesson && error && !loading && (
+        <button type="button" className="accent-button" onClick={() => load(false, null)}>
+          Încearcă din nou
         </button>
       )}
       {loading && <p className="quiz-loading">Pregătesc exercițiile…</p>}
@@ -285,7 +305,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
             ))}
           </ol>
           <div className="learning-actions">
-            <button type="button" className="ghost-button" onClick={() => onAskMentor?.(unit)}>Întreabă tutorele</button>
+            <button type="button" className="ghost-button" onClick={() => onAskMentor?.(unit)}>Întreab-o pe {MASCOT_NAME}</button>
             {!onLesson && (
               <button type="button" className="ghost-button" onClick={() => { setTargetNote(null); setReport(null); setCards([]); }}>Altă notă</button>
             )}

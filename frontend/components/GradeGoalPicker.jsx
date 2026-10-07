@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { TARGET_NOTES, readSavedTargetNote, saveTargetNote } from '../targetGrade.js';
 
-const GradeGoalPicker = ({ kind = 'test', onPick, onCancel }) => {
+const GradeGoalPicker = ({ kind = 'test', onPick, onCancel, busy = false }) => {
   const [chosen, setChosen] = useState(() => readSavedTargetNote() || 8);
   const label = kind === 'flashcards' ? 'grilele rapide' : 'testul';
 
@@ -28,12 +28,14 @@ const GradeGoalPicker = ({ kind = 'test', onPick, onCancel }) => {
         <button
           type="button"
           className="accent-button"
+          disabled={busy}
           onClick={() => {
+            if (busy) return;
             saveTargetNote(chosen);
             onPick(chosen);
           }}
         >
-          Vreau nota {chosen}
+          {busy ? 'Se deschide…' : `Vreau nota ${chosen}`}
         </button>
       </div>
     </div>

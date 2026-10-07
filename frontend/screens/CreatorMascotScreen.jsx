@@ -12,6 +12,9 @@ const THEMES = [
 
 const CreatorMascotScreen = () => {
   const [allowed, setAllowed] = useState(null);
+  const [checking, setChecking] = useState(false);
+  const [checks, setChecks] = useState(null);
+  const [checkError, setCheckError] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -78,6 +81,43 @@ const CreatorMascotScreen = () => {
             </li>
           ))}
         </ul>
+      </section>
+      <section className="surface help-article">
+        <h2 className="display-font">Verificare de sistem</h2>
+        <p>Asta era butonul de diagnosticare din chat. Rămâne aici, doar pentru creator.</p>
+        <button
+          type="button"
+          className="accent-button"
+          disabled={checking}
+          onClick={async () => {
+            if (checking) return;
+            setChecking(true);
+            setCheckError('');
+            const result = await MentorAPI.runDiagnostics();
+            setChecking(false);
+            if (!result.success) {
+              setChecks(null);
+              setCheckError(result.error || 'Nu am putut verifica sistemul.');
+              return;
+            }
+            setChecks(result.data?.checks || []);
+          }}
+        >
+          {checking ? 'Verific…' : 'Verifică sistemul'}
+        </button>
+        {checkError && <p className="guide-error" role="alert">{checkError}</p>}
+        {Array.isArray(checks) && (
+          <ul className="mission-list">
+            {checks.map(item => (
+              <li key={item.key || item.label}>
+                <strong>{item.label}</strong>
+                {' · '}
+                {item.status}
+                {item.detail ? ` · ${item.detail}` : ''}
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
       <HelpPanel heading="Panoul de ajutor, așa cum îl vede copilul" />
     </main>
