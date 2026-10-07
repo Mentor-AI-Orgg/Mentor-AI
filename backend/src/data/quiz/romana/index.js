@@ -28,6 +28,7 @@ const r5_prietenia = require('./r5-prietenia');
 const r5_natura = require('./r5-natura');
 const r5_trepte = require('./r5-trepte');
 const r5_eroi = require('./r5-eroi');
+const hard = require('../hard');
 
 const CHAPTERS = [
   r8_recapitulare_examen,
@@ -63,12 +64,16 @@ const CHAPTERS = [
 ];
 
 const BY_KEY = Object.fromEntries(CHAPTERS.map(chapter => [chapter.key, {
-  flashcards: chapter.flashcards || [],
-  tests: chapter.tests || []
+  flashcards: [...(chapter.flashcards || []), ...hard.flashcardsFor(chapter.key)],
+  tests: [...(chapter.tests || []), ...hard.testsFor(chapter.key)]
 }]));
 
 function flashcardsFor(key) {
   return (BY_KEY[key] && BY_KEY[key].flashcards) || [];
 }
 
-module.exports = { BY_KEY, CHAPTERS, flashcardsFor };
+function testsFor(key) {
+  return (BY_KEY[key] && BY_KEY[key].tests) || [];
+}
+
+module.exports = { BY_KEY, CHAPTERS, flashcardsFor, testsFor };

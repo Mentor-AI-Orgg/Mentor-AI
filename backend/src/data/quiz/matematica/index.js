@@ -13,6 +13,7 @@ const intervale = require('./m8-intervale');
 const algebric = require('./m8-algebric');
 const functii = require('./m8-functii');
 const spatiu = require('./m8-spatiu');
+const hard = require('../hard');
 
 const CHAPTERS = [
   naturale, fractii, geometrie, multimi, proportii, intregi, triunghi,
@@ -20,8 +21,8 @@ const CHAPTERS = [
 ];
 
 const BY_KEY = Object.fromEntries(CHAPTERS.map(chapter => [chapter.key, {
-  flashcards: chapter.flashcards || [],
-  tests: chapter.tests || []
+  flashcards: [...(chapter.flashcards || []), ...hard.flashcardsFor(chapter.key)],
+  tests: [...(chapter.tests || []), ...hard.testsFor(chapter.key)]
 }]));
 
 function chapterPack(key) {

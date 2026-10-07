@@ -4,6 +4,7 @@ const { getGuide, normalizeGrade, normalizeSubject } = require('./gimnaziuGuide'
 const { lessonsFor } = require('./gimnaziuLessons');
 const { generateMany } = require('./itemGenerator');
 const { normalizeTargetNote, maxLevelForNote, levelPlan, chapterTestPlan } = require('./targetGrade');
+const { retuneCard } = require('./quiz/hard/closeOptions');
 
 function shuffle(list) {
   const copy = list.slice();
@@ -58,11 +59,20 @@ function chapterLevelPlan(want, maxLevel) {
 
 function pickOne(candidates, usedLessons, seenLessons) {
   if (!candidates.length) return null;
-  const freshLesson = candidates.filter(item => item.lesson && !usedLessons.has(item.lesson));
-  const pool = freshLesson.length ? freshLesson : candidates;
+  const challenged = candidates.filter(item => item.challenge);
+  const base = challenged.length ? challenged : candidates;
+  const freshLesson = base.filter(item => item.lesson && !usedLessons.has(item.lesson));
+  const pool = freshLesson.length ? freshLesson : base;
   const unseen = pool.filter(item => item.lesson && !seenLessons.has(item.lesson));
   const bucket = unseen.length ? unseen : pool;
   return bucket[Math.floor(Math.random() * bucket.length)];
+}
+
+function preferHard(pool) {
+  const challenge = shuffle(pool.filter(item => item.challenge && !item.secondary));
+  const plain = shuffle(pool.filter(item => !item.challenge && !item.secondary));
+  const secondary = shuffle(pool.filter(item => item.secondary));
+  return [...challenge, ...plain, ...secondary];
 }
 
 function chooseForLevel(pool, level, excluded, used, usedLessons, seenLessons, allowSecondary, floor = 1) {
@@ -146,10 +156,11 @@ function pickPractice({
       pool = questions.filter(item => item.lesson === lesson);
       reviewMode = pool.length > 0;
     }
-    pool.sort((a, b) => (a.level || 99) - (b.level || 99));
-    pool.slice(0, want).forEach(item => {
+    const chosen = preferHard(pool).slice(0, want);
+    chosen.sort((a, b) => (a.level || 99) - (b.level || 99));
+    chosen.forEach(item => {
       used.add(item.id);
-      picked.push(publicCard(item, reviewMode || seen.has(item.point)));
+      picked.push(publicCard(retuneCard(item, pool), reviewMode || seen.has(item.point)));
     });
   } else if (lesson && isTest) {
     const grids = questions.filter(item => item.lesson === lesson).map(questionAsExercise);
@@ -158,8 +169,9 @@ function pickPractice({
       pool = [...exercises, ...grids].filter(item => item.lesson === lesson);
       reviewMode = pool.length > 0;
     }
-    pool.sort((a, b) => (a.level || 99) - (b.level || 99));
-    pool.slice(0, want).forEach(item => {
+    const chosen = preferHard(pool).slice(0, want);
+    chosen.sort((a, b) => (a.level || 99) - (b.level || 99));
+    chosen.forEach(item => {
       used.add(item.id);
       const reviewCard = reviewMode || seen.has(item.point);
       picked.push(publicExercise(item, reviewCard));
@@ -178,7 +190,8 @@ function pickPractice({
       used.add(item.id);
       if (item.lesson) usedLessons.add(item.lesson);
       const reviewCard = seen.has(item.point);
-      picked.push(isTest ? publicExercise(item, reviewCard) : publicCard(item, reviewCard));
+      const shown = isTest ? item : retuneCard(item, rawPool);
+      picked.push(isTest ? publicExercise(shown, reviewCard) : publicCard(shown, reviewCard));
     });
     if (picked.length < want) {
       const rest = (isTest ? chapterTestPlan(want, maxLevel) : chapterLevelPlan(want, maxLevel)).slice(picked.length);
