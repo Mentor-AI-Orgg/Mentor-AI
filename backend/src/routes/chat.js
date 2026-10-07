@@ -5,6 +5,7 @@ const { safetyCheck } = require("../safety/safetyCheck");
 const { SAFETY_REFUSAL_TEXT, DIRECT_ANSWER_GUARD_TEXT, CRISIS_HELP_TEXT } = require("../data/responseTemplates");
 const { normalizeGrade, normalizeSubject } = require("../data/gimnaziuGuide");
 const { answerFromLessons } = require("../mentor/localMentor");
+const { maybeTutorLlm } = require("../mentor/tutorLlm");
 const { accountIsOpen } = require("../data/authStore");
 const memory = require("../memory/memoryStore");
 const { validateBody } = require("../middleware/validate");
@@ -92,12 +93,22 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
   }
 
   const history = memory.get(conversationId);
-  const local = answerFromLessons({ message, subject, grade: class_level, history });
+  let local = answerFromLessons({ message, subject, grade: class_level, history, language: lang });
+  if (local && local.confident === false) {
+    const llm = await maybeTutorLlm({
+      message,
+      subject,
+      grade: class_level,
+      language: lang,
+      local
+    });
+    if (llm && llm.text) local = llm;
+  }
   const result = {
     response: local.text,
-    engine_used: "lectii",
+    engine_used: local.engine || "lectii",
     engine_mocked: false,
-    fallback_path: ["lectii"]
+    fallback_path: [local.engine || "lectii"]
   };
 
   memory.add(conversationId, "user", message);
