@@ -33,7 +33,7 @@ describe('cont nou, termeni și mesaje de lansare', () => {
 
   it('salvează data și versiunea termenilor doar la conturile noi', async () => {
     const { app } = createApp({ autosave: false });
-    const created = await registerGranted(app, { username: `cu_acord_${Date.now().toString(16)}` });
+    const created = await registerGranted(app, { username: `elevnou${String(Date.now()).slice(-6)}` });
     expect(created.res.status).toBe(201);
     const account = authStore.findByUsername(created.username);
     expect(account.termsVersion).toBe(TERMS_VERSION);
@@ -44,7 +44,7 @@ describe('cont nou, termeni și mesaje de lansare', () => {
       email: uniqueEmail('vechi'),
       password: PASSWORD,
       role: 'student',
-      profile: { username: `cont_vechi_${Date.now().toString(16)}`, class: '6' }
+      profile: { username: `vechi${String(Date.now()).slice(-6)}`, class: '6' }
     });
     expect(legacy.ok).toBe(true);
     expect(legacy.account.termsAcceptedAt).toBeUndefined();
