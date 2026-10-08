@@ -1,4 +1,4 @@
-// După ce testul e notat, Zecița poate merge până la soluție,
+// După ce testul e notat, tutorele poate merge până la soluție,
 // dar întâi spune de ce răspunsul nu ține și cere un pas.
 
 const { MASCOT_NAME } = require("../config/mascot");
