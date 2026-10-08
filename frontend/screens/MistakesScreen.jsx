@@ -71,14 +71,15 @@ const MistakesScreen = ({ onNavigate }) => {
         </section>
       )}
       {current && (
-        <section className="focus-card">
+        <section className="placement-quiz">
           <div className="eyebrow">{current.lesson}</div>
-          <p>{current.prompt || 'Deschide lecția și reia ideea.'}</p>
-          {current.prompt && (
-            <label className="field-label">
-              Răspunsul tău
-              <input className="field form-input" value={answer} onChange={event => setAnswer(event.target.value)} />
+          {current.prompt ? (
+            <label className="placement-question">
+              <span className="placement-prompt">{current.prompt}</span>
+              <input className="field form-input" value={answer} placeholder="Răspunsul tău" aria-label="Răspunsul tău" onChange={event => setAnswer(event.target.value)} />
             </label>
+          ) : (
+            <p className="placement-quiz-help">Deschide lecția și reia ideea.</p>
           )}
           <div className="focus-actions">
             {current.prompt && <button type="button" className="accent-button" onClick={submit}>Verifică</button>}

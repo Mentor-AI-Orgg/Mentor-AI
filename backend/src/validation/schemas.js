@@ -1,6 +1,59 @@
 const { z } = require("zod");
 const { usernameIssue } = require("../safety/usernamePolicy");
 
+function celMult(count) {
+  const n = Number(count) || 0;
+  const unit = n === 1 ? "caracter" : "caractere";
+  return n >= 20 ? `${n} de ${unit}` : `${n} ${unit}`;
+}
+
+// Mesajele implicite Zod sunt în engleză. Le înlocuim pentru orice câmp
+// care ajunge la utilizator fără un text propriu.
+z.setErrorMap((issue, ctx) => {
+  const field = Array.isArray(issue.path) && issue.path.length
+    ? String(issue.path[issue.path.length - 1])
+    : "";
+  if (issue.code === z.ZodIssueCode.too_big && issue.type === "string") {
+    if (["password", "confirmPassword", "currentPassword", "newPassword"].includes(field)) {
+      return { message: `Parola poate avea cel mult ${celMult(issue.maximum)}.` };
+    }
+    if (field === "token") return { message: "Linkul nu mai este valabil." };
+    if (field === "email" || field === "parentEmail" || field === "to_email" || field === "other_email" || field === "child_email") {
+      return { message: "Adresa de email este prea lungă." };
+    }
+    return { message: `Textul poate avea cel mult ${celMult(issue.maximum)}.` };
+  }
+  if (issue.code === z.ZodIssueCode.too_small && issue.type === "string") {
+    if (field === "token") return { message: "Linkul nu mai este valabil." };
+    if (Number(issue.minimum) <= 1) return { message: "Câmpul este obligatoriu." };
+    return { message: `Textul trebuie să aibă cel puțin ${celMult(issue.minimum)}.` };
+  }
+  if (issue.code === z.ZodIssueCode.invalid_enum_value) {
+    return { message: "Valoarea nu este acceptată." };
+  }
+  if (issue.code === z.ZodIssueCode.invalid_string) {
+    if (issue.validation === "email") return { message: "Adresa de email nu este validă." };
+    return { message: "Textul nu este valid." };
+  }
+  if (issue.code === z.ZodIssueCode.unrecognized_keys) {
+    return { message: "Cererea conține câmpuri necunoscute." };
+  }
+  if (issue.code === z.ZodIssueCode.invalid_type || issue.code === z.ZodIssueCode.invalid_literal) {
+    return { message: "Date invalide." };
+  }
+  const fallback = String(ctx.defaultError || "");
+  if (/String must|Invalid|Expected|Required|Unrecognized/.test(fallback)) {
+    return { message: "Date invalide." };
+  }
+  return { message: fallback || "Date invalide." };
+});
+
+const PASSWORD_MAX = "Parola poate avea cel mult 200 de caractere.";
+const LINK_INVALID = "Linkul nu mai este valabil.";
+const TERMS_REQUIRED = "Trebuie să fii de acord cu termenii și politica de confidențialitate.";
+
+const linkToken = z.string().trim().min(20, LINK_INVALID).max(200, LINK_INVALID);
+
 const usernameField = z.string().trim().superRefine((value, ctx) => {
   const issue = usernameIssue(value);
   if (!issue) return;
@@ -31,20 +84,23 @@ const optionalEmail = z
 
 const registerSchema = z.object({
   username: usernameField,
-  password: z.string({ required_error: "Parola este obligatorie." }).min(1).max(200),
-  confirmPassword: z.string().min(1).max(200),
+  password: z.string({ required_error: "Parola este obligatorie." }).min(1, "Parola este obligatorie.").max(200, PASSWORD_MAX),
+  confirmPassword: z.string().min(1, "Confirmă parola.").max(200, PASSWORD_MAX),
   class: z.enum(["5", "6", "7", "8"]),
   parentEmail: email,
+  acceptTerms: z.literal(true, {
+    errorMap: () => ({ message: TERMS_REQUIRED })
+  }),
   role: z.enum(["student", "parent", "teacher"]).optional().default("student")
 }).strict();
 
 const consentActionSchema = z.object({
-  token: z.string().trim().min(20).max(200),
+  token: linkToken,
   action: z.enum(["grant", "refuse"])
 });
 
 const tokenSchema = z.object({
-  token: z.string().trim().min(20).max(200)
+  token: linkToken
 });
 
 const parentEmailSchema = z.object({
@@ -53,7 +109,7 @@ const parentEmailSchema = z.object({
 
 const loginSchema = z.object({
   email: z.string().trim().min(1, "Numele de utilizator și parola sunt obligatorii.").max(254),
-  password: z.string().min(1, "Numele de utilizator și parola sunt obligatorii.").max(200)
+  password: z.string().min(1, "Numele de utilizator și parola sunt obligatorii.").max(200, PASSWORD_MAX)
 }).strict();
 
 const forgotPasswordSchema = z.object({
@@ -61,8 +117,8 @@ const forgotPasswordSchema = z.object({
 });
 
 const resetPasswordSchema = z.object({
-  token: z.string().trim().min(20).max(200),
-  password: z.string().min(1).max(200)
+  token: linkToken,
+  password: z.string().min(1, "Parola este obligatorie.").max(200, PASSWORD_MAX)
 });
 
 const problemRefSchema = z.object({
@@ -211,8 +267,8 @@ const profileSchema = z.object({
 });
 
 const passwordChangeSchema = z.object({
-  currentPassword: z.string().min(1, "Parola actuală este obligatorie.").max(200),
-  newPassword: z.string().min(1, "Parola nouă este obligatorie.").max(200)
+  currentPassword: z.string().min(1, "Parola actuală este obligatorie.").max(200, PASSWORD_MAX),
+  newPassword: z.string().min(1, "Parola nouă este obligatorie.").max(200, PASSWORD_MAX)
 });
 
 const friendSettingsSchema = z.object({

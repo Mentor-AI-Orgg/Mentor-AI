@@ -5,6 +5,9 @@ import { passwordHint } from '../passwordHint.js';
 import { MentorAPI } from '../apiClient.js';
 const isValidEmail = value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || '');
 const USERNAME_HINT = 'Alege alt nume. Nu folosi numele tău real, cuvinte urâte sau date de contact.';
+const TERMS_MESSAGE = 'Trebuie să fii de acord cu termenii și politica de confidențialitate.';
+const MISMATCH_MESSAGE = 'Parolele nu coincid.';
+const EMAIL_MESSAGE = 'Adresa de email nu este validă.';
 
 const FieldStatus = ({ touched, valid }) => {
   if (!touched) return null;
@@ -15,7 +18,7 @@ const FieldStatus = ({ touched, valid }) => {
 
 const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
   const [form, setForm] = useState({
-    username: '', password: '', confirmPassword: '', class: '5', parentEmail: ''
+    username: '', password: '', confirmPassword: '', class: '5', parentEmail: '', acceptTerms: false
   });
   const [touched, setTouched] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -37,13 +40,14 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
     if (name.length < 3) {
       setUsernameOk(false);
       setUsernameMsg(USERNAME_HINT);
-      return false;
+      return USERNAME_HINT;
     }
     const result = await MentorAPI.checkUsername(name);
     const ok = Boolean(result.ok);
+    const message = ok ? '' : (result.error || USERNAME_HINT);
     setUsernameOk(ok);
-    setUsernameMsg(ok ? '' : (result.error || USERNAME_HINT));
-    return ok;
+    setUsernameMsg(message);
+    return message;
   };
 
   const validators = useMemo(() => ({
@@ -51,18 +55,27 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
     password: v => passwordHint(v, form.username).ok,
     confirmPassword: v => v && v === form.password,
     class: v => ['5', '6', '7', '8'].includes(String(v)),
-    parentEmail: v => isValidEmail(v)
+    parentEmail: v => isValidEmail(v),
+    acceptTerms: v => v === true
   }), [form.password, form.username, usernameOk]);
 
   const fieldValid = key => (validators[key] ? validators[key](form[key]) : true);
-  const requiredFields = ['username', 'password', 'confirmPassword', 'class', 'parentEmail'];
+  const requiredFields = ['username', 'password', 'confirmPassword', 'class', 'parentEmail', 'acceptTerms'];
 
   const handleSubmit = async () => {
     setTouched(Object.fromEntries(requiredFields.map(key => [key, true])));
     setServerError('');
-    const nameOk = await reviewUsername(form.username);
-    if (!nameOk || !requiredFields.filter(field => field !== 'username').every(fieldValid)) {
-      const message = 'Verifică toate câmpurile marcate cu X înainte să continui.';
+    const nameError = await reviewUsername(form.username);
+    const password = passwordHint(form.password, form.username);
+    const problems = [
+      nameError,
+      password.ok ? '' : password.label,
+      form.confirmPassword && form.confirmPassword === form.password ? '' : MISMATCH_MESSAGE,
+      isValidEmail(form.parentEmail) ? '' : EMAIL_MESSAGE,
+      form.acceptTerms ? '' : TERMS_MESSAGE
+    ].filter(Boolean);
+    if (problems.length) {
+      const message = problems[0];
       if (onValidationError) onValidationError(message); else alert(message);
       return;
     }
@@ -181,7 +194,24 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
               className={`field form-input ${touched.parentEmail ? (fieldValid('parentEmail') ? 'field-valid' : 'field-invalid') : ''}`}
             />
           </label>
-          <small className="field-hint">Aici vin rezumatul de pe email și intrarea în zona de părinte. <a href="/confidentialitate">Citește politica</a>.</small>
+          <small className="field-hint">Aici vin rezumatul de pe email și intrarea în zona de părinte. <a href="/confidentialitate" target="_blank" rel="noopener noreferrer">Citește politica</a>.</small>
+        </div>
+
+        <div>
+          <label className={`consent-check ${touched.acceptTerms && !fieldValid('acceptTerms') ? 'consent-check-invalid' : ''}`}>
+            <input
+              type="checkbox"
+              checked={form.acceptTerms}
+              onChange={e => setField('acceptTerms', e.target.checked)}
+              onBlur={() => markTouched('acceptTerms')}
+            />
+            <span>
+              Am citit și sunt de acord cu <a href="/termeni" target="_blank" rel="noopener noreferrer">Termenii</a> și <a href="/confidentialitate" target="_blank" rel="noopener noreferrer">Politica de confidențialitate</a>.
+            </span>
+          </label>
+          {touched.acceptTerms && !fieldValid('acceptTerms') && (
+            <small className="field-hint field-hint-bad">{TERMS_MESSAGE}</small>
+          )}
         </div>
       </div>
 

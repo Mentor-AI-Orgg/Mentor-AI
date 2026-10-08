@@ -52,7 +52,8 @@ describe('auth', () => {
         password: PASSWORD,
         confirmPassword: PASSWORD,
         class: '5',
-        parentEmail: uniqueEmail('parinte')
+        parentEmail: uniqueEmail('parinte'),
+        acceptTerms: true
       });
     expect(res.status).toBe(409);
     expect(res.body.field).toBe('username');
@@ -68,6 +69,7 @@ describe('auth', () => {
           confirmPassword: PASSWORD,
           class: '6',
           parentEmail: uniqueEmail('parinte'),
+          acceptTerms: true,
           role
         });
       expect(res.status).toBe(403);

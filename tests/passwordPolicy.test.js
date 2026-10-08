@@ -37,7 +37,8 @@ describe('register rejects weak child passwords', () => {
       password: 'password1',
       confirmPassword: 'password1',
       class: '6',
-      parentEmail: `parinte.${Date.now()}@example.com`
+      parentEmail: `parinte.${Date.now()}@example.com`,
+      acceptTerms: true
     });
     expect(common.status).toBe(400);
     expect(common.body.error).toBe('Parola asta e prea cunoscută. Alege alta.');
@@ -47,7 +48,8 @@ describe('register rejects weak child passwords', () => {
       password: 'zmeuelev99',
       confirmPassword: 'zmeuelev99',
       class: '6',
-      parentEmail: `parinte.${Date.now()}.b@example.com`
+      parentEmail: `parinte.${Date.now()}.b@example.com`,
+      acceptTerms: true
     });
     expect(same.status).toBe(400);
     expect(same.body.error).toBe('Alege o parolă care nu e la fel cu numele de utilizator.');
@@ -59,7 +61,8 @@ describe('register rejects weak child passwords', () => {
       password: 'pisica verde sare',
       confirmPassword: 'pisica verde sare',
       class: '6',
-      parentEmail: `parinte.${Date.now()}.c@example.com`
+      parentEmail: `parinte.${Date.now()}.c@example.com`,
+      acceptTerms: true
     });
     expect(phrase.status).toBe(201);
 

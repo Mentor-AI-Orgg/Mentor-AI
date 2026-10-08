@@ -172,9 +172,15 @@
     "logout": "Deconectează-te",
     "parentEyebrow": "Părinte",
     "parentTitle": "Activitatea ta pleacă pe email.",
-    "parentNote": "Părintele de la {email} primește un singur rezumat pe zi când înveți. Nu își face cont.",
+    "parentNote": "Părintele de la {email} alege cât de des primește rezumatul. Din start, o dată pe săptămână.",
+    "parentNoteWeekly": "Părintele de la {email} primește un rezumat pe săptămână când înveți. Nu își face cont.",
+    "parentNoteDaily": "Părintele de la {email} primește un rezumat pe zi când înveți. Nu își face cont.",
+    "parentNoteOff": "Părintele de la {email} nu primește emailuri acum. Le poate porni din zona de părinte.",
     "parentEmailMissing": "adresa dată la înregistrare",
-    "parentEmpty": "Încă nu există copii ale mesajelor. Emailul de studiu pleacă o dată pe zi."
+    "parentEmpty": "Încă nu există copii ale mesajelor. Rezumatul pleacă în ritmul ales de părinte. Din start, o dată pe săptămână.",
+    "parentEmptyWeekly": "Încă nu există copii ale mesajelor. Emailul de studiu pleacă o dată pe săptămână.",
+    "parentEmptyDaily": "Încă nu există copii ale mesajelor. Emailul de studiu pleacă o dată pe zi.",
+    "parentEmptyOff": "Încă nu există copii ale mesajelor. Emailurile către părinte sunt oprite."
   },
   "toast": {
     "welcome": "Bun venit!",

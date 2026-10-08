@@ -284,12 +284,12 @@ const ParentScreen = ({ token = '' }) => {
             </button>
             <button type="button" className="ghost-button" onClick={() => MentorAPI.parentPrivacy(child.id).then(load)}>Profil privat: da</button>
           </div>
+          <p className="field-hint">Retragerea acordului șterge contul copilului și datele. Nu e o oprire temporară.</p>
           <label className="field-label">
-            Ca să ștergi contul sau să retragi acordul, scrie ȘTERGE. Contul și datele dispar.
+            Ca să ștergi contul și să retragi acordul, scrie ȘTERGE. Contul și datele dispar.
             <input className="field form-input" value={confirm} onChange={event => setConfirm(event.target.value)} />
           </label>
-          <button type="button" className="ghost-button" onClick={() => remove(child)}>Șterge contul</button>
-          <button type="button" className="ghost-button" onClick={() => remove(child)}>Retrage acordul</button>
+          <button type="button" className="ghost-button" onClick={() => remove(child)}>Șterge contul și retrage acordul</button>
         </section>
       ))}
       {note && <p className="field-hint" role="status">{note}</p>}

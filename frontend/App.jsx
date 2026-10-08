@@ -17,6 +17,7 @@ import { emitMascot, pickCelebration } from './mascot/mascotEvents.js';
 import LoginScreen from './components/LoginScreen.jsx';
 import ResetPasswordScreen from './components/ResetPasswordScreen.jsx';
 import RegisterScreen from './components/RegisterScreen.jsx';
+import { logoutNotice } from './logoutNotice.js';
 import { ConsentWaitScreen, ConsentScreen, ParentScreen } from './components/ConsentScreens.jsx';
 import OnboardingScreen from './components/OnboardingScreen.jsx';
 import RenameScreen from './components/RenameScreen.jsx';
@@ -65,6 +66,9 @@ function applyAccount(user, prev = {}) {
     exam: user.exam || prev.exam || '',
     dailyHours: user.dailyHours || prev.dailyHours || '',
     parentEmail: user.parentEmail || prev.parentEmail || '',
+    parentEmails: user.parentEmails === 'daily' || user.parentEmails === 'off' || user.parentEmails === 'weekly'
+      ? user.parentEmails
+      : (prev.parentEmails || 'weekly'),
     uiLanguage: user.uiLanguage || prev.uiLanguage || prev.language || 'ro',
     language: user.language || prev.language || 'ro',
     hasCompletedOnboarding: Boolean(user.hasCompletedOnboarding),
@@ -315,13 +319,14 @@ function AppShell({ userData, setUserData }) {
     return { success: true };
   };
 
-  const handleLogout = async () => {
+  const handleLogout = async (options = {}) => {
+    const reason = options && options.reason;
     await MentorAPI.logout();
     setUserData(prev => ({ ...prev, isLoggedIn: false, email: '', planId: 'free', coins: 0 }));
     setScreen('welcome');
     setNavScreen('home');
     writeHash('welcome', {}, 'replace');
-    showToast(t('toast.loggedOut'), 'success');
+    showToast(logoutNotice(reason, t('toast.loggedOut')), 'success');
   };
 
   const handleForgotPassword = async email => {
@@ -344,6 +349,7 @@ function AppShell({ userData, setUserData }) {
       confirmPassword: formData.confirmPassword,
       class: formData.class || '5',
       parentEmail: formData.parentEmail || '',
+      acceptTerms: formData.acceptTerms === true,
       role: 'student'
     });
 

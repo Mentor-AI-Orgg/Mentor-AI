@@ -41,8 +41,14 @@ function auditClean() {
   return result.status === 0;
 }
 
+function truthy(raw) {
+  return ["1", "true", "yes"].includes(String(raw || "").trim().toLowerCase());
+}
+
 function checklist(env = process.env) {
   const secretOk = key => value(env, key).length >= 32;
+  const baseProblem = productionBaseUrlError(value(env, "APP_BASE_URL"));
+  const smtpOk = smtpConfigured();
   return [
     { key: "PREVIEW_PASSWORD", ok: Boolean(value(env, "PREVIEW_PASSWORD")), required: true },
     { key: "PREVIEW_COOKIE_SECRET", ok: secretOk("PREVIEW_COOKIE_SECRET"), required: true },
@@ -51,13 +57,35 @@ function checklist(env = process.env) {
     { key: "BACKUP_KEY", ok: value(env, "BACKUP_KEY").length >= 16, required: false },
     { key: "BACKUP_PUBLIC_KEY", ok: publicKeyReady(env), required: true },
     { key: "BACKUP_AGE", ok: backupFresh(), required: true },
-    { key: "APP_BASE_URL", ok: productionBaseUrlError(value(env, "APP_BASE_URL")) === "", required: true },
-    { key: "SMTP", ok: smtpConfigured(), required: true },
+    { key: "APP_BASE_URL", ok: baseProblem === "", required: true, detail: baseProblem },
+    { key: "SMTP", ok: smtpOk, required: true, detail: smtpOk ? "" : "nu e configurat" },
     { key: "CSP", ok: CSP_MODE === "enforce", required: true },
     { key: "AUDIT", ok: auditClean(), required: true },
     { key: "ADMIN_EMAIL", ok: Boolean(value(env, "ADMIN_EMAIL")), required: false },
     { key: "HEALTH_TOKEN", ok: secretOk("HEALTH_TOKEN"), required: false }
   ];
+}
+
+function problemText(item) {
+  return `${item.key}: ${item.detail || "lipsește"}`;
+}
+
+// SITE_PUBLIC=1 deschide site-ul chiar dacă un punct e roșu. Jurnalul trebuie
+// să spună asta, nu că site-ul rămâne închis.
+function launchLog(items, env = process.env) {
+  const failed = items.filter(item => !item.ok);
+  if (!failed.length) return [];
+  const problems = failed.map(problemText).join("; ");
+  if (truthy(env.SITE_PUBLIC)) {
+    return [`⚠ SITE_PUBLIC=1: site-ul e DESCHIS, dar verificarea de lansare are probleme: ${problems}`];
+  }
+  const closed = env.NODE_ENV === "production" || truthy(env.SITE_CLOSED);
+  if (!closed) return [`[prelansare] verificarea de lansare are probleme: ${problems}`];
+  return failed.map(item => {
+    const why = item.detail || "lipsește";
+    const tail = item.required ? ", site-ul rămâne închis" : ", opțional";
+    return `[prelansare] ${item.key}: ${why}${tail}`;
+  });
 }
 
 function report(items = checklist()) {
@@ -84,4 +112,4 @@ if (require.main === module) {
   process.exit(result.ok ? 0 : 1);
 }
 
-module.exports = { checklist, report, run };
+module.exports = { checklist, report, run, launchLog };

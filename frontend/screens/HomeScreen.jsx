@@ -166,12 +166,12 @@ const HomeScreen = ({ userData, onNavigate }) => {
         </section>
       )}
       {quiz && !result && (
-        <section className="focus-card">
-          <p>Pas cu pas, fără grabă. Poți lăsa goale întrebările pe care nu le știi.</p>
+        <section className="placement-quiz" aria-labelledby="placement-quiz-help">
+          <p id="placement-quiz-help" className="placement-quiz-help">Pas cu pas, fără grabă. Poți lăsa goale întrebările pe care nu le știi.</p>
           {quiz.map(item => (
-            <label key={item.id} className="field-label">
-              {item.prompt}
-              <input className="field form-input" value={answers[item.id] || ''} onChange={event => setAnswers(prev => ({ ...prev, [item.id]: event.target.value }))} />
+            <label key={item.id} className="placement-question">
+              <span className="placement-prompt">{item.prompt}</span>
+              <input className="field form-input" value={answers[item.id] || ''} aria-label={item.prompt} onChange={event => setAnswers(prev => ({ ...prev, [item.id]: event.target.value }))} />
             </label>
           ))}
           {placementError && <p className="guide-error" role="alert">{placementError}</p>}

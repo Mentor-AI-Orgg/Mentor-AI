@@ -52,12 +52,18 @@ function failureCode(error) {
   return "smtp_failed";
 }
 
-function recordMail(code) {
+function recordMail(code, extra) {
   try {
-    require("../ops/errorMonitor").recordMailCode(code);
+    require("../ops/errorMonitor").recordMailCode(code, extra);
   } catch {
     /* jurnalul nu oprește răspunsul către client */
   }
+}
+
+function warnIfSmtpMissing(action) {
+  if (smtpConfigured()) return false;
+  recordMail("smtp_unconfigured", { action: action || "email" });
+  return true;
 }
 
 function transportOptions(settings, { auth = false, ignoreTLS = false, secure = false } = {}) {
@@ -114,13 +120,13 @@ async function trySend(nodemailer, options, message) {
   }
 }
 
-async function sendEmail({ to, subject, body, html, attachments }) {
+async function sendEmail({ to, subject, body, html, attachments, action }) {
   if (!to) {
     return { mocked: true, delivered: false, channel: "email" };
   }
   const settings = smtpSettings();
   if (!settings.host || !settings.from) {
-    recordMail("smtp_unconfigured");
+    recordMail("smtp_unconfigured", { action: action || "email" });
     return { mocked: true, delivered: false, channel: "email", error: "smtp_unconfigured" };
   }
 
@@ -170,15 +176,16 @@ function refusedAddress(to) {
   return String(to || "").trim().toLowerCase().endsWith("@elev.invalid");
 }
 
-async function deliverMessage({ to, phone = "", subject, body, channel = "email", html, attachments }) {
+async function deliverMessage({ to, phone = "", subject, body, channel = "email", html, attachments, action }) {
   if (refusedAddress(to) || refusedAddress(phone) || channel === "none") {
     return { mocked: true, delivered: false, channel, refused: true, reason: "elev_invalid" };
   }
-  return sendEmail({ to, subject, body, html, attachments });
+  return sendEmail({ to, subject, body, html, attachments, action });
 }
 
 module.exports = {
   smtpConfigured,
+  warnIfSmtpMissing,
   sendEmail,
   deliverMessage
 };
