@@ -610,14 +610,16 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 }
 html[data-motion="off"] .app-background.is-landing .floating-lines-container { animation: none !important; }
 .floating-lines-container.is-static {
-  background-color: transparent;
-  background-image:
-    radial-gradient(ellipse 150% 20% at 50% 24%, rgba(68, 214, 215, .42), transparent 70%),
-    radial-gradient(ellipse 170% 16% at 40% 48%, rgba(94, 234, 212, .3), transparent 72%),
-    radial-gradient(ellipse 160% 22% at 62% 72%, rgba(68, 214, 215, .26), transparent 74%),
-    radial-gradient(ellipse 140% 14% at 34% 90%, rgba(147, 252, 9, .14), transparent 72%);
+  background-color: #08142A;
+  background-image: url('/landing/stripes-dark.webp');
   background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  mix-blend-mode: normal !important;
+  opacity: 1;
+  filter: none;
 }
+.floating-lines-container.is-static canvas { visibility: hidden; }
 .typing-dot {
   width: 6px;
   height: 6px;
@@ -2494,27 +2496,25 @@ html[data-resolved-theme="light"] .app-shell::before {
 }
 html[data-resolved-theme="light"] .floating-lines-container canvas { opacity: .28; filter: none; }
 html[data-resolved-theme="light"] .app-background.is-landing .floating-lines-container {
-  mix-blend-mode: multiply !important;
+  mix-blend-mode: normal !important;
   opacity: 1;
-  animation: landingStripes 22s ease-in-out infinite alternate;
-  background-image:
-    radial-gradient(ellipse 150% 18% at 48% 22%, rgba(12, 124, 134, .34), transparent 70%),
-    radial-gradient(ellipse 170% 14% at 36% 46%, rgba(12, 124, 134, .26), transparent 72%),
-    radial-gradient(ellipse 160% 20% at 64% 70%, rgba(58, 134, 0, .18), transparent 74%),
-    radial-gradient(ellipse 140% 12% at 30% 88%, rgba(12, 124, 134, .22), transparent 72%);
+  filter: none;
+  background-color: #F7F9FC;
+  background-image: url('/landing/stripes-light.webp');
   background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 html[data-resolved-theme="light"] .app-background.is-landing .floating-lines-container canvas {
   opacity: 0;
 }
 html[data-resolved-theme="light"] .floating-lines-container.is-static {
-  mix-blend-mode: multiply !important;
-  opacity: .85;
-  background-image:
-    radial-gradient(ellipse 150% 18% at 48% 22%, rgba(12, 124, 134, .34), transparent 70%),
-    radial-gradient(ellipse 170% 14% at 36% 46%, rgba(12, 124, 134, .26), transparent 72%),
-    radial-gradient(ellipse 160% 20% at 64% 70%, rgba(58, 134, 0, .18), transparent 74%),
-    radial-gradient(ellipse 140% 12% at 30% 88%, rgba(12, 124, 134, .22), transparent 72%);
+  mix-blend-mode: normal !important;
+  opacity: 1;
+  filter: none;
+  background-color: #F7F9FC;
+  background-image: url('/landing/stripes-light.webp');
+  background-size: cover;
 }
 html[data-resolved-theme="light"] .surface,
 html[data-resolved-theme="light"] .surface-soft,
