@@ -181,16 +181,26 @@ describe('gimnaziu curriculum', () => {
     expect(context).not.toMatch(/manuale\.edu\.ro/i);
   });
 
-  it('refuză catalogul fără autentificare', async () => {
+  it('arată capitolele fără cont și ține răspunsurile închise', async () => {
     const catalog = await request(app).get('/api/curriculum');
-    expect(catalog.status).toBe(401);
-    expect(catalog.body.code).toBe('unauthenticated');
-    const guide = await request(app).get('/api/curriculum').query({ subject: 'matematica', class_level: 5 });
-    expect(guide.status).toBe(401);
-    const en = await request(app).get('/api/curriculum').query({ track: 'en' });
-    expect(en.status).toBe(401);
-    const alias = await request(app).get('/api/v1/curriculum');
-    expect(alias.status).toBe(401);
+    expect(catalog.status).toBe(200);
+    expect(hasAnswersField(catalog.body)).toBe(false);
+    const guide = await request(app).get('/api/curriculum').query({ subject: 'matematica', class_level: 6 });
+    expect(guide.status).toBe(200);
+    expect(guide.body.grade).toBe(6);
+    expect(guide.body.subject).toBe('matematica');
+    expect(guide.body.units.length).toBeGreaterThan(0);
+    expect(hasAnswersField(guide.body)).toBe(false);
+    const romana = await request(app).get('/api/curriculum').query({ subject: 'romana', class_level: 6 });
+    expect(romana.status).toBe(200);
+    expect(romana.body.units.length).toBeGreaterThan(0);
+    const en = await request(app).get('/api/curriculum').query({ track: 'en', subject: 'matematica' });
+    expect(en.status).toBe(200);
+    expect(en.body.track).toBe('en');
+    expect(hasAnswersField(en.body)).toBe(false);
+    const alias = await request(app).get('/api/v1/curriculum').query({ subject: 'matematica', class_level: 5 });
+    expect(alias.status).toBe(200);
+    expect(hasAnswersField(alias.body)).toBe(false);
   });
 
   it('nu pune câmpul answers în catalog', async () => {
