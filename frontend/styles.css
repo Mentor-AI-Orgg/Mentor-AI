@@ -771,10 +771,18 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .mentor-chats { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .mentor-chat-new { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 0; border-radius: 14px; font-size: 0.875rem; font-weight: 800; }
 .mentor-chat-new:hover { background: var(--primary); color: var(--on-primary); transform: none; }
-.mentor-chat-new:disabled, .mentor-chat-open:disabled { opacity: .45; cursor: not-allowed; }
+.mentor-chat-new:disabled, .mentor-chat-open:disabled, .mentor-chat-delete:disabled { opacity: .45; cursor: not-allowed; }
 .mentor-chat-list { display: flex; flex: 1 1 200px; gap: 8px; min-width: 0; overflow-x: auto; padding-bottom: 2px; }
-.mentor-chat-open { min-height: 44px; max-width: 220px; padding: 0 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-2); color: var(--text); font-size: 0.8125rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.mentor-chat-open.selected { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); }
+.mentor-chat-tab { display: inline-flex; align-items: stretch; flex: 0 0 auto; max-width: 100%; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-2); }
+.mentor-chat-tab.selected { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); }
+.mentor-chat-open { min-height: 44px; max-width: 168px; padding: 0 4px 0 14px; border: 0; border-radius: 14px 0 0 14px; background: transparent; color: var(--text); font-size: 0.8125rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mentor-chat-delete { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 44px; min-width: 44px; height: 44px; min-height: 44px; margin: 0; padding: 0; border: 0; border-radius: 12px; background: transparent; color: var(--text); font-size: 1rem; }
+.mentor-delete-confirm { display: grid; gap: 10px; margin-top: 10px; padding: 12px 14px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); color: var(--text); }
+.mentor-delete-confirm p { margin: 0; font-weight: 800; }
+.mentor-delete-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.mentor-delete-actions .accent-button, .mentor-delete-actions .ghost-button { min-height: 44px; padding: 0 16px; border-radius: 12px; font-size: 0.875rem; font-weight: 800; }
+.mentor-delete-cancel { color: var(--text); }
+.mentor-delete-error { margin: 0; color: var(--text); font-weight: 700; }
 .mentor-chat-title-row, .mentor-rename-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
 .mentor-chat-heading { margin: 0; font: 700 1rem 'Space Grotesk', sans-serif; overflow-wrap: anywhere; }
 .mentor-chat-rename, .mentor-rename-save, .mentor-rename-cancel { min-height: 44px; padding: 0 14px; border-radius: 12px; font-size: 0.8125rem; font-weight: 800; }

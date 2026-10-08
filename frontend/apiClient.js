@@ -543,6 +543,16 @@ const MentorAPI = {
     }
   },
 
+  async deleteChat(conversationId) {
+    try {
+      const id = encodeURIComponent(String(conversationId || ''));
+      const data = await safeFetchJson(`/api/chat/${id}`, { method: 'DELETE' });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message || 'Nu am putut șterge conversația.' };
+    }
+  },
+
   async chat(payload) {
     try {
       const data = await safeFetchJson('/api/chat', {

@@ -15,6 +15,7 @@ import {
   loadTutorChats,
   nameChatsFromLesson,
   openProblemChat,
+  removeChat,
   renameChat,
   saveTutorChats,
   scopeFromSelection,
@@ -398,5 +399,89 @@ describe('chat-urile tutorelui', () => {
     }));
     expect(allRight).toContain('data-mood="sarbatoare"');
     expect(allRight).toContain('Le-ai nimerit.');
+  });
+
+  it('șterge un chat și lasă restul, inclusiv pe cel din altă materie', () => {
+    let state = startNewChat(emptyState(), mathLesson, {
+      now: 1,
+      id: 'unu',
+      conversationId: 'conv-unu'
+    });
+    state = appendMessage(state, 'unu', { role: 'user', content: 'prima' });
+    state = startNewChat(state, mathLesson, { now: 2, id: 'doi', conversationId: 'conv-doi' });
+    state = appendMessage(state, 'doi', { role: 'user', content: 'a doua' });
+    state = openProblemChat(
+      state,
+      mathLesson,
+      { source: 'quiz', id: 'e5n5', prompt: 'Calculează 2³.', lessonTitle: 'Puteri' },
+      { now: 3, id: 'problema', conversationId: 'conv-problema' }
+    );
+    state = appendMessage(state, 'problema', { role: 'user', content: 'nu înțeleg' });
+    state = startNewChat(state, roLesson, { now: 4, id: 'alta', conversationId: 'conv-alta' });
+    state = appendMessage(state, 'alta', { role: 'user', content: 'română' });
+
+    const untouched = removeChat(state, mathLesson, 'alta');
+    expect(chatsForScope(untouched, roLesson).map((chat) => chat.id)).toEqual(['alta']);
+    expect(chatsForScope(untouched, mathLesson)).toHaveLength(3);
+
+    let next = removeChat(state, mathLesson, 'problema');
+    expect(next.chats.find((chat) => chat.id === 'problema')).toBeUndefined();
+    expect(chatsForScope(next, mathLesson).map((chat) => chat.id)).toEqual(['unu', 'doi']);
+    expect(activeChat(next, mathLesson).id).toBe('doi');
+    expect(activeChat(next, roLesson).messages[0].content).toBe('română');
+
+    next = removeChat(next, mathLesson, 'unu');
+    expect(activeChat(next, mathLesson).id).toBe('doi');
+    next = removeChat(next, mathLesson, 'doi');
+    const left = chatsForScope(next, mathLesson);
+    expect(left).toHaveLength(1);
+    expect(left[0].messages).toEqual([]);
+    expect(left[0].id).not.toBe('doi');
+    expect(chatsForScope(next, roLesson)).toHaveLength(1);
+    expect(activeChat(next, roLesson).id).toBe('alta');
+  });
+
+  it('pune un X de 44px lângă fiecare chat și cere confirmarea', () => {
+    const source = readFileSync(
+      new URL('../frontend/components/StudyScreens.jsx', import.meta.url),
+      'utf8'
+    );
+    const css = readFileSync(new URL('../frontend/styles.css', import.meta.url), 'utf8');
+    expect(source).toContain('Ștergi conversația?');
+    expect(source).toContain('Anulează');
+    expect(source).toContain('mentor-chat-delete');
+    expect(source).toContain('MentorAPI.deleteChat');
+    expect(css).toMatch(/\.mentor-chat-delete \{[^}]*min-height:\s*44px/);
+    expect(css).toMatch(/\.mentor-chat-delete \{[^}]*min-width:\s*44px/);
+
+    const owner = 'sterge@test';
+    const scope = { subject: 'matematica', grade: 5 };
+    const storage = memoryStorage();
+    let state = startNewChat(emptyState(), scope, { now: 1, id: 'unu', conversationId: 'c1' });
+    state = appendMessage(state, 'unu', { role: 'user', content: 'prima' });
+    state = startNewChat(state, scope, { now: 2, id: 'doi', conversationId: 'c2' });
+    state = openProblemChat(
+      state,
+      scope,
+      { source: 'quiz', id: 'e5n1', prompt: 'Calculează 3² × 2³ − 4².' },
+      { now: 3, id: 'legat', conversationId: 'c3' }
+    );
+    saveTutorChats(state, { storage, owner });
+    const previous = globalThis.localStorage;
+    globalThis.localStorage = storage;
+    try {
+      const html = renderToStaticMarkup(
+        createElement(ProfessorScreen, {
+          userData: { name: 'Ana', email: owner, class: '5', subject: 'matematica', mentorLeft: 4 },
+          studyFocus: { subject: 'matematica', grade: '5' }
+        })
+      );
+      expect(html.match(/mentor-chat-delete/g)).toHaveLength(3);
+      expect(html).toContain('aria-label="Șterge conversația');
+      expect(html).toContain('Chat nou');
+    } finally {
+      if (previous === undefined) delete globalThis.localStorage;
+      else globalThis.localStorage = previous;
+    }
   });
 });

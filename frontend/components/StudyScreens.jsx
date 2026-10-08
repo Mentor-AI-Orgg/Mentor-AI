@@ -18,6 +18,7 @@ import {
   loadTutorChats,
   nameChatsFromLesson,
   openProblemChat,
+  removeChat,
   renameChat,
   saveTutorChats,
   scopeFromSelection,
@@ -138,9 +139,15 @@ function TutorChatsBar({
   renaming,
   draft,
   loading,
+  pendingDelete,
+  deleteError,
+  deleting,
   onDraft,
   onNew,
   onOpen,
+  onAskDelete,
+  onConfirmDelete,
+  onCancelDelete,
   onBeginRename,
   onSaveRename,
   onCancelRename
@@ -171,21 +178,67 @@ function TutorChatsBar({
         </button>
         <div className="mentor-chat-list" role="list" aria-label="Chat-urile tale">
           {chats.map((chat) => (
-            <button
+            <div
               key={chat.id}
-              type="button"
               role="listitem"
               ref={chat.id === activeId ? selectedRef : null}
-              className={`mentor-chat-open ${chat.id === activeId ? 'selected' : ''}`}
-              aria-current={chat.id === activeId ? 'true' : undefined}
-              onClick={() => onOpen(chat.id)}
-              disabled={loading && chat.id !== activeId}
+              className={`mentor-chat-tab ${chat.id === activeId ? 'selected' : ''}`}
             >
-              {chat.title}
-            </button>
+              <button
+                type="button"
+                className="mentor-chat-open"
+                aria-current={chat.id === activeId ? 'true' : undefined}
+                onClick={() => onOpen(chat.id)}
+                disabled={loading && chat.id !== activeId}
+              >
+                {chat.title}
+              </button>
+              <button
+                type="button"
+                className="mentor-chat-delete"
+                aria-label={`Șterge conversația ${chat.title}`}
+                onClick={() => onAskDelete(chat.id)}
+                disabled={loading || deleting}
+              >
+                <i className="fas fa-xmark" aria-hidden="true" />
+              </button>
+            </div>
           ))}
         </div>
       </div>
+      {pendingDelete && (
+        <div
+          className="mentor-delete-confirm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mentor-delete-title"
+        >
+          <p id="mentor-delete-title">Ștergi conversația?</p>
+          {deleteError ? (
+            <p className="mentor-delete-error" role="alert">
+              {deleteError}
+            </p>
+          ) : null}
+          <div className="mentor-delete-actions">
+            <button
+              type="button"
+              className="accent-button"
+              onClick={onConfirmDelete}
+              disabled={deleting}
+            >
+              Șterge
+            </button>
+            <button
+              type="button"
+              className="ghost-button mentor-delete-cancel"
+              onClick={onCancelDelete}
+              disabled={deleting}
+            >
+              Anulează
+            </button>
+          </div>
+        </div>
+      )}
       {current &&
         (renaming ? (
           <form className="mentor-rename-row" onSubmit={save}>
@@ -265,6 +318,9 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
     pinFromFocus(studyFocus.chapter, studyFocus.subject || userData.subject || userData.profile)
   );
   const [rename, setRename] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [deleteError, setDeleteError] = useState('');
+  const [deletingChat, setDeletingChat] = useState(false);
   const commit = useCallback((updater) => {
     const current = stateRef.current;
     const next = typeof updater === 'function' ? updater(current) : updater;
@@ -312,6 +368,8 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
 
   useEffect(() => {
     setRename(null);
+    setPendingDelete(null);
+    setDeleteError('');
   }, [scopeId]);
 
   const visibleChats = chatsForScope(bundle.state, scope);
@@ -507,6 +565,38 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
     setRename(null);
   };
 
+  const askDelete = (id) => {
+    setDeleteError('');
+    setPendingDelete(id);
+  };
+
+  const cancelDelete = () => {
+    if (deletingChat) return;
+    setPendingDelete(null);
+    setDeleteError('');
+  };
+
+  const confirmDelete = async () => {
+    const id = pendingDelete;
+    if (!id || deletingChat) return;
+    const chat = (stateRef.current.chats || []).find((item) => item.id === id);
+    if (!chat || scopeKey(chat) !== scopeKey(scopeRef.current)) {
+      setPendingDelete(null);
+      return;
+    }
+    setDeletingChat(true);
+    setDeleteError('');
+    const result = await MentorAPI.deleteChat(chat.conversationId);
+    setDeletingChat(false);
+    if (!result?.success) {
+      setDeleteError(result?.error || 'Nu am putut șterge conversația.');
+      return;
+    }
+    setRename((current) => (current?.id === id ? null : current));
+    commit((state) => removeChat(state, scopeRef.current, id));
+    setPendingDelete(null);
+  };
+
   const shown = messages.filter((message) => !message.diagnostic);
   const studentName = String(userData.name || '').trim();
   const hello = studentName ? `Salut, ${studentName}!` : 'Salut!';
@@ -590,9 +680,15 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
         renaming={Boolean(rename && rename.id === current?.id)}
         draft={rename?.draft || ''}
         loading={loading}
+        pendingDelete={pendingDelete}
+        deleteError={deleteError}
+        deleting={deletingChat}
         onDraft={(value) => setRename((prev) => (prev ? { ...prev, draft: value } : prev))}
         onNew={startChat}
         onOpen={openChat}
+        onAskDelete={askDelete}
+        onConfirmDelete={confirmDelete}
+        onCancelDelete={cancelDelete}
         onBeginRename={beginRename}
         onSaveRename={saveRename}
         onCancelRename={() => setRename(null)}

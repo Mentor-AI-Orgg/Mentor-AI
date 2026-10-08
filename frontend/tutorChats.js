@@ -217,6 +217,22 @@ function selectChat(state, scope, chatId) {
   };
 }
 
+function removeChat(state, scope = {}, chatId) {
+  const base = normalizeState(state);
+  const id = String(chatId || '');
+  const target = base.chats.find((chat) => chat.id === id);
+  const key = scopeKey(scope);
+  if (!target || scopeKey(target) !== key) return base;
+  const chats = base.chats.filter((chat) => chat.id !== id);
+  const activeByScope = { ...base.activeByScope };
+  if (activeByScope[key] === id) delete activeByScope[key];
+  const next = { version: 1, chats, activeByScope };
+  const remaining = chatsForScope(next, scope);
+  if (!remaining.length) return startNewChat(next, scope);
+  if (!next.activeByScope[key]) return selectChat(next, scope, remaining[remaining.length - 1].id);
+  return next;
+}
+
 function startNewChat(state, scope = {}, options = {}) {
   const base = normalizeState(state);
   const list = chatsForScope(base, scope);
@@ -518,6 +534,7 @@ export {
   activeChat,
   selectChat,
   startNewChat,
+  removeChat,
   openProblemChat,
   problemKey,
   ensureActiveChat,

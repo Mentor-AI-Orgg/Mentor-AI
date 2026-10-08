@@ -192,10 +192,19 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
 });
 
 router.delete("/:conversationId", (req, res) => {
-  // Aceeași namespace-uire ca la scriere, ca un utilizator să nu poată șterge
-  // istoricul conversației altcuiva.
-  memory.clear(`${req.auth.email}::${req.params.conversationId}`);
-  res.json({ cleared: true });
+  // Mesajele stau în store-ul „memory”, înregistrat la registrul GDPR.
+  // Ștergerea scoate cheia din store, nu o ascunde. Namespace-ul e e-mailul
+  // sesiunii, ca un elev să nu poată șterge conversația altcuiva.
+  const requested = String(req.params.conversationId || "").trim();
+  const broken = !requested || requested.length > 80 || requested.includes("::") || [...requested].some(char => {
+    const code = char.charCodeAt(0);
+    return code < 32 || char === "/" || char === "\\";
+  });
+  if (broken) {
+    return res.status(400).json({ error: "Conversația nu e validă." });
+  }
+  memory.clear(`${req.auth.email}::${requested}`);
+  res.json({ cleared: true, conversation_id: requested });
 });
 
 module.exports = router;
