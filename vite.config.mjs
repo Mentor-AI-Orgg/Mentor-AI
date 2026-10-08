@@ -5,6 +5,23 @@ import react from '@vitejs/plugin-react';
 
 const repoRoot = path.dirname(fileURLToPath(import.meta.url));
 
+function sharedPasswordList() {
+  return {
+    name: 'shared-password-list',
+    transform(code, id) {
+      if (!id.endsWith('commonPasswords.js')) return null;
+      if (!code.includes('module.exports')) return null;
+      return {
+        code: code.replace(
+          'module.exports = { isCommonPassword, commonPasswordCount };',
+          'export { isCommonPassword, commonPasswordCount };'
+        ),
+        map: null
+      };
+    }
+  };
+}
+
 function sentryScrubForDev() {
   return {
     name: 'sentry-scrub-dev',
@@ -21,7 +38,7 @@ function sentryScrubForDev() {
 
 export default defineConfig({
   root: 'frontend',
-  plugins: [react(), sentryScrubForDev()],
+  plugins: [react(), sharedPasswordList(), sentryScrubForDev()],
   publicDir: 'public',
   resolve: {
     alias: {
@@ -31,7 +48,10 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    sourcemap: false
+    sourcemap: false,
+    commonjsOptions: {
+      include: [/shared\//, /node_modules/]
+    }
   },
   server: {
     host: '127.0.0.1',
@@ -49,6 +69,14 @@ export default defineConfig({
         changeOrigin: true
       },
       '/terms.html': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      },
+      '/confidentialitate': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      },
+      '/termeni': {
         target: 'http://localhost:3001',
         changeOrigin: true
       }

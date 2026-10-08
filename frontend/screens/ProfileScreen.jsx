@@ -274,8 +274,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
       onToast?.('Nu am putut șterge contul.', 'warning');
       return;
     }
-    onToast?.('Contul a fost șters.', 'success');
-    onLogout();
+    onLogout({ reason: 'deleted' });
   };
 
   return (
@@ -642,10 +641,10 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         <section id="profil-parinte" className="surface rounded-3xl p-5 profile-tool-card">
           <div className="eyebrow">{t('profile.parentEyebrow')}</div>
           <h3 className="display-font profile-tool-title">{t('profile.parentTitle')}</h3>
-          <p className="detector-demo-note">{t('profile.parentNote', { email: userData.parentEmail || t('profile.parentEmailMissing') })}</p>
+          <p className="detector-demo-note">{t(userData.parentEmails === 'daily' ? 'profile.parentNoteDaily' : userData.parentEmails === 'off' ? 'profile.parentNoteOff' : 'profile.parentNoteWeekly', { email: userData.parentEmail || t('profile.parentEmailMissing') })}</p>
           <div className="profile-inbox">
             {inbox.length === 0 ? (
-              <p className="profile-empty-note">{t('profile.parentEmpty')}</p>
+              <p className="profile-empty-note">{t(userData.parentEmails === 'daily' ? 'profile.parentEmptyDaily' : userData.parentEmails === 'off' ? 'profile.parentEmptyOff' : 'profile.parentEmptyWeekly')}</p>
             ) : (
               inbox.slice(0, 3).map(message => (
                 <article key={message.id} className="profile-inbox-item">
@@ -662,7 +661,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         <Leaderboard />
       </div>
       <div className="mx-5 mt-5 grid gap-3">
-        <button type="button" onClick={exportAccount} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition" disabled={exporting}>
+        <button type="button" onClick={exportAccount} className="surface rounded-3xl p-4 text-left surface-action" disabled={exporting}>
           <i className="fas fa-download mr-2"></i>{exporting ? t('profile.exporting') : t('profile.export')}
         </button>
         {deleteOpen ? (
@@ -685,13 +684,13 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
             </button>
           </form>
         ) : (
-          <button type="button" onClick={() => setDeleteOpen(true)} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">
+          <button type="button" onClick={() => setDeleteOpen(true)} className="surface rounded-3xl p-4 text-left surface-action">
             <i className="fas fa-trash mr-2"></i>{t('profile.delete')}
           </button>
         )}
-        <a href="/confidentialitate" target="_blank" rel="noopener noreferrer" className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">{t('profile.privacy')}</a>
-        <a href="/termeni" target="_blank" rel="noopener noreferrer" className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">{t('profile.terms')}</a>
-        <button type="button" onClick={onLogout} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">
+        <a href="/confidentialitate" target="_blank" rel="noopener noreferrer" className="surface rounded-3xl p-4 text-left surface-action">{t('profile.privacy')}</a>
+        <a href="/termeni" target="_blank" rel="noopener noreferrer" className="surface rounded-3xl p-4 text-left surface-action">{t('profile.terms')}</a>
+        <button type="button" onClick={onLogout} className="surface rounded-3xl p-4 text-left surface-action">
           <i className="fas fa-arrow-right-from-bracket mr-2"></i>{t('profile.logout')}
         </button>
       </div>

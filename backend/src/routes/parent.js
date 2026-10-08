@@ -4,7 +4,7 @@ const router = express.Router();
 const { findAccount, listAccounts, normalizeEmail } = require("../data/authStore");
 const { publicId, setSettings, getSettings, consumePrivatizeToken } = require("../data/friendStore");
 const { getUser } = require("../data/economyStore");
-const { deliverMessage } = require("../notify/deliver");
+const { deliverMessage, warnIfSmtpMissing } = require("../notify/deliver");
 const { publicBaseUrl } = require("../publicUrl");
 const {
   issueMagicToken,
@@ -71,16 +71,20 @@ router.post("/unsubscribe", (req, res) => {
 router.post("/magic", authLimiter, async (req, res) => {
   const email = normalizeEmail(req.body?.email || "");
   const account = findAccount(email);
+  const smtpMissing = warnIfSmtpMissing("parent_magic");
   if (account && account.role === "parent") {
     const token = issueMagicToken(account.email);
     const link = `${publicBaseUrl(req)}/#/parinte/${token}`;
     if (process.env.NODE_ENV !== "production") console.log(`[DEV] ${link}`);
-    await deliverMessage({
-      to: account.email,
-      subject: "Intră în zona de părinte pe Sunt de 10",
-      body: `Linkul este valabil 15 minute și se folosește o singură dată:\n${link}`,
-      channel: "email"
-    });
+    if (!smtpMissing) {
+      await deliverMessage({
+        to: account.email,
+        subject: "Intră în zona de părinte pe Sunt de 10",
+        body: `Linkul este valabil 15 minute și se folosește o singură dată:\n${link}`,
+        channel: "email",
+        action: "parent_magic"
+      });
+    }
   }
   res.json(SAME);
 });

@@ -172,9 +172,15 @@
     "logout": "Sign out",
     "parentEyebrow": "Parent",
     "parentTitle": "Your activity is emailed home.",
-    "parentNote": "The parent at {email} gets one study digest a day. They do not create an account.",
+    "parentNote": "The parent at {email} chooses how often the digest arrives. It starts at once a week.",
+    "parentNoteWeekly": "The parent at {email} gets one digest a week when you study. They do not create an account.",
+    "parentNoteDaily": "The parent at {email} gets one digest a day when you study. They do not create an account.",
+    "parentNoteOff": "The parent at {email} is not getting emails right now. They can turn them on from the parent area.",
     "parentEmailMissing": "the address given at signup",
-    "parentEmpty": "No message copies yet. The study email goes out once a day."
+    "parentEmpty": "No message copies yet. The digest follows the parent’s choice. It starts at once a week.",
+    "parentEmptyWeekly": "No message copies yet. The study email goes out once a week.",
+    "parentEmptyDaily": "No message copies yet. The study email goes out once a day.",
+    "parentEmptyOff": "No message copies yet. Emails to the parent are turned off."
   },
   "toast": {
     "welcome": "Welcome!",

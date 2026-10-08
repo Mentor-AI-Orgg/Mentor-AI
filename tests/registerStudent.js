@@ -31,6 +31,7 @@ async function registerPending(app, overrides = {}) {
         confirmPassword: overrides.confirmPassword || password,
         class: String(overrides.class || '5'),
         parentEmail,
+        acceptTerms: true,
         role: overrides.role || 'student',
         name: overrides.name || '',
         phone: overrides.phone || '',

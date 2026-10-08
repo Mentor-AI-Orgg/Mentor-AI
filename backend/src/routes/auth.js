@@ -40,7 +40,7 @@ const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, 
 const { usernameIssue } = require("../safety/usernamePolicy");
 const { publicBaseUrl } = require("../publicUrl");
 const { ensureUser, pushNotification } = require("../data/economyStore");
-const { deliverMessage, smtpConfigured } = require("../notify/deliver");
+const { deliverMessage, smtpConfigured, warnIfSmtpMissing } = require("../notify/deliver");
 const { MASCOT_NAME } = require("../config/mascot");
 const {
   loginState,
@@ -346,17 +346,22 @@ router.post("/forgot-password", authLimiter, validateBody(forgotPasswordSchema),
     const who = account.profile.username || "copilul";
     const parentBody = `Copilul ${who} a cerut o parolă nouă.\n${link}`;
     pushNotification(account.email, parentEmail || account.email, subject, isInternalEmail(account.email) ? parentBody : body, "email", { mocked: !smtpConfigured() });
-    if (parentEmail) {
-      await deliverMessage({
-        to: parentEmail,
-        subject,
-        body: parentBody,
-        channel: "email"
-      });
+    if (!warnIfSmtpMissing("forgot_password")) {
+      if (parentEmail) {
+        await deliverMessage({
+          to: parentEmail,
+          subject,
+          body: parentBody,
+          channel: "email",
+          action: "forgot_password"
+        });
+      }
+      if (!isInternalEmail(account.email)) {
+        await deliverMessage({ to: account.email, subject, body, channel: "email", action: "forgot_password" });
+      }
     }
-    if (!isInternalEmail(account.email)) {
-      await deliverMessage({ to: account.email, subject, body, channel: "email" });
-    }
+  } else if (warnIfSmtpMissing("forgot_password")) {
+    /* același jurnal, fie că există contul sau nu; fără link în log */
   }
 
   res.json({

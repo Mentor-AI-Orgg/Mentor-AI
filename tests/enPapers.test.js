@@ -104,7 +104,7 @@ describe('EN papers and barem', () => {
     const ids = new Set();
     let sawPoetry = false;
     let sawProse = false;
-    for (let i = 0; i < 8; i += 1) {
+    for (let i = 0; i < 20; i += 1) {
       const paper = generatePaper('romana', [...ids]);
       ids.add(paper.id);
       expect(paper.generated).toBe(true);
@@ -145,7 +145,7 @@ describe('EN papers and barem', () => {
       const score = scoreAttempt(paper.id, answers);
       expect(score.points).toBeGreaterThanOrEqual(40);
     }
-    expect(ids.size).toBe(8);
+    expect(ids.size).toBe(20);
     expect(letters.size).toBeGreaterThan(1);
     expect(sawPoetry).toBe(true);
     expect(sawProse).toBe(true);

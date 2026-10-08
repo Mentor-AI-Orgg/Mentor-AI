@@ -54,6 +54,15 @@ const ART = {
   'trist-bland': '/mascot/explica.png'
 };
 
+const ART_SIZE = {
+  '/mascot/salut.png': [249, 420],
+  '/mascot/mandru.png': [232, 437],
+  '/mascot/gandeste.png': [186, 384],
+  '/mascot/explica.png': [610, 520],
+  '/mascot/bucuros.png': [268, 418],
+  '/mascot/cap.png': [249, 220]
+};
+
 const POSE = {
   salut: 'salut',
   incurajeaza: 'salut',
@@ -98,6 +107,8 @@ const Mascota = ({ mood = 'salut', size = 'md', message = '', art = '', pulse = 
   const src = size === 'sm'
     ? '/mascot/cap.png'
     : (art === 'semnatura' ? '/mascot/explica.png' : ART[safeMood]);
+  const [naturalWidth, naturalHeight] = ART_SIZE[src] || [1, 1];
+  const frameHeight = Math.max(1, Math.round(box * naturalHeight / naturalWidth));
   const pose = size === 'sm' ? 'cap' : (art === 'semnatura' ? 'explica' : (POSE[safeMood] || 'salut'));
   const pulseClass = pulse === 'succes' ? ' is-succes' : pulse === 'gresit' ? ' is-gresit' : '';
   const typingClass = typing ? ' is-typing' : '';
@@ -113,7 +124,7 @@ const Mascota = ({ mood = 'salut', size = 'md', message = '', art = '', pulse = 
             data-size={size}
             src={src}
             width={box}
-            height={box}
+            height={frameHeight}
             alt={label}
             aria-label={label}
           />

@@ -256,12 +256,15 @@ function reportClientError({ message, file, line }) {
   return noteIncident({ type: "client_error", id });
 }
 
-function recordMailCode(code) {
+function recordMailCode(code, extra) {
   const safe = String(code || "").trim();
   if (!/^[A-Za-z0-9_]{1,40}$/.test(safe)) return;
+  const action = String(extra && extra.action || "").trim();
+  const entry = { at: new Date().toISOString(), code: safe };
+  if (/^[a-z0-9_]{1,40}$/.test(action)) entry.action = action;
   let line = "";
   try {
-    line = logError({ at: new Date().toISOString(), code: safe });
+    line = logError(entry);
   } catch {
     return;
   }

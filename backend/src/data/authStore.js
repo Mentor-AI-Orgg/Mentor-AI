@@ -8,6 +8,7 @@
 // supraviețuiesc restartului procesului.
 
 const crypto = require("crypto");
+const { TERMS_VERSION } = require("../../../shared/terms");
 const { promisify } = require("util");
 const persistence = require("./persistence");
 
@@ -135,6 +136,8 @@ async function createStudentAccount({ username, password, className, parentEmail
       consent: { status: "notified", at: now, method: "email-on-file" },
       parentalConsentAt: null,
       privacyAcceptedAt: null,
+      termsAcceptedAt: now,
+      termsVersion: TERMS_VERSION,
       createdAt: now
     };
     ACCOUNTS.set(email, account);

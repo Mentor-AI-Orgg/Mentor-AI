@@ -178,10 +178,38 @@ describe('livrare SMTP', () => {
     expect(sendMail).not.toHaveBeenCalled();
     const logged = `${mailText(errorSpy)}\n${fs.readFileSync(path.join(dir, 'errors.log'), 'utf8')}`;
     expect(logged).toContain('smtp_unconfigured');
+    expect(logged).toContain('forgot_password');
     expect(logged).not.toContain(created.parentEmail);
     expect(logged).not.toContain(created.username);
     expect(logged).not.toContain(PASSWORD);
     expect(logged).not.toContain('/#/parola/');
+  });
+
+  it('scrie parent_magic când SMTP lipsește, cu același răspuns', async () => {
+    arm();
+    applySmtp({
+      SMTP_HOST: '',
+      SMTP_PORT: '',
+      SMTP_USER: '',
+      SMTP_PASS: '',
+      SMTP_FROM: ''
+    });
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'smtp-parent-'));
+    process.env.ERROR_LOG_DIR = dir;
+    const { app } = createApp({ autosave: false });
+    const created = await registerGranted(app);
+    errorSpy.mockClear();
+    const known = await request(app).post('/api/parent/magic').send({ email: created.parentEmail });
+    const missing = await request(app).post('/api/parent/magic').send({ email: uniqueEmail('nimeni') });
+    expect(known.status).toBe(missing.status);
+    expect(known.body).toEqual(missing.body);
+    expect(known.body.message).toMatch(/Dacă există un cont de părinte/);
+    expect(sendMail).not.toHaveBeenCalled();
+    const logged = `${mailText(errorSpy)}\n${fs.readFileSync(path.join(dir, 'errors.log'), 'utf8')}`;
+    expect(logged).toContain('smtp_unconfigured');
+    expect(logged).toContain('parent_magic');
+    expect(logged).not.toContain(created.parentEmail);
+    expect(logged).not.toContain('/#/parinte/');
   });
 
   it('scrie doar codul când SMTP eșuează, apoi răspunde la fel', async () => {

@@ -18,16 +18,19 @@ const { createApp } = require("./src/app");
 if (process.env.NODE_ENV === "production") {
   const missing = ["PREVIEW_COOKIE_SECRET", "SESSION_SECRET"].filter(key => String(process.env[key] || "").trim().length < 32);
   if (missing.length) {
-    console.error(`[prelansare] lipsesc secretele: ${missing.join(", ")}. Site-ul rămâne închis până le pui în DirectAdmin.`);
+    const sitePublic = ["1", "true", "yes"].includes(String(process.env.SITE_PUBLIC || "").trim().toLowerCase());
+    if (sitePublic) {
+      console.error(`⚠ SITE_PUBLIC=1: site-ul e DESCHIS, dar lipsesc secretele: ${missing.join(", ")}.`);
+    } else {
+      console.error(`[prelansare] lipsesc secretele: ${missing.join(", ")}. Site-ul rămâne închis până le pui în DirectAdmin.`);
+    }
   }
 }
 
 const { app, restored } = createApp();
-const { run: prelansare } = require("./src/ops/prelansare");
-for (const item of prelansare().items) {
-  if (!item.ok) {
-    console.log(`[prelansare] ${item.key}: ${item.required ? "lipsește, site-ul rămâne închis" : "opțional, lipsește"}`);
-  }
+const { run: prelansare, launchLog } = require("./src/ops/prelansare");
+for (const line of launchLog(prelansare().items)) {
+  console.error(line);
 }
 
 const { ensureRecentBackup, startDailyBackup } = require("./src/ops/backup");
