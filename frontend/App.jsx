@@ -446,7 +446,8 @@ function AppShell({ userData, setUserData }) {
       subject: extras.subject !== undefined ? extras.subject : prev.subject,
       grade: extras.grade || prev.grade,
       chapter: extras.chapter || null,
-      track: extras.track !== undefined ? extras.track : prev.track
+      track: extras.track !== undefined ? extras.track : prev.track,
+      tutorProblem: extras.tutorProblem || null
     }));
     setNavScreen(target === 'calendar' ? 'calendar' : (target === 'caiet' || target === 'ajutor') ? 'home' : target);
     setScreen(target);

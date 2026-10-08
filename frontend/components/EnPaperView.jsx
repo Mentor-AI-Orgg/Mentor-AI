@@ -5,6 +5,7 @@ import QuoteCard from './QuoteCard.jsx';
 import GeoFigure from './GeoFigure.jsx';
 import { MASCOT_NAME } from '../config/mascot.js';
 import { TEST_OPEN_ERROR, mergeExamSession, takeTicket, ticketIsCurrent } from '../testOpen.js';
+import TestReview from './TestReview.jsx';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -78,7 +79,7 @@ function saveDraft(paperId, answers) {
   }
 }
 
-const EnPaperView = ({ paper, onClose, session: initialSession }) => {
+const EnPaperView = ({ paper, onClose, session: initialSession, onAskProblem, onOpenNotebook, onOpenLesson }) => {
   const [session, setSession] = useState(initialSession || null);
   const [answers, setAnswers] = useState(() => loadDraft(paper?.id));
   const [starting, setStarting] = useState(false);
@@ -289,6 +290,33 @@ const EnPaperView = ({ paper, onClose, session: initialSession }) => {
           ) : null}
           <QuoteCard grade={result.grade} seed={result.grade} className="quote-inline" />
           <p>Timp de lucru: {clock(session?.durationMs || elapsed)}. Baremul e mai jos, după predare. Părintele primește nota, durata și ce ai răspuns.</p>
+          <TestReview
+            items={(result.items || []).map(item => ({
+              id: `${paper.id}:${item.block}:${item.n}`,
+              prompt: `${item.block}, ${item.n}. ${item.prompt || ''}`,
+              given: item.given || item.letter || item.text || '',
+              correct: item.expected || item.sample || '',
+              explain: item.teacher || item.explain || item.barem || '',
+              steps: item.steps,
+              ok: item.ok,
+              verdict: item.verdict,
+              lessonId: paper.subject === 'romana' ? 'strategie' : 'proba',
+              lessonTitle: paper.title || '',
+              rubric: item.rubric
+            }))}
+            onOpenLesson={onOpenLesson}
+            onOpenNotebook={onOpenNotebook}
+            onAsk={item => onAskProblem?.({
+              source: 'en',
+              id: item.id,
+              paperId: paper.id,
+              prompt: item.prompt,
+              lessonId: item.lessonId,
+              lessonTitle: item.lessonTitle,
+              subject: paper.subject,
+              grade: 8
+            })}
+          />
         </div>
       )}
 

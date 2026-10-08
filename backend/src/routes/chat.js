@@ -6,6 +6,8 @@ const { SAFETY_REFUSAL_TEXT, DIRECT_ANSWER_GUARD_TEXT, CRISIS_HELP_TEXT } = requ
 const { normalizeGrade, normalizeSubject } = require("../data/gimnaziuGuide");
 const { answerFromLessons } = require("../mentor/localMentor");
 const { maybeTutorLlm } = require("../mentor/tutorLlm");
+const { resolveProblem, refFromHistory, refFromBody } = require("../mentor/problemContext");
+const { walkProblem, lockedProblemText, hiddenProblemText } = require("../mentor/problemWalk");
 const { accountIsOpen } = require("../data/authStore");
 const memory = require("../memory/memoryStore");
 const { validateBody } = require("../middleware/validate");
@@ -68,7 +70,18 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
     });
   }
 
-  if (!safety.safe) {
+  const history = memory.get(conversationId);
+  const storedRef = refFromHistory(history);
+  const incomingRef = refFromBody(req.body);
+  const problemRef = storedRef || incomingRef;
+  const resolved = problemRef ? resolveProblem(req.auth.email, problemRef) : null;
+  const ready = resolved?.status === "ready";
+  const softCheat = !safety.safe
+    && safety.kind === "caution"
+    && Array.isArray(safety.flags)
+    && safety.flags.every(flag => flag === "cheating_attempt");
+
+  if (!safety.safe && !(ready && softCheat)) {
     return res.json({
       response: SAFETY_REFUSAL_TEXT[lang] || SAFETY_REFUSAL_TEXT.ro,
       engine_used: "safety_filter",
@@ -80,7 +93,7 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
     });
   }
 
-  if (safety.isDirectRequest) {
+  if (safety.isDirectRequest && !ready) {
     return res.json({
       response: DIRECT_ANSWER_GUARD_TEXT[lang] || DIRECT_ANSWER_GUARD_TEXT.ro,
       engine_used: "scaffolding_guard",
@@ -92,17 +105,28 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
     });
   }
 
-  const history = memory.get(conversationId);
-  let local = answerFromLessons({ message, subject, grade: class_level, history, language: lang });
-  if (local && local.confident === false) {
-    const llm = await maybeTutorLlm({
-      message,
-      subject,
-      grade: class_level,
-      language: lang,
-      local
-    });
-    if (llm && llm.text) local = llm;
+  let local;
+  let problemCard = null;
+  if (resolved?.status === "ready") {
+    local = walkProblem({ message, problem: resolved.dossier, history });
+    problemCard = resolved.card || null;
+  } else if (resolved?.status === "locked") {
+    local = lockedProblemText();
+    problemCard = resolved.card || null;
+  } else if (resolved) {
+    local = hiddenProblemText();
+  } else {
+    local = answerFromLessons({ message, subject, grade: class_level, history, language: lang });
+    if (local && local.confident === false) {
+      const llm = await maybeTutorLlm({
+        message,
+        subject,
+        grade: class_level,
+        language: lang,
+        local
+      });
+      if (llm && llm.text) local = llm;
+    }
   }
   const result = {
     response: local.text,
@@ -111,11 +135,22 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
     fallback_path: [local.engine || "lectii"]
   };
 
-  memory.add(conversationId, "user", message);
+  const problemMeta = problemRef
+    ? {
+      problemRef: {
+        source: problemRef.source,
+        id: problemRef.id,
+        sessionId: problemRef.sessionId || "",
+        paperId: problemRef.paperId || ""
+      }
+    }
+    : {};
+  memory.add(conversationId, "user", message, problemMeta);
   memory.add(conversationId, "assistant", result.response, {
     engine: result.engine_used,
     plan_id: normalizedPlanId,
-    lessonId: local.lessonId || ""
+    lessonId: local.lessonId || "",
+    ...problemMeta
   });
   const scaffoldingLevel = Math.min(3, 1 + Math.floor(history.length / 3));
 
@@ -151,7 +186,8 @@ router.post("/", validateBody(chatSchema), async (req, res) => {
     processing_time_ms: Date.now() - startTotal,
     conversation_id: requestedConversationId,
     plan_id: normalizedPlanId,
-    progress: progress ? { awarded: progress.awarded, summary: progress.summary } : null
+    progress: progress ? { awarded: progress.awarded, summary: progress.summary } : null,
+    ...(problemCard ? { problem_card: problemCard } : {})
   });
 });
 

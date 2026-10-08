@@ -57,6 +57,9 @@ function judgeItem(id, answer) {
 function remember(card, correct, now, info = {}) {
   const results = Array.isArray(card.results) ? card.results.slice(-11) : [];
   results.push({ at: now, correct: Boolean(correct) });
+  const given = info.given != null && String(info.given).trim()
+    ? clip(info.given, 400)
+    : clip(card.given || "", 400);
   return {
     box: card.box,
     streak: card.streak,
@@ -66,6 +69,7 @@ function remember(card, correct, now, info = {}) {
     subject: clip(info.subject || card.subject || "", 40),
     grade: clip(info.grade || card.grade || "", 8),
     skill: clip(info.skill || card.skill || "", 80),
+    given,
     results
   };
 }
@@ -88,7 +92,8 @@ function noteCards(user, items = [], info = {}) {
       lessonId: info.lessonId || "",
       subject: info.subject || "",
       grade: info.grade || "",
-      skill: item.skill || item.point || ""
+      skill: item.skill || item.point || "",
+      given: item.given || ""
     });
   }
 }
@@ -102,7 +107,8 @@ function publicCard(id, card, now) {
     grade: card.grade || "",
     due: card.due || null,
     box: card.box || 0,
-    ready: Number(card.due || 0) <= now
+    ready: Number(card.due || 0) <= now,
+    prompt: promptFor(id)
   };
 }
 
@@ -113,7 +119,8 @@ function snapshot(user, now = Date.now()) {
   const due = buildDeck(boxes, now, left).map(row => ({
     ...row,
     lessonId: resolveLessonId(row.lessonId),
-    prompt: promptFor(row.id)
+    prompt: promptFor(row.id),
+    given: undefined
   }));
   const groups = {};
   for (const [id, card] of Object.entries(boxes)) {

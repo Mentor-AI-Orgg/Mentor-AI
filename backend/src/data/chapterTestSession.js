@@ -91,6 +91,13 @@ function finishChapterTest(userId, sessionId, score = {}) {
     correct: Number(score.correct) || 0,
     total: Number(score.total) || 0
   };
+  if (Array.isArray(score.answers)) {
+    session.answers = score.answers.map(row => ({
+      id: String(row?.id || row?.card_id || ""),
+      given: String(row?.given == null ? "" : row.given).slice(0, 2000),
+      ok: Boolean(row?.ok)
+    })).filter(row => row.id);
+  }
   return session;
 }
 

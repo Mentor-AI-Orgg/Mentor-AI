@@ -17,6 +17,7 @@ import {
   lessonFromChapter,
   loadTutorChats,
   nameChatsFromLesson,
+  openProblemChat,
   renameChat,
   saveTutorChats,
   scopeFromSelection,
@@ -35,6 +36,7 @@ const chatRequest = async ({
   classLevel,
   language,
   planId,
+  problem,
   mockReply
 }) => {
   const result = await MentorAPI.chat({
@@ -43,7 +45,17 @@ const chatRequest = async ({
     subject,
     class_level: classLevel,
     language,
-    plan_id: planId
+    plan_id: planId,
+    ...(problem?.id
+      ? {
+          problem: {
+            source: problem.source,
+            id: problem.id,
+            session_id: problem.sessionId || '',
+            paper_id: problem.paperId || ''
+          }
+        }
+      : {})
   });
   if (result.rateLimited) {
     return {
@@ -215,6 +227,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
   }));
   const stateRef = useRef(bundle.state);
   const sendingRef = useRef(false);
+  const askedProblemRef = useRef('');
   const ownerRef = useRef(owner);
   ownerRef.current = owner;
   const [draft, setDraft] = useState('');
@@ -390,6 +403,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
       return appendMessage(ensured.state, chatId, { role: 'user', content: outgoing });
     });
     setLoading(true);
+    const linked = stateRef.current.chats?.find((chat) => chat.id === chatId)?.problem || null;
     try {
       const reply = await chatRequest({
         message: outgoing,
@@ -398,6 +412,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
         classLevel: scopeNow.grade,
         language: userData.language || 'ro',
         planId: userData.planId || 'free',
+        problem: linked,
         mockReply:
           'Hai să o luăm pe înțelesul tău. Spune-mi mai întâi ce ai încercat și ce ți se pare neclar.'
       });
@@ -423,6 +438,33 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
   };
 
   const askSimpler = () => send('Nu am înțeles', { keepDraft: true, forceChat: true });
+  const askDeeper = () => send('Tot nu înțeleg', { keepDraft: true, forceChat: true });
+
+  const problemFocus = studyFocus.tutorProblem;
+  const problemFocusKey = problemFocus?.id
+    ? `${problemFocus.source || ''}:${problemFocus.id}:${problemFocus.sessionId || ''}:${problemFocus.paperId || ''}`
+    : '';
+
+  useEffect(() => {
+    if (!problemFocusKey || !problemFocus?.id) return;
+    if (askedProblemRef.current === problemFocusKey) return;
+    askedProblemRef.current = problemFocusKey;
+    const nextScope = scopeFromSelection({
+      subject: studyFocus.subject || problemFocus.subject || subject,
+      grade: studyFocus.grade || problemFocus.grade || grade,
+      lesson: pinFromFocus(studyFocus.chapter, studyFocus.subject || problemFocus.subject || subject)
+    });
+    scopeRef.current = nextScope;
+    let chat = null;
+    commit((state) => {
+      const next = openProblemChat(state, nextScope, problemFocus);
+      chat = activeChat(next, nextScope);
+      return next;
+    });
+    if (chat && !chat.messages.some((item) => item.role === 'user')) {
+      send('Nu înțeleg exercițiul ăsta. Explică-mi de ce răspunsul meu nu e bun și care e regula.');
+    }
+  }, [problemFocusKey]); // deschide o singură dată chatul legat de exercițiu
 
   const beginRename = () => {
     if (!current) return;
@@ -536,6 +578,15 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
         onCancelRename={() => setRename(null)}
       />
       <section className="mentor-thread surface" aria-busy={loading}>
+        {current?.problem?.prompt && (
+          <aside className="mentor-problem-card">
+            <span className="eyebrow">
+              Exercițiul din test
+              {current.problem.lessonTitle ? ` · ${current.problem.lessonTitle}` : ''}
+            </span>
+            <p><MathText text={current.problem.prompt} /></p>
+          </aside>
+        )}
         {shown.length === 0 && (
           <div className="mentor-empty">
             <h2 className="display-font">
@@ -584,14 +635,26 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
               <div className={latestTutor ? 'mentor-reply-with-help' : 'mentor-reply'}>
                 {bubble}
                 {latestTutor && (
-                  <button
-                    type="button"
-                    className="ghost-button mentor-unclear"
-                    onClick={askSimpler}
-                    disabled={loading}
-                  >
-                    Nu am înțeles
-                  </button>
+                  <div className="test-review-actions">
+                    <button
+                      type="button"
+                      className="ghost-button mentor-unclear"
+                      onClick={askSimpler}
+                      disabled={loading}
+                    >
+                      Nu am înțeles
+                    </button>
+                    {current?.problem && (
+                      <button
+                        type="button"
+                        className="ghost-button mentor-unclear"
+                        onClick={askDeeper}
+                        disabled={loading}
+                      >
+                        Tot nu înțeleg
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             </div>

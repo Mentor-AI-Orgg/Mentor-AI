@@ -148,5 +148,6 @@ module.exports = {
   checkStep,
   examShape,
   iiiFromProblem,
-  allProblems
+  allProblems,
+  lessonTitle
 };

@@ -6,6 +6,7 @@ const {
   checkStep
 } = require('../data/problemBank');
 const { ensureUser, getTodayKey } = require('../data/economyStore');
+const { releaseItems, noteStepAnswer } = require('../data/practiceGate');
 
 const router = express.Router();
 const HOUR = 60 * 60 * 1000;
@@ -54,6 +55,8 @@ router.post('/check-step', (req, res) => {
   if (!problem || !(problem.steps || []).some(step => step.id === stepId)) {
     return res.status(404).json({ error: 'Nu există pasul ăsta.' });
   }
+  const user = ensureUser(req.auth.email);
+  noteStepAnswer(user, problemId, stepId, answer);
   const { row } = attemptOf(req.auth.email, problemId, stepId);
   if (row.solved) {
     const step = problem.steps.find(item => item.id === stepId);
@@ -75,9 +78,26 @@ router.post('/check-step', (req, res) => {
   return res.json(result);
 });
 
+function releaseStep(email, problem) {
+  const [subject, grade, chapterId] = String(problem.key || '').split(':');
+  releaseItems(ensureUser(email), [{
+    id: problem.id,
+    given: '',
+    ok: false,
+    lesson: problem.lesson
+  }], {
+    source: 'step',
+    subject: subject || 'matematica',
+    grade: grade || '',
+    chapterId: chapterId || '',
+    lessonId: problem.lesson || ''
+  });
+}
+
 router.post('/reveal', (req, res) => {
   const problem = findProblem(String(req.body?.problem_id || ''));
   if (!problem) return res.status(404).json({ error: 'Nu există problema asta.' });
+  releaseStep(req.auth.email, problem);
   res.json({
     model: problem.model,
     steps: (problem.steps || []).map(step => ({
@@ -134,6 +154,7 @@ router.post('/self-score', (req, res) => {
     return { id: part.id, points: Math.min(Number(part.points) || 0, partPoints), max: Number(part.points) || 0 };
   });
   const user = ensureUser(req.auth.email);
+  releaseStep(req.auth.email, problem);
   pushLog(user, {
     id: problem.id,
     mode,

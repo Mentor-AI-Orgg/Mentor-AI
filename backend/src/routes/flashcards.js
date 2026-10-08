@@ -18,6 +18,7 @@ const {
   finishChapterTest,
   answerKeyVisible
 } = require("../data/chapterTestSession");
+const { markOpen, releaseItems } = require("../data/practiceGate");
 
 function sealedCheck(result) {
   const verdict = result.verdict || (result.ok ? "exact" : "wrong");
@@ -123,6 +124,12 @@ router.post("/generate", (req, res) => {
       chapterId: pack.chapterId
     });
     sessionId = session.id;
+  }
+  if (pack.cards.length && (kind === "test" || kind === "flashcards")) {
+    markOpen(user, pack.cards.map(card => card.id), {
+      source: kind === "test" ? "quiz" : "flashcard",
+      sessionId
+    });
   }
 
   res.json({
@@ -311,8 +318,26 @@ router.post("/finish", async (req, res) => {
 
   let award = null;
   let duration = capDurationMs(durationMs);
+  releaseItems(user, items.map(item => ({
+    id: item.id,
+    given: item.given,
+    ok: item.ok,
+    lesson: item.lesson
+  })), {
+    source: isTest ? "quiz" : "flashcard",
+    sessionId: session?.id || "",
+    subject: scoredSubject,
+    grade: scoredGrade,
+    chapterId: scoredChapter,
+    lessonId: String(lessonId || "")
+  });
+
   if (session) {
-    const closed = finishChapterTest(req.auth.email, session.id, { correct, total });
+    const closed = finishChapterTest(req.auth.email, session.id, {
+      correct,
+      total,
+      answers: items.map(item => ({ id: item.id, given: item.given, ok: item.ok }))
+    });
     duration = closed ? closed.durationMs : duration;
   }
 

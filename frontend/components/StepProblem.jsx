@@ -3,10 +3,11 @@ import { MentorAPI } from '../apiClient.js';
 import MathText from './MathText.jsx';
 import GeoFigure from './GeoFigure.jsx';
 import { effortLine } from '../i18n/quizFeedback.js';
+import TestReview from './TestReview.jsx';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
-export default function StepProblem({ problems = [], lesson, onClose }) {
+export default function StepProblem({ problems = [], lesson, subject = 'matematica', grade = '', onClose, onAskProblem, onOpenLesson, onOpenNotebook }) {
   const list = problems.filter(Boolean);
   const [pick, setPick] = useState(lesson ? 0 : -1);
   const problem = list[pick] || null;
@@ -21,6 +22,7 @@ export default function StepProblem({ problems = [], lesson, onClose }) {
   const [minutes, setMinutes] = useState(0);
   const [left, setLeft] = useState(0);
   const [ended, setEnded] = useState(false);
+  const [tries, setTries] = useState({});
 
   useEffect(() => {
     if (!minutes || mode !== 'examen' || revealed) return undefined;
@@ -55,6 +57,7 @@ export default function StepProblem({ problems = [], lesson, onClose }) {
   const check = async () => {
     if (!step) return;
     const answer = step.choices ? draft : draft.trim();
+    setTries(prev => ({ ...prev, [step.id]: answer }));
     const response = await MentorAPI.checkProblemStep({
       problem_id: problem.id,
       step_id: step.id,
@@ -205,6 +208,33 @@ export default function StepProblem({ problems = [], lesson, onClose }) {
                   <p>{effort}</p>
                 </>
               )}
+              <TestReview
+                items={(revealed.steps || []).map(row => {
+                  const asked = (problem.steps || []).find(step => step.id === row.id);
+                  return {
+                    id: `${problem.id}:${row.id}`,
+                    prompt: asked?.ask || row.barem || problem.statement,
+                    given: tries[row.id] || '',
+                    correct: row.solution || '',
+                    explain: row.barem || '',
+                    ok: marks[row.id] === 'full' || marks[row.id] === 'half',
+                    verdict: marks[row.id] === 'full' ? 'exact' : marks[row.id] === 'half' ? 'partial' : 'wrong',
+                    lessonId: problem.lesson || lesson?.id || '',
+                    lessonTitle: problem.lessonTitle || lesson?.title || ''
+                  };
+                })}
+                onOpenLesson={onOpenLesson}
+                onOpenNotebook={onOpenNotebook}
+                onAsk={() => onAskProblem?.({
+                  source: 'step',
+                  id: problem.id,
+                  prompt: problem.statement,
+                  lessonId: problem.lesson || lesson?.id || '',
+                  lessonTitle: problem.lessonTitle || lesson?.title || '',
+                  subject,
+                  grade
+                })}
+              />
             </div>
           )}
         </>
