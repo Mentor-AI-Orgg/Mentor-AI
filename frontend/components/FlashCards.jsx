@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { emitMascot } from '../mascot/mascotEvents.js';
 import { MentorAPI } from '../apiClient.js';
-import { formatScore, verdictClass, verdictLabel } from '../verdictCopy.js';
+import { formatScore } from '../verdictCopy.js';
 import QuoteCard from './QuoteCard.jsx';
 import GradeGoalPicker from './GradeGoalPicker.jsx';
 import MathText from './MathText.jsx';
@@ -9,10 +9,11 @@ import { effortLine } from '../i18n/quizFeedback.js';
 import MascotPresence from './mascot/MascotPresence.jsx';
 import { MASCOT_NAME } from '../config/mascot.js';
 import { readQuizPack, takeTicket, ticketIsCurrent } from '../testOpen.js';
+import TestReview from './TestReview.jsx';
 
 const letters = ['A', 'B', 'C', 'D'];
 
-const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMentor, track = '', mode = '', lesson = null }) => {
+const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMentor, onAskProblem, onOpenLesson, onOpenNotebook, track = '', mode = '', lesson = null }) => {
   const [cards, setCards] = useState([]);
   const [index, setIndex] = useState(0);
   const [picked, setPicked] = useState(null);
@@ -293,17 +294,29 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
           {report.homework?.length > 0 && (
             <ul className="quiz-homework">{report.homework.map(row => <li key={row.point}>{row.task}</li>)}</ul>
           )}
-          <ol className="quiz-review-list">
-            {(report.items || []).map((item, itemIndex) => (
-              <li key={item.id || itemIndex} className={verdictClass(item)}>
-                <strong>{verdictLabel(item)}</strong>
-                <p><MathText text={item.prompt} /></p>
-                <p>Tu: <MathText text={item.given || '—'} /></p>
-                <p>În barem: <MathText text={item.sample} /></p>
-                {item.explain && <p className="quiz-explain"><MathText text={item.explain} /></p>}
-              </li>
-            ))}
-          </ol>
+          <TestReview
+            items={(report.items || []).map(item => {
+              const card = cards.find(row => row.id === item.id);
+              return {
+                ...item,
+                correct: item.sample,
+                choices: card?.options,
+                lessonId: item.lesson || lesson?.id || '',
+                lessonTitle: lesson?.title || ''
+              };
+            })}
+            onOpenLesson={lessonId => onOpenLesson?.(lessonId, source)}
+            onOpenNotebook={onOpenNotebook}
+            onAsk={item => onAskProblem?.({
+              source: 'flashcard',
+              id: item.id,
+              prompt: item.prompt,
+              lessonId: item.lessonId,
+              lessonTitle: item.lessonTitle,
+              subject,
+              grade: classLevel
+            })}
+          />
           <div className="learning-actions">
             {typeof onAskMentor === 'function' && source && (
               <button type="button" className="ghost-button" onClick={() => onAskMentor(source)}>

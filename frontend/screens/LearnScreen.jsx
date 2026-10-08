@@ -298,9 +298,23 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
       subject,
       grade: isEn ? 8 : grade,
       track: isEn ? 'en' : null,
-      chapter: unit ? { id: unit.id, title: unit.title, inOwnWords: unit.inOwnWords } : null
+      chapter: unit ? { id: unit.id, title: unit.title, inOwnWords: unit.inOwnWords } : null,
+      tutorProblem: unit?.tutorProblem || null
     });
   };
+
+  const askProblem = (unit, problem) => {
+    askMentor({
+      ...(unit || {}),
+      tutorProblem: {
+        ...problem,
+        subject: problem?.subject || subject,
+        grade: problem?.grade || (isEn ? 8 : grade)
+      }
+    });
+  };
+
+  const openNotebook = () => onNavigate?.('caiet');
 
   const openQuiz = (unit, lesson = null) => {
     setCardSession(null);
@@ -629,6 +643,13 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                   paper={openPaper}
                   session={paperSession}
                   onClose={() => { setOpenPaper(null); setPaperSession(null); }}
+                  onOpenNotebook={openNotebook}
+                  onOpenLesson={() => onNavigate?.('learn', { track: 'en', subject: openPaper.subject || subject, grade: 8 })}
+                  onAskProblem={problem => {
+                    setOpenPaper(null);
+                    setPaperSession(null);
+                    askProblem({ id: 'en', title: openPaper.title }, problem);
+                  }}
                 />
               )}
             </section>
@@ -840,6 +861,12 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             setQuizLesson(null);
             askMentor(unit);
           }}
+          onAskProblem={problem => {
+            setQuizUnit(null);
+            setQuizLesson(null);
+            askProblem(quizUnit, problem);
+          }}
+          onOpenNotebook={openNotebook}
         />
         </div>
       )}
@@ -863,7 +890,18 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           <StepProblem
             problems={problemSession.problems}
             lesson={problemSession.lesson}
+            subject={subject}
+            grade={grade}
             onClose={() => setProblemSession(null)}
+            onOpenLesson={lessonId => {
+              if (problemSession.unit?.id) setOpenChapter(problemSession.unit.id);
+              setAnchorId(lessonId);
+            }}
+            onOpenNotebook={openNotebook}
+            onAskProblem={problem => {
+              setProblemSession(null);
+              askProblem(problemSession.unit || { id: problem.lessonId, title: problem.lessonTitle }, problem);
+            }}
           />
         </div>
       )}
@@ -882,6 +920,11 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             setEnTrainUnit(null);
             askMentor(unit);
           }}
+          onAskProblem={problem => {
+            setEnTrainUnit(null);
+            askProblem(enTrainUnit, problem);
+          }}
+          onOpenNotebook={openNotebook}
         />
       )}
 
@@ -941,6 +984,15 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             mode={isEn ? 'training' : ''}
             onRewardClaim={onRewardClaim}
             onAskMentor={askMentor}
+            onOpenNotebook={openNotebook}
+            onOpenLesson={(lessonId, unit) => {
+              if (unit?.id) setOpenChapter(unit.id);
+              if (lessonId) setAnchorId(lessonId);
+            }}
+            onAskProblem={problem => askProblem(
+              { id: problem.lessonId || '', title: problem.lessonTitle || '' },
+              problem
+            )}
           />
         </div>
       )}

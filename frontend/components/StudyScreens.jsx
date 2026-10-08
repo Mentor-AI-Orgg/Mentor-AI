@@ -17,6 +17,8 @@ import {
   lessonFromChapter,
   loadTutorChats,
   nameChatsFromLesson,
+  openProblemChat,
+  removeChat,
   renameChat,
   saveTutorChats,
   scopeFromSelection,
@@ -35,6 +37,7 @@ const chatRequest = async ({
   classLevel,
   language,
   planId,
+  problem,
   mockReply
 }) => {
   const result = await MentorAPI.chat({
@@ -43,7 +46,17 @@ const chatRequest = async ({
     subject,
     class_level: classLevel,
     language,
-    plan_id: planId
+    plan_id: planId,
+    ...(problem?.id
+      ? {
+          problem: {
+            source: problem.source,
+            id: problem.id,
+            session_id: problem.sessionId || '',
+            paper_id: problem.paperId || ''
+          }
+        }
+      : {})
   });
   if (result.rateLimited) {
     return {
@@ -59,11 +72,31 @@ const chatRequest = async ({
   return { response: mockReply, mocked: true, engine_used: 'offline' };
 };
 
-const TutorFace = ({ mood = 'explica', typing = false }) => (
+function replyMood(text) {
+  const value = String(text || '');
+  if (/Ai nimerit|se potrivește cu baremul/.test(value)) return 'proud';
+  if (/Mai încet|încă nu e pasul|tot fără rezultat/.test(value)) return 'encouraging';
+  return 'explaining';
+}
+
+const TutorFace = ({ mood = 'explaining', typing = false }) => (
   <div className="mentor-avatar" aria-hidden="true">
     <Mascota mood={mood} size="md" typing={typing} />
   </div>
 );
+
+function ChatText({ text }) {
+  const parts = String(text || "")
+    .split(/\n{2,}/)
+    .map(part => part.trim())
+    .filter(Boolean);
+  if (!parts.length) return null;
+  return parts.map((part, index) => (
+    <p key={index} className="mentor-paragraph">
+      <MathText text={part} />
+    </p>
+  ));
+}
 
 const MessageBubble = ({ role, tutorName, children }) => (
   <div
@@ -106,9 +139,15 @@ function TutorChatsBar({
   renaming,
   draft,
   loading,
+  pendingDelete,
+  deleteError,
+  deleting,
   onDraft,
   onNew,
   onOpen,
+  onAskDelete,
+  onConfirmDelete,
+  onCancelDelete,
   onBeginRename,
   onSaveRename,
   onCancelRename
@@ -139,21 +178,67 @@ function TutorChatsBar({
         </button>
         <div className="mentor-chat-list" role="list" aria-label="Chat-urile tale">
           {chats.map((chat) => (
-            <button
+            <div
               key={chat.id}
-              type="button"
               role="listitem"
               ref={chat.id === activeId ? selectedRef : null}
-              className={`mentor-chat-open ${chat.id === activeId ? 'selected' : ''}`}
-              aria-current={chat.id === activeId ? 'true' : undefined}
-              onClick={() => onOpen(chat.id)}
-              disabled={loading && chat.id !== activeId}
+              className={`mentor-chat-tab ${chat.id === activeId ? 'selected' : ''}`}
             >
-              {chat.title}
-            </button>
+              <button
+                type="button"
+                className="mentor-chat-open"
+                aria-current={chat.id === activeId ? 'true' : undefined}
+                onClick={() => onOpen(chat.id)}
+                disabled={loading && chat.id !== activeId}
+              >
+                {chat.title}
+              </button>
+              <button
+                type="button"
+                className="mentor-chat-delete"
+                aria-label={`Șterge conversația ${chat.title}`}
+                onClick={() => onAskDelete(chat.id)}
+                disabled={loading || deleting}
+              >
+                <i className="fas fa-xmark" aria-hidden="true" />
+              </button>
+            </div>
           ))}
         </div>
       </div>
+      {pendingDelete && (
+        <div
+          className="mentor-delete-confirm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mentor-delete-title"
+        >
+          <p id="mentor-delete-title">Ștergi conversația?</p>
+          {deleteError ? (
+            <p className="mentor-delete-error" role="alert">
+              {deleteError}
+            </p>
+          ) : null}
+          <div className="mentor-delete-actions">
+            <button
+              type="button"
+              className="accent-button"
+              onClick={onConfirmDelete}
+              disabled={deleting}
+            >
+              Șterge
+            </button>
+            <button
+              type="button"
+              className="ghost-button mentor-delete-cancel"
+              onClick={onCancelDelete}
+              disabled={deleting}
+            >
+              Anulează
+            </button>
+          </div>
+        </div>
+      )}
       {current &&
         (renaming ? (
           <form className="mentor-rename-row" onSubmit={save}>
@@ -215,6 +300,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
   }));
   const stateRef = useRef(bundle.state);
   const sendingRef = useRef(false);
+  const askedProblemRef = useRef('');
   const ownerRef = useRef(owner);
   ownerRef.current = owner;
   const [draft, setDraft] = useState('');
@@ -232,6 +318,9 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
     pinFromFocus(studyFocus.chapter, studyFocus.subject || userData.subject || userData.profile)
   );
   const [rename, setRename] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [deleteError, setDeleteError] = useState('');
+  const [deletingChat, setDeletingChat] = useState(false);
   const commit = useCallback((updater) => {
     const current = stateRef.current;
     const next = typeof updater === 'function' ? updater(current) : updater;
@@ -279,6 +368,8 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
 
   useEffect(() => {
     setRename(null);
+    setPendingDelete(null);
+    setDeleteError('');
   }, [scopeId]);
 
   const visibleChats = chatsForScope(bundle.state, scope);
@@ -390,6 +481,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
       return appendMessage(ensured.state, chatId, { role: 'user', content: outgoing });
     });
     setLoading(true);
+    const linked = stateRef.current.chats?.find((chat) => chat.id === chatId)?.problem || null;
     try {
       const reply = await chatRequest({
         message: outgoing,
@@ -398,6 +490,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
         classLevel: scopeNow.grade,
         language: userData.language || 'ro',
         planId: userData.planId || 'free',
+        problem: linked,
         mockReply:
           'Hai să o luăm pe înțelesul tău. Spune-mi mai întâi ce ai încercat și ce ți se pare neclar.'
       });
@@ -423,6 +516,33 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
   };
 
   const askSimpler = () => send('Nu am înțeles', { keepDraft: true, forceChat: true });
+  const askDeeper = () => send('Tot nu înțeleg', { keepDraft: true, forceChat: true });
+
+  const problemFocus = studyFocus.tutorProblem;
+  const problemFocusKey = problemFocus?.id
+    ? `${problemFocus.source || ''}:${problemFocus.id}:${problemFocus.sessionId || ''}:${problemFocus.paperId || ''}`
+    : '';
+
+  useEffect(() => {
+    if (!problemFocusKey || !problemFocus?.id) return;
+    if (askedProblemRef.current === problemFocusKey) return;
+    askedProblemRef.current = problemFocusKey;
+    const nextScope = scopeFromSelection({
+      subject: studyFocus.subject || problemFocus.subject || subject,
+      grade: studyFocus.grade || problemFocus.grade || grade,
+      lesson: pinFromFocus(studyFocus.chapter, studyFocus.subject || problemFocus.subject || subject)
+    });
+    scopeRef.current = nextScope;
+    let chat = null;
+    commit((state) => {
+      const next = openProblemChat(state, nextScope, problemFocus);
+      chat = activeChat(next, nextScope);
+      return next;
+    });
+    if (chat && !chat.messages.some((item) => item.role === 'user')) {
+      send('Nu înțeleg exercițiul ăsta. Explică-mi de ce răspunsul meu nu e bun și care e regula.');
+    }
+  }, [problemFocusKey]); // deschide o singură dată chatul legat de exercițiu
 
   const beginRename = () => {
     if (!current) return;
@@ -443,6 +563,38 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
   const openChat = (id) => {
     commit((state) => selectChat(state, scopeRef.current, id));
     setRename(null);
+  };
+
+  const askDelete = (id) => {
+    setDeleteError('');
+    setPendingDelete(id);
+  };
+
+  const cancelDelete = () => {
+    if (deletingChat) return;
+    setPendingDelete(null);
+    setDeleteError('');
+  };
+
+  const confirmDelete = async () => {
+    const id = pendingDelete;
+    if (!id || deletingChat) return;
+    const chat = (stateRef.current.chats || []).find((item) => item.id === id);
+    if (!chat || scopeKey(chat) !== scopeKey(scopeRef.current)) {
+      setPendingDelete(null);
+      return;
+    }
+    setDeletingChat(true);
+    setDeleteError('');
+    const result = await MentorAPI.deleteChat(chat.conversationId);
+    setDeletingChat(false);
+    if (!result?.success) {
+      setDeleteError(result?.error || 'Nu am putut șterge conversația.');
+      return;
+    }
+    setRename((current) => (current?.id === id ? null : current));
+    commit((state) => removeChat(state, scopeRef.current, id));
+    setPendingDelete(null);
   };
 
   const shown = messages.filter((message) => !message.diagnostic);
@@ -528,14 +680,32 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
         renaming={Boolean(rename && rename.id === current?.id)}
         draft={rename?.draft || ''}
         loading={loading}
+        pendingDelete={pendingDelete}
+        deleteError={deleteError}
+        deleting={deletingChat}
         onDraft={(value) => setRename((prev) => (prev ? { ...prev, draft: value } : prev))}
         onNew={startChat}
         onOpen={openChat}
+        onAskDelete={askDelete}
+        onConfirmDelete={confirmDelete}
+        onCancelDelete={cancelDelete}
         onBeginRename={beginRename}
         onSaveRename={saveRename}
         onCancelRename={() => setRename(null)}
       />
       <section className="mentor-thread surface" aria-busy={loading}>
+        {current?.problem?.prompt && (
+          <aside className="mentor-problem-card">
+            <Mascota mood="encouraging" size="md" />
+            <div>
+              <span className="eyebrow">
+                Exercițiul din test
+                {current.problem.lessonTitle ? ` · ${current.problem.lessonTitle}` : ''}
+              </span>
+              <p><MathText text={current.problem.prompt} /></p>
+            </div>
+          </aside>
+        )}
         {shown.length === 0 && (
           <div className="mentor-empty">
             <Mascota mood="encouraging" size="md" />
@@ -566,7 +736,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
             !shown.slice(index + 1).some((item) => item.role === 'assistant');
           const bubble = (
             <MessageBubble role={message.role} tutorName={MASCOT_NAME}>
-              <MathText text={message.content} />
+              <ChatText text={message.content} />
             </MessageBubble>
           );
           if (message.role === 'user') {
@@ -581,18 +751,30 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
           }
           return (
             <div key={`${current?.id || 'chat'}-${index}`} className="mentor-turn">
-              <TutorFace mood="explica" />
+              <TutorFace mood={replyMood(message.content)} />
               <div className={latestTutor ? 'mentor-reply-with-help' : 'mentor-reply'}>
                 {bubble}
                 {latestTutor && (
-                  <button
-                    type="button"
-                    className="ghost-button mentor-unclear"
-                    onClick={askSimpler}
-                    disabled={loading}
-                  >
-                    Nu am înțeles
-                  </button>
+                  <div className="test-review-actions">
+                    <button
+                      type="button"
+                      className="ghost-button mentor-unclear"
+                      onClick={askSimpler}
+                      disabled={loading}
+                    >
+                      Nu am înțeles
+                    </button>
+                    {current?.problem && (
+                      <button
+                        type="button"
+                        className="ghost-button mentor-unclear"
+                        onClick={askDeeper}
+                        disabled={loading}
+                      >
+                        Tot nu înțeleg
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             </div>

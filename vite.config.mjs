@@ -5,9 +5,23 @@ import react from '@vitejs/plugin-react';
 
 const repoRoot = path.dirname(fileURLToPath(import.meta.url));
 
+function sentryScrubForDev() {
+  return {
+    name: 'sentry-scrub-dev',
+    apply: 'serve',
+    transform(code, id) {
+      if (!id.includes('sentryScrub.cjs')) return null;
+      return {
+        code: `const module = { exports: {} };\n${code}\nexport default module.exports;\n`,
+        map: null
+      };
+    }
+  };
+}
+
 export default defineConfig({
   root: 'frontend',
-  plugins: [react()],
+  plugins: [react(), sentryScrubForDev()],
   publicDir: 'public',
   resolve: {
     alias: {

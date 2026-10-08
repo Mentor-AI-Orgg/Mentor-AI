@@ -30,6 +30,11 @@ function withoutControls(text, asSpace) {
   const raw = String(text || '');
   for (let index = 0; index < raw.length; index += 1) {
     const code = raw.charCodeAt(index);
+    if (code === 10 || code === 13) {
+      if (asSpace) out += ' ';
+      else if (code === 10) out += '\n';
+      continue;
+    }
     if (code < 32 || code === 127) {
       if (asSpace) out += ' ';
       continue;
@@ -102,7 +107,7 @@ function normalizeMessage(message) {
   if (!message || typeof message !== 'object') return null;
   const role = message.role === 'user' || message.role === 'assistant' ? message.role : '';
   if (!role) return null;
-  const content = withoutControls(message.content, false).trim();
+  const content = withoutControls(message.content, false).replace(/\n{3,}/g, '\n\n').trim();
   if (!content) return null;
   const next = { role, content: content.slice(0, CONTENT_MAX) };
   if (message.diagnostic) next.diagnostic = true;
@@ -110,6 +115,29 @@ function normalizeMessage(message) {
   if (message.mocked) next.mocked = true;
   if (message.engine) next.engine = String(message.engine).slice(0, 40);
   return next;
+}
+
+function normalizeProblem(problem) {
+  if (!problem || typeof problem !== 'object') return null;
+  const source = String(problem.source || '').trim();
+  const id = String(problem.id || '').trim();
+  const allowed = new Set(['quiz', 'flashcard', 'en', 'step', 'mistake']);
+  if (!allowed.has(source) || !id) return null;
+  const prompt = withoutControls(problem.prompt, true).replace(/\s+/g, ' ').trim().slice(0, 500);
+  return {
+    source,
+    id: id.slice(0, 160),
+    sessionId: String(problem.sessionId || '').trim().slice(0, 80),
+    paperId: String(problem.paperId || '').trim().slice(0, 120),
+    prompt,
+    lessonId: String(problem.lessonId || '').trim().slice(0, 80),
+    lessonTitle: clipTitle(problem.lessonTitle || '')
+  };
+}
+
+function problemKey(problem) {
+  if (!problem?.id) return '';
+  return `${problem.source}:${problem.id}:${problem.sessionId || ''}:${problem.paperId || ''}`;
 }
 
 function normalizeChat(chat) {
@@ -127,7 +155,8 @@ function normalizeChat(chat) {
   const firstQuestion = messages.find((item) => item.role === 'user')?.content || '';
   let title = clipTitle(chat.title || '');
   if (!title) title = defaultTitle({ lessonTitle, firstQuestion });
-  return {
+  const problem = normalizeProblem(chat.problem);
+  const next = {
     id: id.slice(0, 80),
     conversationId: String(chat.conversationId || id).slice(0, 80),
     title,
@@ -140,6 +169,8 @@ function normalizeChat(chat) {
     createdAt: Number(chat.createdAt) || 0,
     updatedAt: Number(chat.updatedAt) || 0
   };
+  if (problem) next.problem = problem;
+  return next;
 }
 
 function normalizeState(state) {
@@ -186,6 +217,22 @@ function selectChat(state, scope, chatId) {
   };
 }
 
+function removeChat(state, scope = {}, chatId) {
+  const base = normalizeState(state);
+  const id = String(chatId || '');
+  const target = base.chats.find((chat) => chat.id === id);
+  const key = scopeKey(scope);
+  if (!target || scopeKey(target) !== key) return base;
+  const chats = base.chats.filter((chat) => chat.id !== id);
+  const activeByScope = { ...base.activeByScope };
+  if (activeByScope[key] === id) delete activeByScope[key];
+  const next = { version: 1, chats, activeByScope };
+  const remaining = chatsForScope(next, scope);
+  if (!remaining.length) return startNewChat(next, scope);
+  if (!next.activeByScope[key]) return selectChat(next, scope, remaining[remaining.length - 1].id);
+  return next;
+}
+
 function startNewChat(state, scope = {}, options = {}) {
   const base = normalizeState(state);
   const list = chatsForScope(base, scope);
@@ -212,6 +259,41 @@ function startNewChat(state, scope = {}, options = {}) {
       .trim()
       .slice(0, 80),
     lessonTitle,
+    messages: [],
+    createdAt: now,
+    updatedAt: now
+  };
+  return {
+    version: 1,
+    chats: [...base.chats, chat],
+    activeByScope: { ...base.activeByScope, [scopeKey(scope)]: chat.id }
+  };
+}
+
+function openProblemChat(state, scope = {}, problem, options = {}) {
+  const base = normalizeState(state);
+  const linked = normalizeProblem(problem);
+  if (!linked) return state?.chats ? state : base;
+  const key = problemKey(linked);
+  const existing = chatsForScope(base, scope).find((chat) => problemKey(chat.problem) === key);
+  if (existing) return selectChat(base, scope, existing.id);
+
+  const now = options.now || Date.now();
+  const lessonTitle = clipTitle(scope.lessonTitle || linked.lessonTitle || '');
+  const title = uniqueTitle(
+    clipTitle(linked.prompt) || lessonTitle || 'Exercițiul din test',
+    chatsForScope(base, scope).map((chat) => chat.title)
+  );
+  const chat = {
+    id: String(options.id || makeId('chat', now)).slice(0, 80),
+    conversationId: String(options.conversationId || makeId('mentor', now)).slice(0, 80),
+    title,
+    titleCustom: true,
+    subject: normalizeSubject(scope.subject),
+    grade: normalizeGrade(scope.grade),
+    lessonId: String(scope.lessonId || '').trim().slice(0, 80),
+    lessonTitle,
+    problem: linked,
     messages: [],
     createdAt: now,
     updatedAt: now
@@ -452,6 +534,9 @@ export {
   activeChat,
   selectChat,
   startNewChat,
+  removeChat,
+  openProblemChat,
+  problemKey,
   ensureActiveChat,
   appendMessage,
   renameChat,

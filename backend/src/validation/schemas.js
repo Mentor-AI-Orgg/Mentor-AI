@@ -65,6 +65,13 @@ const resetPasswordSchema = z.object({
   password: z.string().min(1).max(200)
 });
 
+const problemRefSchema = z.object({
+  source: z.enum(["quiz", "flashcard", "en", "step", "mistake"]),
+  id: z.string().trim().min(1).max(160),
+  session_id: z.string().max(80).optional().default(""),
+  paper_id: z.string().max(120).optional().default("")
+}).strict();
+
 const chatSchema = z.object({
   message: z
     .string({ required_error: "Câmpul 'message' este obligatoriu." })
@@ -75,7 +82,8 @@ const chatSchema = z.object({
   class_level: z.union([z.string(), z.number()]).optional().default(8),
   language: z.string().max(8).optional().default("ro"),
   plan_id: z.string().max(20).optional().default("free"),
-  conversation_id: z.string().max(80).optional()
+  conversation_id: z.string().max(80).optional(),
+  problem: problemRefSchema.optional()
 }).strict();
 
 const detectSchema = z.object({

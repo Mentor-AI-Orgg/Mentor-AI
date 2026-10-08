@@ -3,6 +3,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { ProfessorScreen } from '../frontend/components/StudyScreens.jsx';
+import TestReview from '../frontend/components/TestReview.jsx';
 import { MASCOT_NAME } from '../frontend/config/mascot.js';
 import {
   activeChat,
@@ -13,6 +14,8 @@ import {
   emptyState,
   loadTutorChats,
   nameChatsFromLesson,
+  openProblemChat,
+  removeChat,
   renameChat,
   saveTutorChats,
   scopeFromSelection,
@@ -268,6 +271,35 @@ describe('chat-urile tutorelui', () => {
     expect(home).toContain('Nu acum');
   });
 
+  it('păstrează paragrafele din răspuns, ca bula să nu lipească frazele', () => {
+    const owner = 'para@test';
+    const scope = { subject: 'matematica', grade: 5 };
+    const storage = memoryStorage();
+    const raw = 'Stăm pe exercițiul ăsta.\n\nÎntrebarea: Calculează.\n\nRegula este: Întâi puterile.';
+    let state = startNewChat(emptyState(), scope);
+    const id = activeChat(state, scope).id;
+    state = appendMessage(state, id, { role: 'assistant', content: ` \u0000${raw}\r\n\n\nGata.` });
+    expect(activeChat(state, scope).messages[0].content).toBe(`${raw}\n\nGata.`);
+    expect(activeChat(state, scope).messages[0].content).not.toMatch(/[.!?»][A-ZĂÂÎȘȚŞŢ]/);
+    saveTutorChats(state, { storage, owner });
+    const previous = globalThis.localStorage;
+    globalThis.localStorage = storage;
+    try {
+      const html = renderToStaticMarkup(
+        createElement(ProfessorScreen, {
+          userData: { name: 'Ana', email: owner, class: '5', subject: 'matematica', mentorLeft: 4 },
+          studyFocus: { subject: 'matematica', grade: '5' }
+        })
+      );
+      expect(html.match(/mentor-paragraph/g)).toHaveLength(4);
+      expect(html).toContain('Regula este: Întâi puterile.');
+      expect(html).not.toContain('ăsta.Întrebarea');
+    } finally {
+      if (previous === undefined) delete globalThis.localStorage;
+      else globalThis.localStorage = previous;
+    }
+  });
+
   it('pune numele și avatarul lângă răspuns și ascunde raportul de diagnosticare', () => {
     const owner = 'maria@test';
     const scope = { subject: 'matematica', grade: 6 };
@@ -306,12 +338,147 @@ describe('chat-urile tutorelui', () => {
       expect(html).toContain(MASCOT_NAME);
       expect(html).toContain('Ce învățăm azi?');
       expect(html).toContain('src="/mascot/explica.png"');
+      expect(html).toContain('data-mood="explica"');
       expect(html).toContain('mentor-avatar');
       expect(html).toContain('O fracție este o parte dintr-un întreg.');
       expect(html).toContain('Nu am înțeles');
       expect(html).not.toContain('funcționează');
       expect(html).not.toContain('Diagnosticare');
       expect(html).not.toContain('diag-report');
+    } finally {
+      if (previous === undefined) delete globalThis.localStorage;
+      else globalThis.localStorage = previous;
+    }
+  });
+
+  it('schimbă starea lângă exercițiu: mândră când nimerești, încurajare când încă nu e clar', () => {
+    const owner = 'stare@test';
+    const scope = { subject: 'matematica', grade: 5 };
+    const storage = memoryStorage();
+    let state = openProblemChat(emptyState(), scope, {
+      source: 'quiz',
+      id: 'e5n5',
+      prompt: 'Calculează 2³.',
+      lessonTitle: 'Puteri'
+    });
+    const id = activeChat(state, scope).id;
+    state = appendMessage(state, id, { role: 'user', content: '7' });
+    state = appendMessage(state, id, {
+      role: 'assistant',
+      content: 'Mai încet. Îți repet regula, tot fără rezultat.'
+    });
+    saveTutorChats(state, { storage, owner });
+    const previous = globalThis.localStorage;
+    globalThis.localStorage = storage;
+    try {
+      const guide = renderToStaticMarkup(createElement(ProfessorScreen, {
+        userData: { name: 'Ana', email: owner, class: '5', subject: 'matematica', mentorLeft: 4 },
+        studyFocus: { subject: 'matematica', grade: '5' }
+      }));
+      expect(guide).toContain('data-mood="incurajeaza"');
+      expect(guide).toContain('Exercițiul din test');
+    } finally {
+      if (previous === undefined) delete globalThis.localStorage;
+      else globalThis.localStorage = previous;
+    }
+
+    const review = renderToStaticMarkup(createElement(TestReview, {
+      items: [
+        { id: 'a', ok: false, prompt: 'Calculează 2³.', given: '7', sample: '8' },
+        { id: 'b', ok: true, prompt: 'Altul.', given: 'da', sample: 'da' }
+      ]
+    }));
+    expect(review).toContain('data-mood="mandru"');
+    expect(review).toContain('Unele au ieșit.');
+    const allWrong = renderToStaticMarkup(createElement(TestReview, {
+      items: [{ id: 'a', ok: false, prompt: 'Calculează 2³.', given: '7', sample: '8' }]
+    }));
+    expect(allWrong).toContain('data-mood="incurajeaza"');
+    const allRight = renderToStaticMarkup(createElement(TestReview, {
+      items: [{ id: 'a', ok: true, prompt: 'Calculează 2³.', given: '8', sample: '8' }]
+    }));
+    expect(allRight).toContain('data-mood="sarbatoare"');
+    expect(allRight).toContain('Le-ai nimerit.');
+  });
+
+  it('șterge un chat și lasă restul, inclusiv pe cel din altă materie', () => {
+    let state = startNewChat(emptyState(), mathLesson, {
+      now: 1,
+      id: 'unu',
+      conversationId: 'conv-unu'
+    });
+    state = appendMessage(state, 'unu', { role: 'user', content: 'prima' });
+    state = startNewChat(state, mathLesson, { now: 2, id: 'doi', conversationId: 'conv-doi' });
+    state = appendMessage(state, 'doi', { role: 'user', content: 'a doua' });
+    state = openProblemChat(
+      state,
+      mathLesson,
+      { source: 'quiz', id: 'e5n5', prompt: 'Calculează 2³.', lessonTitle: 'Puteri' },
+      { now: 3, id: 'problema', conversationId: 'conv-problema' }
+    );
+    state = appendMessage(state, 'problema', { role: 'user', content: 'nu înțeleg' });
+    state = startNewChat(state, roLesson, { now: 4, id: 'alta', conversationId: 'conv-alta' });
+    state = appendMessage(state, 'alta', { role: 'user', content: 'română' });
+
+    const untouched = removeChat(state, mathLesson, 'alta');
+    expect(chatsForScope(untouched, roLesson).map((chat) => chat.id)).toEqual(['alta']);
+    expect(chatsForScope(untouched, mathLesson)).toHaveLength(3);
+
+    let next = removeChat(state, mathLesson, 'problema');
+    expect(next.chats.find((chat) => chat.id === 'problema')).toBeUndefined();
+    expect(chatsForScope(next, mathLesson).map((chat) => chat.id)).toEqual(['unu', 'doi']);
+    expect(activeChat(next, mathLesson).id).toBe('doi');
+    expect(activeChat(next, roLesson).messages[0].content).toBe('română');
+
+    next = removeChat(next, mathLesson, 'unu');
+    expect(activeChat(next, mathLesson).id).toBe('doi');
+    next = removeChat(next, mathLesson, 'doi');
+    const left = chatsForScope(next, mathLesson);
+    expect(left).toHaveLength(1);
+    expect(left[0].messages).toEqual([]);
+    expect(left[0].id).not.toBe('doi');
+    expect(chatsForScope(next, roLesson)).toHaveLength(1);
+    expect(activeChat(next, roLesson).id).toBe('alta');
+  });
+
+  it('pune un X de 44px lângă fiecare chat și cere confirmarea', () => {
+    const source = readFileSync(
+      new URL('../frontend/components/StudyScreens.jsx', import.meta.url),
+      'utf8'
+    );
+    const css = readFileSync(new URL('../frontend/styles.css', import.meta.url), 'utf8');
+    expect(source).toContain('Ștergi conversația?');
+    expect(source).toContain('Anulează');
+    expect(source).toContain('mentor-chat-delete');
+    expect(source).toContain('MentorAPI.deleteChat');
+    expect(css).toMatch(/\.mentor-chat-delete \{[^}]*min-height:\s*44px/);
+    expect(css).toMatch(/\.mentor-chat-delete \{[^}]*min-width:\s*44px/);
+
+    const owner = 'sterge@test';
+    const scope = { subject: 'matematica', grade: 5 };
+    const storage = memoryStorage();
+    let state = startNewChat(emptyState(), scope, { now: 1, id: 'unu', conversationId: 'c1' });
+    state = appendMessage(state, 'unu', { role: 'user', content: 'prima' });
+    state = startNewChat(state, scope, { now: 2, id: 'doi', conversationId: 'c2' });
+    state = openProblemChat(
+      state,
+      scope,
+      { source: 'quiz', id: 'e5n1', prompt: 'Calculează 3² × 2³ − 4².' },
+      { now: 3, id: 'legat', conversationId: 'c3' }
+    );
+    saveTutorChats(state, { storage, owner });
+    const previous = globalThis.localStorage;
+    globalThis.localStorage = storage;
+    try {
+      const html = renderToStaticMarkup(
+        createElement(ProfessorScreen, {
+          userData: { name: 'Ana', email: owner, class: '5', subject: 'matematica', mentorLeft: 4 },
+          studyFocus: { subject: 'matematica', grade: '5' }
+        })
+      );
+      expect(html.match(/mentor-chat-delete/g)).toHaveLength(3);
+      expect(html).toContain('aria-label="Șterge conversația');
+      expect(html).toContain('Chat nou');
     } finally {
       if (previous === undefined) delete globalThis.localStorage;
       else globalThis.localStorage = previous;

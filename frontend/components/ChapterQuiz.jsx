@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
-import { formatScore, verdictClass, verdictLabel } from '../verdictCopy.js';
+import { formatScore } from '../verdictCopy.js';
 import QuoteCard from './QuoteCard.jsx';
 import GradeGoalPicker from './GradeGoalPicker.jsx';
 import MathText from './MathText.jsx';
-import { effortLine } from '../i18n/quizFeedback.js';
 import MascotPresence from './mascot/MascotPresence.jsx';
 import { emitMascot } from '../mascot/mascotEvents.js';
 import { MASCOT_NAME } from '../config/mascot.js';
 import { readQuizPack, takeTicket, ticketIsCurrent } from '../testOpen.js';
+import TestReview from './TestReview.jsx';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
-const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = null, onOpenLesson, onClose, onRewardClaim, onAskMentor }) => {
+const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = null, onOpenLesson, onOpenNotebook, onClose, onRewardClaim, onAskMentor, onAskProblem }) => {
   const [cards, setCards] = useState([]);
   const [index, setIndex] = useState(0);
   const [drafts, setDrafts] = useState({});
@@ -266,45 +266,31 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
               </ul>
             </div>
           )}
-          <ol className="quiz-review-list">
-            {(report.items || []).map((item, itemIndex) => (
-              <li key={item.id || itemIndex} className={verdictClass(item)}>
-                <strong>Exercițiul {itemIndex + 1} · {verdictLabel(item)}</strong>
-                <p>{effortLine(item.verdict, item.id, item.ok)}</p>
-                <p><MathText text={item.prompt} /></p>
-                <p>Tu: <MathText text={item.given || '—'} /></p>
-                <p>În barem: <MathText text={item.sample} /></p>
-                {item.explain && <p className="quiz-explain"><MathText text={item.explain} /></p>}
-                {item.rubric && (
-                  <div className="writing-barem">
-                    <strong>Am citit foaia · {item.rubric.total}/{item.rubric.max} · nota {item.rubric.note10}</strong>
-                    {(item.rubric.reading || []).length > 0 && (
-                      <ol className="writing-reading">
-                        {item.rubric.reading.map((row, readIndex) => (
-                          <li key={`${item.id}-read-${readIndex}`}>
-                            {row.quote ? <q>{row.quote}</q> : null}
-                            <span>{row.comment}</span>
-                          </li>
-                        ))}
-                      </ol>
-                    )}
-                    <ul>
-                      {item.rubric.criteria.map(row => (
-                        <li key={row.id}><span>{row.label}</span> <em>{row.points}/{row.max}</em> — {row.note}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {item.steps?.length > 0 && (
-                  <ol className="quiz-steps">
-                    {item.steps.map((step, stepIndex) => (
-                      <li key={`${item.id}-step-${stepIndex}`}><MathText text={step} /></li>
-                    ))}
-                  </ol>
-                )}
-              </li>
-            ))}
-          </ol>
+          <TestReview
+            items={(report.items || []).map(item => {
+              const card = cards.find(row => row.id === item.id);
+              const lessonHit = (report.lessonsToReview || []).find(row => row.id === item.lesson);
+              return {
+                ...item,
+                correct: item.sample,
+                choices: card?.choices,
+                lessonId: item.lesson || '',
+                lessonTitle: lessonHit?.title || lesson?.title || ''
+              };
+            })}
+            onOpenLesson={onOpenLesson}
+            onOpenNotebook={onOpenNotebook}
+            onAsk={item => onAskProblem?.({
+              source: 'quiz',
+              id: item.id,
+              sessionId,
+              prompt: item.prompt,
+              lessonId: item.lessonId,
+              lessonTitle: item.lessonTitle,
+              subject,
+              grade
+            })}
+          />
           <div className="learning-actions">
             <button type="button" className="ghost-button" onClick={() => onAskMentor?.(unit)}>Întreab-o pe {MASCOT_NAME}</button>
             {!onLesson && (

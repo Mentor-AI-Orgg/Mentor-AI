@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import Mascota from '../components/mascot/Mascota.jsx';
+import { MASCOT_NAME } from '../config/mascot.js';
 
 function when(stamp) {
   const at = Number(stamp);
@@ -23,6 +24,24 @@ const MistakesScreen = ({ onNavigate }) => {
   }, []);
 
   const current = book?.due?.[0] || null;
+
+  const ask = item => {
+    if (!item?.id) return;
+    onNavigate?.('professor', {
+      subject: item.subject || 'matematica',
+      grade: item.grade || '5',
+      chapter: item.lessonId ? { id: item.lessonId, title: item.lesson || '', subject: item.subject || 'matematica' } : null,
+      tutorProblem: {
+        source: 'mistake',
+        id: item.id,
+        prompt: item.prompt || '',
+        lessonId: item.lessonId || '',
+        lessonTitle: item.lesson || '',
+        subject: item.subject || 'matematica',
+        grade: item.grade || '5'
+      }
+    });
+  };
 
   const submit = async () => {
     if (!current) return;
@@ -70,6 +89,9 @@ const MistakesScreen = ({ onNavigate }) => {
                 chapter: current.lessonId
               })}>Deschide lecția</button>
             )}
+            <button type="button" className="accent-button" onClick={() => ask(current)}>
+              Nu înțeleg – întreab-o pe {MASCOT_NAME}
+            </button>
           </div>
         </section>
       )}
@@ -86,16 +108,26 @@ const MistakesScreen = ({ onNavigate }) => {
             {group.items.map(item => (
               <li key={item.id}>
                 {item.ready ? 'De recapitulat azi' : `Revine pe ${when(item.due)}`}
+                {item.prompt ? <span> · {item.prompt}</span> : null}
                 {item.lessonId && (
                   <>
                     {' · '}
                     <button type="button" className="ghost-button" onClick={() => onNavigate('learn', {
-                      subject: group.subject || 'matematica',
-                      grade: group.grade || '5',
+                      subject: group.subject || item.subject || 'matematica',
+                      grade: group.grade || item.grade || '5',
                       chapter: item.lessonId
                     })}>Deschide lecția</button>
                   </>
                 )}
+                {' · '}
+                <button type="button" className="ghost-button" onClick={() => ask({
+                  ...item,
+                  subject: item.subject || group.subject,
+                  grade: item.grade || group.grade,
+                  lesson: item.lesson || group.lesson
+                })}>
+                  Nu înțeleg – întreab-o pe {MASCOT_NAME}
+                </button>
               </li>
             ))}
           </ul>
