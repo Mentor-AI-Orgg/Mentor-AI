@@ -2034,7 +2034,7 @@ html[data-motion="off"] *::after {
   width: 88%;
   height: 72%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(closest-side, rgba(94, 234, 212, .25), transparent);
+  background: radial-gradient(closest-side, rgba(94, 234, 212, .08), transparent);
   filter: none;
   pointer-events: none;
   animation: mascotaGlow 4.8s ease-in-out infinite;
@@ -2055,7 +2055,7 @@ html[data-motion="off"] *::after {
   background: transparent;
   opacity: 1;
   mix-blend-mode: normal;
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, .55)) drop-shadow(0 0 10px rgba(94, 234, 212, .35));
+  filter: none;
 }
 .mascota-shine,
 .mascota-blink { position: absolute; z-index: 2; pointer-events: none; }
@@ -2143,10 +2143,10 @@ html[data-motion="off"] *::after {
   --shine-w: 42%;
   --shine-h: 16%;
 }
-.is-somnoros .mascota { filter: saturate(.8) brightness(.92) drop-shadow(0 0 1px rgba(255, 255, 255, .55)) drop-shadow(0 0 10px rgba(94, 234, 212, .35)); }
+.is-somnoros .mascota { filter: saturate(.8) brightness(.92); }
 .is-somnoros .mascota-figure { animation-duration: 7.2s; }
 .is-somnoros .mascota-blink i { animation-duration: 8s; }
-.is-trist-bland .mascota { filter: saturate(.65) drop-shadow(0 0 1px rgba(255, 255, 255, .55)) drop-shadow(0 0 10px rgba(94, 234, 212, .35)); }
+.is-trist-bland .mascota { filter: saturate(.65); }
 .is-bucuros .mascota-pop,
 .is-sarbatoare .mascota-pop,
 .mascota-pop.is-succes { animation: mascotaHop 520ms cubic-bezier(.2, .8, .2, 1); }
@@ -2535,10 +2535,10 @@ html[data-resolved-theme="light"] .is-somnoros .mascota,
 html[data-resolved-theme="light"] .is-trist-bland .mascota {
   opacity: 1;
   mix-blend-mode: normal;
-  filter: drop-shadow(0 0 1px rgba(8, 20, 42, .45)) drop-shadow(0 0 8px rgba(12, 124, 134, .22));
+  filter: none;
 }
 html[data-resolved-theme="light"] .is-somnoros .mascota {
-  filter: saturate(.8) brightness(.96) drop-shadow(0 0 1px rgba(8, 20, 42, .45)) drop-shadow(0 0 8px rgba(12, 124, 134, .22));
+  filter: saturate(.8) brightness(.96);
 }
 html[data-resolved-theme="light"] .surface-action:hover {
   filter: brightness(.97);
