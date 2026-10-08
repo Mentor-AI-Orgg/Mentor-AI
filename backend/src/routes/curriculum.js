@@ -33,9 +33,10 @@ function explicitReveal(body) {
   return flag === true || flag === 1 || flag === "1" || flag === "true";
 }
 
-// Catalogul și ghidul cer un elev. `answers` nu pleacă aici: butonul
-// „Vezi răspunsurile” le cere pentru o singură lecție.
-router.get("/", authRequired, studentRequired, (req, res) => {
+// Programa fără răspunsuri e publică: lecțiile se citesc și fără cookie
+// (browserul din Facebook nu îl păstrează mereu). Răspunsurile rămân pe
+// POST /lesson-answers, doar pentru un elev autentificat.
+router.get("/", (req, res) => {
   const { subject, class_level: classLevel } = req.query || {};
   if (isEnTrack(req.query)) {
     if (subject) return res.json(catalogWithoutAnswers(getEnGuide(subject)));

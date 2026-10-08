@@ -555,7 +555,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           <section className="surface chapter-intro">
             <div className="eyebrow">{guide?.title || `${subjectLabel(subject)} · ${isEn ? 'Evaluare Națională' : gradeLabel(grade)}`}</div>
             <h2 className="display-font">{guide?.title || 'Capitolele clasei'}</h2>
-            <p>{guideLoading ? 'Încărcăm ghidul…' : (guide?.howISeeIt || 'Încărcăm ghidul…')}</p>
+            <p>{guideLoading ? 'Încărcăm ghidul…' : (guide?.howISeeIt || '')}</p>
             {guideError && (
               <p className="guide-error">
                 Nu am putut încărca programa.{' '}
