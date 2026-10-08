@@ -80,15 +80,20 @@ function operatorBlock() {
   const dpo = operator.dpo
     ? escapeHtml(operator.dpo)
     : "Nu este desemnat. Dacă există, setează LEGAL_DPO.";
+  const contact = escapeHtml(contactLine(operator));
+  const address = operator.address
+    ? `<li>Adresă: ${escapeHtml(operator.address)}</li>`
+    : "";
   return `
     ${todo}
     <ul>
       <li>Operator: ${escapeHtml(operator.name || "TODO: LEGAL_OPERATOR_NAME")}</li>
-      <li>Adresă: ${escapeHtml(operator.address || "TODO: LEGAL_OPERATOR_ADDRESS")}</li>
+      ${address}
       <li>CUI: ${cui}</li>
-      <li>Email: ${escapeHtml(contactLine(operator))}</li>
+      <li>Contact: ${contact}</li>
       <li>Responsabil cu protecția datelor: ${dpo}</li>
-    </ul>`;
+    </ul>
+    <p>Pentru orice solicitare, inclusiv cererile persoanelor vizate privind datele personale, scrieți la Contact: ${contact}.</p>`;
 }
 
 function privacyHtml() {
@@ -106,7 +111,7 @@ function privacyHtml() {
     <h2>Pentru copii</h2>
     <p>Știm numele tău de utilizator, clasa și ce lecții faci. Nu vrem numele tău real, școala sau telefonul.</p>
     <p>Părintele vede progresul, nu mesajele tale către mentor. Profilul tău este privat de la început.</p>
-    <p>Îți poți șterge contul din Profil: scrii parola și cuvântul ȘTERGE. Dacă ceva nu e în regulă, spune-i unui adult sau scrie la ${escapeHtml(contact)}.</p>
+    <p>Îți poți șterge contul din Profil: scrii parola și cuvântul ȘTERGE. Dacă ceva nu e în regulă, spune-i unui adult sau scrie la Contact: ${escapeHtml(contact)}.</p>
 
     <h2>Pentru părinți</h2>
     <h3>Cine este operatorul</h3>
@@ -135,7 +140,7 @@ function privacyHtml() {
       <li><strong>mentor_ai_v3_data</strong> în localStorage: temă, clasă, starea lecțiilor și un flag că ești logat. Nu păstrăm acolo email, telefon, emailul părintelui, școala sau numele real.</li>
     </ul>
     <h3>Drepturile dumneavoastră</h3>
-    <p>Aveți dreptul de acces, rectificare, ștergere, portabilitate și de a retrage acordul. Puteți descărca sau șterge datele din zona de părinte, ori scrie la ${escapeHtml(contact)}. Puteți depune o plângere la ANSPDCP, www.dataprotection.ro.</p>
+    <p>Aveți dreptul de acces, rectificare, ștergere, portabilitate și de a retrage acordul. Pentru orice solicitare, inclusiv cererile persoanelor vizate, scrieți la Contact: ${escapeHtml(contact)}. Puteți descărca sau șterge datele și din zona de părinte. Puteți depune o plângere la ANSPDCP, www.dataprotection.ro.</p>
     <p>Contorul de mesaje de criză nu spune cine a scris și nu se șterge odată cu un cont.</p>
     <p><a href="/termeni">Citește și termenii de utilizare</a>.</p>
   `);

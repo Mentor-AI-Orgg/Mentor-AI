@@ -158,9 +158,9 @@ conturile vechi rămase „pending” se șterg după 14 zile. Dacă mesajul aju
 în Spam, părintele nu vede rezumatul, dar contul nou nu se șterge din cauza
 asta. SPF, DKIM și DMARC se setează în DirectAdmin înainte de orice deschidere
 publică. Pașii sunt în [DEPLOY.md](DEPLOY.md). `SITE_PUBLIC` rămâne gol
-până trec și checklist-ul `npm run prelansare` (numele, adresa și emailul
-operatorului, SMTP, copia de siguranță). Nu completa în repo un CIF sau
-o adresă.
+până trec și checklist-ul `npm run prelansare` (numele și emailul
+operatorului, SMTP, copia de siguranță). Adresa poștală este opțională.
+Nu completa în repo un CIF sau o adresă.
 
 Note vechi, mutate, nu mai descriu codul de acum:
 [docs/arhiva/IMPLEMENTARE.md](docs/arhiva/IMPLEMENTARE.md),

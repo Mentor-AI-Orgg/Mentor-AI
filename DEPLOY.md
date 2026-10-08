@@ -220,7 +220,8 @@ numele, emailul sau textul din chat. Eșantionul implicit este 0,25, deci
 unele erori ajung doar pe email. Detaliile sunt în [docs/gdpr/furnizori.md](docs/gdpr/furnizori.md).
 
 Pagina de confidențialitate rămâne deschisă și cât site-ul e închis.
-Numele, adresa și emailul operatorului vin din variabile, nu din repo:
+Numele și emailul operatorului vin din variabile, nu din repo. Adresa
+poștală este opțională:
 
 ```
 LEGAL_OPERATOR_NAME=
@@ -231,9 +232,12 @@ LEGAL_DPO=
 ```
 
 `LEGAL_CUI` rămâne gol dacă operatorul este persoană fizică. `LEGAL_DPO`
-rămâne gol dacă nu există un responsabil cu protecția datelor. Dacă
-numele, adresa sau emailul lipsesc, pagina arată un TODO, iar
-`npm run prelansare` iese cu cod 1. Nu pune un CIF sau o adresă inventată.
+rămâne gol dacă nu există un responsabil cu protecția datelor.
+`LEGAL_OPERATOR_ADDRESS` rămâne gol dacă operatorul nu publică o adresă
+poștală; paginile nu afișează atunci linia de adresă, iar contactul este
+emailul. Dacă numele sau emailul lipsesc, pagina arată un TODO, iar
+`npm run prelansare` iese cu cod 1. Lipsa adresei nu oprește verificarea.
+Nu pune un CIF sau o adresă inventată.
 
 Tutorele răspunde din lecții, fără chei de AI. Emailul către părinte
 are nevoie de SMTP. Calendarul stă în aplicație, fără Google sau Notion.
