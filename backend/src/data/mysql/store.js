@@ -24,6 +24,7 @@ const META_VERSION = "version";
 let cache = new Map();
 let manifest = [];
 let ready = false;
+let hydrated = false;
 let locked = false;
 let drift = false;
 let lastDocument = null;
@@ -91,6 +92,12 @@ function remember(sqlRows) {
   manifest = Array.isArray(names) ? names : [];
   cache = indexBuckets(bucketsFromSql(sqlRows));
   drift = false;
+  hydrated = true;
+}
+
+function ensureHydrated() {
+  if (hydrated || locked) return;
+  remember(loadSqlRows());
 }
 
 function readDocument() {
@@ -136,6 +143,7 @@ function rememberEmpty() {
   manifest = [];
   drift = false;
   lastDocument = null;
+  hydrated = true;
 }
 
 function writePlan(plan, savedAt) {
@@ -161,6 +169,7 @@ function writePlan(plan, savedAt) {
 function writeCollections(collections, options = {}) {
   ensureReady();
   if (locked) return { saved: false, reason: "locked", rows: 0 };
+  ensureHydrated();
   const savedAt = options.savedAt || new Date().toISOString();
   const plan = planChange(cache, collections || {}, {
     manifest,
@@ -192,6 +201,7 @@ function writeDocument(document, options = {}) {
 
 function close() {
   ready = false;
+  hydrated = false;
   locked = false;
   bridge.close();
 }

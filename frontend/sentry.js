@@ -1,6 +1,4 @@
-import * as scrubModule from '@shared/sentryScrub.js';
-
-const scrubSentryEvent = scrubModule.scrubSentryEvent || scrubModule.default?.scrubSentryEvent;
+import scrubbers from '@shared/sentryScrub.cjs';
 
 function sampleRate() {
   const raw = import.meta.env.VITE_SENTRY_SAMPLE_RATE;
@@ -26,7 +24,7 @@ export function initSentry() {
         return null;
       },
       beforeSend(event) {
-        return scrubSentryEvent ? scrubSentryEvent(event) : null;
+        return scrubbers.scrubSentryEvent(event);
       }
     });
   }).catch(() => {});

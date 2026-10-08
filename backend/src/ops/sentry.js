@@ -1,7 +1,7 @@
 // Sentry pornește doar cu SENTRY_DSN. Fără DSN nu se încarcă pachetul.
 // Alertele pe email rămân. Nu trimitem sesiuni, IP, email sau text de chat.
 
-const { scrubSentryEvent, scrubText } = require("../../../shared/sentryScrub");
+const { scrubSentryEvent, scrubText } = require("../../../shared/sentryScrub.cjs");
 
 let enabled = false;
 let started = false;

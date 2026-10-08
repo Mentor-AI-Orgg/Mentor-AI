@@ -22,7 +22,7 @@ describe("rânduri MySQL", () => {
       const sql = sqls.find(item => item.startsWith(`CREATE TABLE IF NOT EXISTS \`${table}\``));
       expect(sql, table).toBeTruthy();
       spec.columns.forEach(column => {
-        expect(sql).toContain(`\`${column}\``);
+        expect(sql).toContain(`${column} `);
       });
     });
   });

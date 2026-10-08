@@ -2,7 +2,7 @@ import { createRequire } from "node:module";
 import { describe, expect, it } from "vitest";
 
 const nodeRequire = createRequire(import.meta.url);
-const { scrubSentryEvent, scrubText } = nodeRequire("../shared/sentryScrub.js");
+const { scrubSentryEvent, scrubText } = nodeRequire("../shared/sentryScrub.cjs");
 
 describe("curățare Sentry", () => {
   it("scoate emailul, IP-ul, utilizatorul și firimiturile", () => {

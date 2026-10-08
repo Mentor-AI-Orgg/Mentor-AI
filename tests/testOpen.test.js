@@ -144,9 +144,11 @@ describe('Zecița e vocea tutorelui, iar diagnosticarea nu e la elev', () => {
 
   it('diagnosticarea rămâne la creator, nu pe ruta elevului', () => {
     const app = source('backend/src/app.js');
+    const mounts = source('backend/src/routes/mounts.js');
     const creator = source('frontend/screens/CreatorMascotScreen.jsx');
-    expect(app).toContain('creatorRequired, diagnosticsRoute');
-    expect(app).not.toContain('studentOnly, diagnosticsRoute');
+    expect(app).toContain('mountApi');
+    expect(mounts).toMatch(/mount: "\/diagnostics"[\s\S]*guards: \[creatorRequired\]/);
+    expect(mounts).not.toMatch(/studentOnly, diagnosticsRoute|studentRequired, diagnosticsRoute/);
     expect(creator).toContain('runDiagnostics');
     expect(creator).toContain('Verifică sistemul');
   });
