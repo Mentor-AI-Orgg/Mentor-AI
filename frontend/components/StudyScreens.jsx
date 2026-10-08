@@ -77,6 +77,19 @@ const TutorFace = ({ mood = 'explica' }) => (
   </div>
 );
 
+function ChatText({ text }) {
+  const parts = String(text || "")
+    .split(/\n{2,}/)
+    .map(part => part.trim())
+    .filter(Boolean);
+  if (!parts.length) return null;
+  return parts.map((part, index) => (
+    <p key={index} className="mentor-paragraph">
+      <MathText text={part} />
+    </p>
+  ));
+}
+
 const MessageBubble = ({ role, tutorName, children }) => (
   <div
     className={`mentor-message ${role === 'user' ? 'mentor-message-user' : 'mentor-message-ai'}`}
@@ -616,7 +629,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
             !shown.slice(index + 1).some((item) => item.role === 'assistant');
           const bubble = (
             <MessageBubble role={message.role} tutorName={MASCOT_NAME}>
-              <MathText text={message.content} />
+              <ChatText text={message.content} />
             </MessageBubble>
           );
           if (message.role === 'user') {
