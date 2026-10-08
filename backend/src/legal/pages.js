@@ -29,24 +29,28 @@ function layout(title, body) {
 <html lang="ro">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>${escapeHtml(title)} · ${escapeHtml(legal.product)}</title>
   <link rel="stylesheet" href="/fonts/faces.css" />
   <style>
-    :root { --bg: #0f1228; --ink: #f4f1ea; --muted: #9aa3b5; --lime: #c8f06c; --line: rgba(255,255,255,.08); }
+    :root { --bg: #08142A; --ink: #FFFFFF; --muted: #A9B8D0; --lime: #44D6D7; --line: rgba(169,184,208,.28); }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 Nunito, "Segoe UI", sans-serif; }
-    main { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 Nunito, "Segoe UI", sans-serif; overflow-wrap: anywhere; }
+    main { max-width: 720px; margin: 0 auto; padding: max(24px, env(safe-area-inset-top)) 16px calc(48px + env(safe-area-inset-bottom)); }
     a { color: var(--lime); }
     h1, h2, h3 { font-family: "Space Grotesk", Nunito, sans-serif; letter-spacing: -.02em; }
     h1 { font-size: clamp(32px, 6vw, 44px); line-height: 1.1; margin: 12px 0 8px; }
     h2 { font-size: 22px; margin: 36px 0 10px; }
     h3 { font-size: 18px; margin: 22px 0 8px; }
-    p, li { color: #d5d8e4; }
-    .eyebrow { color: var(--muted); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
-    .back { color: var(--muted); text-decoration: none; font-size: 14px; }
-    .note { padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.03); color: var(--muted); font-size: 14px; }
-    code { color: var(--ink); }
+    p, li { color: var(--ink); }
+    .eyebrow { color: var(--muted); font-size: 0.75rem; letter-spacing: .18em; text-transform: uppercase; }
+    .back { display: inline-flex; align-items: center; min-height: 44px; color: var(--muted); text-decoration: none; font-size: 1rem; }
+    .note { padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.03); color: var(--muted); font-size: 1rem; }
+    code { color: var(--ink); overflow-wrap: anywhere; }
+    @media (prefers-color-scheme: light) {
+      :root { --bg: #F7F9FC; --ink: #1F2937; --muted: #4B5563; --lime: #0C7C86; --line: rgba(31,41,55,.14); }
+      .note { background: #FFFFFF; }
+    }
   </style>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="dc441396-9915-4ee0-8f77-7f98eb595bc8"></script>
 </head>

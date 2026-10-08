@@ -107,7 +107,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
     <main className="home-page animate-fadeIn">
       <header className="home-header">
         <div className="home-intro">
-          <MascotPresence message={t('home.hello', { name: userData.name || t('home.studentFallback') })} />
+          <MascotPresence mood="waving" message={t('home.hello', { name: userData.name || t('home.studentFallback') })} />
           <div className="home-intro-copy">
           <div className="eyebrow">{dateLabel}</div>
           <h1 className="display-font home-title">{t('home.hello', { name: userData.name || t('home.studentFallback') })}</h1>
@@ -134,7 +134,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
       </header>
       {offer && !quiz && !result && (
         <section className="focus-card placement-offer">
-          <Mascota mood="explica" size="md" />
+          <Mascota mood="waving" size="md" />
           <p>Vrei să vedem de unde pornești? Sunt 10 întrebări scurte, cam 5 minute.</p>
           <div className="placement-choices">
             <button type="button" className="ghost-button" disabled={placementBusy} onClick={async () => {

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { HELP_CATEGORIES, searchHelp } from '../help/articles.js';
 import { askApp } from '../help/ask.js';
+import Mascota from './mascot/Mascota.jsx';
 
 const HelpPanel = ({ heading = 'Ajutor', onNavigate }) => {
   const [query, setQuery] = useState('');
@@ -66,7 +67,12 @@ const HelpPanel = ({ heading = 'Ajutor', onNavigate }) => {
           </button>
         ))}
       </div>
-      {articles.length === 0 && <p>Nu am găsit nimic pentru căutarea asta. Încearcă alt cuvânt.</p>}
+      {articles.length === 0 && (
+        <div className="empty-with-mascot">
+          <Mascota mood="thinking" size="md" />
+          <p>Nu am găsit nimic pentru căutarea asta. Încearcă alt cuvânt.</p>
+        </div>
+      )}
       {articles.map(article => (
         <article key={article.id} className="surface help-article" id={`ajutor-${article.id}`}>
           <h3 className="display-font">{article.title}</h3>
