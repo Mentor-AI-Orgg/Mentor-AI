@@ -172,6 +172,7 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
         {(card || report) ? (
           <MascotPresence
             compact
+            mood={loading ? 'thinking' : (report ? (Number(report.grade) >= 5 ? 'celebrating' : 'encouraging') : '')}
             celebrate={report ? (Number(report.grade) >= 5 ? 'succes' : 'gresit') : ''}
             message={report ? (Number(report.grade) >= 5 ? 'Gata setul. Bravo că l-ai dus până la capăt.' : 'Hai să vedem ce mai repetăm.') : ''}
           />

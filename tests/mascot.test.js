@@ -57,6 +57,22 @@ describe('furnicuța', () => {
     expect(markup({ mood: 'explica', size: 'bust', pulse: 'gresit' })).toContain('is-gresit');
   });
 
+  it('acceptă stări scurte în engleză și arată că scrie', () => {
+    const happy = markup({ mood: 'happy', size: 'lg' });
+    expect(happy).toContain('src="/mascot/bucuros.png"');
+    expect(happy).toContain('data-mood="bucuros"');
+    expect(happy).toContain('is-bucuros');
+    expect(markup({ mood: 'thinking', size: 'md' })).toContain('/mascot/gandeste.png');
+    expect(markup({ mood: 'waving', size: 'lg' })).toContain('/mascot/salut.png');
+    expect(markup({ mood: 'encouraging', size: 'md' })).toContain('is-incurajeaza');
+    expect(markup({ mood: 'sleepy', size: 'md' })).toContain('is-somnoros');
+    expect(markup({ mood: 'celebrating', size: 'lg' })).toContain('/mascot/bucuros.png');
+    const typing = markup({ mood: 'thinking', size: 'md', typing: true });
+    expect(typing).toContain('mascota-typing');
+    expect(typing).toContain('typing-dot');
+    expect(typing).toContain('is-typing');
+  });
+
   it('respiră, clipește și i se aprind ochelarii, fără să înghețe', () => {
     const html = markup({ mood: 'salut', size: 'lg' });
     expect(html).toContain('mascota-figure');
@@ -67,6 +83,8 @@ describe('furnicuța', () => {
     expect(css).toContain('@keyframes mascotaIdle');
     expect(css).toContain('@keyframes mascotaBlink');
     expect(css).toContain('@keyframes mascotaShine');
+    expect(css).toContain('@keyframes mascotaWave');
     expect(css).toContain('animation: mascotaIdle 4.8s ease-in-out infinite');
+    expect(css).toContain('prefers-reduced-motion');
   });
 });
