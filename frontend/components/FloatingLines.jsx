@@ -234,22 +234,24 @@ function FloatingLines({
   const [motionOff, setMotionOff] = useState(() => (
     typeof document !== 'undefined' && document.documentElement.dataset.motion === 'off'
   ));
+  const [lightTheme, setLightTheme] = useState(() => (
+    typeof document !== 'undefined' && document.documentElement.dataset.resolvedTheme === 'light'
+  ));
   useEffect(() => {
     if (typeof document === 'undefined' || typeof MutationObserver === 'undefined') return undefined;
     const root = document.documentElement;
-    const read = () => setMotionOff(root.dataset.motion === 'off');
+    const read = () => {
+      setMotionOff(root.dataset.motion === 'off');
+      setLightTheme(root.dataset.resolvedTheme === 'light');
+    };
     const observer = new MutationObserver(read);
-    observer.observe(root, { attributes: true, attributeFilter: ['data-motion'] });
+    observer.observe(root, { attributes: true, attributeFilter: ['data-motion', 'data-resolved-theme'] });
     return () => observer.disconnect();
   }, []);
-  const skipHeavy = (() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return true;
-    const coarse = window.matchMedia('(pointer: coarse)').matches;
-    const narrow = window.matchMedia('(max-width: 720px)').matches;
-    const saveData = Boolean(navigator.connection && navigator.connection.saveData);
-    return coarse || narrow || saveData;
-  })();
-  const skipWebGL = prefersReducedMotion || motionOff || skipHeavy;
+  const saveData = typeof navigator !== 'undefined' && Boolean(navigator.connection && navigator.connection.saveData);
+  // The shader paints bright lines on black and relies on screen blending, which
+  // disappears on a light page. Light theme uses the soft CSS bands instead.
+  const skipWebGL = prefersReducedMotion || motionOff || saveData || lightTheme;
   const containerRef = useRef(null);
   const targetMouseRef = useRef(new THREE.Vector2(-1000, -1000));
   const currentMouseRef = useRef(new THREE.Vector2(-1000, -1000));
@@ -301,7 +303,8 @@ function FloatingLines({
       renderer.dispose();
       return undefined;
     }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const narrow = typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 800px)').matches;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, narrow ? 1.25 : 2));
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
     container.appendChild(renderer.domElement);

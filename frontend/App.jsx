@@ -643,23 +643,25 @@ function AppShell({ userData, setUserData }) {
   return (
     <div className="app-shell">
       <AdaptiveContainer />
-      <div className="app-background">
-        <BackgroundSafe>
-          <AppBackground
-            enabledWaves={['top', 'middle', 'bottom']}
-            lineCount={[6, 8, 10]}
-            lineDistance={[5, 4, 3]}
-            topWavePosition={{ x: 0.8, y: 0.25, rotate: -0.4 }}
-            middleWavePosition={{ x: 1.0, y: -0.05, rotate: 0.2 }}
-            bottomWavePosition={{ x: 2.0, y: -0.65, rotate: 0.4 }}
-            animationSpeed={0.8}
-            interactive={false}
-            bendRadius={10}
-            bendStrength={0.4}
-            parallax={true}
-            parallaxStrength={0.12}
-          />
-        </BackgroundSafe>
+      <div className={`app-background${screen === 'welcome' ? ' is-landing' : ''}`}>
+        {screen === 'welcome' ? (
+          <BackgroundSafe>
+            <AppBackground
+              enabledWaves={['top', 'middle', 'bottom']}
+              lineCount={[6, 8, 10]}
+              lineDistance={[5, 4, 3]}
+              topWavePosition={{ x: 0.8, y: 0.25, rotate: -0.4 }}
+              middleWavePosition={{ x: 1.0, y: -0.05, rotate: 0.2 }}
+              bottomWavePosition={{ x: 2.0, y: -0.65, rotate: 0.4 }}
+              animationSpeed={0.8}
+              interactive={false}
+              bendRadius={10}
+              bendStrength={0.4}
+              parallax={true}
+              parallaxStrength={0.12}
+            />
+          </BackgroundSafe>
+        ) : null}
       </div>
       <Suspense fallback={<main className="screen-fallback">Se încarcă pagina…</main>}>
         {renderScreen()}
