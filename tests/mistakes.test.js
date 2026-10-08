@@ -85,8 +85,11 @@ describe('caietul de greșeli', () => {
     const home = readFileSync(new URL('../frontend/screens/HomeScreen.jsx', import.meta.url), 'utf8');
     const page = readFileSync(new URL('../frontend/screens/MistakesScreen.jsx', import.meta.url), 'utf8');
     const parent = readFileSync(new URL('../frontend/components/ConsentScreens.jsx', import.meta.url), 'utf8');
-    expect(home).toContain('de recapitulat azi');
-    expect(home).toContain('Recapitulează');
+    const ro = JSON.parse(readFileSync(new URL('../frontend/i18n/locales/ro.json', import.meta.url), 'utf8'));
+    expect(ro.home.reviewDue).toContain('de recapitulat azi');
+    expect(ro.home.reviewAction).toBe('Recapitulează');
+    expect(home).toContain("t('home.reviewDue'");
+    expect(home).toContain("t('home.reviewAction')");
     expect(page).toContain('Caietul de greșeli');
     expect(page).toContain('Deschide lecția');
     expect(parent).toContain('Vezi lecția');

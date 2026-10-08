@@ -284,8 +284,8 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
   return (
     <main className="screen-page shop-page animate-fadeIn">
       <div className="shop-topbar">
-        <button onClick={onBack} className="text-slate-400 text-sm hover:text-white transition"><i className="fas fa-arrow-left mr-2"></i>Înapoi</button>
-        <div className="text-sm text-slate-400">Magazin</div>
+        <button onClick={onBack} className="screen-back" type="button"><i className="fas fa-arrow-left" /> Înapoi</button>
+        <div className="screen-kicker">Magazin</div>
       </div>
 
       <section className="surface shop-hero">

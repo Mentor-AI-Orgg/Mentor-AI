@@ -50,7 +50,9 @@ describe('panoul părintelui', () => {
     const me = await child.agent.get('/api/auth/me');
     expect(me.body.user.timeBlocked).toBe(true);
     const home = fs.readFileSync('frontend/screens/HomeScreen.jsx', 'utf8');
-    expect(home).toContain('Ai lucrat mult azi, ne vedem mâine!');
+    const ro = JSON.parse(fs.readFileSync('frontend/i18n/locales/ro.json', 'utf8'));
+    expect(ro.home.timeBlocked).toBe('Ai lucrat mult azi, ne vedem mâine!');
+    expect(home).toContain("t('home.timeBlocked')");
     const screen = fs.readFileSync('frontend/components/ConsentScreens.jsx', 'utf8');
     expect(screen).toContain('Duminică, de la ora 19');
     expect(screen).toContain('În fiecare zi, de la ora 19');

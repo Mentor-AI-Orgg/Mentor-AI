@@ -111,8 +111,8 @@ const CalendarScreen = ({ onBack, userData }) => {
   return (
     <div className="screen-page animate-fadeIn">
       <div className="px-5 pt-6 flex items-center justify-between">
-        <button onClick={onBack} className="text-slate-400 text-sm hover:text-white transition" type="button"><i className="fas fa-arrow-left mr-2"></i>Înapoi</button>
-        <div className="text-sm text-slate-400">Calendar</div>
+        <button onClick={onBack} className="screen-back" type="button"><i className="fas fa-arrow-left" /> Înapoi</button>
+        <div className="screen-kicker">Calendar</div>
       </div>
 
       <div className="mx-5 mt-4 calendar-tabs" role="tablist">

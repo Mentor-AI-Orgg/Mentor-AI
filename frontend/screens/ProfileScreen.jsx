@@ -281,8 +281,8 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
   return (
     <div className="screen-page animate-fadeIn">
       <div className="px-5 pt-6 flex items-center justify-between">
-        <button onClick={onBack} className="text-slate-400 text-sm hover:text-white transition"><i className="fas fa-arrow-left mr-2"></i>{t('common.back')}</button>
-        <div className="text-sm text-slate-400">{t('profile.title')}</div>
+        <button onClick={onBack} className="screen-back" type="button"><i className="fas fa-arrow-left" /> {t('common.back')}</button>
+        <div className="screen-kicker">{t('profile.title')}</div>
       </div>
       <div className="surface mx-5 mt-6 rounded-3xl p-5 shadow-xl profile-hero-card">
         <div className="flex items-center gap-4">
@@ -291,31 +291,31 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
           </div>
           <div>
             <div className="text-xl font-extrabold">{userData.name || t('profile.defaultName')}</div>
-            <div className="text-sm text-slate-400">{userData.username || t('profile.personalProfile')}</div>
+            <div className="muted">{userData.username || t('profile.personalProfile')}</div>
             <div className="profile-role-pill">{userData.titleName ? `${wardrobe.titles.find(item => item.id === userData.titleId)?.emoji || ''} ${userData.titleName} · `.trim() : ''}{t('common.student')} · {t('home.level')} {userData.level || 1}</div>
           </div>
         </div>
         <div className="mt-6 grid grid-cols-2 gap-3">
           <div className="surface-soft rounded-3xl p-4 text-sm">
-            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">{t('home.coins')}</div>
+            <div className="meta-label">{t('home.coins')}</div>
             <div className="text-lg font-semibold">{userData.coins || 0}</div>
           </div>
           <div className="surface-soft rounded-3xl p-4 text-sm">
-            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">{t('home.streak')}</div>
+            <div className="meta-label">{t('home.streak')}</div>
             <div className="text-lg font-semibold">{t('profile.days', { count: userData.streak || 0 })}</div>
           </div>
           <div className="surface-soft rounded-3xl p-4 text-sm">
-            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">Puncte XP</div>
+            <div className="meta-label">{t('profile.xp')}</div>
             <div className="text-lg font-semibold">{userData.xp || 0}</div>
           </div>
           <div className="surface-soft rounded-3xl p-4 text-sm">
-            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">{t('home.chapters')}</div>
+            <div className="meta-label">{t('home.chapters')}</div>
             <div className="text-lg font-semibold">{userData.chaptersDone || 0}/{userData.chaptersTotal || 0}</div>
           </div>
           <div className="surface-soft rounded-3xl p-4 text-sm col-span-2">
-            <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">Colecție magazin</div>
+            <div className="meta-label">{t('profile.collection')}</div>
             <div className="text-lg font-semibold">
-              {(wardrobe.inventory || []).length}/{wardrobe.items.length || 0} obiecte
+              {t('profile.collectionCount', { owned: (wardrobe.inventory || []).length, total: wardrobe.items.length || 0 })}
               {userData.collection?.avatarsTotal ? ` · ${userData.collection.avatarsOwned || wardrobe.items.filter(item => item.category === 'avatar' && wardrobe.inventory.includes(item.id)).length}/${userData.collection.avatarsTotal} avataruri` : ''}
             </div>
           </div>
@@ -662,7 +662,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         <Leaderboard />
       </div>
       <div className="mx-5 mt-5 grid gap-3">
-        <button type="button" onClick={exportAccount} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition" disabled={exporting}>
+        <button type="button" onClick={exportAccount} className="surface surface-action rounded-3xl p-4 text-left" disabled={exporting}>
           <i className="fas fa-download mr-2"></i>{exporting ? t('profile.exporting') : t('profile.export')}
         </button>
         {deleteOpen ? (
@@ -673,7 +673,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
               deleteAccount();
             }}
           >
-            <p className="text-sm text-slate-300">Scrie parola și ȘTERGE. Contul și datele dispar.</p>
+            <p className="muted">{t('profile.deleteHint')}</p>
             <label className="field-label">Parola
               <input className="field form-input" type="password" autoComplete="current-password" value={deletePassword} onChange={event => setDeletePassword(event.target.value)} />
             </label>
@@ -685,13 +685,13 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
             </button>
           </form>
         ) : (
-          <button type="button" onClick={() => setDeleteOpen(true)} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">
+          <button type="button" onClick={() => setDeleteOpen(true)} className="surface rounded-3xl p-4 text-left surface-action">
             <i className="fas fa-trash mr-2"></i>{t('profile.delete')}
           </button>
         )}
-        <a href="/confidentialitate" target="_blank" rel="noopener noreferrer" className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">{t('profile.privacy')}</a>
-        <a href="/termeni" target="_blank" rel="noopener noreferrer" className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">{t('profile.terms')}</a>
-        <button type="button" onClick={onLogout} className="surface rounded-3xl p-4 text-left hover:bg-[#29285d] transition">
+        <a href="/confidentialitate" target="_blank" rel="noopener noreferrer" className="surface rounded-3xl p-4 text-left surface-action">{t('profile.privacy')}</a>
+        <a href="/termeni" target="_blank" rel="noopener noreferrer" className="surface rounded-3xl p-4 text-left surface-action">{t('profile.terms')}</a>
+        <button type="button" onClick={onLogout} className="surface rounded-3xl p-4 text-left surface-action">
           <i className="fas fa-arrow-right-from-bracket mr-2"></i>{t('profile.logout')}
         </button>
       </div>

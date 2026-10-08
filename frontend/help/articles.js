@@ -29,7 +29,7 @@ const HELP_ARTICLES = [
     id: 'obiectiv-zi',
     category: 'ritm',
     title: 'Obiectivul zilei',
-    body: 'Obiectivul zilnic e o lecție. Când ai deschis-o, ziua e gata. Cele trei misiuni de sub ea sunt în plus, dacă mai ai chef. Poți lipsi o zi: săptămâna cere 4 zile, nu șapte.'
+    body: 'Obiectivul zilnic e o lecție. Când ai deschis-o, ziua e gata. Poți lipsi o zi: săptămâna cere 4 zile, nu șapte.'
   },
   {
     id: 'obiectiv',

@@ -37,8 +37,12 @@ describe('testul de pornire', () => {
     expect(saved.body.placement.correct).toBeUndefined();
 
     const home = fs.readFileSync('frontend/screens/HomeScreen.jsx', 'utf8');
-    expect(home).toContain('Da, hai!');
-    expect(home).toContain('Nu acum');
+    const ro = JSON.parse(fs.readFileSync('frontend/i18n/locales/ro.json', 'utf8'));
+    expect(ro.home.placementYes).toBe('Da, hai!');
+    expect(ro.home.placementLater).toBe('Nu acum');
+    expect(home).toContain("t('home.placementYes')");
+    expect(home).toContain("t('home.placementLater')");
+    expect(home).toContain("onNavigate('placement')");
     expect(home).not.toMatch(/notă|nota/i);
   });
 });

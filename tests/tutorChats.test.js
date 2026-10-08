@@ -264,8 +264,11 @@ describe('chat-urile tutorelui', () => {
     expect(source).not.toContain('Zecița');
     expect(css).toContain('.mentor-avatar');
     expect(css).toContain('@media (prefers-reduced-motion: reduce)');
-    expect(home).toContain('Da, hai!');
-    expect(home).toContain('Nu acum');
+    const ro = JSON.parse(readFileSync(new URL('../frontend/i18n/locales/ro.json', import.meta.url), 'utf8'));
+    expect(ro.home.placementYes).toBe('Da, hai!');
+    expect(ro.home.placementLater).toBe('Nu acum');
+    expect(home).toContain("t('home.placementYes')");
+    expect(home).toContain("t('home.placementLater')");
   });
 
   it('pune numele și avatarul lângă răspuns și ascunde raportul de diagnosticare', () => {

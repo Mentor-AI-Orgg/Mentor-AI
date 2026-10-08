@@ -15,6 +15,7 @@ describe('app hash routes', () => {
       ['profile', { section: 'prieteni' }, '#/profil/prieteni'],
       ['calendar', {}, '#/calendar'],
       ['caiet', {}, '#/caiet'],
+      ['placement', {}, '#/plasament'],
       ['ajutor', {}, '#/ajutor'],
       ['mascota', {}, '#/creator/mascota'],
       ['learn', {}, '#/lectii'],
