@@ -1,48 +1,48 @@
-# Plan: de la fișierul JSON la MySQL
+# De la fișierul JSON la MySQL
 
-Aplicația ține conturile într-un singur fișier, `data/mentor-ai.json`, prin `backend/src/data/persistence.js`. Asta e potrivit cât timp sunt puține conturi. Planul de mai jos spune când se trece pe MySQL (disponibil pe gazduire.net) și cum. Nu se implementează acum.
+Modul este scris. Producția rămâne pe `data/mentor-ai.json` până setezi `STORE=mysql` în DirectAdmin. Pașii de acolo sunt în [DEPLOY.md](../DEPLOY.md).
 
-## Când nu mai ajunge fișierul
+`STORE=json` este implicit. Doar prezența `MYSQL_URL` nu schimbă nimic. Codul de lecții, conturi și economie tot prin `persistence.register` vorbește cu hărțile din memorie. La salvare, modul MySQL scrie rândurile care s-au schimbat, nu tot fișierul.
 
-Se trece pe MySQL dacă se întâmplă una dintre acestea:
+## Când merită trecut
 
 - peste aproximativ 5.000 de conturi active (un copil care a intrat în ultimele 90 de zile);
 - fișierul trece de aproximativ 20 MB;
-- salvarea durează vizibil (aplicația se blochează la fiecare scriere, pentru că tot fișierul se rescrie).
+- salvarea durează vizibil, pentru că pe JSON tot documentul se rescrie.
 
-Până atunci se rămâne pe JSON. Backup-ul criptat din etapa T7 rămâne valabil.
+Până atunci JSON-ul rămâne potrivit. Backup-ul criptat rămâne valabil în ambele moduri.
 
-## Tabele
+## Ce s-a schimbat față de planul inițial
 
-Un cont, un rând. Fără date în plus față de ce e deja în JSON.
+- Driverul este `mysql2`, JavaScript pur, fără addon nativ.
+- Nu există chei străine dure. `account_id` este un id intern (sha256 scurt al cheii din memorie). Economie, memorie, calendar sau acord pot avea rânduri înainte să existe contul. Emailul rămâne coloană acolo unde el este cheia hărții, ca citirea să refacă aceleași chei.
+- Payload-ul JSON al rândului este sursa la citire. Coloanele de lângă el (monede, clasă, acord, dată) sunt ca să cauți în bază fără să desfaci tot.
+- Colecțiile din fișierul de azi, nu doar cele din planul vechi: conturi, sesiuni, reset, prieteni, calendar, memorie, acord, economie, moderare, contorul de criză, ștergerile. O colecție necunoscută cade în `collection_rows`.
+- Migrările de schemă (`schema_migrations`) nu stau într-o tranzacție: `CREATE TABLE` face commit implicit. Diff-ul de date (ștergeri, upsert, `store_meta`) stă într-o tranzacție.
+- Un singur proces scrie. Firul MySQL ia `GET_LOCK('s10_store')`. Al doilea proces nu scrie peste primul.
+- `saveNow()` rămâne sincron. `mysql2` rulează pe un fir separat, iar firul principal așteaptă răspunsul fără să depindă de bucla de evenimente.
+- Backup-ul zilnic și bak1–bak3 rămân instantanee JSON criptate, același format ca `mentor-ai.json`, nu `mysqldump`. Verificarea de 26 de ore se uită la data fișierului de backup, ca înainte.
+- JSON-ul nu se șterge la migrare. Ține-l cel puțin 40 de zile.
 
-- `accounts`: email intern, nume de utilizator, hash-ul parolei, sarea, clasa, emailul părintelui, acordul, data ultimei intrări, suspendare, nume de schimbat.
-- `sessions`: tokenul hash-uit, contul, expirarea.
-- `economy`: monede, XP, inventar, capitole, jurnalul de activitate (JSON în coloană, până se sparge pe rânduri).
-- `friends`: perechi, cereri, blocări.
-- `calendar_events`: data, titlul, tipul, ora.
-- `moderation_reports` și `moderation_log`: rapoartele și jurnalul de 12 luni.
-- `consent_tokens`, `reset_tokens`: token hash-uit și expirare.
+## Migrare și înapoi
 
-Cheile străine folosesc id-ul intern al contului, nu emailul în clar în tabelele publice.
+Din rădăcina repo-ului, cu variabilele MySQL în mediu și fără `STORE=mysql` pe procesul care încă servește site-ul:
 
-## Cum se migrează
+```bash
+node scripts/json-to-mysql.mjs --dry-run
+node scripts/json-to-mysql.mjs --file data/mentor-ai.json
+```
 
-1. Copie de siguranță a `data/mentor-ai.json` (criptată, ca în T7) și o copie pe laptop.
-2. Script local `scripts/json-to-mysql.mjs` (de scris atunci, nu acum): citește JSON-ul, inserează în tabele, într-o tranzacție.
-3. Se compară numărul de conturi și un cont de test (login, o lecție, export).
-4. `persistence.js` capătă un mod `STORE=mysql`. Până e verificat, `STORE=json` rămâne implicit.
-5. Pe server se pune parola MySQL doar în mediul DirectAdmin, nu în repo.
+Dry-run nu deschide baza și nu schimbă schema. Rularea reală e idempotentă: a doua oară nu dublează rândurile. La final compară numărul de conturi și sumele pe colecții. Dacă nu se potrivesc, iese cu eroare și lasă JSON-ul pe disc. Un fișier fără conturi este refuzat fără `--allow-empty`. Scriptul scoate colecțiile vechi (abonamente, invitații, conexiuni de calendar), la fel ca migrarea de pe JSON.
 
-Dacă migrarea eșuează, se revine la fișierul JSON din copie. Nu se șterge JSON-ul în aceeași zi.
+Înapoi, fără să atingă baza:
 
-## Backup-ul după migrare
+```bash
+node scripts/mysql-to-json.mjs --out data/mentor-ai.from-mysql.json
+```
 
-- În fiecare noapte, `mysqldump` al bazei, criptat cu aceeași `BACKUP_KEY`, păstrat 3 copii, ca bak1–bak3.
-- Restaurarea: script separat, oprit site-ul, import, pornit din nou.
-- Verificarea de 26 de ore din T9 se mută pe data fișierului de dump, nu pe `mentor-ai.json`.
-- Fișierul JSON rămâne o copie de rezervă încă 40 de zile, apoi se șterge de pe server.
+Nu scrie peste `data/mentor-ai.json` fără `--force`. Ca să revii: oprești aplicația, pui fișierul exportat la locul lui, `STORE=json`, pornești.
 
-## Ce nu se face acum
+Copia rapidă bak1, în modul MySQL, se reia cu `node backend/src/ops/restoreBackup.js`. Copia zilnică se decriptează cu `scripts/backup-restore.mjs`, apoi se încarcă cu `json-to-mysql.mjs`.
 
-Nu se adaugă `mysql2`, nu se creează baza, nu se schimbă store-urile. Documentul e doar planul.
+Exportul și ștergerea GDPR rămân în memorie, prin `userDataRegistry`, apoi `saveNow` scrie diferența. Funcționează la fel pe JSON și pe MySQL.

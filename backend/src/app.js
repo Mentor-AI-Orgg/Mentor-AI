@@ -3,27 +3,11 @@ const path = require("path");
 const express = require("express");
 
 const config = require("./config");
-const chatRoute = require("./routes/chat");
-const healthRoute = require("./routes/health");
-const leaderboardRoute = require("./routes/leaderboard");
-const calendarRoute = require("./routes/calendar");
-const flashcardsRoute = require("./routes/flashcards");
-const cardsRoute = require("./routes/cards");
-const problemsRoute = require("./routes/problems");
-const diagnosticsRoute = require("./routes/diagnostics");
-const economyRoute = require("./routes/economy");
-const authRoute = require("./routes/auth");
-const accountRoute = require("./routes/account");
-const friendsRoute = require("./routes/friends");
-const moderationRoute = require("./routes/moderation");
-const creatorRoute = require("./routes/creator");
 const { spec: openapiSpec } = require("./openapi");
+const { mountApi } = require("./routes/mounts");
 const { basicAuth } = require("./middleware/basicAuth");
-const { comingSoon, creatorRequired } = require("./middleware/comingSoon");
-const { attachUser, authRequired, studentRequired, consentRequired } = require("./middleware/auth");
-const parentRoute = require("./routes/parent");
-const placementRoute = require("./routes/placement");
-const mistakesRoute = require("./routes/mistakes");
+const { comingSoon } = require("./middleware/comingSoon");
+const { attachUser } = require("./middleware/auth");
 const { startRetention } = require("./data/retentionJob");
 const { startDigestSchedule } = require("./notify/parentActivity");
 const { migrateLegacyProfiles, flagRejectedUsernames } = require("./data/authStore");
@@ -36,7 +20,6 @@ const { newId, reportError, watchOperations } = require("./ops/errorMonitor");
 const persistence = require("./data/persistence");
 const { assertRegistered } = require("./data/loadUserStores");
 assertRegistered();
-const curriculumRoute = require("./routes/curriculum");
 const { privacyHtml, termsHtml } = require("./legal/pages");
 
 function createApp(options = {}) {
@@ -116,7 +99,7 @@ function createApp(options = {}) {
     });
   }
 
-  function mountApi(prefix) {
+  function mountVersion(prefix) {
     app.get(`${prefix}/openapi.json`, (req, res) => res.json(openapiSpec));
     app.get(prefix, (req, res) => res.json({
       name: config.APP_NAME,
@@ -124,33 +107,11 @@ function createApp(options = {}) {
       ok: true,
       spec: `${prefix}/openapi.json`
     }));
-
-    app.use(`${prefix}/auth`, authRoute);
-    app.use(`${prefix}/parent`, parentRoute);
-    app.use(`${prefix}/placement`, authRequired, studentRequired, placementRoute);
-    app.use(`${prefix}/mistakes`, authRequired, studentRequired, mistakesRoute);
-    app.use(`${prefix}/health`, healthRoute);
-    app.use(`${prefix}/leaderboard`, leaderboardRoute);
-    app.use(`${prefix}/moderation`, moderationRoute);
-    app.use(`${prefix}/creator`, creatorRoute);
-    app.use(`${prefix}/curriculum`, curriculumRoute);
-
-    const studentOnly = [authRequired, studentRequired];
-
-    app.use(`${prefix}/chat`, ...studentOnly, chatRoute);
-    app.use(`${prefix}/flashcards`, ...studentOnly, flashcardsRoute);
-    app.use(`${prefix}/cards`, ...studentOnly, cardsRoute);
-    app.use(`${prefix}/problems`, ...studentOnly, problemsRoute);
-    // Verificarea de sistem e unealtă de creator, nu un buton în chatul elevului.
-    app.use(`${prefix}/diagnostics`, creatorRequired, diagnosticsRoute);
-    app.use(`${prefix}/calendar`, ...studentOnly, calendarRoute);
-    app.use(`${prefix}/economy`, ...studentOnly, economyRoute);
-    app.use(`${prefix}/account`, ...studentOnly, accountRoute);
-    app.use(`${prefix}/friends`, ...studentOnly, consentRequired, friendsRoute);
+    mountApi(app, prefix);
   }
 
-  mountApi("/api");
-  mountApi("/api/v1");
+  mountVersion("/api");
+  mountVersion("/api/v1");
 
   app.get("/confidentialitate", (req, res) => {
     res.type("html").send(privacyHtml());

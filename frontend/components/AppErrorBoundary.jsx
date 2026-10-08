@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import Mascota from './mascot/Mascota.jsx';
+import { captureSentryException } from '../sentry.js';
 
 function frameOf(error) {
   const stack = String(error && error.stack || '');
@@ -19,6 +20,7 @@ class AppErrorBoundary extends Component {
   }
 
   componentDidCatch(error) {
+    captureSentryException(error);
     const frame = frameOf(error);
     const message = String(error && error.message || 'eroare').slice(0, 300);
     fetch('/api/client-error', {

@@ -152,9 +152,11 @@ completare, tot în limita de 10 pe minut și 60 pe oră. `gpt-4o-mini` e varian
 ieftină; recenzia foto rămâne pe `OPENAI_MODEL` (implicit `gpt-4o`), de câteva
 ori mai scumpă, și nu e folosită de tutore. Prețul curent stă pe lista OpenAI.
 
-Acordul părintelui se dă doar din linkul primit pe email. Dacă mesajul
-ajunge în Spam, părintele nu confirmă și contul se șterge după 14 zile.
-SPF, DKIM și DMARC se setează în DirectAdmin înainte de orice deschidere
+Contul se deschide imediat. Acordul rămâne cu statusul „notified”: părintele
+este informat pe email, fără un buton care să țină contul deschis. Doar
+conturile vechi rămase „pending” se șterg după 14 zile. Dacă mesajul ajunge
+în Spam, părintele nu vede rezumatul, dar contul nou nu se șterge din cauza
+asta. SPF, DKIM și DMARC se setează în DirectAdmin înainte de orice deschidere
 publică. Pașii sunt în [DEPLOY.md](DEPLOY.md). `SITE_PUBLIC` rămâne gol
 până trec și checklist-ul `npm run prelansare` (numele, adresa și emailul
 operatorului, SMTP, copia de siguranță). Nu completa în repo un CIF sau

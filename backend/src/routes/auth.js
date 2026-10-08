@@ -96,10 +96,11 @@ function consentMail({ req, account, token }) {
     `Păstrăm numele de utilizator (${account.profile.username}), clasa (${account.profile.class}), progresul și emailul părintelui, ca să știm cine învață și cine a dat acordul.`,
     "Profilul este privat de la început.",
     `Politica de confidențialitate: ${publicBaseUrl(req)}/confidentialitate`,
-    "Deschide linkul și apasă un buton. Linkul nu confirmă singur.",
-    "Dacă mesajul nu e în inbox, uită-te în Spam. Fără el, acordul nu se poate da.",
+    "Contul este deja deschis. Mesajul vă anunță; nu trebuie să apăsați un buton ca să rămână deschis.",
+    "Dacă mesajul nu e în inbox, uită-te în Spam.",
+    "Puteți deschide linkul dacă vreți să confirmați, sau să spuneți că nu ați creat contul.",
     link,
-    "Dacă nu confirmați în 14 zile, contul și datele se șterg automat."
+    "Doar un cont vechi rămas în așteptare, fără acest email, se șterge după 14 zile."
   ].join("\n");
   const escape = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const alt = escape(`${MASCOT_NAME}, furnicuța care te ajută`);

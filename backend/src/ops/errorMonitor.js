@@ -235,6 +235,7 @@ function reportError({ id, status, route, code, stack }) {
     stack: String(stack || "").split("\n").slice(0, 12).join("\n")
   };
   appendLog(logError(entry));
+  try { require("./sentry").captureBackendError(entry); } catch { /* Sentry e opțional */ }
   return noteIncident({ type: entry.code, id: entry.id });
 }
 
@@ -251,6 +252,7 @@ function reportClientError({ message, file, line }) {
     line: Number(line) || 0
   };
   appendLog(logError(entry));
+  try { require("./sentry").captureBackendError(entry); } catch { /* Sentry e opțional */ }
   return noteIncident({ type: "client_error", id });
 }
 

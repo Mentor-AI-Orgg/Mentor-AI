@@ -122,7 +122,7 @@ function privacyHtml() {
       <li>copiile de siguranță: ${backupDays} zile, criptate.</li>
     </ul>
     <h3>Cine le mai primește</h3>
-    <p>Firma de găzduire gazduire.net ține serverul. Serviciul de email SMTP trimite mesajele către părinte. Nimeni altcineva. Nu vindem date și nu le folosim pentru publicitate.</p>
+    <p>Firma de găzduire gazduire.net ține serverul și, dacă este pornită, baza de date de pe același cont. Serviciul de email SMTP trimite mesajele către părinte. Umami numără vizitele, fără conturi și fără conversații. Dacă monitorizarea erorilor este pornită, pleacă doar tipul erorii, fără nume de utilizator, email, conversații sau adresă IP. Nu vindem date și nu le folosim pentru publicitate.</p>
     <h3>Ce stă în browser</h3>
     <ul>
       <li><strong>s10_session</strong>: cookie httpOnly, 7 zile, recunoaște contul copilului.</li>
