@@ -2093,7 +2093,7 @@ html[data-motion="off"] *::after {
   width: var(--lid-w);
   height: var(--lid-h);
   border-radius: 42% 42% 48% 48%;
-  background: #10284a;
+  background: transparent;
   transform: scaleY(0);
   transform-origin: center top;
   animation: mascotaBlink 5.4s ease-in-out infinite;
@@ -2667,7 +2667,7 @@ html[data-resolved-theme="light"] .subscription-hero,
 html[data-resolved-theme="light"] .subscription-compare,
 html[data-resolved-theme="light"] .subscription-comparison { background: var(--surface); color: var(--text); }
 html[data-resolved-theme="light"] .auth-panel { background: #FFFFFF; }
-html[data-resolved-theme="light"] .mascota-blink i { background: #1F2937; }
+html[data-resolved-theme="light"] .mascota-blink i { background: transparent; }
 html[data-resolved-theme="light"] .quote-card { color: #1F2937; }
 html[data-resolved-theme="light"] .quote-by { color: #4B5563; }
 html[data-resolved-theme="light"] .onboarding-option {
