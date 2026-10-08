@@ -469,8 +469,8 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
               <div className="eyebrow">{MASCOT_NAME}</div>
               <h1 className="display-font screen-title">{hello}</h1>
               <p className="screen-subtitle">
-                Ce învățăm azi? Îți răspund din lecțiile de aici, pas cu pas. Nu încarc poze și nu
-                apelez un serviciu plătit.
+                Ce învățăm azi? Sunt {MASCOT_NAME}. Îți răspund din lecțiile de aici, pas cu pas.
+                Dacă nu sunt sigură, îți spun cinstit și îți arăt unde să te uiți.
               </p>
             </div>
           </div>
@@ -628,7 +628,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
                 ? 'Te-am auzit. Apasă Enter ca să trimiți.'
                 : 'Scrie sau vorbește, apoi Enter…'
             }
-            aria-label="Întrebarea pentru tutore"
+            aria-label={`Întrebarea pentru ${MASCOT_NAME}`}
           />
         </div>
         <button

@@ -15,6 +15,8 @@ import { emitMascot } from '../mascot/mascotEvents.js';
 import { MASCOT_MESSAGES } from '../i18n/mascotMessages.js';
 import { lessonIdFromHash, resolveAnchorId } from '../lessonText.js';
 import { GRADES, SUBJECTS, gradeLabel, normalizeGrade, normalizeSubject, subjectLabel } from '../curriculum.js';
+import { MASCOT_NAME } from '../config/mascot.js';
+import { TEST_OPEN_ERROR } from '../testOpen.js';
 
 const OFFICIAL_SOURCE_LINE = 'Informațiile au fost adunate din manualele oficiale ale Ministerului Educației, pe baza programei actuale.';
 const EXACT_SOURCE = /litera|editura|isbn|\bA1\d{3}\b|aprobat prin/i;
@@ -111,6 +113,11 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [sessionDone, setSessionDone] = useState(false);
   const [quizUnit, setQuizUnit] = useState(null);
   const [quizLesson, setQuizLesson] = useState(null);
+  const [quizRun, setQuizRun] = useState(0);
+  const [enRun, setEnRun] = useState(0);
+  const [cardRun, setCardRun] = useState(0);
+  const [paperRun, setPaperRun] = useState(0);
+  const [paperBusy, setPaperBusy] = useState(false);
   const [cardSession, setCardSession] = useState(null);
   const [cardSummary, setCardSummary] = useState({ lessons: [], nextDue: null, total: 0, due: 0, unseen: 0 });
   const [problemList, setProblemList] = useState([]);
@@ -131,10 +138,12 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const activeGrade = isEn ? 8 : grade;
 
   useEffect(() => {
-    if (!quizUnit || !quizAnchor.current) return undefined;
-    quizAnchor.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    return undefined;
-  }, [quizUnit, quizLesson]);
+    if (!quizRun || !quizAnchor.current) return undefined;
+    const node = quizAnchor.current;
+    node.scrollIntoView({ block: 'start' });
+    const frame = requestAnimationFrame(() => node.scrollIntoView({ block: 'start' }));
+    return () => cancelAnimationFrame(frame);
+  }, [quizRun, quizUnit, quizLesson]);
 
   useEffect(() => {
     if (!cardSession || !cardAnchor.current) return undefined;
@@ -291,6 +300,49 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
       track: isEn ? 'en' : null,
       chapter: unit ? { id: unit.id, title: unit.title, inOwnWords: unit.inOwnWords } : null
     });
+  };
+
+  const openQuiz = (unit, lesson = null) => {
+    setCardSession(null);
+    setProblemSession(null);
+    setQuizLesson(lesson);
+    setQuizUnit(unit);
+    setQuizRun(n => n + 1);
+  };
+
+  const openEnTrain = unit => {
+    setEnTrainUnit(unit);
+    setEnRun(n => n + 1);
+  };
+
+  const openCards = session => {
+    setQuizUnit(null);
+    setQuizLesson(null);
+    setProblemSession(null);
+    setCardSession(session);
+    setCardRun(n => n + 1);
+  };
+
+  const openGeneratedPaper = async (mode) => {
+    if (paperBusy) return;
+    setPaperBusy(true);
+    setPaperError('');
+    const result = await MentorAPI.generateEnPaper({
+      subject,
+      exclude_ids: seenPapers,
+      ...(mode ? { mode } : {})
+    });
+    setPaperBusy(false);
+    if (result.success && result.data?.paper) {
+      setSeenPapers(prev => [...prev, result.data.paper.id]);
+      setOpenPaper(result.data.paper);
+      setPaperSession(result.data.session || null);
+      setPaperRun(n => n + 1);
+      return;
+    }
+    setPaperError(result.error || (mode === 'drill'
+      ? 'Nu am putut deschide antrenamentul scurt. Încearcă din nou.'
+      : 'Nu am putut genera un alt model acum. Încearcă din nou.'));
   };
 
   const startSession = async unit => {
@@ -534,8 +586,14 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                     type="button"
                     className={`en-paper-pick ${openPaper?.id === paper.id ? 'selected' : ''}`}
                     onClick={() => {
+                      if (openPaper?.id === paper.id) {
+                        setOpenPaper(null);
+                        setPaperSession(null);
+                        return;
+                      }
                       setPaperSession(null);
-                      setOpenPaper(openPaper?.id === paper.id ? null : paper);
+                      setOpenPaper(paper);
+                      setPaperRun(n => n + 1);
                     }}
                   >
                     <i className="fas fa-file-alt" />
@@ -550,44 +608,29 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                 <button
                   type="button"
                   className="accent-button result-action"
-                  onClick={async () => {
-                    setPaperError('');
-                    const result = await MentorAPI.generateEnPaper({ subject, exclude_ids: seenPapers });
-                    if (result.success && result.data?.paper) {
-                      setSeenPapers(prev => [...prev, result.data.paper.id]);
-                      setOpenPaper(result.data.paper);
-                      setPaperSession(result.data.session);
-                      return;
-                    }
-                    setPaperError(result.error || 'Nu am putut genera un alt model acum. Încearcă din nou.');
-                  }}
+                  disabled={paperBusy}
+                  onClick={() => openGeneratedPaper('')}
                 >
-                  Alt model (simulare, 60 min) <i className="fas fa-random" />
+                  {paperBusy ? 'Se deschide…' : 'Alt model (simulare, 60 min)'} <i className="fas fa-random" />
                 </button>
                 <button
                   type="button"
                   className="ghost-button result-action"
-                  onClick={async () => {
-                    setPaperError('');
-                    const result = await MentorAPI.generateEnPaper({
-                      subject,
-                      exclude_ids: seenPapers,
-                      mode: 'drill'
-                    });
-                    if (result.success && result.data?.paper) {
-                      setSeenPapers(prev => [...prev, result.data.paper.id]);
-                      setOpenPaper(result.data.paper);
-                      setPaperSession(result.data.session);
-                      return;
-                    }
-                    setPaperError(result.error || 'Nu am putut deschide antrenamentul scurt. Încearcă din nou.');
-                  }}
+                  disabled={paperBusy}
+                  onClick={() => openGeneratedPaper('drill')}
                 >
-                  Antrenament scurt (fără ora de sală) <i className="fas fa-bolt" />
+                  {paperBusy ? 'Se deschide…' : 'Antrenament scurt (fără ora de sală)'} <i className="fas fa-bolt" />
                 </button>
               </div>
-              {paperError && <p className="guide-error" role="alert">{paperError}</p>}
-              {openPaper && <EnPaperView paper={openPaper} session={paperSession} onClose={() => { setOpenPaper(null); setPaperSession(null); }} />}
+              {paperError && <p className="guide-error" role="alert">{paperError || TEST_OPEN_ERROR}</p>}
+              {openPaper && (
+                <EnPaperView
+                  key={`${openPaper.id}:${paperRun}`}
+                  paper={openPaper}
+                  session={paperSession}
+                  onClose={() => { setOpenPaper(null); setPaperSession(null); }}
+                />
+              )}
             </section>
           )}
 
@@ -651,19 +694,9 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                                 unit: unit.id,
                                 lesson: entry.id
                               }).then(result => (result.success ? result.data?.answers : null)) : undefined}
-                              onQuiz={isEn ? null : () => {
-                                setCardSession(null);
-                                setProblemSession(null);
-                                setQuizUnit(unit);
-                                setQuizLesson({ id: entry.id, title: entry.title });
-                              }}
+                              onQuiz={isEn ? null : () => openQuiz(unit, { id: entry.id, title: entry.title })}
                               cardsDue={(cardSummary.lessons || []).find(row => row.lesson === entry.id)?.due || 0}
-                              onCards={isEn ? null : () => {
-                                setQuizUnit(null);
-                                setQuizLesson(null);
-                                setProblemSession(null);
-                                setCardSession({ unit, lesson: { id: entry.id, title: entry.title }, mode: 'lesson' });
-                              }}
+                              onCards={isEn ? null : () => openCards({ unit, lesson: { id: entry.id, title: entry.title }, mode: 'lesson' })}
                               onProblem={isEn || !problemList.some(row => row.lesson === entry.id) ? null : () => {
                                 setQuizUnit(null);
                                 setQuizLesson(null);
@@ -690,10 +723,10 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                       </small>
                       <div className="learning-actions">
                         <button type="button" className="ghost-button result-action" onClick={() => askMentor(unit)}>
-                          Întreabă tutorele <i className="fas fa-comments" />
+                          Întreab-o pe {MASCOT_NAME} <i className="fas fa-comments" />
                         </button>
                         {!isEn && (
-                          <button type="button" className="ghost-button result-action" onClick={() => { setCardSession(null); setQuizLesson(null); setQuizUnit(unit); }}>
+                          <button type="button" className="ghost-button result-action" onClick={() => openQuiz(unit, null)}>
                             Generează test <i className="fas fa-clipboard-check" />
                           </button>
                         )}
@@ -701,7 +734,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                           <p className="quiz-coverage">Ai repetat tot pentru azi. Următoarea repetare: {sayDay(cardSummary.nextDue) || 'curând'}.</p>
                         )}
                         {!isEn && cardSummary.total > 0 && (cardSummary.due > 0 || cardSummary.unseen > 0) && (
-                          <button type="button" className="ghost-button result-action" onClick={() => { setQuizUnit(null); setQuizLesson(null); setProblemSession(null); setCardSession({ unit, lesson: null, mode: 'chapter' }); }}>
+                          <button type="button" className="ghost-button result-action" onClick={() => openCards({ unit, lesson: null, mode: 'chapter' })}>
                             Flashcard-uri din tot capitolul <i className="fas fa-clone" />
                           </button>
                         )}
@@ -711,12 +744,12 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                           </button>
                         )}
                         {!isEn && cardSummary.total > 0 && cardSummary.due === 0 && cardSummary.unseen === 0 && (
-                          <button type="button" className="ghost-button result-action" onClick={() => { setQuizUnit(null); setQuizLesson(null); setCardSession({ unit, lesson: null, mode: 'extra' }); }}>
+                          <button type="button" className="ghost-button result-action" onClick={() => openCards({ unit, lesson: null, mode: 'extra' })}>
                             Repetă oricum
                           </button>
                         )}
                         {isEn && (
-                          <button type="button" className="ghost-button result-action" onClick={() => setEnTrainUnit(unit)}>
+                          <button type="button" className="ghost-button result-action" onClick={() => openEnTrain(unit)}>
                             Antrenament EN <i className="fas fa-dumbbell" />
                           </button>
                         )}
@@ -729,8 +762,8 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                           onClick={() => {
                             setWorkSprint(true);
                             startSession(unit);
-                            if (isEn) setEnTrainUnit(unit);
-                            else setQuizUnit(unit);
+                            if (isEn) openEnTrain(unit);
+                            else openQuiz(unit, null);
                           }}
                         >
                           Lucrează 15 minute
@@ -770,11 +803,11 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
               {saved ? 'Salvat în lista ta' : 'Salvează pentru mai târziu'} <i className="fas fa-bookmark" />
             </button>
             {!isEn && (
-              <button type="button" className="ghost-button result-action" onClick={() => { setQuizLesson(null); setQuizUnit({ id: session.chapterId || openChapter, title: session.title, inOwnWords: session.objective }); }}>
+              <button type="button" className="ghost-button result-action" onClick={() => openQuiz({ id: session.chapterId || openChapter, title: session.title, inOwnWords: session.objective }, null)}>
                 Generează test <i className="fas fa-clipboard-check" />
               </button>
             )}
-            <button type="button" className="accent-button result-action" onClick={() => askMentor({ id: openChapter, title: session.title, inOwnWords: session.objective })}>Continuă cu tutorele</button>
+            <button type="button" className="accent-button result-action" onClick={() => askMentor({ id: openChapter, title: session.title, inOwnWords: session.objective })}>Continuă cu {MASCOT_NAME}</button>
           </div>
         </section>
       )}
@@ -782,6 +815,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
       {quizUnit && !isEn && (
         <div ref={quizAnchor}>
         <ChapterQuiz
+          key={quizRun}
           unit={quizUnit}
           subject={subject}
           grade={grade}
@@ -813,6 +847,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
       {cardSession && !isEn && (
         <div ref={cardAnchor}>
           <CardDeck
+            key={cardRun}
             unit={cardSession.unit}
             lesson={cardSession.lesson}
             mode={cardSession.mode}
@@ -835,6 +870,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
 
       {enTrainUnit && isEn && (
         <ChapterQuiz
+          key={enRun}
           unit={enTrainUnit}
           subject={subject}
           grade={8}

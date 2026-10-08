@@ -9,6 +9,7 @@ import { xpProgress } from '../xpProgress.js';
 import { dailySlogan } from '../slogans.js';
 import QuoteCard from '../components/QuoteCard.jsx';
 import Mascota from '../components/mascot/Mascota.jsx';
+import { TEST_OPEN_ERROR } from '../testOpen.js';
 import MascotPresence from '../components/mascot/MascotPresence.jsx';
 import LevelBar from '../components/LevelBar.jsx';
 
@@ -16,6 +17,8 @@ const HomeScreen = ({ userData, onNavigate }) => {
   const { t, locale } = useI18n();
   const [offer, setOffer] = useState(false);
   const [quiz, setQuiz] = useState(null);
+  const [placementBusy, setPlacementBusy] = useState(false);
+  const [placementError, setPlacementError] = useState('');
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
   const [dueMistakes, setDueMistakes] = useState(0);
@@ -134,14 +137,31 @@ const HomeScreen = ({ userData, onNavigate }) => {
           <Mascota mood="explica" size="md" />
           <p>Vrei să vedem de unde pornești? Sunt 10 întrebări scurte, cam 5 minute.</p>
           <div className="placement-choices">
-            <button type="button" className="ghost-button" onClick={async () => {
+            <button type="button" className="ghost-button" disabled={placementBusy} onClick={async () => {
+              if (placementBusy) return;
+              setPlacementBusy(true);
+              setPlacementError('');
               const pack = await MentorAPI.placementQuestions('ambele');
-              if (pack.success) setQuiz(pack.data.questions || []);
-            }}>Da, hai!</button>
-            <button type="button" className="ghost-button" onClick={async () => {
-              await MentorAPI.placementSkip();
+              setPlacementBusy(false);
+              if (pack.success && Array.isArray(pack.data?.questions) && pack.data.questions.length) {
+                setQuiz(pack.data.questions);
+                return;
+              }
+              setPlacementError(pack.error || TEST_OPEN_ERROR);
+            }}>{placementBusy ? 'Se deschide…' : 'Da, hai!'}</button>
+            <button type="button" className="ghost-button" disabled={placementBusy} onClick={async () => {
+              if (placementBusy) return;
+              setPlacementBusy(true);
+              setPlacementError('');
+              const pack = await MentorAPI.placementSkip();
+              setPlacementBusy(false);
+              if (!pack.success) {
+                setPlacementError(pack.error || 'Nu am putut amâna testul. Încearcă din nou.');
+                return;
+              }
               setOffer(false);
             }}>Nu acum</button>
+            {placementError && <p className="guide-error" role="alert">{placementError}</p>}
           </div>
         </section>
       )}
@@ -154,16 +174,23 @@ const HomeScreen = ({ userData, onNavigate }) => {
               <input className="field form-input" value={answers[item.id] || ''} onChange={event => setAnswers(prev => ({ ...prev, [item.id]: event.target.value }))} />
             </label>
           ))}
-          <button type="button" className="accent-button" onClick={async () => {
+          {placementError && <p className="guide-error" role="alert">{placementError}</p>}
+          <button type="button" className="accent-button" disabled={placementBusy} onClick={async () => {
+            if (placementBusy) return;
+            setPlacementBusy(true);
+            setPlacementError('');
             const pack = await MentorAPI.placementFinish({
               subject: 'ambele',
               answers: quiz.map(item => ({ id: item.id, given: answers[item.id] || '' }))
             });
+            setPlacementBusy(false);
             if (pack.success) {
               setResult(pack.data);
               setOffer(false);
+              return;
             }
-          }}>Gata</button>
+            setPlacementError(pack.error || 'Nu am putut închide testul. Încearcă din nou.');
+          }}>{placementBusy ? 'Se trimite…' : 'Gata'}</button>
         </section>
       )}
       {result && (

@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import MathText from './MathText.jsx';
 import GeoFigure from './GeoFigure.jsx';
 import { effortLine } from '../i18n/quizFeedback.js';
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion.js';
+import { readDeckPack, takeTicket, ticketIsCurrent } from '../testOpen.js';
 
 const MONTHS = ['ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie'];
 
@@ -22,10 +23,14 @@ export default function CardDeck({ unit, lesson, mode = 'chapter', subject, grad
   const [stats, setStats] = useState({ stiam: 0, aproape: 0, nu: 0 });
   const [nextDue, setNextDue] = useState('');
   const [empty, setEmpty] = useState('');
+  const [error, setError] = useState('');
+  const ticketRef = useRef(0);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    let cancel = false;
+    const ticket = takeTicket(ticketRef);
     setLoading(true);
+    setError('');
     MentorAPI.getCardDeck({
       subject,
       class_level: grade,
@@ -33,15 +38,24 @@ export default function CardDeck({ unit, lesson, mode = 'chapter', subject, grad
       lesson_id: lesson?.id || '',
       mode
     }).then(result => {
-      if (cancel) return;
-      const list = result.success ? (result.data.cards || []) : [];
-      setCards(list);
-      setNextDue(result.data?.nextDue || '');
-      setEmpty(list.length ? '' : 'Nu sunt flashcard-uri aici încă.');
+      if (!ticketIsCurrent(ticketRef, ticket)) return;
+      const outcome = readDeckPack(result);
+      if (!outcome.ok) {
+        setCards([]);
+        setEmpty('');
+        setError(outcome.error);
+        setLoading(false);
+        return;
+      }
+      setCards(outcome.cards);
+      setNextDue(outcome.nextDue || '');
+      setEmpty(outcome.empty || '');
       setLoading(false);
     });
-    return () => { cancel = true; };
-  }, [unit.id, lesson?.id, mode, subject, grade]);
+    return () => {
+      ticketRef.current += 1;
+    };
+  }, [unit.id, lesson?.id, mode, subject, grade, attempt]);
 
   const card = cards[index];
   const done = !loading && cards.length > 0 && index >= cards.length;
@@ -92,7 +106,13 @@ export default function CardDeck({ unit, lesson, mode = 'chapter', subject, grad
         <button type="button" className="ghost-button" onClick={onClose} aria-label="Închide flashcard-urile"><i className="fas fa-xmark" /></button>
       </div>
       {loading && <p className="quiz-loading">Pregătesc cardurile…</p>}
-      {empty && !loading && <p className="quiz-coverage">{empty}</p>}
+      {error && !loading && (
+        <>
+          <p className="guide-error" role="alert">{error}</p>
+          <button type="button" className="accent-button" onClick={() => setAttempt(value => value + 1)}>Încearcă din nou</button>
+        </>
+      )}
+      {empty && !loading && !error && <p className="quiz-coverage">{empty}</p>}
       {card && !done && (
         <>
           <p className="quiz-progress">{index + 1} din {cards.length}</p>

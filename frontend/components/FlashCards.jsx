@@ -7,6 +7,8 @@ import GradeGoalPicker from './GradeGoalPicker.jsx';
 import MathText from './MathText.jsx';
 import { effortLine } from '../i18n/quizFeedback.js';
 import MascotPresence from './mascot/MascotPresence.jsx';
+import { MASCOT_NAME } from '../config/mascot.js';
+import { readQuizPack, takeTicket, ticketIsCurrent } from '../testOpen.js';
 
 const letters = ['A', 'B', 'C', 'D'];
 
@@ -23,10 +25,18 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
   const [report, setReport] = useState(null);
   const [pendingUnit, setPendingUnit] = useState(null);
   const [targetNote, setTargetNote] = useState(null);
+  const [error, setError] = useState('');
+  const ticketRef = useRef(0);
 
   const generate = async (unit, more = false, note = targetNote) => {
-    if (!unit || loading || !subject) return;
+    if (!unit || !subject) {
+      setError('Alege mai întâi materia, apoi capitolul.');
+      return;
+    }
+    if (loading) return;
+    const ticket = takeTicket(ticketRef);
     setLoading(true);
+    setError('');
     setPicked(null);
     setIndex(0);
     setReport(null);
@@ -49,10 +59,17 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
       target_note: note,
       lesson_id: lesson?.id || ''
     });
-    const next = result.success && result.data?.cards?.length ? result.data.cards : [];
-    setCards(next);
-    setCoverage(result.data?.coverage || null);
-    setExclude(prev => [...new Set([...prev, ...next.map(card => card.id)])]);
+    if (!ticketIsCurrent(ticketRef, ticket)) return;
+    const outcome = readQuizPack(result, { lesson: Boolean(lesson?.id) });
+    if (!outcome.ok) {
+      setCards([]);
+      setError(outcome.error);
+      setLoading(false);
+      return;
+    }
+    setCards(outcome.cards);
+    setCoverage(outcome.coverage);
+    setExclude(prev => [...new Set([...prev, ...outcome.cards.map(card => card.id)])]);
     setLoading(false);
   };
 
@@ -183,14 +200,16 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
         </div>
       )}
 
-      {pendingUnit && !cards.length && !loading && !report && (
+      {error && !loading && <p className="guide-error" role="alert">{error}</p>}
+      {pendingUnit && !cards.length && !report && (
         <GradeGoalPicker
           kind="flashcards"
+          busy={loading}
           onPick={note => {
             setTargetNote(note);
             generate(pendingUnit, false, note);
           }}
-          onCancel={() => setPendingUnit(null)}
+          onCancel={() => { setPendingUnit(null); setError(''); }}
         />
       )}
       {targetNote && cards.length > 0 && (
@@ -287,7 +306,7 @@ const FlashCards = ({ chapters = [], onRewardClaim, subject, classLevel, onAskMe
           <div className="learning-actions">
             {typeof onAskMentor === 'function' && source && (
               <button type="button" className="ghost-button" onClick={() => onAskMentor(source)}>
-                Întreabă tutorele
+                Întreab-o pe {MASCOT_NAME}
               </button>
             )}
             <button type="button" className="ghost-button" onClick={() => { setCards([]); setReport(null); setPendingUnit(source); }}>Altă notă</button>
