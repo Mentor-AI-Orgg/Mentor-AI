@@ -469,8 +469,8 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
               <div className="eyebrow">{MASCOT_NAME}</div>
               <h1 className="display-font screen-title">{hello}</h1>
               <p className="screen-subtitle">
-                Ce învățăm azi? Sunt {MASCOT_NAME} și îți răspund din lecțiile de aici, pas cu pas.
-                Nu încarc poze și nu apelez un serviciu plătit.
+                Ce învățăm azi? Sunt {MASCOT_NAME}. Îți răspund din lecțiile de aici, pas cu pas.
+                Dacă nu sunt sigură, îți spun cinstit și îți arăt unde să te uiți.
               </p>
             </div>
           </div>

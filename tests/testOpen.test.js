@@ -120,8 +120,9 @@ describe('Zecița e vocea tutorelui, iar diagnosticarea nu e la elev', () => {
     const hit = answerFromLessons({ message: 'diftong', subject: 'romana', grade: 6 });
     expect(hit.text.startsWith(`Sunt ${MASCOT_NAME}.`)).toBe(true);
     const miss = answerFromLessons({ message: 'azi e soare afara', subject: 'matematica', grade: 6 });
-    expect(miss.text.startsWith(`Sunt ${MASCOT_NAME}.`)).toBe(true);
+    expect(miss.text).toMatch(/Nu sunt sigură/);
     expect(miss.text).toMatch(/nu am găsit/);
+    expect(miss.text).toMatch(/#\/lectii\//);
     const mentor = source('backend/src/mentor/localMentor.js');
     expect(mentor).toContain('MASCOT_NAME');
     expect(mentor).not.toMatch(/Zecița/);
@@ -134,6 +135,8 @@ describe('Zecița e vocea tutorelui, iar diagnosticarea nu e la elev', () => {
     expect(nav).toContain('MASCOT_NAME');
     expect(nav).not.toMatch(/Zecița/);
     expect(study).toContain('Sunt {MASCOT_NAME}');
+    expect(study).toContain('Dacă nu sunt sigură');
+    expect(study).not.toMatch(/serviciu plătit|Nu încarc poze/);
     expect(study).not.toMatch(/Diagnosticare|diagMode|runDiagnostics|fa-stethoscope/);
     expect(learn).toContain('Întreab-o pe {MASCOT_NAME}');
     expect(learn).not.toMatch(/Zecița/);
