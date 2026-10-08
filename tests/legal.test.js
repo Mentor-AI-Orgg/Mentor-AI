@@ -94,11 +94,14 @@ describe('pagini legale', () => {
     delete process.env.LEGAL_CUI;
     delete process.env.LEGAL_DPO;
     const open = await request(app).get('/confidentialitate');
-    expect(open.text).toContain('TODO');
-    expect(open.text).toContain('LEGAL_OPERATOR_NAME');
+    expect(open.text).not.toContain('TODO');
+    expect(open.text).not.toContain('LEGAL_OPERATOR_NAME');
     expect(open.text).not.toContain('LEGAL_OPERATOR_ADDRESS');
-    expect(open.text).not.toMatch(/Adresă:/);
-    expect(open.text).toContain('LEGAL_CONTACT');
+    expect(open.text).not.toContain('LEGAL_CUI');
+    expect(open.text).not.toContain('LEGAL_DPO');
+    expect(open.text).not.toContain('LEGAL_CONTACT');
+    expect(open.text).not.toMatch(/<li>Adresă:/);
+    expect(open.text).not.toMatch(/<li>CUI:/);
     expect(open.text).not.toContain('[DE COMPLETAT');
     expect(privacy.text).toContain(`${days(retention.PENDING_MS)} zile`);
     expect(privacy.text).toContain(`${months(retention.INACTIVE_MS)} luni`);
@@ -154,11 +157,34 @@ describe('pagini legale', () => {
       expect(page.status).toBe(200);
       expect(page.text).toContain(OPERATOR_NAME);
       expect(page.text).toContain(`Contact: ${OPERATOR_EMAIL}`);
+      expect(page.text).toContain(`scrieți-ne la ${OPERATOR_EMAIL}`);
       expect(page.text).toContain('cererile persoanelor vizate');
+      expect(page.text).not.toContain('la Contact:');
+      expect(page.text).not.toContain('TODO');
       expect(page.text).not.toContain('LEGAL_OPERATOR_ADDRESS');
-      expect(page.text).not.toContain('TODO: LEGAL_OPERATOR_ADDRESS');
+      expect(page.text).not.toContain('LEGAL_CUI');
+      expect(page.text).not.toContain('LEGAL_DPO');
       expect(page.text).not.toMatch(/<li>Adresă:/);
+      expect(page.text).not.toMatch(/<li>CUI:/);
+      expect(page.text).not.toMatch(/Responsabil cu protecția datelor/);
       expect(page.text).not.toContain('datele operatorului nu sunt publicate');
+    }
+  });
+
+  it('nu afișează TODO pe paginile publice când sunt setate doar numele și emailul', async () => {
+    process.env.LEGAL_OPERATOR_NAME = OPERATOR_NAME;
+    process.env.LEGAL_CONTACT = OPERATOR_EMAIL;
+    delete process.env.LEGAL_OPERATOR_ADDRESS;
+    delete process.env.LEGAL_CUI;
+    delete process.env.LEGAL_DPO;
+    const { app } = createApp({ autosave: false });
+    for (const route of ['/confidentialitate', '/termeni']) {
+      const page = await request(app).get(route);
+      expect(page.status).toBe(200);
+      expect(page.text).not.toContain('TODO');
+      expect(page.text).toContain(`Contact: ${OPERATOR_EMAIL}`);
+      expect(page.text).toContain(`scrieți-ne la ${OPERATOR_EMAIL}`);
+      expect(page.text).not.toMatch(/<li>CUI:/);
     }
   });
 
@@ -166,13 +192,19 @@ describe('pagini legale', () => {
     process.env.LEGAL_OPERATOR_NAME = OPERATOR_NAME;
     process.env.LEGAL_CONTACT = OPERATOR_EMAIL;
     process.env.LEGAL_OPERATOR_ADDRESS = OPERATOR_ADDRESS;
+    process.env.LEGAL_CUI = '12345678';
+    process.env.LEGAL_DPO = 'dpo@suntde10.ro';
     const { app } = createApp({ autosave: false });
     for (const route of ['/confidentialitate', '/termeni']) {
       const page = await request(app).get(route);
       expect(page.status).toBe(200);
       expect(page.text).toContain(`Adresă: ${OPERATOR_ADDRESS}`);
+      expect(page.text).toContain('CUI: 12345678');
+      expect(page.text).toContain('Responsabil cu protecția datelor: dpo@suntde10.ro');
       expect(page.text).toContain(`Contact: ${OPERATOR_EMAIL}`);
-      expect(page.text).not.toContain('TODO: LEGAL_OPERATOR_ADDRESS');
+      expect(page.text).toContain(`scrieți-ne la ${OPERATOR_EMAIL}`);
+      expect(page.text).not.toContain('TODO');
+      expect(page.text).not.toContain('la Contact:');
     }
   });
 

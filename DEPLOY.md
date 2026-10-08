@@ -235,7 +235,8 @@ LEGAL_DPO=
 rămâne gol dacă nu există un responsabil cu protecția datelor.
 `LEGAL_OPERATOR_ADDRESS` rămâne gol dacă operatorul nu publică o adresă
 poștală; paginile nu afișează atunci linia de adresă, iar contactul este
-emailul. Dacă numele sau emailul lipsesc, pagina arată un TODO, iar
+emailul. `LEGAL_CUI` și `LEGAL_DPO` lipsă nu lasă o linie pe pagină.
+Paginile publice nu afișează text TODO. Dacă numele sau emailul lipsesc,
 `npm run prelansare` iese cu cod 1. Lipsa adresei nu oprește verificarea.
 Nu pune un CIF sau o adresă inventată.
 

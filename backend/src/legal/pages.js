@@ -65,40 +65,35 @@ function layout(title, body) {
 </html>`;
 }
 
-function contactLine(operator) {
-  return operator.email || "TODO: LEGAL_CONTACT";
+function listItem(label, value) {
+  if (!value) return "";
+  return `<li>${label}: ${escapeHtml(value)}</li>`;
 }
 
 function operatorBlock() {
   const operator = operatorFromEnv();
-  const todo = operator.missing.length
-    ? `<p class="note">TODO: datele operatorului nu sunt publicate. În DirectAdmin setează ${operator.missing.map(escapeHtml).join(", ")}. Până atunci <code>npm run prelansare</code> rămâne oprit. Nu completăm aici un CIF sau o adresă inventată.</p>`
-    : "";
-  const cui = operator.cui
-    ? escapeHtml(operator.cui)
-    : "TODO: LEGAL_CUI, doar dacă operatorul este firmă sau PFA. Nu este publicat.";
-  const dpo = operator.dpo
-    ? escapeHtml(operator.dpo)
-    : "Nu este desemnat. Dacă există, setează LEGAL_DPO.";
-  const contact = escapeHtml(contactLine(operator));
-  const address = operator.address
-    ? `<li>Adresă: ${escapeHtml(operator.address)}</li>`
+  const email = operator.email;
+  const requests = email
+    ? `<p>Pentru orice solicitare, inclusiv cererile persoanelor vizate privind datele personale, scrieți-ne la ${escapeHtml(email)}.</p>`
     : "";
   return `
-    ${todo}
     <ul>
-      <li>Operator: ${escapeHtml(operator.name || "TODO: LEGAL_OPERATOR_NAME")}</li>
-      ${address}
-      <li>CUI: ${cui}</li>
-      <li>Contact: ${contact}</li>
-      <li>Responsabil cu protecția datelor: ${dpo}</li>
+      ${listItem("Operator", operator.name)}
+      ${listItem("Adresă", operator.address)}
+      ${listItem("CUI", operator.cui)}
+      ${listItem("Contact", email)}
+      ${listItem("Responsabil cu protecția datelor", operator.dpo)}
     </ul>
-    <p>Pentru orice solicitare, inclusiv cererile persoanelor vizate privind datele personale, scrieți la Contact: ${contact}.</p>`;
+    ${requests}`;
 }
 
 function privacyHtml() {
   const operator = operatorFromEnv();
-  const contact = contactLine(operator);
+  const contact = operator.email ? escapeHtml(operator.email) : "";
+  const childReach = contact ? ` sau scrie-ne la ${contact}` : "";
+  const parentReach = contact
+    ? ` Pentru orice solicitare, inclusiv cererile persoanelor vizate, scrieți-ne la ${contact}.`
+    : "";
   const pending = days(retention.PENDING_MS);
   const inactiveMonths = months(retention.INACTIVE_MS);
   const warning = days(retention.WARNING_BEFORE_MS);
@@ -111,7 +106,7 @@ function privacyHtml() {
     <h2>Pentru copii</h2>
     <p>Știm numele tău de utilizator, clasa și ce lecții faci. Nu vrem numele tău real, școala sau telefonul.</p>
     <p>Părintele vede progresul, nu mesajele tale către mentor. Profilul tău este privat de la început.</p>
-    <p>Îți poți șterge contul din Profil: scrii parola și cuvântul ȘTERGE. Dacă ceva nu e în regulă, spune-i unui adult sau scrie la Contact: ${escapeHtml(contact)}.</p>
+    <p>Îți poți șterge contul din Profil: scrii parola și cuvântul ȘTERGE. Dacă ceva nu e în regulă, spune-i unui adult${childReach}.</p>
 
     <h2>Pentru părinți</h2>
     <h3>Cine este operatorul</h3>
@@ -140,7 +135,7 @@ function privacyHtml() {
       <li><strong>mentor_ai_v3_data</strong> în localStorage: temă, clasă, starea lecțiilor și un flag că ești logat. Nu păstrăm acolo email, telefon, emailul părintelui, școala sau numele real.</li>
     </ul>
     <h3>Drepturile dumneavoastră</h3>
-    <p>Aveți dreptul de acces, rectificare, ștergere, portabilitate și de a retrage acordul. Pentru orice solicitare, inclusiv cererile persoanelor vizate, scrieți la Contact: ${escapeHtml(contact)}. Puteți descărca sau șterge datele și din zona de părinte. Puteți depune o plângere la ANSPDCP, www.dataprotection.ro.</p>
+    <p>Aveți dreptul de acces, rectificare, ștergere, portabilitate și de a retrage acordul.${parentReach} Puteți descărca sau șterge datele și din zona de părinte. Puteți depune o plângere la ANSPDCP, www.dataprotection.ro.</p>
     <p>Contorul de mesaje de criză nu spune cine a scris și nu se șterge odată cu un cont.</p>
     <p><a href="/termeni">Citește și termenii de utilizare</a>.</p>
   `);
