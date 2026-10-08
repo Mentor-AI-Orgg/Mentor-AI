@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { MASCOT_NAME } from '../../config/mascot.js';
 import { useI18n } from '../../i18n/index.jsx';
+import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion.js';
 
 const MOODS = [
   'salut',
@@ -13,6 +14,26 @@ const MOODS = [
   'mandru',
   'trist-bland'
 ];
+
+const MOOD_ALIASES = {
+  happy: 'bucuros',
+  celebrating: 'sarbatoare',
+  celebrate: 'sarbatoare',
+  thinking: 'gandeste',
+  encouraging: 'incurajeaza',
+  encourage: 'incurajeaza',
+  waving: 'salut',
+  wave: 'salut',
+  hello: 'salut',
+  greeting: 'salut',
+  sleepy: 'somnoros',
+  idle: 'somnoros',
+  proud: 'mandru',
+  explaining: 'explica',
+  explain: 'explica',
+  sad: 'trist-bland',
+  gentle: 'trist-bland'
+};
 
 const SIZES = {
   sm: 32,
@@ -45,6 +66,12 @@ const POSE = {
   sarbatoare: 'bucuros'
 };
 
+function resolveMood(mood) {
+  const key = String(mood || '').trim().toLowerCase();
+  const canonical = MOOD_ALIASES[key] || key;
+  return MOODS.includes(canonical) ? canonical : '';
+}
+
 function mascotLabel(translate, name) {
   const text = typeof translate === 'function' ? translate('mascot.aria', { mascota: name }) : '';
   if (!text || text === 'mascot.aria' || !String(text).includes(name)) {
@@ -53,9 +80,10 @@ function mascotLabel(translate, name) {
   return text;
 }
 
-const Mascota = ({ mood = 'salut', size = 'md', message = '', art = '', pulse = '' }) => {
+const Mascota = ({ mood = 'salut', size = 'md', message = '', art = '', pulse = '', typing = false }) => {
   const { t } = useI18n();
-  const safeMood = MOODS.includes(mood) ? mood : 'salut';
+  const reduce = usePrefersReducedMotion();
+  const safeMood = resolveMood(mood) || 'salut';
   const box = SIZES[size] || SIZES.md;
   const [open, setOpen] = useState(Boolean(message));
 
@@ -72,9 +100,11 @@ const Mascota = ({ mood = 'salut', size = 'md', message = '', art = '', pulse = 
     : (art === 'semnatura' ? '/mascot/explica.png' : ART[safeMood]);
   const pose = size === 'sm' ? 'cap' : (art === 'semnatura' ? 'explica' : (POSE[safeMood] || 'salut'));
   const pulseClass = pulse === 'succes' ? ' is-succes' : pulse === 'gresit' ? ' is-gresit' : '';
+  const typingClass = typing ? ' is-typing' : '';
+  const stillClass = reduce ? ' is-still' : '';
 
   return (
-    <div className={`mascota-wrap mascota-${size} is-${safeMood}`}>
+    <div className={`mascota-wrap mascota-${size} is-${safeMood}${typingClass}${stillClass}`}>
       <div className={`mascota-pop${pulseClass}`}>
         <div className="mascota-figure" data-pose={pose}>
           <img
@@ -92,6 +122,13 @@ const Mascota = ({ mood = 'salut', size = 'md', message = '', art = '', pulse = 
             <i />
             <i />
           </span>
+          {typing ? (
+            <span className="mascota-typing" role="status" aria-label="scrie">
+              <i className="typing-dot" />
+              <i className="typing-dot" />
+              <i className="typing-dot" />
+            </span>
+          ) : null}
         </div>
       </div>
       {open && message ? (
@@ -103,5 +140,5 @@ const Mascota = ({ mood = 'salut', size = 'md', message = '', art = '', pulse = 
   );
 };
 
-export { MOODS, mascotLabel };
+export { MOODS, MOOD_ALIASES, mascotLabel, resolveMood };
 export default Mascota;

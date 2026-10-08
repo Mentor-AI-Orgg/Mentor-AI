@@ -12,6 +12,22 @@ concurrency:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ci-root
+          MYSQL_DATABASE: suntde10
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -pci-root"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+          --health-start-period=30s
+    env:
+      MYSQL_URL: mysql://root:ci-root@127.0.0.1:3306/suntde10
     steps:
       - uses: actions/checkout@v4
 

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import LevelBar from './LevelBar.jsx';
+import Mascota from './mascot/Mascota.jsx';
 
 const CATEGORY_META = {
   avatar: { label: 'Avatar', icon: 'fa-user-astronaut' },
@@ -345,7 +346,10 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
         {category === 'titles' ? (
           <div className="shop-grid">
             {(summary?.titles?.catalog || catalog?.titles || []).length === 0 && (
-              <p className="shop-empty">Titlurile apar după o faptă: prima lecție, un test, o serie de zile.</p>
+              <div className="shop-empty empty-with-mascot">
+                <Mascota mood="encouraging" size="md" />
+                <p>Titlurile apar după o faptă: prima lecție, un test, o serie de zile.</p>
+              </div>
             )}
             {(summary?.titles?.catalog || catalog?.titles || []).map(item => (
               <TitleCard
@@ -359,7 +363,12 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
           </div>
         ) : (
           <div className="shop-grid">
-            {items.length === 0 && <p className="shop-empty">Catalogul e gol acum. Reîncearcă sau schimbă tab-ul.</p>}
+            {items.length === 0 && (
+              <div className="shop-empty empty-with-mascot">
+                <Mascota mood="sleepy" size="md" />
+                <p>Catalogul e gol acum. Reîncearcă sau schimbă tab-ul.</p>
+              </div>
+            )}
             {items.map(item => (
               <ShopItemCard
                 key={item.id}

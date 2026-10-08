@@ -10,6 +10,7 @@ function read(env, key) {
 
 function operatorFromEnv(env = process.env) {
   const name = read(env, "LEGAL_OPERATOR_NAME");
+  // Adresa poștală este opțională: o persoană fizică poate să nu o publice.
   const address = read(env, "LEGAL_OPERATOR_ADDRESS");
   const contact = read(env, "LEGAL_CONTACT");
   const email = EMAIL.test(contact) ? contact : "";
@@ -17,7 +18,6 @@ function operatorFromEnv(env = process.env) {
   const cui = read(env, "LEGAL_CUI");
   const missing = [];
   if (!name) missing.push("LEGAL_OPERATOR_NAME");
-  if (!address) missing.push("LEGAL_OPERATOR_ADDRESS");
   if (!email) missing.push("LEGAL_CONTACT");
   return {
     name,

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { MentorAPI } from '../apiClient.js';
+import Mascota from '../components/mascot/Mascota.jsx';
 
 const MONTH_NAMES_RO = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'];
 const WEEKDAY_LABELS_RO = ['L', 'Ma', 'Mi', 'J', 'V', 'S', 'D'];
@@ -167,7 +168,12 @@ const CalendarScreen = ({ onBack, userData }) => {
                   <button type="button" className="ghost-button" onClick={() => setSelectedDay(null)}><i className="fas fa-xmark" /></button>
                 </div>
                 <div className="calendar-day-events">
-                  {(eventsByDay[selectedDay] || []).length === 0 && <p className="calendar-empty-hint">Nimic notat. Adaugă mai jos.</p>}
+                  {(eventsByDay[selectedDay] || []).length === 0 && (
+                    <div className="empty-with-mascot">
+                      <Mascota mood="sleepy" size="md" />
+                      <p className="calendar-empty-hint">Nimic notat. Adaugă mai jos.</p>
+                    </div>
+                  )}
                   {(eventsByDay[selectedDay] || []).map(ev => (
                     <div key={ev.id} className="calendar-event-row">
                       <button type="button" className={`calendar-star ${ev.important ? 'on' : ''}`} onClick={() => toggleImportant(ev)} aria-label={ev.important ? 'Scoate de la importante' : 'Marchează important'}>

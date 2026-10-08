@@ -71,9 +71,9 @@ const chatRequest = async ({
   return { response: mockReply, mocked: true, engine_used: 'offline' };
 };
 
-const TutorFace = ({ mood = 'explica' }) => (
+const TutorFace = ({ mood = 'explica', typing = false }) => (
   <div className="mentor-avatar" aria-hidden="true">
-    <Mascota mood={mood} size="md" />
+    <Mascota mood={mood} size="md" typing={typing} />
   </div>
 );
 
@@ -101,13 +101,13 @@ const MessageBubble = ({ role, tutorName, children }) => (
 
 const LoadingMessage = ({ tutorName }) => (
   <div className="mentor-turn">
-    <TutorFace mood="gandeste" />
+    <TutorFace mood="thinking" typing />
     <div className="mentor-message mentor-message-ai">
       <span className="mentor-message-role">{tutorName}</span>
-      <div className="loading-dots">
-        <i />
-        <i />
-        <i />
+      <div className="loading-dots" aria-hidden="true">
+        <i className="typing-dot" />
+        <i className="typing-dot" />
+        <i className="typing-dot" />
       </div>
     </div>
   </div>
@@ -518,7 +518,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
         <div>
           <div className="mentor-heading">
             <div className="mentor-heading-avatar">
-              <Mascota mood="explica" size="md" />
+              <Mascota mood="waving" size="md" />
             </div>
             <div className="mentor-heading-copy">
               <div className="eyebrow">{MASCOT_NAME}</div>
@@ -602,6 +602,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
         )}
         {shown.length === 0 && (
           <div className="mentor-empty">
+            <Mascota mood="encouraging" size="md" />
             <h2 className="display-font">
               {lessonTitle ? `Hai la „${lessonTitle}”.` : 'Întreabă-mă când ești gata.'}
             </h2>

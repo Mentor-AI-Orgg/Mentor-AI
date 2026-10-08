@@ -1,4 +1,5 @@
-// Conturile rămase fără acordul părintelui se șterg după 14 zile.
+// Doar conturile rămase „pending” se șterg după 14 zile.
+// „notified” și „granted” rămân deschise.
 // eraseAccount trece prin registrul GDPR, deci dispar și datele din celelalte store-uri.
 
 const { listAccounts } = require("./authStore");

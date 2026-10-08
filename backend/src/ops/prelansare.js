@@ -64,9 +64,16 @@ function report(items = checklist()) {
   return items.map(item => `${item.ok ? "✓" : "✗"} ${item.key}`).join("\n");
 }
 
+function addressNote(env = process.env) {
+  const { operatorFromEnv } = require("../legal/operator");
+  if (operatorFromEnv(env).address) return "";
+  return "ℹ LEGAL_OPERATOR_ADDRESS: opțional, nepublicat";
+}
+
 function run(env = process.env) {
   const items = checklist(env);
-  const text = report(items);
+  const note = addressNote(env);
+  const text = note ? `${report(items)}\n${note}` : report(items);
   const ok = items.every(item => !item.required || item.ok);
   return { ok, items, text };
 }

@@ -95,7 +95,12 @@ const MistakesScreen = ({ onNavigate }) => {
           </div>
         </section>
       )}
-      {!current && <p className="nudge-banner">Nimic de recapitulat azi.</p>}
+      {!current && (
+        <div className="empty-with-mascot">
+          <Mascota mood="sleepy" size="md" message="Nimic de recapitulat azi." />
+          <p className="nudge-banner">Nimic de recapitulat azi.</p>
+        </div>
+      )}
       {(book?.groups || []).map(group => (
         <section key={group.lesson} className="focus-card">
           <h2 className="display-font">{group.lesson}</h2>

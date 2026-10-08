@@ -259,6 +259,25 @@ describe('antete, cookie și jurnale', () => {
     expect(boot.stderr).toContain('Opresc pornirea');
   });
 
+  it('lasă CSP fără Sentry până apare un DSN', async () => {
+    delete process.env.SENTRY_DSN;
+    delete process.env.VITE_SENTRY_DSN;
+    const { app } = createApp({ autosave: false });
+    const page = await request(app).get('/confidentialitate');
+    expect(page.headers['content-security-policy']).not.toMatch(/sentry/i);
+  });
+
+  it('adaugă în CSP doar gazda din DSN', async () => {
+    process.env.SENTRY_DSN = 'https://public@o123.ingest.sentry.io/456';
+    try {
+      const { app } = createApp({ autosave: false });
+      const page = await request(app).get('/confidentialitate');
+      expect(page.headers['content-security-policy']).toContain('https://o123.ingest.sentry.io');
+    } finally {
+      delete process.env.SENTRY_DSN;
+    }
+  });
+
   it('nu are script inline și nu folosește innerHTML în index', () => {
     const index = require('node:fs').readFileSync(path.join(process.cwd(), 'frontend', 'index.html'), 'utf8');
     expect(index).not.toContain('innerHTML');

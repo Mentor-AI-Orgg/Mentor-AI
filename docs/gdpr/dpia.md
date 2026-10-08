@@ -22,6 +22,7 @@ Cookie de sesiune httpOnly, limite de cereri, fără stack în răspunsul de ero
 
 - [DE COMPLETAT: cine aprobă această evaluare și data]
 - [DE COMPLETAT: dacă se consultă ANSPDCP înainte de lansarea publică]
-- Revizuire când apare baza de date (vezi `docs/plan-baza-de-date.md`) sau când se adaugă un furnizor nou.
+- MySQL pe același cont de găzduire este opțional (`STORE=mysql`). Până atunci datele stau în fișierul JSON. Vezi `docs/plan-baza-de-date.md`.
+- Umami numără vizitele și este deja în pagină. Sentry pornește doar cu DSN și nu primește nume, email, chat sau IP.
 
-Concluzie: riscul rămâne limitat dacă site-ul rămâne închis până sunt setate parola de creator, SMTP-ul și backup-ul, și dacă nu se adaugă Sentry sau alt furnizor fără o linie nouă aici.
+Concluzie: riscul rămâne limitat dacă site-ul rămâne închis până sunt setate parola de creator, SMTP-ul și backup-ul. Un furnizor nou, inclusiv Sentry pornit, cere o linie în `docs/gdpr/furnizori.md` înainte să primească date.

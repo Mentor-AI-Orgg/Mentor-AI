@@ -2,6 +2,22 @@ const helmet = require("helmet");
 
 const CSP_MODE = "enforce";
 
+function sentryOrigins() {
+  const origins = [];
+  ["SENTRY_DSN", "VITE_SENTRY_DSN"].forEach(key => {
+    const dsn = String(process.env[key] || "").trim();
+    if (!dsn) return;
+    try {
+      const url = new URL(dsn);
+      const origin = `${url.protocol}//${url.host}`;
+      if (origin && !origins.includes(origin)) origins.push(origin);
+    } catch {
+      /* DSN invalid: nu lărgesc CSP */
+    }
+  });
+  return origins;
+}
+
 function securityHeaders() {
   const guarded = helmet({
     contentSecurityPolicy: {
@@ -12,8 +28,8 @@ function securityHeaders() {
         styleSrcAttr: ["'unsafe-inline'"],
         fontSrc: ["'self'"],
         imgSrc: ["'self'", "data:", "blob:"],
-        // Scriptul Umami e pe cloud.umami.is; evenimentele pleacă spre gateway.umami.is.
-        connectSrc: ["'self'", "https://gateway.umami.is"],
+        // Umami rămâne. Gazda Sentry intră doar când DSN-ul e setat.
+        connectSrc: ["'self'", "https://gateway.umami.is", ...sentryOrigins()],
         workerSrc: ["'self'"],
         manifestSrc: ["'self'"],
         objectSrc: ["'none'"],
@@ -38,4 +54,4 @@ function securityHeaders() {
   };
 }
 
-module.exports = { securityHeaders, CSP_MODE };
+module.exports = { securityHeaders, CSP_MODE, sentryOrigins };

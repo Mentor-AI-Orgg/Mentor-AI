@@ -29,24 +29,28 @@ function layout(title, body) {
 <html lang="ro">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>${escapeHtml(title)} · ${escapeHtml(legal.product)}</title>
   <link rel="stylesheet" href="/fonts/faces.css" />
   <style>
-    :root { --bg: #0f1228; --ink: #f4f1ea; --muted: #9aa3b5; --lime: #c8f06c; --line: rgba(255,255,255,.08); }
+    :root { --bg: #08142A; --ink: #FFFFFF; --muted: #A9B8D0; --lime: #44D6D7; --line: rgba(169,184,208,.28); }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 Nunito, "Segoe UI", sans-serif; }
-    main { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 Nunito, "Segoe UI", sans-serif; overflow-wrap: anywhere; }
+    main { max-width: 720px; margin: 0 auto; padding: max(24px, env(safe-area-inset-top)) 16px calc(48px + env(safe-area-inset-bottom)); }
     a { color: var(--lime); }
     h1, h2, h3 { font-family: "Space Grotesk", Nunito, sans-serif; letter-spacing: -.02em; }
     h1 { font-size: clamp(32px, 6vw, 44px); line-height: 1.1; margin: 12px 0 8px; }
     h2 { font-size: 22px; margin: 36px 0 10px; }
     h3 { font-size: 18px; margin: 22px 0 8px; }
-    p, li { color: #d5d8e4; }
-    .eyebrow { color: var(--muted); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
-    .back { color: var(--muted); text-decoration: none; font-size: 14px; }
-    .note { padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.03); color: var(--muted); font-size: 14px; }
-    code { color: var(--ink); }
+    p, li { color: var(--ink); }
+    .eyebrow { color: var(--muted); font-size: 0.75rem; letter-spacing: .18em; text-transform: uppercase; }
+    .back { display: inline-flex; align-items: center; min-height: 44px; color: var(--muted); text-decoration: none; font-size: 1rem; }
+    .note { padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.03); color: var(--muted); font-size: 1rem; }
+    code { color: var(--ink); overflow-wrap: anywhere; }
+    @media (prefers-color-scheme: light) {
+      :root { --bg: #F7F9FC; --ink: #1F2937; --muted: #4B5563; --lime: #0C7C86; --line: rgba(31,41,55,.14); }
+      .note { background: #FFFFFF; }
+    }
   </style>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="dc441396-9915-4ee0-8f77-7f98eb595bc8"></script>
 </head>
@@ -61,35 +65,35 @@ function layout(title, body) {
 </html>`;
 }
 
-function contactLine(operator) {
-  return operator.email || "TODO: LEGAL_CONTACT";
+function listItem(label, value) {
+  if (!value) return "";
+  return `<li>${label}: ${escapeHtml(value)}</li>`;
 }
 
 function operatorBlock() {
   const operator = operatorFromEnv();
-  const todo = operator.missing.length
-    ? `<p class="note">TODO: datele operatorului nu sunt publicate. În DirectAdmin setează ${operator.missing.map(escapeHtml).join(", ")}. Până atunci <code>npm run prelansare</code> rămâne oprit. Nu completăm aici un CIF sau o adresă inventată.</p>`
+  const email = operator.email;
+  const requests = email
+    ? `<p>Pentru orice solicitare, inclusiv cererile persoanelor vizate privind datele personale, scrieți-ne la ${escapeHtml(email)}.</p>`
     : "";
-  const cui = operator.cui
-    ? escapeHtml(operator.cui)
-    : "TODO: LEGAL_CUI, doar dacă operatorul este firmă sau PFA. Nu este publicat.";
-  const dpo = operator.dpo
-    ? escapeHtml(operator.dpo)
-    : "Nu este desemnat. Dacă există, setează LEGAL_DPO.";
   return `
-    ${todo}
     <ul>
-      <li>Operator: ${escapeHtml(operator.name || "TODO: LEGAL_OPERATOR_NAME")}</li>
-      <li>Adresă: ${escapeHtml(operator.address || "TODO: LEGAL_OPERATOR_ADDRESS")}</li>
-      <li>CUI: ${cui}</li>
-      <li>Email: ${escapeHtml(contactLine(operator))}</li>
-      <li>Responsabil cu protecția datelor: ${dpo}</li>
-    </ul>`;
+      ${listItem("Operator", operator.name)}
+      ${listItem("Adresă", operator.address)}
+      ${listItem("CUI", operator.cui)}
+      ${listItem("Contact", email)}
+      ${listItem("Responsabil cu protecția datelor", operator.dpo)}
+    </ul>
+    ${requests}`;
 }
 
 function privacyHtml() {
   const operator = operatorFromEnv();
-  const contact = contactLine(operator);
+  const contact = operator.email ? escapeHtml(operator.email) : "";
+  const childReach = contact ? ` sau scrie-ne la ${contact}` : "";
+  const parentReach = contact
+    ? ` Pentru orice solicitare, inclusiv cererile persoanelor vizate, scrieți-ne la ${contact}.`
+    : "";
   const pending = days(retention.PENDING_MS);
   const inactiveMonths = months(retention.INACTIVE_MS);
   const warning = days(retention.WARNING_BEFORE_MS);
@@ -102,7 +106,7 @@ function privacyHtml() {
     <h2>Pentru copii</h2>
     <p>Știm numele tău de utilizator, clasa și ce lecții faci. Nu vrem numele tău real, școala sau telefonul.</p>
     <p>Părintele vede progresul, nu mesajele tale către mentor. Profilul tău este privat de la început.</p>
-    <p>Îți poți șterge contul din Profil: scrii parola și cuvântul ȘTERGE. Dacă ceva nu e în regulă, spune-i unui adult sau scrie la ${escapeHtml(contact)}.</p>
+    <p>Îți poți șterge contul din Profil: scrii parola și cuvântul ȘTERGE. Dacă ceva nu e în regulă, spune-i unui adult${childReach}.</p>
 
     <h2>Pentru părinți</h2>
     <h3>Cine este operatorul</h3>
@@ -122,7 +126,7 @@ function privacyHtml() {
       <li>copiile de siguranță: ${backupDays} zile, criptate.</li>
     </ul>
     <h3>Cine le mai primește</h3>
-    <p>Firma de găzduire gazduire.net ține serverul. Serviciul de email SMTP trimite mesajele către părinte. Nimeni altcineva. Nu vindem date și nu le folosim pentru publicitate.</p>
+    <p>Firma de găzduire gazduire.net ține serverul și, dacă este pornită, baza de date de pe același cont. Serviciul de email SMTP trimite mesajele către părinte. Umami numără vizitele, fără conturi și fără conversații. Dacă monitorizarea erorilor este pornită, pleacă doar tipul erorii, fără nume de utilizator, email, conversații sau adresă IP. Nu vindem date și nu le folosim pentru publicitate.</p>
     <h3>Ce stă în browser</h3>
     <ul>
       <li><strong>s10_session</strong>: cookie httpOnly, 7 zile, recunoaște contul copilului.</li>
@@ -131,7 +135,7 @@ function privacyHtml() {
       <li><strong>mentor_ai_v3_data</strong> în localStorage: temă, clasă, starea lecțiilor și un flag că ești logat. Nu păstrăm acolo email, telefon, emailul părintelui, școala sau numele real.</li>
     </ul>
     <h3>Drepturile dumneavoastră</h3>
-    <p>Aveți dreptul de acces, rectificare, ștergere, portabilitate și de a retrage acordul. Puteți descărca sau șterge datele din zona de părinte, ori scrie la ${escapeHtml(contact)}. Puteți depune o plângere la ANSPDCP, www.dataprotection.ro.</p>
+    <p>Aveți dreptul de acces, rectificare, ștergere, portabilitate și de a retrage acordul.${parentReach} Puteți descărca sau șterge datele și din zona de părinte. Puteți depune o plângere la ANSPDCP, www.dataprotection.ro.</p>
     <p>Contorul de mesaje de criză nu spune cine a scris și nu se șterge odată cu un cont.</p>
     <p><a href="/termeni">Citește și termenii de utilizare</a>.</p>
   `);

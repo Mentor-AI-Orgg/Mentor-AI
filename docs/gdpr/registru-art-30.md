@@ -17,7 +17,8 @@ Aplicația: Sunt de 10, https://suntde10.ro. Copii de 10–14 ani, clasele 5–8
 | Progres | XP, monede, capitole, răspunsuri corectate de server | aplicația și clasamentul pentru copiii logați | cât ține contul | copilul; părintele prin emailul de activitate |
 | Prieteni și rapoarte | id public, motivul raportului, blocarea | siguranța între copii | raportul rămâne, autorul devine „anonim” la ștergere; jurnalul de moderare 12 luni | David, în panoul de creator |
 | Emailuri | adresa părintelui, subiectul | informare, fără reclamă | cât ține contul; maxim 3 pe zi | furnizorul de email |
-| Jurnal de erori | id scurt, rută, cod, fără email | repararea aplicației | 30 de zile pe disc | David, dacă primește alerta |
+| Jurnal de erori | id scurt, rută, cod, fără email | repararea aplicației | 30 de zile pe disc | David, prin alerta de email. Sentry doar dacă DSN-ul este pus, și atunci fără nume, email, chat sau IP |
+| Vizite | număr de pagini, fără cont | să se vadă dacă site-ul e folosit | la Umami | Umami, deja în pagină |
 
 Nu se colectează: nume real obligatoriu, telefon, școală, poză de profil, locație, reclamă.
 

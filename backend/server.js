@@ -10,6 +10,9 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const persistence = require("./src/data/persistence");
+const { storeMode } = require("./src/data/storeMode");
+const { initSentry, flush: flushSentry } = require("./src/ops/sentry");
+initSentry();
 const { createApp } = require("./src/app");
 
 if (process.env.NODE_ENV === "production") {
@@ -43,8 +46,8 @@ const server = app.listen(config.PORT, () => {
   console.log(`Site public: ${isSiteClosed() ? "ÎNCHIS (în curând)" : "deschis"}`);
   console.log(`Staging auth: ${(config.STAGING_AUTH_USER && config.STAGING_AUTH_PASSWORD) ? "activă" : "inactivă"}`);
   console.log(restored.loaded
-    ? `Date: restaurate din ${persistence.DATA_FILE} (salvate la ${restored.savedAt})`
-    : `Date: pornire pe curat (${restored.reason}); voi salva în ${persistence.DATA_FILE}`);
+    ? `Date: restaurate (${restored.source || storeMode()}${restored.savedAt ? `, salvate la ${restored.savedAt}` : ""})`
+    : `Date: pornire pe curat (${restored.reason || "gol"}, ${storeMode()})`);
 });
 
 server.on("error", (error) => {
@@ -61,8 +64,11 @@ function shutdown(signal) {
     console.log(`${signal} primit, opresc serverul...`);
     persistence.stopAutosave();
     const result = persistence.saveNow();
-    console.log(result.saved ? `Date salvate (${result.bytes} bytes).` : `Date nesalvate: ${result.reason}.`);
-    server.close(() => process.exit(0));
+    console.log(result.saved ? `Date salvate (${result.bytes || 0} bytes).` : `Date nesalvate: ${result.reason}.`);
+    Promise.resolve(flushSentry(1500)).finally(() => {
+      persistence.close();
+      server.close(() => process.exit(0));
+    });
     setTimeout(() => process.exit(1), 10000).unref();
   };
 }

@@ -77,7 +77,7 @@ const ConsentScreen = ({ token = '' }) => {
       <h1 className="display-font form-title">Confirmați contul copilului</h1>
       <p className="form-subtitle">Sunt de 10 este gratuită, fără reclame și fără inteligență artificială plătită. Păstrăm numele de utilizator, clasa, progresul și emailul dumneavoastră. Profilul este privat de la început.</p>
       {info?.username ? <p>Cont: {info.username}, clasa {info.class}.</p> : null}
-      <p className="field-hint">Dacă nu confirmați în 14 zile, contul și datele se șterg automat. <a href="/confidentialitate">Politica de confidențialitate</a>.</p>
+      <p className="field-hint">Contul este deja deschis. Puteți confirma sau spune că nu l-ați creat. Un cont vechi rămas în așteptare se șterge după 14 zile. <a href="/confidentialitate">Politica de confidențialitate</a>.</p>
       {done ? <p role="status">{done}</p> : (
         <div className="onboarding-actions">
           <button type="button" className="accent-button" onClick={() => choose('grant')}>Confirm și sunt de acord</button>

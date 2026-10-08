@@ -30,6 +30,7 @@ router.get("/", (req, res) => {
   res.json({
     ...body,
     mail: smtpConfigured(),
+    store: require("../data/storeMode").storeMode(),
     ...backupDetails()
   });
 });

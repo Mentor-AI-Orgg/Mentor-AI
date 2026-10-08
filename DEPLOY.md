@@ -210,10 +210,18 @@ repornește procesul nu retrimite același tip în aceeași oră: contorul stă
 scurt, fără date despre copii. Ca mailul să plece îți trebuie și
 `SMTP_HOST` plus `SMTP_FROM`. Fără `ADMIN_EMAIL`, erorile rămân doar în
 `logs/errors.log` pe server (în afara site-ului public, nu se urcă în git).
-Sentry nu este pornit.
+
+Sentry este oprit până pui un DSN. Emailul de mai sus rămâne oricum.
+Ca să-l pornești: `SENTRY_DSN` în DirectAdmin (același proces Node) și
+`VITE_SENTRY_DSN` în mediul GitHub `mentor.ai`, prezent la `npm run build`,
+apoi un deploy. Fără DSN-ul de pe server, CSP-ul nu lasă browserul să
+trimită evenimentul. Nu se înregistrează sesiuni, nu se trimite IP-ul,
+numele, emailul sau textul din chat. Eșantionul implicit este 0,25, deci
+unele erori ajung doar pe email. Detaliile sunt în [docs/gdpr/furnizori.md](docs/gdpr/furnizori.md).
 
 Pagina de confidențialitate rămâne deschisă și cât site-ul e închis.
-Numele, adresa și emailul operatorului vin din variabile, nu din repo:
+Numele și emailul operatorului vin din variabile, nu din repo. Adresa
+poștală este opțională:
 
 ```
 LEGAL_OPERATOR_NAME=
@@ -224,9 +232,13 @@ LEGAL_DPO=
 ```
 
 `LEGAL_CUI` rămâne gol dacă operatorul este persoană fizică. `LEGAL_DPO`
-rămâne gol dacă nu există un responsabil cu protecția datelor. Dacă
-numele, adresa sau emailul lipsesc, pagina arată un TODO, iar
-`npm run prelansare` iese cu cod 1. Nu pune un CIF sau o adresă inventată.
+rămâne gol dacă nu există un responsabil cu protecția datelor.
+`LEGAL_OPERATOR_ADDRESS` rămâne gol dacă operatorul nu publică o adresă
+poștală; paginile nu afișează atunci linia de adresă, iar contactul este
+emailul. `LEGAL_CUI` și `LEGAL_DPO` lipsă nu lasă o linie pe pagină.
+Paginile publice nu afișează text TODO. Dacă numele sau emailul lipsesc,
+`npm run prelansare` iese cu cod 1. Lipsa adresei nu oprește verificarea.
+Nu pune un CIF sau o adresă inventată.
 
 Tutorele răspunde din lecții, fără chei de AI. Emailul către părinte
 are nevoie de SMTP. Calendarul stă în aplicație, fără Google sau Notion.
@@ -249,10 +261,11 @@ aplicația nu pornește și `npm run prelansare` iese cu cod 1. Linkurile
 către părinte nu se construiesc din antetul `Host` sau `X-Forwarded-Host`.
 
 `SMTP_FROM` trebuie să fie o adresă de pe domeniul site-ului, de exemplu
-`nu-raspunde@suntde10.ro`. Linkul de acord pleacă doar pe email. Dacă
-mesajul cade în Spam, părintele nu confirmă, iar după 14 zile contul se
-șterge. Nu deschide site-ul (`SITE_PUBLIC` rămâne gol) până nu primești
-un email de probă în inbox, nu în Spam.
+`nu-raspunde@suntde10.ro`. Contul se deschide imediat, cu statusul
+„notified”. Părintele primește emailul ca să vadă rezumatul, nu ca să
+apese un buton fără de care contul dispare. Doar un cont vechi rămas
+„pending” se șterge după 14 zile. Nu deschide site-ul (`SITE_PUBLIC`
+rămâne gol) până nu primești un email de probă în inbox, nu în Spam.
 
 ## SPF, DKIM și DMARC
 
@@ -343,11 +356,74 @@ consolă, fără emailuri), din aplicația Node:
 node backend/src/ops/auditUsernames.js
 ```
 
-Un fișier JSON este suficient pentru volumul de acum și nu are nicio
-dependință, ceea ce conteaza pe shared hosting, unde `npm install` rulează pe
-server. Când numărul de utilizatori crește, locul de înlocuit este doar
-`backend/src/data/persistence.js` - MySQL este disponibil în DirectAdmin, iar
-driverul `mysql2` este pur JavaScript, deci nu cere compilare.
+Un fișier JSON este suficient pentru volumul de acum. MySQL este opțional
+și stă oprit până îl ceri tu. Driverul `mysql2` este JavaScript pur: `npm install`
+pe server nu compilează nimic.
+
+## MySQL, când vrei să treci
+
+Nu pune `STORE=mysql` înainte să existe baza și înainte să rulezi scriptul.
+Până atunci producția rămâne pe JSON, chiar dacă variabilele MySQL sunt goale.
+
+În DirectAdmin:
+
+1. **MySQL Management → Create Database**. Nume scurt, de exemplu `suntde10`.
+   DirectAdmin îi pune prefixul contului.
+2. **Create User**, o parolă lungă, doar pentru această bază. Host: `localhost`.
+3. Dă utilizatorului toate drepturile pe acea bază, nu pe altele.
+4. În mediul aplicației Node (nu în git):
+
+```
+STORE=mysql
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=cont_suntde10
+MYSQL_PASSWORD=parola-din-directadmin
+MYSQL_DATABASE=cont_suntde10
+```
+
+Poți folosi în loc o singură `MYSQL_URL=mysql://user:parola@localhost:3306/baza`.
+Dacă parola are caractere speciale, varianta cu câmpuri separate e mai sigură.
+Nu comite parola.
+
+5. Pe laptop, cu o copie a `data/mentor-ai.json` și cu aceleași variabile
+   (fără să pornești site-ul cu `STORE=mysql` încă):
+
+```bash
+node scripts/json-to-mysql.mjs --dry-run --file data/mentor-ai.json
+node scripts/json-to-mysql.mjs --file data/mentor-ai.json
+```
+
+Dry-run doar numără. Rularea reală scrie rândurile și verifică sumele.
+Dacă sumele nu coincid, scriptul se oprește și JSON-ul rămâne. A doua
+rulare nu dublează nimic. Un fișier fără conturi este refuzat.
+
+6. Repornește aplicația Node. În `/api/health`, cu `HEALTH_TOKEN`, câmpul
+   `store` trebuie să fie `mysql`. Fără token, răspunsul public rămâne
+   `{ "ok": true, "version": "..." }`.
+7. Lasă `data/mentor-ai.json` pe server cel puțin 40 de zile. Nu-l șterge
+   în ziua migrării.
+
+Dacă `STORE=mysql` este setat și baza nu răspunde, procesul de producție
+iese, ca să nu pornească gol și să scrie peste date. Un singur proces
+Passenger, ca și până acum: al doilea nu primește lacătul și nu scrie.
+
+Înapoi pe JSON:
+
+```bash
+node scripts/mysql-to-json.mjs --out data/mentor-ai.from-mysql.json
+```
+
+Oprești site-ul, pui fișierul în `data/mentor-ai.json`, scoți `STORE` sau
+îl pui `json`, pornești. Scriptul nu trece peste `data/mentor-ai.json`
+fără `--force`.
+
+Backup-ul rămâne o copie JSON criptată a memoriei, nu un dump SQL.
+Cronul `node backend/src/ops/backup.js` încarcă store-urile când
+`STORE=mysql`. Restaurezi bak1 cu `node backend/src/ops/restoreBackup.js`.
+Copia zilnică: o decriptezi cu `scripts/backup-restore.mjs`, apoi
+`scripts/json-to-mysql.mjs`. Verificarea de 26 de ore se uită la fișierul
+de backup, nu la vechiul JSON.
 
 ## Deploy doar după CI verde
 

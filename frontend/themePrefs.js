@@ -23,14 +23,38 @@ function readAppearance() {
   }
 }
 
+function resolvedTheme(theme) {
+  if (theme === 'light') return 'light';
+  if (theme !== 'system') return 'dark';
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return 'dark';
+  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+}
+
+let systemWatch;
+
+function watchSystemTheme() {
+  if (systemWatch || typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+  const media = window.matchMedia('(prefers-color-scheme: light)');
+  const sync = () => {
+    if (document.documentElement.dataset.theme === 'system') {
+      document.documentElement.dataset.resolvedTheme = resolvedTheme('system');
+    }
+  };
+  if (typeof media.addEventListener === 'function') media.addEventListener('change', sync);
+  else if (typeof media.addListener === 'function') media.addListener(sync);
+  systemWatch = true;
+}
+
 function applyAppearance(raw) {
   const prefs = normalizeAppearance(raw);
   if (typeof document === 'undefined') return prefs;
   const root = document.documentElement;
   root.dataset.theme = prefs.theme;
+  root.dataset.resolvedTheme = resolvedTheme(prefs.theme);
   root.dataset.text = prefs.textSize;
   root.dataset.font = prefs.readableFont ? 'readable' : 'default';
   root.dataset.motion = prefs.motion ? 'on' : 'off';
+  watchSystemTheme();
   return prefs;
 }
 

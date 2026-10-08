@@ -136,6 +136,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
       <div className="chapter-quiz-head">
         <MascotPresence
           compact
+          mood={loading || finishing ? 'thinking' : (report ? (Number(report.grade) >= 5 ? 'celebrating' : 'encouraging') : 'explaining')}
           celebrate={report ? (Number(report.grade) >= 5 ? 'succes' : 'gresit') : ''}
           message={report ? (Number(report.grade) >= 5 ? 'Ai dus testul până la capăt.' : 'Hai să vedem ce mai repetăm.') : ''}
         />

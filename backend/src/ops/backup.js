@@ -214,12 +214,26 @@ function applyDeletionRegistry(data, registry, backupAt) {
   return { data, removed };
 }
 
+function readSource(options = {}) {
+  if (options.plaintext !== undefined) return Buffer.from(options.plaintext);
+  if (require("../data/storeMode").storeMode() === "mysql") {
+    const persistence = require("../data/persistence");
+    if (!persistence.isLoaded()) {
+      require("../data/loadUserStores");
+      persistence.load();
+    }
+    return Buffer.from(persistence.exportJson());
+  }
+  const file = options.dataFile || dataFile();
+  if (!fs.existsSync(file)) return null;
+  return fs.readFileSync(file);
+}
+
 function createBackup(options = {}) {
   const key = loadPublicKey(options.publicKey);
   if (!key.includes("BEGIN PUBLIC KEY")) throw new Error("BACKUP_PUBLIC_KEY lipsește");
-  const source = options.plaintext !== undefined
-    ? Buffer.from(options.plaintext)
-    : fs.readFileSync(options.dataFile || dataFile());
+  const source = readSource(options);
+  if (!source) throw new Error("nu există fișierul de date");
   const now = options.now ? new Date(options.now) : new Date();
   const dir = backupDir(options.backupDir);
   fs.mkdirSync(dir, { recursive: true });
@@ -271,10 +285,10 @@ function runScheduledBackup(options = {}) {
   if (!options.force && fs.existsSync(existing)) {
     return { ok: true, skipped: true, reason: "today", file: existing };
   }
-  const file = options.dataFile || dataFile();
-  if (!fs.existsSync(file)) return { ok: false, reason: "nu există fișierul de date" };
+  const source = readSource(options);
+  if (!source) return { ok: false, reason: "nu există fișierul de date" };
   try {
-    return { ok: true, ...createBackup({ ...options, now }) };
+    return { ok: true, ...createBackup({ ...options, now, plaintext: source }) };
   } catch (error) {
     return { ok: false, reason: error.message };
   }
@@ -330,10 +344,10 @@ function ensureRecentBackup(options = {}) {
   }
   const latest = latestBackup(options);
   if (!options.force && latest && latest.ageMs < STALE_MS) return { ok: true, skipped: true, ...latest };
-  const file = options.dataFile || dataFile();
-  if (!fs.existsSync(file)) return { ok: false, reason: "nu există fișierul de date" };
+  const source = readSource(options);
+  if (!source) return { ok: false, reason: "nu există fișierul de date" };
   try {
-    return { ok: true, ...createBackup(options) };
+    return { ok: true, ...createBackup({ ...options, plaintext: source }) };
   } catch (error) {
     return { ok: false, reason: error.message };
   }
