@@ -252,6 +252,8 @@ function FloatingLines({
   // The shader paints bright lines on black and relies on screen blending, which
   // disappears on a light page. Light theme uses the soft CSS bands instead.
   const skipWebGL = prefersReducedMotion || motionOff || saveData || lightTheme;
+  const [webglFailed, setWebglFailed] = useState(false);
+  const staticBands = skipWebGL || webglFailed;
   const containerRef = useRef(null);
   const targetMouseRef = useRef(new THREE.Vector2(-1000, -1000));
   const currentMouseRef = useRef(new THREE.Vector2(-1000, -1000));
@@ -297,14 +299,24 @@ function FloatingLines({
     try {
       renderer = new WebGLRenderer({ antialias: true, alpha: false, failIfMajorPerformanceCaveat: false });
     } catch {
+      if (active) setWebglFailed(true);
       return undefined;
     }
     if (!renderer.getContext()) {
       renderer.dispose();
+      if (active) setWebglFailed(true);
       return undefined;
     }
-    const narrow = typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 800px)').matches;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, narrow ? 1.25 : 2));
+    setWebglFailed(false);
+    const drawingRatio = (width, height) => {
+      const narrow = typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 800px)').matches;
+      const cap = narrow ? 1.25 : 1.5;
+      const longest = Math.max(width, height, 1);
+      // Stay under common GPU canvas limits (often 4096) on wide laptop screens.
+      const maxSide = 2048;
+      return Math.min(cap, window.devicePixelRatio || 1, maxSide / longest);
+    };
+    renderer.setPixelRatio(drawingRatio(container.clientWidth || 1, container.clientHeight || 1));
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
     container.appendChild(renderer.domElement);
@@ -372,6 +384,7 @@ function FloatingLines({
       if (!active) return;
       const width = container.clientWidth || 1;
       const height = container.clientHeight || 1;
+      renderer.setPixelRatio(drawingRatio(width, height));
       renderer.setSize(width, height, false);
       const canvasWidth = renderer.domElement.width;
       const canvasHeight = renderer.domElement.height;
@@ -416,6 +429,16 @@ function FloatingLines({
       renderer.domElement.addEventListener('pointerleave', handlePointerLeave);
     }
 
+    let closing = false;
+    const onLost = event => {
+      event.preventDefault();
+      if (closing) return;
+      active = false;
+      cancelAnimationFrame(raf);
+      setWebglFailed(true);
+    };
+    renderer.domElement.addEventListener('webglcontextlost', onLost);
+
     let raf = 0;
     const renderLoop = () => {
       if (!active) return;
@@ -441,10 +464,12 @@ function FloatingLines({
     renderLoop();
 
     return () => {
+      closing = true;
       active = false;
       cancelAnimationFrame(raf);
       if (ro) ro.disconnect();
 
+      renderer.domElement.removeEventListener('webglcontextlost', onLost);
       if (interactive) {
         renderer.domElement.removeEventListener('pointermove', handlePointerMove);
         renderer.domElement.removeEventListener('pointerleave', handlePointerLeave);
@@ -479,7 +504,7 @@ function FloatingLines({
   return (
     <div
       ref={containerRef}
-      className={`floating-lines-container${skipWebGL ? ' is-static' : ''}`}
+      className={`floating-lines-container${staticBands ? ' is-static' : ''}`}
       style={{ mixBlendMode }}
       aria-hidden="true"
     />
