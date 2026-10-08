@@ -6,6 +6,7 @@ const { EXTRAS } = require('./exerciseExtras');
 const { judgeAnswer } = require('../grading/answerJudge');
 const { stampLists } = require('./quiz/legacyLessons');
 const { testsFor } = require('./quiz/matematica');
+const { testsFor: romanaTestsFor } = require('./quiz/romana');
 
 function ex(id, point, prompt, answers, explain, extra = {}) {
   return {
@@ -152,7 +153,8 @@ function questionAsExercise(item) {
     steps: item.explain ? [item.explain] : [],
     level: item.level || 1,
     lesson: item.lesson,
-    secondary: item.secondary
+    secondary: item.secondary,
+    challenge: item.challenge
   };
 }
 
@@ -160,7 +162,7 @@ function listChapterExercises(subject, grade, chapterId) {
   const key = chapterKey(subject, grade, chapterId);
   const extra = EXTRAS[key] || [];
   const base = BANK[key] || [];
-  const added = testsFor(key);
+  const added = String(subject || '').toLowerCase() === 'romana' ? romanaTestsFor(key) : testsFor(key);
   return [...extra, ...base, ...added].map((item, index) => ({
     ...item,
     level: item.level || index + 1
@@ -194,7 +196,10 @@ function findExercise(id) {
     const found = list.find(item => item.id === needle);
     if (found) return found;
   }
-  for (const pack of Object.values(require('./quiz/matematica').BY_KEY)) {
+  for (const pack of [
+    ...Object.values(require('./quiz/matematica').BY_KEY),
+    ...Object.values(require('./quiz/romana').BY_KEY)
+  ]) {
     const found = (pack.tests || []).find(item => item.id === needle);
     if (found) return found;
   }

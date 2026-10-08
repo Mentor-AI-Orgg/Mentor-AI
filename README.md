@@ -140,6 +140,18 @@ inboxul). Copia zilnică pleacă din proces, nu dintr-o cerere; pe DirectAdmin
 poți pune și cronul din [DEPLOY.md](DEPLOY.md). Tutorele acceptă 10 întrebări
 pe minut și 60 pe oră pentru un cont, apoi spune să încerci din nou.
 
+Răspunsul vine din lecții, glosar, fișe, atlasul de figuri și articolele de ajutor.
+Dacă textul salvat nu acoperă întrebarea, spune asta și arată lecția sau ecranul
+cel mai apropiat. Modelul plătit pornește doar cu `TUTOR_LLM=1` și `OPENAI_KEY`
+completată. Fără ambele, chatul rămâne pe material și nu apelează OpenAI.
+Modelul opțional primește câteva fragmente din material, cu instrucțiunea să
+spună când nu e sigur și să nu calculeze tema copilului. Implicit e `gpt-4o-mini`
+(`TUTOR_LLM_MODEL`), cu ieșirea limitată de `TUTOR_LLM_MAX_TOKENS` (400, plafon
+800). O întrebare la care potrivirea locală e nesigură înseamnă o singură
+completare, tot în limita de 10 pe minut și 60 pe oră. `gpt-4o-mini` e varianta
+ieftină; recenzia foto rămâne pe `OPENAI_MODEL` (implicit `gpt-4o`), de câteva
+ori mai scumpă, și nu e folosită de tutore. Prețul curent stă pe lista OpenAI.
+
 Acordul părintelui se dă doar din linkul primit pe email. Dacă mesajul
 ajunge în Spam, părintele nu confirmă și contul se șterge după 14 zile.
 SPF, DKIM și DMARC se setează în DirectAdmin înainte de orice deschidere
