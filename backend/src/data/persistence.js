@@ -7,9 +7,9 @@
 //   - dependințele native (better-sqlite3) și motoarele Prisma sunt riscante,
 //     pentru că `npm install` rulează pe server, cu resurse limitate.
 // Un fișier JSON scris atomic nu are nicio dependință, funcționează oriunde și
-// rezolvă exact problema: datele supraviețuiesc restartului. Când volumul
-// crește, aici este singurul loc de înlocuit cu MySQL (`mysql2` e pur JS, deci
-// merge și pe hostingul actual).
+// rezolvă exact problema: datele supraviețuiesc restartului. STORE=json rămâne
+// implicit. STORE=mysql (mysql2, pur JS) scrie rânduri, nu tot fișierul;
+// store-urile din memorie nu se schimbă.
 //
 // Modelul de salvare: la fiecare interval serializăm tot și scriem doar dacă
 // s-a schimbat ceva față de ultima scriere. Așa nu trebuie să marcăm manual
@@ -45,6 +45,8 @@ let pendingBackup = null;
 let lastBackupAt = 0;
 let lockWarned = false;
 let loaded = false;
+let mysqlBlocked = false;
+let lastJsonBytes = null;
 
 function backupRotateMs() {
   const raw = process.env.BACKUP_ROTATE_MS;
@@ -278,7 +280,7 @@ function migrateFile(file = DATA_FILE) {
   return { migrated: true, backup };
 }
 
-function load() {
+function loadFromJson() {
   loaded = true;
   migrateFile();
   if (!fs.existsSync(DATA_FILE)) {
@@ -331,7 +333,7 @@ function load() {
 // Scriere atomică: întâi într-un fișier temporar, apoi rename. Rename este
 // atomic pe același filesystem, deci un restart în timpul scrierii nu poate
 // lăsa în urmă un fișier pe jumătate scris.
-function saveNow() {
+function saveJsonNow() {
   if (!collections.size) return { saved: false, reason: "nothing_registered" };
 
   const lock = acquireWriteLock();
@@ -405,10 +407,129 @@ function restoreObject(target, data) {
   Object.assign(target, data || {});
 }
 
+function usingMysql() {
+  return require("./storeMode").storeMode() === "mysql";
+}
+
+function loadFromMysql() {
+  loaded = true;
+  const store = require("./mysql/store");
+  let read;
+  try {
+    read = store.readDocument();
+  } catch (error) {
+    mysqlBlocked = true;
+    console.error(`[persistence] MySQL: ${error.message}`);
+    try { require("../ops/errorMonitor").noteSaveFailure(error); } catch { /* jurnalul nu oprește pornirea */ }
+    if (process.env.NODE_ENV === "production") process.exit(1);
+    return { loaded: false, reason: "mysql_error", error: error.message, source: "mysql" };
+  }
+  if (!read) {
+    store.rememberEmpty();
+    return { loaded: false, reason: "no_data", source: "mysql" };
+  }
+  const parsed = read.document;
+  const restored = [];
+  for (const [name, handlers] of collections.entries()) {
+    const slice = parsed.collections?.[name];
+    if (slice === undefined) continue;
+    try {
+      handlers.restore(slice);
+      restored.push(name);
+    } catch (error) {
+      console.error(`[persistence] nu am putut restaura "${name}": ${error.message}`);
+    }
+  }
+  store.markDrift(serialize());
+  lastSerialized = fingerprint(serialize());
+  return { loaded: true, restored, savedAt: parsed.savedAt, source: "mysql" };
+}
+
+function saveMysql() {
+  if (mysqlBlocked) return { saved: false, reason: "mysql_error" };
+  if (!collections.size) return { saved: false, reason: "nothing_registered" };
+  const store = require("./mysql/store");
+  const data = serialize();
+  const current = fingerprint(data);
+  if (!migrationDirty && !store.hasDrift() && current === lastSerialized) {
+    return { saved: false, reason: "unchanged" };
+  }
+  const previous = backupDue() ? lastJsonBytes : null;
+  try {
+    const result = store.writeCollections(data.collections, {
+      force: Boolean(migrationDirty || store.hasDrift()),
+      savedAt: data.savedAt,
+      replaceAll: false
+    });
+    if (!result.saved) {
+      if (result.reason === "unchanged") {
+        migrationDirty = false;
+        lastSerialized = current;
+      }
+      return result;
+    }
+    lastSerialized = current;
+    migrationDirty = false;
+    const json = JSON.stringify(data);
+    lastJsonBytes = Buffer.from(json);
+    if (previous) queueBackup(previous);
+    return { saved: true, bytes: Buffer.byteLength(json), rows: result.rows, source: "mysql" };
+  } catch (error) {
+    console.error(`[persistence] salvare MySQL eșuată: ${error.message}`);
+    try { require("../ops/errorMonitor").noteSaveFailure(error); } catch { /* jurnalul nu oprește salvarea */ }
+    return { saved: false, reason: "error", error: error.message };
+  }
+}
+
+function load() {
+  if (usingMysql()) return loadFromMysql();
+  return loadFromJson();
+}
+
+function saveNow() {
+  if (usingMysql()) return saveMysql();
+  return saveJsonNow();
+}
+
+function exportJson() {
+  return JSON.stringify(serialize());
+}
+
+function importDocument(parsed) {
+  if (!parsed || parsed.version !== FORMAT_VERSION) return { saved: false, reason: "version_mismatch" };
+  const restored = [];
+  for (const [name, handlers] of collections.entries()) {
+    const slice = parsed.collections?.[name];
+    if (slice === undefined) continue;
+    handlers.restore(slice);
+    restored.push(name);
+  }
+  migrationDirty = true;
+  const saved = saveNow();
+  return { ...saved, restored };
+}
+
+function close() {
+  if (!usingMysql()) return;
+  try { require("./mysql/store").close(); } catch { /* firul era deja oprit */ }
+}
+
 // Copie de dinainte de migrarea id-urilor de lecție. Nu se șterge și nu se rescrie.
 function lessonMapBackup(version) {
   const dest = `${DATA_FILE}.pre-lectii-v${version}`;
   if (fs.existsSync(dest)) return { saved: false, reason: "exists", path: dest };
+  if (usingMysql()) {
+    const document = require("./mysql/store").lastReadDocument();
+    if (!document) return { saved: false, reason: "no_file", path: dest };
+    try {
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      fs.writeFileSync(dest, JSON.stringify(document));
+      return { saved: true, path: dest };
+    } catch (error) {
+      console.error(`[persistence] copia pre-lectii-v${version} a eșuat: ${error.message}`);
+      return { saved: false, reason: "error", path: dest };
+    }
+  }
   if (!fs.existsSync(DATA_FILE)) return { saved: false, reason: "no_file", path: dest };
   try {
     fs.copyFileSync(DATA_FILE, dest);
@@ -437,5 +558,9 @@ module.exports = {
   lessonMapBackup,
   restoreMap,
   restoreArray,
-  restoreObject
+  restoreObject,
+  exportJson,
+  importDocument,
+  close,
+  serialize
 };

@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
+import { initSentry } from './sentry.js';
 import AppErrorBoundary from './components/AppErrorBoundary.jsx';
 import { applyAppearance, readAppearance } from './themePrefs.js';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -52,6 +53,7 @@ function registerServiceWorker() {
   });
 }
 
+initSentry();
 registerServiceWorker();
 
 createRoot(document.getElementById('root')).render(

@@ -680,78 +680,6 @@ const MentorAPI = {
     }
   },
 
-  async updateParentPreferences(payload) {
-    try {
-      const data = await safeFetchJson('/api/economy/preferences', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: null, fallback: true };
-    }
-  },
-
-  async getParentAnalytics(params = {}) {
-    try {
-      const qs = new URLSearchParams(params).toString();
-      const data = await safeFetchJson(`/api/economy/parent-analytics${qs ? `?${qs}` : ''}`);
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: null, fallback: true };
-    }
-  },
-
-  async getTeacherAnalytics(params = {}) {
-    try {
-      const qs = new URLSearchParams(params).toString();
-      const data = await safeFetchJson(`/api/economy/teacher-analytics${qs ? `?${qs}` : ''}`);
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: null, fallback: true };
-    }
-  },
-
-  async requestTest(payload) {
-    try {
-      const data = await safeFetchJson('/api/economy/request-test', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: null, fallback: true };
-    }
-  },
-
-  async requestAccessCode(payload) {
-    try {
-      const data = await safeFetchJson('/api/economy/access-code/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: null, fallback: true };
-    }
-  },
-
-  async verifyAccessCode(payload) {
-    try {
-      const data = await safeFetchJson('/api/economy/access-code/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: null, fallback: true };
-    }
-  },
-
   async getCurriculum(params = {}) {
     try {
       const qs = new URLSearchParams(params).toString();
@@ -896,32 +824,6 @@ const MentorAPI = {
     }
   },
 
-  async connectCalendarProvider(provider) {
-    try {
-      const data = await safeFetchJson('/api/calendar/connect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider })
-      });
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: null, fallback: true, error: error.message };
-    }
-  },
-
-  async disconnectCalendarProvider(provider) {
-    try {
-      const data = await safeFetchJson('/api/calendar/disconnect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider })
-      });
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: null, fallback: true };
-    }
-  },
-
   async generateEnPaper(payload) {
     try {
       const data = await safeFetchJson('/api/curriculum/en/papers/generate', {
@@ -997,19 +899,6 @@ const MentorAPI = {
       return { success: true, data, fallback: false };
     } catch (error) {
       return { success: false, data: null, fallback: true, error: error.message };
-    }
-  },
-
-  async reviewEnPhoto(payload) {
-    try {
-      const data = await safeFetchJson('/api/curriculum/en/photo-review', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: null, fallback: true, error: error.message, photoQuota: error.payload?.photoQuota };
     }
   },
 
