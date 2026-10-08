@@ -28,6 +28,11 @@ const STOP = new Set([
   "tema", "problema",
   "prezinta", "prezinti", "prezint", "prezentam", "prezentati",
   "arata", "arati", "aratam", "aratati",
+  "rezolv", "rezolva", "rezolvi", "rezolvam", "rezolvati",
+  "calculez", "calculeaza", "calculati", "calculam",
+  "aflu", "afla", "afli", "invat", "inveti", "invata",
+  "castig", "castiga", "gasec", "gasesc", "gaseste", "deschid", "pricep",
+  "rezultat", "rezultatul", "rezultate",
   "inteleg", "intelegi", "intelegem", "intelegeti", "inteleaga",
   "stiu", "stiti", "stim", "inseamna", "insemna",
   "lamureste", "lamuresti", "lamuriti", "defineste", "definesti", "multumesc",
@@ -204,8 +209,22 @@ function smallTypo(left, right) {
   return editAtMost1(left, right) === 1;
 }
 
+function shortEnding(left, right) {
+  if (!left || !right || left === right) return false;
+  if (left.length < 4 || right.length < 4) return false;
+  const short = left.length <= right.length ? left : right;
+  const long = left.length <= right.length ? right : left;
+  if (short.length < 4 || !long.startsWith(short)) return false;
+  const extra = long.slice(short.length);
+  if (!extra || extra.length > 4) return false;
+  if (extra.length === 1) return short.length >= 4 && "aeiou".includes(extra);
+  return ENDINGS.includes(extra);
+}
+
 function hit(word, row) {
   if (row.titleSet.has(word)) return { rank: 7, term: word };
+  const titleShort = row.titleWords.find(item => shortEnding(word, item));
+  if (titleShort) return { rank: 6, term: titleShort, via: word };
   const titleStem = row.titleWords.find(item => inflected(word, item));
   if (titleStem) return { rank: 6, term: titleStem, via: word.length >= 6 ? word : "" };
   const titleTypo = row.titleWords.find(item => item.length >= 5 && sameFamily(word, item));
@@ -333,6 +352,7 @@ function mentionsWord(folded, canonical) {
 }
 
 function isRequestWord(word) {
+  if (word === "example" || word === "examples" || word === "another" || word === "give" || word === "please") return true;
   if (REQUEST_WORDS.has(word)) return true;
   if (word.length < 5) return false;
   return ["exemplu", "foloseste", "folosim", "aplica", "inteles", "simplu"].some(item => looseWord(word, item));
@@ -340,13 +360,13 @@ function isRequestWord(word) {
 
 function followKind(folded) {
   if (!folded || folded.split(" ").length > 12) return null;
-  if (/^(nu\s+(am\s+)?inteles(\s+(asta|deloc))?|nu\s+inteleg(\s+(asta|deloc))?|n\s+am\s+inteles)$/.test(folded)) {
+  if (/^(nu\s+(am\s+)?inteles(\s+(asta|deloc))?|nu\s+inteleg(\s+(asta|deloc))?|n\s+am\s+inteles|nu\s+pricep(\s+deloc)?|i\s+don\s*t\s+get\s+it|i\s+do\s+not\s+understand)$/.test(folded)) {
     return "simpler";
   }
-  if (/^(mai\s+explica(\s+mi)?|explica(\s+mi)?(\s+te\s+rog)?|explica(\s+mi)?\s+(din\s+nou|iar)|inca\s+o\s+data|repeta(\s+te\s+rog)?)$/.test(folded)) {
+  if (/^(mai\s+explica(\s+mi)?|explica(\s+mi)?(\s+te\s+rog)?|explica(\s+mi)?\s+(din\s+nou|iar)|inca\s+o\s+data|repeta(\s+te\s+rog)?|explain\s+again|say\s+that\s+again|one\s+more\s+time)$/.test(folded)) {
     return "again";
   }
-  const example = mentionsWord(folded, "exemplu");
+  const example = mentionsWord(folded, "exemplu") || /\bexamples?\b/.test(folded);
   if (example && (/\bmai\s+(da|dai)\b/.test(folded) || /\b(alt|alta|altul|alte)\s+exempl/.test(folded) || /\binca\s+(un\s+)?exempl/.test(folded) || /\bun\s+alt\s+exempl/.test(folded))) {
     return "another";
   }
@@ -729,6 +749,7 @@ function reply(row, body, kind) {
     : "Asta stă scris în lecție. Dacă un pas nu e limpede, spune cuvântul care te încurcă.";
   return {
     matched: true,
+    confident: true,
     engine: "lectii",
     lesson: row.lesson.title,
     lessonId: row.lesson.id || "",
@@ -760,6 +781,7 @@ function answerFromLessons({ message, subject, grade, history } = {}) {
     if (empty) {
       return {
         matched: false,
+        confident: true,
         engine: "lectii",
         text: `Spune cu un cuvânt din lecția de ${subjectName}, clasa a ${level}-a. Răspund doar cu ce este scris acolo.`
       };
@@ -767,6 +789,7 @@ function answerFromLessons({ message, subject, grade, history } = {}) {
     const hint = hints.length ? ` Poți întreba despre: ${hints.join("; ")}.` : "";
     return {
       matched: false,
+      confident: false,
       engine: "lectii",
       text: `În lecțiile de ${subjectName} pentru clasa a ${level}-a nu am găsit asta. Nu completez din afara manualului salvat aici.${hint}`
     };
@@ -780,6 +803,7 @@ function answerFromLessons({ message, subject, grade, history } = {}) {
       if (anchor.known && !anchor.row) {
         return {
           matched: false,
+          confident: true,
           engine: "lectii",
           text: `Nu am ce să simplific. Ultimul răspuns nu e dintr-o lecție. Spune cu un cuvânt din lecția de ${subjectName}, clasa a ${level}-a.`
         };
@@ -805,9 +829,18 @@ function answerFromLessons({ message, subject, grade, history } = {}) {
   }
 
   const picked = selectBest(rows, message);
-  if (!picked) return missed(!tokens(message).length);
-  if (intent) return reply(picked.best.row, bodyFor(picked, intent.kind, 0));
-  return reply(picked.best.row, explainBody(picked));
+  const legacy = picked
+    ? reply(picked.best.row, intent ? bodyFor(picked, intent.kind, 0) : explainBody(picked), intent && intent.kind)
+    : null;
+  let grounded = null;
+  try {
+    grounded = require("./grounded").decideGrounded({ message, subject: sid, grade: level, legacy });
+  } catch (error) {
+    grounded = null;
+  }
+  if (grounded) return grounded;
+  if (legacy) return legacy;
+  return missed(!tokens(message).length);
 }
 
 module.exports = { answerFromLessons, tokens, fold, stripMarkers, lessonRecap };

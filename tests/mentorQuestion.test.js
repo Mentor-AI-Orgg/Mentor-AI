@@ -121,7 +121,10 @@ describe('întrebări spuse în propoziție', () => {
 
     expect(ask('explică-mi teorema lui Pitagora', 'matematica', 5).matched).toBe(false);
     expect(ask('azi e soare afara', 'matematica', 6).matched).toBe(false);
-    expect(ask('ce mai faci tu', 'romana', 6).matched).toBe(true);
+    const hello = ask('ce mai faci tu', 'romana', 6);
+    expect(hello.matched).toBe(false);
+    expect(hello.text).toMatch(/lecți/);
+    expect(hello.text).not.toMatch(/Din lecția/);
     expect(ask('azi e soare afara', 'romana', 6).matched).toBe(true);
   });
 });
