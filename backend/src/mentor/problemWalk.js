@@ -133,7 +133,7 @@ function ruleScore(problem, text, { clean = true, hint = false } = {}) {
   if (hasWord(problem.prompt, "nu") && hasWord(text, "nu") && words(text).includes("predicat")) score += 3;
   const known = new Set(words(`${problem.prompt} ${(problem.answers || []).join(" ")}`));
   const novel = words(text).filter(word => !known.has(word)).length;
-  if (!hint && score <= 0) return 0;
+  if (!hint && score <= 0 && novel < 2) return 0;
   if (!clean && novel === 0 && score < 3) return 0;
   score += Math.min(novel, 4) + (clean ? 1 : 0);
   if (!hint && novel === 0) score -= 2;
@@ -148,19 +148,24 @@ function pickRule(problem) {
   if (hint.length >= 12 && !containsAnswer(hint, answers)) {
     pool.push({ text: hint, score: ruleScore(problem, hint, { hint: true }) });
   }
-  const sources = [problem.explain, ...lessonChunks(problem)];
-  sources.flatMap(sentencesOf).forEach(raw => {
-    const text = String(raw || "").replace(/^(?:Enunțul|Enunţul) din lec[țţ]ie este:\s*/i, "").trim();
-    if (text.length < 20) return;
-    if (!containsAnswer(text, answers)) {
-      const score = ruleScore(problem, text);
-      if (score > 0) pool.push({ text, score });
-      return;
-    }
-    const hidden = usableHidden(text, answers);
-    if (!hidden) return;
-    const score = ruleScore(problem, hidden, { clean: false });
-    if (score > 0) pool.push({ text: hidden, score });
+  const sources = [
+    { body: problem.explain, bonus: 3 },
+    ...lessonChunks(problem).map(body => ({ body, bonus: 0 }))
+  ];
+  sources.forEach(({ body, bonus }) => {
+    sentencesOf(body).forEach(raw => {
+      const text = String(raw || "").replace(/^(?:Enunțul|Enunţul) din lec[țţ]ie este:\s*/i, "").trim();
+      if (text.length < 20) return;
+      if (!containsAnswer(text, answers)) {
+        const score = ruleScore(problem, text) + bonus;
+        if (score > 0) pool.push({ text, score });
+        return;
+      }
+      const hidden = usableHidden(text, answers);
+      if (!hidden) return;
+      const score = ruleScore(problem, hidden, { clean: false });
+      if (score > 0) pool.push({ text: hidden, score });
+    });
   });
   pool.sort((a, b) => b.score - a.score || b.text.length - a.text.length);
   return pool[0]?.text || "";

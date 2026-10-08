@@ -102,6 +102,33 @@ describe('tutorul legat de exercițiul predat', () => {
     expect(mathGuide.text).not.toContain('72 − 16');
     expectLoose(mathGuide.text);
 
+    const power = findExercise('e5n5');
+    const powerGuide = walkProblem({
+      message: OPENER,
+      history: [],
+      problem: {
+        prompt: power.prompt,
+        given: '7',
+        ok: false,
+        correct: power.answers[0],
+        answers: power.answers,
+        explain: power.explain,
+        hint: power.hint,
+        steps: power.steps,
+        lessonTitle: 'Puterea cu exponent natural',
+        lessonId: power.lesson,
+        subject: 'matematica',
+        grade: '5',
+        chapterId: 'naturale'
+      }
+    });
+    const powerRule = powerGuide.text.split('\n\n').find(row => row.startsWith('Regula este:'));
+    expect(powerRule.toLowerCase()).toMatch(/exponent|factor/);
+    expect(powerGuide.text).toContain('7');
+    expect(powerGuide.text).not.toContain('nu am o regulă salvată');
+    expect(powerGuide.text).not.toMatch(/\b8\b/);
+    expectLoose(powerGuide.text);
+
     const grammar = findExercise('lq-r5-cuvinte-afirmativ-negativ-2');
     const grammarGuide = walkProblem({
       message: OPENER,
