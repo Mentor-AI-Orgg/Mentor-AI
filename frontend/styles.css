@@ -413,7 +413,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .mentor-message-user { margin-left: auto; border: 1px solid rgba(68, 214, 215,.22); background: rgba(68, 214, 215,.15); }
 .mentor-message-ai { border: 1px solid rgba(68, 214, 215,.18); background: rgba(68, 214, 215,.08); }
 .mentor-message-role { display: block; margin-bottom: 6px; color: var(--aqua); font-size: 0.75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-.mentor-paragraph { margin: 0 0 0.7em; white-space: pre-wrap; }
+.mentor-paragraph { display: block; margin: 0 0 0.85em; white-space: pre-wrap; }
 .mentor-paragraph:last-child { margin-bottom: 0; }
 .mentor-message-user .mentor-message-role { color: var(--lime); }
 .mock-label { display: block; margin-top: 9px; color: #ffd8ad; font-size: 0.75rem; font-weight: 700; }

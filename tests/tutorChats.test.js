@@ -268,6 +268,35 @@ describe('chat-urile tutorelui', () => {
     expect(home).toContain('Nu acum');
   });
 
+  it('păstrează paragrafele din răspuns, ca bula să nu lipească frazele', () => {
+    const owner = 'para@test';
+    const scope = { subject: 'matematica', grade: 5 };
+    const storage = memoryStorage();
+    const raw = 'Stăm pe exercițiul ăsta.\n\nÎntrebarea: Calculează.\n\nRegula este: Întâi puterile.';
+    let state = startNewChat(emptyState(), scope);
+    const id = activeChat(state, scope).id;
+    state = appendMessage(state, id, { role: 'assistant', content: ` \u0000${raw}\r\n\n\nGata.` });
+    expect(activeChat(state, scope).messages[0].content).toBe(`${raw}\n\nGata.`);
+    expect(activeChat(state, scope).messages[0].content).not.toMatch(/[.!?»][A-ZĂÂÎȘȚŞŢ]/);
+    saveTutorChats(state, { storage, owner });
+    const previous = globalThis.localStorage;
+    globalThis.localStorage = storage;
+    try {
+      const html = renderToStaticMarkup(
+        createElement(ProfessorScreen, {
+          userData: { name: 'Ana', email: owner, class: '5', subject: 'matematica', mentorLeft: 4 },
+          studyFocus: { subject: 'matematica', grade: '5' }
+        })
+      );
+      expect(html.match(/mentor-paragraph/g)).toHaveLength(4);
+      expect(html).toContain('Regula este: Întâi puterile.');
+      expect(html).not.toContain('ăsta.Întrebarea');
+    } finally {
+      if (previous === undefined) delete globalThis.localStorage;
+      else globalThis.localStorage = previous;
+    }
+  });
+
   it('pune numele și avatarul lângă răspuns și ascunde raportul de diagnosticare', () => {
     const owner = 'maria@test';
     const scope = { subject: 'matematica', grade: 6 };

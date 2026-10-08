@@ -30,6 +30,11 @@ function withoutControls(text, asSpace) {
   const raw = String(text || '');
   for (let index = 0; index < raw.length; index += 1) {
     const code = raw.charCodeAt(index);
+    if (code === 10 || code === 13) {
+      if (asSpace) out += ' ';
+      else if (code === 10) out += '\n';
+      continue;
+    }
     if (code < 32 || code === 127) {
       if (asSpace) out += ' ';
       continue;
@@ -102,7 +107,7 @@ function normalizeMessage(message) {
   if (!message || typeof message !== 'object') return null;
   const role = message.role === 'user' || message.role === 'assistant' ? message.role : '';
   if (!role) return null;
-  const content = withoutControls(message.content, false).trim();
+  const content = withoutControls(message.content, false).replace(/\n{3,}/g, '\n\n').trim();
   if (!content) return null;
   const next = { role, content: content.slice(0, CONTENT_MAX) };
   if (message.diagnostic) next.diagnostic = true;
