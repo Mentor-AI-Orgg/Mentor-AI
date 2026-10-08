@@ -1,6 +1,21 @@
 import MathText from './MathText.jsx';
+import Mascota from './mascot/Mascota.jsx';
 import { verdictClass, verdictLabel } from '../verdictCopy.js';
 import { MASCOT_NAME } from '../config/mascot.js';
+
+function reviewMood(items) {
+  const tones = items.map(verdictClass);
+  if (tones.length && tones.every(tone => tone === 'ok')) return 'celebrating';
+  if (tones.some(tone => tone === 'ok')) return 'proud';
+  return 'encouraging';
+}
+
+function reviewLine(items) {
+  const tones = items.map(verdictClass);
+  if (tones.length && tones.every(tone => tone === 'ok')) return 'Le-ai nimerit. Dacă vrei, mai deschidem una.';
+  if (tones.some(tone => tone === 'ok')) return 'Unele au ieșit. Pe celelalte le luăm pe rând.';
+  return 'Hai să le luăm pe rând. Aici se lămurește.';
+}
 
 function ReviewItem({ item, index, onOpenLesson, onOpenNotebook, onAsk }) {
   const tone = verdictClass(item);
@@ -91,7 +106,13 @@ export default function TestReview({ items = [], onOpenLesson, onOpenNotebook, o
   if (!items.length) return null;
   return (
     <section className="test-review" aria-label="Revizuirea testului">
-      <h4 className="display-font">Revizuire</h4>
+      <div className="test-review-head">
+        <Mascota mood={reviewMood(items)} size="md" />
+        <div>
+          <h4 className="display-font">Revizuire</h4>
+          <p>{reviewLine(items)}</p>
+        </div>
+      </div>
       <ol className="test-review-list">
         {items.map((item, index) => (
           <ReviewItem

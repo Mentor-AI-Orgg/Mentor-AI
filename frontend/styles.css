@@ -1501,6 +1501,9 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .quiz-work { width: 100%; }
 .quiz-nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
 .test-review { display: grid; gap: 12px; }
+.test-review-head { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.test-review-head .mascota-md .mascota-figure { width: min(88px, 28vw); }
+.test-review-head p { margin: 4px 0 0; color: var(--muted); }
 .test-review h4 { margin: 0; }
 .test-review-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .test-review-item {
@@ -1545,14 +1548,17 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .test-review-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .mentor-problem-card {
   display: grid;
-  gap: 4px;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 10px;
+  align-items: center;
   margin: 0 0 12px;
   padding: 12px 14px;
   border-radius: 16px;
   border: 1px solid var(--chip-border);
   background: var(--chip-bg);
 }
-.mentor-problem-card p { margin: 0; }
+.mentor-problem-card .mascota-md .mascota-figure { width: 72px; }
+.mentor-problem-card p { margin: 4px 0 0; }
 .quiz-review-list { margin: 0; padding-left: 1.15em; display: grid; gap: 12px; }
 .quiz-review-list > li { display: grid; gap: 4px; }
 .quiz-review-list > li.ok { color: var(--feedback-ok); }

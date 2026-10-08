@@ -71,7 +71,14 @@ const chatRequest = async ({
   return { response: mockReply, mocked: true, engine_used: 'offline' };
 };
 
-const TutorFace = ({ mood = 'explica', typing = false }) => (
+function replyMood(text) {
+  const value = String(text || '');
+  if (/Ai nimerit|se potrivește cu baremul/.test(value)) return 'proud';
+  if (/Mai încet|încă nu e pasul|tot fără rezultat/.test(value)) return 'encouraging';
+  return 'explaining';
+}
+
+const TutorFace = ({ mood = 'explaining', typing = false }) => (
   <div className="mentor-avatar" aria-hidden="true">
     <Mascota mood={mood} size="md" typing={typing} />
   </div>
@@ -593,11 +600,14 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
       <section className="mentor-thread surface" aria-busy={loading}>
         {current?.problem?.prompt && (
           <aside className="mentor-problem-card">
-            <span className="eyebrow">
-              Exercițiul din test
-              {current.problem.lessonTitle ? ` · ${current.problem.lessonTitle}` : ''}
-            </span>
-            <p><MathText text={current.problem.prompt} /></p>
+            <Mascota mood="encouraging" size="md" />
+            <div>
+              <span className="eyebrow">
+                Exercițiul din test
+                {current.problem.lessonTitle ? ` · ${current.problem.lessonTitle}` : ''}
+              </span>
+              <p><MathText text={current.problem.prompt} /></p>
+            </div>
           </aside>
         )}
         {shown.length === 0 && (
@@ -645,7 +655,7 @@ const ProfessorScreen = ({ userData, studyFocus = {}, onProgress }) => {
           }
           return (
             <div key={`${current?.id || 'chat'}-${index}`} className="mentor-turn">
-              <TutorFace mood="explica" />
+              <TutorFace mood={replyMood(message.content)} />
               <div className={latestTutor ? 'mentor-reply-with-help' : 'mentor-reply'}>
                 {bubble}
                 {latestTutor && (

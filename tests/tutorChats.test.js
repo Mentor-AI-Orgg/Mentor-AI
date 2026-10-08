@@ -3,6 +3,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { ProfessorScreen } from '../frontend/components/StudyScreens.jsx';
+import TestReview from '../frontend/components/TestReview.jsx';
 import { MASCOT_NAME } from '../frontend/config/mascot.js';
 import {
   activeChat,
@@ -13,6 +14,7 @@ import {
   emptyState,
   loadTutorChats,
   nameChatsFromLesson,
+  openProblemChat,
   renameChat,
   saveTutorChats,
   scopeFromSelection,
@@ -335,6 +337,7 @@ describe('chat-urile tutorelui', () => {
       expect(html).toContain(MASCOT_NAME);
       expect(html).toContain('Ce învățăm azi?');
       expect(html).toContain('src="/mascot/explica.png"');
+      expect(html).toContain('data-mood="explica"');
       expect(html).toContain('mentor-avatar');
       expect(html).toContain('O fracție este o parte dintr-un întreg.');
       expect(html).toContain('Nu am înțeles');
@@ -345,5 +348,55 @@ describe('chat-urile tutorelui', () => {
       if (previous === undefined) delete globalThis.localStorage;
       else globalThis.localStorage = previous;
     }
+  });
+
+  it('schimbă starea lângă exercițiu: mândră când nimerești, încurajare când încă nu e clar', () => {
+    const owner = 'stare@test';
+    const scope = { subject: 'matematica', grade: 5 };
+    const storage = memoryStorage();
+    let state = openProblemChat(emptyState(), scope, {
+      source: 'quiz',
+      id: 'e5n5',
+      prompt: 'Calculează 2³.',
+      lessonTitle: 'Puteri'
+    });
+    const id = activeChat(state, scope).id;
+    state = appendMessage(state, id, { role: 'user', content: '7' });
+    state = appendMessage(state, id, {
+      role: 'assistant',
+      content: 'Mai încet. Îți repet regula, tot fără rezultat.'
+    });
+    saveTutorChats(state, { storage, owner });
+    const previous = globalThis.localStorage;
+    globalThis.localStorage = storage;
+    try {
+      const guide = renderToStaticMarkup(createElement(ProfessorScreen, {
+        userData: { name: 'Ana', email: owner, class: '5', subject: 'matematica', mentorLeft: 4 },
+        studyFocus: { subject: 'matematica', grade: '5' }
+      }));
+      expect(guide).toContain('data-mood="incurajeaza"');
+      expect(guide).toContain('Exercițiul din test');
+    } finally {
+      if (previous === undefined) delete globalThis.localStorage;
+      else globalThis.localStorage = previous;
+    }
+
+    const review = renderToStaticMarkup(createElement(TestReview, {
+      items: [
+        { id: 'a', ok: false, prompt: 'Calculează 2³.', given: '7', sample: '8' },
+        { id: 'b', ok: true, prompt: 'Altul.', given: 'da', sample: 'da' }
+      ]
+    }));
+    expect(review).toContain('data-mood="mandru"');
+    expect(review).toContain('Unele au ieșit.');
+    const allWrong = renderToStaticMarkup(createElement(TestReview, {
+      items: [{ id: 'a', ok: false, prompt: 'Calculează 2³.', given: '7', sample: '8' }]
+    }));
+    expect(allWrong).toContain('data-mood="incurajeaza"');
+    const allRight = renderToStaticMarkup(createElement(TestReview, {
+      items: [{ id: 'a', ok: true, prompt: 'Calculează 2³.', given: '8', sample: '8' }]
+    }));
+    expect(allRight).toContain('data-mood="sarbatoare"');
+    expect(allRight).toContain('Le-ai nimerit.');
   });
 });
