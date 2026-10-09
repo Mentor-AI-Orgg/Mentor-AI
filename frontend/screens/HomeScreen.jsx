@@ -13,8 +13,9 @@ import { TEST_OPEN_ERROR } from '../testOpen.js';
 import { curriculumParams, firstLessonExtras, homeLessonCta } from '../firstLesson.js';
 import MascotPresence from '../components/mascot/MascotPresence.jsx';
 import LevelBar from '../components/LevelBar.jsx';
+import DailyChallenge from '../components/DailyChallenge.jsx';
 
-const HomeScreen = ({ userData, onNavigate }) => {
+const HomeScreen = ({ userData, onNavigate, onReward }) => {
   const { t, locale } = useI18n();
   const [offer, setOffer] = useState(false);
   const [quiz, setQuiz] = useState(null);
@@ -150,6 +151,7 @@ const HomeScreen = ({ userData, onNavigate }) => {
           {itemEmoji(userData.avatarId) || (icon ? <i className={`fas ${icon}`} /> : (userData.name || 'E').charAt(0).toUpperCase())}
         </button>
       </header>
+      <DailyChallenge onReward={onReward} />
       {offer && !quiz && !result && (
         <section className="focus-card placement-offer">
           <Mascota mood="waving" size="md" />
