@@ -10,6 +10,7 @@ import { dailySlogan } from '../slogans.js';
 import QuoteCard from '../components/QuoteCard.jsx';
 import Mascota from '../components/mascot/Mascota.jsx';
 import { TEST_OPEN_ERROR } from '../testOpen.js';
+import { curriculumParams, firstLessonExtras, homeLessonCta } from '../firstLesson.js';
 import MascotPresence from '../components/mascot/MascotPresence.jsx';
 import LevelBar from '../components/LevelBar.jsx';
 
@@ -102,9 +103,26 @@ const HomeScreen = ({ userData, onNavigate }) => {
   const continueExtras = last?.chapterId
     ? { subject: last.subject, grade: last.grade || grade, chapter: last.chapterId, track: last.track || null }
     : { subject: 'matematica', grade };
+  const lessonCta = homeLessonCta(last);
+  const [openingLesson, setOpeningLesson] = useState(false);
+
+  const openLessonCta = async () => {
+    if (lessonCta.mode === 'continue') {
+      onNavigate('learn', continueExtras);
+      return;
+    }
+    if (openingLesson) return;
+    setOpeningLesson(true);
+    const pack = await MentorAPI.getCurriculum(curriculumParams(userData));
+    setOpeningLesson(false);
+    onNavigate('learn', firstLessonExtras(userData, pack.success ? pack.data : null));
+  };
 
   return (
     <main className="home-page animate-fadeIn">
+      <button type="button" className="accent-button home-start-cta" disabled={openingLesson} onClick={openLessonCta}>
+        {openingLesson ? 'Se deschide…' : lessonCta.label}
+      </button>
       <header className="home-header">
         <div className="home-intro">
           <MascotPresence mood="waving" message={t('home.hello', { name: userData.name || t('home.studentFallback') })} />

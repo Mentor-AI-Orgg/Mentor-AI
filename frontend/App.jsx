@@ -20,6 +20,7 @@ import RegisterScreen from './components/RegisterScreen.jsx';
 import { logoutNotice } from './logoutNotice.js';
 import { ConsentWaitScreen, ConsentScreen, ParentScreen } from './components/ConsentScreens.jsx';
 import OnboardingScreen from './components/OnboardingScreen.jsx';
+import StartLessonScreen from './components/StartLessonScreen.jsx';
 import RenameScreen from './components/RenameScreen.jsx';
 import ModerationScreen from './screens/ModerationScreen.jsx';
 import HelpScreen from './screens/HelpScreen.jsx';
@@ -89,7 +90,7 @@ function AppShell({ userData, setUserData }) {
   const [toast, setToast] = useState(null);
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [onboardingData, setOnboardingData] = useState({});
-  const [studyFocus, setStudyFocus] = useState({ subject: null, grade: null, chapter: null, track: null });
+  const [studyFocus, setStudyFocus] = useState({ subject: null, grade: null, chapter: null, track: null, lessonId: null });
   const [screenExtras, setScreenExtras] = useState({});
   const historySilent = useRef(false);
   const loggedInRef = useRef(Boolean(userData.isLoggedIn));
@@ -223,7 +224,8 @@ function AppShell({ userData, setUserData }) {
             subject: route.extras.subject !== undefined ? route.extras.subject : prev.subject,
             grade: route.extras.grade || prev.grade,
             chapter: route.extras.chapter || null,
-            track: route.extras.track !== undefined ? route.extras.track : prev.track
+            track: route.extras.track !== undefined ? route.extras.track : prev.track,
+            lessonId: route.extras.lessonId || null
           }));
         }
         setScreenExtras(route.extras || {});
@@ -262,7 +264,8 @@ function AppShell({ userData, setUserData }) {
           subject: route.extras.subject !== undefined ? route.extras.subject : prev.subject,
           grade: route.extras.grade || prev.grade,
           chapter: route.extras.chapter || null,
-          track: route.extras.track !== undefined ? route.extras.track : prev.track
+          track: route.extras.track !== undefined ? route.extras.track : prev.track,
+          lessonId: route.extras.lessonId || null
         }));
       }
       setScreenExtras(route.extras || {});
@@ -424,9 +427,9 @@ function AppShell({ userData, setUserData }) {
       setUserData(prev => ({ ...prev, ...payload }));
       await MentorAPI.claimReward({ type: 'login_bonus' });
       await syncEconomy({ class: payload.class, name: payload.name });
-      setScreen('home');
+      setScreen('start-lesson');
       setNavScreen('home');
-      writeHash('home', {}, 'replace');
+      writeHash('start-lesson', {}, 'replace');
       showToast(t('toast.onboardingDone'), 'success');
       return;
     }
@@ -453,6 +456,7 @@ function AppShell({ userData, setUserData }) {
       grade: extras.grade || prev.grade,
       chapter: extras.chapter || null,
       track: extras.track !== undefined ? extras.track : prev.track,
+      lessonId: extras.lessonId || null,
       tutorProblem: extras.tutorProblem || null
     }));
     setNavScreen(target === 'calendar' ? 'calendar' : (target === 'caiet' || target === 'ajutor') ? 'home' : target);
@@ -597,6 +601,14 @@ function AppShell({ userData, setUserData }) {
             onBack={handleOnboardingBack}
             isLast={onboardingStep === onboardingSteps.length}
             progress={currentOnboarding.progress}
+          />
+        );
+      case 'start-lesson':
+        return (
+          <StartLessonScreen
+            userData={userData}
+            onStart={extras => handleNavigate('learn', extras)}
+            onLater={() => handleNavigate('home')}
           />
         );
       case 'home':

@@ -51,13 +51,21 @@ export function parseAppHash(hash) {
   }
 
   if (head === 'lectii' || head === 'learn') {
+    const lessonPart = parts.find(part => part.startsWith('lectie-'));
     return {
       kind: 'app',
       screen: 'learn',
       navScreen: 'learn',
-      extras: { track: null, subject: a || null, grade: b || null, chapter: c || null }
+      extras: {
+        track: null,
+        subject: a || null,
+        grade: b || null,
+        chapter: c && !String(c).startsWith('lectie-') ? c : null,
+        lessonId: lessonPart ? lessonPart.slice('lectie-'.length) : null
+      }
     };
   }
+  if (head === 'incepe') return { kind: 'app', screen: 'start-lesson', navScreen: 'home' };
 
   if (/^lectie-/.test(head) && parts.length === 1) {
     return { kind: 'anchor', screen: null, lessonId: head.slice('lectie-'.length) };
@@ -115,15 +123,19 @@ export function hashForRoute(screen, extras = {}) {
       return '#/calendar';
     case 'caiet':
       return '#/caiet';
+    case 'start-lesson':
+      return '#/incepe';
     case 'learn':
       if (extras.track === 'en') {
-        return `#/en/${extras.subject || 'matematica'}`;
+        const base = `#/en/${extras.subject || 'matematica'}`;
+        return extras.lessonId ? `${base}/lectie-${extras.lessonId}` : base;
       }
       if (extras.subject) {
         const parts = ['#/lectii', extras.subject];
         if (extras.grade) parts.push(String(extras.grade));
         if (extras.chapter) parts.push(String(extras.chapter));
-        return parts.join('/');
+        const base = parts.join('/');
+        return extras.lessonId ? `${base}/lectie-${extras.lessonId}` : base;
       }
       return '#/lectii';
     default:

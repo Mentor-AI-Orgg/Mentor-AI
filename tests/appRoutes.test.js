@@ -20,6 +20,8 @@ describe('app hash routes', () => {
       ['learn', {}, '#/lectii'],
       ['learn', { subject: 'romana', grade: '6', chapter: 'fractii' }, '#/lectii/romana/6/fractii'],
       ['learn', { track: 'en', subject: 'matematica' }, '#/en/matematica'],
+      ['learn', { subject: 'matematica', grade: '6', chapter: 'naturale', lessonId: 'm5-citire' }, '#/lectii/matematica/6/naturale/lectie-m5-citire'],
+      ['start-lesson', {}, '#/incepe'],
       ['reset', { token: 'abc' }, '#/parola/abc'],
       ['consent', { token: 'abc' }, '#/acord/abc'],
       ['parent', {}, '#/parinte'],
