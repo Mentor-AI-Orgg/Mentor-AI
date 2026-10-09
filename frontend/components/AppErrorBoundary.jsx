@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import Mascota from './mascot/Mascota.jsx';
 import { captureSentryException } from '../sentry.js';
+import { isChunkLoadError, reloadOnceForChunk } from '../chunkReload.js';
 
 function frameOf(error) {
   const stack = String(error && error.stack || '');
@@ -12,14 +13,17 @@ function frameOf(error) {
 class AppErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { failed: false };
+    this.state = { failed: false, chunk: false };
   }
 
-  static getDerivedStateFromError() {
-    return { failed: true };
+  static getDerivedStateFromError(error) {
+    if (isChunkLoadError(error)) return { chunk: true };
+    return { failed: true, chunk: false };
   }
 
   componentDidCatch(error) {
+    if (this.state.chunk && reloadOnceForChunk(window.sessionStorage, () => window.location.reload())) return;
+    if (this.state.chunk) this.setState({ failed: true });
     captureSentryException(error);
     const frame = frameOf(error);
     const message = String(error && error.message || 'eroare').slice(0, 300);
@@ -31,6 +35,7 @@ class AppErrorBoundary extends Component {
   }
 
   render() {
+    if (this.state.chunk && !this.state.failed) return null;
     if (!this.state.failed) return this.props.children;
     return (
       <div className="error-fallback">
