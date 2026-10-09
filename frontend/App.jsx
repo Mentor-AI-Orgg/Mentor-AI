@@ -9,6 +9,7 @@ import AdaptiveContainer from './components/AdaptiveContainer.jsx';
 import AppBackground from './components/AppBackground.jsx';
 import BottomNav from './components/BottomNav.jsx';
 import Toast from './components/Toast.jsx';
+import OpenInBrowserBanner from './components/OpenInBrowserBanner.jsx';
 import SplashScreen from './components/SplashScreen.jsx';
 import WelcomeScreen from './components/WelcomeScreen.jsx';
 import Mascota from './components/mascot/Mascota.jsx';
@@ -654,6 +655,7 @@ function AppShell({ userData, setUserData }) {
 
   return (
     <div className="app-shell">
+      <OpenInBrowserBanner />
       <AdaptiveContainer />
       <div className={`app-background${screen === 'welcome' ? ' is-landing' : ''}`}>
         {screen === 'welcome' ? (

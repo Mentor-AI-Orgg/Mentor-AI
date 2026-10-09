@@ -63,7 +63,8 @@ async function cacheFirst(request) {
 
 async function networkFirstPage(request) {
   try {
-    return await fetch(request);
+    // Navigarea rămâne cu cookie-ul de sesiune. /api nu e interceptat.
+    return await fetch(request, { credentials: 'include' });
   } catch {
     const offline = await caches.match('/offline.html');
     if (offline) return offline;

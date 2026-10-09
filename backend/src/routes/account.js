@@ -18,6 +18,7 @@ const {
   normalizeEmail
 } = require("../data/authStore");
 const { SESSION_COOKIE } = require("../middleware/auth");
+const { sessionCookieOptions } = require("../http/sessionCookie");
 const economyStore = require("../data/economyStore");
 const registry = require("../data/userDataRegistry");
 const { usernameIssue } = require("../safety/usernamePolicy");
@@ -191,7 +192,7 @@ router.delete("/", validateBody(deleteAccountSchema), async (req, res) => {
     return res.status(401).json({ error: "Parola nu este corectă." });
   }
   await eraseAccount(req.auth.email);
-  res.clearCookie(SESSION_COOKIE, { path: "/" });
+  res.clearCookie(SESSION_COOKIE, sessionCookieOptions(0, req.get("user-agent")));
   res.json({ success: true, deleted: true });
 });
 

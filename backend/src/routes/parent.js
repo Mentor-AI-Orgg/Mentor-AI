@@ -20,14 +20,10 @@ const SAME = {
   message: "Dacă există un cont de părinte pentru adresa asta, primești un link. Verifică și în Spam."
 };
 
-function cookieOptions(maxAge) {
-  return {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge,
-    path: "/"
-  };
+const { sessionCookieOptions } = require("../http/sessionCookie");
+
+function cookieOptions(maxAge, req) {
+  return sessionCookieOptions(maxAge, req && req.get ? req.get("user-agent") : "");
 }
 
 function lessonsLast7Days(email) {
@@ -93,13 +89,13 @@ router.post("/magic/consume", authLimiter, (req, res) => {
   const account = consumeMagicToken(req.body?.token || "");
   if (!account) return res.status(400).json({ error: "Linkul nu mai este valabil." });
   const { token, maxAge } = createParentSession(account.email);
-  res.cookie(PARENT_COOKIE, token, cookieOptions(maxAge));
+  res.cookie(PARENT_COOKIE, token, cookieOptions(maxAge, req));
   res.json({ success: true });
 });
 
 router.post("/logout", parentRequired, (req, res) => {
   destroyParentSession(req.parentAuth.token);
-  res.clearCookie(PARENT_COOKIE, { path: "/" });
+  res.clearCookie(PARENT_COOKIE, cookieOptions(0, req));
   res.json({ success: true });
 });
 
@@ -216,7 +212,7 @@ router.post("/children/:id/delete", parentRequired, async (req, res) => {
   await eraseAccount(child.email);
   if (!findAccount(parentEmail)) {
     destroyParentSession(req.parentAuth.token);
-    res.clearCookie(PARENT_COOKIE, { path: "/" });
+    res.clearCookie(PARENT_COOKIE, cookieOptions(0, req));
   }
   res.json({ success: true, deleted: true });
 });
