@@ -126,6 +126,25 @@ function createApp(options = {}) {
     res.redirect(302, "/termeni");
   });
 
+  const publicDir = path.join(__dirname, "..", "..", "frontend", "public");
+  function sendCrawlFile(res, name, type) {
+    res.sendFile(path.join(publicDir, name), {
+      headers: {
+        "Content-Type": type,
+        "Cache-Control": "public, max-age=3600"
+      }
+    });
+  }
+  app.get("/robots.txt", (req, res) => {
+    sendCrawlFile(res, "robots.txt", "text/plain; charset=utf-8");
+  });
+  app.get("/sitemap.xml", (req, res) => {
+    sendCrawlFile(res, "sitemap.xml", "application/xml; charset=utf-8");
+  });
+  app.get("/og.png", (req, res) => {
+    sendCrawlFile(res, "og.png", "image/png");
+  });
+
   const distDir = path.join(__dirname, "..", "..", "frontend", "dist");
   if (fs.existsSync(distDir)) {
     app.use(express.static(distDir, {

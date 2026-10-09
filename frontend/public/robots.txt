@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://suntde10.ro/sitemap.xml

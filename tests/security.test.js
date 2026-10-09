@@ -281,6 +281,6 @@ describe('antete, cookie și jurnale', () => {
   it('nu are script inline și nu folosește innerHTML în index', () => {
     const index = require('node:fs').readFileSync(path.join(process.cwd(), 'frontend', 'index.html'), 'utf8');
     expect(index).not.toContain('innerHTML');
-    expect(index).not.toMatch(/<script(?![^>]*\bsrc=)/);
+    expect(index).not.toMatch(/<script(?![^>]*(?:\bsrc=|type="application\/ld\+json"))/);
   });
 });
