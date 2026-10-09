@@ -267,6 +267,28 @@ const MentorAPI = {
     }
   },
 
+  async dailyChallenge() {
+    try {
+      const data = await safeFetchJson('/api/economy/daily');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  async answerDaily(choice) {
+    try {
+      const data = await safeFetchJson('/api/economy/daily', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ choice })
+      });
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async placement() {
     try {
       const data = await safeFetchJson('/api/placement');

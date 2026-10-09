@@ -613,7 +613,7 @@ function AppShell({ userData, setUserData }) {
           />
         );
       case 'home':
-        return <HomeScreen userData={userData} onNavigate={handleNavigate} />;
+        return <HomeScreen userData={userData} onNavigate={handleNavigate} onReward={() => syncEconomy()} />;
       case 'caiet':
         return <MistakesScreen onNavigate={handleNavigate} />;
       case 'professor':
