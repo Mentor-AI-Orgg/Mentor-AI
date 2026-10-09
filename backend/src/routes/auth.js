@@ -13,6 +13,8 @@ const {
   normalizeEmail,
   issueResetToken,
   consumeResetToken,
+  resetMailRecentlySent,
+  noteResetMailSent,
   isInternalEmail,
   isConsentGranted,
   accountIsOpen,
@@ -332,8 +334,10 @@ router.post("/forgot-password", authLimiter, validateBody(forgotPasswordSchema),
   const { email } = req.body || {};
   const account = (isValidEmail(email) ? findAccount(email) : null) || findByUsername(email);
 
-  if (account) {
+  const recent = Boolean(account) && resetMailRecentlySent(account.email);
+  if (account && !recent) {
     const token = issueResetToken(account.email);
+    noteResetMailSent(account.email);
     const link = `${publicBaseUrl(req)}/#/parola/${token}`;
     const subject = "Resetare parolă Sunt de 10";
     const body = [
@@ -361,7 +365,7 @@ router.post("/forgot-password", authLimiter, validateBody(forgotPasswordSchema),
       }
     }
   } else if (warnIfSmtpMissing("forgot_password")) {
-    /* același jurnal, fie că există contul sau nu; fără link în log */
+    /* același jurnal, fie că există contul, e prea devreme, sau nu; fără link în log */
   }
 
   res.json({
