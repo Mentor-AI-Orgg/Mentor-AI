@@ -330,8 +330,43 @@ function destroySession(token) {
 // Invalidează toate sesiunile unui cont (schimbare de parolă, logout global).
 const RESETS = new Map();
 const RESET_TTL_MS = 45 * 60 * 1000;
+const RESET_MAIL_WINDOW_MS = 15 * 60 * 1000;
+// Momentul ultimului email de resetare, pe cont. Rămâne în memorie: nu intră
+// în snapshot, ca un restart să nu rescrie sesiunile deja salvate.
+const RESET_MAIL_SENT = new Map();
+
+function dropResetTokens(email) {
+  const key = normalizeEmail(email);
+  for (const [token, row] of RESETS.entries()) {
+    if (row?.email === key) RESETS.delete(token);
+  }
+}
+
+function resetMailRecentlySent(email, now = Date.now()) {
+  const account = findAccount(email);
+  if (!account) return false;
+  const sentAt = RESET_MAIL_SENT.get(account.email) || 0;
+  return now - sentAt < RESET_MAIL_WINDOW_MS;
+}
+
+function noteResetMailSent(email, now = Date.now()) {
+  const account = findAccount(email);
+  if (!account) return;
+  RESET_MAIL_SENT.set(account.email, now);
+}
 
 function issueResetToken(email) {
+  const account = findAccount(email);
+  if (!account) return null;
+  dropResetTokens(account.email);
+  const token = crypto.randomBytes(32).toString("hex");
+  RESETS.set(hashToken(token), { email: account.email, expiresAt: Date.now() + RESET_TTL_MS });
+  return token;
+}
+
+// Link rămas lângă altul, fără să-l șteargă. Doar testele îl folosesc, ca să
+// verifice că folosirea unuia le închide pe celelalte.
+function stageResetToken(email) {
   const account = findAccount(email);
   if (!account) return null;
   const token = crypto.randomBytes(32).toString("hex");
@@ -355,6 +390,7 @@ async function consumeResetToken(token, nextPassword) {
   const weak = passwordError(nextPassword, account.profile?.username || "");
   if (weak) return { ok: false, reason: "weak", error: weak };
   RESETS.delete(key);
+  dropResetTokens(account.email);
   const { salt, hash } = await hashPassword(nextPassword);
   account.salt = salt;
   account.passwordHash = hash;
@@ -391,9 +427,8 @@ function deleteAccount(email) {
   clearLoginFailures(key);
   if (username) clearLoginFailures(username);
   destroySessionsForEmail(key);
-  for (const [token, row] of RESETS.entries()) {
-    if (row?.email === key) RESETS.delete(token);
-  }
+  dropResetTokens(key);
+  RESET_MAIL_SENT.delete(key);
   for (const account of ACCOUNTS.values()) {
     if (account.role === "parent" && Array.isArray(account.children)) {
       account.children = account.children.filter(child => normalizeEmail(child) !== key);
@@ -553,6 +588,9 @@ module.exports = {
   usernameTaken,
   changePassword,
   issueResetToken,
+  stageResetToken,
+  resetMailRecentlySent,
+  noteResetMailSent,
   consumeResetToken,
   createSession,
   getSession,
