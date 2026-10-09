@@ -36,6 +36,7 @@ const {
 } = require("../data/consentStore");
 const legal = require("../../../shared/legal.json");
 const { SESSION_COOKIE, authRequired, STUDENTS_ONLY } = require("../middleware/auth");
+const { sessionCookieOptions: buildSessionCookie } = require("../http/sessionCookie");
 const { authLimiter, usernameCheckLimiter } = require("../middleware/rateLimits");
 const { validateBody } = require("../middleware/validate");
 const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, consentActionSchema, parentEmailSchema, tokenSchema, usernameCheckSchema } = require("../validation/schemas");
@@ -77,16 +78,8 @@ function validatePassword(password, username = "") {
   return passwordError(password, username);
 }
 
-function sessionCookieOptions(maxAge) {
-  return {
-    httpOnly: true,
-    sameSite: "lax",
-    // Cookie-ul se trimite doar pe HTTPS în producție. În development pe
-    // localhost (http) trebuie să rămână disponibil.
-    secure: process.env.NODE_ENV === "production",
-    maxAge,
-    path: "/"
-  };
+function sessionCookieOptions(maxAge, req) {
+  return buildSessionCookie(maxAge, req && req.get ? req.get("user-agent") : "");
 }
 
 function consentMail({ req, account, token }) {
@@ -224,7 +217,7 @@ router.post("/register", authLimiter, ignoreChildIdentity, validateBody(register
   if (parent) linkChildToParent(parent.email, created.account.email);
 
   const { token, maxAge } = createSession(created.account.email);
-  res.cookie(SESSION_COOKIE, token, sessionCookieOptions(maxAge));
+  res.cookie(SESSION_COOKIE, token, sessionCookieOptions(maxAge, req));
   res.status(201).json({
     success: true,
     user: publicAccount(created.account),
@@ -301,7 +294,7 @@ router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) =
   });
 
   const { token, maxAge } = createSession(result.account.email);
-  res.cookie(SESSION_COOKIE, token, sessionCookieOptions(maxAge));
+  res.cookie(SESSION_COOKIE, token, sessionCookieOptions(maxAge, req));
 
   res.json({
     success: true,
@@ -312,14 +305,14 @@ router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) =
 
 router.post("/logout", (req, res) => {
   destroySession(req.sessionToken);
-  res.clearCookie(SESSION_COOKIE, { path: "/" });
+  res.clearCookie(SESSION_COOKIE, sessionCookieOptions(0, req));
   res.json({ success: true });
 });
 
 router.get("/me", authRequired, (req, res) => {
   if (req.auth.role !== "student") {
     destroySession(req.sessionToken);
-    res.clearCookie(SESSION_COOKIE, { path: "/" });
+    res.clearCookie(SESSION_COOKIE, sessionCookieOptions(0, req));
     return res.status(403).json(STUDENTS_ONLY);
   }
   const user = publicAccount(req.auth.account);

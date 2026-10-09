@@ -300,6 +300,23 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .onboarding-next { flex: 1; border: 0; display: flex; align-items: center; justify-content: center; gap: 10px; }
 .home-page { width: 100%; max-width: var(--app-content-max); min-height: 100vh; min-height: 100dvh; margin: 0 auto; padding: 34px var(--app-side-pad) 112px; }
 .home-start-cta { width: 100%; margin: 0 0 18px; }
+.browser-banner {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: min(100% - 24px, var(--app-content-max));
+  margin: 8px auto 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.browser-banner p { margin: 0; font-size: 0.8125rem; line-height: 1.4; }
+.browser-banner .ghost-button { flex: none; }
 .home-header, .section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .home-intro { display: flex; align-items: flex-start; gap: 12px; min-width: 0; }
 .home-intro-copy { flex: 1; min-width: 0; }
