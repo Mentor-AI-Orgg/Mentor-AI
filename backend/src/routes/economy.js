@@ -3,7 +3,7 @@ const router = express.Router();
 const { STUDENTS_ONLY } = require('../middleware/auth');
 const { accountIsOpen } = require('../data/authStore');
 const { validateBody } = require('../middleware/validate');
-const { claimSchema, buySchema, equipSchema, progressSchema, dailyAnswerSchema } = require('../validation/schemas');
+const { claimSchema, buySchema, equipSchema, progressSchema } = require('../validation/schemas');
 const {
   getSummary,
   getCatalog,
@@ -18,23 +18,10 @@ const {
   sendParentReview
 } = require('../data/economyStore');
 const { notifyParent, ALLOWED_TYPES } = require('../notify/parentActivity');
-const { dailyView, answerDaily } = require('../dailyChallenge');
 
 // Toate rutele de aici sunt montate în spatele `authRequired` (vezi
 // backend/server.js), deci `req.auth` există mereu. Identitatea vine exclusiv
 // din sesiune: niciun handler nu mai citește `user_id` din query sau body.
-
-router.get('/daily', (req, res) => {
-  const card = dailyView(req.auth.email, req.auth.account?.profile?.class);
-  if (!card) return res.status(404).json({ error: 'Nu am o provocare pentru azi.' });
-  res.json(card);
-});
-
-router.post('/daily', validateBody(dailyAnswerSchema), (req, res) => {
-  const result = answerDaily(req.auth.email, req.auth.account?.profile?.class, req.body.choice);
-  if (!result.ok) return res.status(404).json({ error: result.error });
-  res.json(result);
-});
 
 router.get('/summary', (req, res) => {
   // Rolul vine din contul salvat, iar monedele și metricile nu mai pot fi
