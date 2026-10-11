@@ -207,24 +207,6 @@ function awardCoins(user, amount, type, note, meta = {}) {
   return { entry, balance: user.balance, amount: value };
 }
 
-function recordDailyChallenge(user, { date, id, correct, streak }) {
-  let coins = 0;
-  let xp = 0;
-  if (correct) {
-    const bonus = awardCoins(user, AWARDS.streak_day.coins, 'reward', 'Provocarea zilei', { type: 'daily_challenge' });
-    user.xp = (user.xp || 0) + AWARDS.streak_day.xp;
-    coins = bonus.amount;
-    xp = AWARDS.streak_day.xp;
-  }
-  user.dailyChallenge = {
-    date,
-    id,
-    correct: Boolean(correct),
-    streak
-  };
-  return { coins, xp, summary: buildSummary(user) };
-}
-
 function spendCoins(user, amount, type, note, meta = {}) {
   const value = Math.max(0, Number(amount) || 0);
   if (user.balance < value) {
@@ -1401,7 +1383,6 @@ persistence.register('economy', {
 module.exports = {
   ensureUser,
   getUser,
-  recordDailyChallenge,
   getSummary,
   getCatalog,
   purchaseItem,
