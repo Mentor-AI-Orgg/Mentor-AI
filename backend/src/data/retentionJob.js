@@ -18,7 +18,7 @@ const {
 let timer = null;
 
 function idleSince(account) {
-  const raw = account.lastLoginAt || account.createdAt;
+  const raw = account.lastActiveAt || account.lastLoginAt || account.createdAt;
   const at = Date.parse(raw || "");
   return Number.isFinite(at) ? at : Date.now();
 }

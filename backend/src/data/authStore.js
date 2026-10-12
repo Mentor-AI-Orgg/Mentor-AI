@@ -29,6 +29,7 @@ const SESSIONS = new Map(); // sha256(token) -> { email, expiresAt }
 const hashToken = token => crypto.createHash("sha256").update(String(token)).digest("hex");
 
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 zile
+const ACTIVE_TOUCH_MS = 60 * 60 * 1000;
 const KEY_LENGTH = 64;
 
 const ROLES = ["student", "parent", "teacher"];
@@ -58,6 +59,14 @@ function findAccount(email) {
 
 function listAccounts() {
   return [...ACCOUNTS.values()];
+}
+
+function touchLastActive(account, now = Date.now()) {
+  if (!account) return false;
+  const previous = Date.parse(account.lastActiveAt || "");
+  if (Number.isFinite(previous) && now - previous < ACTIVE_TOUCH_MS) return false;
+  account.lastActiveAt = new Date(now).toISOString();
+  return true;
 }
 
 function usernameTaken(username, exceptEmail = "") {
@@ -585,6 +594,8 @@ module.exports = {
   isSuspended,
   updateProfile,
   listAccounts,
+  touchLastActive,
+  ACTIVE_TOUCH_MS,
   usernameTaken,
   changePassword,
   issueResetToken,

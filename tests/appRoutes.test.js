@@ -17,6 +17,8 @@ describe('app hash routes', () => {
       ['caiet', {}, '#/caiet'],
       ['ajutor', {}, '#/ajutor'],
       ['mascota', {}, '#/creator/mascota'],
+      ['moderare', {}, '#/creator/moderare'],
+      ['statistici', {}, '#/creator/statistici'],
       ['learn', {}, '#/lectii'],
       ['learn', { subject: 'romana', grade: '6', chapter: 'fractii' }, '#/lectii/romana/6/fractii'],
       ['learn', { track: 'en', subject: 'matematica' }, '#/en/matematica'],

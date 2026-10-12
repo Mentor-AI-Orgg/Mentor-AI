@@ -6,7 +6,7 @@
 // exclusiv din cookie-ul de sesiune, semnat server-side și imposibil de
 // falsificat din browser.
 
-const { getSession, findAccount, accountIsOpen, isSuspended } = require("../data/authStore");
+const { getSession, findAccount, accountIsOpen, isSuspended, touchLastActive } = require("../data/authStore");
 const { getParentSession } = require("../data/consentStore");
 const { usernameIssue } = require("../safety/usernamePolicy");
 
@@ -47,6 +47,7 @@ function attachUser(req, res, next) {
 
   req.auth = { email: account.email, role: account.role, account };
   req.sessionToken = token;
+  touchLastActive(account);
   next();
 }
 
@@ -83,6 +84,7 @@ function parentRequired(req, res, next) {
     return res.status(401).json({ error: "Autentificare necesară.", code: "unauthenticated" });
   }
   req.parentAuth = { email: account.email, role: "parent", account, token };
+  touchLastActive(account);
   next();
 }
 

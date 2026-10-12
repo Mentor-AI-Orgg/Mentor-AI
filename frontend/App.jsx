@@ -25,6 +25,7 @@ import OnboardingScreen from './components/OnboardingScreen.jsx';
 import StartLessonScreen from './components/StartLessonScreen.jsx';
 import RenameScreen from './components/RenameScreen.jsx';
 import ModerationScreen from './screens/ModerationScreen.jsx';
+import OwnerStatsScreen from './screens/OwnerStatsScreen.jsx';
 import HelpScreen from './screens/HelpScreen.jsx';
 import CreatorMascotScreen from './screens/CreatorMascotScreen.jsx';
 import { ProfessorScreen } from './components/StudyScreens.jsx';
@@ -179,7 +180,7 @@ function AppShell({ userData, setUserData }) {
     });
   }, []);
 
-  const isParentLink = route => route.screen === 'reset' || route.screen === 'consent' || route.screen === 'parent' || route.screen === 'moderare' || route.screen === 'mascota';
+  const isParentLink = route => route.screen === 'reset' || route.screen === 'consent' || route.screen === 'parent' || route.screen === 'moderare' || route.screen === 'statistici' || route.screen === 'mascota';
 
   const handleSplashFinish = async () => {
     const route = parseAppHash(window.location.hash);
@@ -484,7 +485,7 @@ function AppShell({ userData, setUserData }) {
         historySilent.current = false;
         return;
       }
-      if (route.screen === 'moderare' || route.screen === 'mascota') {
+      if (route.screen === 'moderare' || route.screen === 'statistici' || route.screen === 'mascota') {
         setScreen(route.screen);
         historySilent.current = false;
         return;
@@ -543,7 +544,9 @@ function AppShell({ userData, setUserData }) {
         return <ParentScreen token={token} />;
       }
       case 'moderare':
-        return <ModerationScreen />;
+        return <ModerationScreen onOpenStats={() => { setScreen('statistici'); writeHash('statistici'); }} />;
+      case 'statistici':
+        return <OwnerStatsScreen onBack={() => { setScreen('moderare'); writeHash('moderare'); }} />;
       case 'mascota':
         return <CreatorMascotScreen />;
       case 'ajutor':

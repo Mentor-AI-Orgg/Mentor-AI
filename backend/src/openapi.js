@@ -19,6 +19,7 @@ const RETIRED = new Set([
 
 const SUMMARIES = {
   "GET /health": "Starea procesului",
+  "GET /admin/stats": "Numere de conturi, doar pentru creator",
   "POST /auth/register": "Creează un cont și setează cookie-ul de sesiune",
   "POST /auth/login": "Autentificare",
   "POST /auth/logout": "Închide sesiunea",

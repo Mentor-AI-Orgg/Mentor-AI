@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 
-export default function ModerationScreen() {
+export default function ModerationScreen({ onOpenStats }) {
   const [state, setState] = useState({ reports: [], log: [], error: '' });
 
   async function load() {
@@ -26,6 +26,9 @@ export default function ModerationScreen() {
       <header className="screen-header">
         <div className="eyebrow">Creator</div>
         <h1 className="display-font screen-title">Moderare</h1>
+        {onOpenStats && (
+          <button type="button" className="ghost-button" onClick={onOpenStats}>Statistici conturi</button>
+        )}
       </header>
       {state.error && <p className="mx-5">{state.error}</p>}
       <section className="mx-5 grid gap-3">
