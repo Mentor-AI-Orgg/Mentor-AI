@@ -3,6 +3,7 @@
 
 import { lazy } from 'react';
 import { isChunkLoadError, reloadOnceForChunk } from './chunkReload.js';
+import { CLIENT_BUILD, reloadIfUpdatedBuild } from './appUpdate.js';
 
 function defaultReload() {
   if (typeof window !== 'undefined' && window.location) window.location.reload();
@@ -26,7 +27,7 @@ export function loadLazyModule(importer, options = {}) {
   };
   return load()
     .catch(again)
-    .catch((error) => {
+    .catch(async (error) => {
       if (!isChunkLoadError(error)) throw error;
       const storage = Object.prototype.hasOwnProperty.call(options, 'storage')
         ? options.storage
@@ -36,6 +37,13 @@ export function loadLazyModule(importer, options = {}) {
       const reload = Object.prototype.hasOwnProperty.call(options, 'reload')
         ? options.reload
         : defaultReload;
+      const updated = await reloadIfUpdatedBuild({
+        storage,
+        reload,
+        fetchImpl: options.fetch,
+        clientBuild: options.clientBuild || CLIENT_BUILD
+      });
+      if (updated) return new Promise(() => {});
       if (reloadOnceForChunk(storage, reload)) return new Promise(() => {});
       throw error;
     });

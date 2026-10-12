@@ -1,6 +1,7 @@
 const express = require("express");
 const crypto = require("crypto");
 const config = require("../config");
+const { currentBuildId } = require("../ops/buildId");
 const { smtpConfigured } = require("../notify/deliver");
 
 const router = express.Router();
@@ -24,7 +25,8 @@ function backupDetails() {
 }
 
 router.get("/", (req, res) => {
-  const body = { ok: true, version: config.APP_VERSION };
+  res.set("Cache-Control", "no-store");
+  const body = { ok: true, version: config.APP_VERSION, build: currentBuildId() };
   const token = String(process.env.HEALTH_TOKEN || "");
   if (!sameSecret(req.get("x-health-token"), token)) return res.json(body);
   res.json({
