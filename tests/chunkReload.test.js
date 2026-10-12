@@ -21,6 +21,8 @@ describe('reîncărcare după un chunk vechi', () => {
     expect(isChunkLoadError(new Error('Importing a module script failed.'))).toBe(true);
     expect(isChunkLoadError(new Error('Unable to preload CSS for /assets/index-ghi.css'))).toBe(true);
     expect(isChunkLoadError({ name: 'ChunkLoadError', message: 'Loading chunk 7 failed.' })).toBe(true);
+    expect(isChunkLoadError(new TypeError('Cannot read properties of undefined (reading "default")'))).toBe(true);
+    expect(isChunkLoadError(new TypeError("undefined is not an object (evaluating 'mod.default')"))).toBe(true);
     expect(isChunkLoadError(new Error('Autentificare necesară.'))).toBe(false);
     expect(isChunkLoadError(new TypeError('Failed to fetch'))).toBe(false);
   });

@@ -1,8 +1,9 @@
-import { lazy, Suspense, useEffect, useId, useState } from 'react';
+import { Suspense, useEffect, useId, useState } from 'react';
 import MathText from './MathText.jsx';
 import { shouldRender3D } from './geo/webglBudget.js';
+import { lazyWithRetry } from '../lazyWithRetry.js';
 
-const GeoSolid = lazy(() => import('./GeoSolid.jsx'));
+const GeoSolid = lazyWithRetry(() => import('./GeoSolid.jsx'));
 
 function SvgFraction({ x, y, num, den, fill = 'currentColor', label }) {
   const cx = Number(x);

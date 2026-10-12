@@ -1,6 +1,7 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
+import { lazyWithRetry } from '../lazyWithRetry.js';
 
-const FloatingLines = lazy(() => import('./FloatingLines.jsx'));
+const FloatingLines = lazyWithRetry(() => import('./FloatingLines.jsx'));
 
 export default function AppBackground(props) {
   return (
