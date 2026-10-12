@@ -1,10 +1,25 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { manualChunk } from './manualChunks.mjs';
+import { buildStamp } from './buildStamp.mjs';
 
 const repoRoot = path.dirname(fileURLToPath(import.meta.url));
+const BUILD_ID = buildStamp();
+
+function writeBuildId() {
+  return {
+    name: 'write-build-id',
+    apply: 'build',
+    closeBundle() {
+      const dir = path.join(repoRoot, 'frontend', 'dist');
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, 'build-id.json'), JSON.stringify({ build: BUILD_ID }));
+    }
+  };
+}
 
 function sharedPasswordList() {
   return {
@@ -39,7 +54,10 @@ function sentryScrubForDev() {
 
 export default defineConfig({
   root: 'frontend',
-  plugins: [react(), sharedPasswordList(), sentryScrubForDev()],
+  define: {
+    'import.meta.env.VITE_BUILD_ID': JSON.stringify(BUILD_ID)
+  },
+  plugins: [react(), sharedPasswordList(), sentryScrubForDev(), writeBuildId()],
   publicDir: 'public',
   resolve: {
     alias: {

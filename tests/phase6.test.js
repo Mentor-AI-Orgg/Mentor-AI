@@ -24,7 +24,8 @@ describe('phase 6 product polish', () => {
   it('keeps health to a yes or no, without integrations', async () => {
     const res = await request(app).get('/api/health');
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ ok: true, version: '3.0.0' });
+    expect(res.body).toEqual({ ok: true, version: '3.0.0', build: 'dev' });
+    expect(res.headers['cache-control']).toMatch(/no-store/);
     expect(res.body.integrations).toBeUndefined();
   });
 

@@ -23,7 +23,8 @@ describe('antete, cookie și jurnale', () => {
     expect(privacy.text).toContain('s10_session');
 
     const health = await request(app).get('/api/health');
-    expect(health.body).toEqual({ ok: true, version: '3.0.0' });
+    expect(health.body).toEqual({ ok: true, version: '3.0.0', build: 'dev' });
+    expect(health.headers['cache-control']).toMatch(/no-store/);
     expect(health.body.integrations).toBeUndefined();
     expect(JSON.stringify(health.body)).not.toMatch(/openai|mathpix|smtp/i);
   });
