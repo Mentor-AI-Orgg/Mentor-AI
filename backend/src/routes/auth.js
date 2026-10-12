@@ -23,7 +23,8 @@ const {
   ensureParentAccount,
   linkChildToParent,
   grantConsent,
-  stripLegacyProfile
+  stripLegacyProfile,
+  touchLastActive
 } = require("../data/authStore");
 const {
   POLICY_VERSION,
@@ -215,6 +216,7 @@ router.post("/register", authLimiter, ignoreChildIdentity, validateBody(register
 
   const parent = await ensureParentAccount(created.account.profile.parentEmail);
   if (parent) linkChildToParent(parent.email, created.account.email);
+  touchLastActive(created.account);
 
   const { token, maxAge } = createSession(created.account.email);
   res.cookie(SESSION_COOKIE, token, sessionCookieOptions(maxAge, req));
@@ -285,6 +287,7 @@ router.post("/login", authLimiter, validateBody(loginSchema), async (req, res) =
 
   result.account.lastLoginAt = new Date().toISOString();
   result.account.inactivityWarningSent = false;
+  touchLastActive(result.account);
 
   ensureUser(result.account.email, {
     role: result.account.role,

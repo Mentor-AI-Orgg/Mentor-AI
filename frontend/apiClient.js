@@ -752,6 +752,15 @@ const MentorAPI = {
     }
   },
 
+  async adminStats() {
+    try {
+      const data = await safeFetchJson('/api/admin/stats');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  },
+
   async creatorStatus() {
     try {
       const data = await safeFetchJson('/api/creator/status');

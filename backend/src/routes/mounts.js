@@ -16,6 +16,7 @@ function definitions() {
     { mount: "/health", tag: "health", router: require("./health"), guards: [] },
     { mount: "/leaderboard", tag: "leaderboard", router: require("./leaderboard"), guards: [] },
     { mount: "/moderation", tag: "moderation", router: require("./moderation"), guards: [] },
+    { mount: "/admin", tag: "admin", router: require("./admin"), guards: [] },
     { mount: "/creator", tag: "creator", router: require("./creator"), guards: [] },
     { mount: "/curriculum", tag: "curriculum", router: require("./curriculum"), guards: [] },
     { mount: "/chat", tag: "chat", router: require("./chat"), guards: student },
