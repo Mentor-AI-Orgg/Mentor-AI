@@ -1,4 +1,5 @@
-import { Component, lazy, Suspense, useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { Component, Suspense, useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { lazyWithRetry } from './lazyWithRetry.js';
 import { MentorAPI } from './apiClient.js';
 import { STORAGE_KEY, defaultUserData, toStoredUser, cleanStoredUser } from './userData.js';
 import { applyProgress, applyTheme } from './appearance.js';
@@ -30,10 +31,10 @@ import { ProfessorScreen } from './components/StudyScreens.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
 import MistakesScreen from './screens/MistakesScreen.jsx';
 
-const LearnScreen = lazy(() => import('./screens/LearnScreen.jsx'));
-const ShopScreen = lazy(() => import('./components/ShopScreen.jsx'));
-const ProfileScreen = lazy(() => import('./screens/ProfileScreen.jsx'));
-const CalendarScreen = lazy(() => import('./screens/CalendarScreen.jsx'));
+const LearnScreen = lazyWithRetry(() => import('./screens/LearnScreen.jsx'));
+const ShopScreen = lazyWithRetry(() => import('./components/ShopScreen.jsx'));
+const ProfileScreen = lazyWithRetry(() => import('./screens/ProfileScreen.jsx'));
+const CalendarScreen = lazyWithRetry(() => import('./screens/CalendarScreen.jsx'));
 
 class BackgroundSafe extends Component {
   constructor(props) {

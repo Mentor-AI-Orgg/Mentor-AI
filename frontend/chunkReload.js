@@ -11,7 +11,9 @@ export function isChunkLoadError(error) {
     || /error loading dynamically imported module/i.test(message)
     || /Importing a module script failed/i.test(message)
     || /Unable to preload CSS/i.test(message)
-    || /Loading chunk [\w-]+ failed/i.test(message);
+    || /Loading chunk [\w-]+ failed/i.test(message)
+    || /reading ['"]default['"]/i.test(message)
+    || /evaluating [^)]*\.default/i.test(message);
 }
 
 export function noteChunkReloadBoot(storage) {

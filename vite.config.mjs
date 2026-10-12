@@ -2,6 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { manualChunk } from './manualChunks.mjs';
 
 const repoRoot = path.dirname(fileURLToPath(import.meta.url));
 
@@ -43,12 +44,20 @@ export default defineConfig({
   resolve: {
     alias: {
       '@shared': path.join(repoRoot, 'shared')
-    }
+    },
+    dedupe: ['react', 'react-dom']
   },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
     sourcemap: false,
+    // Fără modulepreload: webview-ul din Facebook poate evalua chunk-ul React de două ori.
+    modulePreload: false,
+    rollupOptions: {
+      output: {
+        manualChunks: manualChunk
+      }
+    },
     commonjsOptions: {
       include: [/shared\//, /node_modules/]
     }
