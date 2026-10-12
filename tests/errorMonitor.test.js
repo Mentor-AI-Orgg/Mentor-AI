@@ -115,7 +115,7 @@ describe('jurnal de erori și deploy', () => {
     expect(log).not.toContain('?');
   });
 
-  it('respinge un raport din browser mai mare de 2 KB și ignoră câmpurile în plus', async () => {
+  it('păstrează mesajul din browser, fără email, token sau UA brut', async () => {
     arm();
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'clienterr-'));
     process.env.ERROR_LOG_DIR = dir;
@@ -123,23 +123,92 @@ describe('jurnal de erori și deploy', () => {
     const huge = await request(app).post('/api/client-error').send({ message: 'x'.repeat(2100) });
     expect(huge.status).toBe(413);
 
+    const stack = [
+      'NotFoundError: removeChild copil@example.com',
+      '    at commitDeletion (https://suntde10.ro/assets/index-5tdgxzoN.js:41:120)',
+      '    at commitMutationEffects (https://suntde10.ro/assets/index-5tdgxzoN.js:39:80)',
+      '    at f1 (https://suntde10.ro/assets/index-5tdgxzoN.js:10:1)',
+      '    at f2 (https://suntde10.ro/assets/index-5tdgxzoN.js:11:1)',
+      '    at f3 (https://suntde10.ro/assets/index-5tdgxzoN.js:12:1)',
+      '    at f4 (https://suntde10.ro/assets/index-5tdgxzoN.js:13:1)',
+      '    at f5 (https://suntde10.ro/assets/index-5tdgxzoN.js:14:1)'
+    ].join('\n');
     const ok = await request(app).post('/api/client-error').send({
-      message: 'ecran gol',
-      file: 'App.jsx',
-      line: 4,
+      message: 'removeChild copil@example.com token=secret-token ababababababababababababababababababab password=hunter2',
+      name: 'NotFoundError',
+      file: 'https://suntde10.ro/assets/index-5tdgxzoN.js?token=secret-token',
+      line: 41,
+      column: 120,
+      stack,
+      hash: '#/parola/super-secret-token',
+      ua: 'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36 [FBAN/FB4A;FBAV/1.0]',
       email: 'copil@example.com',
       password: 'secret',
       url: 'https://suntde10.ro/reset?token=secret-token'
     });
     expect(ok.status).toBe(200);
     expect(ok.body.ok).toBe(true);
-    const log = fs.readFileSync(path.join(dir, 'errors.log'), 'utf8');
-    expect(log).not.toContain('ecran gol');
-    expect(log).toContain('[redactat]');
-    expect(log).toContain('App.jsx');
+    const again = await request(app).post('/api/client-error').send({
+      message: 'removeChild copil@example.com token=secret-token ababababababababababababababababababab password=hunter2',
+      name: 'NotFoundError',
+      file: 'index-5tdgxzoN.js',
+      line: 39,
+      column: 8
+    });
+    expect(again.status).toBe(200);
+
+    const lines = fs.readFileSync(path.join(dir, 'errors.log'), 'utf8').trim().split('\n');
+    expect(lines).toHaveLength(1);
+    const entry = JSON.parse(lines[0]);
+    expect(entry.message).toContain('removeChild');
+    expect(entry.message).toContain('[email]');
+    expect(entry.message).toContain('token=[redactat]');
+    expect(entry.message).toContain('[hex]');
+    expect(entry.message).toContain('password=[redactat]');
+    expect(entry.name).toBe('NotFoundError');
+    expect(entry.file).toBe('index-5tdgxzoN.js');
+    expect(entry.line).toBe(41);
+    expect(entry.column).toBe(120);
+    expect(entry.hash).toBe('#/parola/[redactat]');
+    expect(entry.ua).toBe('chrome+inapp');
+    expect(entry.stack.split('\n')).toHaveLength(5);
+    expect(entry.stack).toContain('index-5tdgxzoN.js:41:120');
+    expect(entry.stack).not.toContain('f5');
+    expect(entry.code).toBe('client_error');
+    const log = lines[0];
     expect(log).not.toContain('copil@example.com');
     expect(log).not.toContain('secret-token');
-    expect(log).not.toContain('secret');
+    expect(log).not.toContain('hunter2');
+    expect(log).not.toContain('Mozilla');
+    expect(log).not.toContain('FBAN');
+    expect(log).not.toContain('https://');
+  });
+
+  it('nu numără de două ori același raport din browser, în aceeași secundă', async () => {
+    arm();
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'clientdup-'));
+    process.env.ERROR_LOG_DIR = dir;
+    const start = Date.parse('2026-10-12T00:07:00Z');
+    await monitor.reportClientError({
+      message: 'ecran gol',
+      file: 'index-5tdgxzoN.js',
+      line: 39
+    }, start);
+    await monitor.reportClientError({
+      message: 'ecran gol',
+      file: 'index-5tdgxzoN.js',
+      line: 41
+    }, start + 1);
+    expect(fs.readFileSync(path.join(dir, 'errors.log'), 'utf8').trim().split('\n')).toHaveLength(1);
+    const saved = JSON.parse(fs.readFileSync(path.join(dir, 'alert-state.json'), 'utf8'));
+    expect(saved.types.client_error.count).toBe(1);
+    await monitor.reportClientError({
+      message: 'ecran gol',
+      file: 'index-5tdgxzoN.js',
+      line: 41
+    }, start + monitor.CLIENT_DEDUPE_MS + 1);
+    expect(fs.readFileSync(path.join(dir, 'errors.log'), 'utf8').trim().split('\n')).toHaveLength(2);
+    expect(spy.mock.calls[0][0].body).not.toContain('ecran gol');
   });
 
   it('anunță o dată când aceeași eroare se repetă, apoi tace', async () => {

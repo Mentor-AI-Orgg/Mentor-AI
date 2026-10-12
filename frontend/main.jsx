@@ -4,6 +4,7 @@ import { initSentry } from './sentry.js';
 import AppErrorBoundary from './components/AppErrorBoundary.jsx';
 import { applyAppearance, readAppearance } from './themePrefs.js';
 import { installChunkReload } from './chunkReload.js';
+import { installClientErrorReporting } from './clientErrorReport.js';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './styles.css';
 
@@ -55,6 +56,7 @@ function registerServiceWorker() {
 }
 
 installChunkReload();
+installClientErrorReporting();
 initSentry();
 registerServiceWorker();
 

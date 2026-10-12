@@ -7,6 +7,7 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const { logError } = require("../logger");
+const { CLIENT_DEDUPE_MS, sanitizeClientReport } = require("./clientErrorDetail");
 
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_ALERTS = 10;
@@ -23,7 +24,8 @@ const state = {
   smtpStreak: 0,
   alerting: false,
   hydrated: false,
-  hooksInstalled: false
+  hooksInstalled: false,
+  clientRecent: []
 };
 
 function newId() {
@@ -45,6 +47,7 @@ function resetAlerts() {
   state.smtpStreak = 0;
   state.alerting = false;
   state.hydrated = false;
+  state.clientRecent = [];
   if (process.env.ERROR_LOG_DIR) {
     try {
       fs.rmSync(stateFile(), { force: true });
@@ -239,21 +242,38 @@ function reportError({ id, status, route, code, stack }) {
   return noteIncident({ type: entry.code, id: entry.id });
 }
 
-function reportClientError({ message, file, line }) {
+function seenClientError(key, now) {
+  state.clientRecent = state.clientRecent.filter(row => now - row.at < CLIENT_DEDUPE_MS);
+  if (state.clientRecent.some(row => row.key === key)) return true;
+  state.clientRecent.push({ key, at: now });
+  return false;
+}
+
+function reportClientError(body, now = Date.now()) {
+  const detail = sanitizeClientReport(body);
+  const key = `${detail.message}\n${detail.file}`;
+  if (seenClientError(key, now)) return Promise.resolve({ sent: false, reason: "duplicate" });
   const id = newId();
   const entry = {
-    at: new Date().toISOString(),
+    at: new Date(now).toISOString(),
     id,
     status: 0,
     route: "/api/client-error",
     code: "client_error",
-    message: String(message || "").slice(0, 300),
-    file: String(file || "").slice(0, 80),
-    line: Number(line) || 0
+    name: detail.name,
+    message: detail.message,
+    file: detail.file,
+    line: detail.line,
+    column: detail.column,
+    hash: detail.hash,
+    ua: detail.ua,
+    stack: detail.stack
   };
-  appendLog(logError(entry));
+  const line = JSON.stringify(entry);
+  console.error(line);
+  appendLog(line);
   try { require("./sentry").captureBackendError(entry); } catch { /* Sentry e opțional */ }
-  return noteIncident({ type: "client_error", id });
+  return noteIncident({ type: "client_error", id, now });
 }
 
 function recordMailCode(code, extra) {
@@ -384,5 +404,6 @@ module.exports = {
   DAY_ALERTS,
   REPEAT_AT,
   HOUR_MS,
-  BACKUP_STALE_MS
+  BACKUP_STALE_MS,
+  CLIENT_DEDUPE_MS
 };
