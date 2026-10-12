@@ -2,13 +2,7 @@ import { Component } from 'react';
 import Mascota from './mascot/Mascota.jsx';
 import { captureSentryException } from '../sentry.js';
 import { isChunkLoadError, reloadOnceForChunk } from '../chunkReload.js';
-
-function frameOf(error) {
-  const stack = String(error && error.stack || '');
-  const match = stack.match(/([^/\\():\s]+\.(?:jsx?|tsx?)):(\d+)/);
-  if (!match) return { file: '', line: 0 };
-  return { file: match[1], line: Number(match[2]) || 0 };
-}
+import { reportClientError } from '../clientErrorReport.js';
 
 class AppErrorBoundary extends Component {
   constructor(props) {
@@ -21,17 +15,11 @@ class AppErrorBoundary extends Component {
     return { failed: true, chunk: false };
   }
 
-  componentDidCatch(error) {
+  componentDidCatch(error, info) {
     if (this.state.chunk && reloadOnceForChunk(window.sessionStorage, () => window.location.reload())) return;
     if (this.state.chunk) this.setState({ failed: true });
     captureSentryException(error);
-    const frame = frameOf(error);
-    const message = String(error && error.message || 'eroare').slice(0, 300);
-    fetch('/api/client-error', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, file: frame.file, line: frame.line })
-    }).catch(() => {});
+    reportClientError(error, { componentStack: info && info.componentStack });
   }
 
   render() {
