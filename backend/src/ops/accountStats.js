@@ -160,10 +160,86 @@ function accountStats(accounts, now = Date.now()) {
   };
 }
 
+const XP_BOARD_LIMIT = 100;
+
+function cleanNickname(value) {
+  const text = String(value || "").replace(/\s+/g, " ").trim();
+  if (!text || text.includes("@")) return "";
+  return text.slice(0, 40);
+}
+
+function studentIdentity(account) {
+  const profile = account && account.profile && typeof account.profile === "object" ? account.profile : {};
+  return cleanNickname(profile.username) || cleanNickname(profile.name);
+}
+
+function collectStudents(accounts) {
+  const byEmail = new Map();
+  for (const account of accounts || []) {
+    if (isDeleted(account)) continue;
+    const email = String(account.email || "").trim().toLowerCase();
+    if (!email) continue;
+    const previous = byEmail.get(email);
+    const incoming = studentIdentity(account);
+    if (!previous) {
+      byEmail.set(email, {
+        email,
+        role: account.role || "student",
+        createdAt: account.createdAt || "",
+        lastActiveAt: account.lastActiveAt || "",
+        nickname: incoming
+      });
+      continue;
+    }
+    const newer = (stamp(account.createdAt) || 0) >= (stamp(previous.createdAt) || 0);
+    const roleSource = newer ? account : previous;
+    const created = [stamp(previous.createdAt), stamp(account.createdAt)].filter(item => item != null);
+    byEmail.set(email, {
+      email,
+      role: roleSource.role || previous.role || "student",
+      createdAt: created.length ? new Date(Math.min(...created)).toISOString() : "",
+      lastActiveAt: latestStamp(previous.lastActiveAt, account.lastActiveAt),
+      nickname: newer ? incoming || previous.nickname : previous.nickname || incoming
+    });
+  }
+  return [...byEmail.values()].filter(row => row.role === "student");
+}
+
+function asXp(value) {
+  const xp = Number(value);
+  if (!Number.isFinite(xp) || xp < 0) return 0;
+  return xp;
+}
+
+function xpLeaderboard(accounts, xpByEmail = () => 0) {
+  const ranked = collectStudents(accounts)
+    .map(student => ({
+      nickname: student.nickname,
+      xp: asXp(typeof xpByEmail === "function" ? xpByEmail(student.email) : 0),
+      lastActiveAt: stamp(student.lastActiveAt) != null ? new Date(stamp(student.lastActiveAt)).toISOString() : null
+    }))
+    .sort((a, b) => b.xp - a.xp || a.nickname.localeCompare(b.nickname, "ro"));
+  return {
+    xpSummary: {
+      over0: ranked.filter(row => row.xp > 0).length,
+      over100: ranked.filter(row => row.xp > 100).length,
+      over500: ranked.filter(row => row.xp > 500).length
+    },
+    xpLeaderboard: ranked.slice(0, XP_BOARD_LIMIT).map((row, index) => ({
+      rank: index + 1,
+      nickname: row.nickname,
+      xp: row.xp,
+      lastActiveAt: row.lastActiveAt
+    }))
+  };
+}
+
 module.exports = {
   TZ,
   ACTIVITY_NOTE,
+  XP_BOARD_LIMIT,
   startOfBucharestDay,
   dedupeAccounts,
-  accountStats
+  accountStats,
+  xpLeaderboard
 };

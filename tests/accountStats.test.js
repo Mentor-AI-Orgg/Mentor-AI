@@ -1,4 +1,5 @@
 import { createRequire } from 'node:module';
+import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../backend/src/app.js';
@@ -6,10 +7,13 @@ import { PREVIEW_COOKIE, previewToken } from '../backend/src/middleware/comingSo
 import { PASSWORD, registerGranted, uniqueUsername } from './registerStudent.js';
 
 const nodeRequire = createRequire(import.meta.url);
-const { accountStats, startOfBucharestDay } = nodeRequire('../backend/src/ops/accountStats.js');
+const { accountStats, startOfBucharestDay, xpLeaderboard, XP_BOARD_LIMIT } = nodeRequire(
+  '../backend/src/ops/accountStats.js'
+);
 const { findByUsername, touchLastActive, ACTIVE_TOUCH_MS } = nodeRequire(
   '../backend/src/data/authStore.js'
 );
+const { getUser } = nodeRequire('../backend/src/data/economyStore.js');
 
 const SUMMER = Date.parse('2026-07-15T21:30:00.000Z');
 const BANNED_KEYS = ['email', 'username', 'name', 'phone', 'parentEmail', 'passwordHash'];
@@ -114,6 +118,71 @@ describe('numerele de conturi', () => {
     expect(back.retention).toEqual({ cohort: 1, active: 0, percent: 0 });
   });
 
+  it('dă primii 100 de elevi după XP, fără email și fără părinte', () => {
+    const students = Array.from({ length: XP_BOARD_LIMIT + 1 }, (_, index) => ({
+      email: `e${index}@elev.invalid`,
+      role: 'student',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      profile: {
+        username: `elev${String(index).padStart(3, '0')}`,
+        parentEmail: 'parinte@example.com'
+      },
+      lastActiveAt: index === 3 ? '' : '2026-07-10T00:00:00.000Z',
+      lastLoginAt: '2026-07-12T00:00:00.000Z'
+    }));
+    students.push(
+      {
+        email: 'parinte@example.com',
+        role: 'parent',
+        profile: { username: 'parintele' },
+        createdAt: '2026-01-01T00:00:00.000Z'
+      },
+      {
+        email: 'sters@elev.invalid',
+        role: 'student',
+        deletedAt: '2026-02-01T00:00:00.000Z',
+        profile: { username: 'sters' },
+        createdAt: '2026-01-01T00:00:00.000Z'
+      },
+      {
+        email: 'fara@elev.invalid',
+        role: 'student',
+        profile: { username: '', name: 'Mara', parentEmail: 'alt@example.com' },
+        createdAt: '2026-01-02T00:00:00.000Z',
+        lastActiveAt: '2026-07-10T00:00:00.000Z'
+      }
+    );
+    const xp = Object.fromEntries(students.map((account) => [account.email, 0]));
+    students.forEach((account, index) => {
+      if (account.role === 'student' && !account.deletedAt && account.email.startsWith('e')) {
+        xp[account.email] = index;
+      }
+    });
+    xp['fara@elev.invalid'] = 501;
+    xp['parinte@example.com'] = 9000;
+    xp['sters@elev.invalid'] = 9000;
+    const board = xpLeaderboard(students, (email) => xp[email] || 0);
+    expect(board.xpLeaderboard).toHaveLength(XP_BOARD_LIMIT);
+    expect(board.xpLeaderboard[0]).toMatchObject({ rank: 1, nickname: 'Mara', xp: 501 });
+    expect(
+      board.xpLeaderboard.some((row) => row.nickname === 'elev000' || row.nickname === 'elev001')
+    ).toBe(false);
+    expect(
+      board.xpLeaderboard.some((row) => row.nickname === 'parintele' || row.nickname === 'sters')
+    ).toBe(false);
+    expect(board.xpSummary).toEqual({ over0: 101, over100: 1, over500: 1 });
+    expect(board.xpLeaderboard.find((row) => row.nickname === 'elev003').lastActiveAt).toBeNull();
+    expect(board.xpLeaderboard.find((row) => row.nickname === 'elev004').lastActiveAt).toBe(
+      '2026-07-10T00:00:00.000Z'
+    );
+    const dumped = JSON.stringify(board);
+    expect(dumped).not.toMatch(/@|parinte|password/);
+    expect(keysOf(board).some((key) => BANNED_KEYS.includes(key))).toBe(false);
+    expect(
+      readFileSync(new URL('../frontend/components/Leaderboard.jsx', import.meta.url), 'utf8')
+    ).toContain('limit: 8');
+  });
+
   it('notează activitatea cel mult o dată pe oră', () => {
     const account = { lastActiveAt: '' };
     expect(touchLastActive(account, 1_000)).toBe(true);
@@ -168,8 +237,27 @@ describe('GET /api/admin/stats', () => {
     expect(open.body.students).toBeGreaterThanOrEqual(1);
     expect(open.body.parents).toBeGreaterThanOrEqual(1);
     expect(keysOf(open.body).some((key) => BANNED_KEYS.includes(key))).toBe(false);
-    expect(JSON.stringify(open.body)).not.toContain(created.username);
     expect(JSON.stringify(open.body)).not.toContain(created.parentEmail);
+    expect(JSON.stringify(open.body)).not.toContain(byName.email);
+    const listed = open.body.xpLeaderboard.find((row) => row.nickname === created.username);
+    expect(listed).toMatchObject({ xp: 0, lastActiveAt: byName.lastActiveAt });
+    expect(listed.rank).toBeGreaterThan(0);
+    expect(open.body.xpSummary.over500).toEqual(expect.any(Number));
+    const user = getUser(byName.email);
+    user.xp = 0;
+    user.coinsEarned = 40;
+    user.metrics.streak = 2;
+    const scored = await request(app).get('/api/admin/stats').set('Cookie', cookie);
+    const row = scored.body.xpLeaderboard.find((item) => item.nickname === created.username);
+    expect(row.xp).toBe(60);
+    expect(scored.body.xpSummary.over0).toBe(open.body.xpSummary.over0 + 1);
+    expect(scored.body.xpSummary.over100).toBe(open.body.xpSummary.over100);
+    user.xp = 550;
+    const high = await request(app).get('/api/admin/stats').set('Cookie', cookie);
+    expect(high.body.xpLeaderboard.find((item) => item.nickname === created.username).xp).toBe(550);
+    expect(high.body.xpSummary.over500).toBe(scored.body.xpSummary.over500 + 1);
+    expect(high.body.xpSummary.over100).toBe(scored.body.xpSummary.over100 + 1);
+    expect(JSON.stringify(high.body)).not.toContain(created.parentEmail);
     expect(open.body.activityNote).toMatch(/de acum/);
 
     const removed = await created.agent

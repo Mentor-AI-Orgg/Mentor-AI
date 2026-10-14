@@ -8,6 +8,20 @@ function formatCount(value) {
   return numberFormat.format(Number(value) || 0);
 }
 
+const activeFormat = new Intl.DateTimeFormat('ro-RO', {
+  timeZone: 'Europe/Bucharest',
+  day: 'numeric',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit'
+});
+
+function formatActive(value) {
+  const at = Date.parse(value || '');
+  if (!Number.isFinite(at)) return 'fără dată';
+  return activeFormat.format(at);
+}
+
 export default function OwnerStatsScreen({ onBack }) {
   const [state, setState] = useState({ status: 'loading', stats: null });
 
@@ -55,7 +69,10 @@ export default function OwnerStatsScreen({ onBack }) {
       <header className="screen-header">
         <div className="eyebrow">Creator</div>
         <h1 className="display-font screen-title">Câți folosesc aplicația</h1>
-        <p>Doar numere. Fără nume și fără emailuri.</p>
+        <p>
+          Numerele nu au nume. Clasamentul arată porecla elevului, fără email și fără datele
+          părintelui.
+        </p>
         {onBack && (
           <button type="button" className="ghost-button" onClick={onBack}>
             Înapoi la moderare
@@ -111,6 +128,34 @@ export default function OwnerStatsScreen({ onBack }) {
             <strong>{formatCount(stats.returning)}</strong>
           </p>
           <p>{retentionText}</p>
+        </article>
+        <article className="surface rounded-3xl p-4">
+          <h2 className="display-font">Clasament XP</h2>
+          <p>
+            Elevi cu XP mai mare decât 0: <strong>{formatCount(stats.xpSummary?.over0)}</strong>
+          </p>
+          <p>
+            Mai mare decât 100: <strong>{formatCount(stats.xpSummary?.over100)}</strong>
+          </p>
+          <p>
+            Mai mare decât 500: <strong>{formatCount(stats.xpSummary?.over500)}</strong>
+          </p>
+          {(stats.xpLeaderboard || []).length === 0 ? (
+            <p>Niciun elev încă.</p>
+          ) : (
+            <ol className="mt-3 grid gap-2">
+              {stats.xpLeaderboard.map((row) => (
+                <li key={row.rank} className="flex items-baseline justify-between gap-3">
+                  <span>
+                    <strong>{formatCount(row.rank)}.</strong> {row.nickname || 'Fără poreclă'}
+                  </span>
+                  <span>
+                    {formatCount(row.xp)} XP · {formatActive(row.lastActiveAt)}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          )}
         </article>
         <p>{stats.activityNote}</p>
       </section>
