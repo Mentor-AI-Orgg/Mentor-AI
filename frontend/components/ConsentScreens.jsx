@@ -233,6 +233,7 @@ const ParentScreen = ({ token = '' }) => {
               {' '}{panel.readiness.hint}
             </p>
           )}
+          {panel?.lateNote && <p className="late-note">{panel.lateNote}</p>}
           {fresh.map(item => (
             <div key={item.id} className="parent-praise">
               <p>{item.label}</p>

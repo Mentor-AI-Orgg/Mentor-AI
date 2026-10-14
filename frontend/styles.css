@@ -340,6 +340,24 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   cursor: pointer;
 }
 .home-quiet-link:hover { color: var(--primary); background: transparent; }
+.late-night-card {
+  margin: 0 0 14px;
+  padding: 16px;
+  border: 1px solid var(--primary);
+  border-radius: 22px;
+  background: rgba(68, 214, 215, .12);
+  display: grid;
+  gap: 12px;
+}
+.late-night-card p {
+  margin: 0;
+  font: 700 1.2rem 'Space Grotesk', sans-serif;
+  line-height: 1.35;
+}
+.late-night-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.late-night-actions .accent-button,
+.late-night-actions .ghost-button { min-height: 48px; }
+.late-note { margin: 8px 0; color: var(--muted); }
 .leaderboard-card.is-compact { margin: 0 0 4px; padding: 12px 14px; }
 .leaderboard-card.is-compact .leaderboard-head { margin-bottom: 6px; }
 .leaderboard-card.is-compact .leaderboard-head h3 { font-size: 1.05rem; }

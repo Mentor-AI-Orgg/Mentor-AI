@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
 import { curriculumParams, firstLessonExtras } from '../firstLesson.js';
+import LateNightCard from '../components/LateNightCard.jsx';
+import { lateDecision, rememberNight, seenNight } from '../lateNight.js';
 
 const DailyChallengeScreen = ({ userData, onNavigate, onProgress }) => {
   const [pack, setPack] = useState(null);
@@ -9,6 +11,40 @@ const DailyChallengeScreen = ({ userData, onNavigate, onProgress }) => {
   const [index, setIndex] = useState(0);
   const [picks, setPicks] = useState({});
   const [busy, setBusy] = useState(false);
+  const [nightOn, setNightOn] = useState(false);
+  const resumeRef = useRef(null);
+  const night = lateDecision({
+    serverLate: Boolean(userData?.lateNight),
+    serverNight: userData?.lateNightKey || ''
+  });
+
+  const nightRef = useRef(night);
+  nightRef.current = night;
+  const askNight = run => {
+    const current = nightRef.current;
+    if (!current.late || seenNight(current.night)) {
+      if (run) run();
+      return;
+    }
+    resumeRef.current = run || null;
+    setNightOn(true);
+  };
+  const askRef = useRef(askNight);
+  askRef.current = askNight;
+  const remember = () => rememberNight(night.night);
+  const stayNight = () => {
+    remember();
+    const run = resumeRef.current;
+    resumeRef.current = null;
+    setNightOn(false);
+    if (run) run();
+  };
+  const goHome = () => {
+    remember();
+    resumeRef.current = null;
+    setNightOn(false);
+    onNavigate('home');
+  };
 
   useEffect(() => {
     let alive = true;
@@ -20,7 +56,11 @@ const DailyChallengeScreen = ({ userData, onNavigate, onProgress }) => {
         return;
       }
       setPack(result.data);
-      setStep(result.data.done ? 'result' : (result.data.ready ? 'start' : 'empty'));
+      const next = result.data.done ? 'result' : (result.data.ready ? 'start' : 'empty');
+      setStep(next);
+      const current = nightRef.current;
+      if (next === 'start' && current.late && !seenNight(current.night)) askRef.current(() => setStep('ask'));
+      if (next === 'result') askRef.current(null);
     });
     return () => {
       alive = false;
@@ -52,6 +92,7 @@ const DailyChallengeScreen = ({ userData, onNavigate, onProgress }) => {
     }
     setPack(result.data);
     setStep(result.data.done ? 'result' : 'empty');
+    if (result.data.done) askNight(null);
     if (onProgress) onProgress();
   };
 
@@ -67,6 +108,7 @@ const DailyChallengeScreen = ({ userData, onNavigate, onProgress }) => {
   return (
     <main className="home-page daily-page">
       <button type="button" className="ghost-button" onClick={() => onNavigate('home')}>Înapoi acasă</button>
+      {nightOn && <LateNightCard onHome={goHome} onStay={stayNight} />}
       {step === 'load' && <p className="daily-lead">Se deschide provocarea…</p>}
       {step === 'error' && <p className="guide-error" role="alert">{error}</p>}
       {step === 'empty' && (
@@ -79,7 +121,7 @@ const DailyChallengeScreen = ({ userData, onNavigate, onProgress }) => {
           </button>
         </section>
       )}
-      {step === 'start' && (
+      {step === 'start' && !nightOn && (
         <section className="streak-hero">
           <p className="eyebrow">Provocarea zilei</p>
           <h1 className="display-font daily-title">

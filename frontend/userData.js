@@ -18,6 +18,8 @@ const defaultUserData = {
   streakFrozeYesterday: false,
   readiness: null,
   praiseNotice: null,
+  lateNight: false,
+  lateNightKey: '',
   score: 0,
   chaptersDone: 0,
   chaptersTotal: 10,

@@ -21,6 +21,52 @@ function addDays(day, amount) {
   return `${y}-${m}-${d}`;
 }
 
+function bucharestClock(date = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Bucharest',
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).formatToParts(date);
+  const pick = type => parts.find(part => part.type === type)?.value || '';
+  let hour = Number(pick('hour'));
+  if (hour === 24) hour = 0;
+  return {
+    hour,
+    minute: pick('minute') || '00',
+    day: `${pick('year')}-${pick('month')}-${pick('day')}`
+  };
+}
+
+function isLateHour(hour) {
+  return hour >= 22 || hour < 6;
+}
+
+function nightKey(date = new Date()) {
+  const clock = bucharestClock(date);
+  return clock.hour < 6 ? addDays(clock.day, -1) : clock.day;
+}
+
+function lateActivityNote(at, now = new Date()) {
+  if (!at) return '';
+  const when = new Date(at);
+  if (Number.isNaN(when.getTime())) return '';
+  const clock = bucharestClock(when);
+  if (!isLateHour(clock.hour)) return '';
+  const today = bucharestClock(now);
+  const hm = `${String(clock.hour).padStart(2, '0')}:${clock.minute}`;
+  const yesterday = addDays(today.day, -1);
+  let whenWord = '';
+  if (clock.day === today.day && clock.hour < 6 && today.hour >= 6) whenWord = 'ieri';
+  else if (clock.day === today.day) whenWord = 'azi';
+  else if (clock.day === yesterday) whenWord = 'ieri';
+  else return '';
+  return `Activitate târzie: ${whenWord} la ${hm}`;
+}
+
 function weekKey(day) {
   const [year, month, date] = String(day).split('-').map(Number);
   const current = new Date(Date.UTC(year, month - 1, date));
@@ -32,4 +78,4 @@ function weekKey(day) {
   return `${weekYear}-W${String(week).padStart(2, '0')}`;
 }
 
-module.exports = { dayKey, addDays, weekKey };
+module.exports = { dayKey, addDays, weekKey, bucharestClock, isLateHour, nightKey, lateActivityNote };

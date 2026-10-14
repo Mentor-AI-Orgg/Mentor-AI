@@ -6,7 +6,7 @@ const { getGuide } = require('./gimnaziuGuide');
 const { levelFromXp, touchStudy, AWARDS } = require('./progressEngine');
 const { TITLE_CATALOG, unlockedTitleIds, titleById, noteEarlyBird } = require('./titles');
 const { SHOP_CATALOG, shopItemById } = require('./shopCatalog');
-const { dayKey, addDays } = require('../ops/bucharestDay');
+const { dayKey, addDays, bucharestClock, isLateHour, nightKey } = require('../ops/bucharestDay');
 const { blankGuard, settle, record } = require('./streakFreeze');
 const daily = require('./dailyChallenge');
 const { readinessFor } = require('./readiness');
@@ -15,6 +15,12 @@ const STREAK_MILESTONES = [3, 5, 7, 14, 30];
 
 const CHALLENGE_XP = 20;
 const COMPLETION_TYPES = new Set(['session_complete', 'chapter_test', 'en_exam']);
+const LATE_BOUNDARY = new Set(['chapter_open', 'session_complete', 'chapter_test', 'en_exam']);
+
+function noteLateActivity(user, now = new Date()) {
+  if (!isLateHour(bucharestClock(now).hour)) return;
+  user.lateActivity = { at: now.toISOString() };
+}
 
 const USERS = new Map();
 const NOTIFICATIONS = [];
@@ -99,6 +105,7 @@ function createDefaultUser(userId) {
     dailyChallenge: null,
     milestones: [],
     praiseNotice: null,
+    lateActivity: null,
     readinessMark: 0,
     lastAnalogy: {},
     skillLog: [],
@@ -657,6 +664,7 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
     const guard = record(currentGuard(user), dayKey(new Date()));
     noteStreakMilestone(user, guard.count);
   }
+  if (LATE_BOUNDARY.has(type)) noteLateActivity(user);
 
   const entry = recordActivity(user, type, awarded?.coins || 0, note, { ...meta, awarded });
   return { entry, awarded, summary: buildSummary(user) };
@@ -1089,6 +1097,8 @@ function buildSummary(user) {
     streakFrozeYesterday: streakNow.streakFrozeYesterday,
     readiness: childReadiness(user),
     praiseNotice: praiseView(user),
+    lateNight: isLateHour(bucharestClock().hour),
+    lateNightKey: nightKey(),
     hoursToday: user.metrics.hoursToday,
     xp: progress.xp,
     level: progress.level,
@@ -1517,6 +1527,7 @@ function finishDailyChallenge(email, answers) {
   state.xp = awarded?.xp || 0;
   state.finishedAt = new Date().toISOString();
   record(currentGuard(user), today);
+  noteLateActivity(user);
   if (state.total > 0 && correct === state.total) {
     noteMilestone(user, 'challenge', state.day, 'Provocarea zilei, punctaj maxim');
   }
