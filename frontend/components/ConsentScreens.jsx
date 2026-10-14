@@ -221,9 +221,27 @@ const ParentScreen = ({ token = '' }) => {
       <div className="eyebrow">Părinte</div>
       <h1 className="display-font form-title">Copiii tăi</h1>
       {children.length === 0 && <p>Nu mai este niciun cont legat de emailul tău.</p>}
-      {children.map(child => (
+      {children.map(child => {
+        const panel = panels[child.id];
+        const fresh = (panel?.milestones || []).filter(item => !item.praised);
+        return (
         <section key={child.id} className="surface rounded-3xl p-5 profile-tool-card">
           <h2>{child.username}</h2>
+          {panel?.readiness && (
+            <p className="readiness-parent">
+              <strong>{panel.readiness.label}: {panel.readiness.percent}%</strong>
+              {' '}{panel.readiness.hint}
+            </p>
+          )}
+          {fresh.map(item => (
+            <div key={item.id} className="parent-praise">
+              <p>{item.label}</p>
+              <div className="parent-praise-actions">
+                <button type="button" className="ghost-button" aria-label="Laudă cu aplauze" onClick={() => MentorAPI.parentPraise(child.id, { milestoneId: item.id, emoji: 'clap' }).then(load)}>👏</button>
+                <button type="button" className="ghost-button" aria-label="Laudă cu inimă" onClick={() => MentorAPI.parentPraise(child.id, { milestoneId: item.id, emoji: 'heart' }).then(load)}>❤️</button>
+              </div>
+            </div>
+          ))}
           <p>Clasa {child.class}. Înscris la {child.createdAt ? new Date(child.createdAt).toLocaleDateString('ro-RO') : '—'}. Lecții în ultimele 7 zile: {child.lessonsLast7Days}.</p>
           <p>Profil privat: {child.profilePrivate ? 'da' : 'nu'}.</p>
           {panels[child.id] && (
@@ -291,7 +309,8 @@ const ParentScreen = ({ token = '' }) => {
           </label>
           <button type="button" className="ghost-button" onClick={() => remove(child)}>Șterge contul și retrage acordul</button>
         </section>
-      ))}
+        );
+      })}
       {note && <p className="field-hint" role="status">{note}</p>}
     </main>
   );

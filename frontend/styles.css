@@ -2738,4 +2738,44 @@ html[data-resolved-theme="light"] .focus-preset-btn:hover {
   border: 1px solid var(--line);
   border-radius: 14px;
 }
+.praise-banner, .readiness-card {
+  margin: 14px 0;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: rgba(68, 214, 215, .1);
+  display: grid;
+  gap: 8px;
+}
+.readiness-score {
+  margin: 0;
+  font: 700 clamp(1.7rem, 8vw, 2.1rem) 'Space Grotesk', sans-serif;
+  letter-spacing: -0.03em;
+}
+.league-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.league-row.is-up { background: rgba(68, 214, 215, .16); }
+.league-row.is-down { background: rgba(255, 255, 255, .04); }
+.league-row.is-self { border-color: var(--primary); }
+.league-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.league-meta { color: var(--muted); white-space: nowrap; }
+.parent-praise {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(68, 214, 215, .1);
+}
+.parent-praise-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.parent-praise-actions .ghost-button { min-height: 48px; min-width: 48px; }
 

@@ -16,6 +16,8 @@ function applyProgress(summary = {}, prev = {}) {
     completionStreak: typeof summary.completionStreak === 'number' ? summary.completionStreak : prev.completionStreak,
     streakFreezes: typeof summary.streakFreezes === 'number' ? summary.streakFreezes : prev.streakFreezes,
     streakFrozeYesterday: Boolean(summary.streakFrozeYesterday),
+    readiness: summary.readiness || prev.readiness || null,
+    praiseNotice: Object.prototype.hasOwnProperty.call(summary, 'praiseNotice') ? (summary.praiseNotice || null) : (prev.praiseNotice || null),
     xp: typeof summary.xp === 'number' ? summary.xp : prev.xp,
     level: summary.level || prev.level || 1,
     xpToNext: summary.xpToNext ?? prev.xpToNext,

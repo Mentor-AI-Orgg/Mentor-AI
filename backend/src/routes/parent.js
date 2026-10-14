@@ -3,7 +3,9 @@ const router = express.Router();
 
 const { findAccount, listAccounts, normalizeEmail } = require("../data/authStore");
 const { publicId, setSettings, getSettings, consumePrivatizeToken } = require("../data/friendStore");
-const { getUser } = require("../data/economyStore");
+const { getUser, praiseChild } = require("../data/economyStore");
+const { validateBody } = require("../middleware/validate");
+const { praiseSchema } = require("../validation/schemas");
 const { deliverMessage, warnIfSmtpMissing } = require("../notify/deliver");
 const { publicBaseUrl } = require("../publicUrl");
 const {
@@ -133,6 +135,15 @@ router.post("/children/:id/privacy", parentRequired, (req, res) => {
   }
   setSettings(child.email, { profilePrivate: true });
   res.json({ success: true, profilePrivate: true });
+});
+
+// Lauda rămâne în aplicație. Nu trimitem email: limita e 500 pe zi.
+router.post("/children/:id/praise", parentRequired, validateBody(praiseSchema), (req, res) => {
+  const child = ownedChild(req, req.params.id);
+  if (!child) return res.status(404).json({ error: "Nu am găsit copilul." });
+  const result = praiseChild(child.email, req.body.milestoneId, req.body.emoji);
+  if (!result.ok) return res.status(404).json({ error: "Nu am găsit momentul." });
+  res.json({ success: true });
 });
 
 router.get("/children/:id/panel", parentRequired, (req, res) => {

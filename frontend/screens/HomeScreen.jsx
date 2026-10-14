@@ -14,7 +14,7 @@ import { curriculumParams, firstLessonExtras, homeLessonCta } from '../firstLess
 import MascotPresence from '../components/mascot/MascotPresence.jsx';
 import LevelBar from '../components/LevelBar.jsx';
 
-const HomeScreen = ({ userData, onNavigate }) => {
+const HomeScreen = ({ userData, onNavigate, onProgress }) => {
   const { t, locale } = useI18n();
   const [offer, setOffer] = useState(false);
   const [quiz, setQuiz] = useState(null);
@@ -112,6 +112,12 @@ const HomeScreen = ({ userData, onNavigate }) => {
     : 'Înghețarea săptămânii este folosită';
   const [openingLesson, setOpeningLesson] = useState(false);
 
+  const ready = userData.readiness;
+  const dismissPraise = async () => {
+    await MentorAPI.seePraise();
+    if (onProgress) await onProgress();
+  };
+
   const openLessonCta = async () => {
     if (lessonCta.mode === 'continue') {
       onNavigate('learn', continueExtras);
@@ -126,6 +132,12 @@ const HomeScreen = ({ userData, onNavigate }) => {
 
   return (
     <main className="home-page animate-fadeIn">
+      {userData.praiseNotice?.text && (
+        <section className="praise-banner" role="status" aria-label="Laudă de la părinte">
+          <p className="streak-fire">{userData.praiseNotice.text}</p>
+          <button type="button" className="ghost-button" onClick={dismissPraise}>Am văzut</button>
+        </section>
+      )}
       <button type="button" className="accent-button home-start-cta" disabled={openingLesson} onClick={openLessonCta}>
         {openingLesson ? 'Se deschide…' : lessonCta.label}
       </button>
@@ -134,7 +146,28 @@ const HomeScreen = ({ userData, onNavigate }) => {
         <p className="streak-freeze">🧊 {freezeLabel}</p>
         {userData.streakFrozeYesterday && <p className="streak-freeze">Înghețarea a acoperit ieri.</p>}
         <button type="button" className="accent-button" onClick={() => onNavigate('provocare')}>Provocarea zilei</button>
+        <button type="button" className="ghost-button" onClick={() => onNavigate('liga')}>Liga săptămânii</button>
       </section>
+      {ready && (
+        <section className="readiness-card" aria-label={ready.label}>
+          <p className="eyebrow">{ready.label}</p>
+          <p className="readiness-score">{ready.percent}%</p>
+          <p className="daily-lead">{ready.hint}</p>
+          {ready.next && (
+            <button
+              type="button"
+              className="ghost-button"
+              onClick={() => onNavigate('learn', {
+                subject: ready.next.subject,
+                grade: ready.next.grade,
+                chapter: ready.next.chapterId
+              })}
+            >
+              La capitolul următor
+            </button>
+          )}
+        </section>
+      )}
       <header className="home-header">
         <div className="home-intro">
           <MascotPresence mood="waving" message={t('home.hello', { name: userData.name || t('home.studentFallback') })} />

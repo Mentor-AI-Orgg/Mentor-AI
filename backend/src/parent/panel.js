@@ -1,4 +1,4 @@
-const { getUser } = require("../data/economyStore");
+const { getUser, childShare } = require("../data/economyStore");
 const { inboxFor, setSettings, getSettings } = require("../data/friendStore");
 
 function dayKey(time) {
@@ -81,7 +81,10 @@ function buildPanel(email) {
     .slice(-8)
     .map(event => ({ title: event.title || "Simulare", correct: event.correct, total: event.total, at: event.at }));
   const social = inboxFor(email);
+  const share = childShare(email);
   return {
+    readiness: share.readiness,
+    milestones: share.milestones,
     days: days.filter(day => Date.parse(day.day) >= start - 24 * 60 * 60 * 1000),
     chapters,
     mistakes,

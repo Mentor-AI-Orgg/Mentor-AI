@@ -289,6 +289,11 @@ const friendRespondSchema = z.object({
   action: z.enum(["accept", "decline"])
 });
 
+const praiseSchema = z.object({
+  milestoneId: z.string().trim().min(1).max(80),
+  emoji: z.enum(["clap", "heart"])
+}).strict();
+
 const dailyChallengeSchema = z.object({
   answers: z.array(z.object({
     id: z.string().trim().min(1).max(160),
@@ -330,5 +335,6 @@ module.exports = {
   friendRequestSchema,
   friendRespondSchema,
   enPhotoSchema,
-  dailyChallengeSchema
+  dailyChallengeSchema,
+  praiseSchema
 };

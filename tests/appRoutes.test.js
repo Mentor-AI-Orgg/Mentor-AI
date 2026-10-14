@@ -25,6 +25,7 @@ describe('app hash routes', () => {
       ['learn', { subject: 'matematica', grade: '6', chapter: 'naturale', lessonId: 'm5-citire' }, '#/lectii/matematica/6/naturale/lectie-m5-citire'],
       ['start-lesson', {}, '#/incepe'],
       ['provocare', {}, '#/provocare'],
+      ['liga', {}, '#/liga'],
       ['reset', { token: 'abc' }, '#/parola/abc'],
       ['consent', { token: 'abc' }, '#/acord/abc'],
       ['parent', {}, '#/parinte'],

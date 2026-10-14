@@ -6,9 +6,15 @@ const { getGuide } = require('./gimnaziuGuide');
 const { levelFromXp, touchStudy, AWARDS } = require('./progressEngine');
 const { TITLE_CATALOG, unlockedTitleIds, titleById, noteEarlyBird } = require('./titles');
 const { SHOP_CATALOG, shopItemById } = require('./shopCatalog');
-const { dayKey, addDays } = require('../ops/bucharestDay');
+const { dayKey, addDays, weekKey } = require('../ops/bucharestDay');
 const { blankGuard, settle, record } = require('./streakFreeze');
 const daily = require('./dailyChallenge');
+const leagueRules = require('./weeklyLeague');
+const { readinessFor } = require('./readiness');
+
+const COHORTS = new Map();
+const LEAGUE_RESOLVED = new Map();
+const STREAK_MILESTONES = [3, 5, 7, 14, 30];
 
 const CHALLENGE_XP = 20;
 const COMPLETION_TYPES = new Set(['session_complete', 'chapter_test', 'en_exam']);
@@ -94,6 +100,10 @@ function createDefaultUser(userId) {
     streakDays: [],
     streakGuard: blankGuard(),
     dailyChallenge: null,
+    league: { tier: 'bronz', week: '', cohortId: '', weekXp: 0 },
+    milestones: [],
+    praiseNotice: null,
+    readinessMark: 0,
     lastAnalogy: {},
     skillLog: [],
     skillPoints: {},
@@ -127,6 +137,10 @@ function ensureUser(userId, patch = {}) {
   if (!Array.isArray(current.problemLog)) current.problemLog = [];
   if (!Array.isArray(current.streakDays)) current.streakDays = [];
   if (!current.streakGuard || typeof current.streakGuard !== 'object') current.streakGuard = blankGuard();
+  if (!current.league || typeof current.league !== 'object') {
+    current.league = { tier: 'bronz', week: '', cohortId: '', weekXp: 0 };
+  }
+  if (!Array.isArray(current.milestones)) current.milestones = [];
   if (!Number.isInteger(current.streakGuard.freezes) || current.streakGuard.freezes < 0 || current.streakGuard.freezes > 1) {
     current.streakGuard.freezes = 1;
   }
@@ -513,6 +527,7 @@ function grantAward(user, award, type, note, meta = {}) {
   user.awardDay.coins += coins;
   const paid = awardCoins(user, coins, type, note, { ...meta, xp });
   user.xp = (user.xp || 0) + xp;
+  if (xp > 0) noteLeagueXp(user, xp);
   return { coins: paid.amount, xp, balance: paid.balance };
 }
 
@@ -646,7 +661,10 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
     user.savedSessions = user.savedSessions.slice(0, 20);
   }
 
-  if (COMPLETION_TYPES.has(type)) record(currentGuard(user), dayKey(new Date()));
+  if (COMPLETION_TYPES.has(type)) {
+    const guard = record(currentGuard(user), dayKey(new Date()));
+    noteStreakMilestone(user, guard.count);
+  }
 
   const entry = recordActivity(user, type, awarded?.coins || 0, note, { ...meta, awarded });
   return { entry, awarded, summary: buildSummary(user) };
@@ -815,6 +833,7 @@ function claimReward({ userId = 'demo_user', type, payload = {} }) {
     noteEarlyBird(user, todayKey);
     const bonus = awardCoins(user, AWARDS.login_bonus.coins, 'reward', 'Bonus de prima logare', { type });
     user.xp = (user.xp || 0) + AWARDS.login_bonus.xp;
+    noteLeagueXp(user, AWARDS.login_bonus.xp);
     pushNotification(userId, payload.parentEmail || user.preferences.parentEmail, 'Prima logare', `A fost acordat bonusul de ${AWARDS.login_bonus.coins} de monede pentru prima intrare.`, 'reward');
     return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'login_bonus', summary: buildSummary(user) };
   }
@@ -1077,6 +1096,8 @@ function buildSummary(user) {
     completionStreak: streakNow.completionStreak,
     streakFreezes: streakNow.streakFreezes,
     streakFrozeYesterday: streakNow.streakFrozeYesterday,
+    readiness: childReadiness(user),
+    praiseNotice: praiseView(user),
     hoursToday: user.metrics.hoursToday,
     xp: progress.xp,
     level: progress.level,
@@ -1383,6 +1404,10 @@ function deleteUser(email) {
       }
     }
     USERS.delete(key);
+    for (const cohort of COHORTS.values()) {
+      if (!Array.isArray(cohort.members)) continue;
+      cohort.members = cohort.members.filter(member => member !== key);
+    }
   }
 
   for (let i = NOTIFICATIONS.length - 1; i >= 0; i--) {
@@ -1410,12 +1435,16 @@ persistence.register('economy', {
   snapshot: () => ({
     users: persistence.mapToObject(USERS),
     notifications: NOTIFICATIONS,
-    purchases: persistence.mapToObject(PURCHASES)
+    purchases: persistence.mapToObject(PURCHASES),
+    cohorts: persistence.mapToObject(COHORTS),
+    leagueResolved: persistence.mapToObject(LEAGUE_RESOLVED)
   }),
   restore: data => {
     persistence.restoreMap(USERS, data?.users);
     persistence.restoreArray(NOTIFICATIONS, data?.notifications);
     persistence.restoreMap(PURCHASES, data?.purchases);
+    persistence.restoreMap(COHORTS, data?.cohorts);
+    persistence.restoreMap(LEAGUE_RESOLVED, data?.leagueResolved);
     purgeExpiredNotifications();
     purgeExpiredAccessCodes();
     migrateStoredUsers();
@@ -1505,7 +1534,210 @@ function finishDailyChallenge(email, answers) {
   state.xp = awarded?.xp || 0;
   state.finishedAt = new Date().toISOString();
   record(currentGuard(user), today);
+  if (state.total > 0 && correct === state.total) {
+    noteMilestone(user, 'challenge', state.day, 'Provocarea zilei, punctaj maxim');
+  }
   return dailyView(user, today);
+}
+
+function noteMilestone(user, kind, key, label) {
+  if (!Array.isArray(user.milestones)) user.milestones = [];
+  const id = `${kind}:${key}`;
+  if (user.milestones.some(item => item.id === id)) return null;
+  const item = {
+    id,
+    kind,
+    label: String(label || '').slice(0, 120),
+    at: new Date().toISOString(),
+    praised: false
+  };
+  user.milestones.push(item);
+  return item;
+}
+
+function noteStreakMilestone(user, count) {
+  if (!STREAK_MILESTONES.includes(count)) return;
+  noteMilestone(user, 'streak', String(count), `Serie de ${count} zile`);
+}
+
+function noteReadinessMilestone(user, percent) {
+  let mark = Number(user.readinessMark) || 0;
+  while (percent >= mark + 10 && mark < 100) {
+    mark += 10;
+    noteMilestone(user, 'readiness', String(mark), `Progresul a trecut de ${mark}%`);
+  }
+  if (mark !== user.readinessMark) user.readinessMark = mark;
+}
+
+function childReadiness(user) {
+  const readiness = readinessFor(user, user.preferences?.className);
+  noteReadinessMilestone(user, readiness.percent);
+  return readiness;
+}
+
+function praiseView(user) {
+  const notice = user.praiseNotice;
+  if (!notice || notice.seen) return null;
+  const emoji = notice.emoji === '❤️' ? '❤️' : '👏';
+  return { text: `Părintele tău te-a lăudat! ${emoji}` };
+}
+
+function ensureLeague(user) {
+  if (!user.league || typeof user.league !== 'object') {
+    user.league = { tier: 'bronz', week: '', cohortId: '', weekXp: 0 };
+  }
+  if (!leagueRules.TIERS.includes(user.league.tier)) user.league.tier = 'bronz';
+  if (typeof user.league.weekXp !== 'number') user.league.weekXp = 0;
+  return user.league;
+}
+
+function resolveCohort(cohortId) {
+  if (LEAGUE_RESOLVED.has(cohortId)) return LEAGUE_RESOLVED.get(cohortId);
+  const cohort = COHORTS.get(cohortId);
+  if (!cohort) return {};
+  const members = (cohort.members || []).map(email => {
+    const member = USERS.get(email);
+    const league = member ? ensureLeague(member) : null;
+    const xp = league && league.cohortId === cohortId ? league.weekXp : 0;
+    return {
+      email,
+      xp,
+      nickname: member ? publicPseudonym(member) : 'Elev'
+    };
+  }).sort((a, b) => b.xp - a.xp || a.nickname.localeCompare(b.nickname, 'ro'));
+  const map = {};
+  members.forEach((member, index) => {
+    map[member.email] = leagueRules.nextTierForPlace(index + 1, members.length, cohort.tier);
+  });
+  LEAGUE_RESOLVED.set(cohortId, map);
+  return map;
+}
+
+function rolloverLeague(user, today) {
+  const league = ensureLeague(user);
+  const week = weekKey(today);
+  if (league.week === week) return league;
+  const previous = league.tier;
+  if (league.cohortId) {
+    const map = resolveCohort(league.cohortId);
+    const next = map[user.userId] || league.tier;
+    if (leagueRules.tierIndex(next) > leagueRules.tierIndex(previous)) {
+      noteMilestone(user, 'league', `${league.week}:${next}`, `A urcat în liga ${leagueRules.TIER_LABEL[next]}`);
+    }
+    league.tier = next;
+  }
+  league.week = week;
+  league.weekXp = 0;
+  league.cohortId = '';
+  return league;
+}
+
+function placeInLeague(user, today) {
+  const league = rolloverLeague(user, today);
+  if (league.cohortId && COHORTS.has(league.cohortId)) return league;
+  const grade = String(user.preferences?.className || '5');
+  let cohort = [...COHORTS.values()].find(item =>
+    item.week === league.week
+    && item.grade === grade
+    && item.tier === league.tier
+    && Array.isArray(item.members)
+    && item.members.length < leagueRules.LEAGUE_SIZE
+    && !LEAGUE_RESOLVED.has(item.id));
+  if (!cohort) {
+    const index = [...COHORTS.values()].filter(item =>
+      item.week === league.week && item.grade === grade && item.tier === league.tier).length;
+    cohort = {
+      id: `${league.week}:${grade}:${league.tier}:${index}`,
+      week: league.week,
+      grade,
+      tier: league.tier,
+      members: []
+    };
+    COHORTS.set(cohort.id, cohort);
+  }
+  if (!cohort.members.includes(user.userId)) cohort.members.push(user.userId);
+  league.cohortId = cohort.id;
+  return league;
+}
+
+function noteLeagueXp(user, amount) {
+  const xp = Number(amount) || 0;
+  if (xp <= 0 || (user.role && user.role !== 'student')) return;
+  const today = dayKey(new Date());
+  placeInLeague(user, today);
+  user.league.weekXp += xp;
+}
+
+function leagueView(email) {
+  const user = ensureUser(email);
+  const today = dayKey(new Date());
+  const league = rolloverLeague(user, today);
+  const left = leagueRules.daysLeft(today);
+  const base = {
+    tier: leagueRules.TIER_LABEL[league.tier] || 'Bronz',
+    tierId: league.tier,
+    daysLeft: left,
+    daysLabel: leagueRules.daysLabel(left),
+    weekXp: league.weekXp
+  };
+  if (!league.cohortId || !COHORTS.has(league.cohortId)) {
+    return {
+      ...base,
+      joined: false,
+      message: 'Liga începe când câștigi XP săptămâna asta.'
+    };
+  }
+  const cohort = COHORTS.get(league.cohortId);
+  const members = (cohort.members || []).map(id => {
+    const member = USERS.get(id);
+    const row = member ? ensureLeague(member) : null;
+    return {
+      nickname: member ? publicPseudonym(member) : 'Elev',
+      xp: row && row.cohortId === cohort.id ? row.weekXp : 0,
+      self: id === user.userId
+    };
+  });
+  return {
+    ...base,
+    joined: true,
+    grade: cohort.grade,
+    size: members.length,
+    rows: leagueRules.publicBoard(members, cohort.tier)
+  };
+}
+
+function childShare(email) {
+  const user = getUser(email) || ensureUser(email);
+  rolloverLeague(user, dayKey(new Date()));
+  return {
+    readiness: childReadiness(user),
+    milestones: (user.milestones || []).map(item => ({
+      id: item.id,
+      kind: item.kind,
+      label: item.label,
+      at: item.at,
+      praised: Boolean(item.praised)
+    }))
+  };
+}
+
+function praiseChild(email, milestoneId, emoji) {
+  const user = ensureUser(email);
+  const item = (user.milestones || []).find(row => row.id === milestoneId);
+  if (!item) return { ok: false, reason: 'missing' };
+  const symbol = emoji === 'heart' ? '❤️' : '👏';
+  if (!item.praised) {
+    item.praised = true;
+    item.emoji = symbol;
+    user.praiseNotice = { emoji: symbol, at: new Date().toISOString(), seen: false };
+  }
+  return { ok: true };
+}
+
+function seePraise(email) {
+  const user = ensureUser(email);
+  if (user.praiseNotice) user.praiseNotice.seen = true;
+  return { ok: true };
 }
 
 module.exports = {
@@ -1545,6 +1777,10 @@ module.exports = {
   exportUser,
   getDailyChallenge,
   finishDailyChallenge,
+  leagueView,
+  childShare,
+  praiseChild,
+  seePraise,
   deleteUser,
   pruneHistory,
   exportEconomyFor

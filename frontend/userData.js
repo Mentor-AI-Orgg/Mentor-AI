@@ -16,6 +16,8 @@ const defaultUserData = {
   completionStreak: 0,
   streakFreezes: 1,
   streakFrozeYesterday: false,
+  readiness: null,
+  praiseNotice: null,
   score: 0,
   chaptersDone: 0,
   chaptersTotal: 10,

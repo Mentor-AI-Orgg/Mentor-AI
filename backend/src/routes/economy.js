@@ -15,7 +15,8 @@ const {
   logActivity,
   getNotifications,
   markNotificationRead,
-  sendParentReview
+  sendParentReview,
+  seePraise
 } = require('../data/economyStore');
 const { notifyParent, ALLOWED_TYPES } = require('../notify/parentActivity');
 
@@ -50,6 +51,10 @@ router.get('/catalog', (req, res) => {
 
 router.get('/inventory', (req, res) => {
   res.json(getInventory(req.auth.email));
+});
+
+router.post('/praise-seen', (req, res) => {
+  res.json(seePraise(req.auth.email));
 });
 
 router.get('/notifications', (req, res) => {

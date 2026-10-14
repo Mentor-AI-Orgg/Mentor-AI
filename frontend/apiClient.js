@@ -591,6 +591,37 @@ const MentorAPI = {
     }
   },
 
+  async getLeague() {
+    try {
+      const data = await safeFetchJson('/api/league');
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: false, error: error.message || 'Nu am putut deschide liga.' };
+    }
+  },
+
+  async seePraise() {
+    try {
+      const data = await safeFetchJson('/api/economy/praise-seen', { method: 'POST' });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: false, error: error.message || 'Nu am putut închide mesajul.' };
+    }
+  },
+
+  async parentPraise(id, payload) {
+    try {
+      const data = await safeFetchJson(`/api/parent/children/${encodeURIComponent(id)}/praise`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, fallback: false, error: error.message || 'Nu am putut trimite lauda.' };
+    }
+  },
+
   async finishDailyChallenge(answers) {
     try {
       const data = await safeFetchJson('/api/daily-challenge/finish', {
