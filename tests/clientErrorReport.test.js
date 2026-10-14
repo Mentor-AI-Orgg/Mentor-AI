@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   CLIENT_BURST_MS,
@@ -32,23 +34,31 @@ describe('raport unic din browser', () => {
       '    at commitDeletion (https://suntde10.ro/assets/index-5tdgxzoN.js:41:120)',
       '    at commitMutationEffects (https://suntde10.ro/assets/index-5tdgxzoN.js:39:80)'
     ].join('\n');
-    const sent = reportClientError(error, {
-      componentStack: '\n    at HomeScreen (https://suntde10.ro/assets/HomeScreen-abc.js:10:2)\n    at App',
-      hash: '#/parola/super-secret-token',
-      ua: 'Mozilla/5.0 Chrome/120.0.0.0 Mobile Safari/537.36 [FBAN/FB4A;FBAV/1]'
-    }, { fetch: fetchImpl, now: 1000 });
+    const sent = reportClientError(
+      error,
+      {
+        componentStack:
+          '\n    at HomeScreen (https://suntde10.ro/assets/HomeScreen-abc.js:10:2)\n    at App',
+        hash: '#/parola/super-secret-token',
+        ua: 'Mozilla/5.0 Chrome/120.0.0.0 Mobile Safari/537.36 [FBAN/FB4A;FBAV/1]'
+      },
+      { fetch: fetchImpl, now: 1000 }
+    );
     expect(sent).toBe(true);
 
     const host = {};
-    const again = handleWindowError({
-      target: host,
-      currentTarget: host,
-      message: error.message,
-      error,
-      filename: 'https://suntde10.ro/assets/index-5tdgxzoN.js',
-      lineno: 39,
-      colno: 8
-    }, { fetch: fetchImpl, now: 1000 + 1 });
+    const again = handleWindowError(
+      {
+        target: host,
+        currentTarget: host,
+        message: error.message,
+        error,
+        filename: 'https://suntde10.ro/assets/index-5tdgxzoN.js',
+        lineno: 39,
+        colno: 8
+      },
+      { fetch: fetchImpl, now: 1000 + 1 }
+    );
     expect(again).toBe(false);
     expect(calls).toHaveLength(1);
     expect(calls[0].name).toBe('NotFoundError');
@@ -74,7 +84,11 @@ describe('raport unic din browser', () => {
     reportClientError(error, {}, { fetch: fetchImpl, now: 5000 });
     reportClientError(error, {}, { fetch: fetchImpl, now: 5000 + CLIENT_BURST_MS + 10 });
     expect(calls).toHaveLength(1);
-    reportClientError(new Error('alt ecran'), {}, { fetch: fetchImpl, now: 5000 + CLIENT_BURST_MS + 20 });
+    reportClientError(
+      new Error('alt ecran'),
+      {},
+      { fetch: fetchImpl, now: 5000 + CLIENT_BURST_MS + 20 }
+    );
     expect(calls).toHaveLength(2);
     reportClientError(error, {}, { fetch: fetchImpl, now: 5000 + CLIENT_DEDUPE_MS });
     expect(calls).toHaveLength(3);
@@ -83,27 +97,91 @@ describe('raport unic din browser', () => {
   it('ignoră resursele și chunk-ul pe window, dar limita poate raporta chunk-ul', () => {
     const { calls, fetchImpl } = callsOf();
     const host = {};
-    expect(handleWindowError({
-      target: {},
-      currentTarget: host,
-      message: 'imagine',
-      filename: 'https://suntde10.ro/logo.png'
-    }, { fetch: fetchImpl, now: 1 })).toBe(false);
-    const chunk = new Error('Failed to fetch dynamically imported module: https://suntde10.ro/assets/Learn-abc.js');
-    expect(handleWindowError({
-      target: host,
-      currentTarget: host,
-      message: chunk.message,
-      error: chunk,
-      filename: 'https://suntde10.ro/assets/index.js',
-      lineno: 2,
-      colno: 3
-    }, { fetch: fetchImpl, now: 2 })).toBe(false);
+    expect(
+      handleWindowError(
+        {
+          target: {},
+          currentTarget: host,
+          message: 'imagine',
+          filename: 'https://suntde10.ro/logo.png'
+        },
+        { fetch: fetchImpl, now: 1 }
+      )
+    ).toBe(false);
+    const chunk = new Error(
+      'Failed to fetch dynamically imported module: https://suntde10.ro/assets/Learn-abc.js'
+    );
+    expect(
+      handleWindowError(
+        {
+          target: host,
+          currentTarget: host,
+          message: chunk.message,
+          error: chunk,
+          filename: 'https://suntde10.ro/assets/index.js',
+          lineno: 2,
+          colno: 3
+        },
+        { fetch: fetchImpl, now: 2 }
+      )
+    ).toBe(false);
     expect(calls).toHaveLength(0);
     expect(reportClientError(chunk, {}, { fetch: fetchImpl, now: 3 })).toBe(true);
     expect(calls).toHaveLength(1);
     expect(calls[0].name).toBe('Error');
     expect(calls[0].message).not.toContain('https://');
+  });
+
+  it('trimite Script error. o dată pe pagină și lasă eroarea cu fișier să plece', () => {
+    const { calls, fetchImpl } = callsOf();
+    const host = {};
+    const opaque = {
+      target: host,
+      currentTarget: host,
+      message: 'Script error.',
+      filename: '',
+      lineno: 0,
+      colno: 0
+    };
+    expect(handleWindowError(opaque, { fetch: fetchImpl, now: 1000 })).toBe(true);
+    expect(handleWindowError(opaque, { fetch: fetchImpl, now: 1000 + CLIENT_DEDUPE_MS + 50 })).toBe(
+      false
+    );
+    const real = new Error('ecran gol');
+    real.stack = '    at render (HomeScreen.jsx:3:1)';
+    expect(
+      handleWindowError(
+        {
+          target: host,
+          currentTarget: host,
+          message: 'ecran gol',
+          error: real,
+          filename: 'HomeScreen.jsx',
+          lineno: 3,
+          colno: 1
+        },
+        { fetch: fetchImpl, now: 1000 + CLIENT_DEDUPE_MS + 80 }
+      )
+    ).toBe(true);
+    expect(calls).toHaveLength(2);
+    expect(calls[0].message).toBe('Script error.');
+    expect(calls[0].file).toBe('');
+    expect(calls[0].line).toBe(0);
+    expect(calls[0].stack).toBe('');
+    expect(calls[1].file).toBe('HomeScreen.jsx');
+    expect(calls[1].stack).toContain('HomeScreen.jsx');
+  });
+
+  it('Umami primește crossorigin pentru că răspunde cu CORS', () => {
+    const files = [
+      'frontend/index.html',
+      'backend/src/comingSoonPage.js',
+      'backend/src/legal/pages.js'
+    ];
+    for (const file of files) {
+      const html = readFileSync(path.join(process.cwd(), file), 'utf8');
+      expect(html).toMatch(/cloud\.umami\.is\/script\.js" crossorigin="anonymous"/);
+    }
   });
 
   it('agăță o singură dată listener-ul de erori', () => {
@@ -119,11 +197,14 @@ describe('raport unic din browser', () => {
   });
 
   it('păstrează fișierul din primul cadru când lipsește componenta', () => {
-    const payload = clientErrorPayload({
-      name: 'Error',
-      message: 'ecran gol',
-      stack: '    at render (HomeScreen.jsx:12:4)'
-    }, { hash: '#/acasa', ua: 'Mozilla/5.0 Version/17 Safari/605' });
+    const payload = clientErrorPayload(
+      {
+        name: 'Error',
+        message: 'ecran gol',
+        stack: '    at render (HomeScreen.jsx:12:4)'
+      },
+      { hash: '#/acasa', ua: 'Mozilla/5.0 Version/17 Safari/605' }
+    );
     expect(payload.file).toBe('HomeScreen.jsx');
     expect(payload.line).toBe(12);
     expect(payload.column).toBe(4);

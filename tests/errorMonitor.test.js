@@ -120,7 +120,9 @@ describe('jurnal de erori și deploy', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'clienterr-'));
     process.env.ERROR_LOG_DIR = dir;
     const { app } = createApp({ autosave: false });
-    const huge = await request(app).post('/api/client-error').send({ message: 'x'.repeat(2100) });
+    const huge = await request(app)
+      .post('/api/client-error')
+      .send({ message: 'x'.repeat(2100) });
     expect(huge.status).toBe(413);
 
     const stack = [
@@ -134,7 +136,8 @@ describe('jurnal de erori și deploy', () => {
       '    at f5 (https://suntde10.ro/assets/index-5tdgxzoN.js:14:1)'
     ].join('\n');
     const ok = await request(app).post('/api/client-error').send({
-      message: 'removeChild copil@example.com token=secret-token ababababababababababababababababababab password=hunter2',
+      message:
+        'removeChild copil@example.com token=secret-token ababababababababababababababababababab password=hunter2',
       name: 'NotFoundError',
       file: 'https://suntde10.ro/assets/index-5tdgxzoN.js?token=secret-token',
       line: 41,
@@ -149,7 +152,8 @@ describe('jurnal de erori și deploy', () => {
     expect(ok.status).toBe(200);
     expect(ok.body.ok).toBe(true);
     const again = await request(app).post('/api/client-error').send({
-      message: 'removeChild copil@example.com token=secret-token ababababababababababababababababababab password=hunter2',
+      message:
+        'removeChild copil@example.com token=secret-token ababababababababababababababababababab password=hunter2',
       name: 'NotFoundError',
       file: 'index-5tdgxzoN.js',
       line: 39,
@@ -189,26 +193,103 @@ describe('jurnal de erori și deploy', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'clientdup-'));
     process.env.ERROR_LOG_DIR = dir;
     const start = Date.parse('2026-10-12T00:07:00Z');
-    await monitor.reportClientError({
-      message: 'ecran gol',
-      file: 'index-5tdgxzoN.js',
-      line: 39
-    }, start);
-    await monitor.reportClientError({
-      message: 'ecran gol',
-      file: 'index-5tdgxzoN.js',
-      line: 41
-    }, start + 1);
-    expect(fs.readFileSync(path.join(dir, 'errors.log'), 'utf8').trim().split('\n')).toHaveLength(1);
+    await monitor.reportClientError(
+      {
+        message: 'ecran gol',
+        file: 'index-5tdgxzoN.js',
+        line: 39
+      },
+      start
+    );
+    await monitor.reportClientError(
+      {
+        message: 'ecran gol',
+        file: 'index-5tdgxzoN.js',
+        line: 41
+      },
+      start + 1
+    );
+    expect(fs.readFileSync(path.join(dir, 'errors.log'), 'utf8').trim().split('\n')).toHaveLength(
+      1
+    );
     const saved = JSON.parse(fs.readFileSync(path.join(dir, 'alert-state.json'), 'utf8'));
     expect(saved.types.client_error.count).toBe(1);
-    await monitor.reportClientError({
-      message: 'ecran gol',
-      file: 'index-5tdgxzoN.js',
-      line: 41
-    }, start + monitor.CLIENT_DEDUPE_MS + 1);
-    expect(fs.readFileSync(path.join(dir, 'errors.log'), 'utf8').trim().split('\n')).toHaveLength(2);
+    await monitor.reportClientError(
+      {
+        message: 'ecran gol',
+        file: 'index-5tdgxzoN.js',
+        line: 41
+      },
+      start + monitor.CLIENT_DEDUPE_MS + 1
+    );
+    expect(fs.readFileSync(path.join(dir, 'errors.log'), 'utf8').trim().split('\n')).toHaveLength(
+      2
+    );
     expect(spy.mock.calls[0][0].body).not.toContain('ecran gol');
+  });
+
+  it('scrie Script error. în jurnal și nu trimite email, apoi anunță eroarea reală', async () => {
+    arm();
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'opaque-'));
+    process.env.ERROR_LOG_DIR = dir;
+    const start = Date.parse('2026-10-14T06:00:00Z');
+    const opaque = await monitor.reportClientError(
+      {
+        name: 'Error',
+        message: 'Script error.',
+        file: '',
+        line: 0,
+        column: 0,
+        stack: '',
+        hash: '#/lectii/matematica/5',
+        ua: 'chrome+inapp'
+      },
+      start
+    );
+    expect(opaque).toEqual({ sent: false, reason: 'opaque' });
+    const blank = await monitor.reportClientError(
+      {
+        message: '',
+        file: '',
+        line: 0,
+        stack: '',
+        hash: '#/start',
+        ua: 'safari'
+      },
+      start + 5000
+    );
+    expect(blank).toEqual({ sent: false, reason: 'opaque' });
+    expect(spy).not.toHaveBeenCalled();
+
+    const real = await monitor.reportClientError(
+      {
+        message: 'ecran gol',
+        name: 'TypeError',
+        file: 'index-abc.js',
+        line: 12,
+        column: 3,
+        stack: '    at render (index-abc.js:12:3)',
+        hash: '#/cont'
+      },
+      start + 6000
+    );
+    expect(real.sent).toBe(true);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy.mock.calls[0][0].body).toContain('client_error');
+    expect(spy.mock.calls[0][0].body).not.toContain('Script error.');
+
+    const lines = fs
+      .readFileSync(path.join(dir, 'errors.log'), 'utf8')
+      .trim()
+      .split('\n')
+      .map((row) => JSON.parse(row));
+    expect(lines.filter((row) => row.opaque).map((row) => row.message)).toEqual([
+      'Script error.',
+      ''
+    ]);
+    expect(lines.find((row) => row.message === 'Script error.').hash).toBe('#/lectii/matematica/5');
+    expect(lines.find((row) => row.message === 'ecran gol').opaque).toBeUndefined();
+    expect(lines.find((row) => row.message === 'ecran gol').file).toBe('index-abc.js');
   });
 
   it('anunță o dată când aceeași eroare se repetă, apoi tace', async () => {

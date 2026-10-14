@@ -27,14 +27,55 @@ describe('detalii raport browser', () => {
 
   it('recunoaște browserul și webview-ul, fără UA brut', () => {
     expect(detail.coarseUserAgent('Mozilla/5.0 Version/17.0 Safari/605.1.15')).toBe('safari');
-    expect(detail.coarseUserAgent('Mozilla/5.0 Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0')).toBe('edge');
-    expect(detail.coarseUserAgent('Mozilla/5.0 Chrome/120.0.0.0 Mobile Safari/537.36 Instagram 300')).toBe('chrome+inapp');
-    expect(detail.coarseUserAgent('Mozilla/5.0 Version/17.0 Safari/605 Instagram')).toBe('safari+inapp');
+    expect(detail.coarseUserAgent('Mozilla/5.0 Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0')).toBe(
+      'edge'
+    );
+    expect(
+      detail.coarseUserAgent('Mozilla/5.0 Chrome/120.0.0.0 Mobile Safari/537.36 Instagram 300')
+    ).toBe('chrome+inapp');
+    expect(detail.coarseUserAgent('Mozilla/5.0 Version/17.0 Safari/605 Instagram')).toBe(
+      'safari+inapp'
+    );
     expect(detail.coarseUserAgent('chrome+inapp')).toBe('chrome+inapp');
     expect(detail.coarseUserAgent('necunoscut')).toBe('other');
     expect(detail.sanitizeHash('#/profil/parola')).toBe('#/profil/parola');
     expect(detail.sanitizeHash('#/parinte')).toBe('#/parinte');
     expect(detail.sanitizeHash('#/acord/token-secret')).toBe('#/acord/[redactat]');
     expect(detail.sanitizeHash('#/parinte/magic')).toBe('#/parinte/[redactat]');
+  });
+
+  it('marchează doar Script error. fără fișier, linie sau stivă', () => {
+    expect(
+      detail.isOpaqueClientError({
+        message: 'Script error.',
+        file: '',
+        line: 0,
+        column: 0,
+        stack: ''
+      })
+    ).toBe(true);
+    expect(detail.isOpaqueClientError({ message: '', file: '', line: 0, stack: '' })).toBe(true);
+    expect(
+      detail.isOpaqueClientError({
+        message: 'Script error.',
+        file: 'index-abc.js',
+        line: 0,
+        stack: ''
+      })
+    ).toBe(false);
+    expect(
+      detail.isOpaqueClientError({ message: 'Script error.', file: '', line: 4, stack: '' })
+    ).toBe(false);
+    expect(
+      detail.isOpaqueClientError({
+        message: 'Script error.',
+        file: '',
+        line: 0,
+        stack: 'at boom (index-abc.js:4:1)'
+      })
+    ).toBe(false);
+    expect(detail.isOpaqueClientError({ message: 'ecran gol', file: '', line: 0, stack: '' })).toBe(
+      false
+    );
   });
 });

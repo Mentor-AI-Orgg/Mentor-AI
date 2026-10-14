@@ -103,7 +103,7 @@ function comingSoonPage({ creatorPage = false, previewError = "", siteOpen = fal
     .handle { margin-top: 16px; color: #fff; font-weight: 700; font-size: 16px; }
     .nets { margin-top: 4px; color: #9aa0c6; font-size: 13px; }
   </style>
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="dc441396-9915-4ee0-8f77-7f98eb595bc8"></script>
+  <script defer src="https://cloud.umami.is/script.js" crossorigin="anonymous" data-website-id="dc441396-9915-4ee0-8f77-7f98eb595bc8"></script>
 </head>
 <body>
   <main>
