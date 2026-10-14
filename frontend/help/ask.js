@@ -94,6 +94,13 @@ const APP_FAQ = [
     extras: { section: 'parinte' }
   },
   {
+    id: 'progres',
+    keys: ['progresul', 'unde e progresul', 'ecranul de progres', 'pregatit pentru evaluare'],
+    answer: 'Progresul e în profil, la scurtătura Progres. Acolo vezi cât ai parcurs din clasa ta.',
+    screen: 'progres',
+    extras: {}
+  },
+  {
     id: 'acasa',
     keys: ['acasă', 'prima pagină', 'obiectivul zilei', 'obiectivul săptămânii', 'unde e acasă'],
     answer: 'Prima pagină e Acasă. Acolo sunt obiectivul zilei, obiectivul săptămânii și butonul Continuă.',

@@ -144,7 +144,6 @@ const HomeScreen = ({ userData, onNavigate, onProgress }) => {
       <button type="button" className="accent-button home-start-cta" disabled={openingLesson} onClick={openLessonCta}>
         {openingLesson ? 'Se deschide…' : lessonCta.label}
       </button>
-      <button type="button" className="home-quiet-link" onClick={() => onNavigate('progres')}>Progres</button>
       <header className="home-header">
         <div className="home-intro">
           <MascotPresence mood="waving" message={t('home.hello', { name: userData.name || t('home.studentFallback') })} />
