@@ -214,12 +214,13 @@ describe('lauda părintelui', () => {
     const praiseBlock = route.slice(route.indexOf('children/:id/praise'), route.indexOf('children/:id/panel'));
     expect(home).toContain('Provocarea zilei');
     expect(home).toContain("onNavigate('progres')");
-    expect(home).toContain('<Leaderboard compact />');
+    expect(home).not.toContain('Leaderboard');
     expect(home).not.toContain('Liga');
     expect(progress).toContain('La capitolul următor');
     expect(board).toContain('Locul tău');
     expect(board).toContain('limit: 8');
-    expect(profile).not.toContain('<Leaderboard');
+    expect(profile).toContain('id="profil-clasament"');
+    expect(profile).toContain('<Leaderboard />');
     expect(home).toContain('Am văzut');
     expect(parent).toContain('Laudă cu aplauze');
     expect(parent).toContain('Laudă cu inimă');

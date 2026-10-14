@@ -19,8 +19,9 @@ const APP_FAQ = [
   {
     id: 'clasament',
     keys: ['clasament', 'clasamentul', 'unde e clasamentul', 'locul meu', 'după xp'],
-    answer: 'Clasamentul e pe prima pagină, sub provocarea zilei. Sunt primii 8 după XP. Dacă ești mai jos, îți vezi și locul tău. Se vede porecla, nu emailul. Dacă profilul e privat, se vede locul și punctajul, fără nume.',
-    screen: 'home'
+    answer: 'Clasamentul e în profil, mai jos. E după XP, tot timpul. Dacă profilul e privat, se vede locul și punctajul, fără nume.',
+    screen: 'profile',
+    extras: { section: 'clasament' }
   },
   {
     id: 'prieteni',
