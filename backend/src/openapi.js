@@ -19,6 +19,10 @@ const RETIRED = new Set([
 
 const SUMMARIES = {
   "GET /health": "Starea procesului",
+  "GET /daily-challenge": "Provocarea zilei, din lecțiile terminate",
+  "POST /daily-challenge/finish": "Închide provocarea zilei și dă XP dublu",
+  "POST /economy/praise-seen": "Copilul a văzut lauda părintelui",
+  "POST /parent/children/{id}/praise": "Părintele laudă un moment, doar în aplicație",
   "GET /admin/stats": "Numere de conturi și clasamentul XP, doar pentru creator",
   "POST /auth/register": "Creează un cont și setează cookie-ul de sesiune",
   "POST /auth/login": "Autentificare",

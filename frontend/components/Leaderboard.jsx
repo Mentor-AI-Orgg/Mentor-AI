@@ -48,7 +48,22 @@ const LeaderboardRow = ({ entry }) => {
   );
 };
 
-const Leaderboard = () => {
+const CompactRow = ({ entry }) => {
+  const locked = Boolean(entry.private);
+  const own = Boolean(entry.isCurrentUser);
+  return (
+    <>
+      {own && entry.rank > 8 && <p className="leaderboard-own-break">Locul tău</p>}
+      <div className={`leaderboard-compact-row ${own ? 'is-current-user' : ''}`}>
+        <span className="leaderboard-rank">{entry.rank}</span>
+        <span className="leaderboard-compact-name">{locked ? 'Profil privat' : entry.name}{own ? ' (tu)' : ''}</span>
+        <span className="leaderboard-xp">{entry.xp?.toLocaleString?.('ro-RO') || entry.xp} XP</span>
+      </div>
+    </>
+  );
+};
+
+const Leaderboard = ({ compact = false }) => {
   const [state, setState] = useState({ loading: true, entries: [], offline: false });
 
   useEffect(() => {
@@ -62,6 +77,30 @@ const Leaderboard = () => {
     load();
     return () => { cancelled = true; };
   }, []);
+
+  if (compact) {
+    return (
+      <section className="leaderboard-card surface is-compact" aria-busy={state.loading} aria-label="Clasament">
+        <div className="leaderboard-head">
+          <div>
+            <div className="eyebrow">Clasament</div>
+            <h3 className="display-font">Primii 8</h3>
+          </div>
+        </div>
+        {state.loading ? (
+          <p className="daily-lead">Se încarcă clasamentul…</p>
+        ) : state.offline ? (
+          <p className="daily-lead">Clasamentul e momentan indisponibil.</p>
+        ) : state.entries.length === 0 ? (
+          <p className="daily-lead">Nu sunt încă elevi în clasament.</p>
+        ) : (
+          <div className="leaderboard-list">
+            {state.entries.map(entry => <CompactRow key={entry.id || `rank-${entry.rank}`} entry={entry} />)}
+          </div>
+        )}
+      </section>
+    );
+  }
 
   return (
     <section className="leaderboard-card surface" aria-busy={state.loading}>

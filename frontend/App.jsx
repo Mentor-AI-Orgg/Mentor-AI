@@ -30,6 +30,8 @@ import HelpScreen from './screens/HelpScreen.jsx';
 import CreatorMascotScreen from './screens/CreatorMascotScreen.jsx';
 import { ProfessorScreen } from './components/StudyScreens.jsx';
 import HomeScreen from './screens/HomeScreen.jsx';
+import DailyChallengeScreen from './screens/DailyChallengeScreen.jsx';
+import ReadinessScreen from './screens/ReadinessScreen.jsx';
 import MistakesScreen from './screens/MistakesScreen.jsx';
 
 const LearnScreen = lazyWithRetry(() => import('./screens/LearnScreen.jsx'));
@@ -617,7 +619,11 @@ function AppShell({ userData, setUserData }) {
           />
         );
       case 'home':
-        return <HomeScreen userData={userData} onNavigate={handleNavigate} />;
+        return <HomeScreen userData={userData} onNavigate={handleNavigate} onProgress={syncEconomy} />;
+      case 'progres':
+        return <ReadinessScreen userData={userData} onNavigate={handleNavigate} />;
+      case 'provocare':
+        return <DailyChallengeScreen userData={userData} onNavigate={handleNavigate} onProgress={syncEconomy} />;
       case 'caiet':
         return <MistakesScreen onNavigate={handleNavigate} />;
       case 'professor':

@@ -20,8 +20,8 @@ describe('întrebări despre aplicație, pe dispozitiv', () => {
     expect(askApp('setarille').extras.section).toBe('setari');
     expect(askApp('cum schimb tema?').extras.section).toBe('tema');
     expect(askApp('cum schimb temma').extras.section).toBe('tema');
-    expect(askApp('unde e clasamentul?').extras.section).toBe('clasament');
-    expect(askApp('unde e clasamnetul').extras.section).toBe('clasament');
+    expect(askApp('unde e clasamentul?').screen).toBe('home');
+    expect(askApp('unde e clasamnetul').screen).toBe('home');
     expect(askApp('cum adaug un prieten?').extras.section).toBe('prieteni');
     expect(askApp('cum adaug un prietn').extras.section).toBe('prieteni');
   });

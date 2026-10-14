@@ -12,7 +12,7 @@ import TestReview from './TestReview.jsx';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
-const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = null, onOpenLesson, onOpenNotebook, onClose, onRewardClaim, onAskMentor, onAskProblem }) => {
+const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = null, onOpenLesson, onOpenNotebook, onClose, onRewardClaim, onAskMentor, onAskProblem, onFinished }) => {
   const [cards, setCards] = useState([]);
   const [index, setIndex] = useState(0);
   const [drafts, setDrafts] = useState({});
@@ -119,6 +119,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
     if (result.success) {
       setReport(result.data);
       emitMascot(onLesson ? 'lectie_terminata' : 'test_terminat', { capitol: lesson?.title || unit.title || '' });
+      onFinished?.();
       if (onRewardClaim && result.data?.summary) {
         onRewardClaim({
           balance: result.data.summary.balance,

@@ -3,6 +3,8 @@ import { MentorAPI } from '../apiClient.js';
 import FocusTimer from '../components/FocusTimer.jsx';
 import FlashCards from '../components/FlashCards.jsx';
 import ChapterQuiz from '../components/ChapterQuiz.jsx';
+import LateNightCard from '../components/LateNightCard.jsx';
+import { lateDecision, rememberNight, seenNight } from '../lateNight.js';
 import CardDeck from '../components/CardDeck.jsx';
 import StepProblem from '../components/StepProblem.jsx';
 import EnPaperView from '../components/EnPaperView.jsx';
@@ -96,6 +98,11 @@ const chapterStatus = (chapters, subject, grade, chapterId) => {
 };
 
 const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onProgress }) => {
+  const night = lateDecision({
+    serverLate: Boolean(userData.lateNight),
+    serverNight: userData.lateNightKey || ''
+  });
+  const holdArrival = Boolean(studyFocus.chapter) && night.late && !seenNight(night.night);
   const defaultGrade = normalizeGrade(studyFocus.grade || userData.class);
   const [track, setTrack] = useState(studyFocus.track === 'en' ? 'en' : null);
   const [subject, setSubject] = useState(
@@ -105,7 +112,9 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   );
   const [grade, setGrade] = useState(studyFocus.track === 'en' ? 8 : defaultGrade);
   const [guide, setGuide] = useState(null);
-  const [openChapter, setOpenChapter] = useState(studyFocus.chapter || null);
+  const [openChapter, setOpenChapter] = useState(holdArrival ? null : (studyFocus.chapter || null));
+  const [nightOn, setNightOn] = useState(holdArrival);
+  const resumeRef = useRef(holdArrival ? () => setOpenChapter(studyFocus.chapter) : null);
   const [session, setSession] = useState(null);
   const [doneSteps, setDoneSteps] = useState({});
   const [loading, setLoading] = useState(false);
@@ -281,16 +290,45 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     onProgress?.();
   };
 
-  const openUnit = async unit => {
-    const nextOpen = openChapter === unit.id ? null : unit.id;
-    setOpenChapter(nextOpen);
-    if (!nextOpen) return;
+  const remember = () => rememberNight(night.night);
+  const goHome = () => {
+    remember();
+    resumeRef.current = null;
+    setNightOn(false);
+    onNavigate?.('home');
+  };
+  const stayNight = () => {
+    remember();
+    const run = resumeRef.current;
+    resumeRef.current = null;
+    setNightOn(false);
+    if (run) run();
+  };
+  const askNight = run => {
+    if (!night.late || seenNight(night.night)) {
+      run();
+      return;
+    }
+    resumeRef.current = run;
+    setNightOn(true);
+  };
+
+  const openUnitNow = async unit => {
+    setOpenChapter(unit.id);
     const result = await MentorAPI.recordProgress({
       type: 'chapter_open',
       note: unit.title,
       meta: { subject, grade: activeGrade, chapterId: unit.id, title: unit.title, track: isEn ? 'en' : '' }
     });
     applyResult(result);
+  };
+
+  const openUnit = unit => {
+    if (openChapter === unit.id) {
+      setOpenChapter(null);
+      return;
+    }
+    askNight(() => { void openUnitNow(unit); });
   };
 
   const askMentor = unit => {
@@ -316,7 +354,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
 
   const openNotebook = () => onNavigate?.('caiet');
 
-  const openQuiz = (unit, lesson = null) => {
+  const openQuizNow = (unit, lesson = null) => {
     setCardSession(null);
     setProblemSession(null);
     setQuizLesson(lesson);
@@ -324,9 +362,15 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     setQuizRun(n => n + 1);
   };
 
+  const openQuiz = (unit, lesson = null) => {
+    askNight(() => openQuizNow(unit, lesson));
+  };
+
   const openEnTrain = unit => {
-    setEnTrainUnit(unit);
-    setEnRun(n => n + 1);
+    askNight(() => {
+      setEnTrainUnit(unit);
+      setEnRun(n => n + 1);
+    });
   };
 
   const openCards = session => {
@@ -337,7 +381,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     setCardRun(n => n + 1);
   };
 
-  const openGeneratedPaper = async (mode) => {
+  const openGeneratedPaperNow = async (mode) => {
     if (paperBusy) return;
     setPaperBusy(true);
     setPaperError('');
@@ -359,7 +403,11 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
       : 'Nu am putut genera un alt model acum. Încearcă din nou.'));
   };
 
-  const startSession = async unit => {
+  const openGeneratedPaper = mode => {
+    askNight(() => { void openGeneratedPaperNow(mode); });
+  };
+
+  const startSessionNow = async unit => {
     setOpenChapter(unit.id);
     setLoading(true);
     setSaved(false);
@@ -399,12 +447,17 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
     applyResult(result);
   };
 
+  const startSession = unit => {
+    askNight(() => { void startSessionNow(unit); });
+  };
+
   const toggleStep = async key => {
     const next = { ...doneSteps, [key]: !doneSteps[key] };
     setDoneSteps(next);
     const complete = SESSION_STEPS.every(step => next[step.key]);
     if (complete && session && !sessionDone) {
       setSessionDone(true);
+      askNight(() => {});
       const result = await MentorAPI.recordProgress({
         type: 'session_complete',
         note: session.title,
@@ -440,6 +493,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
 
   return (
     <main className="screen-page learn-page animate-fadeIn">
+      {nightOn && <LateNightCard onHome={goHome} onStay={stayNight} />}
       <header className="screen-header">
         <div className="learn-top-row">
           <MascotPresence />
@@ -856,6 +910,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
             setQuizLesson(null);
           }}
           onRewardClaim={onRewardClaim}
+          onFinished={() => askNight(() => {})}
           onAskMentor={unit => {
             setQuizUnit(null);
             setQuizLesson(null);
@@ -916,6 +971,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
           mode="training"
           onClose={() => setEnTrainUnit(null)}
           onRewardClaim={onRewardClaim}
+          onFinished={() => askNight(() => {})}
           onAskMentor={unit => {
             setEnTrainUnit(null);
             askMentor(unit);

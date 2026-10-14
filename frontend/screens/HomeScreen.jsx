@@ -13,8 +13,9 @@ import { TEST_OPEN_ERROR } from '../testOpen.js';
 import { curriculumParams, firstLessonExtras, homeLessonCta } from '../firstLesson.js';
 import MascotPresence from '../components/mascot/MascotPresence.jsx';
 import LevelBar from '../components/LevelBar.jsx';
+import Leaderboard from '../components/Leaderboard.jsx';
 
-const HomeScreen = ({ userData, onNavigate }) => {
+const HomeScreen = ({ userData, onNavigate, onProgress }) => {
   const { t, locale } = useI18n();
   const [offer, setOffer] = useState(false);
   const [quiz, setQuiz] = useState(null);
@@ -38,14 +39,6 @@ const HomeScreen = ({ userData, onNavigate }) => {
   const streakDays = userData.streakDays || [];
   const weekGoal = weeklyGoalFrom(streakDays);
   const dayGoal = dailyGoalFrom(streakDays);
-  const today = new Date();
-  const boxes = Array.from({ length: 7 }, (_, index) => {
-    const d = new Date(today);
-    d.setDate(today.getDate() - (6 - index));
-    const key = d.toISOString().slice(0, 10);
-    return { key, on: streakDays.includes(key) };
-  });
-
   useEffect(() => {
     if (!userData?.isLoggedIn) return undefined;
     MentorAPI.mistakes().then(pack => {
@@ -66,13 +59,13 @@ const HomeScreen = ({ userData, onNavigate }) => {
     if (sessionStorage.getItem('s10-hello-day') === day) return undefined;
     sessionStorage.setItem('s10-hello-day', day);
     const nume = userData.name || userData.username || '';
-    const streak = Number(userData.streak || 0);
+    const streak = Number(userData.completionStreak || 0);
     const milestones = [3, 7, 14, 21, 30];
     if (new Date().getHours() >= 22) emitMascot('seara_tarziu');
     else if (milestones.includes(streak)) emitMascot('serie_zile', { n: streak });
     else emitMascot('prima_intrare_azi', { nume });
     return undefined;
-  }, [userData.name, userData.username, userData.streak]);
+  }, [userData.name, userData.username, userData.completionStreak]);
 
   useEffect(() => {
     if (!dayGoal.done) return undefined;
@@ -104,7 +97,18 @@ const HomeScreen = ({ userData, onNavigate }) => {
     ? { subject: last.subject, grade: last.grade || grade, chapter: last.chapterId, track: last.track || null }
     : { subject: 'matematica', grade };
   const lessonCta = homeLessonCta(last);
+  const serie = Number(userData.completionStreak) || 0;
+  const freezes = Number.isFinite(userData.streakFreezes) ? userData.streakFreezes : 1;
+  const serieShort = serie === 1 ? '1 zi' : `${serie} zile`;
+  const freezeLabel = freezes > 0
+    ? '1 înghețare disponibilă săptămâna aceasta'
+    : 'Înghețarea săptămânii este folosită';
   const [openingLesson, setOpeningLesson] = useState(false);
+
+  const dismissPraise = async () => {
+    await MentorAPI.seePraise();
+    if (onProgress) await onProgress();
+  };
 
   const openLessonCta = async () => {
     if (lessonCta.mode === 'continue') {
@@ -120,9 +124,29 @@ const HomeScreen = ({ userData, onNavigate }) => {
 
   return (
     <main className="home-page animate-fadeIn">
+      {userData.praiseNotice?.text && (
+        <section className="praise-banner" role="status" aria-label="Laudă de la părinte">
+          <p>{userData.praiseNotice.text}</p>
+          <button type="button" className="ghost-button" onClick={dismissPraise}>Am văzut</button>
+        </section>
+      )}
+      <p className="streak-compact" aria-label="Seria de zile">
+        <span className="streak-compact-count">🔥 {serieShort}</span>
+        <span className="streak-compact-freeze">
+          🧊 {freezes > 0 ? '1' : '0'}
+          <span className="visually-hidden">{freezeLabel}</span>
+        </span>
+      </p>
+      {userData.streakFrozeYesterday && <p className="streak-freeze">Înghețarea a acoperit ieri.</p>}
+      <button type="button" className="challenge-card" onClick={() => onNavigate('provocare')}>
+        <span className="eyebrow">O dată pe zi</span>
+        <span className="challenge-card-title">Provocarea zilei</span>
+      </button>
       <button type="button" className="accent-button home-start-cta" disabled={openingLesson} onClick={openLessonCta}>
         {openingLesson ? 'Se deschide…' : lessonCta.label}
       </button>
+      <Leaderboard compact />
+      <button type="button" className="home-quiet-link" onClick={() => onNavigate('progres')}>Progres</button>
       <header className="home-header">
         <div className="home-intro">
           <MascotPresence mood="waving" message={t('home.hello', { name: userData.name || t('home.studentFallback') })} />
@@ -261,15 +285,8 @@ const HomeScreen = ({ userData, onNavigate }) => {
           </div>
           <button type="button" className="ghost-button" onClick={() => onNavigate('ajutor')}>Ajutor</button>
         </div>
-        <div className="streak-week" aria-label="Zile la rând, ultimele 7">
-          {boxes.map(box => (
-            <span key={box.key} className={`streak-box ${box.on ? 'on' : ''}`} title={box.key} />
-          ))}
-          <small>{userData.streak || 0} zile la rând</small>
-        </div>
         <div className="stats-grid">
           <div className="stat-card"><span>{t('home.level')}</span><strong>{userData.level || 1}</strong><small>{t('home.nextXpShort', { count: bar.toNext })}</small></div>
-          <div className="stat-card"><span>{t('home.streak')}</span><strong>{userData.streak || 0}</strong><small>{t('home.daysInARow')}</small></div>
           <div className="stat-card"><span>{t('home.coins')}</span><strong>{userData.coins || 0}</strong><small>{t('home.toSpend')}</small></div>
         </div>
       </section>

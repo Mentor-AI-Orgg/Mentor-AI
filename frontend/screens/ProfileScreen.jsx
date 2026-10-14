@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { MentorAPI } from '../apiClient.js';
-import Leaderboard from '../components/Leaderboard.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { avatarIcon, itemEmoji } from '../appearance.js';
 import LevelBar from '../components/LevelBar.jsx';
@@ -301,7 +300,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
           </div>
           <div className="surface-soft rounded-3xl p-4 text-sm">
             <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">{t('home.streak')}</div>
-            <div className="text-lg font-semibold">{t('profile.days', { count: userData.streak || 0 })}</div>
+            <div className="text-lg font-semibold">{t('profile.days', { count: Number.isFinite(userData.completionStreak) ? userData.completionStreak : (userData.streak || 0) })}</div>
           </div>
           <div className="surface-soft rounded-3xl p-4 text-sm">
             <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">Puncte XP</div>
@@ -657,9 +656,6 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
         </section>
       </div>
 
-      <div id="profil-clasament" className="mx-5 mt-5">
-        <Leaderboard />
-      </div>
       <div className="mx-5 mt-5 grid gap-3">
         <button type="button" onClick={exportAccount} className="surface rounded-3xl p-4 text-left surface-action" disabled={exporting}>
           <i className="fas fa-download mr-2"></i>{exporting ? t('profile.exporting') : t('profile.export')}
