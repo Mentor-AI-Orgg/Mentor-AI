@@ -78,6 +78,16 @@ function sanitizeStack(value) {
     .join("\n");
 }
 
+function isOpaqueClientError(detail) {
+  const source = detail && typeof detail === "object" ? detail : {};
+  const message = String(source.message || "").trim();
+  const blank = message === "" || message === "Script error.";
+  const file = String(source.file || "").trim();
+  const line = Number(source.line) || 0;
+  const stack = String(source.stack || "").trim();
+  return blank && !file && line === 0 && !stack;
+}
+
 function sanitizeClientReport(body) {
   const source = body && typeof body === "object" ? body : {};
   return {
@@ -99,5 +109,6 @@ module.exports = {
   sanitizeHash,
   coarseUserAgent,
   sanitizeStack,
-  sanitizeClientReport
+  sanitizeClientReport,
+  isOpaqueClientError
 };

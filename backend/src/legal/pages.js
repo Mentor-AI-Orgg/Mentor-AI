@@ -52,7 +52,7 @@ function layout(title, body) {
       .note { background: #FFFFFF; }
     }
   </style>
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="dc441396-9915-4ee0-8f77-7f98eb595bc8"></script>
+  <script defer src="https://cloud.umami.is/script.js" crossorigin="anonymous" data-website-id="dc441396-9915-4ee0-8f77-7f98eb595bc8"></script>
 </head>
 <body>
   <main>

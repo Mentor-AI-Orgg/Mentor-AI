@@ -7,7 +7,7 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const { logError } = require("../logger");
-const { CLIENT_DEDUPE_MS, sanitizeClientReport } = require("./clientErrorDetail");
+const { CLIENT_DEDUPE_MS, isOpaqueClientError, sanitizeClientReport } = require("./clientErrorDetail");
 
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_ALERTS = 10;
@@ -269,9 +269,11 @@ function reportClientError(body, now = Date.now()) {
     ua: detail.ua,
     stack: detail.stack
   };
+  if (isOpaqueClientError(detail)) entry.opaque = true;
   const line = JSON.stringify(entry);
   console.error(line);
   appendLog(line);
+  if (entry.opaque) return Promise.resolve({ sent: false, reason: "opaque" });
   try { require("./sentry").captureBackendError(entry); } catch { /* Sentry e opțional */ }
   return noteIncident({ type: "client_error", id, now });
 }
