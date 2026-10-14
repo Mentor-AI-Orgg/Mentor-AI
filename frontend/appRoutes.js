@@ -67,6 +67,7 @@ export function parseAppHash(hash) {
     };
   }
   if (head === 'incepe') return { kind: 'app', screen: 'start-lesson', navScreen: 'home' };
+  if (head === 'provocare') return { kind: 'app', screen: 'provocare', navScreen: 'home' };
 
   if (/^lectie-/.test(head) && parts.length === 1) {
     return { kind: 'anchor', screen: null, lessonId: head.slice('lectie-'.length) };
@@ -128,6 +129,8 @@ export function hashForRoute(screen, extras = {}) {
       return '#/caiet';
     case 'start-lesson':
       return '#/incepe';
+    case 'provocare':
+      return '#/provocare';
     case 'learn':
       if (extras.track === 'en') {
         const base = `#/en/${extras.subject || 'matematica'}`;

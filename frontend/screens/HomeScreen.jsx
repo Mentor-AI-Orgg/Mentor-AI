@@ -66,13 +66,13 @@ const HomeScreen = ({ userData, onNavigate }) => {
     if (sessionStorage.getItem('s10-hello-day') === day) return undefined;
     sessionStorage.setItem('s10-hello-day', day);
     const nume = userData.name || userData.username || '';
-    const streak = Number(userData.streak || 0);
+    const streak = Number(userData.completionStreak || 0);
     const milestones = [3, 7, 14, 21, 30];
     if (new Date().getHours() >= 22) emitMascot('seara_tarziu');
     else if (milestones.includes(streak)) emitMascot('serie_zile', { n: streak });
     else emitMascot('prima_intrare_azi', { nume });
     return undefined;
-  }, [userData.name, userData.username, userData.streak]);
+  }, [userData.name, userData.username, userData.completionStreak]);
 
   useEffect(() => {
     if (!dayGoal.done) return undefined;
@@ -104,6 +104,12 @@ const HomeScreen = ({ userData, onNavigate }) => {
     ? { subject: last.subject, grade: last.grade || grade, chapter: last.chapterId, track: last.track || null }
     : { subject: 'matematica', grade };
   const lessonCta = homeLessonCta(last);
+  const serie = Number(userData.completionStreak) || 0;
+  const freezes = Number.isFinite(userData.streakFreezes) ? userData.streakFreezes : 1;
+  const serieLabel = serie === 1 ? '1 zi la rând' : `${serie} zile la rând`;
+  const freezeLabel = freezes > 0
+    ? '1 înghețare disponibilă săptămâna aceasta'
+    : 'Înghețarea săptămânii este folosită';
   const [openingLesson, setOpeningLesson] = useState(false);
 
   const openLessonCta = async () => {
@@ -123,6 +129,12 @@ const HomeScreen = ({ userData, onNavigate }) => {
       <button type="button" className="accent-button home-start-cta" disabled={openingLesson} onClick={openLessonCta}>
         {openingLesson ? 'Se deschide…' : lessonCta.label}
       </button>
+      <section className="streak-hero" aria-label="Seria de zile">
+        <p className="streak-fire">🔥 {serieLabel}</p>
+        <p className="streak-freeze">🧊 {freezeLabel}</p>
+        {userData.streakFrozeYesterday && <p className="streak-freeze">Înghețarea a acoperit ieri.</p>}
+        <button type="button" className="accent-button" onClick={() => onNavigate('provocare')}>Provocarea zilei</button>
+      </section>
       <header className="home-header">
         <div className="home-intro">
           <MascotPresence mood="waving" message={t('home.hello', { name: userData.name || t('home.studentFallback') })} />
@@ -265,11 +277,11 @@ const HomeScreen = ({ userData, onNavigate }) => {
           {boxes.map(box => (
             <span key={box.key} className={`streak-box ${box.on ? 'on' : ''}`} title={box.key} />
           ))}
-          <small>{userData.streak || 0} zile la rând</small>
+          <small>{serieLabel}</small>
         </div>
         <div className="stats-grid">
           <div className="stat-card"><span>{t('home.level')}</span><strong>{userData.level || 1}</strong><small>{t('home.nextXpShort', { count: bar.toNext })}</small></div>
-          <div className="stat-card"><span>{t('home.streak')}</span><strong>{userData.streak || 0}</strong><small>{t('home.daysInARow')}</small></div>
+          <div className="stat-card"><span>{t('home.streak')}</span><strong>{serie}</strong><small>{t('home.daysInARow')}</small></div>
           <div className="stat-card"><span>{t('home.coins')}</span><strong>{userData.coins || 0}</strong><small>{t('home.toSpend')}</small></div>
         </div>
       </section>

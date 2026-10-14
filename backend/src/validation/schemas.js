@@ -289,6 +289,13 @@ const friendRespondSchema = z.object({
   action: z.enum(["accept", "decline"])
 });
 
+const dailyChallengeSchema = z.object({
+  answers: z.array(z.object({
+    id: z.string().trim().min(1).max(160),
+    choice: z.number().int().min(0).max(7)
+  }).strict()).max(5)
+}).strict();
+
 const enPhotoSchema = z.object({
   paper_id: z.string().trim().min(1).max(120),
   target: z.string().trim().min(1).max(80),
@@ -322,5 +329,6 @@ module.exports = {
   friendSettingsSchema,
   friendRequestSchema,
   friendRespondSchema,
-  enPhotoSchema
+  enPhotoSchema,
+  dailyChallengeSchema
 };

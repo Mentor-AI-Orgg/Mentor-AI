@@ -2702,4 +2702,40 @@ html[data-resolved-theme="light"] .focus-preset-btn:hover {
   background: #D5F3F4;
   color: #08343A;
 }
+.streak-hero {
+  margin: 14px 0;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: rgba(68, 214, 215, .1);
+  display: grid;
+  gap: 8px;
+}
+.streak-fire {
+  margin: 0;
+  font: 700 clamp(1.7rem, 8vw, 2.1rem) 'Space Grotesk', sans-serif;
+  letter-spacing: -0.03em;
+}
+.streak-freeze, .daily-lead { margin: 0; color: var(--muted); line-height: 1.45; }
+.daily-title { margin: 0; font-size: clamp(1.5rem, 7vw, 2rem); line-height: 1.15; }
+.daily-rank-title { margin: 8px 0 0; font-size: 1.05rem; }
+.challenge-options, .rank-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.challenge-choice {
+  width: 100%;
+  text-align: left;
+  min-height: 48px;
+  line-height: 1.35;
+}
+.challenge-choice.is-on {
+  border-color: var(--primary);
+  background: rgba(68, 214, 215, .16);
+}
+.rank-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
 

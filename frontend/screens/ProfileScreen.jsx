@@ -301,7 +301,7 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
           </div>
           <div className="surface-soft rounded-3xl p-4 text-sm">
             <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">{t('home.streak')}</div>
-            <div className="text-lg font-semibold">{t('profile.days', { count: userData.streak || 0 })}</div>
+            <div className="text-lg font-semibold">{t('profile.days', { count: Number.isFinite(userData.completionStreak) ? userData.completionStreak : (userData.streak || 0) })}</div>
           </div>
           <div className="surface-soft rounded-3xl p-4 text-sm">
             <div className="text-slate-400 uppercase tracking-[0.2em] mb-1">Puncte XP</div>

@@ -6,6 +6,12 @@ const { getGuide } = require('./gimnaziuGuide');
 const { levelFromXp, touchStudy, AWARDS } = require('./progressEngine');
 const { TITLE_CATALOG, unlockedTitleIds, titleById, noteEarlyBird } = require('./titles');
 const { SHOP_CATALOG, shopItemById } = require('./shopCatalog');
+const { dayKey, addDays } = require('../ops/bucharestDay');
+const { blankGuard, settle, record } = require('./streakFreeze');
+const daily = require('./dailyChallenge');
+
+const CHALLENGE_XP = 20;
+const COMPLETION_TYPES = new Set(['session_complete', 'chapter_test', 'en_exam']);
 
 const USERS = new Map();
 const NOTIFICATIONS = [];
@@ -86,6 +92,8 @@ function createDefaultUser(userId) {
     enPapers: {},
     enPhotoDay: { date: "", used: 0 },
     streakDays: [],
+    streakGuard: blankGuard(),
+    dailyChallenge: null,
     lastAnalogy: {},
     skillLog: [],
     skillPoints: {},
@@ -118,6 +126,10 @@ function ensureUser(userId, patch = {}) {
   if (!current.cardBoxes || typeof current.cardBoxes !== 'object') current.cardBoxes = {};
   if (!Array.isArray(current.problemLog)) current.problemLog = [];
   if (!Array.isArray(current.streakDays)) current.streakDays = [];
+  if (!current.streakGuard || typeof current.streakGuard !== 'object') current.streakGuard = blankGuard();
+  if (!Number.isInteger(current.streakGuard.freezes) || current.streakGuard.freezes < 0 || current.streakGuard.freezes > 1) {
+    current.streakGuard.freezes = 1;
+  }
   if (!current.lastAnalogy) current.lastAnalogy = {};
   if (!Array.isArray(current.skillLog)) current.skillLog = [];
   if (!current.skillPoints || typeof current.skillPoints !== 'object') current.skillPoints = {};
@@ -634,8 +646,34 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
     user.savedSessions = user.savedSessions.slice(0, 20);
   }
 
+  if (COMPLETION_TYPES.has(type)) record(currentGuard(user), dayKey(new Date()));
+
   const entry = recordActivity(user, type, awarded?.coins || 0, note, { ...meta, awarded });
   return { entry, awarded, summary: buildSummary(user) };
+}
+
+function currentGuard(user) {
+  if (!user.streakGuard || typeof user.streakGuard !== 'object') user.streakGuard = blankGuard();
+  const guard = user.streakGuard;
+  if (!Number.isInteger(guard.count) || guard.count < 0) guard.count = 0;
+  if (typeof guard.lastDay !== 'string') guard.lastDay = '';
+  if (typeof guard.week !== 'string') guard.week = '';
+  if (!Number.isInteger(guard.freezes) || guard.freezes < 0 || guard.freezes > 1) guard.freezes = 1;
+  if (typeof guard.frozenDay !== 'string') guard.frozenDay = '';
+  return guard;
+}
+
+function settleGuard(user, today = dayKey(new Date())) {
+  return settle(currentGuard(user), today);
+}
+
+function streakFields(user, today = dayKey(new Date())) {
+  const guard = settleGuard(user, today);
+  return {
+    completionStreak: guard.count,
+    streakFreezes: guard.freezes,
+    streakFrozeYesterday: guard.frozenDay === addDays(today, -1)
+  };
 }
 
 function recordSkillReview(userId, payload = {}) {
@@ -1028,6 +1066,7 @@ function buildSummary(user) {
   const progress = levelFromXp(user.xp || 0);
   const done = countDoneChapters(user, grade);
   const total = chapterUniverse(grade);
+  const streakNow = streakFields(user);
   return {
     userId: user.userId,
     role: user.role,
@@ -1035,6 +1074,9 @@ function buildSummary(user) {
     coinsEarned: user.coinsEarned,
     coinsSpent: user.coinsSpent,
     streak: user.metrics.streak,
+    completionStreak: streakNow.completionStreak,
+    streakFreezes: streakNow.streakFreezes,
+    streakFrozeYesterday: streakNow.streakFrozeYesterday,
     hoursToday: user.metrics.hoursToday,
     xp: progress.xp,
     level: progress.level,
@@ -1380,6 +1422,92 @@ persistence.register('economy', {
   }
 });
 
+function dailyState(user, today) {
+  const state = user.dailyChallenge;
+  if (state && state.day === today && state.done) return state;
+  if (state && state.day === today && Array.isArray(state.questions) && state.questions.length) return state;
+  const pool = daily.reviewPool(user.chapters);
+  const questions = pool.length ? daily.pickDaily(pool, `${today}:${user.userId}`) : [];
+  user.dailyChallenge = {
+    day: today,
+    questions,
+    done: false,
+    correct: 0,
+    total: questions.length,
+    xp: 0,
+    finishedAt: ''
+  };
+  return user.dailyChallenge;
+}
+
+function dailyRanking(day) {
+  const rows = [];
+  for (const user of USERS.values()) {
+    const state = user.dailyChallenge;
+    if (!state || state.day !== day || !state.done || user.role !== 'student') continue;
+    rows.push({
+      nickname: publicPseudonym(user),
+      correct: Number(state.correct) || 0,
+      total: Number(state.total) || 0,
+      xp: Number(state.xp) || 0
+    });
+  }
+  return daily.rankRows(rows);
+}
+
+function dailyView(user, today) {
+  const state = dailyState(user, today);
+  const streak = streakFields(user, today);
+  if (!state.questions.length) {
+    return { ready: false, message: daily.EMPTY_MESSAGE, streak };
+  }
+  if (!state.done) {
+    return {
+      ready: true,
+      done: false,
+      day: today,
+      total: state.total,
+      doubled: true,
+      questions: daily.publicQuestions(state.questions),
+      streak
+    };
+  }
+  return {
+    ready: true,
+    done: true,
+    day: today,
+    correct: state.correct,
+    total: state.total,
+    xp: state.xp,
+    doubled: true,
+    ranking: dailyRanking(today),
+    streak
+  };
+}
+
+function getDailyChallenge(email) {
+  const user = ensureUser(email);
+  return dailyView(user, dayKey(new Date()));
+}
+
+function finishDailyChallenge(email, answers) {
+  const user = ensureUser(email);
+  const today = dayKey(new Date());
+  const state = dailyState(user, today);
+  if (!state.questions.length || state.done) return dailyView(user, today);
+  const correct = daily.gradeAnswers(state.questions, answers);
+  const wanted = correct * CHALLENGE_XP;
+  const awarded = wanted > 0
+    ? grantAward(user, { xp: wanted, coins: 0 }, 'daily_challenge', 'Provocarea zilei', { correct, total: state.total })
+    : null;
+  state.done = true;
+  state.correct = correct;
+  state.xp = awarded?.xp || 0;
+  state.finishedAt = new Date().toISOString();
+  record(currentGuard(user), today);
+  return dailyView(user, today);
+}
+
 module.exports = {
   ensureUser,
   getUser,
@@ -1415,6 +1543,8 @@ module.exports = {
   purgeExpiredAccessCodes,
   purgeExpiredNotifications,
   exportUser,
+  getDailyChallenge,
+  finishDailyChallenge,
   deleteUser,
   pruneHistory,
   exportEconomyFor
