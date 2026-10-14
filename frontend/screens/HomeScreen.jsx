@@ -13,7 +13,6 @@ import { TEST_OPEN_ERROR } from '../testOpen.js';
 import { curriculumParams, firstLessonExtras, homeLessonCta } from '../firstLesson.js';
 import MascotPresence from '../components/mascot/MascotPresence.jsx';
 import LevelBar from '../components/LevelBar.jsx';
-import Leaderboard from '../components/Leaderboard.jsx';
 
 const HomeScreen = ({ userData, onNavigate, onProgress }) => {
   const { t, locale } = useI18n();
@@ -145,7 +144,6 @@ const HomeScreen = ({ userData, onNavigate, onProgress }) => {
       <button type="button" className="accent-button home-start-cta" disabled={openingLesson} onClick={openLessonCta}>
         {openingLesson ? 'Se deschide…' : lessonCta.label}
       </button>
-      <Leaderboard compact />
       <button type="button" className="home-quiet-link" onClick={() => onNavigate('progres')}>Progres</button>
       <header className="home-header">
         <div className="home-intro">
