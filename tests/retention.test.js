@@ -213,7 +213,8 @@ describe('lauda părintelui', () => {
     const route = fs.readFileSync('backend/src/routes/parent.js', 'utf8');
     const praiseBlock = route.slice(route.indexOf('children/:id/praise'), route.indexOf('children/:id/panel'));
     expect(home).toContain('Provocarea zilei');
-    expect(home).toContain("onNavigate('progres')");
+    expect(home).not.toContain("onNavigate('progres')");
+    expect(home).not.toContain('home-quiet-link');
     expect(home).not.toContain('Leaderboard');
     expect(home).not.toContain('Liga');
     expect(progress).toContain('La capitolul următor');
@@ -221,6 +222,8 @@ describe('lauda părintelui', () => {
     expect(board).toContain('limit: 8');
     expect(profile).toContain('id="profil-clasament"');
     expect(profile).toContain('<Leaderboard />');
+    expect(profile).toContain("onNavigate?.('progres')");
+    expect(parent).toContain('panel.readiness.percent');
     expect(home).toContain('Am văzut');
     expect(parent).toContain('Laudă cu aplauze');
     expect(parent).toContain('Laudă cu inimă');

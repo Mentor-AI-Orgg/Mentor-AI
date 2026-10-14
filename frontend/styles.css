@@ -326,20 +326,6 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 }
 .challenge-card:hover { background: rgba(68, 214, 215, .22); color: inherit; }
 .challenge-card-title { font: 700 clamp(1.35rem, 6vw, 1.75rem) 'Space Grotesk', sans-serif; line-height: 1.15; }
-.home-quiet-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  margin: 2px 0 10px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font: 600 0.95rem inherit;
-  text-decoration: underline;
-  cursor: pointer;
-}
-.home-quiet-link:hover { color: var(--primary); background: transparent; }
 .late-night-card {
   margin: 0 0 14px;
   padding: 16px;
