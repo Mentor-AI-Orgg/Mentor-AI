@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import {
   CLIENT_BURST_MS,
   CLIENT_DEDUPE_MS,
+  clientBuildStamp,
   clientErrorPayload,
   handleWindowError,
   installClientErrorReporting,
@@ -210,5 +211,17 @@ describe('raport unic din browser', () => {
     expect(payload.column).toBe(4);
     expect(payload.hash).toBe('#/acasa');
     expect(payload.ua).toBe('safari');
+  });
+
+  it('pune în raport id-ul de build doar când e un token sigur', () => {
+    expect(clientBuildStamp('abc123def456')).toBe('abc123def456');
+    expect(clientBuildStamp('id cu spații')).toBe('');
+    expect(clientBuildStamp('')).toBe('');
+    const payload = clientErrorPayload(new Error('ecran gol'), {
+      build: 'abc123def456',
+      file: 'index-abc.js'
+    });
+    expect(payload.build).toBe('abc123def456');
+    expect(clientErrorPayload(new Error('alt'), { build: '../secret' }).build).toBeUndefined();
   });
 });

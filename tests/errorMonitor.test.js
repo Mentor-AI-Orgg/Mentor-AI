@@ -8,6 +8,7 @@ import { createApp } from '../backend/src/app.js';
 
 const nodeRequire = createRequire(import.meta.url);
 const monitor = nodeRequire('../backend/src/ops/errorMonitor.js');
+const assets = nodeRequire('../backend/src/ops/assetManifest.js');
 const deliver = nodeRequire('../backend/src/notify/deliver.js');
 
 describe('jurnal de erori și deploy', () => {
@@ -29,12 +30,14 @@ describe('jurnal de erori și deploy', () => {
     else process.env.ADMIN_EMAIL = previous.ADMIN_EMAIL;
     if (previous.ERROR_LOG_DIR === undefined) delete process.env.ERROR_LOG_DIR;
     else process.env.ERROR_LOG_DIR = previous.ERROR_LOG_DIR;
+    assets.setAssetManifestForTests(undefined);
   });
 
   function arm() {
     spy = vi.spyOn(deliver, 'deliverMessage').mockResolvedValue({ delivered: true, mocked: true });
     monitor.resetAlerts();
     process.env.ADMIN_EMAIL = 'admin@example.com';
+    assets.setAssetManifestForTests({ files: ['index-abc.js'] });
   }
 
   it('limitează alertele la un tip pe oră și la 10 pe zi', async () => {
@@ -179,6 +182,9 @@ describe('jurnal de erori și deploy', () => {
     expect(entry.stack).toContain('index-5tdgxzoN.js:41:120');
     expect(entry.stack).not.toContain('f5');
     expect(entry.code).toBe('client_error');
+    expect(entry.stale).toBe(true);
+    expect(entry.foreign).toBeUndefined();
+    expect(spy).not.toHaveBeenCalled();
     const log = lines[0];
     expect(log).not.toContain('copil@example.com');
     expect(log).not.toContain('secret-token');
@@ -196,7 +202,7 @@ describe('jurnal de erori și deploy', () => {
     await monitor.reportClientError(
       {
         message: 'ecran gol',
-        file: 'index-5tdgxzoN.js',
+        file: 'index-abc.js',
         line: 39
       },
       start
@@ -204,7 +210,7 @@ describe('jurnal de erori și deploy', () => {
     await monitor.reportClientError(
       {
         message: 'ecran gol',
-        file: 'index-5tdgxzoN.js',
+        file: 'index-abc.js',
         line: 41
       },
       start + 1
@@ -217,7 +223,7 @@ describe('jurnal de erori și deploy', () => {
     await monitor.reportClientError(
       {
         message: 'ecran gol',
-        file: 'index-5tdgxzoN.js',
+        file: 'index-abc.js',
         line: 41
       },
       start + monitor.CLIENT_DEDUPE_MS + 1
@@ -289,7 +295,104 @@ describe('jurnal de erori și deploy', () => {
     ]);
     expect(lines.find((row) => row.message === 'Script error.').hash).toBe('#/lectii/matematica/5');
     expect(lines.find((row) => row.message === 'ecran gol').opaque).toBeUndefined();
+    expect(lines.find((row) => row.message === 'ecran gol').foreign).toBeUndefined();
+    expect(lines.find((row) => row.message === 'ecran gol').stale).toBeUndefined();
     expect(lines.find((row) => row.message === 'ecran gol').file).toBe('index-abc.js');
+  });
+
+  it('jurnalizează scriptul străin și bundle-ul vechi, apoi anunță doar build-ul curent', async () => {
+    arm();
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'origin-'));
+    process.env.ERROR_LOG_DIR = dir;
+    const start = Date.parse('2026-10-14T08:00:00Z');
+    const foreign = await monitor.reportClientError(
+      {
+        message: 'script injectat',
+        name: 'Error',
+        file: 'browser_declutter',
+        line: 1,
+        stack: '',
+        hash: '#/acasa'
+      },
+      start
+    );
+    expect(foreign).toEqual({ sent: false, reason: 'foreign' });
+    const extension = await monitor.reportClientError(
+      {
+        message: 'extensie',
+        file: 'chrome-extension://abcd/content.js',
+        line: 2
+      },
+      start + 1000
+    );
+    expect(extension).toEqual({ sent: false, reason: 'foreign' });
+    const stale = await monitor.reportClientError(
+      {
+        message: 'bundle vechi',
+        file: 'https://suntde10.ro/assets/index-5tdgxzoN.js',
+        line: 41,
+        stack: '    at commitDeletion (https://suntde10.ro/assets/index-5tdgxzoN.js:41:120)'
+      },
+      start + 2000
+    );
+    expect(stale).toEqual({ sent: false, reason: 'stale' });
+    const oldTab = await monitor.reportClientError(
+      {
+        message: 'tab vechi',
+        file: 'index-abc.js',
+        line: 4,
+        stack: '    at render (index-abc.js:4:1)',
+        build: 'oldbuild99'
+      },
+      start + 3000
+    );
+    expect(oldTab).toEqual({ sent: false, reason: 'stale' });
+    expect(spy).not.toHaveBeenCalled();
+
+    const current = await monitor.reportClientError(
+      {
+        message: 'ecran gol',
+        name: 'TypeError',
+        file: 'index-abc.js',
+        line: 12,
+        stack: '    at render (index-abc.js:12:3)',
+        build: 'dev'
+      },
+      start + 4000
+    );
+    expect(current.sent).toBe(true);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy.mock.calls[0][0].body).toContain('client_error');
+    expect(spy.mock.calls[0][0].body).not.toContain('browser_declutter');
+    expect(spy.mock.calls[0][0].body).not.toContain('index-5tdgxzoN.js');
+
+    const lines = fs
+      .readFileSync(path.join(dir, 'errors.log'), 'utf8')
+      .trim()
+      .split('\n')
+      .map((row) => JSON.parse(row));
+    expect(lines.find((row) => row.file === 'browser_declutter')).toMatchObject({
+      foreign: true,
+      message: 'script injectat'
+    });
+    expect(lines.find((row) => row.file === 'content.js').foreign).toBe(true);
+    expect(lines.find((row) => row.file === 'index-5tdgxzoN.js')).toMatchObject({
+      stale: true,
+      message: 'bundle vechi'
+    });
+    expect(lines.find((row) => row.message === 'tab vechi')).toMatchObject({
+      stale: true,
+      build: 'oldbuild99',
+      file: 'index-abc.js'
+    });
+    const live = lines.find((row) => row.message === 'ecran gol');
+    expect(live.foreign).toBeUndefined();
+    expect(live.stale).toBeUndefined();
+    expect(live.build).toBe('dev');
+    expect(
+      JSON.parse(fs.readFileSync(path.join(dir, 'alert-state.json'), 'utf8')).types.client_error
+        .count
+    ).toBe(1);
   });
 
   it('anunță o dată când aceeași eroare se repetă, apoi tace', async () => {
