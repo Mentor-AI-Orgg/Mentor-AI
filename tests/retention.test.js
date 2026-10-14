@@ -6,11 +6,9 @@ import { createApp } from '../backend/src/app.js';
 import { registerGranted } from './registerStudent.js';
 
 const nodeRequire = createRequire(import.meta.url);
-const league = nodeRequire('../backend/src/data/weeklyLeague.js');
 const readiness = nodeRequire('../backend/src/data/readiness.js');
 const economy = nodeRequire('../backend/src/data/economyStore.js');
 const auth = nodeRequire('../backend/src/data/authStore.js');
-const days = nodeRequire('../backend/src/ops/bucharestDay.js');
 const { publicId } = nodeRequire('../backend/src/data/friendStore.js');
 
 afterEach(() => {
@@ -34,164 +32,6 @@ function parentOf(app, parentEmail) {
     return agent;
   })();
 }
-
-describe('regulile ligii', () => {
-  it('numără zilele de luni până duminică și nu lasă zonele să se calce', () => {
-    expect(days.weekKey('2026-10-12')).toBe(days.weekKey('2026-10-18'));
-    expect(days.weekKey('2026-10-19')).not.toBe(days.weekKey('2026-10-12'));
-    expect(league.daysLeft('2026-10-12')).toBe(7);
-    expect(league.daysLeft('2026-10-18')).toBe(1);
-    expect(league.daysLabel(1)).toBe('Ultima zi din săptămână');
-    expect(league.daysLabel(7)).toBe('Mai sunt 7 zile');
-
-    const full = league.zoneBounds(20, 'argint');
-    expect(full).toEqual({ promoteThrough: 5, demoteFrom: 16 });
-    expect(league.zoneBounds(20, 'bronz').demoteFrom).toBe(21);
-    expect(league.zoneBounds(20, 'diamant').promoteThrough).toBe(0);
-    expect(league.zoneBounds(1, 'bronz')).toEqual({ promoteThrough: 1, demoteFrom: 2 });
-    expect(league.nextTierForPlace(1, 1, 'bronz')).toBe('argint');
-    expect(league.nextTierForPlace(1, 1, 'diamant')).toBe('diamant');
-    expect(league.nextTierForPlace(6, 6, 'bronz')).toBe('bronz');
-    expect(league.nextTierForPlace(1, 6, 'diamant')).toBe('diamant');
-    expect(league.nextTierForPlace(6, 6, 'diamant')).toBe('aur');
-  });
-
-  it('arată doar porecla, locul și zona', () => {
-    const rows = league.publicBoard([
-      { nickname: 'Zeta', xp: 10, self: false, email: 'zeta@example.com' },
-      { nickname: 'Alfa', xp: 40, self: true, email: 'alfa@example.com' },
-      { nickname: 'Beta', xp: 30, email: 'beta@example.com' },
-      { nickname: 'Gama', xp: 20, email: 'gama@example.com' },
-      { nickname: 'Delta', xp: 15, email: 'delta@example.com' },
-      { nickname: 'Eps', xp: 12, email: 'eps@example.com' }
-    ], 'argint');
-    expect(rows[0]).toEqual({ place: 1, nickname: 'Alfa', xp: 40, zone: 'up', self: true });
-    expect(rows[5].zone).toBe('down');
-    expect(JSON.stringify(rows)).not.toContain('@');
-    expect(rows[0]).not.toHaveProperty('email');
-  });
-});
-
-describe('liga săptămânală', () => {
-  function makeStudent(name, grade, tier) {
-    const email = `${name}.${grade}@example.com`;
-    const user = economy.ensureUser(email, { username: name, className: grade, role: 'student' });
-    user.league.tier = tier;
-    return email;
-  }
-
-  function giveChapters(email, grade, count) {
-    for (let index = 0; index < count; index += 1) {
-      economy.recordProgress({
-        userId: email,
-        type: 'session_complete',
-        trusted: true,
-        meta: { subject: 'matematica', grade, chapterId: `cap${index}`, title: `Capitol ${index}` }
-      });
-    }
-  }
-
-  it('deschide o ligă nouă la al 21-lea elev și nu arată emailul', () => {
-    const grade = `g${Date.now().toString(36)}`;
-    const emails = Array.from({ length: 21 }, (_, index) => {
-      const name = `grup${String(index).padStart(2, '0')}`;
-      const email = makeStudent(name, grade, 'bronz');
-      giveChapters(email, grade, 1);
-      return email;
-    });
-    const views = emails.map(email => economy.leagueView(email));
-    const sizes = views.map(view => view.size).sort((a, b) => b - a);
-    expect(sizes.filter(size => size === 20)).toHaveLength(20);
-    expect(sizes.filter(size => size === 1)).toHaveLength(1);
-    views.forEach(view => {
-      expect(view.joined).toBe(true);
-      expect(view.tier).toBe('Bronz');
-      expect(JSON.stringify(view)).not.toContain('@');
-      view.rows.forEach(row => {
-        expect(row.nickname.startsWith('grup')).toBe(true);
-        expect(Object.keys(row).sort()).toEqual(['nickname', 'place', 'self', 'xp', 'zone']);
-      });
-    });
-  });
-
-  it('urcă primii cinci, coboară ultimul și nu repetă rezolvarea', () => {
-    vi.useFakeTimers({ toFake: ['Date'] });
-    vi.setSystemTime(new Date('2026-10-12T10:00:00.000Z'));
-    const grade = `r${Date.now().toString(36)}`;
-    const plan = [
-      ['aalfa', 4],
-      ['bbeta', 3],
-      ['cgama', 2],
-      ['ddelta', 2],
-      ['eeps', 1],
-      ['fzeta', 1]
-    ];
-    const emails = plan.map(([name, count]) => {
-      const email = makeStudent(name, grade, 'argint');
-      giveChapters(email, grade, count);
-      return email;
-    });
-    const monday = economy.leagueView(emails[0]);
-    expect(monday.daysLeft).toBe(7);
-    expect(monday.daysLabel).toBe('Mai sunt 7 zile');
-    expect(monday.rows.map(row => row.nickname)).toEqual(plan.map(([name]) => name));
-    expect(monday.rows.filter(row => row.zone === 'up').map(row => row.place)).toEqual([1, 2, 3, 4, 5]);
-    expect(monday.rows.filter(row => row.zone === 'down').map(row => row.place)).toEqual([6]);
-    expect(JSON.stringify(monday)).not.toContain('@');
-
-    vi.setSystemTime(new Date('2026-10-18T10:00:00.000Z'));
-    const sunday = economy.leagueView(emails[5]);
-    expect(sunday.daysLeft).toBe(1);
-    expect(sunday.daysLabel).toBe('Ultima zi din săptămână');
-    expect(sunday.tier).toBe('Argint');
-
-    vi.setSystemTime(new Date('2026-10-19T10:00:00.000Z'));
-    emails.forEach(email => economy.leagueView(email));
-    expect(economy.getUser(emails[0]).league.tier).toBe('aur');
-    expect(economy.getUser(emails[4]).league.tier).toBe('aur');
-    expect(economy.getUser(emails[5]).league.tier).toBe('bronz');
-    const promoted = economy.childShare(emails[0]).milestones.filter(item => item.kind === 'league');
-    expect(promoted).toHaveLength(1);
-    expect(promoted[0].label).toBe('A urcat în liga Aur');
-    economy.leagueView(emails[0]);
-    expect(economy.childShare(emails[0]).milestones.filter(item => item.kind === 'league')).toHaveLength(1);
-    expect(economy.childShare(emails[5]).milestones.some(item => item.kind === 'league')).toBe(false);
-  });
-
-  it('nu urcă peste Diamant și nu coboară sub Bronz', () => {
-    vi.useFakeTimers({ toFake: ['Date'] });
-    vi.setSystemTime(new Date('2026-10-12T10:00:00.000Z'));
-    const grade = `c${Date.now().toString(36)}`;
-    const top = makeStudent('topdiam', grade, 'diamant');
-    giveChapters(top, grade, 2);
-    vi.setSystemTime(new Date('2026-10-19T10:00:00.000Z'));
-    economy.leagueView(top);
-    expect(economy.getUser(top).league.tier).toBe('diamant');
-
-    vi.setSystemTime(new Date('2026-10-12T10:00:00.000Z'));
-    const lowGrade = `b${Date.now().toString(36)}`;
-    const emails = ['unu', 'doi', 'trei', 'patru', 'cinci', 'sase'].map((name, index) => {
-      const email = makeStudent(name, lowGrade, 'bronz');
-      giveChapters(email, lowGrade, 6 - index);
-      return email;
-    });
-    vi.setSystemTime(new Date('2026-10-19T10:00:00.000Z'));
-    emails.forEach(email => economy.leagueView(email));
-    expect(economy.getUser(emails[0]).league.tier).toBe('argint');
-    expect(economy.getUser(emails[5]).league.tier).toBe('bronz');
-  });
-
-  it('nu bagă în ligă un cont care nu e de elev', () => {
-    const grade = `p${Date.now().toString(36)}`;
-    const email = `profesor.${grade}@example.com`;
-    economy.ensureUser(email, { role: 'teacher', className: grade, username: 'profesor' });
-    giveChapters(email, grade, 2);
-    const view = economy.leagueView(email);
-    expect(view.joined).toBe(false);
-    expect(view.weekXp).toBe(0);
-    expect(view.message).toMatch(/XP/);
-  });
-});
 
 describe('pregătirea pentru evaluare', () => {
   it('pornește de la zero și urcă odată cu capitolul terminat și cu acuratețea', () => {
@@ -362,34 +202,29 @@ describe('lauda părintelui', () => {
     expect(missing.status).toBe(404);
     const bad = await parent.post(`/api/parent/children/${id}/praise`).send({ milestoneId: 'streak:3', emoji: 'star' });
     expect(bad.status).toBe(400);
-    const quiet = await request(app).get('/api/league');
-    expect(quiet.status).toBe(401);
-
-    const grade = `h${Date.now().toString(36)}`;
-    economy.getUser(account.email).preferences.className = grade;
-    await child.agent.post('/api/economy/claim').send({ type: 'login_bonus' });
-    const board = await child.agent.get('/api/league');
-    expect(board.status).toBe(200);
-    expect(board.body.joined).toBe(true);
-    expect(board.body.rows.some(row => row.nickname === child.username)).toBe(true);
-    expect(JSON.stringify(board.body)).not.toContain('@');
-    expect(JSON.stringify(board.body)).not.toContain(account.email);
   });
 
   it('păstrează textele calme în ecrane', () => {
     const home = fs.readFileSync('frontend/screens/HomeScreen.jsx', 'utf8');
     const parent = fs.readFileSync('frontend/components/ConsentScreens.jsx', 'utf8');
-    const leagueScreen = fs.readFileSync('frontend/screens/LeagueScreen.jsx', 'utf8');
+    const progress = fs.readFileSync('frontend/screens/ReadinessScreen.jsx', 'utf8');
+    const board = fs.readFileSync('frontend/components/Leaderboard.jsx', 'utf8');
+    const profile = fs.readFileSync('frontend/screens/ProfileScreen.jsx', 'utf8');
     const route = fs.readFileSync('backend/src/routes/parent.js', 'utf8');
     const praiseBlock = route.slice(route.indexOf('children/:id/praise'), route.indexOf('children/:id/panel'));
-    expect(home).toContain('Liga săptămânii');
-    expect(home).toContain('La capitolul următor');
+    expect(home).toContain('Provocarea zilei');
+    expect(home).toContain("onNavigate('progres')");
+    expect(home).toContain('<Leaderboard compact />');
+    expect(home).not.toContain('Liga');
+    expect(progress).toContain('La capitolul următor');
+    expect(board).toContain('Locul tău');
+    expect(board).toContain('limit: 8');
+    expect(profile).not.toContain('<Leaderboard');
     expect(home).toContain('Am văzut');
     expect(parent).toContain('Laudă cu aplauze');
     expect(parent).toContain('Laudă cu inimă');
     expect(parent).not.toContain('Mama');
     expect(parent).not.toContain('Tata');
-    expect(leagueScreen).toContain('nu sub Bronz');
     expect(praiseBlock).not.toContain('deliver');
   });
 });

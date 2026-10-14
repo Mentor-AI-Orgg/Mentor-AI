@@ -27,7 +27,6 @@ function definitions() {
     { mount: "/calendar", tag: "calendar", router: require("./calendar"), guards: student },
     { mount: "/economy", tag: "economy", router: require("./economy"), guards: student },
     { mount: "/daily-challenge", tag: "daily-challenge", router: require("./dailyChallenge"), guards: student },
-    { mount: "/league", tag: "league", router: require("./league"), guards: student },
     { mount: "/account", tag: "account", router: require("./account"), guards: student },
     { mount: "/friends", tag: "friends", router: require("./friends"), guards: [...student, consentRequired] }
   ];

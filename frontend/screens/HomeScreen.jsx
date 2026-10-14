@@ -13,6 +13,7 @@ import { TEST_OPEN_ERROR } from '../testOpen.js';
 import { curriculumParams, firstLessonExtras, homeLessonCta } from '../firstLesson.js';
 import MascotPresence from '../components/mascot/MascotPresence.jsx';
 import LevelBar from '../components/LevelBar.jsx';
+import Leaderboard from '../components/Leaderboard.jsx';
 
 const HomeScreen = ({ userData, onNavigate, onProgress }) => {
   const { t, locale } = useI18n();
@@ -38,14 +39,6 @@ const HomeScreen = ({ userData, onNavigate, onProgress }) => {
   const streakDays = userData.streakDays || [];
   const weekGoal = weeklyGoalFrom(streakDays);
   const dayGoal = dailyGoalFrom(streakDays);
-  const today = new Date();
-  const boxes = Array.from({ length: 7 }, (_, index) => {
-    const d = new Date(today);
-    d.setDate(today.getDate() - (6 - index));
-    const key = d.toISOString().slice(0, 10);
-    return { key, on: streakDays.includes(key) };
-  });
-
   useEffect(() => {
     if (!userData?.isLoggedIn) return undefined;
     MentorAPI.mistakes().then(pack => {
@@ -106,13 +99,12 @@ const HomeScreen = ({ userData, onNavigate, onProgress }) => {
   const lessonCta = homeLessonCta(last);
   const serie = Number(userData.completionStreak) || 0;
   const freezes = Number.isFinite(userData.streakFreezes) ? userData.streakFreezes : 1;
-  const serieLabel = serie === 1 ? '1 zi la rând' : `${serie} zile la rând`;
+  const serieShort = serie === 1 ? '1 zi' : `${serie} zile`;
   const freezeLabel = freezes > 0
     ? '1 înghețare disponibilă săptămâna aceasta'
     : 'Înghețarea săptămânii este folosită';
   const [openingLesson, setOpeningLesson] = useState(false);
 
-  const ready = userData.readiness;
   const dismissPraise = async () => {
     await MentorAPI.seePraise();
     if (onProgress) await onProgress();
@@ -134,40 +126,27 @@ const HomeScreen = ({ userData, onNavigate, onProgress }) => {
     <main className="home-page animate-fadeIn">
       {userData.praiseNotice?.text && (
         <section className="praise-banner" role="status" aria-label="Laudă de la părinte">
-          <p className="streak-fire">{userData.praiseNotice.text}</p>
+          <p>{userData.praiseNotice.text}</p>
           <button type="button" className="ghost-button" onClick={dismissPraise}>Am văzut</button>
         </section>
       )}
+      <p className="streak-compact" aria-label="Seria de zile">
+        <span className="streak-compact-count">🔥 {serieShort}</span>
+        <span className="streak-compact-freeze">
+          🧊 {freezes > 0 ? '1' : '0'}
+          <span className="visually-hidden">{freezeLabel}</span>
+        </span>
+      </p>
+      {userData.streakFrozeYesterday && <p className="streak-freeze">Înghețarea a acoperit ieri.</p>}
+      <button type="button" className="challenge-card" onClick={() => onNavigate('provocare')}>
+        <span className="eyebrow">O dată pe zi</span>
+        <span className="challenge-card-title">Provocarea zilei</span>
+      </button>
       <button type="button" className="accent-button home-start-cta" disabled={openingLesson} onClick={openLessonCta}>
         {openingLesson ? 'Se deschide…' : lessonCta.label}
       </button>
-      <section className="streak-hero" aria-label="Seria de zile">
-        <p className="streak-fire">🔥 {serieLabel}</p>
-        <p className="streak-freeze">🧊 {freezeLabel}</p>
-        {userData.streakFrozeYesterday && <p className="streak-freeze">Înghețarea a acoperit ieri.</p>}
-        <button type="button" className="accent-button" onClick={() => onNavigate('provocare')}>Provocarea zilei</button>
-        <button type="button" className="ghost-button" onClick={() => onNavigate('liga')}>Liga săptămânii</button>
-      </section>
-      {ready && (
-        <section className="readiness-card" aria-label={ready.label}>
-          <p className="eyebrow">{ready.label}</p>
-          <p className="readiness-score">{ready.percent}%</p>
-          <p className="daily-lead">{ready.hint}</p>
-          {ready.next && (
-            <button
-              type="button"
-              className="ghost-button"
-              onClick={() => onNavigate('learn', {
-                subject: ready.next.subject,
-                grade: ready.next.grade,
-                chapter: ready.next.chapterId
-              })}
-            >
-              La capitolul următor
-            </button>
-          )}
-        </section>
-      )}
+      <Leaderboard compact />
+      <button type="button" className="home-quiet-link" onClick={() => onNavigate('progres')}>Progres</button>
       <header className="home-header">
         <div className="home-intro">
           <MascotPresence mood="waving" message={t('home.hello', { name: userData.name || t('home.studentFallback') })} />
@@ -306,15 +285,8 @@ const HomeScreen = ({ userData, onNavigate, onProgress }) => {
           </div>
           <button type="button" className="ghost-button" onClick={() => onNavigate('ajutor')}>Ajutor</button>
         </div>
-        <div className="streak-week" aria-label="Zile la rând, ultimele 7">
-          {boxes.map(box => (
-            <span key={box.key} className={`streak-box ${box.on ? 'on' : ''}`} title={box.key} />
-          ))}
-          <small>{serieLabel}</small>
-        </div>
         <div className="stats-grid">
           <div className="stat-card"><span>{t('home.level')}</span><strong>{userData.level || 1}</strong><small>{t('home.nextXpShort', { count: bar.toNext })}</small></div>
-          <div className="stat-card"><span>{t('home.streak')}</span><strong>{serie}</strong><small>{t('home.daysInARow')}</small></div>
           <div className="stat-card"><span>{t('home.coins')}</span><strong>{userData.coins || 0}</strong><small>{t('home.toSpend')}</small></div>
         </div>
       </section>

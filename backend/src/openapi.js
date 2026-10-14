@@ -21,7 +21,6 @@ const SUMMARIES = {
   "GET /health": "Starea procesului",
   "GET /daily-challenge": "Provocarea zilei, din lecțiile terminate",
   "POST /daily-challenge/finish": "Închide provocarea zilei și dă XP dublu",
-  "GET /league": "Liga săptămânii, cu porecle, fără email",
   "POST /economy/praise-seen": "Copilul a văzut lauda părintelui",
   "POST /parent/children/{id}/praise": "Părintele laudă un moment, doar în aplicație",
   "GET /admin/stats": "Numere de conturi și clasamentul XP, doar pentru creator",

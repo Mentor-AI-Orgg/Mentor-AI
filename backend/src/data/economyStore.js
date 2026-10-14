@@ -6,14 +6,11 @@ const { getGuide } = require('./gimnaziuGuide');
 const { levelFromXp, touchStudy, AWARDS } = require('./progressEngine');
 const { TITLE_CATALOG, unlockedTitleIds, titleById, noteEarlyBird } = require('./titles');
 const { SHOP_CATALOG, shopItemById } = require('./shopCatalog');
-const { dayKey, addDays, weekKey } = require('../ops/bucharestDay');
+const { dayKey, addDays } = require('../ops/bucharestDay');
 const { blankGuard, settle, record } = require('./streakFreeze');
 const daily = require('./dailyChallenge');
-const leagueRules = require('./weeklyLeague');
 const { readinessFor } = require('./readiness');
 
-const COHORTS = new Map();
-const LEAGUE_RESOLVED = new Map();
 const STREAK_MILESTONES = [3, 5, 7, 14, 30];
 
 const CHALLENGE_XP = 20;
@@ -100,7 +97,6 @@ function createDefaultUser(userId) {
     streakDays: [],
     streakGuard: blankGuard(),
     dailyChallenge: null,
-    league: { tier: 'bronz', week: '', cohortId: '', weekXp: 0 },
     milestones: [],
     praiseNotice: null,
     readinessMark: 0,
@@ -137,9 +133,6 @@ function ensureUser(userId, patch = {}) {
   if (!Array.isArray(current.problemLog)) current.problemLog = [];
   if (!Array.isArray(current.streakDays)) current.streakDays = [];
   if (!current.streakGuard || typeof current.streakGuard !== 'object') current.streakGuard = blankGuard();
-  if (!current.league || typeof current.league !== 'object') {
-    current.league = { tier: 'bronz', week: '', cohortId: '', weekXp: 0 };
-  }
   if (!Array.isArray(current.milestones)) current.milestones = [];
   if (!Number.isInteger(current.streakGuard.freezes) || current.streakGuard.freezes < 0 || current.streakGuard.freezes > 1) {
     current.streakGuard.freezes = 1;
@@ -527,7 +520,6 @@ function grantAward(user, award, type, note, meta = {}) {
   user.awardDay.coins += coins;
   const paid = awardCoins(user, coins, type, note, { ...meta, xp });
   user.xp = (user.xp || 0) + xp;
-  if (xp > 0) noteLeagueXp(user, xp);
   return { coins: paid.amount, xp, balance: paid.balance };
 }
 
@@ -833,7 +825,6 @@ function claimReward({ userId = 'demo_user', type, payload = {} }) {
     noteEarlyBird(user, todayKey);
     const bonus = awardCoins(user, AWARDS.login_bonus.coins, 'reward', 'Bonus de prima logare', { type });
     user.xp = (user.xp || 0) + AWARDS.login_bonus.xp;
-    noteLeagueXp(user, AWARDS.login_bonus.xp);
     pushNotification(userId, payload.parentEmail || user.preferences.parentEmail, 'Prima logare', `A fost acordat bonusul de ${AWARDS.login_bonus.coins} de monede pentru prima intrare.`, 'reward');
     return { ok: true, earned: bonus.amount, balance: bonus.balance, claim: 'login_bonus', summary: buildSummary(user) };
   }
@@ -1404,10 +1395,6 @@ function deleteUser(email) {
       }
     }
     USERS.delete(key);
-    for (const cohort of COHORTS.values()) {
-      if (!Array.isArray(cohort.members)) continue;
-      cohort.members = cohort.members.filter(member => member !== key);
-    }
   }
 
   for (let i = NOTIFICATIONS.length - 1; i >= 0; i--) {
@@ -1435,16 +1422,12 @@ persistence.register('economy', {
   snapshot: () => ({
     users: persistence.mapToObject(USERS),
     notifications: NOTIFICATIONS,
-    purchases: persistence.mapToObject(PURCHASES),
-    cohorts: persistence.mapToObject(COHORTS),
-    leagueResolved: persistence.mapToObject(LEAGUE_RESOLVED)
+    purchases: persistence.mapToObject(PURCHASES)
   }),
   restore: data => {
     persistence.restoreMap(USERS, data?.users);
     persistence.restoreArray(NOTIFICATIONS, data?.notifications);
     persistence.restoreMap(PURCHASES, data?.purchases);
-    persistence.restoreMap(COHORTS, data?.cohorts);
-    persistence.restoreMap(LEAGUE_RESOLVED, data?.leagueResolved);
     purgeExpiredNotifications();
     purgeExpiredAccessCodes();
     migrateStoredUsers();
@@ -1582,133 +1565,8 @@ function praiseView(user) {
   return { text: `Părintele tău te-a lăudat! ${emoji}` };
 }
 
-function ensureLeague(user) {
-  if (!user.league || typeof user.league !== 'object') {
-    user.league = { tier: 'bronz', week: '', cohortId: '', weekXp: 0 };
-  }
-  if (!leagueRules.TIERS.includes(user.league.tier)) user.league.tier = 'bronz';
-  if (typeof user.league.weekXp !== 'number') user.league.weekXp = 0;
-  return user.league;
-}
-
-function resolveCohort(cohortId) {
-  if (LEAGUE_RESOLVED.has(cohortId)) return LEAGUE_RESOLVED.get(cohortId);
-  const cohort = COHORTS.get(cohortId);
-  if (!cohort) return {};
-  const members = (cohort.members || []).map(email => {
-    const member = USERS.get(email);
-    const league = member ? ensureLeague(member) : null;
-    const xp = league && league.cohortId === cohortId ? league.weekXp : 0;
-    return {
-      email,
-      xp,
-      nickname: member ? publicPseudonym(member) : 'Elev'
-    };
-  }).sort((a, b) => b.xp - a.xp || a.nickname.localeCompare(b.nickname, 'ro'));
-  const map = {};
-  members.forEach((member, index) => {
-    map[member.email] = leagueRules.nextTierForPlace(index + 1, members.length, cohort.tier);
-  });
-  LEAGUE_RESOLVED.set(cohortId, map);
-  return map;
-}
-
-function rolloverLeague(user, today) {
-  const league = ensureLeague(user);
-  const week = weekKey(today);
-  if (league.week === week) return league;
-  const previous = league.tier;
-  if (league.cohortId) {
-    const map = resolveCohort(league.cohortId);
-    const next = map[user.userId] || league.tier;
-    if (leagueRules.tierIndex(next) > leagueRules.tierIndex(previous)) {
-      noteMilestone(user, 'league', `${league.week}:${next}`, `A urcat în liga ${leagueRules.TIER_LABEL[next]}`);
-    }
-    league.tier = next;
-  }
-  league.week = week;
-  league.weekXp = 0;
-  league.cohortId = '';
-  return league;
-}
-
-function placeInLeague(user, today) {
-  const league = rolloverLeague(user, today);
-  if (league.cohortId && COHORTS.has(league.cohortId)) return league;
-  const grade = String(user.preferences?.className || '5');
-  let cohort = [...COHORTS.values()].find(item =>
-    item.week === league.week
-    && item.grade === grade
-    && item.tier === league.tier
-    && Array.isArray(item.members)
-    && item.members.length < leagueRules.LEAGUE_SIZE
-    && !LEAGUE_RESOLVED.has(item.id));
-  if (!cohort) {
-    const index = [...COHORTS.values()].filter(item =>
-      item.week === league.week && item.grade === grade && item.tier === league.tier).length;
-    cohort = {
-      id: `${league.week}:${grade}:${league.tier}:${index}`,
-      week: league.week,
-      grade,
-      tier: league.tier,
-      members: []
-    };
-    COHORTS.set(cohort.id, cohort);
-  }
-  if (!cohort.members.includes(user.userId)) cohort.members.push(user.userId);
-  league.cohortId = cohort.id;
-  return league;
-}
-
-function noteLeagueXp(user, amount) {
-  const xp = Number(amount) || 0;
-  if (xp <= 0 || (user.role && user.role !== 'student')) return;
-  const today = dayKey(new Date());
-  placeInLeague(user, today);
-  user.league.weekXp += xp;
-}
-
-function leagueView(email) {
-  const user = ensureUser(email);
-  const today = dayKey(new Date());
-  const league = rolloverLeague(user, today);
-  const left = leagueRules.daysLeft(today);
-  const base = {
-    tier: leagueRules.TIER_LABEL[league.tier] || 'Bronz',
-    tierId: league.tier,
-    daysLeft: left,
-    daysLabel: leagueRules.daysLabel(left),
-    weekXp: league.weekXp
-  };
-  if (!league.cohortId || !COHORTS.has(league.cohortId)) {
-    return {
-      ...base,
-      joined: false,
-      message: 'Liga începe când câștigi XP săptămâna asta.'
-    };
-  }
-  const cohort = COHORTS.get(league.cohortId);
-  const members = (cohort.members || []).map(id => {
-    const member = USERS.get(id);
-    const row = member ? ensureLeague(member) : null;
-    return {
-      nickname: member ? publicPseudonym(member) : 'Elev',
-      xp: row && row.cohortId === cohort.id ? row.weekXp : 0,
-      self: id === user.userId
-    };
-  });
-  return {
-    ...base,
-    joined: true,
-    grade: cohort.grade,
-    size: members.length,
-    rows: leagueRules.publicBoard(members, cohort.tier)
-  };
-}
-
 function childShare(email) {
   const user = getUser(email) || ensureUser(email);
-  rolloverLeague(user, dayKey(new Date()));
   return {
     readiness: childReadiness(user),
     milestones: (user.milestones || []).map(item => ({
@@ -1777,7 +1635,6 @@ module.exports = {
   exportUser,
   getDailyChallenge,
   finishDailyChallenge,
-  leagueView,
   childShare,
   praiseChild,
   seePraise,

@@ -591,15 +591,6 @@ const MentorAPI = {
     }
   },
 
-  async getLeague() {
-    try {
-      const data = await safeFetchJson('/api/league');
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: null, fallback: false, error: error.message || 'Nu am putut deschide liga.' };
-    }
-  },
-
   async seePraise() {
     try {
       const data = await safeFetchJson('/api/economy/praise-seen', { method: 'POST' });
