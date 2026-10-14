@@ -78,4 +78,49 @@ describe('detalii raport browser', () => {
       false
     );
   });
+
+  it('anunță doar fișierul din manifestul build-ului curent', () => {
+    const live = ['index-abc.js'];
+    expect(
+      detail.clientErrorOrigin(
+        { file: 'index-abc.js', stack: 'at render (index-abc.js:4:1)', build: 'dev' },
+        live,
+        'dev'
+      )
+    ).toEqual({ current: true });
+    expect(
+      detail.clientErrorOrigin(
+        { file: 'browser_declutter', stack: 'at boom (index-abc.js:8:1)', build: 'dev' },
+        live,
+        'dev'
+      )
+    ).toEqual({ current: true });
+    expect(
+      detail.clientErrorOrigin(
+        {
+          file: 'index-5tdgxzoN.js',
+          stack: 'at commitDeletion (index-5tdgxzoN.js:41:120)'
+        },
+        live,
+        'dev'
+      )
+    ).toEqual({ stale: true });
+    expect(
+      detail.clientErrorOrigin({ file: 'index-abc.js', build: 'oldbuild99' }, live, 'dev')
+    ).toEqual({ stale: true });
+    expect(
+      detail.clientErrorOrigin({ file: 'browser_declutter', line: 1, stack: '' }, live, 'dev')
+    ).toEqual({ foreign: true });
+    expect(detail.clientErrorOrigin({ file: 'content.js', stack: '' }, live, 'dev')).toEqual({
+      foreign: true
+    });
+    expect(
+      detail.clientErrorOrigin({ file: 'browser_declutter', build: 'oldbuild99' }, live, 'dev')
+    ).toEqual({ stale: true, foreign: true });
+    expect(
+      detail.clientErrorOrigin({ message: 'ecran gol', file: '', stack: '' }, live, 'dev')
+    ).toEqual({
+      foreign: true
+    });
+  });
 });

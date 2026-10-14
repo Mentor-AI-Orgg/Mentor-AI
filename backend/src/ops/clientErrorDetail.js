@@ -88,6 +88,46 @@ function isOpaqueClientError(detail) {
   return blank && !file && line === 0 && !stack;
 }
 
+function sanitizeBuild(value) {
+  const id = String(value ?? "").trim().slice(0, 40);
+  if (!/^[A-Za-z0-9._-]+$/.test(id)) return "";
+  return id;
+}
+
+// Chunk-urile Vite sunt nume-hash.ext, cu hash de 8 caractere. browser_declutter nu seamănă.
+const BUILT_ASSET = /^.+-[A-Za-z0-9_-]{8}\.(?:js|mjs|css)$/;
+
+function referencedAssetNames(detail) {
+  const source = detail && typeof detail === "object" ? detail : {};
+  const found = [];
+  const push = (name) => {
+    const clean = String(name || "");
+    if (!/^[A-Za-z0-9._-]{1,80}$/.test(clean) || found.includes(clean)) return;
+    found.push(clean);
+  };
+  push(source.file);
+  const matches = String(source.stack || "").match(/[A-Za-z0-9._-]+\.(?:js|mjs|css)/g) || [];
+  matches.forEach(push);
+  return found;
+}
+
+function clientErrorOrigin(detail, assetNames, serverBuild) {
+  const names = referencedAssetNames(detail);
+  const known = assetNames instanceof Set ? assetNames : new Set(assetNames || []);
+  const inManifest = names.filter((name) => known.has(name));
+  const clientBuild = sanitizeBuild(detail && detail.build);
+  const server = sanitizeBuild(serverBuild);
+  const buildMismatch = Boolean(clientBuild && server && clientBuild !== server);
+  if (!buildMismatch && inManifest.length > 0) return { current: true };
+  const stale = buildMismatch || names.some((name) => BUILT_ASSET.test(name) && !known.has(name));
+  const foreign = inManifest.length === 0 && !names.some((name) => BUILT_ASSET.test(name));
+  const flags = {};
+  if (stale) flags.stale = true;
+  if (foreign) flags.foreign = true;
+  if (!flags.stale && !flags.foreign) flags.foreign = true;
+  return flags;
+}
+
 function sanitizeClientReport(body) {
   const source = body && typeof body === "object" ? body : {};
   return {
@@ -98,7 +138,8 @@ function sanitizeClientReport(body) {
     column: finite(source.column),
     hash: sanitizeHash(source.hash),
     ua: coarseUserAgent(source.ua),
-    stack: sanitizeStack(source.stack)
+    stack: sanitizeStack(source.stack),
+    build: sanitizeBuild(source.build)
   };
 }
 
@@ -110,5 +151,7 @@ module.exports = {
   coarseUserAgent,
   sanitizeStack,
   sanitizeClientReport,
-  isOpaqueClientError
+  isOpaqueClientError,
+  referencedAssetNames,
+  clientErrorOrigin
 };

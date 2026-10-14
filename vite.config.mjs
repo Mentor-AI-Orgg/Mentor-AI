@@ -10,13 +10,24 @@ const repoRoot = path.dirname(fileURLToPath(import.meta.url));
 const BUILD_ID = buildStamp();
 
 function writeBuildId() {
+  let files = [];
   return {
     name: 'write-build-id',
     apply: 'build',
+    generateBundle(_options, bundle) {
+      files = Object.keys(bundle)
+        .map((file) => file.split('/').pop())
+        .filter((name) => /^[A-Za-z0-9._-]{1,80}$/.test(name) && /\.(js|mjs|css)$/.test(name))
+        .sort();
+    },
     closeBundle() {
       const dir = path.join(repoRoot, 'frontend', 'dist');
       fs.mkdirSync(dir, { recursive: true });
       fs.writeFileSync(path.join(dir, 'build-id.json'), JSON.stringify({ build: BUILD_ID }));
+      fs.writeFileSync(
+        path.join(dir, 'asset-manifest.json'),
+        JSON.stringify({ build: BUILD_ID, files })
+      );
     }
   };
 }

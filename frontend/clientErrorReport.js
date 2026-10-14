@@ -123,6 +123,15 @@ function readUserAgent() {
   }
 }
 
+export function clientBuildStamp(value) {
+  const raw =
+    value === undefined || value === null
+      ? import.meta.env && import.meta.env.VITE_BUILD_ID
+      : value;
+  const id = String(raw || '').trim();
+  return /^[A-Za-z0-9._-]{1,40}$/.test(id) ? id : '';
+}
+
 export function clientErrorPayload(error, extra = {}) {
   const stack = shortStack(
     extra.stack != null ? extra.stack : error && error.stack,
@@ -133,7 +142,7 @@ export function clientErrorPayload(error, extra = {}) {
   const file = sanitizeFile(extra.file) || (located ? located[1] : '');
   const line = finite(extra.line) || (located ? finite(located[2]) : 0);
   const column = finite(extra.column) || (located ? finite(located[3]) : 0);
-  return {
+  const payload = {
     message: sanitizeText(extra.message || (error && error.message) || 'eroare', 300),
     name: sanitizeName(extra.name || (error && error.name) || 'Error'),
     file,
@@ -143,6 +152,9 @@ export function clientErrorPayload(error, extra = {}) {
     hash: sanitizeClientHash(extra.hash != null ? extra.hash : readHash()),
     ua: coarseUserAgent(extra.ua != null ? extra.ua : readUserAgent())
   };
+  const build = clientBuildStamp(extra.build);
+  if (build) payload.build = build;
+  return payload;
 }
 
 function isDuplicate(payload, now) {
