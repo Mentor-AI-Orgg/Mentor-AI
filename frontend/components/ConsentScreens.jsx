@@ -234,6 +234,23 @@ const ParentScreen = ({ token = '' }) => {
             </p>
           )}
           {panel?.lateNote && <p className="late-note">{panel.lateNote}</p>}
+          {Array.isArray(panel?.lessonMastery) && panel.lessonMastery.length > 0 && (
+            <div className="lesson-mastery-parent">
+              <p>Pe lecții</p>
+              <ul className="lesson-mastery-list">
+                {panel.lessonMastery.map(item => (
+                  <li key={`${item.subject}:${item.chapterId}:${item.lessonId}`} className={`lesson-mastery-row${item.review ? ' is-review' : ''}`}>
+                    <span className="lesson-mastery-copy">
+                      <span className="lesson-mastery-title">{item.title}</span>
+                      {item.chapterTitle ? <small>{item.chapterTitle}</small> : null}
+                    </span>
+                    <span className="lesson-mastery-pct">{item.percent}%</span>
+                    {item.review ? <em className="lesson-review">de recapitulat</em> : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {fresh.map(item => (
             <div key={item.id} className="parent-praise">
               <p>{item.label}</p>

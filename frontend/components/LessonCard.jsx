@@ -200,7 +200,7 @@ function RichBody({ entry, loadAnswers }) {
   );
 }
 
-export default function LessonCard({ entry, lessonIndex, initiallyOpen = false, forceOpen = false, onQuiz, onCards, cardsDue = 0, onProblem, loadAnswers }) {
+export default function LessonCard({ entry, lessonIndex, initiallyOpen = false, forceOpen = false, onQuiz, onCards, cardsDue = 0, onProblem, loadAnswers, mastery = null }) {
   const [open, setOpen] = useState(initiallyOpen || forceOpen);
   useEffect(() => {
     if (forceOpen) setOpen(true);
@@ -216,7 +216,14 @@ export default function LessonCard({ entry, lessonIndex, initiallyOpen = false, 
       >
         <summary>
           <span className="lesson-card-title">Lecția {lessonIndex + 1}. {entry.title}</span>
-          <span className="lesson-card-time">~{minutes} min</span>
+          <span className="lesson-card-aside">
+            {mastery && Number.isFinite(mastery.percent) ? (
+              <span className={`lesson-card-mastery${mastery.review ? ' is-review' : ''}`}>
+                {mastery.percent}%{mastery.review ? ' · de recapitulat' : ''}
+              </span>
+            ) : null}
+            <span className="lesson-card-time">~{minutes} min</span>
+          </span>
         </summary>
         <div className="lesson-card-body">
           {open ? <MascotPresence compact /> : null}

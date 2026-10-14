@@ -17,6 +17,7 @@ const defaultUserData = {
   streakFreezes: 1,
   streakFrozeYesterday: false,
   readiness: null,
+  lessonMastery: [],
   praiseNotice: null,
   lateNight: false,
   lateNightKey: '',

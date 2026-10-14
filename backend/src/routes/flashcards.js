@@ -306,6 +306,7 @@ router.post("/finish", async (req, res) => {
     subject: scoredSubject,
     grade: scoredGrade,
     chapterId: scoredChapter,
+    lessonId: String(lessonId || ""),
     title,
     correct,
     total,

@@ -17,6 +17,9 @@ function applyProgress(summary = {}, prev = {}) {
     streakFreezes: typeof summary.streakFreezes === 'number' ? summary.streakFreezes : prev.streakFreezes,
     streakFrozeYesterday: Boolean(summary.streakFrozeYesterday),
     readiness: summary.readiness || prev.readiness || null,
+    lessonMastery: Object.prototype.hasOwnProperty.call(summary, 'lessonMastery')
+      ? (Array.isArray(summary.lessonMastery) ? summary.lessonMastery : [])
+      : (prev.lessonMastery || []),
     praiseNotice: Object.prototype.hasOwnProperty.call(summary, 'praiseNotice') ? (summary.praiseNotice || null) : (prev.praiseNotice || null),
     lateNight: Object.prototype.hasOwnProperty.call(summary, 'lateNight') ? Boolean(summary.lateNight) : Boolean(prev.lateNight),
     lateNightKey: Object.prototype.hasOwnProperty.call(summary, 'lateNightKey') ? (summary.lateNightKey || '') : (prev.lateNightKey || ''),

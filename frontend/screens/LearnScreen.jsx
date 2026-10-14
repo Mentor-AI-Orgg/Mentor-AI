@@ -246,6 +246,13 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   }, [subject, grade, isEn]);
 
   const units = useMemo(() => guide?.units || [], [guide]);
+  const masteryByLesson = useMemo(() => {
+    const map = new Map();
+    (userData.lessonMastery || []).forEach(row => {
+      map.set(`${row.subject}:${row.grade}:${row.chapterId}:${row.lessonId}`, row);
+    });
+    return map;
+  }, [userData.lessonMastery]);
   const savedSessions = userData.savedSessions || [];
   const [anchorId, setAnchorId] = useState('');
 
@@ -770,6 +777,7 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
                                 lesson: entry.id
                               }).then(result => (result.success ? result.data?.answers : null)) : undefined}
                               onQuiz={isEn ? null : () => openQuiz(unit, { id: entry.id, title: entry.title })}
+                              mastery={masteryByLesson.get(`${subject}:${activeGrade}:${unit.id}:${entry.id}`) || null}
                               cardsDue={(cardSummary.lessons || []).find(row => row.lesson === entry.id)?.due || 0}
                               onCards={isEn ? null : () => openCards({ unit, lesson: { id: entry.id, title: entry.title }, mode: 'lesson' })}
                               onProblem={isEn || !problemList.some(row => row.lesson === entry.id) ? null : () => {

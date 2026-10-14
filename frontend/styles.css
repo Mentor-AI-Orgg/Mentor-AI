@@ -2835,6 +2835,33 @@ html[data-resolved-theme="light"] .focus-preset-btn:hover {
   font: 700 clamp(1.7rem, 8vw, 2.1rem) 'Space Grotesk', sans-serif;
   letter-spacing: -0.03em;
 }
+.lesson-mastery-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.lesson-mastery-row {
+  width: 100%;
+  margin: 0;
+  text-align: left;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+}
+button.lesson-mastery-row { cursor: pointer; }
+.lesson-mastery-row:hover { border-color: var(--primary); background: rgba(68, 214, 215, .12); }
+.lesson-mastery-row.is-review { border-color: var(--primary); background: rgba(68, 214, 215, .12); }
+.lesson-mastery-copy { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.lesson-mastery-title { font: 700 1rem 'Space Grotesk', sans-serif; }
+.lesson-mastery-copy small, .lesson-review { color: var(--muted); font-style: normal; }
+.lesson-mastery-pct { margin-left: auto; font: 700 1rem 'Space Grotesk', sans-serif; }
+.lesson-card-aside { display: grid; justify-items: end; gap: 2px; }
+.lesson-card-mastery { color: var(--muted); font: 700 0.875rem 'Nunito', sans-serif; white-space: nowrap; }
+.lesson-card-mastery.is-review { color: var(--primary); }
+.lesson-mastery-parent { margin: 8px 0; }
 .parent-praise {
   display: grid;
   gap: 8px;

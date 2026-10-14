@@ -1,4 +1,5 @@
 const { getUser, childShare } = require("../data/economyStore");
+const { lessonMasteryFor } = require("../data/lessonMastery");
 const { lateActivityNote } = require("../ops/bucharestDay");
 const { inboxFor, setSettings, getSettings } = require("../data/friendStore");
 
@@ -85,6 +86,7 @@ function buildPanel(email) {
   const share = childShare(email);
   return {
     readiness: share.readiness,
+    lessonMastery: lessonMasteryFor(user),
     milestones: share.milestones,
     lateNote: lateActivityNote(user.lateActivity?.at),
     days: days.filter(day => Date.parse(day.day) >= start - 24 * 60 * 60 * 1000),

@@ -10,6 +10,7 @@ const { dayKey, addDays, bucharestClock, isLateHour, nightKey } = require('../op
 const { blankGuard, settle, record } = require('./streakFreeze');
 const daily = require('./dailyChallenge');
 const { readinessFor } = require('./readiness');
+const { lessonMasteryFor } = require('./lessonMastery');
 
 const STREAK_MILESTONES = [3, 5, 7, 14, 30];
 
@@ -704,6 +705,7 @@ function recordSkillReview(userId, payload = {}) {
     subject: payload.subject || '',
     grade: String(payload.grade || ''),
     chapterId: payload.chapterId || '',
+    lessonId: String(payload.lessonId || '').slice(0, 80),
     title: String(payload.title || '').slice(0, 120),
     correct: Number(payload.correct) || 0,
     total: Number(payload.total) || items.length,
@@ -1096,6 +1098,7 @@ function buildSummary(user) {
     streakFreezes: streakNow.streakFreezes,
     streakFrozeYesterday: streakNow.streakFrozeYesterday,
     readiness: childReadiness(user),
+    lessonMastery: lessonMasteryFor(user),
     praiseNotice: praiseView(user),
     lateNight: isLateHour(bucharestClock().hour),
     lateNightKey: nightKey(),
