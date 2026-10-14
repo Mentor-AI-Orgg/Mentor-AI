@@ -1400,6 +1400,7 @@ module.exports = {
   getParentAnalytics,
   sendParentReview,
   listLeaderboardEntries,
+  xpFromUser,
   lessonsThisWeek,
   migrateStoredUser,
   getDeterministicJackpotDay,
