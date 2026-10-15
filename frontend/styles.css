@@ -1459,6 +1459,7 @@ html[data-motion="off"] .app-background.is-landing .floating-lines-container { a
 .saved-sessions-list { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
 .saved-sessions-list li { display: flex; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.04); }
 .profile-shortcut-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.profile-stickers { margin: 14px 0 0; color: var(--muted); font-size: 0.95rem; }
 .calendar-suggest-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .calendar-add-row input[type="time"] { min-width: 108px; }
 .shop-empty { grid-column: 1 / -1; color: var(--muted); font-size: 0.8125rem; margin: 0; }

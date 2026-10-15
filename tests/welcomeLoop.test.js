@@ -14,7 +14,7 @@ const quick = nodeRequire('../backend/src/data/quickStart.js');
 const chest = nodeRequire('../backend/src/data/lessonChest.js');
 const shop = nodeRequire('../backend/src/data/shopCatalog.js');
 
-describe('bonusul de cont, startul scurt, cufărul și povestea', () => {
+describe('bonusul de cont, startul scurt și cufărul', () => {
   it('acordă bonusul de 20 XP o singură dată', async () => {
     const { app } = createApp({ autosave: false });
     const created = await registerGranted(app);
@@ -103,6 +103,10 @@ describe('bonusul de cont, startul scurt, cufărul și povestea', () => {
     const right = chest.decideChest({ userId: 'elev-a', key: 'matematica:5:naturale', owned: [], coinRoom: 4 });
     expect(right).toEqual(left);
     expect(chest.decideChest({ userId: 'elev-a', key: 'matematica:5:naturale', owned: [], coinRoom: 0 }).kind).not.toBe('coins');
+    const sticker = chest.STICKERS[0];
+    const label = chest.chestLabel({ kind: 'sticker', sticker });
+    expect(label).toBe(`${sticker.emoji} ${sticker.name}.`);
+    expect(label).not.toMatch(/Povestea/);
   });
 
   it('spune câte lecții mai sunt până la nivelul următor', () => {
@@ -126,6 +130,9 @@ describe('bonusul de cont, startul scurt, cufărul și povestea', () => {
     expect(home).not.toContain("onNavigate('progres')");
     expect(profile).not.toContain('profil-poveste');
     expect(profile).not.toContain('STORY_TITLE');
+    expect(profile).toContain('Stickere');
+    const chestSrc = fs.readFileSync('backend/src/data/lessonChest.js', 'utf8');
+    expect(chestSrc).not.toMatch(/Povestea/);
     expect(start).toContain('+20 XP, ai început!');
     expect(start).toContain('quick-start-end');
     expect(start).toContain('Sari peste');
