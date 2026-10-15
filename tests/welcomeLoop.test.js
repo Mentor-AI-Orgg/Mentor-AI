@@ -91,7 +91,7 @@ describe('bonusul de cont, startul scurt și cufărul', () => {
     expect(other.story).toBeUndefined();
 
     const shopItems = shop.SHOP_CATALOG.map(item => item.id);
-    expect(shopItems).not.toContain('zecita-stea');
+    for (const sticker of chest.STICKERS) expect(shopItems).not.toContain(sticker.id);
     if (first.body.chest.kind === 'coins') {
       expect(first.body.chest.coins).toBeLessThanOrEqual(chest.COIN_AMOUNT);
       expect(first.body.summary.balance).toBeLessThanOrEqual(chest.COIN_AMOUNT);
@@ -107,6 +107,30 @@ describe('bonusul de cont, startul scurt și cufărul', () => {
     const label = chest.chestLabel({ kind: 'sticker', sticker });
     expect(label).toBe(`${sticker.emoji} ${sticker.name}.`);
     expect(label).not.toMatch(/Povestea/);
+
+    expect(chest.FACTS.length).toBeGreaterThanOrEqual(60);
+    expect(new Set(chest.FACTS).size).toBe(chest.FACTS.length);
+    expect(chest.STICKERS.length).toBeGreaterThanOrEqual(20);
+    expect(new Set(chest.STICKERS.map(item => item.id)).size).toBe(chest.STICKERS.length);
+    const owned = chest.STICKERS.map(item => item.id);
+    const last = chest.FACTS[chest.FACTS.length - 1];
+    const fresh = chest.decideChest({
+      userId: 'elev-a',
+      key: 'mate:5:nou',
+      owned,
+      seenFacts: chest.FACTS.slice(0, -1),
+      coinRoom: 0
+    });
+    expect(fresh).toEqual({ kind: 'fact', coins: 0, sticker: null, fact: last });
+    const again = chest.decideChest({
+      userId: 'elev-a',
+      key: 'mate:5:nou',
+      owned,
+      seenFacts: chest.FACTS,
+      coinRoom: 0
+    });
+    expect(again.kind).toBe('fact');
+    expect(chest.FACTS).toContain(again.fact);
   });
 
   it('spune câte lecții mai sunt până la nivelul următor', () => {
@@ -133,6 +157,7 @@ describe('bonusul de cont, startul scurt și cufărul', () => {
     expect(profile).toContain('Stickere');
     const chestSrc = fs.readFileSync('backend/src/data/lessonChest.js', 'utf8');
     expect(chestSrc).not.toMatch(/Povestea/);
+    expect(chestSrc).not.toMatch(/[—–]/);
     expect(start).toContain('+20 XP, ai început!');
     expect(start).toContain('quick-start-end');
     expect(start).toContain('Sari peste');

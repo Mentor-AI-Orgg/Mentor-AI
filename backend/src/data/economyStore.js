@@ -520,10 +520,12 @@ function chestCoinRoom(user) {
 
 function openLessonChest(user, key) {
   if (!key || user.chests[key]) return null;
+  const seenFacts = Object.values(user.chests).map(item => item && item.fact).filter(Boolean);
   const reward = decideChest({
     userId: user.userId,
     key,
     owned: user.stickers,
+    seenFacts,
     coinRoom: chestCoinRoom(user)
   });
   if (reward.kind === 'coins' && reward.coins > 0) {
