@@ -430,6 +430,7 @@ router.post("/finish", async (req, res) => {
     history: review.snapshot,
     awarded: award?.awarded || null,
     summary: award?.summary || null,
+    chest: award?.chest || null,
     parentNotified: !parentNotify.skipped,
     parentNotify: {
       skipped: parentNotify.skipped,

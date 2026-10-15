@@ -9,6 +9,7 @@ import { emitMascot } from '../mascot/mascotEvents.js';
 import { MASCOT_NAME } from '../config/mascot.js';
 import { readQuizPack, takeTicket, ticketIsCurrent } from '../testOpen.js';
 import TestReview from './TestReview.jsx';
+import MysteryChest from './MysteryChest.jsx';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -26,6 +27,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
   const [hintFor, setHintFor] = useState('');
   const [sessionId, setSessionId] = useState('');
   const [error, setError] = useState('');
+  const [chest, setChest] = useState(null);
   const startedAt = useRef(Date.now());
   const ticketRef = useRef(0);
   const onLesson = Boolean(lesson?.id);
@@ -35,6 +37,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
     setLoading(true);
     setError('');
     setReport(null);
+    setChest(null);
     setDrafts({});
     setHintFor('');
     setIndex(0);
@@ -118,6 +121,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
     });
     if (result.success) {
       setReport(result.data);
+      if (result.data?.chest) setChest(result.data.chest);
       emitMascot(onLesson ? 'lectie_terminata' : 'test_terminat', { capitol: lesson?.title || unit.title || '' });
       onFinished?.();
       if (onRewardClaim && result.data?.summary) {
@@ -134,6 +138,7 @@ const ChapterQuiz = ({ unit, subject, grade, track = '', mode = '', lesson = nul
 
   return (
     <section className="chapter-quiz surface animate-fadeIn" aria-label={`Test: ${unit.title}`}>
+      {chest && <MysteryChest reward={chest} onClose={() => setChest(null)} />}
       <div className="chapter-quiz-head">
         <MascotPresence
           compact

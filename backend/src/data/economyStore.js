@@ -643,7 +643,6 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
   if (type === 'session_complete') {
     const key = chapterKey(meta.subject, meta.grade, meta.chapterId);
     const stamp = `${key}:${todayKey}`;
-    const alreadyDone = Boolean(user.chapters[key] && user.chapters[key].status === 'done');
     if (key && !user.sessionAwards[stamp]) {
       user.sessionAwards[stamp] = true;
       if (user.chapters[key]) user.chapters[key].status = 'done';
@@ -658,10 +657,8 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
         };
       }
       if (trusted) awarded = grantAward(user, AWARDS.session_complete, 'session_complete', note || 'Sesiune terminată', meta);
-      if (!alreadyDone && meta.subject && meta.chapterId) {
-        chest = openLessonChest(user, key);
-      }
     }
+    if (key && meta.subject && meta.chapterId) chest = openLessonChest(user, key);
   }
 
   if (type === 'flashcard_known') {
@@ -709,6 +706,7 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
         durationMs
       });
     }
+    if (key && meta.subject && meta.chapterId) chest = openLessonChest(user, `${key}:test`);
   }
 
   if (type === 'mentor_message') {

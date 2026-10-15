@@ -90,6 +90,55 @@ describe('bonusul de cont, startul scurt și cufărul', () => {
     expect(other.chest).toBeTruthy();
     expect(other.story).toBeUndefined();
 
+    const doneKey = 'matematica:5:geometrie';
+    const student = economy.getUser(email);
+    student.chapters[doneKey] = { status: 'done', subject: 'matematica', grade: '5', chapterId: 'geometrie', title: 'Geometrie' };
+    student.sessionAwards[`${doneKey}:${new Date().toISOString().slice(0, 10)}`] = true;
+    const late = economy.recordProgress({
+      userId: email,
+      type: 'session_complete',
+      meta: { subject: 'matematica', grade: '5', chapterId: 'geometrie', title: 'Geometrie' }
+    });
+    expect(late.chest?.id).toBe(doneKey);
+    const lateAgain = economy.recordProgress({
+      userId: email,
+      type: 'session_complete',
+      meta: { subject: 'matematica', grade: '5', chapterId: 'geometrie', title: 'Geometrie' }
+    });
+    expect(lateAgain.chest).toBeNull();
+
+    const tested = economy.recordProgress({
+      userId: email,
+      type: 'chapter_test',
+      trusted: true,
+      meta: {
+        subject: 'matematica',
+        grade: '5',
+        chapterId: 'naturale',
+        title: 'Numere naturale',
+        score: 8,
+        total: 10,
+        serverScored: true
+      }
+    });
+    expect(tested.chest?.id).toBe('matematica:5:naturale:test');
+    expect(['coins', 'sticker', 'fact']).toContain(tested.chest.kind);
+    const testedAgain = economy.recordProgress({
+      userId: email,
+      type: 'chapter_test',
+      trusted: true,
+      meta: {
+        subject: 'matematica',
+        grade: '5',
+        chapterId: 'naturale',
+        title: 'Numere naturale',
+        score: 7,
+        total: 10,
+        serverScored: true
+      }
+    });
+    expect(testedAgain.chest).toBeNull();
+
     const shopItems = shop.SHOP_CATALOG.map(item => item.id);
     for (const sticker of chest.STICKERS) expect(shopItems).not.toContain(sticker.id);
     if (first.body.chest.kind === 'coins') {
@@ -169,6 +218,11 @@ describe('bonusul de cont, startul scurt și cufărul', () => {
     expect(start).toContain('Sari peste');
     expect(start).toContain('Spre prima lecție');
     expect(start).not.toMatch(/sigur că|pierzi|doar azi|ofertă/i);
+    const quiz = fs.readFileSync('frontend/components/ChapterQuiz.jsx', 'utf8');
+    expect(quiz).toContain('MysteryChest');
+    expect(quiz).toContain('result.data?.chest');
+    const finishRoute = fs.readFileSync('backend/src/routes/flashcards.js', 'utf8');
+    expect(finishRoute).toContain('chest: award?.chest || null');
     const chestUi = fs.readFileSync('frontend/components/MysteryChest.jsx', 'utf8');
     const css = fs.readFileSync('frontend/styles.css', 'utf8');
     const store = fs.readFileSync('backend/src/data/economyStore.js', 'utf8');
