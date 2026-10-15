@@ -3,7 +3,9 @@ const crypto = require('crypto');
 const { LESSON_ID_MAP_VERSION, LESSON_ID_MAP } = require('./lessonIdMap');
 const { needsMigration, migrateUserLessonIds, migrateNotificationList } = require('./lessonMigration');
 const { getGuide } = require('./gimnaziuGuide');
-const { levelFromXp, touchStudy, AWARDS } = require('./progressEngine');
+const { levelFromXp, touchStudy, lessonsUntilNext, AWARDS } = require('./progressEngine');
+const { QUIZ_XP, quizFor, publicQuestions, countCorrect } = require('./quickStart');
+const { DAILY_COIN_MAX, stickerById, stickerAlbum, decideChest, chestLabel } = require('./lessonChest');
 const { TITLE_CATALOG, unlockedTitleIds, titleById, noteEarlyBird } = require('./titles');
 const { SHOP_CATALOG, shopItemById } = require('./shopCatalog');
 const { dayKey, addDays, bucharestClock, isLateHour, nightKey } = require('../ops/bucharestDay');
@@ -88,6 +90,10 @@ function createDefaultUser(userId) {
       monthKey
     },
     xp: 0,
+    quickStart: { pending: true, done: false, skipped: false },
+    chests: {},
+    chestDay: { date: '', coins: 0 },
+    stickers: [],
     chapters: {},
     savedSessions: [],
     flashKnown: {},
@@ -126,6 +132,9 @@ function ensureUser(userId, patch = {}) {
   const current = USERS.get(key);
   if (current.xp == null) current.xp = 0;
   if (!current.chapters || typeof current.chapters !== 'object') current.chapters = {};
+  if (!current.chests || typeof current.chests !== 'object') current.chests = {};
+  if (!current.chestDay || typeof current.chestDay !== 'object') current.chestDay = { date: '', coins: 0 };
+  if (!Array.isArray(current.stickers)) current.stickers = [];
   if (!Array.isArray(current.savedSessions)) current.savedSessions = [];
   if (!current.flashKnown) current.flashKnown = {};
   if (!current.mentorAwards) current.mentorAwards = {};
@@ -500,6 +509,66 @@ function chapterKey(subject, grade, chapterId) {
   return `${String(subject || '').toLowerCase()}:${String(grade || '')}:${String(chapterId || '')}`;
 }
 
+function chestCoinRoom(user) {
+  const today = getTodayKey();
+  if (!user.awardDay || user.awardDay.date !== today) user.awardDay = { date: today, xp: 0, coins: 0 };
+  if (!user.chestDay || user.chestDay.date !== today) user.chestDay = { date: today, coins: 0 };
+  const studyRoom = Math.max(0, DAILY_COIN_CAP - user.awardDay.coins);
+  const chestRoom = Math.max(0, DAILY_COIN_MAX - user.chestDay.coins);
+  return Math.min(studyRoom, chestRoom);
+}
+
+function openLessonChest(user, key) {
+  if (!key || user.chests[key]) return null;
+  const seenFacts = Object.values(user.chests).map(item => item && item.fact).filter(Boolean);
+  const reward = decideChest({
+    userId: user.userId,
+    key,
+    owned: user.stickers,
+    seenFacts,
+    coinRoom: chestCoinRoom(user)
+  });
+  if (reward.kind === 'coins' && reward.coins > 0) {
+    user.awardDay.coins += reward.coins;
+    user.chestDay.coins += reward.coins;
+    awardCoins(user, reward.coins, 'chest', 'Cufărul lecției', { chapterKey: key });
+  }
+  if (reward.kind === 'sticker' && reward.sticker && !user.stickers.includes(reward.sticker.id)) {
+    user.stickers.push(reward.sticker.id);
+  }
+  const saved = {
+    kind: reward.kind,
+    coins: reward.coins || 0,
+    stickerId: reward.sticker?.id || '',
+    fact: reward.fact || '',
+    at: new Date().toISOString()
+  };
+  user.chests[key] = saved;
+  return publicChest(key, saved);
+}
+
+function publicChest(key, saved) {
+  const sticker = saved.stickerId ? stickerById(saved.stickerId) : null;
+  const reward = {
+    id: key,
+    kind: saved.kind,
+    coins: saved.coins || 0,
+    sticker,
+    fact: saved.fact || ''
+  };
+  return { ...reward, label: chestLabel(reward) };
+}
+
+function stickerView(user) {
+  return stickerAlbum(user.stickers);
+}
+
+function quickStartView(user) {
+  const row = user.quickStart;
+  if (!row || row.pending !== true) return { pending: false, done: false, skipped: false };
+  return { pending: true, done: Boolean(row.done), skipped: Boolean(row.skipped) };
+}
+
 function countDoneChapters(user, grade) {
   const chapters = user.chapters && typeof user.chapters === 'object' ? user.chapters : {};
   return Object.values(chapters).filter(item => item && item.status === 'done' && String(item.grade) === String(grade)).length;
@@ -550,6 +619,7 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
   }
 
   let awarded = null;
+  let chest = null;
 
   if (type === 'chapter_open') {
     const key = chapterKey(meta.subject, meta.grade, meta.chapterId);
@@ -573,6 +643,7 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
   if (type === 'session_complete') {
     const key = chapterKey(meta.subject, meta.grade, meta.chapterId);
     const stamp = `${key}:${todayKey}`;
+    const alreadyDone = Boolean(user.chapters[key] && user.chapters[key].status === 'done');
     if (key && !user.sessionAwards[stamp]) {
       user.sessionAwards[stamp] = true;
       if (user.chapters[key]) user.chapters[key].status = 'done';
@@ -587,6 +658,9 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
         };
       }
       if (trusted) awarded = grantAward(user, AWARDS.session_complete, 'session_complete', note || 'Sesiune terminată', meta);
+      if (!alreadyDone && meta.subject && meta.chapterId) {
+        chest = openLessonChest(user, key);
+      }
     }
   }
 
@@ -667,7 +741,7 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
   if (LATE_BOUNDARY.has(type)) noteLateActivity(user);
 
   const entry = recordActivity(user, type, awarded?.coins || 0, note, { ...meta, awarded });
-  return { entry, awarded, summary: buildSummary(user) };
+  return { entry, awarded, summary: buildSummary(user), chest };
 }
 
 function currentGuard(user) {
@@ -1106,6 +1180,9 @@ function buildSummary(user) {
     xpToNext: progress.xpToNext,
     nextLevelAt: progress.nextLevelAt,
     levelSpan: progress.levelSpan,
+    lessonsToNext: lessonsUntilNext(progress.xpToNext),
+    quickStart: quickStartView(user),
+    stickers: stickerView(user),
     score: Math.round((done / total) * 100),
     chaptersDone: done,
     chaptersTotal: total,
@@ -1609,6 +1686,64 @@ function seePraise(email) {
   return { ok: true };
 }
 
+function quickStartPack(user) {
+  const view = quickStartView(user);
+  if (!view.pending || view.done || view.skipped) {
+    return { ok: true, ...view, questions: [] };
+  }
+  const pack = quizFor(user.userId, user.preferences.className);
+  return {
+    ok: true,
+    ...view,
+    subject: pack.subject,
+    grade: pack.grade,
+    chapterId: pack.chapterId,
+    title: pack.title,
+    questions: publicQuestions(pack.questions)
+  };
+}
+
+function getQuickStart(userId) {
+  return quickStartPack(ensureUser(userId));
+}
+
+function finishQuickStart(userId, answers) {
+  const user = ensureUser(userId);
+  const view = quickStartView(user);
+  if (!view.pending) return { ok: false, reason: 'not_offered', summary: buildSummary(user) };
+  if (view.done || view.skipped) {
+    return { ok: true, already: true, earnedXp: 0, summary: buildSummary(user) };
+  }
+  const pack = quizFor(user.userId, user.preferences.className);
+  const given = new Set((answers || []).map(item => item && item.id));
+  if (!pack.questions.every(item => given.has(item.id))) {
+    return { ok: false, reason: 'incomplete', summary: buildSummary(user) };
+  }
+  const correct = countCorrect(pack.questions, answers);
+  user.quickStart.done = true;
+  user.xp = (user.xp || 0) + QUIZ_XP;
+  return {
+    ok: true,
+    already: false,
+    earnedXp: QUIZ_XP,
+    correct,
+    total: pack.questions.length,
+    subject: pack.subject,
+    grade: pack.grade,
+    chapterId: pack.chapterId,
+    title: pack.title,
+    summary: buildSummary(user)
+  };
+}
+
+function skipQuickStart(userId) {
+  const user = ensureUser(userId);
+  const view = quickStartView(user);
+  if (!view.pending) return { ok: false, reason: 'not_offered', summary: buildSummary(user) };
+  if (!view.done) user.quickStart.skipped = true;
+  return { ok: true, skipped: true, earnedXp: 0, summary: buildSummary(user) };
+}
+
 module.exports = {
   ensureUser,
   getUser,
@@ -1649,6 +1784,9 @@ module.exports = {
   childShare,
   praiseChild,
   seePraise,
+  getQuickStart,
+  finishQuickStart,
+  skipQuickStart,
   deleteUser,
   pruneHistory,
   exportEconomyFor

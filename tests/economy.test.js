@@ -34,7 +34,10 @@ describe('economy purchases', () => {
     });
     expect(forged.status).toBe(200);
     expect(forged.body.awarded).toBeNull();
-    expect(forged.body.summary.balance).toBe(30);
+    const chestCoins = forged.body.chest?.kind === 'coins' ? forged.body.chest.coins : 0;
+    expect(chestCoins).toBeLessThanOrEqual(4);
+    expect(forged.body.summary.balance).toBe(30 + chestCoins);
+    expect(forged.body.summary.balance).toBeLessThan(40);
 
     const tooSoon = await agent.post('/api/economy/buy').send({ item_id: 'avatar-neon-fox' });
     expect(tooSoon.status).toBe(400);

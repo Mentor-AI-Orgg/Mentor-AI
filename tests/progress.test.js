@@ -66,7 +66,10 @@ describe('verified study progress', () => {
     });
     expect(session.status).toBe(200);
     expect(session.body.awarded).toBeNull();
-    expect(session.body.summary.balance).toBe(30);
+    expect(session.body.summary.xp).toBe(20);
+    const chestCoins = session.body.chest?.kind === 'coins' ? session.body.chest.coins : 0;
+    expect(chestCoins).toBeLessThanOrEqual(4);
+    expect(session.body.summary.balance).toBe(30 + chestCoins);
     expect(session.body.summary.chaptersDone).toBeGreaterThanOrEqual(1);
 
     for (let i = 0; i < 5; i += 1) {
