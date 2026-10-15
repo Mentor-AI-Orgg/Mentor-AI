@@ -4,7 +4,6 @@ import FocusTimer from '../components/FocusTimer.jsx';
 import FlashCards from '../components/FlashCards.jsx';
 import ChapterQuiz from '../components/ChapterQuiz.jsx';
 import LateNightCard from '../components/LateNightCard.jsx';
-import MysteryChest from '../components/MysteryChest.jsx';
 import { lateDecision, rememberNight, seenNight } from '../lateNight.js';
 import CardDeck from '../components/CardDeck.jsx';
 import StepProblem from '../components/StepProblem.jsx';
@@ -121,7 +120,6 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [sessionDone, setSessionDone] = useState(false);
-  const [chest, setChest] = useState(null);
   const [quizUnit, setQuizUnit] = useState(null);
   const [quizLesson, setQuizLesson] = useState(null);
   const [quizRun, setQuizRun] = useState(0);
@@ -466,7 +464,6 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
         meta: { subject, grade: activeGrade, chapterId: session.chapterId || openChapter, title: session.title, track: isEn ? 'en' : '' }
       });
       applyResult(result);
-      if (result.data?.chest) setChest(result.data.chest);
     }
   };
 
@@ -497,12 +494,6 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   return (
     <main className="screen-page learn-page animate-fadeIn">
       {nightOn && <LateNightCard onHome={goHome} onStay={stayNight} />}
-      {chest && (
-        <MysteryChest
-          reward={chest}
-          onClose={() => setChest(null)}
-        />
-      )}
       <header className="screen-header">
         <div className="learn-top-row">
           <MascotPresence />

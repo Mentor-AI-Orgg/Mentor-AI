@@ -3,7 +3,7 @@ const router = express.Router();
 const { STUDENTS_ONLY } = require('../middleware/auth');
 const { accountIsOpen } = require('../data/authStore');
 const { validateBody } = require('../middleware/validate');
-const { claimSchema, buySchema, equipSchema, progressSchema, quickStartFinishSchema } = require('../validation/schemas');
+const { claimSchema, buySchema, equipSchema, progressSchema } = require('../validation/schemas');
 const {
   getSummary,
   getCatalog,
@@ -16,10 +16,7 @@ const {
   getNotifications,
   markNotificationRead,
   sendParentReview,
-  seePraise,
-  getQuickStart,
-  finishQuickStart,
-  skipQuickStart
+  seePraise
 } = require('../data/economyStore');
 const { notifyParent, ALLOWED_TYPES } = require('../notify/parentActivity');
 
@@ -74,20 +71,6 @@ router.post('/notifications/:notificationId/read', (req, res) => {
   }
   const notification = markNotificationRead(req.params.notificationId);
   res.json({ success: true, notification });
-});
-
-router.get('/quick-start', (req, res) => {
-  res.json(getQuickStart(req.auth.email));
-});
-
-router.post('/quick-start/finish', validateBody(quickStartFinishSchema), (req, res) => {
-  const result = finishQuickStart(req.auth.email, req.body.answers || []);
-  res.status(result.ok ? 200 : 400).json(result);
-});
-
-router.post('/quick-start/skip', (req, res) => {
-  const result = skipQuickStart(req.auth.email);
-  res.status(result.ok ? 200 : 400).json(result);
 });
 
 router.post('/claim', validateBody(claimSchema), async (req, res) => {

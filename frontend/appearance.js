@@ -27,8 +27,6 @@ function applyProgress(summary = {}, prev = {}) {
     nextLevelAt: summary.nextLevelAt ?? prev.nextLevelAt,
     levelSpan: summary.levelSpan ?? prev.levelSpan,
     lessonsToNext: summary.lessonsToNext ?? prev.lessonsToNext,
-    quickStart: summary.quickStart || prev.quickStart || null,
-    stickers: Array.isArray(summary.stickers) ? summary.stickers : (prev.stickers || []),
     score: typeof summary.score === 'number' ? summary.score : prev.score,
     chaptersDone: summary.chaptersDone,
     chaptersTotal: summary.chaptersTotal,
