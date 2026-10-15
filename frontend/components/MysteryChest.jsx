@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import Mascota from './mascot/Mascota.jsx';
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion.js';
 
 const MysteryChest = ({ reward, onClose }) => {
@@ -13,9 +15,10 @@ const MysteryChest = ({ reward, onClose }) => {
 
   if (!reward) return null;
 
-  return (
+  const dialog = (
     <div className="chest-pop" role="dialog" aria-modal="true" aria-labelledby="chest-title">
       <div className="chest-card">
+        <Mascota mood="bucuros" size="md" />
         <div className={`chest-box ${open ? 'is-open' : ''}`} aria-hidden="true">
           <span className="chest-lid">📦</span>
         </div>
@@ -25,6 +28,8 @@ const MysteryChest = ({ reward, onClose }) => {
       </div>
     </div>
   );
+  if (typeof document === 'undefined') return dialog;
+  return createPortal(dialog, document.body);
 };
 
 export default MysteryChest;

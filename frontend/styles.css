@@ -324,6 +324,14 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   border-radius: inherit;
   background: linear-gradient(90deg, var(--lime), var(--aqua));
 }
+.onboarding-page.quick-start-end {
+  justify-content: center;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  gap: 8px;
+}
+.onboarding-page.quick-start-end .onboarding-actions { margin-top: 12px; padding-top: 0; }
+.onboarding-page.quick-start-end .onboarding-copy { margin-bottom: 0; }
 .quick-start-xp { margin: 8px 0 0; font: 800 1.6rem 'Space Grotesk', sans-serif; color: var(--ink); }
 .quick-start-card { margin-top: 18px; }
 .quick-start-question { font-size: 1.25rem; margin: 6px 0 12px; }
@@ -343,20 +351,24 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   position: fixed;
   inset: 0;
   z-index: 40;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
   padding: 16px;
   background: rgba(0, 0, 0, .45);
 }
 .chest-card {
   width: min(100%, 360px);
-  padding: 22px 18px;
+  margin: auto;
+  padding: 18px 18px 16px;
   border-radius: 22px;
   background: var(--surface, #14343a);
   border: 1px solid rgba(68, 214, 215, .45);
   text-align: center;
+  overflow: visible;
 }
-.chest-box { font-size: 4rem; line-height: 1; margin-bottom: 8px; }
+.chest-box { font-size: 2rem; line-height: 1; margin: 4px 0 8px; }
 .chest-box .chest-lid { display: inline-block; transform: translateY(6px) scale(.92); }
 .chest-box.is-open .chest-lid { transform: none; animation: chest-open .45s ease; }
 .chest-title { font-size: 1.35rem; margin: 0 0 8px; }
@@ -2211,6 +2223,31 @@ html[data-motion="off"] *::after {
 .mascota-md .mascota-figure { width: 120px; }
 .mascota-bust .mascota-figure { width: min(176px, 100%); }
 .mascota-sm .mascota-figure { width: 32px; }
+.quick-start-end .mascota-wrap,
+.chest-card .mascota-wrap { justify-items: center; width: 100%; }
+.quick-start-end .mascota-lg .mascota-figure,
+.chest-card .mascota-md .mascota-figure,
+.story-scene .mascota-md .mascota-figure,
+.home-page .mascot-stage .mascota-bust .mascota-figure {
+  width: auto;
+  max-width: 100%;
+}
+.quick-start-end .mascota,
+.chest-card .mascota,
+.story-scene .mascota,
+.home-page .mascot-stage .mascota {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+}
+.quick-start-end .mascota { max-width: min(200px, 54vw); max-height: 38dvh; }
+.chest-card .mascota { max-width: min(132px, 36vw); max-height: 24dvh; }
+.story-scene .mascota { max-width: min(112px, 32vw); max-height: 26dvh; }
+.story-pop-card .story-scene { align-items: center; }
+.home-page .mascot-stage { width: auto; max-width: min(120px, 32vw); }
+.home-page .mascot-stage .mascota { max-width: min(120px, 32vw); max-height: 22dvh; }
 .mascota {
   position: relative;
   z-index: 1;
@@ -2352,10 +2389,20 @@ html[data-motion="off"] *::after {
 }
 .mascot-stage { flex: 0 0 auto; width: min(176px, 34vw); max-width: 176px; }
 .mascot-stage.is-compact { width: min(120px, 30vw); max-width: 120px; }
+.home-page .mascot-stage { width: auto; max-width: min(120px, 32vw); }
 .mascot-stage .mascota-figure,
 .mascot-corner .mascota-figure { display: block; width: 100%; }
+.home-page .mascot-stage .mascota-figure { width: auto; max-width: 100%; }
 .mascot-celebrate .mascota-figure { display: block; width: min(240px, 70vw); }
 .mascot-stage .mascota { width: 100%; height: auto; max-height: min(220px, 34vh); max-height: min(220px, 34dvh); }
+.home-page .mascot-stage .mascota {
+  width: auto;
+  height: auto;
+  max-width: min(120px, 32vw);
+  max-height: 22dvh;
+  object-fit: contain;
+  object-position: center bottom;
+}
 .mascot-stage.is-compact .mascota { max-height: min(150px, 26vh); max-height: min(150px, 26dvh); }
 .lesson-card-body > .mascot-stage { float: right; margin: 0 0 8px 10px; }
 .lesson-card-actions { clear: both; }

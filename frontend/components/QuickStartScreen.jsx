@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import Mascota from './mascot/Mascota.jsx';
 import { MentorAPI } from '../apiClient.js';
 
@@ -34,6 +34,11 @@ const QuickStartScreen = ({ onLesson, onSkip }) => {
   const questions = Array.isArray(pack?.questions) ? pack.questions : [];
   const question = questions[index];
 
+  useLayoutEffect(() => {
+    if (!done && !empty) return;
+    window.scrollTo(0, 0);
+  }, [done, empty]);
+
   const skip = async () => {
     if (busy) return;
     setBusy(true);
@@ -64,7 +69,7 @@ const QuickStartScreen = ({ onLesson, onSkip }) => {
 
   if (empty) {
     return (
-      <main className="onboarding-page animate-fadeIn quick-start">
+      <main className="onboarding-page animate-fadeIn quick-start quick-start-end">
         <div className="onboarding-copy">
           <Mascota mood="salut" size="lg" />
           <p className="form-subtitle">Poți continua când vrei.</p>
@@ -78,7 +83,7 @@ const QuickStartScreen = ({ onLesson, onSkip }) => {
 
   if (done) {
     return (
-      <main className="onboarding-page animate-fadeIn quick-start">
+      <main className="onboarding-page animate-fadeIn quick-start quick-start-end">
         <div className="onboarding-copy">
           <Mascota mood="sarbatoare" size="lg" />
           <p className="quick-start-xp">+20 XP, ai început!</p>

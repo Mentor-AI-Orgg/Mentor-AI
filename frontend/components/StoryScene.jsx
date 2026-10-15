@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import Mascota from './mascot/Mascota.jsx';
 import { STORY_TITLE } from '../config/mascot.js';
 
@@ -6,7 +7,7 @@ const StoryScene = ({ scene, onClose, compact = false }) => {
   const lines = Array.isArray(scene.lines) ? scene.lines : [];
   return (
     <article className={`story-scene ${compact ? 'is-compact' : ''}`}>
-      <Mascota mood={scene.mood || 'salut'} size={compact ? 'sm' : 'md'} />
+      <Mascota mood={scene.mood || 'salut'} size="md" />
       <div>
         {scene.chapterTitle && <p className="eyebrow">{scene.chapterTitle}</p>}
         {lines.map(line => <p key={line}>{line}</p>)}
@@ -20,7 +21,7 @@ const StoryScene = ({ scene, onClose, compact = false }) => {
 
 const StoryPop = ({ scene, onClose }) => {
   if (!scene) return null;
-  return (
+  const dialog = (
     <div className="chest-pop" role="dialog" aria-modal="true" aria-labelledby="story-pop-title">
       <div className="chest-card story-pop-card">
         <h2 id="story-pop-title" className="display-font chest-title">{STORY_TITLE}</h2>
@@ -29,6 +30,8 @@ const StoryPop = ({ scene, onClose }) => {
       </div>
     </div>
   );
+  if (typeof document === 'undefined') return dialog;
+  return createPortal(dialog, document.body);
 };
 
 export default StoryScene;
