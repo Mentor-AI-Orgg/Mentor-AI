@@ -23,7 +23,6 @@ import { logoutNotice } from './logoutNotice.js';
 import { ConsentWaitScreen, ConsentScreen, ParentScreen } from './components/ConsentScreens.jsx';
 import OnboardingScreen from './components/OnboardingScreen.jsx';
 import StartLessonScreen from './components/StartLessonScreen.jsx';
-import QuickStartScreen from './components/QuickStartScreen.jsx';
 import RenameScreen from './components/RenameScreen.jsx';
 import ModerationScreen from './screens/ModerationScreen.jsx';
 import OwnerStatsScreen from './screens/OwnerStatsScreen.jsx';
@@ -263,15 +262,7 @@ function AppShell({ userData, setUserData }) {
       showToast(t('toast.calendarConnected'), 'success');
       return;
     }
-    const summary = await syncEconomy();
-    const offerStart = summary?.quickStart?.pending && !summary.quickStart.done && !summary.quickStart.skipped;
-    const deepLink = route.kind === 'app' && !['home', 'quick-start', 'start-lesson'].includes(route.screen);
-    if (offerStart && !deepLink) {
-      setScreen('quick-start');
-      setNavScreen('home');
-      writeHash('quick-start', {}, 'replace');
-      return;
-    }
+    await syncEconomy();
     if (route.kind === 'app') {
       if (route.extras) {
         setStudyFocus(prev => ({
@@ -321,7 +312,7 @@ function AppShell({ userData, setUserData }) {
       setOnboardingStep(user.name ? 2 : 1);
       setScreen('onboarding');
       writeHash('onboarding', {}, 'replace');
-      MentorAPI.claimReward({ type: 'login_bonus' }).then(() => syncEconomy()).catch(() => null);
+      MentorAPI.claimReward({ type: 'login_bonus' }).then(() => syncEconomy());
       showToast(t('toast.welcome'), 'success');
       return { success: true };
     }
@@ -331,14 +322,8 @@ function AppShell({ userData, setUserData }) {
     writeHash('home', {}, 'replace');
 
     await MentorAPI.claimReward({ type: 'login_bonus' }).catch(() => null);
-    const summary = await syncEconomy();
+    await syncEconomy();
     showToast(t('toast.welcome'), 'success');
-    if (summary?.quickStart?.pending && !summary.quickStart.done && !summary.quickStart.skipped) {
-      setScreen('quick-start');
-      setNavScreen('home');
-      writeHash('quick-start', {}, 'replace');
-      return { success: true };
-    }
     return { success: true };
   };
 
@@ -382,11 +367,7 @@ function AppShell({ userData, setUserData }) {
     }
 
     const user = registration.data?.user || {};
-    const account = applyAccount({ ...user, consent: user.consent || 'notified', parentEmail: formData.parentEmail }, userRef.current);
-    userRef.current = account;
-    setUserData(account);
-    await MentorAPI.claimReward({ type: 'login_bonus' }).catch(() => null);
-    await syncEconomy({ class: formData.class || user.class, name: user.name || '' });
+    setUserData(prev => applyAccount({ ...user, consent: user.consent || 'notified', parentEmail: formData.parentEmail }, prev));
     if (!user.hasCompletedOnboarding) {
       setOnboardingData(prev => ({ ...prev, name: user.name || prev.name, class: formData.class || prev.class }));
       setOnboardingStep(2);
@@ -449,18 +430,12 @@ function AppShell({ userData, setUserData }) {
       };
       await MentorAPI.updateProfile(payload);
       setUserData(prev => ({ ...prev, ...payload }));
-      await MentorAPI.claimReward({ type: 'login_bonus' }).catch(() => null);
-      const summary = await syncEconomy({ class: payload.class, name: payload.name });
-      showToast(t('toast.onboardingDone'), 'success');
-      if (summary?.quickStart?.pending && !summary.quickStart.done && !summary.quickStart.skipped) {
-        setScreen('quick-start');
-        setNavScreen('home');
-        writeHash('quick-start', {}, 'replace');
-        return;
-      }
+      await MentorAPI.claimReward({ type: 'login_bonus' });
+      await syncEconomy({ class: payload.class, name: payload.name });
       setScreen('start-lesson');
       setNavScreen('home');
       writeHash('start-lesson', {}, 'replace');
+      showToast(t('toast.onboardingDone'), 'success');
       return;
     }
     setOnboardingStep(prev => prev + 1);
@@ -641,18 +616,6 @@ function AppShell({ userData, setUserData }) {
             userData={userData}
             onStart={extras => handleNavigate('learn', extras)}
             onLater={() => handleNavigate('home')}
-          />
-        );
-      case 'quick-start':
-        return (
-          <QuickStartScreen
-            onLesson={pack => handleNavigate('learn', {
-              subject: pack?.subject || 'matematica',
-              grade: pack?.grade || userData.class || '5',
-              chapter: pack?.chapterId || null,
-              track: null
-            })}
-            onSkip={() => handleNavigate('home')}
           />
         );
       case 'home':

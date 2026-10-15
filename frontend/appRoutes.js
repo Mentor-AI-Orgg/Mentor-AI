@@ -67,7 +67,6 @@ export function parseAppHash(hash) {
     };
   }
   if (head === 'incepe') return { kind: 'app', screen: 'start-lesson', navScreen: 'home' };
-  if (head === 'inceput') return { kind: 'app', screen: 'quick-start', navScreen: 'home' };
   if (head === 'provocare') return { kind: 'app', screen: 'provocare', navScreen: 'home' };
   if (head === 'progres') return { kind: 'app', screen: 'progres', navScreen: 'home' };
 
@@ -131,8 +130,6 @@ export function hashForRoute(screen, extras = {}) {
       return '#/caiet';
     case 'start-lesson':
       return '#/incepe';
-    case 'quick-start':
-      return '#/inceput';
     case 'provocare':
       return '#/provocare';
     case 'progres':
