@@ -50,7 +50,7 @@ function decideChest({ userId, key, owned = [], coinRoom = 0 }) {
 function chestLabel(reward) {
   if (!reward) return '';
   if (reward.kind === 'coins') return `Ai găsit ${reward.coins} monede.`;
-  if (reward.kind === 'sticker') return `${reward.sticker.emoji} ${reward.sticker.name}. O păstrezi la Povestea ${possessiveName()}.`;
+  if (reward.kind === 'sticker') return `${reward.sticker.emoji} ${reward.sticker.name}.`;
   return reward.fact;
 }
 

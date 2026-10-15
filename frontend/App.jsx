@@ -680,7 +680,6 @@ function AppShell({ userData, setUserData }) {
             onToast={showToast}
             onProfileSaved={user => setUserData(prev => applyAccount(user, prev))}
             onNavigate={handleNavigate}
-            onProgress={syncEconomy}
             section={screenExtras.section || ''}
           />
         );

@@ -374,10 +374,6 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .chest-title { font-size: 1.35rem; margin: 0 0 8px; }
 .chest-label { margin: 0 0 16px; }
 .chest-card .accent-button { width: 100%; }
-.story-scene { display: flex; gap: 12px; align-items: flex-start; margin-top: 12px; text-align: left; }
-.story-scene p { margin: 0 0 6px; }
-.story-pop-card .story-scene { margin-bottom: 14px; }
-.story-stickers { margin-top: 12px; }
 @keyframes chest-open {
   from { transform: translateY(8px) scale(.9); }
   to { transform: none; }
@@ -2227,14 +2223,12 @@ html[data-motion="off"] *::after {
 .chest-card .mascota-wrap { justify-items: center; width: 100%; }
 .quick-start-end .mascota-lg .mascota-figure,
 .chest-card .mascota-md .mascota-figure,
-.story-scene .mascota-md .mascota-figure,
 .home-page .mascot-stage .mascota-bust .mascota-figure {
   width: auto;
   max-width: 100%;
 }
 .quick-start-end .mascota,
 .chest-card .mascota,
-.story-scene .mascota,
 .home-page .mascot-stage .mascota {
   width: auto;
   height: auto;
@@ -2244,8 +2238,6 @@ html[data-motion="off"] *::after {
 }
 .quick-start-end .mascota { max-width: min(200px, 54vw); max-height: 38dvh; }
 .chest-card .mascota { max-width: min(132px, 36vw); max-height: 24dvh; }
-.story-scene .mascota { max-width: min(112px, 32vw); max-height: 26dvh; }
-.story-pop-card .story-scene { align-items: center; }
 .home-page .mascot-stage { width: auto; max-width: min(120px, 32vw); }
 .home-page .mascot-stage .mascota { max-width: min(120px, 32vw); max-height: 22dvh; }
 .mascota {

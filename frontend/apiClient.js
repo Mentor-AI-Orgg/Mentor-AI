@@ -676,19 +676,6 @@ const MentorAPI = {
     }
   },
 
-  async seeStory(id) {
-    try {
-      const data = await safeFetchJson('/api/economy/story-seen', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id })
-      });
-      return { success: true, data, fallback: false };
-    } catch (error) {
-      return { success: false, data: null, error: error?.message || '', fallback: true };
-    }
-  },
-
   async claimReward(payload) {
     try {
       const data = await safeFetchJson('/api/economy/claim', {

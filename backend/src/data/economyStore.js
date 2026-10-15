@@ -6,7 +6,6 @@ const { getGuide } = require('./gimnaziuGuide');
 const { levelFromXp, touchStudy, lessonsUntilNext, AWARDS } = require('./progressEngine');
 const { QUIZ_XP, quizFor, publicQuestions, countCorrect } = require('./quickStart');
 const { DAILY_COIN_MAX, stickerById, decideChest, chestLabel } = require('./lessonChest');
-const { sceneFor } = require('./zecitaStory');
 const { TITLE_CATALOG, unlockedTitleIds, titleById, noteEarlyBird } = require('./titles');
 const { SHOP_CATALOG, shopItemById } = require('./shopCatalog');
 const { dayKey, addDays, bucharestClock, isLateHour, nightKey } = require('../ops/bucharestDay');
@@ -94,9 +93,6 @@ function createDefaultUser(userId) {
     quickStart: { pending: true, done: false, skipped: false },
     chests: {},
     chestDay: { date: '', coins: 0 },
-    stories: {},
-    storyOrder: [],
-    storyUnseen: '',
     stickers: [],
     chapters: {},
     savedSessions: [],
@@ -138,9 +134,6 @@ function ensureUser(userId, patch = {}) {
   if (!current.chapters || typeof current.chapters !== 'object') current.chapters = {};
   if (!current.chests || typeof current.chests !== 'object') current.chests = {};
   if (!current.chestDay || typeof current.chestDay !== 'object') current.chestDay = { date: '', coins: 0 };
-  if (!current.stories || typeof current.stories !== 'object') current.stories = {};
-  if (!Array.isArray(current.storyOrder)) current.storyOrder = [];
-  if (typeof current.storyUnseen !== 'string') current.storyUnseen = '';
   if (!Array.isArray(current.stickers)) current.stickers = [];
   if (!Array.isArray(current.savedSessions)) current.savedSessions = [];
   if (!current.flashKnown) current.flashKnown = {};
@@ -564,30 +557,6 @@ function publicChest(key, saved) {
   return { ...reward, label: chestLabel(reward) };
 }
 
-function unlockChapterStory(user, key, title) {
-  if (!key || user.stories[key]) return null;
-  const scene = sceneFor(user.storyOrder.length, title);
-  user.stories[key] = { ...scene, at: new Date().toISOString() };
-  user.storyOrder.push(key);
-  user.storyUnseen = scene.id;
-  return { fresh: true, scene: publicStory(user.stories[key]) };
-}
-
-function publicStory(scene) {
-  if (!scene) return null;
-  return {
-    id: scene.id,
-    mood: scene.mood,
-    lines: Array.isArray(scene.lines) ? scene.lines.slice(0, 4) : [],
-    chapterTitle: scene.chapterTitle || ''
-  };
-}
-
-function storyView(user) {
-  const scenes = (user.storyOrder || []).map(key => publicStory(user.stories[key])).filter(Boolean);
-  return { scenes, unseenId: user.storyUnseen || '' };
-}
-
 function stickerView(user) {
   return (user.stickers || []).map(stickerById).filter(Boolean);
 }
@@ -649,7 +618,6 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
 
   let awarded = null;
   let chest = null;
-  let story = null;
 
   if (type === 'chapter_open') {
     const key = chapterKey(meta.subject, meta.grade, meta.chapterId);
@@ -690,7 +658,6 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
       if (trusted) awarded = grantAward(user, AWARDS.session_complete, 'session_complete', note || 'Sesiune terminată', meta);
       if (!alreadyDone && meta.subject && meta.chapterId) {
         chest = openLessonChest(user, key);
-        story = unlockChapterStory(user, key, meta.title || note);
       }
     }
   }
@@ -772,7 +739,7 @@ function recordProgress({ userId, type, meta = {}, note = '', trusted = false })
   if (LATE_BOUNDARY.has(type)) noteLateActivity(user);
 
   const entry = recordActivity(user, type, awarded?.coins || 0, note, { ...meta, awarded });
-  return { entry, awarded, summary: buildSummary(user), chest, story };
+  return { entry, awarded, summary: buildSummary(user), chest };
 }
 
 function currentGuard(user) {
@@ -1213,7 +1180,6 @@ function buildSummary(user) {
     levelSpan: progress.levelSpan,
     lessonsToNext: lessonsUntilNext(progress.xpToNext),
     quickStart: quickStartView(user),
-    story: storyView(user),
     stickers: stickerView(user),
     score: Math.round((done / total) * 100),
     chaptersDone: done,
@@ -1776,12 +1742,6 @@ function skipQuickStart(userId) {
   return { ok: true, skipped: true, earnedXp: 0, summary: buildSummary(user) };
 }
 
-function seeStory(userId, id) {
-  const user = ensureUser(userId);
-  if (user.storyUnseen && user.storyUnseen === String(id || '')) user.storyUnseen = '';
-  return { ok: true, summary: buildSummary(user) };
-}
-
 module.exports = {
   ensureUser,
   getUser,
@@ -1825,7 +1785,6 @@ module.exports = {
   getQuickStart,
   finishQuickStart,
   skipQuickStart,
-  seeStory,
   deleteUser,
   pruneHistory,
   exportEconomyFor

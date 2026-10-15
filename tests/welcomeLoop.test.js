@@ -67,7 +67,7 @@ describe('bonusul de cont, startul scurt, cufărul și povestea', () => {
     expect(late.body.summary.xp).toBe(0);
   });
 
-  it('deschide cufărul și povestea o singură dată pe lecție, pe server', async () => {
+  it('deschide cufărul o singură dată pe lecție, pe server', async () => {
     const { app } = createApp({ autosave: false });
     const created = await registerGranted(app);
     const email = auth.findByUsername(created.username).email;
@@ -77,20 +77,10 @@ describe('bonusul de cont, startul scurt, cufărul și povestea', () => {
     expect(first.body.awarded).toBeNull();
     expect(['coins', 'sticker', 'fact']).toContain(first.body.chest.kind);
     expect(first.body.chest.label.length).toBeGreaterThan(3);
-    expect(first.body.story.fresh).toBe(true);
-    expect(first.body.story.scene.lines.length).toBeGreaterThanOrEqual(2);
-    expect(first.body.story.scene.lines.length).toBeLessThanOrEqual(4);
+    expect(first.body.story).toBeUndefined();
 
     const again = await created.agent.post('/api/economy/progress').send({ type: 'session_complete', meta });
     expect(again.body.chest).toBeNull();
-    expect(again.body.story).toBeNull();
-
-    const summary = await created.agent.get('/api/economy/summary');
-    expect(summary.body.summary.story.scenes).toHaveLength(1);
-    expect(summary.body.summary.story.unseenId).toBe(first.body.story.scene.id);
-    const seen = await created.agent.post('/api/economy/story-seen').send({ id: first.body.story.scene.id });
-    expect(seen.body.summary.story.unseenId).toBe('');
-    expect(seen.body.summary.story.scenes).toHaveLength(1);
 
     const other = economy.recordProgress({
       userId: email,
@@ -98,7 +88,7 @@ describe('bonusul de cont, startul scurt, cufărul și povestea', () => {
       meta: { subject: 'matematica', grade: '5', chapterId: 'fractii', title: 'Fracții' }
     });
     expect(other.chest).toBeTruthy();
-    expect(other.story.scene.id).not.toBe(first.body.story.scene.id);
+    expect(other.story).toBeUndefined();
 
     const shopItems = shop.SHOP_CATALOG.map(item => item.id);
     expect(shopItems).not.toContain('zecita-stea');
@@ -134,23 +124,23 @@ describe('bonusul de cont, startul scurt, cufărul și povestea', () => {
     expect(home).toContain('lessonsLabel');
     expect(home).toContain('level-nudge');
     expect(home).not.toContain("onNavigate('progres')");
-    expect(profile).toContain('STORY_TITLE');
-    expect(profile).toContain('id="profil-poveste"');
+    expect(profile).not.toContain('profil-poveste');
+    expect(profile).not.toContain('STORY_TITLE');
     expect(start).toContain('+20 XP, ai început!');
     expect(start).toContain('quick-start-end');
     expect(start).toContain('Sari peste');
     expect(start).toContain('Spre prima lecție');
     expect(start).not.toMatch(/sigur că|pierzi|doar azi|ofertă/i);
     const chestUi = fs.readFileSync('frontend/components/MysteryChest.jsx', 'utf8');
-    const storyUi = fs.readFileSync('frontend/components/StoryScene.jsx', 'utf8');
     const css = fs.readFileSync('frontend/styles.css', 'utf8');
+    const store = fs.readFileSync('backend/src/data/economyStore.js', 'utf8');
     expect(chestUi).toContain('<Mascota');
     expect(chestUi).not.toContain('size="sm"');
-    expect(storyUi).toContain('size="md"');
-    expect(storyUi).not.toContain("'sm'");
     expect(css).toContain('.quick-start-end .mascota');
     expect(css).toContain('.chest-card .mascota');
-    expect(css).toContain('.story-scene .mascota');
+    expect(css).not.toContain('.story-scene');
     expect(css).toContain('.home-page .mascot-stage .mascota');
+    expect(store).not.toContain('zecitaStory');
+    expect(store).not.toContain('seeStory');
   });
 });

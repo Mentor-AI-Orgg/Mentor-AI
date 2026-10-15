@@ -183,10 +183,6 @@ const quickStartFinishSchema = z.object({
   }).strict()).max(3)
 }).strict();
 
-const storySeenSchema = z.object({
-  id: z.string().trim().min(1).max(80)
-}).strict();
-
 const progressSchema = z.object({
   type: z.enum([
     "chapter_open",
@@ -336,7 +332,6 @@ module.exports = {
   equipSchema,
   progressSchema,
   quickStartFinishSchema,
-  storySeenSchema,
   accessCodeRequestSchema,
   accessCodeVerifySchema,
   calendarEventSchema,

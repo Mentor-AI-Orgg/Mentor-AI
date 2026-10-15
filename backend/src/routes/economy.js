@@ -3,7 +3,7 @@ const router = express.Router();
 const { STUDENTS_ONLY } = require('../middleware/auth');
 const { accountIsOpen } = require('../data/authStore');
 const { validateBody } = require('../middleware/validate');
-const { claimSchema, buySchema, equipSchema, progressSchema, quickStartFinishSchema, storySeenSchema } = require('../validation/schemas');
+const { claimSchema, buySchema, equipSchema, progressSchema, quickStartFinishSchema } = require('../validation/schemas');
 const {
   getSummary,
   getCatalog,
@@ -19,8 +19,7 @@ const {
   seePraise,
   getQuickStart,
   finishQuickStart,
-  skipQuickStart,
-  seeStory
+  skipQuickStart
 } = require('../data/economyStore');
 const { notifyParent, ALLOWED_TYPES } = require('../notify/parentActivity');
 
@@ -89,10 +88,6 @@ router.post('/quick-start/finish', validateBody(quickStartFinishSchema), (req, r
 router.post('/quick-start/skip', (req, res) => {
   const result = skipQuickStart(req.auth.email);
   res.status(result.ok ? 200 : 400).json(result);
-});
-
-router.post('/story-seen', validateBody(storySeenSchema), (req, res) => {
-  res.json(seeStory(req.auth.email, req.body.id));
 });
 
 router.post('/claim', validateBody(claimSchema), async (req, res) => {

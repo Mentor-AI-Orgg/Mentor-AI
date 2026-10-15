@@ -5,7 +5,6 @@ import FlashCards from '../components/FlashCards.jsx';
 import ChapterQuiz from '../components/ChapterQuiz.jsx';
 import LateNightCard from '../components/LateNightCard.jsx';
 import MysteryChest from '../components/MysteryChest.jsx';
-import { StoryPop } from '../components/StoryScene.jsx';
 import { lateDecision, rememberNight, seenNight } from '../lateNight.js';
 import CardDeck from '../components/CardDeck.jsx';
 import StepProblem from '../components/StepProblem.jsx';
@@ -123,7 +122,6 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
   const [saved, setSaved] = useState(false);
   const [sessionDone, setSessionDone] = useState(false);
   const [chest, setChest] = useState(null);
-  const [storyPop, setStoryPop] = useState(null);
   const [quizUnit, setQuizUnit] = useState(null);
   const [quizLesson, setQuizLesson] = useState(null);
   const [quizRun, setQuizRun] = useState(0);
@@ -469,7 +467,6 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
       });
       applyResult(result);
       if (result.data?.chest) setChest(result.data.chest);
-      if (result.data?.story?.fresh && result.data.story.scene) setStoryPop(result.data.story.scene);
     }
   };
 
@@ -504,15 +501,6 @@ const LearnScreen = ({ userData, studyFocus = {}, onNavigate, onRewardClaim, onP
         <MysteryChest
           reward={chest}
           onClose={() => setChest(null)}
-        />
-      )}
-      {!chest && storyPop && (
-        <StoryPop
-          scene={storyPop}
-          onClose={async () => {
-            await MentorAPI.seeStory(storyPop.id);
-            setStoryPop(null);
-          }}
         />
       )}
       <header className="screen-header">
