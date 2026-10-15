@@ -645,6 +645,50 @@ const MentorAPI = {
     }
   },
 
+  async quickStart() {
+    try {
+      const data = await safeFetchJson('/api/economy/quick-start');
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, error: error?.message || '', fallback: true };
+    }
+  },
+
+  async finishQuickStart(answers) {
+    try {
+      const data = await safeFetchJson('/api/economy/quick-start/finish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers })
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, error: error?.message || '', fallback: true };
+    }
+  },
+
+  async skipQuickStart() {
+    try {
+      const data = await safeFetchJson('/api/economy/quick-start/skip', { method: 'POST' });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, error: error?.message || '', fallback: true };
+    }
+  },
+
+  async seeStory(id) {
+    try {
+      const data = await safeFetchJson('/api/economy/story-seen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      return { success: true, data, fallback: false };
+    } catch (error) {
+      return { success: false, data: null, error: error?.message || '', fallback: true };
+    }
+  },
+
   async claimReward(payload) {
     try {
       const data = await safeFetchJson('/api/economy/claim', {

@@ -6,6 +6,7 @@ import { dailyGoalFrom, weeklyGoalFrom } from '../weeklyGoal.js';
 import { useI18n } from '../i18n/index.jsx';
 import { avatarIcon, itemEmoji } from '../appearance.js';
 import { xpProgress } from '../xpProgress.js';
+import { lessonsLabel } from '../levelLessons.js';
 import { dailySlogan } from '../slogans.js';
 import QuoteCard from '../components/QuoteCard.jsx';
 import Mascota from '../components/mascot/Mascota.jsx';
@@ -137,6 +138,12 @@ const HomeScreen = ({ userData, onNavigate, onProgress }) => {
         </span>
       </p>
       {userData.streakFrozeYesterday && <p className="streak-freeze">Înghețarea a acoperit ieri.</p>}
+      <p className="level-nudge" aria-label={lessonsLabel(bar.toNext, bar.nextLevel)}>
+        <span>{lessonsLabel(bar.toNext, bar.nextLevel)}</span>
+        <span className="progress-track progress-track-xp" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={bar.pct}>
+          <span style={{ width: `${bar.pct}%` }} />
+        </span>
+      </p>
       <button type="button" className="challenge-card" onClick={() => onNavigate('provocare')}>
         <span className="eyebrow">O dată pe zi</span>
         <span className="challenge-card-title">Provocarea zilei</span>

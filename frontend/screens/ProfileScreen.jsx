@@ -8,6 +8,8 @@ import ReportButton from '../components/ReportButton.jsx';
 import { passwordHint } from '../passwordHint.js';
 import { appearancePayload, readAppearance, saveAppearance } from '../themePrefs.js';
 import Mascota from '../components/mascot/Mascota.jsx';
+import StoryScene from '../components/StoryScene.jsx';
+import { MASCOT_NAME, STORY_TITLE } from '../config/mascot.js';
 
 const CLASSES = ['5', '6', '7', '8'];
 
@@ -40,7 +42,7 @@ const PROFILE_ANCHORS = {
   parinte: 'profil-parinte'
 };
 
-const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, onNavigate, section = '' }) => {
+const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, onNavigate, onProgress, section = '' }) => {
   const { t } = useI18n();
   const [inbox, setInbox] = useState([]);
   const [skills, setSkills] = useState({ log: [], strengths: [], weaknesses: [] });
@@ -335,6 +337,30 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
           </button>
         </div>
       </div>
+
+      <section id="profil-poveste" className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
+        <div className="eyebrow">{MASCOT_NAME}</div>
+        <h3 className="display-font profile-tool-title">{STORY_TITLE}</h3>
+        {(userData.story?.scenes || []).length === 0 && (
+          <p>Prima scenă se deschide când termini o lecție.</p>
+        )}
+        {(userData.story?.scenes || []).map(scene => (
+          <StoryScene
+            key={scene.id}
+            scene={scene}
+            compact
+            onClose={scene.id === userData.story?.unseenId ? async () => {
+              await MentorAPI.seeStory(scene.id);
+              if (onProgress) await onProgress();
+            } : undefined}
+          />
+        ))}
+        {(userData.stickers || []).length > 0 && (
+          <p className="story-stickers">
+            De la cufăr: {(userData.stickers || []).map(item => `${item.emoji} ${item.name}`).join(' · ')}
+          </p>
+        )}
+      </section>
 
       <section id="profil-cont" className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">
         <div className="eyebrow">Editează</div>

@@ -66,7 +66,23 @@ const AWARDS = {
   focus_50: { coins: 20, xp: 18 },
   mentor_message: { coins: 4, xp: 10 },
   streak_day: { coins: 5, xp: 5 },
-  chapter_test: { coins: 10, xp: 15 }
+  chapter_test: { coins: 10, xp: 15 },
+  quick_start: { coins: 0, xp: 20 }
 };
 
-module.exports = { yesterdayKey, levelFromXp, touchStudy, AWARDS, XP_THRESHOLDS, XP_AFTER };
+function lessonsUntilNext(xpToNext) {
+  const left = Math.max(0, Number(xpToNext) || 0);
+  const lesson = Math.max(1, Number(AWARDS.session_complete.xp) || 25);
+  if (!left) return 0;
+  return Math.ceil(left / lesson);
+}
+
+module.exports = {
+  yesterdayKey,
+  levelFromXp,
+  touchStudy,
+  AWARDS,
+  XP_THRESHOLDS,
+  XP_AFTER,
+  lessonsUntilNext
+};

@@ -176,6 +176,17 @@ const equipSchema = z.object({
   slot: z.enum(["avatar", "background", "title"]).optional()
 });
 
+const quickStartFinishSchema = z.object({
+  answers: z.array(z.object({
+    id: z.string().trim().min(1).max(80),
+    choice: z.number().int().min(0).max(5)
+  }).strict()).max(3)
+}).strict();
+
+const storySeenSchema = z.object({
+  id: z.string().trim().min(1).max(80)
+}).strict();
+
 const progressSchema = z.object({
   type: z.enum([
     "chapter_open",
@@ -324,6 +335,8 @@ module.exports = {
   buySchema,
   equipSchema,
   progressSchema,
+  quickStartFinishSchema,
+  storySeenSchema,
   accessCodeRequestSchema,
   accessCodeVerifySchema,
   calendarEventSchema,
