@@ -334,11 +334,16 @@ const ProfileScreen = ({ userData, onBack, onLogout, onToast, onProfileSaved, on
             <i className="fas fa-circle-question" /> Ajutor
           </button>
         </div>
-        <p className="profile-stickers">
-          Stickere: {(userData.stickers || []).length
-            ? userData.stickers.map(item => `${item.emoji} ${item.name}`).join(' · ')
-            : 'încă niciunul.'}
-        </p>
+        <div className="profile-stickers">
+          <p>Stickere: {(userData.stickers || []).filter(item => item.owned).length}/{(userData.stickers || []).length}</p>
+          <ul className="profile-sticker-row">
+            {(userData.stickers || []).map(item => (
+              <li key={item.id} className={item.owned ? 'profile-sticker' : 'profile-sticker is-missing'}>
+                <span aria-hidden="true">{item.emoji}</span> {item.name}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       <section id="profil-cont" className="surface mx-5 mt-5 rounded-3xl p-5 profile-tool-card">

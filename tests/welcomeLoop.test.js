@@ -131,6 +131,10 @@ describe('bonusul de cont, startul scurt și cufărul', () => {
     });
     expect(again.kind).toBe('fact');
     expect(chest.FACTS).toContain(again.fact);
+    const album = chest.stickerAlbum(['zecita-stea']);
+    expect(album).toHaveLength(chest.STICKERS.length);
+    expect(album.filter(item => item.owned)).toEqual([expect.objectContaining({ id: 'zecita-stea', owned: true })]);
+    expect(album.find(item => item.id === 'zecita-cana').owned).toBe(false);
   });
 
   it('spune câte lecții mai sunt până la nivelul următor', () => {
@@ -155,6 +159,8 @@ describe('bonusul de cont, startul scurt și cufărul', () => {
     expect(profile).not.toContain('profil-poveste');
     expect(profile).not.toContain('STORY_TITLE');
     expect(profile).toContain('Stickere');
+    expect(profile).toContain('is-missing');
+    expect(profile).toContain('item.owned');
     const chestSrc = fs.readFileSync('backend/src/data/lessonChest.js', 'utf8');
     expect(chestSrc).not.toMatch(/Povestea/);
     expect(chestSrc).not.toMatch(/[—–]/);

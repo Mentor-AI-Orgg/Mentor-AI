@@ -5,7 +5,7 @@ const { needsMigration, migrateUserLessonIds, migrateNotificationList } = requir
 const { getGuide } = require('./gimnaziuGuide');
 const { levelFromXp, touchStudy, lessonsUntilNext, AWARDS } = require('./progressEngine');
 const { QUIZ_XP, quizFor, publicQuestions, countCorrect } = require('./quickStart');
-const { DAILY_COIN_MAX, stickerById, decideChest, chestLabel } = require('./lessonChest');
+const { DAILY_COIN_MAX, stickerById, stickerAlbum, decideChest, chestLabel } = require('./lessonChest');
 const { TITLE_CATALOG, unlockedTitleIds, titleById, noteEarlyBird } = require('./titles');
 const { SHOP_CATALOG, shopItemById } = require('./shopCatalog');
 const { dayKey, addDays, bucharestClock, isLateHour, nightKey } = require('../ops/bucharestDay');
@@ -560,7 +560,7 @@ function publicChest(key, saved) {
 }
 
 function stickerView(user) {
-  return (user.stickers || []).map(stickerById).filter(Boolean);
+  return stickerAlbum(user.stickers);
 }
 
 function quickStartView(user) {

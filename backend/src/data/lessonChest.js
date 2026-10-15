@@ -101,6 +101,16 @@ function stickerById(id) {
   return STICKERS.find(item => item.id === id) || null;
 }
 
+function stickerAlbum(ownedIds = []) {
+  const owned = new Set(ownedIds || []);
+  return STICKERS.map(item => ({
+    id: item.id,
+    emoji: item.emoji,
+    name: item.name,
+    owned: owned.has(item.id)
+  }));
+}
+
 function pickFact(userId, key, seenFacts) {
   const seen = new Set(seenFacts || []);
   const fresh = FACTS.filter(item => !seen.has(item));
@@ -136,6 +146,7 @@ module.exports = {
   STICKERS,
   FACTS,
   stickerById,
+  stickerAlbum,
   decideChest,
   chestLabel
 };
