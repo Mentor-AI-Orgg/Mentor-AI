@@ -27,6 +27,11 @@
 // mentor-ai.json.pending.<instanceId>. Procesul care ține lock-ul le unește
 // peste disc, fără să înlocuiască un câmp care există deja.
 //
+// Lock-ul ține și build-ul. Dacă îl ține un build mai vechi (sau un lock fără
+// build), procesul nou îl preia și unește la fel. Doi procese din același
+// build nu se fură unul pe altul. La deploy, procesul vechi lasă lock-ul și
+// iese, ca să nu rămână lângă cel nou.
+//
 // Fișierul are revizie monotonă, savedAt și instanceId. Înainte de fiecare
 // scriere recitim antetul, sub lock. Dacă discul e mai nou, sau l-a scris alt
 // proces după ce noi am încărcat, păstrăm discul și adăugăm doar cheile care
@@ -36,6 +41,7 @@
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const { currentBuildId } = require("../ops/buildId");
 
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "..", "..", "..", "data");
 // Numele tehnic vechi al fișierului rămâne intenționat: o redenumire ar pierde datele.
@@ -49,6 +55,9 @@ const STALE_HEARTBEAT_MS = 30 * 1000;
 const SHRINK_ACCOUNTS = 5;
 const SHRINK_RATIO = 0.02;
 const INSTANCE_ID = crypto.randomBytes(8).toString("hex");
+const PROCESS_STARTED_AT = Date.now();
+const APP_ROOT = path.join(__dirname, "..", "..", "..");
+const RESTART_FILE = path.join(APP_ROOT, "tmp", "restart.txt");
 
 const collections = new Map(); // nume -> { snapshot(), restore(data) }
 
@@ -261,15 +270,99 @@ function pidAlive(pid) {
   }
 }
 
-function writeLock() {
+function ourBuild() {
+  return currentBuildId() || "dev";
+}
+
+function lockPayload() {
   const now = new Date().toISOString();
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(LOCK_FILE, JSON.stringify({
+  return {
     pid: process.pid,
     instanceId: INSTANCE_ID,
     heartbeat: now,
-    at: now
-  }));
+    at: now,
+    build: ourBuild()
+  };
+}
+
+function writeLock() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(LOCK_FILE, JSON.stringify(lockPayload()));
+}
+
+function otherBuild(current) {
+  if (!current || current.pid === process.pid) return false;
+  return String(current.build || "") !== ourBuild();
+}
+
+function runningUnderTest() {
+  return process.env.NODE_ENV === "test" || Boolean(process.env.VITEST);
+}
+
+// Înlocuiește lock-ul unui build vechi. Citim înapoi ca doi procese noi să nu
+// creadă amândoi că l-au luat.
+function stealLock() {
+  try {
+    fs.rmSync(LOCK_FILE, { force: true });
+  } catch {
+    return false;
+  }
+  let fd;
+  try {
+    fd = fs.openSync(LOCK_FILE, "wx");
+    fs.writeFileSync(fd, JSON.stringify(lockPayload()));
+    fs.closeSync(fd);
+    fd = null;
+    const check = JSON.parse(fs.readFileSync(LOCK_FILE, "utf8"));
+    return check.pid === process.pid && check.instanceId === INSTANCE_ID;
+  } catch {
+    if (fd != null) {
+      try { fs.closeSync(fd); } catch { /* descriptorul s-a închis odată cu eșecul */ }
+    }
+    return false;
+  }
+}
+
+function looksLikeNode(pid) {
+  try {
+    const cmd = fs.readFileSync(`/proc/${pid}/cmdline`);
+    const text = Buffer.isBuffer(cmd) ? cmd.toString("utf8") : String(cmd);
+    return text.includes("node");
+  } catch {
+    return false;
+  }
+}
+
+function retireOtherBuild(pid) {
+  if (runningUnderTest()) return;
+  if (!Number.isInteger(pid) || pid <= 1 || pid === process.pid) return;
+  if (!pidAlive(pid) || !looksLikeNode(pid)) return;
+  try {
+    process.kill(pid, "SIGTERM");
+  } catch {
+    /* procesul vechi poate fi deja oprit */
+  }
+}
+
+function handoffForRestart() {
+  if (runningUnderTest()) return false;
+  let mtime = 0;
+  try {
+    mtime = fs.statSync(RESTART_FILE).mtimeMs;
+  } catch {
+    return false;
+  }
+  if (!(mtime > PROCESS_STARTED_AT + 2000)) return false;
+  try {
+    const current = JSON.parse(fs.readFileSync(LOCK_FILE, "utf8"));
+    if (current.pid === process.pid) fs.rmSync(LOCK_FILE, { force: true });
+  } catch {
+    /* lock-ul poate lipsi */
+  }
+  console.error("[persistence] un deploy nou a cerut restart. Las lacătul și ies.");
+  const timer = setTimeout(() => process.exit(0), 100);
+  if (typeof timer.unref === "function") timer.unref();
+  return true;
 }
 
 function heartbeatFresh(current, now = Date.now()) {
@@ -295,13 +388,7 @@ function acquireWriteLock() {
   try {
     fs.mkdirSync(DATA_DIR, { recursive: true });
     const fd = fs.openSync(LOCK_FILE, "wx");
-    const now = new Date().toISOString();
-    fs.writeFileSync(fd, JSON.stringify({
-      pid: process.pid,
-      instanceId: INSTANCE_ID,
-      heartbeat: now,
-      at: now
-    }));
+    fs.writeFileSync(fd, JSON.stringify(lockPayload()));
     fs.closeSync(fd);
     lockWarned = false;
     return { ok: true };
@@ -317,6 +404,16 @@ function acquireWriteLock() {
     current = JSON.parse(fs.readFileSync(LOCK_FILE, "utf8"));
   } catch {
     current = null;
+  }
+  if (current && otherBuild(current) && foreignLockActive(current)) {
+    const previousPid = current.pid;
+    if (stealLock()) {
+      retireOtherBuild(previousPid);
+      lockWarned = false;
+      console.error(`[persistence] preiau lacătul de la build-ul ${String(current.build || "vechi")}.`);
+      return { ok: true, replaced: true, staleBuild: true };
+    }
+    return { ok: false, reason: "locked", pid: current.pid };
   }
   if (foreignLockActive(current)) {
     if (!lockWarned) {
@@ -610,6 +707,7 @@ function saveJsonNow() {
     return { saved: false, reason: lock.reason || "locked" };
   }
 
+  const stoleStaleBuild = Boolean(lock.staleBuild);
   const disk = readDiskDocument();
   if (disk && disk.unreadable) {
     console.error("[persistence] nu scriu: antetul de pe disc nu poate fi citit");
@@ -620,10 +718,12 @@ function saveJsonNow() {
   const guard = disk ? guardAgainstDisk(mem) : { ok: true };
   const others = readPendingCollections();
   let merged = false;
-  if (disk && !guard.ok) {
+  if (disk && (!guard.ok || stoleStaleBuild)) {
     mem = mergeMissing(disk.collections || {}, mem);
     merged = true;
-    console.error(`[persistence] unesc peste disc (${guard.reason})`);
+    console.error(stoleStaleBuild
+      ? "[persistence] unesc peste disc după preluarea lacătului"
+      : `[persistence] unesc peste disc (${guard.reason})`);
   }
   if (others.length) {
     for (const extra of others) mem = mergeMissing(mem, extra.collections);
@@ -636,7 +736,8 @@ function saveJsonNow() {
 
   const data = serialize();
   const current = fingerprint(data);
-  if (!migrationDirty && !others.length && current === lastSerialized && guard.ok) {
+  if (!migrationDirty && !others.length && current === lastSerialized && guard.ok && !stoleStaleBuild) {
+    handoffForRestart();
     return { saved: false, reason: "unchanged" };
   }
   if (
@@ -649,6 +750,7 @@ function saveJsonNow() {
     baselineInstanceId = String(disk.instanceId || baselineInstanceId);
     lastSerialized = current;
     migrationDirty = false;
+    handoffForRestart();
     return { saved: false, reason: "unchanged", merged: true };
   }
 
@@ -672,6 +774,7 @@ function saveJsonNow() {
     lockNoted = false;
     deletePendingFiles(others.map(item => item.file));
     if (previous) queueBackup(previous);
+    handoffForRestart();
     return { saved: true, bytes: Buffer.byteLength(json), revision: memoryRevision, merged };
   } catch (error) {
     console.error(`[persistence] salvare eșuată: ${error.message}`);
