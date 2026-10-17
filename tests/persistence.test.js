@@ -21,6 +21,13 @@ describe('persistență', () => {
     persistence.flushDeferredBackup();
     if (lockChild && !lockChild.killed) lockChild.kill();
     lockChild = null;
+    if (fs.existsSync(persistence.DATA_DIR)) {
+      for (const name of fs.readdirSync(persistence.DATA_DIR)) {
+        if (name.startsWith('mentor-ai.json.pending.')) {
+          fs.rmSync(`${persistence.DATA_DIR}/${name}`, { force: true });
+        }
+      }
+    }
   });
 
   it('scrie modificarea pe disc și păstrează contul', async () => {

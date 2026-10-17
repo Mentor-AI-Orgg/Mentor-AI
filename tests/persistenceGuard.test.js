@@ -65,6 +65,13 @@ describe('garda de scriere', () => {
       fs.rmSync(`${persistence.DATA_FILE}.bak${n}.enc`, { force: true });
     }
     persistence.resumeWriter();
+    if (fs.existsSync(persistence.DATA_DIR)) {
+      for (const name of fs.readdirSync(persistence.DATA_DIR)) {
+        if (name.startsWith('mentor-ai.json.pending.')) {
+          fs.rmSync(path.join(persistence.DATA_DIR, name), { force: true });
+        }
+      }
+    }
     if (snapshot) {
       fs.writeFileSync(persistence.DATA_FILE, snapshot);
       persistence.load();
@@ -99,7 +106,7 @@ describe('garda de scriere', () => {
     expect(readDisk().revision).toBe(saved.revision);
   });
 
-  it('refuză scrierea unui proces rămas în urmă și alertează o singură dată', async () => {
+  it('păstrează clasa de pe un disc mai nou și nu oprește scrierea', async () => {
     process.env.ADMIN_EMAIL = 'admin@example.com';
     const { app } = createApp({ autosave: false });
     const created = await registerGranted(app);
@@ -115,21 +122,17 @@ describe('garda de scriere', () => {
 
     const refused = persistence.saveNow();
     expect(refused.saved).toBe(false);
-    expect(refused.reason).toBe('stale_revision');
-    expect(refused.stopped).toBe(true);
-    expect(persistence.writerStatus().exitRequested).toBe(true);
-    expect(persistence.writerStatus().stopped).toBe(true);
+    expect(refused.reason).toBe('unchanged');
+    expect(refused.merged).toBe(true);
+    expect(persistence.writerStatus().exitRequested).toBe(false);
+    expect(persistence.writerStatus().stopped).toBe(false);
 
     const kept = readDisk();
     expect(kept.revision).toBe(disk.revision);
     expect(kept.collections.auth.accounts[account.email].profile.class).toBe('5');
 
-    expect(persistence.saveNow().reason).toBe('stopped');
-    expect(mailSpy).toHaveBeenCalledTimes(1);
-    const alert = mailSpy.mock.calls[0][0];
-    expect(alert.body).toContain('stale_revision');
-    expect(JSON.stringify(alert)).not.toContain(account.email);
-    expect(JSON.stringify(alert)).not.toContain(created.username);
+    expect(persistence.saveNow().reason).toBe('unchanged');
+    expect(mailSpy).not.toHaveBeenCalled();
   });
 
   it('refuză fișierul scris de alt proces după încărcare, chiar la aceeași revizie', async () => {
@@ -146,11 +149,12 @@ describe('garda de scriere', () => {
     account.profile.class = '7';
 
     const refused = persistence.saveNow();
-    expect(refused.reason).toBe('foreign_instance');
-    expect(refused.stopped).toBe(true);
+    expect(refused.reason).toBe('unchanged');
+    expect(refused.merged).toBe(true);
+    expect(persistence.writerStatus().stopped).toBe(false);
     expect(readDisk().collections.auth.accounts[account.email].profile.class).toBe('5');
     expect(readDisk().instanceId).toBe('proces-strain');
-    expect(persistence.saveNow().reason).toBe('stopped');
+    expect(persistence.saveNow().reason).toBe('unchanged');
   });
 
   it('refuză un fișier ilizibil în loc să îl acopere', () => {
@@ -161,7 +165,8 @@ describe('garda de scriere', () => {
     fs.writeFileSync(persistence.DATA_FILE, '{', 'utf8');
     const refused = persistence.saveNow();
     expect(refused.reason).toBe('unreadable');
-    expect(refused.stopped).toBe(true);
+    expect(refused.stopped).toBeUndefined();
+    expect(persistence.writerStatus().stopped).toBe(false);
     expect(fs.readFileSync(persistence.DATA_FILE, 'utf8')).toBe('{');
   });
 
@@ -179,12 +184,13 @@ describe('garda de scriere', () => {
     account.profile.class = '8';
 
     const refused = persistence.saveNow();
-    expect(refused.reason).toBe('shrink');
-    expect(refused.stopped).toBe(true);
+    expect(refused.reason).toBe('unchanged');
+    expect(refused.merged).toBe(true);
+    expect(persistence.writerStatus().stopped).toBe(false);
     const kept = readDisk();
     expect(kept.collections.auth.accounts[account.email].profile.class).toBe('6');
     expect(kept.collections.auth.accounts[extras[0]]).toBeTruthy();
-    expect(persistence.saveNow().reason).toBe('stopped');
+    expect(persistence.saveNow().reason).toBe('unchanged');
   });
 
   it('refuză și o scădere mică, dacă trece de 2%', async () => {
@@ -207,7 +213,9 @@ describe('garda de scriere', () => {
     delete doc.collections.auth.accounts[victim];
     const refused = persistence.importDocument(doc);
     expect(refused.saved).toBe(false);
-    expect(refused.reason).toBe('shrink');
+    expect(refused.reason).toBe('unchanged');
+    expect(refused.merged).toBe(true);
+    expect(persistence.writerStatus().stopped).toBe(false);
     expect(readDisk().collections.auth.accounts[victim].role).toBe('student');
   });
 
@@ -322,7 +330,7 @@ describe('garda de scriere', () => {
     expect(readDisk().collections.auth.accounts[account.email].profile.class).toBe('8');
   });
 
-  it('al doilea proces care nu ia lock-ul nu scrie și se oprește', async () => {
+  it('al doilea proces care nu ia lock-ul nu scrie și nu se oprește', async () => {
     const { app } = createApp({ autosave: false });
     const created = await registerGranted(app);
     const account = authStore.findByUsername(created.username);
@@ -344,7 +352,6 @@ describe('garda de scriere', () => {
     const script = `
       delete process.env.VITEST;
       process.env.NODE_ENV = 'production';
-      process.env.PERSISTENCE_EXIT_ON_LOCK = '1';
       process.env.STORE = 'json';
       process.env.ADMIN_EMAIL = '';
       const fs = require('fs');
@@ -366,9 +373,9 @@ describe('garda de scriere', () => {
       encoding: 'utf8',
       timeout: 60000
     });
-    expect(child.status, child.stderr || child.stdout || '').toBe(1);
+    expect(child.status, child.stderr || child.stdout || '').toBe(0);
     const reported = JSON.parse(fs.readFileSync(resultPath, 'utf8'));
-    expect(reported).toMatchObject({ saved: false, reason: 'second_instance', stopped: true });
+    expect(reported).toMatchObject({ saved: false, reason: 'locked', stopped: false });
     expect(fs.readFileSync(persistence.DATA_FILE).equals(before)).toBe(true);
     expect(readDisk().collections.auth.accounts[account.email].profile.class).toBe('5');
   });
@@ -389,14 +396,12 @@ describe('garda de scriere', () => {
     expect(blocked.reason).toBe('locked');
     expect(persistence.writerStatus().stopped).toBe(false);
 
-    process.env.PERSISTENCE_EXIT_ON_LOCK = '1';
-    const stopped = persistence.saveNow();
-    expect(stopped.reason).toBe('second_instance');
-    expect(stopped.stopped).toBe(true);
+    const again = persistence.saveNow();
+    expect(again.reason).toBe('locked');
+    expect(again.stopped).toBeUndefined();
+    expect(persistence.writerStatus().stopped).toBe(false);
     expect(readDisk().collections.auth.accounts[account.email].profile.class).toBe('5');
-    expect(persistence.saveNow().reason).toBe('stopped');
 
-    delete process.env.PERSISTENCE_EXIT_ON_LOCK;
     persistence.resumeWriter();
     child.kill();
     await new Promise(resolve => child.once('exit', resolve));
@@ -405,5 +410,117 @@ describe('garda de scriere', () => {
     const saved = persistence.saveNow();
     expect(saved.saved).toBe(true);
     expect(readDisk().collections.auth.accounts[account.email].profile.class).toBe('8');
+  });
+
+  it('lasă contul nou deoparte cât ține alt proces lock-ul, apoi îl unește', async () => {
+    process.env.ADMIN_EMAIL = 'admin@example.com';
+    const { app } = createApp({ autosave: false });
+    await registerGranted(app);
+    expect(persistence.saveNow().saved).toBe(true);
+
+    const child = spawn('sleep', ['30']);
+    lockChild = child;
+    await new Promise((resolve, reject) => {
+      child.once('error', reject);
+      child.once('spawn', resolve);
+    });
+    fs.writeFileSync(persistence.LOCK_FILE, JSON.stringify({
+      pid: child.pid,
+      instanceId: 'titular',
+      heartbeat: new Date().toISOString(),
+      at: new Date().toISOString()
+    }));
+
+    const created = await registerGranted(app);
+    const account = authStore.findByUsername(created.username);
+    const spilled = persistence.saveNow();
+    expect(spilled).toMatchObject({ saved: false, reason: 'locked', spilled: true });
+    expect(readDisk().collections.auth.accounts[account.email]).toBeUndefined();
+    const pendingNames = fs.readdirSync(persistence.DATA_DIR)
+      .filter(name => name.startsWith('mentor-ai.json.pending.') && !name.endsWith('.tmp'));
+    expect(pendingNames).toHaveLength(1);
+    const side = JSON.parse(fs.readFileSync(path.join(persistence.DATA_DIR, pendingNames[0]), 'utf8'));
+    expect(side.collections.auth.accounts[account.email].role).toBe('student');
+    expect(mailSpy).toHaveBeenCalledTimes(1);
+    expect(mailSpy.mock.calls[0][0].body).toContain('second_instance');
+    expect(JSON.stringify(mailSpy.mock.calls[0][0])).not.toContain(account.email);
+
+    const again = persistence.saveNow();
+    expect(again.reason).toBe('locked');
+    expect(mailSpy).toHaveBeenCalledTimes(1);
+
+    child.kill();
+    await new Promise(resolve => child.once('exit', resolve));
+    lockChild = null;
+    fs.rmSync(persistence.LOCK_FILE, { force: true });
+    const saved = persistence.saveNow();
+    expect(saved.saved).toBe(true);
+    expect(readDisk().collections.auth.accounts[account.email].role).toBe('student');
+    expect(fs.readdirSync(persistence.DATA_DIR)
+      .some(name => name.startsWith('mentor-ai.json.pending.') && !name.endsWith('.tmp'))).toBe(false);
+    expect(persistence.writerStatus().stopped).toBe(false);
+  });
+
+  it('unește un cont nou peste un disc mai nou, fără să acopere clasa de pe disc', async () => {
+    const { app } = createApp({ autosave: false });
+    const created = await registerGranted(app);
+    const account = authStore.findByUsername(created.username);
+    account.profile.class = '5';
+    expect(persistence.saveNow().saved).toBe(true);
+
+    const disk = readDisk();
+    const [diskOnly] = addFakeStudents(disk, 1);
+    disk.revision += 5;
+    disk.instanceId = 'alt-proces';
+    disk.collections.auth.accounts[account.email].profile.class = '5';
+    writeDisk(disk);
+    account.profile.class = '9';
+
+    const extra = await registerGranted(app);
+    const extraAccount = authStore.findByUsername(extra.username);
+    const saved = persistence.saveNow();
+    expect(saved.saved).toBe(true);
+    expect(saved.merged).toBe(true);
+    expect(persistence.writerStatus().stopped).toBe(false);
+
+    const after = readDisk();
+    expect(after.revision).toBe(disk.revision + 1);
+    expect(after.collections.auth.accounts[account.email].profile.class).toBe('5');
+    expect(after.collections.auth.accounts[diskOnly].role).toBe('student');
+    expect(after.collections.auth.accounts[extraAccount.email].role).toBe('student');
+  });
+
+  it('procesul care ține lock-ul unește conturile lăsate deoparte fără să le acopere pe cele de pe disc', async () => {
+    const { app } = createApp({ autosave: false });
+    const created = await registerGranted(app);
+    const account = authStore.findByUsername(created.username);
+    account.profile.class = '5';
+    expect(persistence.saveNow().saved).toBe(true);
+    const beforeRev = readDisk().revision;
+
+    const extra = 'nou.pending@example.com';
+    const pendingFile = path.join(persistence.DATA_DIR, 'mentor-ai.json.pending.altproces');
+    const collections = JSON.parse(persistence.exportJson()).collections;
+    collections.auth.accounts[extra] = {
+      email: extra,
+      role: 'student',
+      profile: { username: 'noupending', class: '6' }
+    };
+    collections.auth.accounts[account.email].profile.class = '9';
+    fs.writeFileSync(pendingFile, JSON.stringify({
+      version: 1,
+      instanceId: 'altproces',
+      savedAt: new Date().toISOString(),
+      collections
+    }));
+
+    const saved = persistence.saveNow();
+    expect(saved.saved).toBe(true);
+    const disk = readDisk();
+    expect(disk.collections.auth.accounts[extra].role).toBe('student');
+    expect(disk.collections.auth.accounts[account.email].profile.class).toBe('5');
+    expect(disk.revision).toBe(beforeRev + 1);
+    expect(fs.existsSync(pendingFile)).toBe(false);
+    expect(persistence.writerStatus().stopped).toBe(false);
   });
 });
