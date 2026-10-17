@@ -443,7 +443,9 @@ function deleteAccount(email) {
       account.children = account.children.filter(child => normalizeEmail(child) !== key);
     }
   }
-  return ACCOUNTS.delete(key);
+  const removed = ACCOUNTS.delete(key);
+  if (removed) persistence.noteRemovedAccounts(1);
+  return removed;
 }
 
 function purgeExpiredResets(now = Date.now()) {
