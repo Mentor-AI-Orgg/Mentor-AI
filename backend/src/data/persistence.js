@@ -19,10 +19,17 @@
 // bytes-ul anterior se cifrează într-un timer, cel mult o dată la 15 minute.
 // Fișierul principal rămâne scris sincron, înainte de ieșirea din saveNow.
 //
-// Un singur proces Passenger. Al doilea proces găsește mentor-ai.json.lock cu
-// un pid viu și nu scrie, ca să nu calce datele primului. Lock-ul unui proces
-// mort se preia la următoarea salvare.
+// Un singur proces Passenger. Lock-ul ține pid, instanță și un puls.
+// Al doilea proces nu scrie și se oprește, ca Passenger să pornească unul nou,
+// care încarcă fișierul de pe disc. Lock-ul se preia doar dacă procesul e mort
+// și pulsul e vechi.
+//
+// Fișierul are revizie monotonă, savedAt și instanceId. Înainte de fiecare
+// scriere recitim antetul, sub lock. Dacă discul e mai nou, sau l-a scris alt
+// proces după ce noi am încărcat, refuzăm, alertăm o dată și oprim scrierea.
+// La fel dacă numărul de conturi scade peste prag, fără ștergeri anunțate.
 
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -34,6 +41,10 @@ const LOCK_FILE = `${DATA_FILE}.lock`;
 const AUTOSAVE_MS = 5000;
 const DEFAULT_BACKUP_ROTATE_MS = 15 * 60 * 1000;
 const FORMAT_VERSION = 1;
+const STALE_HEARTBEAT_MS = 30 * 1000;
+const SHRINK_ACCOUNTS = 5;
+const SHRINK_RATIO = 0.02;
+const INSTANCE_ID = crypto.randomBytes(8).toString("hex");
 
 const collections = new Map(); // nume -> { snapshot(), restore(data) }
 
@@ -47,6 +58,11 @@ let lockWarned = false;
 let loaded = false;
 let mysqlBlocked = false;
 let lastJsonBytes = null;
+let memoryRevision = 0;
+let baselineInstanceId = "";
+let allowedShrink = 0;
+let writerStopped = false;
+let exitRequested = false;
 
 function backupRotateMs() {
   const raw = process.env.BACKUP_ROTATE_MS;
@@ -68,12 +84,92 @@ function register(name, handlers) {
   collections.set(name, handlers);
 }
 
+function countAccounts(collections) {
+  const accounts = collections?.auth?.accounts;
+  if (!accounts || typeof accounts !== "object") return 0;
+  let total = 0;
+  for (const account of Object.values(accounts)) {
+    if (!account || typeof account !== "object") continue;
+    if (account.deleted === true || account.deletedAt || account.erasedAt) continue;
+    if (account.role === "student" || account.role === "parent") total += 1;
+  }
+  return total;
+}
+
 function serialize() {
-  const data = { version: FORMAT_VERSION, savedAt: new Date().toISOString(), collections: {} };
+  const data = {
+    version: FORMAT_VERSION,
+    savedAt: new Date().toISOString(),
+    revision: memoryRevision + 1,
+    instanceId: INSTANCE_ID,
+    collections: {}
+  };
   for (const [name, handlers] of collections.entries()) {
     data.collections[name] = handlers.snapshot();
   }
   return data;
+}
+
+function adoptHeader(parsed) {
+  memoryRevision = Number(parsed?.revision) || 0;
+  baselineInstanceId = String(parsed?.instanceId || "");
+  allowedShrink = 0;
+  writerStopped = false;
+  exitRequested = false;
+}
+
+function noteRemovedAccounts(count) {
+  const n = Number(count);
+  if (!Number.isFinite(n) || n <= 0) return;
+  allowedShrink += n;
+}
+
+function abandonLock() {
+  try {
+    if (!fs.existsSync(LOCK_FILE)) return;
+    const current = JSON.parse(fs.readFileSync(LOCK_FILE, "utf8"));
+    if (current.pid !== process.pid) return;
+    current.heartbeat = new Date(Date.now() - STALE_HEARTBEAT_MS - 1000).toISOString();
+    fs.writeFileSync(LOCK_FILE, JSON.stringify(current));
+  } catch {
+    /* lock-ul vechi nu împiedică ieșirea */
+  }
+}
+
+function runningUnderTest() {
+  return process.env.NODE_ENV === "test" || Boolean(process.env.VITEST);
+}
+
+function haltWriter(reason, detail) {
+  writerStopped = true;
+  abandonLock();
+  console.error(`[persistence] opresc scrierea: ${reason}${detail ? ` (${detail})` : ""}`);
+  let pending = Promise.resolve();
+  try {
+    pending = require("../ops/errorMonitor").noteIncident({
+      type: String(reason).slice(0, 80),
+      id: "persistence"
+    });
+  } catch {
+    pending = Promise.resolve();
+  }
+  Promise.resolve(pending).catch(() => {});
+  exitRequested = true;
+  if (!runningUnderTest()) {
+    const force = setTimeout(() => process.exit(1), 2000);
+    force.unref();
+    Promise.resolve(pending).catch(() => {}).finally(() => process.exit(1));
+  }
+  return { saved: false, reason, stopped: true };
+}
+
+function resumeWriter() {
+  writerStopped = false;
+  exitRequested = false;
+}
+
+function writerStatus() {
+  return { stopped: writerStopped, exitRequested, revision: memoryRevision, instanceId: INSTANCE_ID };
 }
 
 // Comparăm ignorând `savedAt`, altfel orice serializare ar părea o schimbare.
@@ -107,8 +203,39 @@ function backupDue() {
 
 // Copiază generațiile și scrie bak1 din bytes deja citiți, nu din fișierul
 // care tocmai a fost înlocuit. Așa o scriere proastă nu devine singura copie.
+function countInText(text) {
+  try {
+    return countAccounts(JSON.parse(text).collections);
+  } catch {
+    return null;
+  }
+}
+
+function largestBakCount() {
+  let max = null;
+  for (const n of [1, 2, 3]) {
+    for (const file of [encryptedBackupPath(n), backupPath(n)]) {
+      if (!fs.existsSync(file)) continue;
+      try {
+        const count = countInText(readBackupFile(file));
+        if (count == null) continue;
+        if (max == null || count > max) max = count;
+      } catch {
+        /* copia ilizibilă nu blochează celelalte */
+      }
+    }
+  }
+  return max;
+}
+
 function rotateBackupsFrom(bytes) {
   try {
+    const nextCount = countInText(Buffer.isBuffer(bytes) ? bytes.toString("utf8") : String(bytes || ""));
+    const largest = largestBakCount();
+    if (largest != null && (nextCount == null || nextCount < largest)) {
+      console.error("[persistence] nu rotesc backup-ul peste o copie cu mai multe conturi");
+      return false;
+    }
     const { backupKeyConfigured, encrypt } = require("../ops/backupCrypto");
     if (backupKeyConfigured()) {
       if (fs.existsSync(encryptedBackupPath(2))) fs.renameSync(encryptedBackupPath(2), encryptedBackupPath(3));
@@ -167,18 +294,46 @@ function pidAlive(pid) {
 }
 
 function writeLock() {
+  const now = new Date().toISOString();
   fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(LOCK_FILE, JSON.stringify({ pid: process.pid, at: new Date().toISOString() }));
+  fs.writeFileSync(LOCK_FILE, JSON.stringify({
+    pid: process.pid,
+    instanceId: INSTANCE_ID,
+    heartbeat: now,
+    at: now
+  }));
 }
 
-// Soft-guard: un al doilea proces Node nu are voie să rescrie fișierul.
-// Passenger trebuie configurat cu un singur proces. Dacă pid-ul din lock a
-// murit (restart), preluăm lock-ul și scriem mai departe.
+function heartbeatFresh(current, now = Date.now()) {
+  const at = Date.parse(current?.heartbeat || "");
+  if (!Number.isFinite(at)) return false;
+  return now - at < STALE_HEARTBEAT_MS;
+}
+
+// Ținut de altcineva cât timp procesul trăiește sau pulsul e proaspăt.
+// Preluăm doar când pid-ul e mort și pulsul e vechi (sau lipsește).
+function foreignLockActive(current) {
+  if (!current || current.pid === process.pid) return false;
+  const alive = pidAlive(current.pid);
+  const fresh = heartbeatFresh(current);
+  if (!alive && !fresh) return false;
+  return true;
+}
+
+// Un al doilea proces Node nu are voie să rescrie fișierul.
+// Passenger trebuie un singur proces. Preluăm lock-ul doar când pid-ul e mort
+// și pulsul e vechi sau lipsește.
 function acquireWriteLock() {
   try {
     fs.mkdirSync(DATA_DIR, { recursive: true });
     const fd = fs.openSync(LOCK_FILE, "wx");
-    fs.writeFileSync(fd, JSON.stringify({ pid: process.pid, at: new Date().toISOString() }));
+    const now = new Date().toISOString();
+    fs.writeFileSync(fd, JSON.stringify({
+      pid: process.pid,
+      instanceId: INSTANCE_ID,
+      heartbeat: now,
+      at: now
+    }));
     fs.closeSync(fd);
     lockWarned = false;
     return { ok: true };
@@ -195,7 +350,7 @@ function acquireWriteLock() {
   } catch {
     current = null;
   }
-  if (current && pidAlive(current.pid) && current.pid !== process.pid) {
+  if (foreignLockActive(current)) {
     if (!lockWarned) {
       console.error(
         `[persistence] procesul ${current.pid} ține deja datele. Nu scriu peste ${path.basename(DATA_FILE)}. Passenger trebuie un singur proces Node.`
@@ -233,6 +388,7 @@ function tryLoadBackup() {
         handlers.restore(slice);
         restored.push(name);
       }
+      adoptHeader(parsed);
       lastSerialized = fingerprint(serialize());
       console.warn(`[persistence] am restaurat din ${path.basename(file)}`);
       return { loaded: true, restored, savedAt: parsed.savedAt, reason: "backup" };
@@ -282,6 +438,8 @@ function migrateFile(file = DATA_FILE) {
 
 function loadFromJson() {
   loaded = true;
+  writerStopped = false;
+  exitRequested = false;
   migrateFile();
   if (!fs.existsSync(DATA_FILE)) {
     return { loaded: false, reason: "no_file" };
@@ -326,20 +484,68 @@ function loadFromJson() {
     }
   }
 
+  adoptHeader(parsed);
   lastSerialized = fingerprint(serialize());
-  return { loaded: true, restored, savedAt: parsed.savedAt };
+  return { loaded: true, restored, savedAt: parsed.savedAt, revision: memoryRevision };
 }
 
 // Scriere atomică: întâi într-un fișier temporar, apoi rename. Rename este
 // atomic pe același filesystem, deci un restart în timpul scrierii nu poate
 // lăsa în urmă un fișier pe jumătate scris.
+function readDiskDocument() {
+  if (!fs.existsSync(DATA_FILE)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
+  } catch {
+    return { unreadable: true };
+  }
+}
+
+function guardAgainstDisk(nextCollections) {
+  const disk = readDiskDocument();
+  if (!disk) return { ok: true };
+  if (disk.unreadable) {
+    return { ok: false, reason: "unreadable", detail: "antetul de pe disc nu poate fi citit" };
+  }
+  const revision = Number(disk.revision) || 0;
+  const instanceId = String(disk.instanceId || "");
+  if (revision > memoryRevision) {
+    return { ok: false, reason: "stale_revision", detail: `disc ${revision}, memorie ${memoryRevision}` };
+  }
+  if (instanceId && instanceId !== INSTANCE_ID && instanceId !== baselineInstanceId) {
+    return { ok: false, reason: "foreign_instance", detail: "fișier scris de alt proces" };
+  }
+  const diskCount = countAccounts(disk.collections);
+  const nextCount = countAccounts(nextCollections);
+  const unexplained = diskCount - nextCount - allowedShrink;
+  if (unexplained > SHRINK_ACCOUNTS || (diskCount > 0 && unexplained / diskCount > SHRINK_RATIO)) {
+    return {
+      ok: false,
+      reason: "shrink",
+      detail: `disc ${diskCount}, memorie ${nextCount}, neanunțate ${unexplained}`
+    };
+  }
+  return { ok: true };
+}
+
+function exitOnForeignLock() {
+  return !runningUnderTest() || process.env.PERSISTENCE_EXIT_ON_LOCK === "1";
+}
+
 function saveJsonNow() {
   if (!collections.size) return { saved: false, reason: "nothing_registered" };
+  if (writerStopped) return { saved: false, reason: "stopped" };
 
   const lock = acquireWriteLock();
-  if (!lock.ok) return { saved: false, reason: lock.reason || "locked" };
+  if (!lock.ok) {
+    if (lock.reason === "locked" && exitOnForeignLock()) return haltWriter("second_instance");
+    return { saved: false, reason: lock.reason || "locked" };
+  }
 
   const data = serialize();
+  const guard = guardAgainstDisk(data.collections);
+  if (!guard.ok) return haltWriter(guard.reason, guard.detail);
+
   const current = fingerprint(data);
   if (!migrationDirty && current === lastSerialized) return { saved: false, reason: "unchanged" };
 
@@ -355,10 +561,13 @@ function saveJsonNow() {
     }
     fs.writeFileSync(TEMP_FILE, json, "utf8");
     fs.renameSync(TEMP_FILE, DATA_FILE);
+    memoryRevision += 1;
+    baselineInstanceId = INSTANCE_ID;
+    allowedShrink = 0;
     lastSerialized = current;
     migrationDirty = false;
     if (previous) queueBackup(previous);
-    return { saved: true, bytes: Buffer.byteLength(json) };
+    return { saved: true, bytes: Buffer.byteLength(json), revision: memoryRevision };
   } catch (error) {
     console.error(`[persistence] salvare eșuată: ${error.message}`);
     try {
@@ -556,6 +765,9 @@ module.exports = {
   stripRemovedCollections,
   migrateFile,
   lessonMapBackup,
+  noteRemovedAccounts,
+  resumeWriter,
+  writerStatus,
   restoreMap,
   restoreArray,
   restoreObject,
