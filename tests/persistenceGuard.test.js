@@ -100,6 +100,7 @@ describe('garda de scriere', () => {
     const lock = JSON.parse(fs.readFileSync(persistence.LOCK_FILE, 'utf8'));
     expect(lock.pid).toBe(process.pid);
     expect(lock.instanceId).toBe(disk.instanceId);
+    expect(lock.build).toBe('dev');
     expect(Number.isFinite(Date.parse(lock.heartbeat))).toBe(true);
 
     expect(persistence.saveNow().reason).toBe('unchanged');
@@ -310,7 +311,8 @@ describe('garda de scriere', () => {
       pid: child.pid,
       instanceId: 'vechi',
       heartbeat: new Date().toISOString(),
-      at: new Date().toISOString()
+      at: new Date().toISOString(),
+      build: 'dev'
     }));
     account.profile.class = '8';
     const blocked = persistence.saveNow();
@@ -323,7 +325,8 @@ describe('garda de scriere', () => {
       pid: child.pid,
       instanceId: 'vechi',
       heartbeat: new Date(Date.now() - 60 * 1000).toISOString(),
-      at: new Date(Date.now() - 60 * 1000).toISOString()
+      at: new Date(Date.now() - 60 * 1000).toISOString(),
+      build: 'dev'
     }));
     const saved = persistence.saveNow();
     expect(saved.saved).toBe(true);
@@ -342,7 +345,8 @@ describe('garda de scriere', () => {
       pid: process.pid,
       instanceId: 'titular',
       heartbeat: new Date().toISOString(),
-      at: new Date().toISOString()
+      at: new Date().toISOString(),
+      build: 'dev'
     }));
 
     const stores = path.join(root, 'backend/src/data/loadUserStores.js');
@@ -352,6 +356,7 @@ describe('garda de scriere', () => {
     const script = `
       delete process.env.VITEST;
       process.env.NODE_ENV = 'production';
+      process.env.BUILD_ID = 'dev';
       process.env.STORE = 'json';
       process.env.ADMIN_EMAIL = '';
       const fs = require('fs');
@@ -366,7 +371,7 @@ describe('garda de scriere', () => {
       }));
       process.exit(result && result.stopped ? 1 : 0);
     `;
-    const env = { ...process.env, NODE_ENV: 'production', STORE: 'json', ADMIN_EMAIL: '', ERROR_LOG_DIR: persistence.DATA_DIR };
+    const env = { ...process.env, NODE_ENV: 'production', STORE: 'json', BUILD_ID: 'dev', ADMIN_EMAIL: '', ERROR_LOG_DIR: persistence.DATA_DIR };
     delete env.VITEST;
     const child = spawnSync(process.execPath, ['-e', script], {
       env,
@@ -390,7 +395,7 @@ describe('garda de scriere', () => {
     const child = spawn('sleep', ['30']);
     lockChild = child;
     await new Promise(resolve => child.once('spawn', resolve));
-    fs.writeFileSync(persistence.LOCK_FILE, JSON.stringify({ pid: child.pid }));
+    fs.writeFileSync(persistence.LOCK_FILE, JSON.stringify({ pid: child.pid, build: 'dev' }));
     account.profile.class = '8';
     const blocked = persistence.saveNow();
     expect(blocked.reason).toBe('locked');
@@ -428,7 +433,8 @@ describe('garda de scriere', () => {
       pid: child.pid,
       instanceId: 'titular',
       heartbeat: new Date().toISOString(),
-      at: new Date().toISOString()
+      at: new Date().toISOString(),
+      build: 'dev'
     }));
 
     const created = await registerGranted(app);
@@ -520,6 +526,59 @@ describe('garda de scriere', () => {
     expect(disk.collections.auth.accounts[extra].role).toBe('student');
     expect(disk.collections.auth.accounts[account.email].profile.class).toBe('5');
     expect(disk.revision).toBe(beforeRev + 1);
+    expect(fs.existsSync(pendingFile)).toBe(false);
+    expect(persistence.writerStatus().stopped).toBe(false);
+  });
+
+  it('preia lacătul de la un build vechi și nu acoperă conturile de pe disc', async () => {
+    const { app } = createApp({ autosave: false });
+    const created = await registerGranted(app);
+    const account = authStore.findByUsername(created.username);
+    account.profile.class = '5';
+    expect(persistence.saveNow().saved).toBe(true);
+
+    const disk = readDisk();
+    const [diskOnly] = addFakeStudents(disk, 1);
+    writeDisk(disk);
+    account.profile.class = '9';
+
+    const child = spawn('sleep', ['40']);
+    lockChild = child;
+    await new Promise((resolve, reject) => {
+      child.once('error', reject);
+      child.once('spawn', resolve);
+    });
+    fs.writeFileSync(persistence.LOCK_FILE, JSON.stringify({
+      pid: child.pid,
+      instanceId: 'vechi',
+      heartbeat: new Date().toISOString(),
+      at: new Date().toISOString(),
+      build: 'build-vechi'
+    }));
+
+    const extra = 'pending.vechi@example.com';
+    const pendingFile = path.join(persistence.DATA_DIR, 'mentor-ai.json.pending.alt');
+    const collections = JSON.parse(persistence.exportJson()).collections;
+    collections.auth.accounts[extra] = {
+      email: extra,
+      role: 'student',
+      profile: { username: 'pendingvechi', class: '6' }
+    };
+    fs.writeFileSync(pendingFile, JSON.stringify({
+      version: 1,
+      instanceId: 'alt',
+      collections
+    }));
+
+    const saved = persistence.saveNow();
+    expect(saved.saved).toBe(true);
+    const after = readDisk();
+    expect(after.collections.auth.accounts[account.email].profile.class).toBe('5');
+    expect(after.collections.auth.accounts[diskOnly].role).toBe('student');
+    expect(after.collections.auth.accounts[extra].role).toBe('student');
+    const lock = JSON.parse(fs.readFileSync(persistence.LOCK_FILE, 'utf8'));
+    expect(lock.pid).toBe(process.pid);
+    expect(lock.build).toBe('dev');
     expect(fs.existsSync(pendingFile)).toBe(false);
     expect(persistence.writerStatus().stopped).toBe(false);
   });

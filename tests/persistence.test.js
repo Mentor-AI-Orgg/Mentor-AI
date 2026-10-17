@@ -126,7 +126,7 @@ describe('persistență', () => {
 
     const child = spawn('sleep', ['30']);
     lockChild = child;
-    fs.writeFileSync(persistence.LOCK_FILE, JSON.stringify({ pid: child.pid }));
+    fs.writeFileSync(persistence.LOCK_FILE, JSON.stringify({ pid: child.pid, build: 'dev' }));
     account.profile.class = '8';
     const blocked = persistence.saveNow();
     expect(blocked.saved).toBe(false);
