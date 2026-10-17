@@ -19,15 +19,19 @@
 // bytes-ul anterior se cifrează într-un timer, cel mult o dată la 15 minute.
 // Fișierul principal rămâne scris sincron, înainte de ieșirea din saveNow.
 //
-// Un singur proces Passenger. Lock-ul ține pid, instanță și un puls.
-// Al doilea proces nu scrie și se oprește, ca Passenger să pornească unul nou,
-// care încarcă fișierul de pe disc. Lock-ul se preia doar dacă procesul e mort
-// și pulsul e vechi.
+// Un singur proces scrie fișierul principal. Lock-ul ține pid, instanță și un puls
+// și se preia doar dacă procesul e mort și pulsul e vechi.
+//
+// Al doilea proces nu acoperă fișierul și nu se oprește: oprirea pierdea
+// înscrierile care existau doar în memoria lui. Le scrie în
+// mentor-ai.json.pending.<instanceId>. Procesul care ține lock-ul le unește
+// peste disc, fără să înlocuiască un câmp care există deja.
 //
 // Fișierul are revizie monotonă, savedAt și instanceId. Înainte de fiecare
 // scriere recitim antetul, sub lock. Dacă discul e mai nou, sau l-a scris alt
-// proces după ce noi am încărcat, refuzăm, alertăm o dată și oprim scrierea.
-// La fel dacă numărul de conturi scade peste prag, fără ștergeri anunțate.
+// proces după ce noi am încărcat, păstrăm discul și adăugăm doar cheile care
+// lipsesc. La fel dacă numărul de conturi ar scădea peste prag, fără ștergeri
+// anunțate. O ștergere anunțată trece și se scrie.
 
 const crypto = require("crypto");
 const fs = require("fs");
@@ -63,6 +67,7 @@ let baselineInstanceId = "";
 let allowedShrink = 0;
 let writerStopped = false;
 let exitRequested = false;
+let lockNoted = false;
 
 function backupRotateMs() {
   const raw = process.env.BACKUP_ROTATE_MS;
@@ -116,6 +121,7 @@ function adoptHeader(parsed) {
   allowedShrink = 0;
   writerStopped = false;
   exitRequested = false;
+  lockNoted = false;
 }
 
 function noteRemovedAccounts(count) {
@@ -124,48 +130,10 @@ function noteRemovedAccounts(count) {
   allowedShrink += n;
 }
 
-function abandonLock() {
-  try {
-    if (!fs.existsSync(LOCK_FILE)) return;
-    const current = JSON.parse(fs.readFileSync(LOCK_FILE, "utf8"));
-    if (current.pid !== process.pid) return;
-    current.heartbeat = new Date(Date.now() - STALE_HEARTBEAT_MS - 1000).toISOString();
-    fs.writeFileSync(LOCK_FILE, JSON.stringify(current));
-  } catch {
-    /* lock-ul vechi nu împiedică ieșirea */
-  }
-}
-
-function runningUnderTest() {
-  return process.env.NODE_ENV === "test" || Boolean(process.env.VITEST);
-}
-
-function haltWriter(reason, detail) {
-  writerStopped = true;
-  abandonLock();
-  console.error(`[persistence] opresc scrierea: ${reason}${detail ? ` (${detail})` : ""}`);
-  let pending = Promise.resolve();
-  try {
-    pending = require("../ops/errorMonitor").noteIncident({
-      type: String(reason).slice(0, 80),
-      id: "persistence"
-    });
-  } catch {
-    pending = Promise.resolve();
-  }
-  Promise.resolve(pending).catch(() => {});
-  exitRequested = true;
-  if (!runningUnderTest()) {
-    const force = setTimeout(() => process.exit(1), 2000);
-    force.unref();
-    Promise.resolve(pending).catch(() => {}).finally(() => process.exit(1));
-  }
-  return { saved: false, reason, stopped: true };
-}
-
 function resumeWriter() {
   writerStopped = false;
   exitRequested = false;
+  lockNoted = false;
 }
 
 function writerStatus() {
@@ -390,6 +358,7 @@ function tryLoadBackup() {
       }
       adoptHeader(parsed);
       lastSerialized = fingerprint(serialize());
+      absorbPendingFiles();
       console.warn(`[persistence] am restaurat din ${path.basename(file)}`);
       return { loaded: true, restored, savedAt: parsed.savedAt, reason: "backup" };
     } catch {
@@ -486,6 +455,7 @@ function loadFromJson() {
 
   adoptHeader(parsed);
   lastSerialized = fingerprint(serialize());
+  absorbPendingFiles();
   return { loaded: true, restored, savedAt: parsed.savedAt, revision: memoryRevision };
 }
 
@@ -528,26 +498,159 @@ function guardAgainstDisk(nextCollections) {
   return { ok: true };
 }
 
-function exitOnForeignLock() {
-  return !runningUnderTest() || process.env.PERSISTENCE_EXIT_ON_LOCK === "1";
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+// Adaugă doar chei care lipsesc. Un câmp deja prezent rămâne cel din bază,
+// ca să nu acoperim datele mai noi de pe disc.
+function mergeMissing(base, extra) {
+  if (!isPlainObject(extra) || !isPlainObject(base)) return base;
+  const out = { ...base };
+  for (const key of Object.keys(extra)) {
+    if (!Object.prototype.hasOwnProperty.call(out, key) || out[key] === undefined) {
+      out[key] = extra[key];
+    } else if (isPlainObject(out[key]) && isPlainObject(extra[key])) {
+      out[key] = mergeMissing(out[key], extra[key]);
+    }
+  }
+  return out;
+}
+
+function applyCollections(merged) {
+  for (const [name, handlers] of collections.entries()) {
+    if (!Object.prototype.hasOwnProperty.call(merged || {}, name)) continue;
+    handlers.restore(merged[name]);
+  }
+}
+
+function pendingPath() {
+  return path.join(DATA_DIR, `mentor-ai.json.pending.${INSTANCE_ID}`);
+}
+
+function listPendingFiles() {
+  if (!fs.existsSync(DATA_DIR)) return [];
+  return fs.readdirSync(DATA_DIR)
+    .filter(name => name.startsWith("mentor-ai.json.pending.") && !name.endsWith(".tmp"))
+    .map(name => path.join(DATA_DIR, name));
+}
+
+function readPendingCollections() {
+  const found = [];
+  for (const file of listPendingFiles()) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(file, "utf8"));
+      if (parsed && parsed.collections && typeof parsed.collections === "object") {
+        found.push({ file, collections: parsed.collections });
+      }
+    } catch {
+      /* un fișier pending ilizibil nu blochează discul */
+    }
+  }
+  return found;
+}
+
+function spillPending(snapshot) {
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    const dest = pendingPath();
+    const tmp = `${dest}.tmp`;
+    fs.writeFileSync(tmp, JSON.stringify({
+      version: FORMAT_VERSION,
+      instanceId: INSTANCE_ID,
+      savedAt: new Date().toISOString(),
+      collections: snapshot
+    }));
+    fs.renameSync(tmp, dest);
+    return true;
+  } catch (error) {
+    console.error(`[persistence] nu am putut lăsa conturile deoparte: ${error.message}`);
+    return false;
+  }
+}
+
+function deletePendingFiles(files) {
+  for (const file of files) {
+    try { fs.rmSync(file, { force: true }); } catch { /* rămâne pentru următoarea salvare */ }
+  }
+}
+
+function noteLockOnce() {
+  if (lockNoted) return;
+  lockNoted = true;
+  console.error("[persistence] alt proces ține datele. Nu ies; las conturile noi deoparte până le pot uni.");
+  try {
+    require("../ops/errorMonitor").noteIncident({ type: "second_instance", id: "persistence" }).catch(() => {});
+  } catch {
+    /* alerta nu ține procesul */
+  }
+}
+
+function absorbPendingFiles() {
+  const extras = readPendingCollections();
+  if (!extras.length) return false;
+  let merged = serialize().collections;
+  for (const extra of extras) merged = mergeMissing(merged, extra.collections);
+  applyCollections(merged);
+  return true;
 }
 
 function saveJsonNow() {
   if (!collections.size) return { saved: false, reason: "nothing_registered" };
   if (writerStopped) return { saved: false, reason: "stopped" };
 
+  const dirtyNow = migrationDirty || fingerprint(serialize()) !== lastSerialized;
   const lock = acquireWriteLock();
   if (!lock.ok) {
-    if (lock.reason === "locked" && exitOnForeignLock()) return haltWriter("second_instance");
+    if (lock.reason === "locked" && dirtyNow) {
+      const spilled = spillPending(serialize().collections);
+      noteLockOnce();
+      return { saved: false, reason: "locked", spilled };
+    }
     return { saved: false, reason: lock.reason || "locked" };
   }
 
-  const data = serialize();
-  const guard = guardAgainstDisk(data.collections);
-  if (!guard.ok) return haltWriter(guard.reason, guard.detail);
+  const disk = readDiskDocument();
+  if (disk && disk.unreadable) {
+    console.error("[persistence] nu scriu: antetul de pe disc nu poate fi citit");
+    return { saved: false, reason: "unreadable" };
+  }
 
+  let mem = serialize().collections;
+  const guard = disk ? guardAgainstDisk(mem) : { ok: true };
+  const others = readPendingCollections();
+  let merged = false;
+  if (disk && !guard.ok) {
+    mem = mergeMissing(disk.collections || {}, mem);
+    merged = true;
+    console.error(`[persistence] unesc peste disc (${guard.reason})`);
+  }
+  if (others.length) {
+    for (const extra of others) mem = mergeMissing(mem, extra.collections);
+    merged = true;
+  }
+  if (merged) {
+    applyCollections(mem);
+    if (disk) memoryRevision = Number(disk.revision) || 0;
+  }
+
+  const data = serialize();
   const current = fingerprint(data);
-  if (!migrationDirty && current === lastSerialized) return { saved: false, reason: "unchanged" };
+  if (!migrationDirty && !others.length && current === lastSerialized && guard.ok) {
+    return { saved: false, reason: "unchanged" };
+  }
+  if (
+    merged &&
+    disk &&
+    current === fingerprint({ version: FORMAT_VERSION, collections: disk.collections || {} })
+  ) {
+    deletePendingFiles(others.map(item => item.file));
+    memoryRevision = Number(disk.revision) || 0;
+    baselineInstanceId = String(disk.instanceId || baselineInstanceId);
+    lastSerialized = current;
+    migrationDirty = false;
+    return { saved: false, reason: "unchanged", merged: true };
+  }
 
   try {
     fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -566,8 +669,10 @@ function saveJsonNow() {
     allowedShrink = 0;
     lastSerialized = current;
     migrationDirty = false;
+    lockNoted = false;
+    deletePendingFiles(others.map(item => item.file));
     if (previous) queueBackup(previous);
-    return { saved: true, bytes: Buffer.byteLength(json), revision: memoryRevision };
+    return { saved: true, bytes: Buffer.byteLength(json), revision: memoryRevision, merged };
   } catch (error) {
     console.error(`[persistence] salvare eșuată: ${error.message}`);
     try {
