@@ -1,12 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import QuoteCard from './QuoteCard.jsx';
 import Mascota from './mascot/Mascota.jsx';
 import { passwordHint } from '../passwordHint.js';
 import { MentorAPI } from '../apiClient.js';
+import { confirmPasswordIssue, normalizeSecret, shouldKeepUsername } from '../signupFields.js';
 const isValidEmail = value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || '');
-const USERNAME_HINT = 'Alege alt nume. Nu folosi numele tău real, cuvinte urâte sau date de contact.';
 const TERMS_MESSAGE = 'Trebuie să fii de acord cu termenii și politica de confidențialitate.';
-const MISMATCH_MESSAGE = 'Parolele nu coincid.';
 const EMAIL_MESSAGE = 'Adresa de email nu este validă.';
 
 const FieldStatus = ({ touched, valid }) => {
@@ -25,35 +24,55 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
   const [serverError, setServerError] = useState('');
   const [usernameOk, setUsernameOk] = useState(false);
   const [usernameMsg, setUsernameMsg] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const usernameRef = useRef('');
 
   const setField = (key, value) => {
     setForm(prev => ({ ...prev, [key]: value }));
-    if (key === 'username') {
-      setUsernameOk(false);
-      setUsernameMsg('');
-    }
   };
   const markTouched = key => setTouched(prev => ({ ...prev, [key]: true }));
 
+  const applyUsername = (value, inputType) => {
+    const next = shouldKeepUsername(usernameRef.current, value, inputType);
+    const restored = next === usernameRef.current && String(value ?? '') !== next;
+    if (next === usernameRef.current && !restored) return next;
+    usernameRef.current = next;
+    setForm(prev => ({ ...prev, username: next }));
+    if (restored) return next;
+    setUsernameOk(false);
+    setUsernameMsg('');
+    setSuggestions([]);
+    return next;
+  };
+
   const reviewUsername = async value => {
     const name = String(value || '').trim();
+    const still = () => usernameRef.current.trim() === name;
     if (name.length < 3) {
-      setUsernameOk(false);
-      setUsernameMsg(USERNAME_HINT);
-      return USERNAME_HINT;
+      const message = name
+        ? 'Numele trebuie să aibă cel puțin 3 caractere.'
+        : 'Scrie un nume de utilizator. Câmpul e gol.';
+      if (still()) {
+        setUsernameOk(false);
+        setUsernameMsg(message);
+        setSuggestions([]);
+      }
+      return message;
     }
     const result = await MentorAPI.checkUsername(name);
+    if (!still()) return '';
     const ok = Boolean(result.ok);
-    const message = ok ? '' : (result.error || USERNAME_HINT);
+    const message = ok ? '' : (result.error || 'Alege alt nume.');
     setUsernameOk(ok);
     setUsernameMsg(message);
+    setSuggestions(ok ? [] : (result.suggestions || []));
     return message;
   };
 
   const validators = useMemo(() => ({
     username: () => usernameOk,
     password: v => passwordHint(v, form.username).ok,
-    confirmPassword: v => v && v === form.password,
+    confirmPassword: v => !confirmPasswordIssue(form.password, v),
     class: v => ['5', '6', '7', '8'].includes(String(v)),
     parentEmail: v => isValidEmail(v),
     acceptTerms: v => v === true
@@ -70,7 +89,7 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
     const problems = [
       nameError,
       password.ok ? '' : password.label,
-      form.confirmPassword && form.confirmPassword === form.password ? '' : MISMATCH_MESSAGE,
+      confirmPasswordIssue(form.password, form.confirmPassword),
       isValidEmail(form.parentEmail) ? '' : EMAIL_MESSAGE,
       form.acceptTerms ? '' : TERMS_MESSAGE
     ].filter(Boolean);
@@ -81,7 +100,12 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
     }
 
     setSubmitting(true);
-    const result = await onContinue(form);
+    const result = await onContinue({
+      ...form,
+      username: form.username.trim(),
+      password: normalizeSecret(form.password),
+      confirmPassword: normalizeSecret(form.confirmPassword)
+    });
     setSubmitting(false);
     if (result && !result.success) {
       setServerError(result.error || 'Nu am putut crea contul.');
@@ -107,15 +131,36 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
             </span>
             <input
               type="text"
+              name="username"
               value={form.username}
-              onChange={e => setField('username', e.target.value)}
-              onBlur={() => { markTouched('username'); reviewUsername(form.username); }}
+              onChange={e => {
+                const next = applyUsername(e.target.value, e.nativeEvent?.inputType);
+                if (e.target.value !== next) e.target.value = next;
+              }}
+              onBlur={() => { markTouched('username'); reviewUsername(usernameRef.current); }}
               placeholder="Ex: andrei_p"
-              autoComplete="off"
+              autoComplete="username"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               className={`field form-input ${touched.username ? (fieldValid('username') ? 'field-valid' : 'field-invalid') : ''}`}
             />
           </label>
-          <small className="field-hint">{usernameMsg || 'Nu folosi numele tău real.'}</small>
+          <small className={`field-hint${usernameMsg ? ' field-hint-bad' : ''}`}>{usernameMsg || 'Nu folosi numele tău real.'}</small>
+          {suggestions.length > 0 && (
+            <div className="username-suggestions">
+              {suggestions.map(name => (
+                <button
+                  key={name}
+                  type="button"
+                  className="ghost-button username-suggestion"
+                  onClick={() => { applyUsername(name, 'insertText'); markTouched('username'); reviewUsername(name); }}
+                >
+                  {name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div>
@@ -146,6 +191,7 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
             </span>
             <input
               type="password"
+              name="new-password"
               value={form.password}
               onChange={e => setField('password', e.target.value)}
               onBlur={() => markTouched('password')}
@@ -169,6 +215,7 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
             </span>
             <input
               type="password"
+              name="confirm-password"
               value={form.confirmPassword}
               onChange={e => setField('confirmPassword', e.target.value)}
               onBlur={() => markTouched('confirmPassword')}
@@ -177,6 +224,9 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
               className={`field form-input ${touched.confirmPassword ? (fieldValid('confirmPassword') ? 'field-valid' : 'field-invalid') : ''}`}
             />
           </label>
+          {touched.confirmPassword && confirmPasswordIssue(form.password, form.confirmPassword) && (
+            <small className="field-hint field-hint-bad">{confirmPasswordIssue(form.password, form.confirmPassword)}</small>
+          )}
         </div>
 
         <div>
@@ -215,8 +265,8 @@ const RegisterScreen = ({ onBack, onContinue, onValidationError }) => {
         </div>
       </div>
 
-      {(Boolean(serverError && serverError.includes('nume de utilizator')) || (Boolean(touched.username) && !usernameOk && Boolean(usernameMsg))) && (
-        <Mascota mood="explica" size="sm" message="Alege alt nume. Nu folosi numele tău real." />
+      {(Boolean(serverError && serverError.includes('Numele ')) || (Boolean(touched.username) && !usernameOk && Boolean(usernameMsg))) && (
+        <Mascota mood="explica" size="sm" message={usernameMsg || 'Alege alt nume. Nu folosi numele tău real.'} />
       )}
       {serverError && <div className="form-error" role="alert"><i className="fas fa-circle-exclamation"></i> {serverError}</div>}
 

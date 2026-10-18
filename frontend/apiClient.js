@@ -110,7 +110,12 @@ const MentorAPI = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username })
       });
-      return { ok: Boolean(data.ok), error: data.error || '', code: data.code || '' };
+      return {
+        ok: Boolean(data.ok),
+        error: data.error || '',
+        code: data.code || '',
+        suggestions: Array.isArray(data.suggestions) ? data.suggestions : []
+      };
     } catch (error) {
       return { ok: false, error: humanizeFetchError(error), code: error.payload?.code || '' };
     }

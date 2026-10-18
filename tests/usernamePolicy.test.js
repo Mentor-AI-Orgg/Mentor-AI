@@ -6,7 +6,7 @@ import { createApp } from '../backend/src/app.js';
 import { PASSWORD, registerGranted, uniqueEmail, uniqueUsername } from './registerStudent.js';
 
 const nodeRequire = createRequire(import.meta.url);
-const { usernameIssue, FRIENDLY } = nodeRequire('../backend/src/safety/usernamePolicy.js');
+const { usernameIssue } = nodeRequire('../backend/src/safety/usernamePolicy.js');
 const { rejectedNames } = nodeRequire('../backend/src/ops/auditUsernames.js');
 const { findByUsername, flagRejectedUsernames } = nodeRequire('../backend/src/data/authStore.js');
 
@@ -22,7 +22,13 @@ const GOOD = [
   'violeta',
   'dracula',
   'canal',
-  'sexta'
+  'sexta',
+  'kitty',
+  'morcov',
+  'curcubeu',
+  'analiza10',
+  'essex10',
+  'peacock1'
 ];
 
 const BLOCKED = [
@@ -73,7 +79,7 @@ const RESERVED = [
 ];
 
 const INVALID = [
-  ['ab', 'username_invalid_chars'],
+  ['ab', 'username_too_short'],
   ['123ana', 'username_invalid_chars'],
   ['2012', 'username_invalid_chars'],
   ['vulpe-alba', 'username_invalid_chars'],
@@ -98,7 +104,7 @@ describe('nume de utilizator', () => {
         expect(issue, name).toBeNull();
       } else {
         expect(issue?.code, name).toBe(code);
-        expect(issue?.error).toBe(FRIENDLY);
+        expect(issue?.error, name).toMatch(/\S/);
       }
     }
   });
@@ -122,7 +128,7 @@ describe('nume de utilizator', () => {
       expect(res.status, username).toBe(400);
       expect(res.body.field).toBe('username');
       expect(res.body.code).toBe(code);
-      expect(res.body.error).toBe(FRIENDLY);
+      expect(res.body.error).toBe(usernameIssue(username).error);
     }
 
     const created = await registerGranted(app, { username: 'ana_matei' });
@@ -138,6 +144,8 @@ describe('nume de utilizator', () => {
     const taken = await created.agent.patch('/api/account/profile').send({ username: 'mihai.p' });
     expect(taken.status).toBe(409);
     expect(taken.body.code).toBe('username_taken');
+    expect(taken.body.error).toBe('Numele mihai.p e deja folosit, încearcă mihai.p123.');
+    expect(taken.body.suggestions[0]).toBe('mihai.p123');
 
     const check = await request(app).post('/api/auth/username-check').send({ username: 'Ștefan10' });
     expect(check.status).toBe(200);

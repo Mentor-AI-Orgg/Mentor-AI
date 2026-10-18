@@ -36,13 +36,10 @@ function sharedPasswordList() {
   return {
     name: 'shared-password-list',
     transform(code, id) {
-      if (!id.endsWith('commonPasswords.js')) return null;
+      if (!id.endsWith('commonPasswords.js') && !id.endsWith('secretNormalize.js')) return null;
       if (!code.includes('module.exports')) return null;
       return {
-        code: code.replace(
-          'module.exports = { isCommonPassword, commonPasswordCount };',
-          'export { isCommonPassword, commonPasswordCount };'
-        ),
+        code: code.replace(/module\.exports = \{([^}]+)\};/, 'export {$1};'),
         map: null
       };
     }

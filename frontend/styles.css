@@ -240,6 +240,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .field-valid { border-color: rgba(52, 211, 153, .55) !important; }
 .field-invalid { border-color: rgba(251, 113, 133, .55) !important; }
 .field-hint { display: block; margin-top: 6px; color: var(--muted); font-size: 0.75rem; line-height: 1.5; }
+.username-suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.username-suggestion { min-height: 36px; padding: 0 12px; border-radius: 999px; }
 .field-hint-bad { color: #fb7185; }
 .form-error { display: flex; align-items: center; gap: 8px; margin-top: 4px; padding: 10px 12px; border-radius: 14px; background: rgba(251, 113, 133, .12); border: 1px solid rgba(251, 113, 133, .4); color: #fda4af; font-size: 0.75rem; line-height: 1.5; }
 .form-error i { font-size: 0.8125rem; flex-shrink: 0; }

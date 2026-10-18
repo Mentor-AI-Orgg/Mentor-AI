@@ -66,6 +66,26 @@ describe('register rejects weak child passwords', () => {
     });
     expect(phrase.status).toBe(201);
 
+    const spaced = await request(app).post('/api/auth/register').send({
+      username: 'zmeuspatiu1',
+      password: 'pisica verde sare ',
+      confirmPassword: 'pisica verde sare\u00a0',
+      class: '6',
+      parentEmail: `parinte.${Date.now()}.d@example.com`,
+      acceptTerms: true
+    });
+    expect(spaced.status).toBe(201);
+    const login = await request(app).post('/api/auth/login').send({
+      email: 'zmeuspatiu1',
+      password: 'pisica verde sare'
+    });
+    expect(login.status).toBe(200);
+    const padded = await request(app).post('/api/auth/login').send({
+      email: 'zmeuspatiu1',
+      password: 'pisica verde sare '
+    });
+    expect(padded.status).toBe(200);
+
     const created = await registerGranted(app, { username: 'zmeutestpw' });
     expect(created.res.status).toBe(201);
     const changed = await created.agent.post('/api/account/password').send({

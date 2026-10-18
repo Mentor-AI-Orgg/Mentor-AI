@@ -21,7 +21,7 @@ const { SESSION_COOKIE } = require("../middleware/auth");
 const { sessionCookieOptions } = require("../http/sessionCookie");
 const economyStore = require("../data/economyStore");
 const registry = require("../data/userDataRegistry");
-const { usernameIssue } = require("../safety/usernamePolicy");
+const { usernameIssue, suggestUsernames, takenError } = require("../safety/usernamePolicy");
 const { passwordError } = require("../safety/passwordPolicy");
 
 const SECRET_KEY = /password|salt|token|secret|hash/i;
@@ -89,10 +89,12 @@ router.post("/rename", (req, res) => {
   const issue = usernameIssue(username);
   if (issue) return res.status(400).json({ error: issue.error, field: "username", code: issue.code });
   if (usernameTaken(username, req.auth.email)) {
+    const suggestions = suggestUsernames(username).filter(item => item.toLowerCase() !== username.toLowerCase() && !usernameTaken(item, req.auth.email));
     return res.status(409).json({
-      error: "Acest nume de utilizator este deja folosit.",
+      error: takenError(username, suggestions),
       field: "username",
-      code: "username_taken"
+      code: "username_taken",
+      suggestions
     });
   }
   req.auth.account.profile.username = username;
@@ -150,10 +152,12 @@ router.patch("/profile", validateBody(profileSchema), async (req, res) => {
     if (nameIssue) return res.status(400).json({ error: nameIssue.error, field: "username", code: nameIssue.code });
   }
   if (patch.username && usernameTaken(patch.username, req.auth.email)) {
+    const suggestions = suggestUsernames(patch.username).filter(item => !usernameTaken(item, req.auth.email));
     return res.status(409).json({
-      error: "Acest nume de utilizator este deja folosit.",
+      error: takenError(patch.username, suggestions),
       field: "username",
-      code: "username_taken"
+      code: "username_taken",
+      suggestions
     });
   }
   if (patch.parentEmail && normalizeEmail(patch.parentEmail) === normalizeEmail(req.auth.email)) {
