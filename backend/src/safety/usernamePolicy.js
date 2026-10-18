@@ -97,26 +97,66 @@ function isReserved(value) {
   return names.some(name => folded === fold(name) || plainName === plain(name));
 }
 
+function tokenFolds(value) {
+  return String(value || "")
+    .split(/[^A-Za-zĂÂÎȘȚăâîșț0-9]+/)
+    .map(part => fold(part))
+    .filter(Boolean);
+}
+
 function isBlocked(value) {
   const folded = fold(value);
   if (!folded) return false;
   if (LISTS.exceptions.some(item => fold(item) === folded)) return false;
+  const tokens = tokenFolds(value);
   return LISTS.words.some(word => {
     const needle = fold(word);
-    return needle.length >= 3 && folded.includes(needle);
+    if (needle.length < 3) return false;
+    // Cuvintele scurte (sex, anal, cock) se potrivesc doar întregi.
+    // Altfel „analiza”, „essex” sau un nume obișnuit pică din greșeală.
+    if (needle.length <= 4) return folded === needle || tokens.some(token => token === needle);
+    return folded.includes(needle);
   });
 }
 
 function usernameIssue(value) {
   const trimmed = String(value ?? "").trim();
-  if (!trimmed) return { code: "username_invalid_chars", error: FRIENDLY };
-  if (looksLikeContact(trimmed)) return { code: "username_contact_info", error: FRIENDLY };
-  if (!SHAPE.test(trimmed) || /^\d{3,}/.test(trimmed)) {
-    return { code: "username_invalid_chars", error: FRIENDLY };
+  if (!trimmed) return { code: "username_empty", error: "Scrie un nume de utilizator. Câmpul e gol." };
+  if (trimmed.length < 3) return { code: "username_too_short", error: "Numele trebuie să aibă cel puțin 3 caractere." };
+  if (looksLikeContact(trimmed)) {
+    return { code: "username_contact_info", error: "Nu pune telefon, email sau rețele sociale în nume." };
   }
-  if (isReserved(trimmed)) return { code: "username_reserved", error: FRIENDLY };
-  if (isBlocked(trimmed)) return { code: "username_blocked", error: FRIENDLY };
+  if (/^\d{3,}/.test(trimmed)) {
+    return { code: "username_invalid_chars", error: "Nu începe numele cu mai multe cifre." };
+  }
+  if (!SHAPE.test(trimmed)) {
+    return { code: "username_invalid_chars", error: "Folosește litere, cifre, punct sau liniuță jos, fără spații." };
+  }
+  if (isReserved(trimmed)) return { code: "username_reserved", error: "Acest nume e rezervat. Alege altul." };
+  if (isBlocked(trimmed)) return { code: "username_blocked", error: "Alege alt nume. Cuvintele nepotrivite nu sunt permise." };
   return null;
+}
+
+function suggestUsernames(name) {
+  const stem = String(name || "")
+    .trim()
+    .replace(/[^A-Za-zĂÂÎȘȚăâîșț0-9._]/g, "")
+    .replace(/^[._]+|[._]+$/g, "")
+    .slice(0, 14) || "elev";
+  const ideas = [`${stem}123`, `${stem}_10`, `${stem}7`];
+  const unique = [];
+  for (const idea of ideas) {
+    if (unique.includes(idea) || usernameIssue(idea)) continue;
+    unique.push(idea);
+  }
+  return unique;
+}
+
+function takenError(name, suggestions = []) {
+  const shown = String(name || "").trim();
+  const first = suggestions[0];
+  if (first) return `Numele ${shown} e deja folosit, încearcă ${first}.`;
+  return `Numele ${shown} e deja folosit. Alege altul.`;
 }
 
 function usernameError(value) {
@@ -154,6 +194,8 @@ module.exports = {
   FRIENDLY,
   usernameIssue,
   usernameError,
+  suggestUsernames,
+  takenError,
   textRejected,
   obviouslyInappropriate,
   fold

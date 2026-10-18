@@ -41,7 +41,8 @@ const { sessionCookieOptions: buildSessionCookie } = require("../http/sessionCoo
 const { authLimiter, usernameCheckLimiter } = require("../middleware/rateLimits");
 const { validateBody } = require("../middleware/validate");
 const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, consentActionSchema, parentEmailSchema, tokenSchema, usernameCheckSchema } = require("../validation/schemas");
-const { usernameIssue } = require("../safety/usernamePolicy");
+const { usernameIssue, suggestUsernames, takenError } = require("../safety/usernamePolicy");
+const { normalizeSecret, confirmPasswordIssue } = require("../../../shared/secretNormalize");
 const { publicBaseUrl } = require("../publicUrl");
 const { ensureUser, pushNotification } = require("../data/economyStore");
 const { deliverMessage, smtpConfigured, warnIfSmtpMissing } = require("../notify/deliver");
@@ -145,23 +146,28 @@ router.post("/username-check", usernameCheckLimiter, validateBody(usernameCheckS
   if (issue) return res.json({ ok: false, code: issue.code, error: issue.error });
   const existing = findByUsername(req.body.username);
   if (existing && (!req.auth || existing.email !== req.auth.email)) {
+    const suggestions = suggestUsernames(req.body.username).filter(item => !findByUsername(item));
     return res.json({
       ok: false,
       code: "username_taken",
-      error: "Acest nume de utilizator este deja folosit."
+      error: takenError(req.body.username, suggestions),
+      suggestions
     });
   }
   res.json({ ok: true });
 });
 
 router.post("/register", authLimiter, ignoreChildIdentity, validateBody(registerSchema), async (req, res) => {
-  const { username, password, confirmPassword, class: className, parentEmail, role = "student" } = req.body || {};
+  const { username, class: className, parentEmail, role = "student" } = req.body || {};
+  const password = normalizeSecret(req.body?.password);
+  const confirmPassword = normalizeSecret(req.body?.confirmPassword);
 
   if (role !== "student") {
     return res.status(403).json({ ...STUDENTS_ONLY, field: "role" });
   }
-  if (String(password) !== String(confirmPassword)) {
-    return res.status(400).json({ error: "Parolele nu coincid.", field: "confirmPassword" });
+  const mismatch = confirmPasswordIssue(password, confirmPassword);
+  if (mismatch) {
+    return res.status(400).json({ error: mismatch, field: "confirmPassword" });
   }
   const passwordError = validatePassword(password, username);
   if (passwordError) return res.status(400).json({ error: passwordError, field: "password" });
@@ -172,10 +178,12 @@ router.post("/register", authLimiter, ignoreChildIdentity, validateBody(register
     });
   }
   if (findByUsername(username)) {
+    const suggestions = suggestUsernames(username).filter(item => !findByUsername(item));
     return res.status(409).json({
-      error: "Acest nume de utilizator este deja folosit.",
+      error: takenError(username, suggestions),
       field: "username",
-      code: "username_taken"
+      code: "username_taken",
+      suggestions
     });
   }
   if (!allowSignupIp(req.ip)) {
@@ -199,10 +207,12 @@ router.post("/register", authLimiter, ignoreChildIdentity, validateBody(register
   });
   if (!created.ok) {
     if (created.reason === "username_taken") {
+      const suggestions = suggestUsernames(username).filter(item => !findByUsername(item));
       return res.status(409).json({
-        error: "Acest nume de utilizator este deja folosit.",
+        error: takenError(username, suggestions),
         field: "username",
-        code: "username_taken"
+        code: "username_taken",
+        suggestions
       });
     }
     return res.status(400).json({ error: "Nu am putut crea contul." });

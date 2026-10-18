@@ -98,12 +98,22 @@ function accountIsOpen(account) {
   return status === "granted" || status === "notified";
 }
 
+async function passwordMatches(password, salt, hash) {
+  const raw = String(password ?? "");
+  if (await verifyPassword(raw, salt, hash)) return true;
+  const { normalizeSecret } = require("../../../shared/secretNormalize");
+  const trimmed = normalizeSecret(raw);
+  if (trimmed === raw) return false;
+  return verifyPassword(trimmed, salt, hash);
+}
+
 async function changePassword(email, currentPassword, nextPassword) {
   const account = findAccount(email);
   if (!account) return { ok: false, reason: "missing" };
-  const valid = await verifyPassword(currentPassword, account.salt, account.passwordHash);
+  const valid = await passwordMatches(currentPassword, account.salt, account.passwordHash);
   if (!valid) return { ok: false, reason: "wrong" };
-  const { salt, hash } = await hashPassword(nextPassword);
+  const { normalizeSecret } = require("../../../shared/secretNormalize");
+  const { salt, hash } = await hashPassword(normalizeSecret(nextPassword));
   account.salt = salt;
   account.passwordHash = hash;
   return { ok: true };
@@ -291,7 +301,7 @@ async function authenticate({ email, password }) {
     await hashPassword(String(password || ""), "dummy_salt_for_timing");
     return { ok: false, reason: "invalid_credentials" };
   }
-  const valid = await verifyPassword(password, account.salt, account.passwordHash);
+  const valid = await passwordMatches(password, account.salt, account.passwordHash);
   if (!valid) return { ok: false, reason: "invalid_credentials" };
   return { ok: true, account };
 }
@@ -396,11 +406,13 @@ async function consumeResetToken(token, nextPassword) {
     return { ok: false, reason: "invalid" };
   }
   const { passwordError } = require("../safety/passwordPolicy");
-  const weak = passwordError(nextPassword, account.profile?.username || "");
+  const { normalizeSecret } = require("../../../shared/secretNormalize");
+  const next = normalizeSecret(nextPassword);
+  const weak = passwordError(next, account.profile?.username || "");
   if (weak) return { ok: false, reason: "weak", error: weak };
   RESETS.delete(key);
   dropResetTokens(account.email);
-  const { salt, hash } = await hashPassword(nextPassword);
+  const { salt, hash } = await hashPassword(next);
   account.salt = salt;
   account.passwordHash = hash;
   destroySessionsForEmail(account.email);

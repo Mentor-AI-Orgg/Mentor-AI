@@ -1,7 +1,8 @@
 import { isCommonPassword } from '@shared/commonPasswords.js';
+import { normalizeSecret } from '@shared/secretNormalize.js';
 
 function passwordHint(password, username = '') {
-  const value = String(password || '');
+  const value = normalizeSecret(password);
   const name = String(username || '').trim().toLowerCase();
   if (!value) return { ok: false, label: 'Minim 8 caractere. Poți scrie o frază.' };
   if (value.length < 8) return { ok: false, label: 'Prea scurtă. Mai scrie.' };
