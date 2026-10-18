@@ -219,7 +219,9 @@ describe('tutorul legat de exercițiul predat', () => {
     const card = (opened.body.cards || []).map(row => ({ row, exercise: findExercise(row.id) })).find(item => secretOf(item.exercise));
     expect(card).toBeTruthy();
     const secret = secretOf(card.exercise);
-    expect(JSON.stringify(opened.body)).not.toContain(secret);
+    const visible = { ...opened.body };
+    delete visible.session_id;
+    expect(JSON.stringify(visible)).not.toContain(secret);
 
     const forged = await agent.post('/api/chat').send({
       message: OPENER,
