@@ -1,12 +1,8 @@
-// Rezumatul de duminică împarte căsuța salut@ cu linkurile și alertele.
-// Plafonul gazdei e 500/zi. Rezumatul se oprește la 300, ca să rămână loc
-// pentru linkul de părinte, resetarea parolei și alertele.
-
-const DIGEST_DAILY_BUDGET = 300;
+// Căsuța are plafonul ei. Când SMTP îl anunță, rezumatul se oprește până
+// la miezul nopții pe ora București și nu mai reîncearcă în aceeași zi.
+// Linkurile și resetările nu trec pe aici: ele încearcă oricum.
 
 const state = {
-  date: "",
-  digestSent: 0,
   quotaUntil: 0
 };
 
@@ -38,24 +34,6 @@ function bucharestMidnightAfter(now = new Date()) {
   return now.getTime() + 6 * 3600 * 1000;
 }
 
-function noteDay(date) {
-  if (state.date !== date) {
-    state.date = date;
-    state.digestSent = 0;
-  }
-}
-
-function digestRoom(date, budget = DIGEST_DAILY_BUDGET) {
-  noteDay(date);
-  return Math.max(0, Number(budget) - state.digestSent);
-}
-
-function recordDigest(date) {
-  noteDay(date);
-  state.digestSent += 1;
-  return state.digestSent;
-}
-
 function quotaBlocked(now = new Date()) {
   return state.quotaUntil > now.getTime();
 }
@@ -74,29 +52,18 @@ function isQuotaError(error) {
 }
 
 function snapshot() {
-  return {
-    date: state.date,
-    digestSent: state.digestSent,
-    quotaUntil: state.quotaUntil
-  };
+  return { quotaUntil: state.quotaUntil };
 }
 
 function restore(data = {}) {
-  state.date = String(data.date || "");
-  state.digestSent = Number(data.digestSent) || 0;
   state.quotaUntil = Number(data.quotaUntil) || 0;
 }
 
 function resetForTests() {
-  state.date = "";
-  state.digestSent = 0;
   state.quotaUntil = 0;
 }
 
 module.exports = {
-  DIGEST_DAILY_BUDGET,
-  digestRoom,
-  recordDigest,
   quotaBlocked,
   noteQuota,
   isQuotaError,

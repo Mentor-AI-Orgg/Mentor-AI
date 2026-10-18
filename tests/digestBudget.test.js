@@ -13,10 +13,13 @@ const authStore = nodeRequire('../backend/src/data/authStore.js');
 const errorMonitor = nodeRequire('../backend/src/ops/errorMonitor.js');
 const nodemailer = nodeRequire('nodemailer');
 
-const SUNDAY = new Date('2026-10-18T16:30:00.000Z');
 const SUNDAY_EARLY = new Date('2026-10-18T15:30:00.000Z');
+const SUNDAY = new Date('2026-10-18T16:30:00.000Z');
 const SUNDAY_LATER = new Date('2026-10-18T17:00:00.000Z');
 const MONDAY = new Date('2026-10-19T16:30:00.000Z');
+const TUESDAY = new Date('2026-10-20T16:30:00.000Z');
+
+const ACCEPTED = { mocked: false, delivered: true, channel: 'email' };
 
 async function studentWithActivity(app) {
   const created = await registerGranted(app);
@@ -28,7 +31,7 @@ async function studentWithActivity(app) {
   return created;
 }
 
-describe('plafonul rezumatului', () => {
+describe('rezumatul și plafonul căsuței', () => {
   beforeEach(() => {
     mailBudget.resetForTests();
   });
@@ -38,57 +41,53 @@ describe('plafonul rezumatului', () => {
     mailBudget.resetForTests();
   });
 
-  it('nu trimite înainte de 19, apoi împarte restul pe zile fără dubluri', async () => {
+  it('nu trimite înainte de 19 și nu repetă o trimitere reușită în aceeași săptămână', async () => {
     const { app } = createApp({ autosave: false });
     persistence.saveNow();
     expect(persistence.thisProcessWrites()).toBe(true);
     const first = await studentWithActivity(app);
     const second = await studentWithActivity(app);
-    const early = await sendDueDigests(SUNDAY_EARLY, { budget: 1 });
-    expect(early).toHaveLength(0);
-    const sunday = await sendDueDigests(SUNDAY, { budget: 1 });
-    expect(sunday).toHaveLength(1);
-    const again = await sendDueDigests(SUNDAY_LATER, { budget: 1 });
-    expect(again).toHaveLength(0);
-    const monday = await sendDueDigests(MONDAY, { budget: 1 });
-    expect(monday).toHaveLength(1);
-    expect(monday[0].username).not.toBe(sunday[0].username);
-    const names = [sunday[0].username, monday[0].username].sort();
-    expect(names).toEqual([first.username, second.username].sort());
-    const sentUser = economy.getUser(authStore.findByUsername(sunday[0].username).email);
-    expect(sentUser.digestWeek).toBe('2026-10-18');
-    expect(mailBudget.snapshot().digestSent).toBe(1);
-    expect(mailBudget.bucharestMidnightAfter(SUNDAY)).toBe(Date.parse('2026-10-18T21:00:00.000Z'));
-    const oldMarker = economy.getUser(authStore.findByUsername(second.username).email);
-    oldMarker.digestWeek = "";
-    oldMarker.digestSentOn = "2026-10-18";
-    const repeat = await sendDueDigests(new Date("2026-10-20T16:30:00.000Z"), { budget: 5 });
+    vi.spyOn(deliver, 'deliverMessage').mockResolvedValue(ACCEPTED);
+    expect(await sendDueDigests(SUNDAY_EARLY)).toHaveLength(0);
+    const wanted = new Set([first.username, second.username]);
+    const sunday = (await sendDueDigests(SUNDAY)).filter(row => wanted.has(row.username));
+    expect(sunday).toHaveLength(2);
+    expect((await sendDueDigests(SUNDAY_LATER)).filter(row => wanted.has(row.username))).toHaveLength(0);
+    const marked = economy.getUser(authStore.findByUsername(first.username).email);
+    expect(marked.digestWeek).toBe('2026-10-18');
+    expect(marked.digestSentOn).toBe('2026-10-18');
+    marked.digestWeek = '';
+    const repeat = await sendDueDigests(TUESDAY);
+    expect(repeat.map(row => row.username)).not.toContain(first.username);
     expect(repeat.map(row => row.username)).not.toContain(second.username);
   });
 
-  it('la plafonul căsuței oprește lotul și lasă linkurile să încerce', async () => {
+  it('la refuzul căsuței oprește seara și reia a doua zi doar pe cine nu a primit', async () => {
     const { app } = createApp({ autosave: false });
     persistence.saveNow();
     const created = [];
     for (let n = 0; n < 3; n += 1) created.push(await studentWithActivity(app));
+    const parents = new Set(created.map(row => row.parentEmail));
+    const names = new Set(created.map(row => row.username));
     let calls = 0;
-    vi.spyOn(deliver, 'deliverMessage').mockImplementation(async () => {
+    vi.spyOn(deliver, 'deliverMessage').mockImplementation(async ({ to }) => {
+      if (!parents.has(to)) return ACCEPTED;
       calls += 1;
       if (calls === 2) return { mocked: false, delivered: false, quota: true, error: 'smtp_quota' };
-      return { mocked: false, delivered: true, channel: 'email' };
+      return ACCEPTED;
     });
-    const first = await sendDueDigests(SUNDAY, { budget: 10 });
+    const first = (await sendDueDigests(SUNDAY)).filter(row => names.has(row.username));
     expect(first).toHaveLength(1);
     expect(calls).toBe(2);
-    const later = await sendDueDigests(SUNDAY_LATER, { budget: 10 });
-    expect(later).toHaveLength(0);
+    expect((await sendDueDigests(SUNDAY_LATER)).filter(row => names.has(row.username))).toHaveLength(0);
     expect(calls).toBe(2);
-    const monday = await sendDueDigests(MONDAY, { budget: 10 });
+    const monday = (await sendDueDigests(MONDAY)).filter(row => names.has(row.username));
+    expect(monday).toHaveLength(2);
     expect(monday.map(row => row.username)).not.toContain(first[0].username);
-    expect(monday.length).toBe(2);
-    expect(created).toHaveLength(3);
+    expect(created.map(row => row.username).sort()).toEqual(
+      [first[0].username, ...monday.map(row => row.username)].sort()
+    );
     vi.restoreAllMocks();
-
     mailBudget.noteQuota(SUNDAY);
     const magic = await deliver.deliverMessage({
       to: 'parinte@example.com',
@@ -100,13 +99,30 @@ describe('plafonul rezumatului', () => {
     expect(magic.quota).toBeUndefined();
   });
 
+  it('un eșec care nu e plafon nu marchează trimis și se reia la tic-ul următor', async () => {
+    const { app } = createApp({ autosave: false });
+    persistence.saveNow();
+    const created = await studentWithActivity(app);
+    let calls = 0;
+    vi.spyOn(deliver, 'deliverMessage').mockImplementation(async ({ to }) => {
+      if (to !== created.parentEmail) return ACCEPTED;
+      calls += 1;
+      if (calls === 1) return { mocked: false, delivered: false, error: 'smtp_450' };
+      return ACCEPTED;
+    });
+    expect((await sendDueDigests(SUNDAY)).filter(row => row.username === created.username)).toHaveLength(0);
+    const again = (await sendDueDigests(SUNDAY_LATER)).filter(row => row.username === created.username);
+    expect(again.map(row => row.username)).toEqual([created.username]);
+    expect(economy.getUser(authStore.findByUsername(created.username).email).digestWeek).toBe('2026-10-18');
+  });
+
   it('un al doilea proces nu retrimite rezumatul', async () => {
     const { app } = createApp({ autosave: false });
     persistence.saveNow();
     await studentWithActivity(app);
+    vi.spyOn(deliver, 'deliverMessage').mockResolvedValue(ACCEPTED);
     vi.spyOn(persistence, 'thisProcessWrites').mockReturnValue(false);
-    const sent = await sendDueDigests(SUNDAY, { budget: 5 });
-    expect(sent).toHaveLength(0);
+    expect(await sendDueDigests(SUNDAY)).toHaveLength(0);
   });
 
   it('recunoaște plafonul SMTP și nu pornește alerta', async () => {
@@ -140,6 +156,7 @@ describe('plafonul rezumatului', () => {
       expect(mailBudget.quotaBlocked(SUNDAY_LATER)).toBe(true);
       expect(mailBudget.quotaBlocked(MONDAY)).toBe(false);
       expect(mailBudget.isQuotaError({ responseCode: 550, message: 'user unknown' })).toBe(false);
+      expect(mailBudget.bucharestMidnightAfter(SUNDAY)).toBe(Date.parse('2026-10-18T21:00:00.000Z'));
     } finally {
       if (previous.host == null) delete process.env.SMTP_HOST;
       else process.env.SMTP_HOST = previous.host;

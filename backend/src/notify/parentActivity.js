@@ -1,6 +1,8 @@
 // Activitatea copilului se adună și pleacă într-un rezumat, după ora 19.
-// Duminica pornesc săptămânalele. Ce nu încape în plafonul zilei pleacă în
-// zilele următoare. Nu copiem mesaje, răspunsuri sau câmpul note.
+// Duminica pornesc săptămânalele. Cine nu a primit un răspuns reușit de la
+// căsuță continuă în zilele următoare. Nu există plafon intern: ne oprim
+// doar când SMTP spune că s-a umplut, până la miezul nopții. Nu copiem
+// mesaje, răspunsuri sau câmpul note.
 
 const { findAccount, accountIsOpen, listAccounts } = require("../data/authStore");
 const { getGuide } = require("../data/gimnaziuGuide");
@@ -121,6 +123,13 @@ function reserveOutbound(parentEmail, date) {
   return true;
 }
 
+function releaseOutbound(parentEmail, date) {
+  const key = String(parentEmail || "").trim().toLowerCase();
+  const row = SENT[key];
+  if (!row || row.date !== date || row.count <= 0) return;
+  row.count -= 1;
+}
+
 function outboundCount(parentEmail, date) {
   const row = SENT[String(parentEmail || "").trim().toLowerCase()];
   if (!row || row.date !== date) return 0;
@@ -187,6 +196,8 @@ function weekKey(clock) {
 
 function sentThisWeek(economy, week) {
   if (economy.digestWeek === week) return true;
+  // Varianta veche marca și refuzurile. Nu se pot deosebi de trimiterile
+  // reușite, așa că un marcaj din săptămâna asta nu se mai trimite.
   const on = String(economy.digestSentOn || "");
   if (!/^\d{4}-\d{2}-\d{2}$/.test(on)) return false;
   return on >= week && on <= addCalendarDays(week, 6);
@@ -206,13 +217,11 @@ function digestLine(events, username, label = "Azi") {
   return `${label}, ${username} a lucrat ${minutes} ${minutes === 1 ? "minut" : "minute"}: ${bits.join(", ")}.`;
 }
 
-async function sendDueDigests(now = new Date(), { force = false, budget = mailBudget.DIGEST_DAILY_BUDGET } = {}) {
+async function sendDueDigests(now = new Date(), { force = false } = {}) {
   const clock = bucharestParts(now);
   if (!force && clock.hour < 19) return [];
   if (!force && !require("../data/persistence").thisProcessWrites()) return [];
   if (mailBudget.quotaBlocked(now)) return [];
-  let room = mailBudget.digestRoom(clock.date, budget);
-  if (room <= 0) return [];
   const week = weekKey(clock);
   const { issueUnsubscribeToken } = require("../data/consentStore");
   const { publicBaseUrl } = require("../publicUrl");
@@ -224,7 +233,6 @@ async function sendDueDigests(now = new Date(), { force = false, budget = mailBu
     if (freq === "off") continue;
     const economy = getUser(account.email);
     if (!economy || !economy.digestEvents?.length) continue;
-    if (economy.digestHeldOn === clock.date) continue;
     if (freq === "daily") {
       if (economy.digestSentOn === clock.date) continue;
     } else if (sentThisWeek(economy, week)) continue;
@@ -239,7 +247,7 @@ async function sendDueDigests(now = new Date(), { force = false, budget = mailBu
   const sent = [];
   let changed = false;
   for (const item of due) {
-    if (room <= 0 || mailBudget.quotaBlocked(now)) break;
+    if (mailBudget.quotaBlocked(now)) break;
     const { account, freq, economy } = item;
     const parentEmail = account.profile.parentEmail;
     if (!reserveOutbound(parentEmail, clock.date)) continue;
@@ -263,21 +271,18 @@ async function sendDueDigests(now = new Date(), { force = false, budget = mailBu
       channel: "email",
       action: "digest"
     });
-    if (delivery.quota) {
-      mailBudget.noteQuota(now);
-      break;
-    }
-    const accepted = Boolean(delivery.delivered || delivery.mocked);
-    if (!accepted) {
-      economy.digestHeldOn = clock.date;
-      changed = true;
+    if (!delivery.delivered) {
+      releaseOutbound(parentEmail, clock.date);
+      if (delivery.quota) {
+        mailBudget.noteQuota(now);
+        changed = true;
+        break;
+      }
       continue;
     }
     economy.digestSentOn = clock.date;
     economy.digestWeek = week;
     if (freq === "daily") economy.digestEvents = [];
-    mailBudget.recordDigest(clock.date);
-    room -= 1;
     changed = true;
     sent.push({ to: parentEmail, subject, body, delivery, username: account.profile.username });
   }

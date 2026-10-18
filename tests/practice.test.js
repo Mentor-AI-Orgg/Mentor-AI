@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, vi } from 'vitest';
 import { createRequire } from 'node:module';
 import { createApp } from '../backend/src/app.js';
 import { registerGranted } from './registerStudent.js';
@@ -349,7 +349,18 @@ describe('practice API', () => {
     expect(digest[0].minutes).toBe(180);
     expect(digest[0].title).toBe('Numere naturale');
 
-    const sent = await sendDueDigests(new Date(), { force: true });
+    const deliver = nodeRequire('../backend/src/notify/deliver.js');
+    const delivery = vi.spyOn(deliver, 'deliverMessage').mockResolvedValue({
+      mocked: false,
+      delivered: true,
+      channel: 'email'
+    });
+    let sent;
+    try {
+      sent = await sendDueDigests(new Date(), { force: true });
+    } finally {
+      delivery.mockRestore();
+    }
     const mine = sent.find(row => row.username === created.username);
     expect(mine).toBeTruthy();
     expect(mine.body).toContain(`1 din ${cards.length}`);
