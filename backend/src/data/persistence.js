@@ -149,6 +149,15 @@ function writerStatus() {
   return { stopped: writerStopped, exitRequested, revision: memoryRevision, instanceId: INSTANCE_ID };
 }
 
+function thisProcessWrites() {
+  try {
+    const current = JSON.parse(fs.readFileSync(LOCK_FILE, "utf8"));
+    return current.pid === process.pid && current.instanceId === INSTANCE_ID;
+  } catch {
+    return false;
+  }
+}
+
 // Comparăm ignorând `savedAt`, altfel orice serializare ar părea o schimbare.
 function fingerprint(data) {
   return JSON.stringify({ version: data.version, collections: data.collections });
@@ -976,6 +985,7 @@ module.exports = {
   noteRemovedAccounts,
   resumeWriter,
   writerStatus,
+  thisProcessWrites,
   restoreMap,
   restoreArray,
   restoreObject,

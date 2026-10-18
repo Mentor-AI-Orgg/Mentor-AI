@@ -3,6 +3,7 @@
 // Eșecul se scrie ca un cod, fără parolă, destinatar sau corp.
 
 const config = require("../config");
+const { isQuotaError, noteQuota } = require("./mailBudget");
 
 function unwrap(value) {
   const text = String(value ?? "").replace(/\r/g, "").trim();
@@ -160,6 +161,18 @@ async function sendEmail({ to, subject, body, html, attachments, action }) {
       return { mocked: false, delivered: true, channel: "email" };
     }
     failure = result.error;
+    if (isQuotaError(failure)) break;
+  }
+  if (isQuotaError(failure)) {
+    noteQuota();
+    recordMail("smtp_quota");
+    return {
+      mocked: false,
+      delivered: false,
+      channel: "email",
+      error: "smtp_quota",
+      quota: true
+    };
   }
   const code = failureCode(failure);
   recordMail(code);

@@ -1,5 +1,6 @@
-// Activitatea copilului se adună și pleacă cel mult un rezumat pe zi.
-// Nu copiem mesaje, răspunsuri sau câmpul note trimis de browser.
+// Activitatea copilului se adună și pleacă într-un rezumat, după ora 19.
+// Duminica pornesc săptămânalele. Ce nu încape în plafonul zilei pleacă în
+// zilele următoare. Nu copiem mesaje, răspunsuri sau câmpul note.
 
 const { findAccount, accountIsOpen, listAccounts } = require("../data/authStore");
 const { getGuide } = require("../data/gimnaziuGuide");
@@ -55,7 +56,9 @@ const LESSON_TYPES = new Set([
   "save_session"
 ]);
 const DAILY_CAP = 3;
+const WEEKDAY_INDEX = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
 const SENT = {};
+const mailBudget = require("./mailBudget");
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -171,6 +174,17 @@ function notifyParentSoon() {
   return { skipped: true, reason: "not_emailed" };
 }
 
+function addCalendarDays(date, days) {
+  const [year, month, day] = date.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day + days)).toISOString().slice(0, 10);
+}
+
+function weekKey(clock) {
+  const index = WEEKDAY_INDEX[clock.weekday];
+  if (index == null) return clock.date;
+  return addCalendarDays(clock.date, -index);
+}
+
 function digestLine(events, username, label = "Azi") {
   const lessons = events.filter(event => LESSON_TYPES.has(event.type)).length;
   const tests = events.filter(event => TEST_TYPES.has(event.type));
@@ -185,21 +199,41 @@ function digestLine(events, username, label = "Azi") {
   return `${label}, ${username} a lucrat ${minutes} ${minutes === 1 ? "minut" : "minute"}: ${bits.join(", ")}.`;
 }
 
-async function sendDueDigests(now = new Date(), { force = false } = {}) {
+async function sendDueDigests(now = new Date(), { force = false, budget = mailBudget.DIGEST_DAILY_BUDGET } = {}) {
   const clock = bucharestParts(now);
   if (!force && clock.hour < 19) return [];
+  if (!force && !require("../data/persistence").thisProcessWrites()) return [];
+  if (mailBudget.quotaBlocked(now)) return [];
+  let room = mailBudget.digestRoom(clock.date, budget);
+  if (room <= 0) return [];
+  const week = weekKey(clock);
   const { issueUnsubscribeToken } = require("../data/consentStore");
   const { publicBaseUrl } = require("../publicUrl");
-  const sent = [];
+  const { getUser } = require("../data/economyStore");
+  const due = [];
   for (const account of listAccounts()) {
     if (account.role !== "student" || !accountIsOpen(account)) continue;
     const freq = account.profile.parentEmails || "weekly";
     if (freq === "off") continue;
-    if (freq === "weekly" && clock.weekday !== "Sun" && !force) continue;
-    const { getUser } = require("../data/economyStore");
     const economy = getUser(account.email);
     if (!economy || !economy.digestEvents?.length) continue;
-    if (economy.digestSentOn === clock.date) continue;
+    if (economy.digestHeldOn === clock.date) continue;
+    if (freq === "daily") {
+      if (economy.digestSentOn === clock.date) continue;
+    } else if (economy.digestWeek === week) continue;
+    due.push({ account, freq, economy });
+  }
+  due.sort((a, b) => {
+    const rank = item => (item.freq === "daily" ? 1 : 0);
+    const byKind = rank(a) - rank(b);
+    if (byKind) return byKind;
+    return String(a.account.email).localeCompare(String(b.account.email));
+  });
+  const sent = [];
+  let changed = false;
+  for (const item of due) {
+    if (room <= 0 || mailBudget.quotaBlocked(now)) break;
+    const { account, freq, economy } = item;
     const parentEmail = account.profile.parentEmail;
     if (!reserveOutbound(parentEmail, clock.date)) continue;
     const username = escapeHtml(account.profile.username || "copilul");
@@ -219,11 +253,33 @@ async function sendDueDigests(now = new Date(), { force = false } = {}) {
       to: parentEmail,
       subject,
       body,
-      channel: "email"
+      channel: "email",
+      action: "digest"
     });
+    if (delivery.quota) {
+      mailBudget.noteQuota(now);
+      break;
+    }
+    const accepted = Boolean(delivery.delivered || delivery.mocked);
+    if (!accepted) {
+      economy.digestHeldOn = clock.date;
+      changed = true;
+      continue;
+    }
     economy.digestSentOn = clock.date;
+    economy.digestWeek = week;
     if (freq === "daily") economy.digestEvents = [];
+    mailBudget.recordDigest(clock.date);
+    room -= 1;
+    changed = true;
     sent.push({ to: parentEmail, subject, body, delivery, username: account.profile.username });
+  }
+  if (changed) {
+    try {
+      require("../data/persistence").saveNow();
+    } catch {
+      /* marcajul rămâne în memorie până la salvarea următoare */
+    }
   }
   return sent;
 }
@@ -244,6 +300,11 @@ require("../data/userDataRegistry").register("emailuri", {
   }
 });
 
+require("../data/persistence").register("mailBudget", {
+  snapshot: () => mailBudget.snapshot(),
+  restore: data => mailBudget.restore(data)
+});
+
 module.exports = {
   notifyParent,
   notifyParentSoon,
@@ -254,6 +315,7 @@ module.exports = {
   escapeHtml,
   bucharestParts,
   digestLine,
+  weekKey,
   LABELS,
   ALLOWED_TYPES,
   DAILY_CAP
