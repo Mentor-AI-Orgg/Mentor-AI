@@ -3,7 +3,7 @@ import { describe, it, expect, beforeAll, afterEach } from 'vitest';
 import { createRequire } from 'node:module';
 import { createApp } from '../backend/src/app.js';
 import { registerGranted } from './registerStudent.js';
-import { shopItemVisible, themeWash, THEME_ACCENTS } from '../frontend/shopLook.js';
+import { shopItemVisible, themeWash, THEME_ACCENTS, halloweenShelf, regularShelf } from '../frontend/shopLook.js';
 import { applyShopBackground } from '../frontend/themePrefs.js';
 
 const nodeRequire = createRequire(import.meta.url);
@@ -198,5 +198,33 @@ describe('ediția de Halloween și avatarele noi', () => {
     const cosmetics = readFileSync(new URL('../shared/cosmetics.json', import.meta.url), 'utf8');
     expect(cosmetics).toContain('Ediție limitată · Exclusiv Halloween');
     expect(cosmetics).toContain('Disponibil până pe 31 octombrie');
+  });
+
+  it('ține Halloween separat și așază Fotbalist și Gamer lângă prețul 150', () => {
+    const open = economyStore.getCatalog(OPEN);
+    const closed = economyStore.getCatalog(CLOSED);
+    expect(halloweenShelf(open.items, []).map(item => item.id)).toEqual(HALLOWEEN);
+    expect(halloweenShelf(closed.items, [])).toEqual([]);
+    expect(halloweenShelf(closed.items, ['avatar-halloween-ghost']).map(item => item.id)).toEqual(['avatar-halloween-ghost']);
+
+    const avatars = regularShelf(open.items, 'avatar', []);
+    const avatarIds = avatars.map(item => item.id);
+    expect(avatarIds.some(id => id.includes('halloween'))).toBe(false);
+    const alien = avatarIds.indexOf('avatar-alien');
+    expect(avatarIds[alien - 1]).toBe('avatar-wizard');
+    expect(avatarIds[alien + 1]).toBe('avatar-football');
+    expect(avatarIds[alien + 2]).toBe('avatar-gamer');
+    expect(avatars.find(item => item.id === 'avatar-football').price).toBe(150);
+    expect(avatars.find(item => item.id === 'avatar-gamer').price).toBe(150);
+    const yetiAt = avatarIds.indexOf('avatar-yeti');
+    expect(yetiAt).toBeGreaterThan(avatarIds.indexOf('avatar-cosmic-dragon'));
+    expect(avatars[yetiAt].rarity).toBe('Mythic');
+    expect(avatars[yetiAt].price).toBe(300);
+    expect(regularShelf(closed.items, 'avatar', ['avatar-halloween-pumpkin']).some(item => item.exclusive === 'halloween')).toBe(false);
+    expect(regularShelf(open.items, 'background', []).some(item => item.exclusive === 'halloween')).toBe(false);
+
+    const shop = readFileSync(new URL('../frontend/components/ShopScreen.jsx', import.meta.url), 'utf8');
+    expect(shop).toContain('🎃 Halloween · Ediție limitată');
+    expect(shop.indexOf('shop-halloween-title')).toBeLessThan(shop.indexOf('>Catalog<'));
   });
 });

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
-import { shopItemVisible } from '../shopLook.js';
+import { halloweenShelf, regularShelf } from '../shopLook.js';
 import LevelBar from './LevelBar.jsx';
 import Mascota from './mascot/Mascota.jsx';
 
@@ -190,11 +190,14 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
   const ownedItems = new Set(summary?.inventory || []);
   const claimedRewards = summary?.dailyClaims || [];
   const rewardsById = useMemo(() => Object.fromEntries((claimedRewards || []).map(reward => [reward.id, reward])), [claimedRewards]);
-  const items = useMemo(() => {
-    if (!catalog) return [];
-    const owned = new Set(summary?.inventory || []);
-    return (catalog.items || []).filter(item => item.category === category && shopItemVisible(item, owned.has(item.id)));
-  }, [catalog, category, summary]);
+  const halloween = useMemo(
+    () => halloweenShelf(catalog?.items || [], summary?.inventory || []),
+    [catalog, summary]
+  );
+  const items = useMemo(
+    () => regularShelf(catalog?.items || [], category, summary?.inventory || []),
+    [catalog, category, summary]
+  );
 
   const handleClaim = async type => {
     setClaiming(true);
@@ -323,6 +326,34 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
           <LevelBar userData={summary || userData} compact />
         </div>
       </section>
+
+      {halloween.length > 0 && (
+        <section className="shop-section surface shop-halloween" aria-labelledby="shop-halloween-title">
+          <div className="shop-section-head">
+            <div>
+              <h2 id="shop-halloween-title" className="display-font">🎃 Halloween · Ediție limitată</h2>
+              {halloween.some(item => item.saleOpen !== false && item.untilLabel) ? (
+                <p className="shop-until">{halloween.find(item => item.untilLabel).untilLabel}</p>
+              ) : null}
+            </div>
+          </div>
+          <div className="shop-grid">
+            {halloween.map(item => (
+              <ShopItemCard
+                key={item.id}
+                item={item}
+                owned={ownedItems.has(item.id)}
+                equipped={summary?.equipped?.[item.category]}
+                buying={buyingId === item.id}
+                equipping={equippingId === item.id}
+                onBuy={next => setPendingItem(next)}
+                onEquip={handleEquipItem}
+                userLevel={summary?.level || userData.level || 1}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="shop-section surface">
         <div className="shop-section-head">

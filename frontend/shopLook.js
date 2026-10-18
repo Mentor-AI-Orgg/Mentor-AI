@@ -38,6 +38,29 @@ function shopItemVisible(item, owned) {
   return true;
 }
 
+function ownedSet(ownedIds) {
+  if (ownedIds instanceof Set) return ownedIds;
+  return new Set(ownedIds || []);
+}
+
+function isHalloweenItem(item) {
+  return item?.exclusive === 'halloween';
+}
+
+function halloweenShelf(items, ownedIds) {
+  const owned = ownedSet(ownedIds);
+  return (items || []).filter(item => isHalloweenItem(item) && shopItemVisible(item, owned.has(item.id)));
+}
+
+function regularShelf(items, category, ownedIds) {
+  const owned = ownedSet(ownedIds);
+  return (items || [])
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) => item.category === category && !isHalloweenItem(item) && shopItemVisible(item, owned.has(item.id)))
+    .sort((a, b) => (Number(a.item.price) - Number(b.item.price)) || (a.index - b.index))
+    .map(({ item }) => item);
+}
+
 export {
   ALL_ITEMS,
   AVATAR_ICONS,
@@ -46,5 +69,8 @@ export {
   itemEmoji,
   avatarIcon,
   themeWash,
-  shopItemVisible
+  shopItemVisible,
+  isHalloweenItem,
+  halloweenShelf,
+  regularShelf
 };
