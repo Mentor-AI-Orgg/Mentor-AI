@@ -63,7 +63,11 @@ describe('emailuri către părinte', () => {
       meta: { chapterId: 'fractii', subject: 'matematica', grade: 5, minutes: 12 }
     });
     expect(activity.status).toBe(200);
-    const spy = vi.spyOn(deliver, 'deliverMessage');
+    const spy = vi.spyOn(deliver, 'deliverMessage').mockResolvedValue({
+      mocked: false,
+      delivered: true,
+      channel: 'email'
+    });
     const first = await sendDueDigests(new Date(), { force: true });
     const second = await sendDueDigests(new Date(), { force: true });
     expect(first).toHaveLength(1);
@@ -81,7 +85,11 @@ describe('emailuri către părinte', () => {
   it('oprește al patrulea email din aceeași zi către același părinte', async () => {
     const { app } = createApp({ autosave: false });
     const parentEmail = uniqueEmail('rezumat');
-    const spy = vi.spyOn(deliver, 'deliverMessage');
+    const spy = vi.spyOn(deliver, 'deliverMessage').mockResolvedValue({
+      mocked: false,
+      delivered: true,
+      channel: 'email'
+    });
     for (let n = 0; n < 4; n += 1) {
       const created = await registerGranted(app, { parentEmail });
       await created.agent.post('/api/economy/activity').send({
