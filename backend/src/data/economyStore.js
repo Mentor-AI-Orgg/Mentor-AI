@@ -5,7 +5,7 @@ const { needsMigration, migrateUserLessonIds, migrateNotificationList } = requir
 const { getGuide } = require('./gimnaziuGuide');
 const { levelFromXp, touchStudy, lessonsUntilNext, AWARDS } = require('./progressEngine');
 const { TITLE_CATALOG, unlockedTitleIds, titleById, noteEarlyBird } = require('./titles');
-const { SHOP_CATALOG, shopItemById } = require('./shopCatalog');
+const { SHOP_CATALOG, shopItemById, isSaleOpen, catalogAt } = require('./shopCatalog');
 const { dayKey, addDays, bucharestClock, isLateHour, nightKey } = require('../ops/bucharestDay');
 const { blankGuard, settle, record } = require('./streakFreeze');
 const daily = require('./dailyChallenge');
@@ -884,14 +884,15 @@ function claimReward({ userId = 'demo_user', type, payload = {} }) {
   return { ok: false, reason: 'unknown_reward', balance: user.balance, summary: buildSummary(user) };
 }
 
-function getCatalog() {
+function getCatalog(now = new Date()) {
+  const items = catalogAt(now);
   const categories = CATEGORY_ORDER.map(category => ({
     id: category,
-    items: SHOP_CATALOG.filter(item => item.category === category)
+    items: items.filter(item => item.category === category)
   }));
   return {
     categories,
-    items: SHOP_CATALOG,
+    items,
     titles: TITLE_CATALOG.map(item => ({ id: item.id, name: item.name, description: item.description })),
     highlights: {
       freeDaily: [
@@ -903,7 +904,7 @@ function getCatalog() {
   };
 }
 
-function purchaseItem({ userId = 'demo_user', itemId }) {
+function purchaseItem({ userId = 'demo_user', itemId, now = new Date() }) {
   const user = ensureUser(userId);
   const item = SHOP_CATALOG.find(entry => entry.id === itemId);
   if (!item) {
@@ -911,6 +912,15 @@ function purchaseItem({ userId = 'demo_user', itemId }) {
   }
   if (user.inventory.includes(item.id)) {
     return { ok: false, reason: 'already_owned', balance: user.balance };
+  }
+  if (!isSaleOpen(item, now)) {
+    return {
+      ok: false,
+      reason: 'sale_ended',
+      message: 'Ediția de Halloween s-a închis pe 31 octombrie. Ce ai cumpărat rămâne la tine.',
+      balance: user.balance,
+      item
+    };
   }
   const minLevel = Number(item.minLevel || 0);
   const level = levelFromXp(user.xp || 0).level;

@@ -24,4 +24,27 @@ function avatarIcon(avatarId) {
   return AVATAR_ICONS[avatarId] || null;
 }
 
-export { ALL_ITEMS, AVATAR_ICONS, THEME_ACCENTS, shopItem, itemEmoji, avatarIcon };
+function themeWash(themeId) {
+  const item = shopItem(themeId);
+  if (!item || item.category !== 'background') return null;
+  if (Array.isArray(item.wash) && item.wash.length >= 2) return item.wash.slice(0, 2);
+  if (item.accent) return [item.accent, item.accent];
+  return null;
+}
+
+function shopItemVisible(item, owned) {
+  if (!item) return false;
+  if (item.saleOpen === false && !owned) return false;
+  return true;
+}
+
+export {
+  ALL_ITEMS,
+  AVATAR_ICONS,
+  THEME_ACCENTS,
+  shopItem,
+  itemEmoji,
+  avatarIcon,
+  themeWash,
+  shopItemVisible
+};

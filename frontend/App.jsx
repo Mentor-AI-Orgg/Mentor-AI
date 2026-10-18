@@ -685,7 +685,9 @@ function AppShell({ userData, setUserData }) {
               parallaxStrength={0.12}
             />
           </BackgroundSafe>
-        ) : null}
+        ) : (
+          <AppBackground themeId={userData.themeId} washOnly />
+        )}
       </div>
       <Suspense fallback={<main className="screen-fallback">Se încarcă pagina…</main>}>
         {renderScreen()}

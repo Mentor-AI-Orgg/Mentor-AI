@@ -68,6 +68,25 @@ function saveAppearance(raw) {
   return prefs;
 }
 
+function applyShopBackground(themeId, { accent = '', wash = null } = {}) {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  const spots = Array.isArray(wash) && wash.length >= 2 ? wash : null;
+  if (!spots) {
+    root.style.removeProperty('--user-accent');
+    root.style.removeProperty('--theme-spot-a');
+    root.style.removeProperty('--theme-spot-b');
+    delete root.dataset.shopTheme;
+    root.classList.remove('has-user-theme');
+    return;
+  }
+  root.style.setProperty('--user-accent', accent || spots[0]);
+  root.style.setProperty('--theme-spot-a', spots[0]);
+  root.style.setProperty('--theme-spot-b', spots[1]);
+  root.dataset.shopTheme = String(themeId || '');
+  root.classList.add('has-user-theme');
+}
+
 function appearancePayload(prefs) {
   return {
     theme: prefs.theme,
@@ -82,6 +101,7 @@ export {
   normalizeAppearance,
   readAppearance,
   applyAppearance,
+  applyShopBackground,
   saveAppearance,
   appearancePayload
 };

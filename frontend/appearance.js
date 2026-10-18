@@ -1,10 +1,11 @@
-import { AVATAR_ICONS, THEME_ACCENTS, avatarIcon, itemEmoji } from './shopLook.js';
+import { AVATAR_ICONS, THEME_ACCENTS, avatarIcon, itemEmoji, themeWash } from './shopLook.js';
+import { applyShopBackground } from './themePrefs.js';
 
 function applyTheme(themeId) {
-  if (typeof document === 'undefined') return;
-  const accent = THEME_ACCENTS[themeId];
-  document.documentElement.style.setProperty('--user-accent', accent || '');
-  document.documentElement.classList.toggle('has-user-theme', Boolean(accent));
+  applyShopBackground(themeId, {
+    accent: THEME_ACCENTS[themeId] || '',
+    wash: themeWash(themeId)
+  });
 }
 
 function applyProgress(summary = {}, prev = {}) {
