@@ -25,7 +25,13 @@
     { "id": "avatar-queen", "name": "Regină", "price": 220, "rarity": "Legendary", "icon": "fa-chess-queen", "emoji": "👸", "description": "Același rang, alt emoji." },
     { "id": "avatar-unicorn", "name": "Unicorn", "price": 280, "rarity": "Mythic", "icon": "fa-star", "emoji": "🦄", "description": "Rar. Se vede de departe." },
     { "id": "avatar-cosmic-dragon", "name": "Dragon cosmic", "price": 300, "rarity": "Mythic", "icon": "fa-meteor", "emoji": "🌌", "description": "Capătul catalogului de avatare." },
-    { "id": "avatar-time-traveler", "name": "Călător în timp", "price": 300, "rarity": "Mythic", "icon": "fa-hourglass-half", "emoji": "⌛", "description": "Pentru cine revine la capitolul de ieri." }
+    { "id": "avatar-time-traveler", "name": "Călător în timp", "price": 300, "rarity": "Mythic", "icon": "fa-hourglass-half", "emoji": "⌛", "description": "Pentru cine revine la capitolul de ieri." },
+    { "id": "avatar-halloween-pumpkin", "name": "Dovleac", "price": 150, "rarity": "Epic", "icon": "fa-cookie", "emoji": "🎃", "description": "Zâmbește din farfurie, nu sperie pe nimeni.", "limited": true, "exclusive": "halloween", "availableUntil": "2026-10-31", "badge": "Ediție limitată · Exclusiv Halloween", "untilLabel": "Disponibil până pe 31 octombrie" },
+    { "id": "avatar-halloween-ghost", "name": "Fantomiță", "price": 150, "rarity": "Epic", "icon": "fa-ghost", "emoji": "👻", "description": "O fantomă mică, cu cearșaf alb și chef de teme.", "limited": true, "exclusive": "halloween", "availableUntil": "2026-10-31", "badge": "Ediție limitată · Exclusiv Halloween", "untilLabel": "Disponibil până pe 31 octombrie" },
+    { "id": "avatar-halloween-vampire", "name": "Vampir", "price": 150, "rarity": "Epic", "icon": "fa-mask", "emoji": "🧛", "description": "Pelerină de carnaval, fără dinți ascuțiți.", "limited": true, "exclusive": "halloween", "availableUntil": "2026-10-31", "badge": "Ediție limitată · Exclusiv Halloween", "untilLabel": "Disponibil până pe 31 octombrie" },
+    { "id": "avatar-yeti", "name": "Yeti", "price": 300, "rarity": "Mythic", "icon": "fa-snowman", "emoji": "❄️", "description": "Blănos și liniștit, din zăpada de la munte." },
+    { "id": "avatar-football", "name": "Fotbalist", "price": 150, "rarity": "Epic", "icon": "fa-soccer-ball", "emoji": "⚽", "description": "Intră pe teren după ce termină exercițiul." },
+    { "id": "avatar-gamer", "name": "Gamer", "price": 150, "rarity": "Epic", "icon": "fa-gamepad", "emoji": "🎮", "description": "O manetă, o pauză, apoi înapoi la lecție." }
   ],
   "backgrounds": [
     { "id": "theme-pink-pulse", "name": "Roz cald", "price": 40, "rarity": "Common", "accent": "#ff8fa3", "emoji": "💗", "description": "Fundal roz, blând pentru ochi." },
@@ -53,6 +59,8 @@
     { "id": "theme-space-station", "name": "Stație spațială", "price": 220, "rarity": "Legendary", "accent": "#6b7cff", "emoji": "🚀", "description": "Pentru astronautul din magazin." },
     { "id": "theme-floating", "name": "Insule plutitoare", "price": 220, "rarity": "Legendary", "accent": "#8ec5ff", "emoji": "☁️", "description": "Ușor, deasupra temelor." },
     { "id": "theme-cyber", "name": "Cyber", "price": 280, "rarity": "Mythic", "accent": "#39ff14", "emoji": "💚", "description": "Verde-neon, rar." },
-    { "id": "theme-universe", "name": "Univers", "price": 300, "rarity": "Mythic", "accent": "#c9b6ff", "emoji": "🪐", "description": "Capătul catalogului de fundaluri." }
+    { "id": "theme-universe", "name": "Univers", "price": 300, "rarity": "Mythic", "accent": "#c9b6ff", "emoji": "🪐", "description": "Capătul catalogului de fundaluri." },
+    { "id": "theme-halloween-night", "name": "Noapte de Halloween", "price": 150, "rarity": "Epic", "accent": "#ff8a1e", "wash": ["#ff8a1e", "#7c4dff"], "emoji": "🎃", "description": "Portocaliu și violet, ca o seară cu dovleci luminați.", "limited": true, "exclusive": "halloween", "availableUntil": "2026-10-31", "badge": "Ediție limitată · Exclusiv Halloween", "untilLabel": "Disponibil până pe 31 octombrie" },
+    { "id": "theme-halloween-house", "name": "Casă bântuită", "price": 150, "rarity": "Epic", "accent": "#e8b86d", "wash": ["#e8b86d", "#8e7cc3"], "emoji": "🏚️", "description": "O căsuță prietenoasă, cu ferestre calde.", "limited": true, "exclusive": "halloween", "availableUntil": "2026-10-31", "badge": "Ediție limitată · Exclusiv Halloween", "untilLabel": "Disponibil până pe 31 octombrie" }
   ]
 }

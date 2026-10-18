@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { MentorAPI } from '../apiClient.js';
+import { shopItemVisible } from '../shopLook.js';
 import LevelBar from './LevelBar.jsx';
 import Mascota from './mascot/Mascota.jsx';
 
@@ -57,21 +58,37 @@ const ShopRewardCard = ({ reward, loading, onClaim, claimState }) => {
   );
 };
 
+function visualStyle(item) {
+  const wash = Array.isArray(item.wash) && item.wash.length >= 2 ? item.wash : null;
+  if (wash) {
+    return {
+      background: `radial-gradient(circle at 50% 46%, #08142A 0 34%, transparent 35%), linear-gradient(160deg, ${wash[0]}, ${wash[1]})`
+    };
+  }
+  if (item.accent) return { color: item.accent };
+  return undefined;
+}
+
 const ShopItemCard = ({ item, owned, equipped, onBuy, onEquip, buying, equipping, userLevel }) => {
   const isEquipped = equipped === item.id;
   const needsLevel = Number(item.minLevel || 0);
   const locked = !owned && needsLevel > 0 && Number(userLevel || 1) < needsLevel;
+  const closed = !owned && item.saleOpen === false;
   return (
     <div className={`shop-item-card surface ${owned ? 'owned' : ''} ${isEquipped ? 'equipped' : ''} ${locked ? 'is-locked' : ''}`}>
       <div className="shop-item-head">
-        <div className="shop-item-badge">{locked ? `Nivel ${needsLevel}` : (RARITY_RO[item.rarity] || item.rarity)}</div>
+        <div className="shop-item-badges">
+          <div className="shop-item-badge">{locked ? `Nivel ${needsLevel}` : (RARITY_RO[item.rarity] || item.rarity)}</div>
+          {item.badge ? <div className="shop-limited-badge">{item.badge}</div> : null}
+        </div>
         <div className="shop-item-price"><i className="fas fa-coins" /> {formatCoins(item.price)}</div>
       </div>
-      <div className="shop-item-visual" style={item.accent ? { color: item.accent } : undefined}>
+      <div className={`shop-item-visual${item.wash ? ' has-wash' : ''}`} style={visualStyle(item)}>
         <span className="shop-item-emoji">{item.emoji || '✨'}</span>
       </div>
       <h4>{item.name}</h4>
       <p>{item.description}</p>
+      {item.untilLabel ? <p className="shop-until">{item.untilLabel}</p> : null}
       {locked && <small className="shop-voice-note">Mitic de la nivelul {needsLevel}. Continuă să înveți — nu se cumpără cu lei.</small>}
       <div className="shop-item-footer">
         <span>{CATEGORY_META[item.category]?.label || item.category}</span>
@@ -80,8 +97,8 @@ const ShopItemCard = ({ item, owned, equipped, onBuy, onEquip, buying, equipping
             {isEquipped ? 'Pe profil' : equipping ? '...' : 'Poartă'}
           </button>
         ) : (
-          <button type="button" className="accent-button" disabled={buying || locked} onClick={() => onBuy(item)}>
-            {locked ? `Nivel ${needsLevel}` : buying ? '...' : 'Cumpără'}
+          <button type="button" className="accent-button" disabled={buying || locked || closed} onClick={() => onBuy(item)}>
+            {closed ? 'S-a încheiat' : locked ? `Nivel ${needsLevel}` : buying ? '...' : 'Cumpără'}
           </button>
         )}
       </div>
@@ -175,8 +192,9 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
   const rewardsById = useMemo(() => Object.fromEntries((claimedRewards || []).map(reward => [reward.id, reward])), [claimedRewards]);
   const items = useMemo(() => {
     if (!catalog) return [];
-    return (catalog.items || []).filter(item => item.category === category);
-  }, [catalog, category]);
+    const owned = new Set(summary?.inventory || []);
+    return (catalog.items || []).filter(item => item.category === category && shopItemVisible(item, owned.has(item.id)));
+  }, [catalog, category, summary]);
 
   const handleClaim = async type => {
     setClaiming(true);
@@ -219,6 +237,10 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
     }
     if (result.data?.reason === 'level_required') {
       if (onRewardToast) onRewardToast(`Mitic de la nivelul ${result.data.minLevel}. Acum ești nivelul ${result.data.level}.`, 'warning');
+      return;
+    }
+    if (result.data?.reason === 'sale_ended') {
+      if (onRewardToast) onRewardToast(result.data.message || 'Ediția de Halloween s-a închis pe 31 octombrie. Ce ai cumpărat rămâne la tine.', 'warning');
       return;
     }
     if (onRewardToast) onRewardToast('Nu ai destule monede de studiu pentru obiectul ales.', 'warning');
@@ -412,6 +434,7 @@ const ShopScreen = ({ userData, onBack, onCoinsChange, onAppearanceChange, onRew
           <div className="shop-confirm-card surface">
             <h3 id="shop-confirm-title" className="display-font">Confirmă cumpărarea</h3>
             <p>Vrei să cumperi <strong>{pendingItem.name}</strong> pentru {formatCoins(pendingItem.price)} monede de studiu?</p>
+            {pendingItem.untilLabel ? <p>{pendingItem.untilLabel}.</p> : null}
             <div className="shop-confirm-actions">
               <button type="button" className="ghost-button" onClick={() => setPendingItem(null)} disabled={Boolean(buyingId)}>Anulează</button>
               <button type="button" className="accent-button" onClick={() => handleBuy(pendingItem.id)} disabled={Boolean(buyingId)}>
