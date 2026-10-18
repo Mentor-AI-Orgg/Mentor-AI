@@ -185,6 +185,13 @@ function weekKey(clock) {
   return addCalendarDays(clock.date, -index);
 }
 
+function sentThisWeek(economy, week) {
+  if (economy.digestWeek === week) return true;
+  const on = String(economy.digestSentOn || "");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(on)) return false;
+  return on >= week && on <= addCalendarDays(week, 6);
+}
+
 function digestLine(events, username, label = "Azi") {
   const lessons = events.filter(event => LESSON_TYPES.has(event.type)).length;
   const tests = events.filter(event => TEST_TYPES.has(event.type));
@@ -220,7 +227,7 @@ async function sendDueDigests(now = new Date(), { force = false, budget = mailBu
     if (economy.digestHeldOn === clock.date) continue;
     if (freq === "daily") {
       if (economy.digestSentOn === clock.date) continue;
-    } else if (economy.digestWeek === week) continue;
+    } else if (sentThisWeek(economy, week)) continue;
     due.push({ account, freq, economy });
   }
   due.sort((a, b) => {

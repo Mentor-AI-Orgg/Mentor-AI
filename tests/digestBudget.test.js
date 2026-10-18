@@ -59,6 +59,11 @@ describe('plafonul rezumatului', () => {
     expect(sentUser.digestWeek).toBe('2026-10-18');
     expect(mailBudget.snapshot().digestSent).toBe(1);
     expect(mailBudget.bucharestMidnightAfter(SUNDAY)).toBe(Date.parse('2026-10-18T21:00:00.000Z'));
+    const oldMarker = economy.getUser(authStore.findByUsername(second.username).email);
+    oldMarker.digestWeek = "";
+    oldMarker.digestSentOn = "2026-10-18";
+    const repeat = await sendDueDigests(new Date("2026-10-20T16:30:00.000Z"), { budget: 5 });
+    expect(repeat.map(row => row.username)).not.toContain(second.username);
   });
 
   it('la plafonul căsuței oprește lotul și lasă linkurile să încerce', async () => {
