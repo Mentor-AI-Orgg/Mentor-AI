@@ -113,6 +113,39 @@ function percent(part, whole) {
   return Math.round((part / whole) * 1000) / 10;
 }
 
+function blankSlice() {
+  return {
+    active: { today: 0, days7: 0, days30: 0 },
+    returning: 0,
+    cohort: 0,
+    retained: 0
+  };
+}
+
+function publishSlice(slice) {
+  return {
+    active: slice.active,
+    returning: slice.returning,
+    retention: {
+      cohort: slice.cohort,
+      active: slice.retained,
+      percent: percent(slice.retained, slice.cohort)
+    }
+  };
+}
+
+function tallyActivity(slice, { born, seen, today, days7, days30, now }) {
+  const active7 = seen != null && seen >= days7;
+  if (seen != null && seen >= today) slice.active.today += 1;
+  if (active7) slice.active.days7 += 1;
+  if (seen != null && seen >= days30) slice.active.days30 += 1;
+  if (born != null && born < now - DAY_MS && active7) slice.returning += 1;
+  if (born != null && born < days7) {
+    slice.cohort += 1;
+    if (active7) slice.retained += 1;
+  }
+}
+
 function accountStats(accounts, now = Date.now()) {
   const moment = new Date(now);
   const today = startOfBucharestDay(moment, 0);
@@ -121,10 +154,9 @@ function accountStats(accounts, now = Date.now()) {
   const rows = dedupeAccounts(accounts);
   const counts = { total: rows.length, students: 0, parents: 0, other: 0 };
   const created = { today: 0, days7: 0, days30: 0 };
-  const active = { today: 0, days7: 0, days30: 0 };
-  let returning = 0;
-  let cohort = 0;
-  let retained = 0;
+  const everyone = blankSlice();
+  const students = blankSlice();
+  const parents = blankSlice();
 
   for (const account of rows) {
     if (account.role === "student") counts.students += 1;
@@ -137,25 +169,24 @@ function accountStats(accounts, now = Date.now()) {
     if (born != null && born >= days30) created.days30 += 1;
 
     const seen = activityAt(account);
-    const active7 = seen != null && seen >= days7;
-    if (seen != null && seen >= today) active.today += 1;
-    if (active7) active.days7 += 1;
-    if (seen != null && seen >= days30) active.days30 += 1;
-
-    if (born != null && born < now - DAY_MS && active7) returning += 1;
-    if (born != null && born < days7) {
-      cohort += 1;
-      if (active7) retained += 1;
-    }
+    const mark = { born, seen, today, days7, days30, now };
+    tallyActivity(everyone, mark);
+    if (account.role === "student") tallyActivity(students, mark);
+    else if (account.role === "parent") tallyActivity(parents, mark);
   }
 
+  const all = publishSlice(everyone);
   return {
     timezone: TZ,
     ...counts,
     newAccounts: created,
-    active,
-    returning,
-    retention: { cohort, active: retained, percent: percent(retained, cohort) },
+    active: all.active,
+    returning: all.returning,
+    retention: all.retention,
+    roles: {
+      student: publishSlice(students),
+      parent: publishSlice(parents)
+    },
     activityNote: ACTIVITY_NOTE
   };
 }

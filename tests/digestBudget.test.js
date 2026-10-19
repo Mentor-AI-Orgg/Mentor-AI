@@ -153,6 +153,12 @@ describe('rezumatul și plafonul căsuței', () => {
       });
       expect(delivery).toMatchObject({ delivered: false, quota: true, error: 'smtp_quota' });
       expect(alert).not.toHaveBeenCalled();
+      const until = mailBudget.snapshot().quotaUntil;
+      expect(until).toBe(mailBudget.bucharestMidnightAfter(new Date()));
+      expect(mailBudget.quotaBlocked(new Date(until - 1000))).toBe(true);
+      expect(mailBudget.quotaBlocked(new Date(until + 1000))).toBe(false);
+      mailBudget.resetForTests();
+      mailBudget.noteQuota(SUNDAY);
       expect(mailBudget.quotaBlocked(SUNDAY_LATER)).toBe(true);
       expect(mailBudget.quotaBlocked(MONDAY)).toBe(false);
       expect(mailBudget.isQuotaError({ responseCode: 550, message: 'user unknown' })).toBe(false);
