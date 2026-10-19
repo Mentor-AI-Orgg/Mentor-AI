@@ -22,6 +22,41 @@ function formatActive(value) {
   return activeFormat.format(at);
 }
 
+function RoleActivity({
+  title,
+  slice,
+  headline = false,
+  emptyLabel,
+  rateLabel,
+  activeWord = 'Activi',
+  returnLabel = 'Creați de mai mult de o zi și activi în ultimele 7 zile'
+}) {
+  const active = slice?.active || {};
+  const retention = slice?.retention || {};
+  const retentionText =
+    retention.percent == null
+      ? emptyLabel
+      : `${percentFormat.format(retention.percent)}% ${rateLabel}`;
+  return (
+    <article className={`surface rounded-3xl p-4${headline ? '' : ' text-sm'}`}>
+      <h2 className={headline ? 'display-font' : 'font-semibold'}>{title}</h2>
+      <p>
+        {activeWord} azi <strong>{formatCount(active.today)}</strong>
+      </p>
+      <p>
+        În 7 zile <strong>{formatCount(active.days7)}</strong>
+      </p>
+      <p>
+        În 30 de zile <strong>{formatCount(active.days30)}</strong>
+      </p>
+      <p>
+        {returnLabel}: <strong>{formatCount(slice?.returning)}</strong>
+      </p>
+      <p>{retentionText}</p>
+    </article>
+  );
+}
+
 export default function OwnerStatsScreen({ onBack }) {
   const [state, setState] = useState({ status: 'loading', stats: null });
 
@@ -58,11 +93,6 @@ export default function OwnerStatsScreen({ onBack }) {
   }
 
   const stats = state.stats;
-  const retention = stats.retention || {};
-  const retentionText =
-    retention.percent == null
-      ? 'Încă nu sunt conturi create de cel puțin 7 zile.'
-      : `${percentFormat.format(retention.percent)}% din conturile create de cel puțin 7 zile au fost active în ultimele 7 zile.`;
 
   return (
     <main className="screen-page animate-fadeIn">
@@ -80,6 +110,19 @@ export default function OwnerStatsScreen({ onBack }) {
         )}
       </header>
       <section className="mx-5 grid gap-3">
+        <RoleActivity
+          title="Elevi"
+          slice={stats.roles?.student}
+          headline
+          emptyLabel="Încă nu sunt elevi cu cont de cel puțin 7 zile."
+          rateLabel="din elevii cu cont de cel puțin 7 zile au fost activi în ultimele 7 zile."
+        />
+        <RoleActivity
+          title="Părinți"
+          slice={stats.roles?.parent}
+          emptyLabel="Încă nu sunt părinți cu cont de cel puțin 7 zile."
+          rateLabel="din părinții cu cont de cel puțin 7 zile au fost activi în ultimele 7 zile."
+        />
         <article className="surface rounded-3xl p-4">
           <h2 className="display-font">Conturi</h2>
           <p>
@@ -109,26 +152,14 @@ export default function OwnerStatsScreen({ onBack }) {
             Ultimele 30 de zile <strong>{formatCount(stats.newAccounts?.days30)}</strong>
           </p>
         </article>
-        <article className="surface rounded-3xl p-4">
-          <h2 className="display-font">Activi</h2>
-          <p>
-            Azi <strong>{formatCount(stats.active?.today)}</strong>
-          </p>
-          <p>
-            7 zile <strong>{formatCount(stats.active?.days7)}</strong>
-          </p>
-          <p>
-            30 de zile <strong>{formatCount(stats.active?.days30)}</strong>
-          </p>
-        </article>
-        <article className="surface rounded-3xl p-4">
-          <h2 className="display-font">Revin</h2>
-          <p>
-            Conturi create de mai mult de o zi și active în ultimele 7 zile:{' '}
-            <strong>{formatCount(stats.returning)}</strong>
-          </p>
-          <p>{retentionText}</p>
-        </article>
+        <RoleActivity
+          title="Toate conturile"
+          slice={{ active: stats.active, returning: stats.returning, retention: stats.retention }}
+          activeWord="Active"
+          returnLabel="Create de mai mult de o zi și active în ultimele 7 zile"
+          emptyLabel="Încă nu sunt conturi create de cel puțin 7 zile."
+          rateLabel="din conturile create de cel puțin 7 zile au fost active în ultimele 7 zile."
+        />
         <article className="surface rounded-3xl p-4">
           <h2 className="display-font">Clasament XP</h2>
           <p>

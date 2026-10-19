@@ -83,6 +83,14 @@ describe('numerele de conturi', () => {
     expect(stats.active).toEqual({ today: 1, days7: 2, days30: 2 });
     expect(stats.returning).toBe(2);
     expect(stats.retention).toEqual({ cohort: 2, active: 2, percent: 100 });
+    expect(stats.roles.student.active).toEqual({ today: 1, days7: 1, days30: 1 });
+    expect(stats.roles.student.returning).toBe(1);
+    expect(stats.roles.student.retention).toEqual({ cohort: 1, active: 1, percent: 100 });
+    expect(stats.roles.parent).toEqual({
+      active: { today: 0, days7: 0, days30: 0 },
+      returning: 0,
+      retention: { cohort: 0, active: 0, percent: null }
+    });
     expect(keysOf(stats).some((key) => BANNED_KEYS.includes(key))).toBe(false);
     expect(JSON.stringify(stats)).not.toMatch(/Ana|parinte@example.com|gone@elev/);
   });
@@ -101,6 +109,9 @@ describe('numerele de conturi', () => {
     );
     expect(fresh.returning).toBe(0);
     expect(fresh.retention).toEqual({ cohort: 0, active: 0, percent: null });
+    expect(fresh.roles.student.returning).toBe(0);
+    expect(fresh.roles.student.retention).toEqual({ cohort: 0, active: 0, percent: null });
+    expect(fresh.roles.parent.returning).toBe(0);
 
     const back = accountStats(
       [
@@ -116,6 +127,9 @@ describe('numerele de conturi', () => {
     );
     expect(back.returning).toBe(1);
     expect(back.retention).toEqual({ cohort: 1, active: 0, percent: 0 });
+    expect(back.roles.student.returning).toBe(1);
+    expect(back.roles.student.retention).toEqual({ cohort: 1, active: 0, percent: 0 });
+    expect(back.roles.parent.active).toEqual({ today: 0, days7: 0, days30: 0 });
   });
 
   it('dă primii 100 de elevi după XP, fără email și fără părinte', () => {
@@ -259,6 +273,12 @@ describe('GET /api/admin/stats', () => {
     expect(high.body.xpSummary.over100).toBe(scored.body.xpSummary.over100 + 1);
     expect(JSON.stringify(high.body)).not.toContain(created.parentEmail);
     expect(open.body.activityNote).toMatch(/de acum/);
+    expect(open.body.roles.student.active.today).toEqual(expect.any(Number));
+    expect(open.body.roles.parent.retention.percent === null || typeof open.body.roles.parent.retention.percent === 'number').toBe(true);
+    const screen = readFileSync(new URL('../frontend/screens/OwnerStatsScreen.jsx', import.meta.url), 'utf8');
+    expect(screen.indexOf('title="Elevi"')).toBeGreaterThan(-1);
+    expect(screen.indexOf('title="Elevi"')).toBeLessThan(screen.indexOf('title="Părinți"'));
+    expect(screen.indexOf('title="Părinți"')).toBeLessThan(screen.indexOf('title="Toate conturile"'));
 
     const removed = await created.agent
       .delete('/api/account')
